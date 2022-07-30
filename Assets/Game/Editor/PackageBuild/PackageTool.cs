@@ -1,11 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.IO;
-using GameChannel;
 using AssetBundles;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AssetBundleEditorTools.AssetBundleSet;
+using Common.GameChannel;
+using Common.Utility;
 
 /// <summary>
 /// added by wsh @ 2018.01.03
@@ -16,17 +18,17 @@ using System.Text;
 
 public class PackageTool : EditorWindow
 {
-    static private BuildTarget buildTarget = BuildTarget.Android;
-    static private ChannelType channelType = ChannelType.Test;
-    static private string resVersion = "1.0.000";
-    static private string bundleVersion = "1.0.000";
-    static private LocalServerType localServerType = LocalServerType.CurrentMachine;
-    static private string localServerIP = "127.0.0.1";
-    static private bool androidBuildABForPerChannel;
-    static private bool iosBuildABForPerChannel;
-    static private bool buildABSForPerChannel;
+    private static BuildTarget buildTarget = BuildTarget.Android;
+    private static ChannelType channelType = ChannelType.Test;
+    private static string resVersion = "1.0.000";
+    private static string bundleVersion = "1.0.000";
+    private static LocalServerType localServerType = LocalServerType.CurrentMachine;
+    private static string localServerIP = "127.0.0.1";
+    private static bool androidBuildABForPerChannel;
+    private static bool iosBuildABForPerChannel;
+    private static bool buildABSForPerChannel;
 
-    [MenuItem("Tools/Package", false, 0)]
+    [MenuItem("Tool/AseetBundlePack/Package", false, 0)]
     static void Init() {
         EditorWindow.GetWindow(typeof(PackageTool));
     }

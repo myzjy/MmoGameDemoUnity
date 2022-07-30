@@ -1,31 +1,38 @@
-﻿using UnityEngine;
-#if UNITY_EDITOR
+﻿using System.IO;
+using Common.Utility;
 using UnityEditor;
-using System.IO;
-#endif
+using  UnityEngine;
 
-/// <summary>
-/// added by wsh @ 2017.12.25
-/// 注意：
-/// 1、所有ab路径中目录、文件名不能以下划线打头，否则出包时StreamingAssets中的资源不能打到真机上，很坑爹
-/// </summary>
-
-namespace AssetBundles
+namespace Framework.AssetBundles.Config
 {
-    public class AssetBundleConfig
+    public static class AssetBundleConfig
     {
-        public const string localSvrAppPath = "Editor/AssetBundle/LocalServer/AssetBundleServer.exe";
+        public const string AssetsFolderName = "AddressablePaker";
+        public const string AssetsFolderNameS = "Game/AddressablePaker";
         public const string AssetBundlesFolderName = "AssetBundles";
-        public const string AssetBundleSuffix = ".assetbundle";
-        public const string AssetsFolderName = "AssetBundles ";
-        public const string ChannelFolderName = "Channel";
-        public const string AssetsPathMapFileName = "AssetsMap.bytes";
+        public const string AssetsPathMapFileName = "AssetsMap";//"AssetsMap.bytes";
         public const string VariantsMapFileName = "VariantsMap.bytes";
-        public const string AssetBundleServerUrlFileName = "AssetBundleServerUrl.txt";
-        public const string VariantMapParttren = "Variant";
-        public const string CommonMapPattren = ",";
+        public const string ChannelFolderName = "Channel";
+        public const string localSvrAppPath = "Editor/AssetBundle/LocalServer/AssetBundleServer.exe";
 
+        //后缀名
+        public const string AssetBundleSuffix = ".assetbundle";
+        private static int mIsEditorMode = -1;
+        private const string kIsEditorMode = "IsEditorMode";
+        private static int mIsSimulateMode = -1;
+        private const string kIsSimulateMode = "IsSimulateMode";
+        public const string CommonMapPattren = ",";
+        public const string AssetBundleServerUrlFileName = "AssetBundleServerUrl.txt";
 #if UNITY_EDITOR
+                
+        public static string LocalSvrAppWorkPath
+        {
+            get
+            {
+                return AssetBundlesBuildOutputPath;
+            }
+        }
+        
         public static string AssetBundlesBuildOutputPath
         {
             get
@@ -35,28 +42,6 @@ namespace AssetBundles
                 return outputPath;
             }
         }
-
-        public static string LocalSvrAppPath
-        {
-            get
-            {
-                return Path.Combine(Application.dataPath, localSvrAppPath);
-            }
-        }
-
-        public static string LocalSvrAppWorkPath
-        {
-            get
-            {
-                return AssetBundlesBuildOutputPath;
-            }
-        }
-
-        private static int mIsEditorMode = -1;
-        private const string kIsEditorMode = "IsEditorMode";
-        private static int mIsSimulateMode = -1;
-        private const string kIsSimulateMode = "IsSimulateMode";
-
         public static bool IsEditorMode
         {
             get
@@ -86,7 +71,13 @@ namespace AssetBundles
                 }
             }
         }
-
+        public static string LocalSvrAppPath
+        {
+            get
+            {
+                return Path.Combine(Application.dataPath, localSvrAppPath);
+            }
+        }
         public static bool IsSimulateMode
         {
             get
@@ -118,5 +109,6 @@ namespace AssetBundles
             }
         }
 #endif
+
     }
 }

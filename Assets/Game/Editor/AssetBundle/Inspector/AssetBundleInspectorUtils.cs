@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using Framework.AssetBundles.Config;
 
 /// <summary>
 /// added by wsh @ 2018.01.06

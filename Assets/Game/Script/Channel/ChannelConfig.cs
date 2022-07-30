@@ -1,5 +1,4 @@
-﻿
-namespace GameChannel
+﻿namespace Common.GameChannel
 {
     public enum ChannelType
     {

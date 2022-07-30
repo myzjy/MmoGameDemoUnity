@@ -1,119 +1,173 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Common.Utility;
+using Framework.AssetBundles.Utilty;
+using Script.Framework.AssetBundle;
+using UnityEngine;
 
-/// <summary>
-/// added by wsh @ 2017.12.23
-/// 功能：Manifest管理：提供对AssetBundleManifest类的封装
-/// 注意：关于Manifest，Unity有个2个Bug：不记得在哪个版本修复了，这里使用manifest相关接口一律自行过滤掉
-/// 1、可能会给空的ab名字，具体情况未知
-/// 2、可能会包含自身，具体情况未知
-/// </summary>
-
-namespace AssetBundles
+namespace AssetBundles.Config
 {
     public class Manifest
     {
-        const string assetName = "AssetBundleManifest";
-        AssetBundleManifest manifest = null;
-        byte[] manifestBytes = null;
-        string[] emptyStringArray = new string[] { };
-        
-        public Manifest()
-        {
-            AssetbundleName = AssetBundleManager.ManifestBundleName;
-            if (string.IsNullOrEmpty(AssetbundleName))
-            {
-                Logger.LogError("You should set ManifestBundleName first!");
-            }
-        }
-        
+        /// <summary>
+        /// 基础资源名字
+        /// </summary>
+        private const string assetName = "AssetBundleManifest";
+
+        /// <summary>
+        /// 资源财产包
+        /// </summary>
+        private AssetBundleManifest manifest = null;
+
         public AssetBundleManifest assetbundleManifest
         {
-            get
-            {
-                return manifest;
-            }
+            get { return manifest; }
         }
 
-        public string AssetbundleName
-        {
-            get;
-            protected set;
-        }
-        
+        /// <summary>
+        /// 下载资源财产包字节包
+        /// </summary>
+        private byte[] manifestBytes = null;
+
+        /// <summary>
+        /// 数组？
+        /// </summary>
+        private string[] emptyStringArray;
+
+        /// <summary>
+        /// 资源包名
+        /// </summary>
+        public string AssetbundleName { get; protected set; }
+
+        /// <summary>
+        /// 资源财产包数量
+        /// </summary>
         public int Length
         {
-            get
+            get { return manifest == null ? 0 : manifest.GetAllAssetBundles().Length; }
+        }
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public Manifest()
+        {
+            //资源包名
+            AssetbundleName = AssetBundleManager.ManifestBundleName;
+            //判断是否设置了资源包财产名
+            if (string.IsNullOrEmpty(AssetbundleName))
             {
-                return manifest == null ? 0 : manifest.GetAllAssetBundles().Length;
+                ToolsDebug.LogError("请设置ManifestBundleName！！！");
             }
         }
 
-        public void LoadFromAssetbundle(AssetBundle assetbundle)
+        #region 读取资源
+
+        /// <summary>
+        /// 读取的AssetBundle
+        /// </summary>
+        /// <param name="assetBundle"></param>
+        public void LoadFromAssetBundle(AssetBundle assetBundle)
         {
-            if (assetbundle == null)
+            if (assetBundle == null)
             {
-                Logger.LogError("Manifest LoadFromAssetbundle assetbundle null!");
+                ToolsDebug.LogError("manifest LoadFromAssetBundle assetBundle is null");
                 return;
             }
-            manifest = assetbundle.LoadAsset<AssetBundleManifest>(assetName);
+
+            //读取到 manifest 文件
+            manifest = assetBundle.LoadAsset<AssetBundleManifest>(assetName);
         }
 
+        #endregion
+
+        /// <summary>
+        /// 设置字节数组
+        /// </summary>
+        /// <param name="bytes"></param>
         public void SaveBytes(byte[] bytes)
         {
             manifestBytes = bytes;
         }
 
+        /// <summary>
+        /// 保存到磁盘缓存
+        /// </summary>
         public void SaveToDiskCahce()
         {
-            if (manifestBytes != null && manifestBytes.Length > 0)
-            {
-                string path = AssetBundleUtility.GetPersistentDataPath(AssetbundleName);
-                GameUtility.SafeWriteAllBytes(path, manifestBytes);
-            }
+            if (manifestBytes == null || manifestBytes.Length <= 0) return;
+            //根据资源文件名 获取持久数据路径
+            string path = AssetBundleUtility.GetPersistentDataPath(AssetbundleName);
+            //根据路径和manifest字节数组 将字节数组写入对应路径
+            GameUtility.SafeWriteAllBytes(path, manifestBytes);
         }
 
+        /// <summary>
+        /// 获取AssetBundle的hash值
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public Hash128 GetAssetBundleHash(string name)
         {
+            //获取给定的AssetBundle的hash值
             return manifest == null ? default(Hash128) : manifest.GetAssetBundleHash(name);
         }
-        
+
+        /// <summary>
+        /// 获取清单中的所有资产包。
+        /// </summary>
+        /// <returns></returns>
         public string[] GetAllAssetBundleNames()
         {
             return manifest == null ? emptyStringArray : manifest.GetAllAssetBundles();
         }
-        
+        /// <summary>
+        /// 在清单中获得所有带有变体的资产包  
+        /// </summary>
+        /// <returns></returns>
         public string[] GetAllAssetBundlesWithVariant()
         {
             return manifest == null ? emptyStringArray : manifest.GetAllAssetBundlesWithVariant();
         }
-        
+
+        /// <summary>
+        /// 为给定的AssetBundle设置所有依赖的AssetBundles。  
+        /// </summary>
+        /// <param name="assetbundleName">资产包的名称。</param>
+        /// <returns></returns>
         public string[] GetAllDependencies(string assetbundleName)
         {
             return manifest == null ? emptyStringArray : manifest.GetAllDependencies(assetbundleName);
         }
-        
+
         public string[] GetDirectDependencies(string assetbundleName)
         {
             return manifest == null ? emptyStringArray : manifest.GetDirectDependencies(assetbundleName);
         }
-        
+
+        /// <summary>
+        /// 进行对比
+        /// </summary>
+        /// <param name="otherManifest"></param>
+        /// <returns></returns>
         public List<string> CompareTo(Manifest otherManifest)
         {
-            List<string> ret_list = new List<string>();
+            var ret_list = new List<string>();
             if (otherManifest.assetbundleManifest == null)
             {
                 return ret_list;
             }
 
-            if (otherManifest == null )
+            //对比manifest (列表) 不为空
+            if (otherManifest == null)
             {
                 ret_list.AddRange(otherManifest.GetAllAssetBundleNames());
                 return ret_list;
             }
-
+            //获取其他清单的资产列表
             string[] other_name_list = otherManifest.GetAllAssetBundleNames();
+            //活动当前
             string[] self_name_list = GetAllAssetBundleNames();
+            //循环判断
             foreach (string name in other_name_list)
             {
                 int idx = System.Array.FindIndex(self_name_list, element => element.Equals(name));
@@ -130,9 +184,9 @@ namespace AssetBundles
                 else
                 {
                     //对方有，自己有，且hash相同：什么也不做
-                    //donothing
                 }
             }
+
             return ret_list;
         }
     }

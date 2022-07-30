@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using AssetBundles;
+using Common.Utility;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
 using UnityEditor;
 
 /// <summary>
@@ -39,7 +42,7 @@ public static class CheckAssetBundles
         assebundleNames = AssetDatabase.GetAllAssetBundleNames();
         if (assebundleNames.Length != 0)
         {
-            Logger.LogError("Something wrong!!!");
+            ToolsDebug.LogError("Something wrong!!!");
         }
     }
 

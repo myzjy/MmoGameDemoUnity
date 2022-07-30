@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Common.Utility;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
 
 /// <summary>
 /// added by wsh @ 2017.12.25
@@ -114,7 +118,13 @@ namespace AssetBundles
             {
                 if (IsValid)
                 {
-                    assetImporter.assetBundleName = AssetBundleUtility.AssetBundlePathToAssetBundleName(value);
+                    // string assetBundleName = Path.GetFileName(assetPath);
+                    // ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
+                    // assetImporter.assetBundleName =
+                    //     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
+                    //     AssetBundleConfig.AssetBundleSuffix;
+                    //不通过这个地方改变assetbundle值
+                    assetImporter.assetBundleName = value; //AssetBundleUtility.AssetBundlePathToAssetBundleName(value);
                 }
             }
         }

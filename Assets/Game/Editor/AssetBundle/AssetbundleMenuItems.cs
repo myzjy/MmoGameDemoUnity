@@ -1,18 +1,14 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using AssetBundles;
+using Common.Utility;
+using Framework.AssetBundles.Config;
+using UnityEditor;
+using UnityEngine;
 
-/// <summary>
-/// added by wsh @ 2017.12.25
-/// 说明：Assetbundle相关菜单项
-/// TODO：
-/// 1、提供可视化界面的Assetbundle管理，包括依赖、公共包查看，ab添加、移除功能---check Unity5.6官方的AB管理工具好不好用
-/// 2、重构这部分代码，全部功能整合到打包窗口，不用菜单选项了
-/// 3、提供各个渠道历史资源版本AB变化对比工具，让增量更新透明化
-/// </summary>
-
-namespace AssetBundles
+namespace AssetBundleEditorTools.AssetBundleSet
 {
     // unity editor启动和运行时调用静态构造函数
     [InitializeOnLoad]
@@ -31,11 +27,12 @@ namespace AssetBundles
         const string kToolsClearPersistentAssets = "AssetBundles/Clear PersistentData";
 
         const string kCreateAssetbundleForCurrent = "Assets/AssetBundles/Create Assetbundle For Current &#z";
+        const string kCreateAssetbundleForFile = "Assets/AssetBundles/SetDefault without extension Name ";
         const string kCreateAssetbundleForChildren = "Assets/AssetBundles/Create Assetbundle For Children &#x";
         const string kAssetDependencis = "Assets/AssetBundles/Asset Dependencis &#h";
         const string kAssetbundleAllDependencis = "Assets/AssetBundles/Assetbundle All Dependencis &#j";
         const string kAssetbundleDirectDependencis = "Assets/AssetBundles/Assetbundle Direct Dependencis &#k";
-        
+
         static AssetBundleMenuItems()
         {
             CheckSimulateModelEnv();
@@ -55,7 +52,7 @@ namespace AssetBundles
             if (!File.Exists(outputManifest))
             {
                 bool checkBuild = EditorUtility.DisplayDialog("Build AssetBundles Warning",
-                    string.Format("Build AssetBundles for : \n\nplatform : {0} \nchannel : {1} \n\nContinue ?", buildTargetName, channelName),
+                    $"Build AssetBundles for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
                     "Confirm", "Cancel");
                 if (!checkBuild)
                 {
@@ -66,12 +63,12 @@ namespace AssetBundles
                 hasBuildAssetBundles = true;
                 BuildPlayer.BuildAssetBundlesForCurSetting();
             }
-            
+
             var streamingManifest = PackageUtils.GetCurBuildSettingStreamingManifestPath();
             if (hasBuildAssetBundles || !File.Exists(streamingManifest))
             {
                 bool checkCopy = EditorUtility.DisplayDialog("Copy AssetBundles To StreamingAssets Warning",
-                    string.Format("Copy AssetBundles to streamingAssets folder for : \n\nplatform : {0} \nchannel : {1} \n\nContinue ?", buildTargetName, channelName),
+                    $"Copy AssetBundles to streamingAssets folder for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
                     "Confirm", "Cancel");
                 if (!checkCopy)
                 {
@@ -84,17 +81,16 @@ namespace AssetBundles
                 ToolsClearPersistentAssets();
                 PackageUtils.CopyCurSettingAssetBundlesToStreamingAssets();
             }
+
             LaunchAssetBundleServer.CheckAndDoRunning();
         }
-        
+
         [MenuItem(kEditorMode, false)]
         public static void ToggleEditorMode()
         {
-            if (AssetBundleConfig.IsSimulateMode)
-            {
-                AssetBundleConfig.IsEditorMode = true;
-                LaunchAssetBundleServer.CheckAndDoRunning();
-            }
+            if (!AssetBundleConfig.IsSimulateMode) return;
+            AssetBundleConfig.IsEditorMode = true;
+            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kEditorMode, true)]
@@ -107,12 +103,10 @@ namespace AssetBundles
         [MenuItem(kSimulateMode)]
         public static void ToggleSimulateMode()
         {
-            if (AssetBundleConfig.IsEditorMode)
-            {
-                AssetBundleConfig.IsSimulateMode = true;
-                CheckSimulateModelEnv();
-                LaunchAssetBundleServer.CheckAndDoRunning();
-            }
+            if (!AssetBundleConfig.IsEditorMode) return;
+            AssetBundleConfig.IsSimulateMode = true;
+            CheckSimulateModelEnv();
+            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kSimulateMode, true)]
@@ -123,12 +117,12 @@ namespace AssetBundles
         }
 
         [MenuItem(kToolRunAllCheckers)]
-        static public void ToolRunAllCheckers()
+        public static void ToolRunAllCheckers()
         {
             var buildTargetName = PackageUtils.GetCurPlatformName();
             var channelName = PackageUtils.GetCurSelectedChannel().ToString();
             bool checkCopy = EditorUtility.DisplayDialog("Run Checkers Warning",
-                string.Format("Run Checkers for : \n\nplatform : {0} \nchannel : {1} \n\nContinue ?", buildTargetName, channelName),
+                $"Run Checkers for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
                 "Confirm", "Cancel");
             if (!checkCopy)
             {
@@ -140,12 +134,12 @@ namespace AssetBundles
         }
 
         [MenuItem(kToolBuildForCurrentSetting, false, 1100)]
-        static public void ToolBuildForCurrentSetting()
+        public static void ToolBuildForCurrentSetting()
         {
             var buildTargetName = PackageUtils.GetCurPlatformName();
             var channelName = PackageUtils.GetCurSelectedChannel().ToString();
             bool checkCopy = EditorUtility.DisplayDialog("Build AssetBundles Warning",
-                string.Format("Build AssetBundles for : \n\nplatform : {0} \nchannel : {1} \n\nContinue ?", buildTargetName, channelName),
+                $"Build AssetBundles for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
                 "Confirm", "Cancel");
             if (!checkCopy)
             {
@@ -156,12 +150,12 @@ namespace AssetBundles
         }
 
         [MenuItem(kToolsCopyAssetbundles, false, 1101)]
-        static public void ToolsCopyAssetbundles()
+        public static void ToolsCopyAssetbundles()
         {
             var buildTargetName = PackageUtils.GetCurPlatformName();
             var channelName = PackageUtils.GetCurSelectedChannel().ToString();
             bool checkCopy = EditorUtility.DisplayDialog("Copy AssetBundles To StreamingAssets Warning",
-                string.Format("Copy AssetBundles to streamingAssets folder for : \n\nplatform : {0} \nchannel : {1} \n\nContinue ?", buildTargetName, channelName),
+                $"Copy AssetBundles to streamingAssets folder for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
                 "Confirm", "Cancel");
             if (!checkCopy)
             {
@@ -176,37 +170,38 @@ namespace AssetBundles
         }
 
         [MenuItem(kToolsOpenOutput, false, 1201)]
-        static public void ToolsOpenOutput()
+        public static void ToolsOpenOutput()
         {
             string outputPath = PackageUtils.GetCurBuildSettingAssetBundleOutputPath();
             EditorUtils.ExplorerFolder(outputPath);
         }
 
         [MenuItem(kToolsOpenPerisitentData, false, 1202)]
-        static public void ToolsOpenPerisitentData()
+        public static void ToolsOpenPerisitentData()
         {
             EditorUtils.ExplorerFolder(Application.persistentDataPath);
         }
 
         [MenuItem(kToolsClearOutput, false, 1302)]
-        static public void ToolsClearOutput()
+        public static void ToolsClearOutput()
         {
             var buildTargetName = PackageUtils.GetCurPlatformName();
             var channelName = PackageUtils.GetCurSelectedChannel().ToString();
             bool checkClear = EditorUtility.DisplayDialog("ClearOutput Warning",
-                string.Format("Clear output assetbundles will force to rebuild all : \n\nplatform : {0} \nchannel : {1} \n\n continue ?", buildTargetName, channelName),
+                $"Clear output assetbundles will force to rebuild all : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\n continue ?",
                 "Yes", "No");
             if (!checkClear)
             {
                 return;
             }
+
             string outputPath = PackageUtils.GetCurBuildSettingAssetBundleOutputPath();
             GameUtility.SafeDeleteDir(outputPath);
-            Debug.Log(string.Format("Clear done : {0}", outputPath));
+            Debug.Log($"Clear done : {outputPath}");
         }
 
         [MenuItem(kToolsClearStreamingAssets, false, 1303)]
-        static public void ToolsClearStreamingAssets()
+        public static void ToolsClearStreamingAssets()
         {
             bool checkClear = EditorUtility.DisplayDialog("ClearStreamingAssets Warning",
                 "Clear streaming assets assetbundles will lost the latest player build info, continue ?",
@@ -215,14 +210,15 @@ namespace AssetBundles
             {
                 return;
             }
+
             string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
             GameUtility.SafeClearDir(outputPath);
             AssetDatabase.Refresh();
-            Debug.Log(string.Format("Clear {0} assetbundle streaming assets done!", PackageUtils.GetCurPlatformName()));
+            Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle streaming assets done!");
         }
 
         [MenuItem(kToolsClearPersistentAssets, false, 1301)]
-        static public void ToolsClearPersistentAssets()
+        public static void ToolsClearPersistentAssets()
         {
             bool checkClear = EditorUtility.DisplayDialog("ClearPersistentAssets Warning",
                 "Clear persistent assetbundles will force to update all assetbundles that difference with streaming assets assetbundles, continue ?",
@@ -234,144 +230,138 @@ namespace AssetBundles
 
             string outputPath = Path.Combine(Application.persistentDataPath, AssetBundleConfig.AssetBundlesFolderName);
             GameUtility.SafeDeleteDir(outputPath);
-            Debug.Log(string.Format("Clear {0} assetbundle persistent assets done!", PackageUtils.GetCurPlatformName()));
+            Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle persistent assets done!");
         }
 
-        [MenuItem(kCreateAssetbundleForCurrent)]
-        static public void CreateAssetbundleForCurrent()
+        [MenuItem(kCreateAssetbundleForFile)]
+        public static void SetDefaultWithoutExtensionName()
         {
-            if (AssetBundleEditorHelper.HasValidSelection())
+            //有没有选择
+            if (!AssetBundleEditorHelper.HasValidSelection())
+                return;
+            var selectObjs = Selection.objects;
+            AssetBundleEditorHelper.CreaeteAssetBundleForFile(selectObjs);
+        }
+
+
+        [MenuItem(kCreateAssetbundleForCurrent)]
+        public static void CreateAssetbundleForCurrent()
+        {
+            if (!AssetBundleEditorHelper.HasValidSelection()) return;
+            bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForCurrent Warning",
+                "Create assetbundle for cur selected objects will reset assetbundles which contains this dir, continue ?",
+                "Yes", "No");
+            if (!checkCreate)
             {
-                bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForCurrent Warning",
-                    "Create assetbundle for cur selected objects will reset assetbundles which contains this dir, continue ?",
-                    "Yes", "No");
-                if (!checkCreate)
-                {
-                    return;
-                }
-                Object[] selObjs = Selection.objects;
-                AssetBundleEditorHelper.CreateAssetbundleForCurrent(selObjs);
-                List<string> removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
-                removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs));
-                string removeStr = string.Empty;
-                int i = 0;
-                foreach(string str in removeList)
-                {
-                    removeStr += string.Format("[{0}]{1}\n",++i,str);
-                }
-                if (removeList.Count > 0)
-                {
-                    Debug.Log(string.Format("CreateAssetbundleForCurrent done!\nRemove list :" +
-                        "\n-------------------------------------------\n" +
-                        "{0}" +
-                        "\n-------------------------------------------\n",
-                        removeStr));
-                }
+                return;
+            }
+
+            var selObjs = Selection.objects;
+            AssetBundleEditorHelper.CreateAssetbundleForCurrent(selObjs);
+            var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
+            removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs));
+            var removeStr = new StringBuilder(10);
+            int i = 0;
+            foreach (string str in removeList)
+            {
+                removeStr.Append($"[{++i}]{str}\n");
+            }
+
+            if (removeList.Count > 0)
+            {
+                Debug.Log("CreateAssetbundleForCurrent done!\nRemove list :" +
+                          "\n-------------------------------------------\n" + $"{removeStr}" +
+                          "\n-------------------------------------------\n");
             }
         }
-        
+
         [MenuItem(kCreateAssetbundleForChildren)]
-        static public void CreateAssetbundleForChildren()
+        public static void CreateAssetbundleForChildren()
         {
-            if (AssetBundleEditorHelper.HasValidSelection())
+            if (!AssetBundleEditorHelper.HasValidSelection()) return;
+            bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForChildren Warning",
+                "Create assetbundle for all children of cur selected objects will reset assetbundles which contains this dir, continue ?",
+                "Yes", "No");
+            if (!checkCreate)
             {
-                bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForChildren Warning",
-                    "Create assetbundle for all children of cur selected objects will reset assetbundles which contains this dir, continue ?",
-                    "Yes", "No");
-                if (!checkCreate)
-                {
-                    return;
-                }
-                Object[] selObjs = Selection.objects;
-                AssetBundleEditorHelper.CreateAssetbundleForChildren(selObjs);
-                List<string> removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
-                removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs, true, false));
-                string removeStr = string.Empty;
-                int i = 0;
-                foreach (string str in removeList)
-                {
-                    removeStr += string.Format("[{0}]{1}\n", ++i, str);
-                }
-                if (removeList.Count > 0)
-                {
-                    Debug.Log(string.Format("CreateAssetbundleForChildren done!\nRemove list :" +
-                    "\n-------------------------------------------\n" +
-                    "{0}" +
-                    "\n-------------------------------------------\n",
-                    removeStr));
-                }
+                return;
+            }
+
+            var selObjs = Selection.objects;
+            AssetBundleEditorHelper.CreateAssetbundleForChildren(selObjs);
+            var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
+            removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs, true, false));
+            var removeStr = new StringBuilder(10);
+            int i = 0;
+            foreach (string str in removeList)
+            {
+                removeStr.Append($"[{++i}]{str}\n");
+            }
+
+            if (removeList.Count > 0)
+            {
+                Debug.Log("CreateAssetbundleForChildren done!\nRemove list :" +
+                          "\n-------------------------------------------\n" + $"{removeStr}" +
+                          "\n-------------------------------------------\n");
             }
         }
 
         [MenuItem(kAssetDependencis)]
-        static public void ListAssetDependencis()
+        public static void ListAssetDependencis()
         {
-            if (AssetBundleEditorHelper.HasValidSelection())
+            if (!AssetBundleEditorHelper.HasValidSelection()) return;
+            var selObjs = Selection.objects;
+            string depsStr = AssetBundleEditorHelper.GetDependencyText(selObjs, false);
+            var selStr = new StringBuilder(10);
+            int i = 0;
+            foreach (var obj in selObjs)
             {
-                Object[] selObjs = Selection.objects;
-                string depsStr = AssetBundleEditorHelper.GetDependencyText(selObjs, false);
-                string selStr = string.Empty;
-                int i = 0;
-                foreach (Object obj in selObjs)
-                {
-                    selStr += string.Format("[{0}]{1};", ++i, AssetDatabase.GetAssetPath(obj));
-                }
-                Debug.Log(string.Format("Selection({0}) depends on the following assets:" + 
-                    "\n-------------------------------------------\n" + 
-                    "{1}" + 
-                    "\n-------------------------------------------\n",
-                    selStr,
-                    depsStr));
-                AssetBundleEditorHelper.SelectDependency(selObjs,false);
+                selStr.Append($"[{++i}]{AssetDatabase.GetAssetPath(obj)};");
             }
+
+            Debug.Log($"Selection({selStr.ToString()}) depends on the following assets:" +
+                      "\n-------------------------------------------\n" + $"{depsStr}" +
+                      "\n-------------------------------------------\n");
+            AssetBundleEditorHelper.SelectDependency(selObjs, false);
         }
-        
+
         [MenuItem(kAssetbundleAllDependencis)]
-        static public void ListAssetbundleAllDependencis()
+        public static void ListAssetbundleAllDependencis()
         {
             ListAssetbundleDependencis(true);
         }
-        
+
         [MenuItem(kAssetbundleDirectDependencis)]
-        static public void ListAssetbundleDirectDependencis()
+        public static void ListAssetbundleDirectDependencis()
         {
             ListAssetbundleDependencis(false);
         }
-        
-        static public void ListAssetbundleDependencis(bool isAll)
+
+        private static void ListAssetbundleDependencis(bool isAll)
         {
-            if (AssetBundleEditorHelper.HasValidSelection())
+            if (!AssetBundleEditorHelper.HasValidSelection()) return;
+            string localFilePath = PackageUtils.GetCurBuildSettingAssetBundleManifestPath();
+
+            var selObjs = Selection.objects;
+            var depsList = AssetBundleEditorHelper.GetDependancisFormBuildManifest(localFilePath, selObjs, isAll);
+            if (depsList == null)
             {
-                string localFilePath = PackageUtils.GetCurBuildSettingAssetBundleManifestPath();
-
-                Object[] selObjs = Selection.objects;
-                var depsList = AssetBundleEditorHelper.GetDependancisFormBuildManifest(localFilePath, selObjs, isAll);
-                if (depsList == null)
-                {
-                    return;
-                }
-
-                depsList.Sort();
-                string depsStr = string.Empty;
-                int i = 0;
-                foreach (string str in depsList)
-                {
-                    depsStr += string.Format("[{0}]{1}\n", ++i, str);
-                }
-
-                string selStr = string.Empty;
-                i = 0;
-                foreach (Object obj in selObjs)
-                {
-                    selStr += string.Format("[{0}]{1};", ++i, AssetDatabase.GetAssetPath(obj));
-                }
-                Debug.Log(string.Format("Selection({0}) directly depends on the following assetbundles:" +
-                    "\n-------------------------------------------\n" +
-                    "{1}" +
-                    "\n-------------------------------------------\n",
-                    selStr,
-                    depsStr));
+                return;
             }
+
+            depsList.Sort();
+            string depsStr = string.Empty;
+            int i = 0;
+            depsStr = depsList.Aggregate(depsStr, (current, str) => current + $"[{++i}]{str}\n");
+
+            string selStr = string.Empty;
+            i = 0;
+            selStr = selObjs.Aggregate(selStr,
+                (current, obj) => current + $"[{++i}]{AssetDatabase.GetAssetPath(obj)};");
+
+            Debug.Log($"Selection({selStr}) directly depends on the following assetbundles:" +
+                      "\n-------------------------------------------\n" + $"{depsStr}" +
+                      "\n-------------------------------------------\n");
         }
     }
 }

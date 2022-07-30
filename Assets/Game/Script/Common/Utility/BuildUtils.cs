@@ -1,27 +1,24 @@
-﻿using UnityEngine;
-
-/// <summary>
-/// added by wsh @ 2018.01.04
-/// 功能：构建相关配置和通用函数
-/// </summary>
-
-public class BuildUtils
+﻿namespace Common.Utility
 {
-    public const string ManifestBundleName = "AssetBundles";
-    public const string ChannelNameFileName = "channel_name.bytes";
-    public const string AppVersionFileName = "app_version.bytes";
-    public const string ResVersionFileName = "res_version.bytes";
-    public const string NoticeVersionFileName = "notice_version.bytes";
-    public const string AssetBundlesSizeFileName = "assetbundls_size.bytes";
-    public const string UpdateNoticeFileName = "update_notice.bytes";
-
-    public static bool CheckIsNewVersion(string sourceVersion, string targetVersion)
+    public class BuildUtils
     {
-        string[] sVerList = sourceVersion.Split('.');
-        string[] tVerList = targetVersion.Split('.');
+        /// <summary>
+        /// 清单包名称
+        /// </summary>
+        public const string ManifestBundleName = "AssetBundles";
+        public const string ChannelNameFileName = "channel_name.bytes";
+        public const string AppVersionFileName = "app_version.bytes";
+        public const string ResVersionFileName = "res_version.bytes";
+        public const string NoticeVersionFileName = "notice_version.bytes";
+        public const string AssetBundlesSizeFileName = "assetbundls_size.bytes";
+        public const string UpdateNoticeFileName = "update_notice.bytes";
 
-        if (sVerList.Length >= 3 && tVerList.Length >= 3)
+        public static bool CheckIsNewVersion(string sourceVersion, string targetVersion)
         {
+            string[] sVerList = sourceVersion.Split('.');
+            string[] tVerList = targetVersion.Split('.');
+
+            if (sVerList.Length < 3 || tVerList.Length < 3) return false;
             try
             {
                 int sV0 = int.Parse(sVerList[0]);
@@ -49,22 +46,16 @@ public class BuildUtils
                     return false;
                 }
 
-                if (tV2 > sV2)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return tV2 > sV2;
             }
             catch (System.Exception ex)
             {
-                Logger.LogError(string.Format("parse version error. clientversion: {0} serverversion: {1}\n {2}\n{3}", sourceVersion, targetVersion, ex.Message, ex.StackTrace));
+                ToolsDebug.LogError(
+                    $"parse version error. clientversion: {sourceVersion} serverversion: {targetVersion}\n {ex.Message}\n{ex.StackTrace}");
                 return false;
             }
-        }
 
-        return false;
+            return false;
+        }
     }
 }

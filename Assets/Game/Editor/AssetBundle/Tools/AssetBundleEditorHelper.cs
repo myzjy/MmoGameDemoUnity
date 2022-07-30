@@ -1,6 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// added by wsh @ 2017.12.24
@@ -11,6 +16,8 @@ namespace AssetBundles
 {
     public class AssetBundleEditorHelper
     {
+        public const string ASSETBUNDLE_EXT = ".assetbundle";
+
         public class AssetEntry
         {
             public string path;
@@ -20,7 +27,7 @@ namespace AssetBundles
             {
                 return objs.Contains(obj);
             }
-            
+
             public bool ContainsType(System.Type tpye)
             {
                 foreach (Object obj in objs)
@@ -30,6 +37,7 @@ namespace AssetBundles
                         return true;
                     }
                 }
+
                 return false;
             }
         }
@@ -40,7 +48,7 @@ namespace AssetBundles
             CHILDREN_FILES,
             CHILDREN_DIR,
         }
-        
+
         public static bool HasValidSelection()
         {
             if (Selection.objects == null || Selection.objects.Length == 0)
@@ -48,14 +56,15 @@ namespace AssetBundles
                 Debug.LogWarning("You must select an object first");
                 return false;
             }
+
             return true;
         }
-        
+
         public static Object[] GetDependencisObjs(Object[] objects, bool reverse)
         {
             return reverse ? EditorUtility.CollectDeepHierarchy(objects) : EditorUtility.CollectDependencies(objects);
         }
-        
+
         public static List<AssetEntry> GetDependencyList(Object[] objects, bool reverse)
         {
             Object[] deps = GetDependencisObjs(objects, reverse);
@@ -94,14 +103,14 @@ namespace AssetBundles
             objects = null;
             return list;
         }
-        
+
         public static string RemovePrefix(string text)
         {
             text = text.Replace("UnityEngine.", "");
             text = text.Replace("UnityEditor.", "");
             return text;
         }
-        
+
         public static string GetDependencyText(Object[] objects, bool reverse)
         {
             List<AssetEntry> dependencies = GetDependencyList(objects, reverse);
@@ -123,6 +132,7 @@ namespace AssetBundles
 
                     text += ")";
                 }
+
                 list.Add(text);
             }
 
@@ -137,7 +147,7 @@ namespace AssetBundles
             dependencies = null;
             return text;
         }
-        
+
         public static void SelectDependency(Object[] objects, bool reverse)
         {
             List<AssetEntry> dependencies = GetDependencyList(objects, reverse);
@@ -150,6 +160,7 @@ namespace AssetBundles
                     // 不是Assets资源
                     continue;
                 }
+
                 if (ae.objs != null & ae.objs.Count > 0)
                 {
                     bool isFind = false;
@@ -161,6 +172,7 @@ namespace AssetBundles
                             isFind = true;
                         }
                     }
+
                     if (!isFind)
                     {
                         // 未找到，则默认添加第一个object
@@ -173,7 +185,7 @@ namespace AssetBundles
             dependencies = null;
             Selection.objects = list.ToArray();
         }
-        
+
         public static string[] AssetbundleNameToAssetPath(string assetbundleName)
         {
             string[] allNames = AssetDatabase.GetAllAssetBundleNames();
@@ -186,12 +198,14 @@ namespace AssetBundles
             if (idx == -1)
             {
                 //not found
-                Debug.LogError(string.Format("Assetbundle({0}) not found! check the name is correct with it's variant."));
+                Debug.LogError(
+                    string.Format("Assetbundle({0}) not found! check the name is correct with it's variant."));
                 return null;
             }
+
             return AssetDatabase.GetAssetPathsFromAssetBundle(assetbundleName);
         }
-        
+
         public static string AssetPathToAssetbundleName(string assetPath)
         {
             string[] allNames = AssetDatabase.GetAllAssetBundleNames();
@@ -215,7 +229,7 @@ namespace AssetBundles
 
             return null;
         }
-        
+
         public static List<string> GetSelectionAssetbundleNames()
         {
             if (!HasValidSelection())
@@ -227,7 +241,7 @@ namespace AssetBundles
                 return GetObjectsAssetbundleNames(Selection.objects);
             }
         }
-        
+
         public static List<string> GetObjectsAssetbundleNames(Object[] objects)
         {
             List<string> ret = new List<string>();
@@ -240,10 +254,12 @@ namespace AssetBundles
                     ret.Add(toName);
                 }
             }
+
             return ret;
         }
-        
-        public static List<string> GetDependancisFormBuildManifest(string manifestPath, Object[] objects,bool isAll = true)
+
+        public static List<string> GetDependancisFormBuildManifest(string manifestPath, Object[] objects,
+            bool isAll = true)
         {
             AssetBundleManifest manifest = PackageUtils.GetManifestFormLocal(manifestPath);
             if (manifest == null)
@@ -269,6 +285,7 @@ namespace AssetBundles
                 {
                     deps = manifest.GetDirectDependencies(name);
                 }
+
                 foreach (string dep in deps)
                 {
                     if (!strList.Contains(dep))
@@ -277,22 +294,23 @@ namespace AssetBundles
                     }
                 }
             }
-            
+
             return strList;
         }
-        
+
         public static void CreateAssetbundleForCurrent(string assetPath)
         {
             AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
             if (importer == null)
             {
-                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!", assetPath));
+                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+                    assetPath));
                 return;
             }
 
             CreateAssetbundleForCurrent(importer);
         }
-        
+
         public static void CreateAssetbundleForCurrent(AssetBundleImporter importer)
         {
             if (importer == null || !importer.IsValid)
@@ -300,24 +318,30 @@ namespace AssetBundles
                 Debug.LogError("importer null or not valid!");
                 return;
             }
-            
+            // string assetBundleName = Path.GetFileName(importer.assetPath);
+            // ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
             // TODO：处理variant
-            importer.assetBundleName = importer.assetPath;
+            // importer.assetBundleName =
+            //     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
+            //     AssetBundleConfig.AssetBundleSuffix;
+            importer.assetBundleName =  AssetBundleUtility.AssetBundlePathToAssetBundleName(importer.assetPath);
+            // importer.assetBundleName = ;
             //importer.assetBundleVariant = null;
         }
-        
+
         public static void CreateAssetbundleForChildren(string assetPath)
         {
             AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
             if (importer == null)
             {
-                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!", assetPath));
+                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+                    assetPath));
                 return;
             }
 
             CreateAssetbundleForChildren(importer);
         }
-        
+
         public static void CreateAssetbundleForChildren(AssetBundleImporter importer)
         {
             if (importer == null || !importer.IsValid)
@@ -337,7 +361,7 @@ namespace AssetBundles
                 CreateAssetbundleForCurrent(child);
             }
         }
-        
+
         public static List<string> RemoveAssetBundleInParents(string assetPath)
         {
             List<string> removeList = new List<string>();
@@ -353,14 +377,18 @@ namespace AssetBundles
                 if (!string.IsNullOrEmpty(parentImporter.assetBundleName))
                 {
                     removeList.Add(string.Format("{0}{1}", parentImporter.assetPath,
-                        string.IsNullOrEmpty(parentImporter.assetBundleVariant) ? null : string.Format("({0})", parentImporter.assetBundleVariant)));
+                        string.IsNullOrEmpty(parentImporter.assetBundleVariant)
+                            ? null
+                            : string.Format("({0})", parentImporter.assetBundleVariant)));
                     parentImporter.assetBundleName = null;
                 }
+
                 parentImporter = parentImporter.GetParent();
             }
+
             return removeList;
         }
-        
+
         public static List<string> RemoveAssetbundleInParents(Object[] objects)
         {
             List<string> removeList = new List<string>();
@@ -369,10 +397,12 @@ namespace AssetBundles
                 string assetPath = AssetDatabase.GetAssetPath(obj);
                 removeList.AddRange(RemoveAssetBundleInParents(assetPath));
             }
+
             return removeList;
         }
-        
-        public static List<string> RemoveAssetBundleInChildren(string assetPath, bool containsSelf, bool countainsDirectly, REMOVE_TYPE removeType)
+
+        public static List<string> RemoveAssetBundleInChildren(string assetPath, bool containsSelf,
+            bool countainsDirectly, REMOVE_TYPE removeType)
         {
             List<string> removeList = new List<string>();
             AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
@@ -384,8 +414,10 @@ namespace AssetBundles
             //是否删除自身
             if (containsSelf && !string.IsNullOrEmpty(importer.assetBundleName))
             {
-                removeList.Add(string.Format("{0}{1}",importer.assetPath,
-                    string.IsNullOrEmpty(importer.assetBundleVariant) ? null : string.Format("({0})", importer.assetBundleVariant)));
+                removeList.Add(string.Format("{0}{1}", importer.assetPath,
+                    string.IsNullOrEmpty(importer.assetBundleVariant)
+                        ? null
+                        : string.Format("({0})", importer.assetBundleVariant)));
                 importer.assetBundleName = null;
             }
 
@@ -396,39 +428,66 @@ namespace AssetBundles
                 {
                     continue;
                 }
-                
+
                 if (!string.IsNullOrEmpty(child.assetBundleName) && countainsDirectly)
                 {
                     if (removeType == REMOVE_TYPE.ALL ||
                         (removeType == REMOVE_TYPE.CHILDREN_DIR && child.IsFile == false) ||
                         (removeType == REMOVE_TYPE.CHILDREN_FILES && child.IsFile == true)
-                        )
+                       )
                     {
                         removeList.Add(string.Format("{0}{1}", child.assetPath,
-                            string.IsNullOrEmpty(child.assetBundleVariant) ? null : string.Format("({0})", child.assetBundleVariant)));
+                            string.IsNullOrEmpty(child.assetBundleVariant)
+                                ? null
+                                : string.Format("({0})", child.assetBundleVariant)));
                         child.assetBundleName = null;
                     }
                 }
+
                 if (!child.IsFile)
                 {
                     // 为目录，递归：递归时containsSelf设置为false，是否删除本身由removeType确定
                     removeList.AddRange(RemoveAssetBundleInChildren(child.assetPath, false, true, removeType));
                 }
             }
+
             return removeList;
         }
-        
-        public static List<string> RemoveAssetbundleInChildren(Object[] objects, bool countainsSelf = false, bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
+
+        public static List<string> RemoveAssetbundleInChildren(Object[] objects, bool countainsSelf = false,
+            bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
         {
             List<string> removeList = new List<string>();
             foreach (Object obj in objects)
             {
                 string assetPath = AssetDatabase.GetAssetPath(obj);
-                removeList.AddRange(RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
+                removeList.AddRange(
+                    RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
             }
+
             return removeList;
         }
-        
+
+        public static void CreaeteAssetBundleForFile(Object[] objects)
+        {
+            foreach (Object obj in objects)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(obj);
+                AssetImporter importer = AssetImporter.GetAtPath(assetPath);
+                ToolsDebug.Log($"importer.assetPath--->{importer.assetPath}");
+                string assetBundleName = Path.GetFileName(assetPath);
+                ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
+                importer.assetBundleName =
+                    assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
+                    ASSETBUNDLE_EXT;
+                ToolsDebug.Log(assetPath);
+                ToolsDebug.Log(importer.assetBundleName);
+                EditorUtility.SetDirty(obj);
+            }
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+        }
+
         public static void CreateAssetbundleForCurrent(Object[] objects)
         {
             foreach (Object obj in objects)
@@ -437,7 +496,7 @@ namespace AssetBundles
                 CreateAssetbundleForCurrent(assetPath);
             }
         }
-        
+
         public static void CreateAssetbundleForChildren(Object[] objects)
         {
             foreach (Object obj in objects)

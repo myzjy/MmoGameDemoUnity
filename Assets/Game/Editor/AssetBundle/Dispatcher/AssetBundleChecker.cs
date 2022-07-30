@@ -2,6 +2,9 @@
 using System.IO;
 using UnityEditor;
 using System.Collections.Generic;
+using Common.Utility;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
 
 /// <summary>
 /// added by wsh @ 2018.01.03

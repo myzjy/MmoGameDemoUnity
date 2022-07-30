@@ -1,12 +1,16 @@
 ﻿using UnityEditor;
 using System.IO;
-using GameChannel;
 using System;
 using AssetBundles;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using Common.GameChannel;
+using Common.Utility;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
 
 /// <summary>
 /// added by wsh @ 2018.01.03
@@ -107,19 +111,12 @@ public class PackageUtils
         try
         {
             // 注意：这里获取所有内网地址后选择一个最小的，因为可能存在虚拟机网卡
-            var ips = new List<string>();
             var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (IPAddress ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    ips.Add(ip.ToString());
-                }
-            }
+            var ips = (from ip in host.AddressList where ip.AddressFamily == AddressFamily.InterNetwork select ip.ToString()).ToList();
             ips.Sort();
             if (ips.Count <= 0)
             {
-                Logger.LogError("Get inter network ip failed!");
+                ToolsDebug.LogError("Get inter network ip failed!");
             }
             else
             {
@@ -128,8 +125,8 @@ public class PackageUtils
         }
         catch (System.Exception ex)
         {
-            Logger.LogError("Get inter network ip failed with err : " + ex.Message);
-            Logger.LogError("Go Tools/Package to specify any machine as local server!!!");
+            ToolsDebug.LogError($"Get inter network ip failed with err : { ex.Message}");
+            ToolsDebug.LogError("Go Tools/Package to specify any machine as local server!!!");
         }
         return string.Empty;
     }
@@ -158,7 +155,7 @@ public class PackageUtils
             case BuildTarget.iOS:
                 return "iOS";
             default:
-                Logger.LogError("Error buildTarget!!!");
+                ToolsDebug.LogError("Error buildTarget!!!");
                 return null;
         }
     }

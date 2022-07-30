@@ -1,35 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using System.Collections.Generic;
+using Script.Framework.AssetBundle;
+// ReSharper disable once InvalidXmlDocComment
 /// <summary>
-/// added by wsh @ 2017.12.22
+/// added by wsh @ 2017.12.22 xluaframework
 /// 功能：Assetbundle加载器，给逻辑层使用（预加载），支持协程操作
 /// 注意：
 /// 1、加载器AssetBundleManager只负责调度，创建，不负责回收，逻辑层代码使用完一定要记得回收，否则会产生GC
 /// 2、尝试加载并缓存所有的asset
 /// </summary>
-
-namespace AssetBundles
+namespace Framework.AssetBundle.AsyncOperation
 {
-    public class AssetBundleAsyncLoader : BaseAssetBundleAsyncLoader
+    public class AssetBundleAsyncLoader: BaseAssetBundleAsyncLoader
     {
-        static Queue<AssetBundleAsyncLoader> pool = new Queue<AssetBundleAsyncLoader>();
-        static int sequence = 0;
-        protected List<string> waitingList = new List<string>();
-        protected int waitingCount = 0;
-        protected bool isOver = false;
+        private static Queue<AssetBundleAsyncLoader> pool = new Queue<AssetBundleAsyncLoader>();
+        private static int sequence = 0;
+        private List<string> waitingList = new List<string>();
+        private int waitingCount = 0;
+        private bool isOver = false;
 
         public static AssetBundleAsyncLoader Get()
         {
-            if (pool.Count > 0)
-            {
-                return pool.Dequeue();
-            }
-            else
-            {
-                return new AssetBundleAsyncLoader(++sequence);
-            }
+            return pool.Count > 0 ? pool.Dequeue() : new AssetBundleAsyncLoader(++sequence);
         }
 
         public static void Recycle(AssetBundleAsyncLoader loader)
@@ -55,12 +46,11 @@ namespace AssetBundles
             }
             if (dependances != null && dependances.Length > 0)
             {
-                for (int i = 0; i < dependances.Length; i++)
+                foreach (var t in dependances)
                 {
-                    var ab = dependances[i];
-                    if (!AssetBundleManager.Instance.IsAssetBundleLoaded(ab))
+                    if (!AssetBundleManager.Instance.IsAssetBundleLoaded(t))
                     {
-                        waitingList.Add(dependances[i]);
+                        waitingList.Add(t);
                     }
                 }
             }

@@ -1,5 +1,7 @@
 ﻿using AssetBundles;
 using System.Collections.Generic;
+using Framework.AssetBundles.Config;
+using Script.Framework.AssetBundle;
 using UnityEditor;
 using UnityEngine;
 

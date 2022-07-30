@@ -2,10 +2,12 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using GameChannel;
 using AssetBundles;
 using System;
 using System.Text;
+using Common.GameChannel;
+using Common.Utility;
+using Framework.AssetBundles.Config;
 
 /// <summary>
 /// added by wsh @ 2018.01.03
@@ -65,6 +67,7 @@ public class BuildPlayer : Editor
     {
         bool buildForPerChannel = PackageUtils.BuildAssetBundlesForPerChannel(buildTarget);
 
+        // XLuaMenu.CopyLuaFilesToAssetsPackage();
         PackageUtils.CheckAndRunAllCheckers(buildForPerChannel, false);
 
         DateTime start = DateTime.Now;
@@ -89,6 +92,7 @@ public class BuildPlayer : Editor
         var targetName = PackageUtils.GetPlatformName(buildTarget);
         Debug.Assert(buildForPerChannel == true);
 
+        // XLuaMenu.CopyLuaFilesToAssetsPackage();
         PackageUtils.CheckAndRunAllCheckers(buildForPerChannel, false);
 
         int index = 0;
@@ -148,7 +152,7 @@ public class BuildPlayer : Editor
             LaunchAssetBundleServer.WriteAssetBundleServerURL();
         }
         
-        BaseChannel channel = ChannelManager.instance.CreateChannel(channelName);
+        BaseChannel channel = ChannelManager.Instance.CreateChannel(channelName);
         SetPlayerSetting(channel);
 
         string savePath = PackageUtils.GetChannelOutputPath(buildTarget, channelName);
@@ -196,7 +200,7 @@ public class BuildPlayer : Editor
         }
         PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.iOS, iconList.ToArray());
 
-        BaseChannel channel = ChannelManager.instance.CreateChannel(channelName);
+        BaseChannel channel = ChannelManager.Instance.CreateChannel(channelName);
         SetPlayerSetting(channel);
 
         PackageUtils.CheckAndAddSymbolIfNeeded(buildTarget, channelName);

@@ -1,126 +1,129 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GameData.Net;
+using GameSystem.ServiceDataPro;
+using GameTools.Singletons;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class SimpleHttp : MonoBehaviour
+namespace Common.Http
 {
-    private HttpInfo m_info;
-    private WWW m_www;
-    private float m_during = 0f;
-
-    public static SimpleHttp newInstance
+    /// <summary>
+    /// http 
+    /// </summary>
+    public class SimpleHttp : MMOSingletonDontDestroy<SimpleHttp>
     {
-        get
+        private HttpInfo m_info;
+
+        private UnityWebRequest rootService = null;
+        private float mduring = 0f;
+
+        public override void OnAwake()
         {
-            GameObject gameObject = new GameObject();
-            SimpleHttp result = gameObject.AddComponent<SimpleHttp>();
-            DontDestroyOnLoad(gameObject);
-            return result;
         }
-    }
 
-    void Update()
-    {
-        if (m_info != null && m_www != null)
+        void Update()
         {
-            m_during += Time.deltaTime;
-            if (m_during >= m_info.timeOut)
+            if (m_info == null || rootService == null) return;
+            mduring += Time.deltaTime;
+            if (!(mduring >= m_info.timeOut)) return;
+            try
             {
-                try
+                rootService.Dispose();
+                if (m_info.callbackDel != null)
                 {
-                    m_www.Dispose();
-                    if (m_info.callbackDel != null)
-                    {
-                        m_info.callbackDel(null);
-                        m_info.callbackDel = null;
-                        m_info = null;
-                    }
+                    m_info.callbackDel(null);
+                    m_info.callbackDel = null;
+                    m_info = null;
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                ToolsDebug.LogError("http timeout callback got exception " + ex.Message + "\n" + ex.StackTrace);
+            }
+
+            DestroyImmediate(gameObject);
+        }
+
+        public static void HttpPost(string url, Dictionary<string, string> formData, byte[] byteData,
+            Action<UnityWebRequest> callback, int timeOut = 10)
+        {
+            HttpInfo httpInfo = new HttpInfo
+            {
+                callbackDel = callback,
+                url = url,
+                formData = formData,
+                byteData = byteData,
+                type = HTTP_TYPE.POST,
+                timeOut = timeOut
+            };
+            SimpleHttp.Instance.StartHttp(httpInfo);
+            // rootService.ServicePro.SetGameLoad(url);
+            // rootService.ServicePro.RequestSeverPost(url, formData, byteData, callback, timeOut);
+        }
+
+        public void StartHttp(HttpInfo info)
+        {
+            if (info == null) return;
+            switch (info.type)
+            {
+                case HTTP_TYPE.GET:
+                    StartCoroutine(DoHttpGet(info));
+                    break;
+                case HTTP_TYPE.POST:
+                    StartCoroutine(DoHttpPost(info));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private IEnumerator DoHttpGet(HttpInfo info)
+        {
+            //TODO
+            yield return null;
+        }
+
+        private IEnumerator DoHttpPost(HttpInfo info)
+        {
+            m_info = info;
+            rootService = new UnityWebRequest(m_info.url);
+            rootService.url = m_info.url;
+            rootService.uploadHandler = (UploadHandler) new UploadHandlerRaw(m_info.byteData);
+            if (m_info.formData != null)
+            {
+                foreach (var VARIABLE in m_info.formData)
                 {
-                    Logger.LogError("http timeout callback got exception " + ex.Message + "\n" + ex.StackTrace);
+                    rootService.SetRequestHeader(VARIABLE.Key, VARIABLE.Value);
+                }
+            }
+
+            yield return rootService;
+
+            Complete();
+        }
+
+        private void Complete()
+        {
+            try
+            {
+                if (m_info != null && m_info.callbackDel != null)
+                {
+                    m_info.callbackDel(rootService);
+                    m_info.callbackDel = null;
                 }
 
-                DestroyImmediate(gameObject);
+                m_info = null;
+                rootService.Dispose();
             }
-        }
-    }
-
-    public static void HttpGet(string url, Dictionary<string, string> formData, byte[] byteData, Action<WWW> callback, float timeOut = 10f)
-    {
-        HttpInfo httpInfo = new HttpInfo();
-        httpInfo.callbackDel = callback;
-        httpInfo.url = url;
-        httpInfo.formData = formData;
-        httpInfo.byteData = byteData;
-        httpInfo.type = HTTP_TYPE.GET;
-        httpInfo.timeOut = timeOut;
-        SimpleHttp.newInstance.StartHttp(httpInfo);
-    }
-
-    public static void HttpPost(string url, Dictionary<string, string> formData, byte[] byteData, Action<WWW> callback, float timeOut = 10f)
-    {
-        HttpInfo httpInfo = new HttpInfo();
-        httpInfo.callbackDel = callback;
-        httpInfo.url = url;
-        httpInfo.formData = formData;
-        httpInfo.byteData = byteData;
-        httpInfo.type = HTTP_TYPE.POST;
-        httpInfo.timeOut = timeOut;
-        SimpleHttp.newInstance.StartHttp(httpInfo);
-    }
-
-    public void StartHttp(HttpInfo info)
-    {
-        if (info != null)
-        {
-            if (info.type == HTTP_TYPE.GET)
+            catch (Exception ex)
             {
-                StartCoroutine(DoHttpGet(info));
+                ToolsDebug.LogError("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
+                ToolsDebug.Log("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
             }
 
-            if (info.type == HTTP_TYPE.POST)
-            {
-                StartCoroutine(DoHttpPost(info));
-            }
+            DestroyImmediate(gameObject);
         }
     }
-
-    private IEnumerator DoHttpGet(HttpInfo info)
-    {
-        //TODO
-        yield return null;
-    }
-
-    private IEnumerator DoHttpPost(HttpInfo info)
-    {
-        m_info = info;
-        m_www = new WWW(m_info.url, m_info.byteData, m_info.formData);
-        yield return m_www;
-
-        Complete();
-    }
-
-    private void Complete()
-    {
-        try
-        {
-            if (m_info != null && m_info.callbackDel != null)
-            {
-                m_info.callbackDel(m_www);
-                m_info.callbackDel = null;
-            }
-            m_info = null;
-            m_www.Dispose();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
-            Logger.Log("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
-        }
-
-        DestroyImmediate(gameObject);
-    }
-
 }
