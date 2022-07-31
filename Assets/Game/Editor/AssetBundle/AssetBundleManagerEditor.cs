@@ -125,9 +125,9 @@ namespace AssetBundles
         protected void DrawAssetbundleRefrences(string assetbundleName, string key, int level = 0)
         {
             var instance = AssetBundleManager.Instance;
-            var abRefrences = instance.GetAssetBundleRefrences(assetbundleName);
-            var webRequestRefrences = instance.GetWebRequesterRefrences(assetbundleName);
-            var abLoaderRefrences = instance.GetAssetBundleLoaderRefrences(assetbundleName);
+            var abRefrences = instance.GetAssetBundleRefraction(assetbundleName);
+            var webRequestRefrences = instance.GetWebRequesterRefraction(assetbundleName);
+            var abLoaderRefrences = instance.GetAssetBundleLoaderRefraction(assetbundleName);
             var expanded = false;
 
             expanded = GUILayoutUtils.DrawSubHeader(level + 1, "ABRefrence:", abRefrenceSate, key, abRefrences.Count.ToString());
@@ -161,7 +161,7 @@ namespace AssetBundles
             GUILayoutUtils.DrawProperty("Has Loaded:", loaded ? "true" : "false");
             EditorGUILayout.EndHorizontal();
 
-            var referencesCount = instance.GetAssetbundleRefrenceCount(assetbundleName);
+            var referencesCount = instance.GetAssetBundleRefractionCount(assetbundleName);
             expanded = GUILayoutUtils.DrawSubHeader(level, "References Count:", refrenceSate, key, referencesCount.ToString());
             if (expanded)
             {
@@ -213,7 +213,7 @@ namespace AssetBundles
         protected void OnDrawAssetBundleResident()
         {
             var instance = AssetBundleManager.Instance;
-            var resident = instance.GetAssetbundleResident();
+            var resident = instance.GetAssetBundleResident();
             var iter = resident.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
@@ -227,7 +227,7 @@ namespace AssetBundles
         protected void OnDrawAssetBundleCaching()
         {
             var instance = AssetBundleManager.Instance;
-            var assetbundleCaching = instance.GetAssetbundleCaching();
+            var assetbundleCaching = instance.GetAssetBundleCaching();
             var iter = assetbundleCaching.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
@@ -294,7 +294,7 @@ namespace AssetBundles
         protected void OnDrawProsessingWebRequester()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsessingWebRequester();
+            var prosessing = instance.GetProsesWebRequester();
             var iter = prosessing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
@@ -310,7 +310,7 @@ namespace AssetBundles
         protected void OnDrawProsessingAssetBundleAsyncLoader()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsessingAssetBundleAsyncLoader();
+            var prosessing = instance.GetProsesAssetBundleAsyncLoader();
             var iter = prosessing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
@@ -326,7 +326,7 @@ namespace AssetBundles
         protected void OnDrawProsessingAssetAsyncLoader()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsessingAssetAsyncLoader();
+            var prosessing = instance.GetProsesAssetAsyncLoader();
             var iter = prosessing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())

@@ -685,6 +685,169 @@ namespace Script.Framework.AssetBundle
             return creater;
         }
 
- 
+ #if UNITY_EDITOR
+        // [BlackList]
+        public HashSet<string> GetAssetBundleResident()
+        {
+            return assetbundleResident;
+        }
+
+        // [BlackList]
+        public ICollection<string> GetAssetBundleCaching()
+        {
+            return assetbundlesCaching.Keys;
+        }
+
+        // [BlackList]
+        public Dictionary<string, ResourceWebRequester> GetWebRequesting()
+        {
+            return webRequesting;
+        }
+
+        // [BlackList]
+        public Queue<ResourceWebRequester> GetWebRequestQueue()
+        {
+            return webRequesterQueue;
+        }
+
+        // [BlackList]
+        public List<ResourceWebRequester> GetProsesWebRequester()
+        {
+            return prosessingWebRequester;
+        }
+
+        // [BlackList]
+        public List<AssetBundleAsyncLoader> GetProsesAssetBundleAsyncLoader()
+        {
+            return prosessingAssetBundleAsyncLoader;
+        }
+
+        // [BlackList]
+        public List<AssetAsyncLoader> GetProsesAssetAsyncLoader()
+        {
+            return prosessingAssetAsyncLoader;
+        }
+
+        // [BlackList]
+        public string GetAssetBundleName(string assetName)
+        {
+            return assetsPathMapping.GetAssetBundleName(assetName);
+        }
+
+        // [BlackList]
+        public int GetAssetCachingCount()
+        {
+            return assetsCaching.Count;
+        }
+
+        // [BlackList]
+        public Dictionary<string, List<string>> GetAssetCaching()
+        {
+            var assetBundleDic = new Dictionary<string, List<string>>();
+
+            using var iter = assetsCaching.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                var assetName = iter.Current.Key;
+                var assetBundleName = assetsPathMapping.GetAssetBundleName(assetName);
+                assetBundleDic.TryGetValue(assetBundleName, out var assetNameList);
+                assetNameList ??= new List<string>();
+
+                assetNameList.Add(assetName);
+                assetBundleDic[assetBundleName] = assetNameList;
+            }
+
+            return assetBundleDic;
+        }
+
+        // [BlackList]
+        public int GetAssetBundleRefractionCount(string assetBundleName)
+        {
+            return GetReferenceCount(assetBundleName);
+        }
+
+        // [BlackList]
+        public int GetAssetbundleDependenciesCount(string assetBundleName)
+        {
+            string[] dependancies = manifest.GetAllDependencies(assetBundleName);
+            return dependancies.Count(cur => !string.IsNullOrEmpty(cur) && cur != assetBundleName);
+        }
+
+        // [BlackList]
+        public List<string> GetAssetBundleRefraction(string assetBundleName)
+        {
+            var refrences = new List<string>();
+            var cachingIter = assetbundlesCaching.GetEnumerator();
+            while (cachingIter.MoveNext())
+            {
+                var curAssetbundleName = cachingIter.Current.Key;
+                if (curAssetbundleName == assetBundleName)
+                {
+                    continue;
+                }
+
+                string[] dependancies = manifest.GetAllDependencies(curAssetbundleName);
+                refrences.AddRange(from dependance in dependancies
+                    where dependance == assetBundleName
+                    select curAssetbundleName);
+            }
+
+            var requestingIter = webRequesting.GetEnumerator();
+            while (requestingIter.MoveNext())
+            {
+                var curAssetbundleName = requestingIter.Current.Key;
+                if (curAssetbundleName == assetBundleName)
+                {
+                    continue;
+                }
+
+                string[] dependancies = manifest.GetAllDependencies(curAssetbundleName);
+                foreach (var dependance in dependancies)
+                {
+                    if (dependance == assetBundleName)
+                    {
+                        refrences.Add(curAssetbundleName);
+                    }
+                }
+            }
+
+            return refrences;
+        }
+
+        // [BlackList]
+        public List<string> GetWebRequesterRefraction(string assetbundleName)
+        {
+            var refrences = new List<string>();
+            var iter = webRequesting.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                var curAssetbundleName = iter.Current.Key;
+                var webRequster = iter.Current.Value;
+                if (curAssetbundleName != assetbundleName) continue;
+                refrences.Add(webRequster.Sequence.ToString());
+            }
+
+            return refrences;
+        }
+
+        // [BlackList]
+        public List<string> GetAssetBundleLoaderRefraction(string assetbundleName)
+        {
+            var references = new List<string>();
+            var iter = prosessingAssetBundleAsyncLoader.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                if (iter.Current == null) continue;
+                var curAssetBundleName = iter.Current.assetbundleName;
+                var curLoader = iter.Current;
+                if (curAssetBundleName == assetbundleName)
+                {
+                    references.Add(curLoader.Sequence.ToString());
+                }
+            }
+
+            return references;
+        }
+#endif
     }
 }

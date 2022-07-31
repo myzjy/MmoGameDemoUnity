@@ -15,7 +15,6 @@ using Common.Utility;
 /// TODO：
 /// 1、安卓打包可以不用区分渠道，没有IOS那样的机器审核难以通过的问题
 /// </summary>
-
 public class PackageTool : EditorWindow
 {
     private static BuildTarget buildTarget = BuildTarget.Android;
@@ -29,7 +28,8 @@ public class PackageTool : EditorWindow
     private static bool buildABSForPerChannel;
 
     [MenuItem("Tool/AseetBundlePack/Package", false, 0)]
-    static void Init() {
+    static void Init()
+    {
         EditorWindow.GetWindow(typeof(PackageTool));
     }
 
@@ -64,6 +64,7 @@ public class PackageTool : EditorWindow
             buildTargetSupport = true;
             channelType = (ChannelType)EditorGUILayout.EnumPopup("Build Channel : ", channelType);
         }
+
         GUILayout.EndVertical();
 
         if (buildTargetSupport)
@@ -83,6 +84,7 @@ public class PackageTool : EditorWindow
     }
 
     #region AB相关配置
+
     void DrawAssetBundlesConfigGUI()
     {
         GUILayout.Space(3);
@@ -111,16 +113,20 @@ public class PackageTool : EditorWindow
                 PackageUtils.SaveIOSBuildABForPerChannelSetting(buildABSForPerChannel);
             }
         }
+
         if (GUILayout.Button("Run All Checkers", GUILayout.Width(200)))
         {
             bool checkChannel = PackageUtils.BuildAssetBundlesForPerChannel(buildTarget);
             PackageUtils.CheckAndRunAllCheckers(checkChannel, true);
         }
+
         GUILayout.EndHorizontal();
     }
+
     #endregion
 
     #region 资源配置GUI
+
     void DrawConfigGUI()
     {
         GUILayout.Space(3);
@@ -135,6 +141,7 @@ public class PackageTool : EditorWindow
             resVersion = curResVersion;
             SaveAllCurrentVersionFile(true);
         }
+
         GUILayout.Label("Auto increase sub version, otherwise modify the text directly!", GUILayout.Width(500));
         GUILayout.EndHorizontal();
 
@@ -154,7 +161,9 @@ public class PackageTool : EditorWindow
             bundleVersion = curBundleVersion;
             PlayerSettings.bundleVersion = curBundleVersion;
         }
-        GUILayout.Label("Auto increase sub version, otherwise modify the text directly or go to PlayerSetting!", GUILayout.Width(500));
+
+        GUILayout.Label("Auto increase sub version, otherwise modify the text directly or go to PlayerSetting!",
+            GUILayout.Width(500));
         GUILayout.EndHorizontal();
 
         GUILayout.Space(3);
@@ -165,10 +174,12 @@ public class PackageTool : EditorWindow
             {
                 LoadCurrentResVersionFromFile();
             }
+
             if (GUILayout.Button("Validate All Channels ResVersion", GUILayout.Width(200)))
             {
                 ValidateAllResVersionFile();
             }
+
             if (GUILayout.Button("Save Version To All Channels", GUILayout.Width(200)))
             {
                 SaveAllVersionFile();
@@ -180,16 +191,20 @@ public class PackageTool : EditorWindow
             {
                 LoadCurrentResVersionFromFile();
             }
+
             if (GUILayout.Button("Save All Version To Channel", GUILayout.Width(200)))
             {
                 SaveAllCurrentVersionFile();
             }
         }
+
         GUILayout.EndHorizontal();
     }
+
     #endregion
 
     #region 本地服务器配置GUI
+
     void DrawLocalServerGUI()
     {
         GUILayout.Space(3);
@@ -197,7 +212,8 @@ public class PackageTool : EditorWindow
         GUILayout.Space(3);
 
         GUILayout.BeginHorizontal();
-        var curSelected = (LocalServerType)EditorGUILayout.EnumPopup("Local Server Type : ", localServerType, GUILayout.Width(300));
+        var curSelected =
+            (LocalServerType)EditorGUILayout.EnumPopup("Local Server Type : ", localServerType, GUILayout.Width(300));
         bool typeChanged = curSelected != localServerType;
         if (typeChanged)
         {
@@ -206,6 +222,7 @@ public class PackageTool : EditorWindow
             localServerType = curSelected;
             localServerIP = PackageUtils.GetLocalServerIP();
         }
+
         if (localServerType == LocalServerType.CurrentMachine)
         {
             GUILayout.Label(localServerIP);
@@ -218,17 +235,20 @@ public class PackageTool : EditorWindow
                 PackageUtils.SaveLocalServerIP(localServerIP);
             }
         }
+
         GUILayout.EndHorizontal();
     }
+
     #endregion
 
     #region AB相关操作GUI
+
     void DrawAssetBundlesGUI()
     {
         GUILayout.Space(3);
         GUILayout.Label("-------------[Build AssetBundles]-------------");
         GUILayout.Space(3);
-        
+
         GUILayout.Space(3);
         GUILayout.BeginHorizontal();
         if (buildABSForPerChannel)
@@ -237,14 +257,17 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += BuildAssetBundlesForCurrentChannel;
             }
+
             if (GUILayout.Button("For All Channels", GUILayout.Width(200)))
             {
                 EditorApplication.delayCall += BuildAssetBundlesForAllChannels;
             }
+
             if (GUILayout.Button("Open Current Output", GUILayout.Width(200)))
             {
                 AssetBundleMenuItems.ToolsOpenOutput();
             }
+
             if (GUILayout.Button("Copy To StreamingAsset", GUILayout.Width(200)))
             {
                 AssetBundleMenuItems.ToolsCopyAssetbundles();
@@ -256,20 +279,25 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += BuildAssetBundlesForCurrentChannel;
             }
+
             if (GUILayout.Button("Open Output Folder", GUILayout.Width(200)))
             {
                 AssetBundleMenuItems.ToolsOpenOutput();
             }
+
             if (GUILayout.Button("Copy To StreamingAsset", GUILayout.Width(200)))
             {
                 AssetBundleMenuItems.ToolsCopyAssetbundles();
             }
         }
+
         GUILayout.EndHorizontal();
     }
+
     #endregion
 
     #region xlua相关GUI
+
     void DrawXLuaGUI()
     {
         GUILayout.Space(3);
@@ -281,11 +309,14 @@ public class PackageTool : EditorWindow
         {
             GenXLuaCode(buildTarget);
         }
+
         GUILayout.EndHorizontal();
     }
+
     #endregion
 
     #region 打包相关GUI
+
     void DrawBuildAndroidPlayerGUI()
     {
         GUILayout.Space(3);
@@ -299,14 +330,17 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += CopyAndroidSDKResources;
             }
+
             if (GUILayout.Button("Current Channel Only", GUILayout.Width(200)))
             {
                 EditorApplication.delayCall += BuildAndroidPlayerForCurrentChannel;
             }
+
             if (GUILayout.Button("For All Channels", GUILayout.Width(200)))
             {
                 EditorApplication.delayCall += BuildAndroidPlayerForAllChannels;
             }
+
             if (GUILayout.Button("Open Output Folder", GUILayout.Width(200)))
             {
                 var folder = PackageUtils.GetChannelOutputPath(buildTarget, channelType.ToString());
@@ -319,16 +353,19 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += CopyAndroidSDKResources;
             }
+
             if (GUILayout.Button("Execute Build", GUILayout.Width(200)))
             {
                 EditorApplication.delayCall += BuildAndroidPlayerForCurrentChannel;
             }
+
             if (GUILayout.Button("Open Output Folder", GUILayout.Width(200)))
             {
                 var folder = PackageUtils.GetChannelOutputPath(buildTarget, channelType.ToString());
                 EditorUtils.ExplorerFolder(folder);
             }
         }
+
         GUILayout.EndHorizontal();
     }
 
@@ -344,10 +381,12 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += BuildIOSPlayerForCurrentChannel;
             }
+
             if (GUILayout.Button("For All Channels", GUILayout.Width(200)))
             {
                 EditorApplication.delayCall += BuildIOSPlayerForAllChannels;
             }
+
             if (GUILayout.Button("Open Current Output", GUILayout.Width(200)))
             {
                 var folder = Path.Combine(System.Environment.CurrentDirectory, BuildPlayer.XCodeOutputPath);
@@ -360,12 +399,14 @@ public class PackageTool : EditorWindow
             {
                 EditorApplication.delayCall += BuildIOSPlayerForCurrentChannel;
             }
+
             if (GUILayout.Button("Open Output Folder", GUILayout.Width(200)))
             {
                 var folder = Path.Combine(System.Environment.CurrentDirectory, BuildPlayer.XCodeOutputPath);
                 EditorUtils.ExplorerFolder(folder);
             }
         }
+
         GUILayout.EndHorizontal();
     }
 
@@ -380,13 +421,17 @@ public class PackageTool : EditorWindow
             DrawBuildIOSPlayerGUI();
         }
     }
+
     #endregion
 
     #region 资源配置操作
+
     public static string ReadResVersionConfig()
     {
         // 从数据库加载资源版本号
-        AssetBundleResVersionConfig config = AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as AssetBundleResVersionConfig;
+        AssetBundleResVersionConfig config =
+            AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
+                AssetBundleResVersionConfig;
         if (config == null)
         {
             config = CreateInstance<AssetBundleResVersionConfig>();
@@ -400,7 +445,9 @@ public class PackageTool : EditorWindow
     public static void SaveResVersionConfig(string curResVersion)
     {
         // 保存资源版本号到数据库
-        AssetBundleResVersionConfig config = AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as AssetBundleResVersionConfig;
+        AssetBundleResVersionConfig config =
+            AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
+                AssetBundleResVersionConfig;
         if (config == null)
         {
             config = CreateInstance<AssetBundleResVersionConfig>();
@@ -438,7 +485,8 @@ public class PackageTool : EditorWindow
         {
             if (!silence)
             {
-                EditorUtility.DisplayDialog("Error", string.Format("No res version file for : \n\nplatform : {0} \nchannel : {1} \n\n",
+                EditorUtility.DisplayDialog("Error", string.Format(
+                    "No res version file for : \n\nplatform : {0} \nchannel : {1} \n\n",
                     buildTargetName, channelType.ToString()), "Confirm");
             }
         }
@@ -447,7 +495,8 @@ public class PackageTool : EditorWindow
             resVersion = readVersion;
             if (!silence)
             {
-                EditorUtility.DisplayDialog("Success", string.Format("Load cur res version file : \n\nplatform : {0} \nchannel : {1} \n\n",
+                EditorUtility.DisplayDialog("Success", string.Format(
+                    "Load cur res version file : \n\nplatform : {0} \nchannel : {1} \n\n",
                     buildTargetName, channelType.ToString()), "Confirm");
             }
         }
@@ -461,7 +510,8 @@ public class PackageTool : EditorWindow
         PlayerSettings.bundleVersion = bundleVersion;
         if (!silence)
         {
-            EditorUtility.DisplayDialog("Success", string.Format("Save all version file : \n\nplatform : {0} \nchannel : {1} \n\n",
+            EditorUtility.DisplayDialog("Success", string.Format(
+                "Save all version file : \n\nplatform : {0} \nchannel : {1} \n\n",
                 buildTargetName, channelType.ToString()), "Confirm");
         }
     }
@@ -478,11 +528,13 @@ public class PackageTool : EditorWindow
             {
                 readVersion = "";
             }
+
             versionMap.TryGetValue(readVersion, out channelList);
             if (channelList == null)
             {
                 channelList = new List<ChannelType>();
             }
+
             channelList.Add(current);
             versionMap[readVersion] = channelList;
         }
@@ -498,8 +550,10 @@ public class PackageTool : EditorWindow
             {
                 sb.AppendFormat("{0}, ", channel.ToString());
             }
+
             sb.AppendLine("\n-------------------------------------\n");
         }
+
         EditorUtility.DisplayDialog("Result", sb.ToString(), "Confirm");
     }
 
@@ -510,11 +564,14 @@ public class PackageTool : EditorWindow
         {
             SaveAllVersionFile(buildTarget, current);
         }
+
         EditorUtility.DisplayDialog("Success", "Save all version files to all channels done!", "Confirm");
     }
+
     #endregion
 
     #region AB相关操作
+
     public static void IncreaseResSubVersion()
     {
         // 每一次构建资源，子版本号自增，注意：前两个字段这里不做托管，自行编辑设置
@@ -525,6 +582,7 @@ public class PackageTool : EditorWindow
             int.TryParse(vers[vers.Length - 1], out subVer);
             vers[vers.Length - 1] = string.Format("{0:D3}", subVer + 1);
         }
+
         resVersion = string.Join(".", vers);
         SaveAllCurrentVersionFile(true);
     }
@@ -537,7 +595,8 @@ public class PackageTool : EditorWindow
         BuildPlayer.BuildAssetBundles(buildTarget, channelType.ToString());
 
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build AssetBundles for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s", 
+        EditorUtility.DisplayDialog("Success", string.Format(
+            "Build AssetBundles for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s",
             buildTargetName, channelType, (DateTime.Now - start).TotalSeconds), "Confirm");
     }
 
@@ -547,9 +606,11 @@ public class PackageTool : EditorWindow
 
         var start = DateTime.Now;
         BuildPlayer.BuildAssetBundlesForAllChannels(buildTarget);
-        
+
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build AssetBundles for : \n\nplatform : {0} \nchannel : all \n\ndone! use {1}s", buildTargetName, (DateTime.Now - start).TotalSeconds), "Confirm");
+        EditorUtility.DisplayDialog("Success",
+            string.Format("Build AssetBundles for : \n\nplatform : {0} \nchannel : all \n\ndone! use {1}s",
+                buildTargetName, (DateTime.Now - start).TotalSeconds), "Confirm");
     }
 
     public static void GenXLuaCode(BuildTarget buildTarget)
@@ -574,13 +635,17 @@ public class PackageTool : EditorWindow
             {
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, "HOTFIX_ENABLE");
             }
+
             return checkClear == 2;
         }
+
         return false;
     }
+
     #endregion
 
     #region 打包相关操作
+
     public static void IncreaseAppSubVersion()
     {
         // 每一次构建安装包，子版本号自增，注意：前两个字段这里不做托管，自行到PlayerSetting中设置
@@ -591,6 +656,7 @@ public class PackageTool : EditorWindow
             int.TryParse(vers[vers.Length - 1], out subVer);
             vers[vers.Length - 1] = string.Format("{0:D3}", subVer + 1);
         }
+
         bundleVersion = string.Join(".", vers);
         SaveAllCurrentVersionFile(true);
     }
@@ -613,7 +679,9 @@ public class PackageTool : EditorWindow
         BuildPlayer.BuildAndroid(channelType.ToString(), channelType == ChannelType.Test);
 
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build player for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s", buildTargetName, channelType, (DateTime.Now - start).TotalSeconds), "Confirm");
+        EditorUtility.DisplayDialog("Success",
+            string.Format("Build player for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s", buildTargetName,
+                channelType, (DateTime.Now - start).TotalSeconds), "Confirm");
     }
 
     public static void BuildAndroidPlayerForAllChannels()
@@ -632,7 +700,9 @@ public class PackageTool : EditorWindow
         }
 
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build player for : \n\nplatform : {0} \nchannel : all \n\ndone! use {2}s", buildTargetName, (DateTime.Now - start).TotalSeconds), "Confirm");
+        EditorUtility.DisplayDialog("Success",
+            string.Format("Build player for : \n\nplatform : {0} \nchannel : all \n\ndone! use {2}s", buildTargetName,
+                (DateTime.Now - start).TotalSeconds), "Confirm");
     }
 
     public static void BuildIOSPlayerForCurrentChannel()
@@ -648,7 +718,9 @@ public class PackageTool : EditorWindow
         BuildPlayer.BuildXCode(channelType.ToString(), channelType == ChannelType.Test);
 
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build player for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s", buildTargetName, channelType, (DateTime.Now - start).TotalSeconds), "Confirm");
+        EditorUtility.DisplayDialog("Success",
+            string.Format("Build player for : \n\nplatform : {0} \nchannel : {1} \n\ndone! use {2}s", buildTargetName,
+                channelType, (DateTime.Now - start).TotalSeconds), "Confirm");
     }
 
     public static void BuildIOSPlayerForAllChannels()
@@ -667,7 +739,10 @@ public class PackageTool : EditorWindow
         }
 
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
-        EditorUtility.DisplayDialog("Success", string.Format("Build player for : \n\nplatform : {0} \nchannel : all \n\ndone! use {2}s", buildTargetName, (DateTime.Now - start).TotalSeconds), "Confirm");
+        EditorUtility.DisplayDialog("Success",
+            string.Format("Build player for : \n\nplatform : {0} \nchannel : all \n\ndone! use {2}s", buildTargetName,
+                (DateTime.Now - start).TotalSeconds), "Confirm");
     }
+
     #endregion
 }

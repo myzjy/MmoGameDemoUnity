@@ -611,6 +611,7 @@ public class AssetBundleUpdater : MonoBehaviour
         yield break;
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     IEnumerator GetDownloadAssetBundlesSize()
     {
         var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.AssetBundlesSizeFileName);

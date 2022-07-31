@@ -6,6 +6,7 @@ using ZJYFrameWork.UISerializable.UIInitView;
 using Script.Framework.AssetBundle;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.UISerializable.Manager;
 using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.UISerializable.UIModel
