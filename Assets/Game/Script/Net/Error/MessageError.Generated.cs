@@ -1,9 +1,12 @@
-﻿using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace ZJYFrameWork.Net
 {
-    public  partial class MessageError:SeverModel
+    public partial class MessageError:SeverModel
     {
         /// <summary>
         /// 错误Code
@@ -28,7 +31,8 @@ namespace ZJYFrameWork.Net
         }
     }
 
-    public class MessageErrorSerializer:Serializer
+
+public class MessageErrorSerializer:Serializer
     {
         public static void Unpack(MessageError model,byte[] bytes)
         {
@@ -61,9 +65,7 @@ namespace ZJYFrameWork.Net
             builder.Append($"\"time\":{model.code},");
             NewLine(builder,isPretty);
             Indent(builder,index+1,isPretty);
-            builder.Append($"\"date\":{ToTime(model.time)},");
-            NewLine(builder,isPretty);
-            Indent(builder,index+1,isPretty);
+            builder.Append("\"date\":");
             if (model.date != null)
             {
                 ErrorSerializer.ToJson(model.date,builder,isPretty,index+1);

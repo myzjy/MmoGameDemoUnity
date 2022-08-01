@@ -1,6 +1,6 @@
 ﻿namespace ZJYFrameWork.UISerializable.Manager
 {
-    public class GlobalDataManager:Singleton<GlobalDataManager>
+    public class GlobalDataManager : Singleton<GlobalDataManager>
     {
         public TimesManager time = new TimesManager();
     }
