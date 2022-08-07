@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Script.Framework.AssetBundle;
+using ZJYFrameWork.AssetBundles;
 // ReSharper disable once InvalidXmlDocComment
 /// <summary>
 /// added by wsh @ 2017.12.22 xluaframework
@@ -8,6 +8,7 @@ using Script.Framework.AssetBundle;
 /// 1、加载器AssetBundleManager只负责调度，创建，不负责回收，逻辑层代码使用完一定要记得回收，否则会产生GC
 /// 2、尝试加载并缓存所有的asset
 /// </summary>
+// ReSharper disable once CheckNamespace
 namespace Framework.AssetBundle.AsyncOperation
 {
     public class AssetBundleAsyncLoader: BaseAssetBundleAsyncLoader

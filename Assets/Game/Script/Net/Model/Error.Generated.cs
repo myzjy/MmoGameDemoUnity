@@ -1,7 +1,7 @@
 ﻿using  System.Text;
 namespace ZJYFrameWork.Net
 {
-    public partial class Error:SeverModel
+    public partial class Error:SeverModel,IError
     {
         /// <summary>
         /// 出现错误的CommandID

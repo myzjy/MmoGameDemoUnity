@@ -5,7 +5,7 @@ using Common.GameChannel;
 using Common.Utility;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
-using Script.Framework.AssetBundle;
+using ZJYFrameWork.AssetBundles;
 using Script.Framework.UI.Tip;
 using UnityEditor;
 using UnityEngine;
@@ -44,13 +44,11 @@ public class GameLaunch : MonoBehaviour
         ToolsDebug.Log($"XLuaManager StartHotfix use {(DateTime.Now - startTime).Milliseconds}ms");
 
         // var data = AssetDatabase.GetAssetPathsFromAssetBundle(launchPrefabPath + AssetBundleConfig.AssetBundleSuffix);
-        yield return InitLaunchPrefab();
-        yield return InitNoticeTipPrefab();
-
-        if (updater != null)
-        {
-            updater.StartCheckUpdate();
-        }
+        // yield return InitLaunchPrefab();
+        // yield return InitNoticeTipPrefab();
+        // var obj = new GameObject();
+        // obj.name = "AssetBundleUpdater";
+        yield return AssetBundleManager.Instance._updater.CheckUpdateOrDownloadGame();
 
         // root.StartRoot();
     }
@@ -131,7 +129,7 @@ public class GameLaunch : MonoBehaviour
         }
 
         var go = InstantiateGameObject(launchPrefab);
-        updater = go.AddComponent<AssetBundleUpdater>();
+        // updater = go.AddComponent<AssetBundleUpdater>();
         yield break;
     }
 

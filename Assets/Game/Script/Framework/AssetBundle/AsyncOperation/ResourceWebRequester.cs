@@ -118,10 +118,10 @@ namespace Framework.AssetBundle.AsyncOperation
                 request.downloadHandler = Download;
                 ToolsDebug.Log("Downloading : " + url);
                 request.SendWebRequest();
-                while (!request.isDone)
-                {
-                    Debug.Log(request.downloadHandler.text);
-                }
+                // while (!request.isDone)
+                // {
+                //     Debug.Log(request.downloadHandler.text);
+                // }
             }
         }
 

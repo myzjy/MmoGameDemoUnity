@@ -13,7 +13,7 @@ using Script.Config;
 using UnityEditor;
 using UnityEngine;
 
-namespace Script.Framework.AssetBundle
+namespace ZJYFrameWork.AssetBundles
 {
     public class AssetBundleManager : MMOSingletonDontDestroy<AssetBundleManager>
     {
@@ -26,6 +26,11 @@ namespace Script.Framework.AssetBundle
         /// manifest 用于提供依赖关系连
         /// </summary>
         private Manifest manifest = null;
+
+        public delegate void OnLoadedDelegate();
+
+        // AssetBundle加载出错时的处理
+        public delegate void OnErrorDelegate(ErrorInfo errorInfo);
 
         /// <summary>
         ///资源路径映射表
@@ -71,12 +76,25 @@ namespace Script.Framework.AssetBundle
             get { return BuildUtils.ManifestBundleName; }
         }
 
+        public AssetBundleUpdater _updater;
+
         public override void OnAwake()
         {
+            _updater = new AssetBundleUpdater();
+            // DontDestroyOnLoad(obj);
+            if (_updater != null)
+            {
+                _updater.StartCheckUpdate();
+            }
         }
 
         void Update()
         {
+            if (_updater != null)
+            {
+                _updater.Update();
+            }
+
             OnProsessingWebRequester();
             OnProsessingAssetBundleAsyncLoader();
             OnProsessingAssetAsyncLoader();
@@ -108,7 +126,7 @@ namespace Script.Framework.AssetBundle
             yield return pathMapRequest;
             assetbundle = pathMapRequest.assetbundle;
             var s = assetbundle.LoadAllAssets();
-            var mapContent = s[0] as TextAsset;// assetbundle.LoadAsset<TextAsset>(assetsPathMapping.AssetName);
+            var mapContent = s[0] as TextAsset; // assetbundle.LoadAsset<TextAsset>(assetsPathMapping.AssetName);
             if (mapContent != null)
             {
                 assetsPathMapping.Initialize(mapContent.text);
@@ -186,10 +204,7 @@ namespace Script.Framework.AssetBundle
             yield break;
         }
 
-        public Manifest curManifest
-        {
-            get { return manifest; }
-        }
+        public virtual Manifest GetCurManifest => manifest;
 
         public void ClearAssetsCache()
         {
@@ -494,9 +509,10 @@ namespace Script.Framework.AssetBundle
             return assetbundleResident.Contains(assebundleName);
         }
 
-        public bool MapAssetPath(string assetPath,string assetBundleName, out string assetbundleName, out string assetName)
+        public bool MapAssetPath(string assetPath, string assetBundleName, out string assetbundleName,
+            out string assetName)
         {
-            return assetsPathMapping.MapAssetPath(assetPath,assetBundleName, out assetbundleName, out assetName);
+            return assetsPathMapping.MapAssetPath(assetPath, assetBundleName, out assetbundleName, out assetName);
         }
 
         public BaseAssetAsyncLoader LoadAssetAsync(string assetPath, System.Type assetType)
@@ -512,7 +528,7 @@ namespace Script.Framework.AssetBundle
             var newAssetPath = $"{assetPath}{AssetBundleConfig.AssetBundleSuffix}";
             string assetbundleName = null;
             string assetName = null;
-            bool status = MapAssetPath(newAssetPath, "",out assetbundleName, out assetName);
+            bool status = MapAssetPath(newAssetPath, "", out assetbundleName, out assetName);
             if (!status)
             {
                 ToolsDebug.LogError("No assetbundle at asset path :" + newAssetPath);
@@ -685,7 +701,14 @@ namespace Script.Framework.AssetBundle
             return creater;
         }
 
- #if UNITY_EDITOR
+        public void Load(string assetBundle, OnLoadedDelegate onLoaded = null, OnErrorDelegate onError = null)
+        {
+        }
+#if UNITY_EDITOR && DEVELOP_BUILD
+
+#endif
+
+#if UNITY_EDITOR
         // [BlackList]
         public HashSet<string> GetAssetBundleResident()
         {

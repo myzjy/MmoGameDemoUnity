@@ -18,7 +18,7 @@
 
         public override string GetBundleID()
         {
-            return "com.chivas.xluaframework";
+            return "com.zjy.mmogame";
         }
 
         public override void InstallApk()
@@ -27,7 +27,7 @@
 
         public override string GetProductName()
         {
-            return "xluaframework";
+            return "mmogame";
         }
 
         public override void Login()

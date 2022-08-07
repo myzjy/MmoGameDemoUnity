@@ -27,16 +27,20 @@ public class SymbolWindows : EditorWindow
 
     private List<SymbolData> m_symbolDataList = new List<SymbolData>()
     {
-        new SymbolData("Inst_resouce", "创建物体设定是否采用"),
-        new SymbolData("Inst_resouce_cb", "创建物体设定是否采用这个"),
-        new SymbolData("LoadAsset_re", "读资源设定是否采用这个"),
-        new SymbolData("IOBSERVABLES", ""),
         new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
         new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
         new SymbolData("USE_BSET_HTTP", "用户基础Https"),
         new SymbolData("USE_DEBUG_TOOLS", "用户调试"),
         new SymbolData("HOTFIX_ENABLE","xlua"),
         new SymbolData("LOGGER_ON","LOG"),
+        new SymbolData("DEVELOP_BUILD","开发模式"),
+        new SymbolData("DISABLE_SERVERSENT_EVENTS",""),
+        new SymbolData("BESTHTTP_DISABLE_SIGNALR","开发模式"),
+        new SymbolData("BESTHTTP_DISABLE_SOCKETIO","开发模式"),
+        new SymbolData("BESTHTTP_DISABLE_UNITY_FORM","开发模式"),
+        new SymbolData("DEVELOP_BUILD","开发模式"),
+        new SymbolData("DEVELOP_BUILD","开发模式"),
+        new SymbolData("DEVELOP_BUILD","开发模式"),
 
     };
 

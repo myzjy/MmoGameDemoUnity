@@ -1,15 +1,16 @@
-﻿using AssetBundles;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Framework.AssetBundles.Config;
-using Script.Framework.AssetBundle;
 using UnityEditor;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles;
 
+// ReSharper disable once InvalidXmlDocComment
 /// <summary>
 /// added by wsh @ 2017.12.29
 /// 功能：Assetbundle编辑器支持，方便调试用
 /// </summary>
 
+// ReSharper disable once CheckNamespace
 namespace AssetBundles
 {
     [CustomEditor(typeof(AssetBundleManager), true)]
@@ -21,22 +22,26 @@ namespace AssetBundles
         "Prosessing AssetBundle AsyncLoader", "Prosessing Asset AsyncLoader",
     };
 
-        static protected int selectedTypeIndex = 6;
-        static protected Dictionary<string, bool> abItemSate = new Dictionary<string, bool>();
-        static protected Dictionary<string, bool> refrenceSate = new Dictionary<string, bool>();
-        static protected Dictionary<string, bool> dependenciesSate = new Dictionary<string, bool>();
-        static protected Dictionary<string, bool> abRefrenceSate = new Dictionary<string, bool>();
-        static protected Dictionary<string, bool> webRequestRefrenceSate = new Dictionary<string, bool>();
-        static protected Dictionary<string, bool> abLoaderfrenceSate = new Dictionary<string, bool>();
+        private static int _selectedTypeIndex = 6;
+        private static readonly Dictionary<string, bool> AbItemSate = new Dictionary<string, bool>();
+        private static readonly Dictionary<string, bool> RefrenceSate = new Dictionary<string, bool>();
+        // ReSharper disable once InconsistentNaming
+        private static readonly Dictionary<string, bool> _dependenciesSate = new Dictionary<string, bool>();
+        // ReSharper disable once InconsistentNaming
+        private static readonly Dictionary<string, bool> abRefrenceSate = new Dictionary<string, bool>();
+        // ReSharper disable once InconsistentNaming
+        private static readonly Dictionary<string, bool> webRequestRefrenceSate = new Dictionary<string, bool>();
+        // ReSharper disable once InconsistentNaming
+        private static readonly Dictionary<string, bool> AbLoaderSate = new Dictionary<string, bool>();
 
-        static protected void ClearStates()
+        private static void ClearStates()
         {
-            abItemSate.Clear();
-            refrenceSate.Clear();
-            dependenciesSate.Clear();
+            AbItemSate.Clear();
+            RefrenceSate.Clear();
+            _dependenciesSate.Clear();
             abRefrenceSate.Clear();
             webRequestRefrenceSate.Clear();
-            abLoaderfrenceSate.Clear();
+            AbLoaderSate.Clear();
         }
         
         public void OnEnable()
@@ -59,15 +64,15 @@ namespace AssetBundles
             base.OnInspectorGUI();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("DisplayType:", GUILayout.MaxWidth(80f));
-            var newSelectedTypeIndex = EditorGUILayout.Popup(selectedTypeIndex, displayTypes);
+            var newSelectedTypeIndex = EditorGUILayout.Popup(_selectedTypeIndex, displayTypes);
             EditorGUILayout.EndHorizontal();
 
-            if (newSelectedTypeIndex != selectedTypeIndex)
+            if (newSelectedTypeIndex != _selectedTypeIndex)
             {
                 ClearStates();
             }
-            selectedTypeIndex = newSelectedTypeIndex;
-            OnRefresh(selectedTypeIndex);
+            _selectedTypeIndex = newSelectedTypeIndex;
+            OnRefresh(_selectedTypeIndex);
         }
 
         public void OnRefresh(int selectedTypeIndex)
@@ -106,17 +111,17 @@ namespace AssetBundles
                     }
                 case 5:
                     {
-                        OnDrawProsessingWebRequester();
+                        OnDrawProcessingWebRequester();
                         break;
                     }
                 case 6:
                     {
-                        OnDrawProsessingAssetBundleAsyncLoader();
+                        OnDrawProcessingAssetBundleAsyncLoader();
                         break;
                     }
                 case 7:
                     {
-                        OnDrawProsessingAssetAsyncLoader();
+                        OnDrawProcessingAssetAsyncLoader();
                         break;
                     }
             }
@@ -142,7 +147,7 @@ namespace AssetBundles
                 GUILayoutUtils.DrawTextListContent(webRequestRefrences, "Sequence : ");
             }
 
-            expanded = GUILayoutUtils.DrawSubHeader(level + 1, "ABLoader:", abLoaderfrenceSate, key, abLoaderRefrences.Count.ToString());
+            expanded = GUILayoutUtils.DrawSubHeader(level + 1, "ABLoader:", AbLoaderSate, key, abLoaderRefrences.Count.ToString());
             if (expanded && abLoaderRefrences.Count > 0)
             {
                 GUILayoutUtils.DrawTextListContent(abLoaderRefrences, "Sequence : ");
@@ -162,15 +167,15 @@ namespace AssetBundles
             EditorGUILayout.EndHorizontal();
 
             var referencesCount = instance.GetAssetBundleRefractionCount(assetbundleName);
-            expanded = GUILayoutUtils.DrawSubHeader(level, "References Count:", refrenceSate, key, referencesCount.ToString());
+            expanded = GUILayoutUtils.DrawSubHeader(level, "References Count:", RefrenceSate, key, referencesCount.ToString());
             if (expanded)
             {
                 DrawAssetbundleRefrences(assetbundleName, key, level);
             }
 
-            var dependencies = instance.curManifest.GetAllDependencies(assetbundleName);
+            var dependencies = instance.GetCurManifest.GetAllDependencies(assetbundleName);
             var dependenciesCount = instance.GetAssetbundleDependenciesCount(assetbundleName);
-            expanded = GUILayoutUtils.DrawSubHeader(level, "Dependencies Count:", dependenciesSate, key, dependenciesCount.ToString());
+            expanded = GUILayoutUtils.DrawSubHeader(level, "Dependencies Count:", _dependenciesSate, key, dependenciesCount.ToString());
             if (expanded && dependenciesCount > 0)
             {
                 for (int i = 0; i < dependencies.Length; i++)
@@ -178,7 +183,7 @@ namespace AssetBundles
                     var dependence = dependencies[i];
                     if (!string.IsNullOrEmpty(dependence) && dependence != assetbundleName)
                     {
-                        DrawAssetbundleItem(dependence, dependence, abItemSate, assetbundleName + dependence, level + 1);
+                        DrawAssetbundleItem(dependence, dependence, AbItemSate, assetbundleName + dependence, level + 1);
                     }
                 }
             }
@@ -214,36 +219,36 @@ namespace AssetBundles
         {
             var instance = AssetBundleManager.Instance;
             var resident = instance.GetAssetBundleResident();
-            var iter = resident.GetEnumerator();
+            using var iter = resident.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
                 var assetbundleName = iter.Current;
-                DrawAssetbundleItem(assetbundleName, assetbundleName, abItemSate, assetbundleName);
+                DrawAssetbundleItem(assetbundleName, assetbundleName, AbItemSate, assetbundleName);
             }
             EditorGUILayout.EndVertical();
         }
 
-        protected void OnDrawAssetBundleCaching()
+        private void OnDrawAssetBundleCaching()
         {
             var instance = AssetBundleManager.Instance;
-            var assetbundleCaching = instance.GetAssetBundleCaching();
-            var iter = assetbundleCaching.GetEnumerator();
+            var assetBundleCaching = instance.GetAssetBundleCaching();
+            using var iter = assetBundleCaching.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
-                var assetbundleName = iter.Current;
-                DrawAssetbundleItem(assetbundleName, assetbundleName, abItemSate, assetbundleName);
+                var assetBundleName = iter.Current;
+                DrawAssetbundleItem(assetBundleName, assetBundleName, AbItemSate, assetBundleName);
             }
             EditorGUILayout.EndVertical();
         }
 
-        protected void OnDrawAssetCaching()
+        protected static void OnDrawAssetCaching()
         {
             var instance = AssetBundleManager.Instance;
             var assetCaching = instance.GetAssetCaching();
             var totalCount = instance.GetAssetCachingCount();
-            var iter = assetCaching.GetEnumerator();
+            using var iter = assetCaching.GetEnumerator();
             EditorGUILayout.BeginVertical();
             GUILayoutUtils.DrawProperty("Total loaded assets count : ", totalCount.ToString());
             while (iter.MoveNext())
@@ -251,7 +256,7 @@ namespace AssetBundles
                 var assetbundleName = iter.Current.Key;
                 var assetNameList = iter.Current.Value;
                 string title = string.Format("{0}[{1}]", assetbundleName, assetNameList.Count);
-                if (GUILayoutUtils.DrawHeader(title, abItemSate, assetbundleName, false, false))
+                if (GUILayoutUtils.DrawHeader(title, AbItemSate, assetbundleName, false, false))
                 {
                     GUILayoutUtils.DrawTextListContent(assetNameList);
                 }
@@ -263,14 +268,14 @@ namespace AssetBundles
         {
             var instance = AssetBundleManager.Instance;
             var webRequesting = instance.GetWebRequesting();
-            var iter = webRequesting.GetEnumerator();
+            using var iter = webRequesting.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
                 var assetbundleName = iter.Current.Key;
                 var webRequester = iter.Current.Value;
                 string title = string.Format("Sequence : {0} --- {1}", webRequester.Sequence, assetbundleName);
-                DrawAssetbundleItem(title, assetbundleName, abItemSate, assetbundleName);
+                DrawAssetbundleItem(title, assetbundleName, AbItemSate, assetbundleName);
             }
             EditorGUILayout.EndVertical();
         }
@@ -279,63 +284,71 @@ namespace AssetBundles
         {
             var instance = AssetBundleManager.Instance;
             var requesterQueue = instance.GetWebRequestQueue();
-            var iter = requesterQueue.GetEnumerator();
+            using var iter = requesterQueue.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
-                var assetbundleName = iter.Current.assetbundleName;
-                var webRequester = iter.Current;
-                string title = string.Format("Sequence : {0} --- {1}", webRequester.Sequence, assetbundleName);
-                DrawAssetbundleItem(title, assetbundleName, abItemSate, assetbundleName);
+                if (iter.Current != null)
+                {
+                    var assetBundleName = iter.Current.assetbundleName;
+                    var webRequester = iter.Current;
+                    string title = $"Sequence : {webRequester.Sequence} --- {assetBundleName}";
+                    DrawAssetbundleItem(title, assetBundleName, AbItemSate, assetBundleName);
+                }
             }
             EditorGUILayout.EndVertical();
         }
 
-        protected void OnDrawProsessingWebRequester()
+        protected void OnDrawProcessingWebRequester()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsesWebRequester();
-            var iter = prosessing.GetEnumerator();
+            var processing = instance.GetProsesWebRequester();
+            using var iter = processing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
-                var assetbundleName = iter.Current.assetbundleName;
-                var webRequester = iter.Current;
-                string title = string.Format("Sequence : {0} --- {1}", webRequester.Sequence, assetbundleName);
-                DrawAssetbundleItem(title, assetbundleName, abItemSate, assetbundleName);
+                if (iter.Current != null)
+                {
+                    var assetBundleName = iter.Current.assetbundleName;
+                    var webRequester = iter.Current;
+                    var title = $"Sequence : {webRequester.Sequence} --- {assetBundleName}";
+                    DrawAssetbundleItem(title, assetBundleName, AbItemSate, assetBundleName);
+                }
             }
             EditorGUILayout.EndVertical();
         }
 
-        protected void OnDrawProsessingAssetBundleAsyncLoader()
+        protected void OnDrawProcessingAssetBundleAsyncLoader()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsesAssetBundleAsyncLoader();
-            var iter = prosessing.GetEnumerator();
+            var processing = instance.GetProsesAssetBundleAsyncLoader();
+            using var iter = processing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
-                var assetbundleName = iter.Current.assetbundleName;
+                if (iter.Current == null) continue;
+                var assetBundleName = iter.Current.assetbundleName;
                 var loader = iter.Current;
-                string title = string.Format("Sequence : {0} --- {1}", loader.Sequence, assetbundleName);
-                DrawAssetbundleItem(title, assetbundleName, abItemSate, assetbundleName);
+                var title = $"Sequence : {loader.Sequence} --- {assetBundleName}";
+                DrawAssetbundleItem(title, assetBundleName, AbItemSate, assetBundleName);
             }
             EditorGUILayout.EndVertical();
         }
 
-        protected void OnDrawProsessingAssetAsyncLoader()
+        private void OnDrawProcessingAssetAsyncLoader()
         {
             var instance = AssetBundleManager.Instance;
-            var prosessing = instance.GetProsesAssetAsyncLoader();
-            var iter = prosessing.GetEnumerator();
+            var processing = instance.GetProsesAssetAsyncLoader();
+            using var iter = processing.GetEnumerator();
             EditorGUILayout.BeginVertical();
             while (iter.MoveNext())
             {
+                if (iter.Current == null) continue;
                 var assetName = iter.Current.AssetName;
                 var loader = iter.Current;
-                string title = string.Format("Sequence : {0} --- {1}", loader.Sequence, assetName);
-                var assetbundleName = instance.GetAssetBundleName(assetName);
-                DrawAssetbundleItem(title, assetbundleName, abItemSate, assetbundleName);
+                var title = $"Sequence : {loader.Sequence} --- {assetName}";
+                var assetBundleName = instance.GetAssetBundleName(assetName);
+                DrawAssetbundleItem(title, assetBundleName, AbItemSate, assetBundleName);
             }
             EditorGUILayout.EndVertical();
         }

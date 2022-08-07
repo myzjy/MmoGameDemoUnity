@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common.Utility;
 using Framework.AssetBundles.Utilty;
-using Script.Framework.AssetBundle;
+using ZJYFrameWork.AssetBundles;
 using UnityEngine;
 
 namespace AssetBundles.Config

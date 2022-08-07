@@ -11,7 +11,7 @@ using Framework.AssetBundles.Utilty;
 using GameData.Net;
 using Newtonsoft.Json;
 using Script.Config;
-using Script.Framework.AssetBundle;
+using ZJYFrameWork.AssetBundles;
 using Script.Framework.UI.Tip;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -20,7 +20,7 @@ using UnityEngine.UI;
 /// <summary>
 /// AssetBundleUpdater 更新
 /// </summary>
-public class AssetBundleUpdater : MonoBehaviour
+public class AssetBundleUpdater
 {
     private static int MAX_DOWNLOAD_NUM = 5;
     private static int UPDATE_SIZE_LIMIT = 5 * 1024 * 1024;
@@ -57,7 +57,6 @@ public class AssetBundleUpdater : MonoBehaviour
         // rightslider = transform.Find("rightSlider").GetComponent<Slider>();
         // leftslider.gameObject.SetActive(false);
         // rightslider.gameObject.SetActive(false);
-
     }
 
     private void Start()
@@ -71,19 +70,9 @@ public class AssetBundleUpdater : MonoBehaviour
 
     public void StartCheckUpdate()
     {
-        StartCoroutine(CheckUpdateOrDownloadGame());
-#if UNITY_EDITOR || CLIENT_DEBUG
-        TestHotfix();
-#endif
     }
-// #if UNITY_EDITOR || CLIENT_DEBUG
-    // Hotfix测试---用于测试热更模块的热修复
-    public void TestHotfix()
-    {
-        ToolsDebug.Log("********** AssetbundleUpdater : Call TestHotfix in cs...");
-    }
-// #endif
-    IEnumerator CheckUpdateOrDownloadGame()
+
+   public IEnumerator CheckUpdateOrDownloadGame()
     {
         // 初始化本地版本信息
         var start = DateTime.Now;
@@ -143,7 +132,7 @@ public class AssetBundleUpdater : MonoBehaviour
         // CustomDataStruct.Helper.Startup();
         //移除
         UINoticeTip.Instance.DestroySelf();
-        Destroy(gameObject, 0.5f);
+
         yield break;
     }
 
@@ -179,7 +168,7 @@ public class AssetBundleUpdater : MonoBehaviour
         string saveName = string.Format(APK_FILE_PATH, ChannelManager.Instance.channelName, serverAppVersion);
         // Logger.Log(string.Format("Download game : {0}", saveName));
         ChannelManager.Instance.StartDownloadGame(URLSetting.APP_DOWNLOAD_URL, DownloadGameSuccess, DownloadGameFail,
-            (int progress) =>
+            (progress) =>
             {
                 // slider.normalizedValue = progress;
             }, saveName);
@@ -187,10 +176,8 @@ public class AssetBundleUpdater : MonoBehaviour
 
     void DownloadGameSuccess()
     {
-        UINoticeTip.Instance.ShowOneButtonTip("下载完毕", "游戏下载完毕，确认安装？", "安装", () =>
-        {
-            ChannelManager.Instance.InstallGame(DownloadGameSuccess, DownloadGameFail);
-        });
+        UINoticeTip.Instance.ShowOneButtonTip("下载完毕", "游戏下载完毕，确认安装？", "安装",
+            () => { ChannelManager.Instance.InstallGame(DownloadGameSuccess, DownloadGameFail); });
     }
 
     void DownloadGameFail()
@@ -238,10 +225,9 @@ public class AssetBundleUpdater : MonoBehaviour
 
         ToolsDebug.Log(
             $"streamingResVersion = {streamingResVersion}, persistentResVersion = {persistentResVersion}, persistentNoticeVersion = {persistentNoticeVersion}");
-        yield break;
     }
 
-    IEnumerator InitSDK()
+    private IEnumerator InitSDK()
     {
 #if UNITY_EDITOR
         yield break;
@@ -327,7 +313,7 @@ public class AssetBundleUpdater : MonoBehaviour
         sb.AppendFormat("NOTIFY_URL = {0}\n", URLSetting.NOTICE_URL);
         sb.AppendFormat("APP_DOWNLOAD_URL = {0}\n", URLSetting.APP_DOWNLOAD_URL);
         sb.AppendFormat("SERVER_RESOURCE_ADDR = {0}\n", URLSetting.SERVER_RESOURCE_URL);
-        sb.AppendFormat("noticeVersion = {0}\n", ChannelManager.instance.noticeVersion);
+        sb.AppendFormat("noticeVersion = {0}\n", ChannelManager.Instance.noticeVersion);
         sb.AppendFormat("serverAppVersion = {0}\n", serverAppVersion);
         sb.AppendFormat("serverResVersion = {0}\n", serverResVersion);
         ToolsDebug.Log(sb.ToString());
@@ -354,7 +340,6 @@ public class AssetBundleUpdater : MonoBehaviour
 
         serverAppVersion = request.text.Trim().Replace("\r", "");
         request.Dispose();
-
     }
 
     IEnumerator DownloadLocalServerResVersion()
@@ -401,7 +386,6 @@ public class AssetBundleUpdater : MonoBehaviour
 
         // 从本地服务器拉一下资源版本号
         yield return DownloadLocalServerResVersion();
-
     }
 
     IEnumerator OutnetGetUrlList()
@@ -514,7 +498,8 @@ public class AssetBundleUpdater : MonoBehaviour
 
         start = DateTime.Now;
         yield return GetDownloadAssetBundlesSize();
-        ToolsDebug.Log($"GetDownloadAssetBundlesSize : {KBSizeToString(downloadSize)}, use {(DateTime.Now - start).Milliseconds}ms");
+        ToolsDebug.Log(
+            $"GetDownloadAssetBundlesSize : {KBSizeToString(downloadSize)}, use {(DateTime.Now - start).Milliseconds}ms");
         if (ShowUpdatePrompt(downloadSize) || isInternal)
         {
             UINoticeTip.Instance.ShowOneButtonTip("更新提示", $"本次更新需要消耗{KBSizeToString(downloadSize)}流量！",
@@ -556,9 +541,11 @@ public class AssetBundleUpdater : MonoBehaviour
 
         yield break;
     }
+
     private bool ShowUpdatePrompt(int downloadSize)
     {
-        if (UPDATE_SIZE_LIMIT <= 0 && Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
+        if (UPDATE_SIZE_LIMIT <= 0 &&
+            Application.internetReachability == NetworkReachability.ReachableViaLocalAreaNetwork)
         {
             // wifi不提示更新了
             return false;
@@ -566,9 +553,10 @@ public class AssetBundleUpdater : MonoBehaviour
 
         return downloadSize >= UPDATE_SIZE_LIMIT;
     }
+
     IEnumerator CheckIfNeededUpdate(bool isInternal)
     {
-        localManifest = AssetBundleManager.Instance.curManifest;
+        localManifest = AssetBundleManager.Instance.GetCurManifest;
         hostManifest = new Manifest();
 
         string downloadManifestUrl = hostManifest.AssetbundleName;
@@ -591,8 +579,9 @@ public class AssetBundleUpdater : MonoBehaviour
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " + request.url +
-                            "\n err : " + request.error);
+            ToolsDebug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " +
+                                request.url +
+                                "\n err : " + request.error);
             request.Dispose();
             if (isInternal)
             {
@@ -620,7 +609,8 @@ public class AssetBundleUpdater : MonoBehaviour
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " + request.url +
+            ToolsDebug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " +
+                                request.url +
                                 "\n err : " + request.error);
             request.Dispose();
             yield return GetDownloadAssetBundlesSize();
@@ -632,7 +622,7 @@ public class AssetBundleUpdater : MonoBehaviour
         downloadSize = 0;
         var lines = content.Split('\n');
         var lookup = new Dictionary<string, int>();
-        var separator = new[] {AssetBundleConfig.CommonMapPattren};
+        var separator = new[] { AssetBundleConfig.CommonMapPattren };
         foreach (var line in lines)
         {
             if (string.IsNullOrEmpty(line))
@@ -707,7 +697,7 @@ public class AssetBundleUpdater : MonoBehaviour
         yield break;
     }
 
-    void Update()
+    public void Update()
     {
         if (!isDownloading)
         {
@@ -764,8 +754,8 @@ public class AssetBundleUpdater : MonoBehaviour
             progressValue += (progressSlice * downloadingRequest[i].progress);
         }
 
-        rightslider.normalizedValue = progressValue;
-        leftslider.normalizedValue = progressValue;
+        // rightslider.normalizedValue = progressValue;
+        // leftslider.normalizedValue = progressValue;
     }
 
     private string KBSizeToString(int kbSize)

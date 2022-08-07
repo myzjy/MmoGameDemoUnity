@@ -6,7 +6,7 @@
 /// </summary>
 
 using System.Collections.Generic;
-using Script.Framework.AssetBundle;
+using ZJYFrameWork.AssetBundles;
 
 namespace Framework.AssetBundle.AsyncOperation
 {
