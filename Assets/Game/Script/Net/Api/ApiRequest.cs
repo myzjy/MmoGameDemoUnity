@@ -6,132 +6,128 @@ namespace ZJYFrameWork.Net
 {
     public class ApiRequest
     {
-    const float timeoutSec = 6f; //10 => 6 => 3 => 6
+        private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
 
-		internal HTTPRequest bhRequest;
+        private readonly HTTPRequest _bhRequest;
 
-		public Uri Uri { get; private set; }
-		public HTTPMethods Method { get; private set; }
+        public Uri Uri { get; private set; }
+        public HTTPMethods Method { get; private set; }
 
-		private Action<ApiRequest> onBeforeSend;
-		private Action<long, long> onProgress;
-		private Action<ApiResponse> onComplete;
-		private Action<ApiResponse> onSuccess;
-		private Action<ApiResponse> onError;
+        private Action<ApiRequest> _onBeforeSend;
+        private Action<long, long> _onProgress;
+        private Action<ApiResponse> _onComplete;
+        private Action<ApiResponse> _onSuccess;
+        private Action<ApiResponse> _onError;
 
-		System.Diagnostics.Stopwatch watch;
+        private System.Diagnostics.Stopwatch _watch;
 
 
-		public ApiRequest(HTTPMethods method, Uri uri, byte[] data = null, Action<ApiRequest> onBeforeSend = null,
-			Action<ApiResponse> onSuccess = null, Action<ApiResponse> onError = null,
-			Action<ApiResponse> onComplete = null)
-		{
-			this.Uri = uri;
-			this.Method = method;
-			this.bhRequest = new HTTPRequest(uri, method);
+        public ApiRequest(HTTPMethods method, Uri uri, byte[] data = null, Action<ApiRequest> onBeforeSend = null,
+            Action<ApiResponse> onSuccess = null, Action<ApiResponse> onError = null,
+            Action<ApiResponse> onComplete = null)
+        {
+            this.Uri = uri;
+            this.Method = method;
+            this._bhRequest = new HTTPRequest(uri, method);
 
-			// タイムアウト設定
-			bhRequest.ConnectTimeout = TimeSpan.FromSeconds(timeoutSec);
-			bhRequest.Timeout = TimeSpan.FromSeconds(timeoutSec);
+            // 超时设定
+            _bhRequest.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
+            _bhRequest.Timeout = TimeSpan.FromSeconds(TimeoutSec);
 
-			// 自動リトライは危険なのでアプリ側で制御する
-			// bhRequest.DisableRetry = true;
 
 #if !BESTHTTP_DISABLE_CACHING && (!UNITY_WEBGL || UNITY_EDITOR)
-			// キャッシュは使わない
-			bhRequest.DisableCache = true;
+            // 不使用现金
+            _bhRequest.DisableCache = true;
 #endif
 
-			bhRequest.SetHeader("Accept-Encoding", "gzip");
-			bhRequest.SetHeader("App-Version", Application.version);
-			bhRequest.SetHeader("User-Agent", UserAgent.Value);
+            _bhRequest.SetHeader("Accept-Encoding", "gzip");
+            _bhRequest.SetHeader("App-Version", Application.version);
+            _bhRequest.SetHeader("User-Agent", UserAgent.Value);
 
 
-			bhRequest.RawData = data;
-
-		
+            _bhRequest.RawData = data;
 
 
-			bhRequest.Callback = HandleResponse;
+            _bhRequest.Callback = HandleResponse;
 
-			this.onBeforeSend = onBeforeSend;
-			this.onSuccess = onSuccess;
-			this.onError = onError;
-			this.onComplete = onComplete;
-		}
+            this._onBeforeSend = onBeforeSend;
+            this._onSuccess = onSuccess;
+            this._onError = onError;
+            this._onComplete = onComplete;
+        }
 
-		public void Send(Action<long, long> onProgress = null)
-		{
-			if (this.onBeforeSend != null)
-			{
-				onBeforeSend(this);
-			}
+        public void Send(Action<long, long> onProgress = null)
+        {
+            if (this._onBeforeSend != null)
+            {
+                _onBeforeSend(this);
+            }
 
-			this.onProgress = onProgress;
+            this._onProgress = onProgress;
 
-			if (this.onProgress != null)
-			{
-				// bhRequest.OnProgress = (req, loaded, total) => this.onProgress(loaded, total);
-				this.onProgress(0, 0);
-			}
+            if (this._onProgress != null)
+            {
+                // bhRequest.OnProgress = (req, loaded, total) => this.onProgress(loaded, total);
+                this._onProgress(0, 0);
+            }
 
-			watch = new System.Diagnostics.Stopwatch();
-			watch.Start();
+            _watch = new System.Diagnostics.Stopwatch();
+            _watch.Start();
 
-			bhRequest.Send();
-		}
+            _bhRequest.Send();
+        }
 
-		public void Abort()
-		{
-			bhRequest.Abort();
-			onBeforeSend = null;
-			onComplete = null;
-			onSuccess = null;
-			onError = null;
-			watch = null;
-		}
+        public void Abort()
+        {
+            _bhRequest.Abort();
+            _onBeforeSend = null;
+            _onComplete = null;
+            _onSuccess = null;
+            _onError = null;
+            _watch = null;
+        }
 
-		public void SetHeader(string name, string value)
-		{
-			bhRequest.SetHeader(name, value);
-		}
+        public void SetHeader(string name, string value)
+        {
+            _bhRequest.SetHeader(name, value);
+        }
 
 
-		public string DumpHeaders()
-		{
-			return bhRequest.DumpHeaders();
-		}
+        public string DumpHeaders()
+        {
+            return _bhRequest.DumpHeaders();
+        }
 
-		private void HandleResponse(HTTPRequest originalBhRequest, HTTPResponse bhResponse)
-		{
-			watch.Stop();
-			long elapsedMsec = watch.ElapsedMilliseconds;
-			ApiResponse response = new ApiResponse(this, bhResponse, elapsedMsec);
+        private void HandleResponse(HTTPRequest originalBhRequest, HTTPResponse bhResponse)
+        {
+            _watch.Stop();
+            long elapsedMsec = _watch.ElapsedMilliseconds;
+            ApiResponse response = new ApiResponse(this, bhResponse, elapsedMsec);
 
-			if (onProgress != null && bhResponse != null)
-			{
-				onProgress(bhResponse.Data.Length, bhResponse.Data.Length);
-			}
+            if (_onProgress != null && bhResponse != null)
+            {
+                _onProgress(bhResponse.Data.Length, bhResponse.Data.Length);
+            }
 
-			if (response.IsSuccess)
-			{
-				if (this.onSuccess != null)
-				{
-					onSuccess(response);
-				}
-			}
-			else
-			{
-				if (this.onError != null)
-				{
-					onError(response);
-				}
-			}
+            if (response.IsSuccess)
+            {
+                if (this._onSuccess != null)
+                {
+                    _onSuccess(response);
+                }
+            }
+            else
+            {
+                if (this._onError != null)
+                {
+                    _onError(response);
+                }
+            }
 
-			if (this.onComplete != null)
-			{
-				this.onComplete(response);
-			}
-		}    
+            if (this._onComplete != null)
+            {
+                this._onComplete(response);
+            }
+        }
     }
 }
