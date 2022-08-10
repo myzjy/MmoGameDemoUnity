@@ -46,5 +46,15 @@ namespace Net.Https
             _handler.Request(api);
 
         }
+
+        private void SetAuthTokenOnce(ApiResponse response)
+        {
+#if DEVELOP_BUILD
+            if (response.StatusCode == 401)
+            {
+                //请求错误
+            }   
+#endif
+        }
     }
 }
