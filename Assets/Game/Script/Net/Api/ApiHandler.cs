@@ -46,7 +46,7 @@ namespace ZJYFrameWork.Net
 
             this.beasUrl = new Uri(baseUri);
             this.authToken = authToken;
-            ;
+            
             this.logger = Debug.unityLogger;
 
             return this;
