@@ -133,7 +133,7 @@ namespace ZJYFrameWork.UISerializable.UIModel
             var parent = GetPanelUIRoot(GetCanvasType());
             var start = DateTime.Now;
             GameObject go = Object.Instantiate(prefab, parent.transform, true);
-            ToolsDebug.Log($"Instantiate use {(DateTime.Now - start).Milliseconds}ms");
+            Debug.Log($"Instantiate use {(DateTime.Now - start).Milliseconds}ms");
             var rectTransform = go.GetComponent<RectTransform>();
             rectTransform.offsetMax = Vector2.zero;
             rectTransform.offsetMin = Vector2.zero;
@@ -155,7 +155,7 @@ namespace ZJYFrameWork.UISerializable.UIModel
 
             var obj = loader.asset as GameObject;
 #if UNITY_EDITOR
-            Debug.Log($"{PrefabName()}读取成功！！{loader.asset}");
+            UnityEngine.Debug.Log($"{PrefabName()}读取成功！！{loader.asset}");
 #endif
             var go = InstantiateGameObject(obj,
                 res =>

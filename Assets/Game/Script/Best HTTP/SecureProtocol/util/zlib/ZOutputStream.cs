@@ -76,7 +76,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Zlib
         public ZOutputStream(Stream output, ZStream z)
 			: base()
 		{
-			Debug.Assert(output.CanWrite);
+			System.Diagnostics.Debug.Assert(output.CanWrite);
 
             if (z == null)
             {
@@ -101,7 +101,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Zlib
 		public ZOutputStream(Stream output, int level, bool nowrap)
 			: base()
 		{
-			Debug.Assert(output.CanWrite);
+			System.Diagnostics.Debug.Assert(output.CanWrite);
 
 			this.output = output;
             this.compress = true;

@@ -100,7 +100,7 @@ namespace Script.Framework.UI.Tip
         {
             if (go == null)
             {
-                ToolsDebug.LogError("You should set UIGameObject first!");
+                Debug.LogError("You should set UIGameObject first!");
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace Script.Framework.UI.Tip
         {
             if (go == null)
             {
-                ToolsDebug.LogError("You should set UIGameObject first!");
+                Debug.LogError("You should set UIGameObject first!");
                 return;
             }
 
@@ -140,7 +140,7 @@ namespace Script.Framework.UI.Tip
         {
             if (go == null)
             {
-                ToolsDebug.LogError("You should set UIGameObject first!");
+                Debug.LogError("You should set UIGameObject first!");
                 return;
             }
 

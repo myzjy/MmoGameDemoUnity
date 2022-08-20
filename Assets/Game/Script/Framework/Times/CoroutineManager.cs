@@ -26,7 +26,7 @@ namespace ZJYFrameWork.Framwork.Times
             catch (Exception e)
             {
 #if UNITY_EDITOR
-                Debug.LogError($"{enumerator.ToString()}  删除错误 没有添加");
+                UnityEngine.Debug.LogError($"{enumerator.ToString()}  删除错误 没有添加");
 #endif
             }
         }

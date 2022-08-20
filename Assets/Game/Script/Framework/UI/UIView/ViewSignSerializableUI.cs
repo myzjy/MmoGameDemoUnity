@@ -49,12 +49,12 @@ namespace ZJYFrameWork.UISerializable
             {
                 //刷新根节点
                 // m_UISko.FlushData();
-                Debug.Log("刷新节点");
+                UnityEngine.Debug.Log("刷新节点");
             }
             else
             {
 #if UNITY_EDITOR
-                Debug.LogError("UISerializableKeyObject 找不到根节点");
+                UnityEngine.Debug.LogError("UISerializableKeyObject 找不到根节点");
 #endif
             }
         }
@@ -136,7 +136,7 @@ namespace ZJYFrameWork.UISerializable
                 sb.Append(str);
             }
 #if UNITY_EDITOR
-            Debug.Log(sb.ToString());
+            UnityEngine.Debug.Log(sb.ToString());
 #endif
             return sb.ToString();
         }
@@ -162,7 +162,7 @@ namespace ZJYFrameWork.UISerializable
                 sb.Append(str);
             }
 #if UNITY_EDITOR
-            Debug.Log(sb.ToString());
+            UnityEngine.Debug.Log(sb.ToString());
 #endif
             return sb.ToString();
         }

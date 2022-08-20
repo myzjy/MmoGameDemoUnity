@@ -48,7 +48,7 @@ namespace EditorCoroutines
 		{
 			while (true)
 			{
-				Debug.Log("Hello EditorCoroutine!");
+				UnityEngine.Debug.Log("Hello EditorCoroutine!");
 				yield return new WaitForSeconds(2f);
 			}
 		}
@@ -59,7 +59,7 @@ namespace EditorCoroutines
 			{
 				var www = new WWW("https://unity3d.com/");
 				yield return www;
-				Debug.Log("Hello EditorCoroutine!" + www.text);
+				UnityEngine.Debug.Log("Hello EditorCoroutine!" + www.text);
 				yield return new WaitForSeconds(2f);
 			}
 		}
@@ -69,7 +69,7 @@ namespace EditorCoroutines
 			while (true)
 			{
 				yield return new WaitForSeconds(2f);
-				Debug.Log("I'm not nested");
+				UnityEngine.Debug.Log("I'm not nested");
 				yield return this.StartCoroutine(ExampleNestedOneLayer());
 			}
 		}
@@ -77,14 +77,14 @@ namespace EditorCoroutines
 		IEnumerator ExampleNestedOneLayer()
 		{
 			yield return new WaitForSeconds(2f);
-			Debug.Log("I'm one layer nested");
+			UnityEngine.Debug.Log("I'm one layer nested");
 			yield return this.StartCoroutine(ExampleNestedTwoLayers());
 		}
 
 		IEnumerator ExampleNestedTwoLayers()
 		{
 			yield return new WaitForSeconds(2f);
-			Debug.Log("I'm two layers nested");
+			UnityEngine.Debug.Log("I'm two layers nested");
 		}
 
 
@@ -110,7 +110,7 @@ namespace EditorCoroutines
 			{
 				while (true)
 				{
-					Debug.Log("Hello EditorCoroutine!");
+					UnityEngine.Debug.Log("Hello EditorCoroutine!");
 					yield return new WaitForSeconds(2f);
 				}
 			}

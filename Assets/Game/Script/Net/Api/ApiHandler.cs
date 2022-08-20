@@ -47,7 +47,7 @@ namespace ZJYFrameWork.Net
             this.beasUrl = new Uri(baseUri);
             this.authToken = authToken;
             
-            this.logger = Debug.unityLogger;
+            this.logger = UnityEngine.Debug.unityLogger;
 
             return this;
         }
@@ -244,7 +244,7 @@ namespace ZJYFrameWork.Net
         private void LogRequest(ApiRequest request, Model data)
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
-            ToolsDebug.Log($"[ApiRequest] {request.Method.ToString().ToUpper()} {request.Uri.AbsoluteUri}\n" +
+            Debug.Log($"[ApiRequest] {request.Method.ToString().ToUpper()} {request.Uri.AbsoluteUri}\n" +
                            $"{request.DumpHeaders()}\n\n{JsonConvert.SerializeObject(data)}\n");
 #endif
         }
@@ -273,8 +273,8 @@ namespace ZJYFrameWork.Net
                 sb.Append("\n");
             }
 
-            ToolsDebug.Log($"{response.Request.Uri.AbsoluteUri}:{(Model)data}");
-            ToolsDebug.Log($"{sb.ToString()}");
+            Debug.Log($"{response.Request.Uri.AbsoluteUri}:{(Model)data}");
+            Debug.Log($"{sb.ToString()}");
 #endif
         }
     }

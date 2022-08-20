@@ -121,7 +121,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.IO
 			}
 			while (numRead < block.Length);
 
-			Debug.Assert(inStreamEnded || numRead == block.Length);
+			System.Diagnostics.Debug.Assert(inStreamEnded || numRead == block.Length);
 
 			byte[] bytes = inStreamEnded
 				?	inCipher.DoFinal(block, 0, numRead)
@@ -140,13 +140,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.IO
 			int		offset,
 			int		count)
         {
-			Debug.Assert(buffer != null);
-			Debug.Assert(0 <= offset && offset <= buffer.Length);
-			Debug.Assert(count >= 0);
+			System.Diagnostics.Debug.Assert(buffer != null);
+			System.Diagnostics.Debug.Assert(0 <= offset && offset <= buffer.Length);
+			System.Diagnostics.Debug.Assert(count >= 0);
 
 			int end = offset + count;
 
-			Debug.Assert(0 <= end && end <= buffer.Length);
+			System.Diagnostics.Debug.Assert(0 <= end && end <= buffer.Length);
 
 			if (outCipher == null)
             {

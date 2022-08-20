@@ -27,7 +27,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"SafeReadAllBytes failed! path = {inFile} with err = {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeReadAllBytes failed! path = {inFile} with err = {ex.Message}");
                 return null;
             }
         }
@@ -55,7 +55,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
                 return false;
             }
         }
@@ -98,7 +98,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"SafeClearDir failed! path = {folderPath} with err = {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeClearDir failed! path = {folderPath} with err = {ex.Message}");
                 return false;
             }
         }
@@ -161,7 +161,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"SafeDeleteFile failed! path = {filePath} with err: {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeDeleteFile failed! path = {filePath} with err: {ex.Message}");
                 return false;
             }
         }
@@ -187,7 +187,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                Debug.LogError($"SafeRenameFile failed! path = {sourceFileName} with err: {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeRenameFile failed! path = {sourceFileName} with err: {ex.Message}");
                 return false;
             }
         }
@@ -211,6 +211,7 @@ namespace Common.Utility
             }
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         public static bool SafeWriteAllBytes(string outFile, byte[] outBytes)
         {
             try
@@ -233,7 +234,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeWriteAllBytes failed! path = {outFile} with err = {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeWriteAllBytes failed! path = {outFile} with err = {ex.Message}");
                 return false;
             }
         }
@@ -257,7 +258,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeReadAllText failed! path = {inFile} with err = {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeReadAllText failed! path = {inFile} with err = {ex.Message}");
                 return null;
             }
         }
@@ -280,7 +281,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
                 return false;
             }
         }
@@ -305,7 +306,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError(
+                UnityEngine.Debug.LogError(
                     $"SafeWriteAllText failed! path = {outFile} with err = {ex.Message}");
                 return false;
             }
@@ -329,7 +330,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeWriteAllLines failed! path = {outFile} with err = {ex.Message}");
+                UnityEngine.Debug.LogError($"SafeWriteAllLines failed! path = {outFile} with err = {ex.Message}");
                 return false;
             }
         }
@@ -379,7 +380,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeDeleteFile failed! path = {filePath} with err: {ex.Message}");
+                Debug.LogError($"SafeDeleteFile failed! path = {filePath} with err: {ex.Message}");
                 return false;
             }
         }
@@ -403,7 +404,7 @@ namespace Common.Utility
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError($"SafeRenameFile failed! path = {sourceFileName} with err: {ex.Message}");
+                Debug.LogError($"SafeRenameFile failed! path = {sourceFileName} with err: {ex.Message}");
                 return false;
             }
         }

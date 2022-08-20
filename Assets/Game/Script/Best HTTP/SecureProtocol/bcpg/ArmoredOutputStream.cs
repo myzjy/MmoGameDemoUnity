@@ -48,8 +48,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
             int[]    data,
             int        len)
         {
-            Debug.Assert(len > 0);
-            Debug.Assert(len < 4);
+            System.Diagnostics.Debug.Assert(len > 0);
+            System.Diagnostics.Debug.Assert(len < 4);
 
             byte[] bs = new byte[4];
             int d1 = data[0];

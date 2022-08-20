@@ -35,7 +35,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint Inverse32(uint d)
         {
-            Debug.Assert((d & 1) == 1);
+            System.Diagnostics.Debug.Assert((d & 1) == 1);
 
             //int x = d + (((d + 1) & 4) << 1);   // d.x == 1 mod 2**4
             uint x = d;                         // d.x == 1 mod 2**3
@@ -43,16 +43,16 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
             x *= 2 - d * x;                     // d.x == 1 mod 2**12
             x *= 2 - d * x;                     // d.x == 1 mod 2**24
             x *= 2 - d * x;                     // d.x == 1 mod 2**48
-            Debug.Assert(d * x == 1);
+            System.Diagnostics.Debug.Assert(d * x == 1);
             return x;
         }
 
         public static uint ModOddInverse(uint[] m, uint[] x, uint[] z)
         {
             int len32 = m.Length;
-            Debug.Assert(len32 > 0);
-            Debug.Assert((m[0] & 1) != 0);
-            Debug.Assert(m[len32 - 1] != 0);
+            System.Diagnostics.Debug.Assert(len32 > 0);
+            System.Diagnostics.Debug.Assert((m[0] & 1) != 0);
+            System.Diagnostics.Debug.Assert(m[len32 - 1] != 0);
 
             int bits = (len32 << 5) - Integers.NumberOfLeadingZeros((int)m[len32 - 1]);
             int len30 = (bits + 29) / 30;
@@ -91,7 +91,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
             CNormalize30(len30, signF, D, M);
 
             Decode30(bits, D, 0, z, 0);
-            Debug.Assert(0 != Nat.LessThan(len32, z, m));
+            System.Diagnostics.Debug.Assert(0 != Nat.LessThan(len32, z, m));
 
             return (uint)(EqualTo(len30, F, 1) & EqualToZero(len30, G));
         }
@@ -99,9 +99,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
         public static bool ModOddInverseVar(uint[] m, uint[] x, uint[] z)
         {
             int len32 = m.Length;
-            Debug.Assert(len32 > 0);
-            Debug.Assert((m[0] & 1) != 0);
-            Debug.Assert(m[len32 - 1] != 0);
+            System.Diagnostics.Debug.Assert(len32 > 0);
+            System.Diagnostics.Debug.Assert((m[0] & 1) != 0);
+            System.Diagnostics.Debug.Assert(m[len32 - 1] != 0);
 
             int bits = (len32 << 5) - Integers.NumberOfLeadingZeros((int)m[len32 - 1]);
             int len30 = (bits + 29) / 30;
@@ -168,7 +168,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 signD = Negate30(lenDE, D);
                 signF = Negate30(lenFG, F);
             }
-            Debug.Assert(0 == signF);
+            System.Diagnostics.Debug.Assert(0 == signF);
 
             if (!IsOne(lenFG, F))
                 return false;
@@ -177,10 +177,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
             {
                 signD = Add30(lenDE, D, M);
             }
-            Debug.Assert(0 == signD);
+            System.Diagnostics.Debug.Assert(0 == signD);
 
             Decode30(bits, D, 0, z, 0);
-            Debug.Assert(!Nat.Gte(len32, z, m));
+            System.Diagnostics.Debug.Assert(!Nat.Gte(len32, z, m));
 
             return true;
         }
@@ -211,9 +211,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static int Add30(int len30, int[] D, int[] M)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(D.Length >= len30);
-            Debug.Assert(M.Length >= len30);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(D.Length >= len30);
+            System.Diagnostics.Debug.Assert(M.Length >= len30);
 
             int c = 0, last = len30 - 1;
             for (int i = 0; i < last; ++i)
@@ -228,8 +228,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static void CNegate30(int len30, int cond, int[] D)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(D.Length >= len30);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(D.Length >= len30);
 
             int c = 0, last = len30 - 1;
             for (int i = 0; i < last; ++i)
@@ -243,9 +243,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static void CNormalize30(int len30, int condNegate, int[] D, int[] M)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(D.Length >= len30);
-            Debug.Assert(M.Length >= len30);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(D.Length >= len30);
+            System.Diagnostics.Debug.Assert(M.Length >= len30);
 
             int last = len30 - 1;
 
@@ -275,13 +275,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                     int di = D[last] + (M[last] & condAdd);
                     c += di; D[last] = c;
                 }
-                Debug.Assert(c >> 30 == 0);
+                System.Diagnostics.Debug.Assert(c >> 30 == 0);
             }
         }
 
         private static void Decode30(int bits, int[] x, int xOff, uint[] z, int zOff)
         {
-            Debug.Assert(bits > 0);
+            System.Diagnostics.Debug.Assert(bits > 0);
 
             int avail = 0;
             ulong data = 0L;
@@ -307,9 +307,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
             for (int i = 0; i < 30; ++i)
             {
-                Debug.Assert((f & 1) == 1);
-                Debug.Assert((u * f0 + v * g0) == f << i);
-                Debug.Assert((q * f0 + r * g0) == g << i);
+                System.Diagnostics.Debug.Assert((f & 1) == 1);
+                System.Diagnostics.Debug.Assert((u * f0 + v * g0) == f << i);
+                System.Diagnostics.Debug.Assert((q * f0 + r * g0) == g << i);
 
                 int c1 = eta >> 31;
                 int c2 = -(g & 1);
@@ -362,10 +362,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 if (i <= 0)
                     break;
 
-                Debug.Assert((f & 1) == 1);
-                Debug.Assert((g & 1) == 1);
-                Debug.Assert((u * f0 + v * g0) == f << (30 - i));
-                Debug.Assert((q * f0 + r * g0) == g << (30 - i));
+                System.Diagnostics.Debug.Assert((f & 1) == 1);
+                System.Diagnostics.Debug.Assert((g & 1) == 1);
+                System.Diagnostics.Debug.Assert((u * f0 + v * g0) == f << (30 - i));
+                System.Diagnostics.Debug.Assert((q * f0 + r * g0) == g << (30 - i));
 
                 if (eta < 0)
                 {
@@ -394,7 +394,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 q += u * w;
                 r += v * w;
 
-                Debug.Assert((g & m) == 0);
+                System.Diagnostics.Debug.Assert((g & m) == 0);
             }
 
             t[0] = u;
@@ -407,7 +407,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static void Encode30(int bits, uint[] x, int xOff, int[] z, int zOff)
         {
-            Debug.Assert(bits > 0);
+            System.Diagnostics.Debug.Assert(bits > 0);
 
             int avail = 0;
             ulong data = 0UL;
@@ -487,8 +487,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static int Negate30(int len30, int[] D)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(D.Length >= len30);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(D.Length >= len30);
 
             int c = 0, last = len30 - 1;
             for (int i = 0; i < last; ++i)
@@ -503,11 +503,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static void UpdateDE30(int len30, int[] D, int[] E, int[] t, int m0Inv32, int[] M)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(D.Length >= len30);
-            Debug.Assert(E.Length >= len30);
-            Debug.Assert(M.Length >= len30);
-            Debug.Assert(m0Inv32 * M[0] == 1);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(D.Length >= len30);
+            System.Diagnostics.Debug.Assert(E.Length >= len30);
+            System.Diagnostics.Debug.Assert(M.Length >= len30);
+            System.Diagnostics.Debug.Assert(m0Inv32 * M[0] == 1);
 
             int u = t[0], v = t[1], q = t[2], r = t[3];
             int di, ei, i, md, me, mi, sd, se;
@@ -542,8 +542,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
             cd += (long)mi * md;
             ce += (long)mi * me;
 
-            Debug.Assert(((int)cd & M30) == 0);
-            Debug.Assert(((int)ce & M30) == 0);
+            System.Diagnostics.Debug.Assert(((int)cd & M30) == 0);
+            System.Diagnostics.Debug.Assert(((int)ce & M30) == 0);
 
             cd >>= 30;
             ce >>= 30;
@@ -567,9 +567,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         private static void UpdateFG30(int len30, int[] F, int[] G, int[] t)
         {
-            Debug.Assert(len30 > 0);
-            Debug.Assert(F.Length >= len30);
-            Debug.Assert(G.Length >= len30);
+            System.Diagnostics.Debug.Assert(len30 > 0);
+            System.Diagnostics.Debug.Assert(F.Length >= len30);
+            System.Diagnostics.Debug.Assert(G.Length >= len30);
 
             int u = t[0], v = t[1], q = t[2], r = t[3];
             int fi, gi, i;
@@ -581,8 +581,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
             cf = (long)u * fi + (long)v * gi;
             cg = (long)q * fi + (long)r * gi;
 
-            Debug.Assert(((int)cf & M30) == 0);
-            Debug.Assert(((int)cg & M30) == 0);
+            System.Diagnostics.Debug.Assert(((int)cf & M30) == 0);
+            System.Diagnostics.Debug.Assert(((int)cg & M30) == 0);
 
             cf >>= 30;
             cg >>= 30;

@@ -170,7 +170,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
                 c += (ulong)z[3] + (x4 << 1);
                 z[3] = (uint)c; c >>= 32;
 
-                Debug.Assert(c >= 0 && c <= 2);
+                System.Diagnostics.Debug.Assert(c >= 0 && c <= 2);
 
                 x = (uint)c;
             }
@@ -190,7 +190,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         public static void SquareN(uint[] x, int n, uint[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             uint[] tt = Nat128.CreateExt();
             Nat128.Square(x, tt);

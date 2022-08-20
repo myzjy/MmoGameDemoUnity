@@ -105,7 +105,7 @@ namespace ZJYFrameWork.AssetBundleLoader.Build
 
             if (!update) return false;
             UpdateDataAsset(newAsset);
-            Debug.Log("update manifest asset.");
+            UnityEngine.Debug.Log("update manifest asset.");
 
             return true;
         }
@@ -315,7 +315,7 @@ namespace ZJYFrameWork.AssetBundleLoader.Build
             };
             var assetBundleManifest =
                 BuildPipeline.BuildAssetBundles(BundleOutputPath, new[] { build }, option, target);
-            Debug.Log($"hash:{assetBundleManifest.GetAssetBundleHash(dataAssetBundleName)}");
+            UnityEngine.Debug.Log($"hash:{assetBundleManifest.GetAssetBundleHash(dataAssetBundleName)}");
             MoveFiles(tmpManifestPaths, manifestPaths);
             AssetDatabase.Refresh();
         }

@@ -75,22 +75,22 @@ public class BuildPlayer : Editor
         {
             start = DateTime.Now;
             CheckAssetBundles.SwitchChannel(channelName);
-            Debug.Log("Finished CheckAssetBundles.SwitchChannel! use " + (DateTime.Now - start).TotalSeconds + "s");
+            UnityEngine.Debug.Log("Finished CheckAssetBundles.SwitchChannel! use " + (DateTime.Now - start).TotalSeconds + "s");
         }
 
         start = DateTime.Now;
         InnerBuildAssetBundles(buildTarget, channelName, true);
-        Debug.Log("Finished InnerBuildAssetBundles! use " + (DateTime.Now - start).TotalSeconds + "s");
+        UnityEngine.Debug.Log("Finished InnerBuildAssetBundles! use " + (DateTime.Now - start).TotalSeconds + "s");
 
         var targetName = PackageUtils.GetPlatformName(buildTarget);
-        Debug.Log(string.Format("Build assetbundles for platform : {0} and channel : {1} done!", targetName, channelName));
+        UnityEngine.Debug.Log(string.Format("Build assetbundles for platform : {0} and channel : {1} done!", targetName, channelName));
     }
 
     public static void BuildAssetBundlesForAllChannels(BuildTarget buildTarget)
     {
         bool buildForPerChannel = PackageUtils.BuildAssetBundlesForPerChannel(buildTarget);
         var targetName = PackageUtils.GetPlatformName(buildTarget);
-        Debug.Assert(buildForPerChannel == true);
+        UnityEngine.Debug.Assert(buildForPerChannel == true);
 
         // XLuaMenu.CopyLuaFilesToAssetsPackage();
         PackageUtils.CheckAndRunAllCheckers(buildForPerChannel, false);
@@ -112,10 +112,10 @@ public class BuildPlayer : Editor
             buildAssetbundles = (DateTime.Now - start).TotalSeconds;
 
             index++;
-            Debug.Log(string.Format("{0}.Build assetbundles for platform : {1} and channel : {2} done! use time : switchChannel = {3}s , build assetbundls = {4} s", index, targetName, channelName, switchChannel, buildAssetbundles));
+            UnityEngine.Debug.Log(string.Format("{0}.Build assetbundles for platform : {1} and channel : {2} done! use time : switchChannel = {3}s , build assetbundls = {4} s", index, targetName, channelName, switchChannel, buildAssetbundles));
         }
 
-        Debug.Log(string.Format("Build assetbundles for platform : {0} for all {1} channels done!", targetName, index));
+        UnityEngine.Debug.Log(string.Format("Build assetbundles for platform : {0} for all {1} channels done!", targetName, index));
     }
 
     public static void BuildAssetBundlesForCurSetting()
@@ -170,7 +170,7 @@ public class BuildPlayer : Editor
         }
         string outputPath = Path.Combine(Application.persistentDataPath, AssetBundleConfig.AssetBundlesFolderName);
         GameUtility.SafeDeleteDir(outputPath);
-        Debug.Log(string.Format("Build android player for : {0} done! output ：{1}", channelName, savePath));
+        UnityEngine.Debug.Log(string.Format("Build android player for : {0} done! output ：{1}", channelName, savePath));
     }
     
     public static void BuildXCode(string channelName, bool isTest)

@@ -85,7 +85,7 @@ namespace AssetBundles
 
                 if (!isValid)
                 {
-                    Debug.LogError("AssetBundlesImporter is not valid!");
+                    UnityEngine.Debug.LogError("AssetBundlesImporter is not valid!");
                 }
                 return isValid;
             }

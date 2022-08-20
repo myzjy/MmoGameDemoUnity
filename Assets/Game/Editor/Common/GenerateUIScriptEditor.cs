@@ -61,7 +61,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             }
             else
             {
-                Debug.LogError("当前项目找不到csproj文件,生成引用失败");
+                UnityEngine.Debug.LogError("当前项目找不到csproj文件,生成引用失败");
             }
 
             foreach (var item in UIInfos)
@@ -81,7 +81,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     var UIView = UISelfObj.GetComponent<UIView>();
                     if (UIView == null)
                     {
-                        Debug.LogError($"{path} 预制体 没有UIView组件");
+                        UnityEngine.Debug.LogError($"{path} 预制体 没有UIView组件");
                         continue;
                     }
 
@@ -106,7 +106,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     //方法体 替换
                     classStr = classStr.Replace("${Init}", initStr);
                     var OutPutFileFUllPath = $"{outputPath}{className}.cs";
-                    Debug.Log($"创建脚本目录:{OutPutFileFUllPath}");
+                    UnityEngine.Debug.Log($"创建脚本目录:{OutPutFileFUllPath}");
 
                     var stream = new FileStream(OutPutFileFUllPath, FileMode.Create, FileAccess.Write);
                     var fileWrite = new StreamWriter(stream, System.Text.Encoding.UTF8);
@@ -114,8 +114,8 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     fileWrite.Flush();
                     fileWrite.Close();
                     stream.Close();
-                    Debug.LogError($"创建脚本{OutPutFileFUllPath}成功!!!!");
-                    Debug.LogError(classStr);
+                    UnityEngine.Debug.LogError($"创建脚本{OutPutFileFUllPath}成功!!!!");
+                    UnityEngine.Debug.LogError(classStr);
                     if (!string.IsNullOrEmpty(csproStr))
                     {
                         if (!Regex.IsMatch(csproStr, $"{className}.cs"))
@@ -129,7 +129,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                             fileWrite.Flush();
                             fileWrite.Close();
                             stream.Close();
-                            Debug.Log("生成Csproj配置文件成功!!!");
+                            UnityEngine.Debug.Log("生成Csproj配置文件成功!!!");
                         }
                     }
                 }

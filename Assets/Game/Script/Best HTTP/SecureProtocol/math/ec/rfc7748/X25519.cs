@@ -96,7 +96,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
             int[] t1 = F.Create();
             int[] t2 = F.Create();
 
-            Debug.Assert(n[7] >> 30 == 1U);
+            System.Diagnostics.Debug.Assert(n[7] >> 30 == 1U);
 
             int bit = 254, swap = 1;
             do
@@ -130,7 +130,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
             }
             while (bit >= 3);
 
-            Debug.Assert(swap == 0);
+            System.Diagnostics.Debug.Assert(swap == 0);
 
             for (int i = 0; i < 3; ++i)
             {

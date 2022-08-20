@@ -147,7 +147,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             ulong cc = Nat192.Mul33Add(PInv33, xx, 6, xx, 0, z, 0);
             uint c = Nat192.Mul33DWordAdd(PInv33, cc, z, 0);
 
-            Debug.Assert(c == 0 || c == 1);
+            System.Diagnostics.Debug.Assert(c == 0 || c == 1);
 
             if (c != 0 || (z[5] == P5 && Nat192.Gte(z, P)))
             {
@@ -173,7 +173,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         public static void SquareN(uint[] x, int n, uint[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             uint[] tt = Nat192.CreateExt();
             Nat192.Square(x, tt);

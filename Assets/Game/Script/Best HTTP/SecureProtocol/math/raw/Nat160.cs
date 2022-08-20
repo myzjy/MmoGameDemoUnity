@@ -417,7 +417,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static ulong Mul33Add(uint w, uint[] x, int xOff, uint[] y, int yOff, uint[] z, int zOff)
         {
-            Debug.Assert(w >> 31 == 0);
+            System.Diagnostics.Debug.Assert(w >> 31 == 0);
 
             ulong c = 0, wVal = w;
             ulong x0 = x[xOff + 0];
@@ -446,8 +446,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint MulWordAddExt(uint x, uint[] yy, int yyOff, uint[] zz, int zzOff)
         {
-            Debug.Assert(yyOff <= 5);
-            Debug.Assert(zzOff <= 5);
+            System.Diagnostics.Debug.Assert(yyOff <= 5);
+            System.Diagnostics.Debug.Assert(zzOff <= 5);
 
             ulong c = 0, xVal = x;
             c += xVal * yy[yyOff + 0] + zz[zzOff + 0];
@@ -470,8 +470,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint Mul33DWordAdd(uint x, ulong y, uint[] z, int zOff)
         {
-            Debug.Assert(x >> 31 == 0);
-            Debug.Assert(zOff <= 1);
+            System.Diagnostics.Debug.Assert(x >> 31 == 0);
+            System.Diagnostics.Debug.Assert(zOff <= 1);
             ulong c = 0, xVal = x;
             ulong y00 = y & M;
             c += xVal * y00 + z[zOff + 0];
@@ -492,8 +492,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint Mul33WordAdd(uint x, uint y, uint[] z, int zOff)
         {
-            Debug.Assert(x >> 31 == 0);
-            Debug.Assert(zOff <= 2);
+            System.Diagnostics.Debug.Assert(x >> 31 == 0);
+            System.Diagnostics.Debug.Assert(zOff <= 2);
             ulong c = 0, yVal = y;
             c += yVal * x + z[zOff + 0];
             z[zOff + 0] = (uint)c;
@@ -509,7 +509,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint MulWordDwordAdd(uint x, ulong y, uint[] z, int zOff)
         {
-            Debug.Assert(zOff <= 2);
+            System.Diagnostics.Debug.Assert(zOff <= 2);
             ulong c = 0, xVal = x;
             c += xVal * y + z[zOff + 0];
             z[zOff + 0] = (uint)c;
@@ -525,7 +525,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint MulWordsAdd(uint x, uint y, uint[] z, int zOff)
         {
-            Debug.Assert(zOff <= 3);
+            System.Diagnostics.Debug.Assert(zOff <= 3);
 
             ulong c = 0, xVal = x, yVal = y;
             c += yVal * xVal + z[zOff + 0];

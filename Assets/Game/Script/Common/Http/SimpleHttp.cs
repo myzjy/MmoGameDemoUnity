@@ -40,7 +40,7 @@ namespace Common.Http
             }
             catch (Exception ex)
             {
-                ToolsDebug.LogError("http timeout callback got exception " + ex.Message + "\n" + ex.StackTrace);
+                Debug.LogError("http timeout callback got exception " + ex.Message + "\n" + ex.StackTrace);
             }
 
             DestroyImmediate(gameObject);
@@ -119,8 +119,8 @@ namespace Common.Http
             }
             catch (Exception ex)
             {
-                ToolsDebug.LogError("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
-                ToolsDebug.Log("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
+                Debug.LogError("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
+                Debug.Log("http complete callback got exception " + ex.Message + "\n" + ex.StackTrace);
             }
 
             DestroyImmediate(gameObject);

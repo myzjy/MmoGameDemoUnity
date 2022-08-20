@@ -50,7 +50,7 @@
             }
             catch (System.Exception ex)
             {
-                ToolsDebug.LogError(
+                Debug.LogError(
                     $"parse version error. clientversion: {sourceVersion} serverversion: {targetVersion}\n {ex.Message}\n{ex.StackTrace}");
                 return false;
             }

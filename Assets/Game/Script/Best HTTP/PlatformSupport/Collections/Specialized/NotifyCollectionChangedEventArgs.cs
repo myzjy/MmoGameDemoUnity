@@ -288,7 +288,7 @@ namespace PlatformSupport.Collections.Specialized
             else if (action == PlatformSupport.Collections.Specialized.NotifyCollectionChangedAction.Remove)
                 InitializeRemove(action, changedItems, startingIndex);
             else
-                Debug.Assert(false, String.Format("Unsupported action: {0}", action.ToString()));
+                System.Diagnostics.Debug.Assert(false, String.Format("Unsupported action: {0}", action.ToString()));
         }
 
         private void InitializeAdd(PlatformSupport.Collections.Specialized.NotifyCollectionChangedAction action, IList newItems, int newStartingIndex)
@@ -375,7 +375,7 @@ namespace PlatformSupport.Collections.Specialized
 
         internal ReadOnlyList(IList list)
         {
-            Debug.Assert(list != null);
+            System.Diagnostics.Debug.Assert(list != null);
 
             _list = list;
         }

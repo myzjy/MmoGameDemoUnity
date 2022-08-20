@@ -171,7 +171,7 @@ namespace GameDataEditor.Common
                     if (isChange)
                     {
                         SettedCount++;
-                        Debug.Log(file, obj);
+                        UnityEngine.Debug.Log(file, obj);
                     }
 
                     if (jump)
@@ -181,13 +181,13 @@ namespace GameDataEditor.Common
                 }
                 catch (Exception e)
                 {
-                    Debug.Log($"{file}:{e.Message}");
+                    UnityEngine.Debug.Log($"{file}:{e.Message}");
                 }
             }
 
             EditorUtility.ClearProgressBar();
-            Debug.Log(DateTime.Now);
-            Debug.Log($"图片操作完成：{SettedCount}");
+            UnityEngine.Debug.Log(DateTime.Now);
+            UnityEngine.Debug.Log($"图片操作完成：{SettedCount}");
             AssetDatabase.Refresh();
         }
 

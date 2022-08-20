@@ -18,7 +18,7 @@ namespace ZJYFrameWork.UISerializable.Manager
                 //事件是否为同一种
                 if (UIEventNotificationDict[name].GetInvocationList().Contains(eventAction))
                 {
-                    Debug.LogError($"Error:多个相同事件通知器,检查{name}");
+                    UnityEngine.Debug.LogError($"Error:多个相同事件通知器,检查{name}");
                 }
                 else
                 {

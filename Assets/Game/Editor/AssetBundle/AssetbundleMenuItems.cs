@@ -197,7 +197,7 @@ namespace AssetBundleEditorTools.AssetBundleSet
 
             string outputPath = PackageUtils.GetCurBuildSettingAssetBundleOutputPath();
             GameUtility.SafeDeleteDir(outputPath);
-            Debug.Log($"Clear done : {outputPath}");
+            UnityEngine.Debug.Log($"Clear done : {outputPath}");
         }
 
         [MenuItem(kToolsClearStreamingAssets, false, 1303)]
@@ -214,7 +214,7 @@ namespace AssetBundleEditorTools.AssetBundleSet
             string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
             GameUtility.SafeClearDir(outputPath);
             AssetDatabase.Refresh();
-            Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle streaming assets done!");
+            UnityEngine.Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle streaming assets done!");
         }
 
         [MenuItem(kToolsClearPersistentAssets, false, 1301)]
@@ -230,7 +230,7 @@ namespace AssetBundleEditorTools.AssetBundleSet
 
             string outputPath = Path.Combine(Application.persistentDataPath, AssetBundleConfig.AssetBundlesFolderName);
             GameUtility.SafeDeleteDir(outputPath);
-            Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle persistent assets done!");
+            UnityEngine.Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle persistent assets done!");
         }
 
         [MenuItem(kCreateAssetbundleForFile)]
@@ -269,9 +269,9 @@ namespace AssetBundleEditorTools.AssetBundleSet
 
             if (removeList.Count > 0)
             {
-                Debug.Log("CreateAssetbundleForCurrent done!\nRemove list :" +
-                          "\n-------------------------------------------\n" + $"{removeStr}" +
-                          "\n-------------------------------------------\n");
+                UnityEngine.Debug.Log("CreateAssetbundleForCurrent done!\nRemove list :" +
+                                      "\n-------------------------------------------\n" + $"{removeStr}" +
+                                      "\n-------------------------------------------\n");
             }
         }
 
@@ -300,9 +300,9 @@ namespace AssetBundleEditorTools.AssetBundleSet
 
             if (removeList.Count > 0)
             {
-                Debug.Log("CreateAssetbundleForChildren done!\nRemove list :" +
-                          "\n-------------------------------------------\n" + $"{removeStr}" +
-                          "\n-------------------------------------------\n");
+                UnityEngine.Debug.Log("CreateAssetbundleForChildren done!\nRemove list :" +
+                                      "\n-------------------------------------------\n" + $"{removeStr}" +
+                                      "\n-------------------------------------------\n");
             }
         }
 
@@ -319,9 +319,9 @@ namespace AssetBundleEditorTools.AssetBundleSet
                 selStr.Append($"[{++i}]{AssetDatabase.GetAssetPath(obj)};");
             }
 
-            Debug.Log($"Selection({selStr.ToString()}) depends on the following assets:" +
-                      "\n-------------------------------------------\n" + $"{depsStr}" +
-                      "\n-------------------------------------------\n");
+            UnityEngine.Debug.Log($"Selection({selStr.ToString()}) depends on the following assets:" +
+                                  "\n-------------------------------------------\n" + $"{depsStr}" +
+                                  "\n-------------------------------------------\n");
             AssetBundleEditorHelper.SelectDependency(selObjs, false);
         }
 
@@ -359,9 +359,9 @@ namespace AssetBundleEditorTools.AssetBundleSet
             selStr = selObjs.Aggregate(selStr,
                 (current, obj) => current + $"[{++i}]{AssetDatabase.GetAssetPath(obj)};");
 
-            Debug.Log($"Selection({selStr}) directly depends on the following assetbundles:" +
-                      "\n-------------------------------------------\n" + $"{depsStr}" +
-                      "\n-------------------------------------------\n");
+            UnityEngine.Debug.Log($"Selection({selStr}) directly depends on the following assetbundles:" +
+                                  "\n-------------------------------------------\n" + $"{depsStr}" +
+                                  "\n-------------------------------------------\n");
         }
     }
 }

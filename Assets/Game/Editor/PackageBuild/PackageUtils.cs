@@ -116,7 +116,7 @@ public class PackageUtils
             ips.Sort();
             if (ips.Count <= 0)
             {
-                ToolsDebug.LogError("Get inter network ip failed!");
+                Debug.LogError("Get inter network ip failed!");
             }
             else
             {
@@ -125,8 +125,8 @@ public class PackageUtils
         }
         catch (System.Exception ex)
         {
-            ToolsDebug.LogError($"Get inter network ip failed with err : { ex.Message}");
-            ToolsDebug.LogError("Go Tools/Package to specify any machine as local server!!!");
+            Debug.LogError($"Get inter network ip failed with err : { ex.Message}");
+            Debug.LogError("Go Tools/Package to specify any machine as local server!!!");
         }
         return string.Empty;
     }
@@ -155,7 +155,7 @@ public class PackageUtils
             case BuildTarget.iOS:
                 return "iOS";
             default:
-                ToolsDebug.LogError("Error buildTarget!!!");
+                Debug.LogError("Error buildTarget!!!");
                 return null;
         }
     }
@@ -267,7 +267,7 @@ public class PackageUtils
         FileInfo fileInfo = new FileInfo(manifestPath);
         if (!fileInfo.Exists)
         {
-            Debug.LogError("You need to build assetbundles first to get assetbundle dependencis info!");
+            UnityEngine.Debug.LogError("You need to build assetbundles first to get assetbundle dependencis info!");
             return null;
         }
         byte[] bytes = GameUtility.SafeReadAllBytes(fileInfo.FullName);
@@ -296,7 +296,7 @@ public class PackageUtils
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("Something wrong, you need manual delete AssetBundles folder in StreamingAssets, err : " + ex);
+            UnityEngine.Debug.LogError("Something wrong, you need manual delete AssetBundles folder in StreamingAssets, err : " + ex);
             return;
         }
 
@@ -317,14 +317,14 @@ public class PackageUtils
         var buildTarget = EditorUserBuildSettings.activeBuildTarget;
         var channelName = GetCurSelectedChannel().ToString();
         CopyAssetBundlesToStreamingAssets(buildTarget, channelName);
-        Debug.Log("Copy channel assetbundles to streaming assets done!");
+        UnityEngine.Debug.Log("Copy channel assetbundles to streaming assets done!");
     }
 
     public static void CheckAndAddSymbolIfNeeded(BuildTarget buildTarget, string targetSymbol)
     {
         if (buildTarget != BuildTarget.Android && buildTarget != BuildTarget.iOS)
         {
-            Debug.LogError("Only support Android and IOS !");
+            UnityEngine.Debug.LogError("Only support Android and IOS !");
             return;
         }
 
@@ -345,7 +345,7 @@ public class PackageUtils
             AssetBundleDispatcherInspector.hasAnythingModified = false;
             var start = DateTime.Now;
             CheckAssetBundles.Run(buildForPerChannel);
-            Debug.Log("Finished CheckAssetBundles.Run! use " + (DateTime.Now - start).TotalSeconds + "s");
+            UnityEngine.Debug.Log("Finished CheckAssetBundles.Run! use " + (DateTime.Now - start).TotalSeconds + "s");
         }
     }
     

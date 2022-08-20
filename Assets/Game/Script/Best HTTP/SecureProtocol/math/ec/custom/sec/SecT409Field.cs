@@ -218,7 +218,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             z[5] =                                (c2 << 13) ^ (c1 >> 51);
             z[6] =                                (c3 << 13) ^ (c2 >> 51);
 
-            Debug.Assert((c3 >> 51) == 0);
+            System.Diagnostics.Debug.Assert((c3 >> 51) == 0);
         }
 
         public static void Square(ulong[] x, ulong[] z)
@@ -237,7 +237,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         public static void SquareN(ulong[] x, int n, ulong[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             ulong[] tt = Nat.Create64(13);
             ImplSquare(x, tt);
@@ -355,8 +355,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         protected static void ImplMulwAcc(ulong[] u, ulong x, ulong y, ulong[] z, int zOff)
         {
-            Debug.Assert(x >> 59 == 0);
-            Debug.Assert(y >> 59 == 0);
+            System.Diagnostics.Debug.Assert(x >> 59 == 0);
+            System.Diagnostics.Debug.Assert(y >> 59 == 0);
 
             //u[0] = 0;
             u[1] = y;
@@ -381,7 +381,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             }
             while ((k -= 6) > 0);
 
-            Debug.Assert(h >> 53 == 0);
+            System.Diagnostics.Debug.Assert(h >> 53 == 0);
 
             z[zOff    ] ^= l & M59;
             z[zOff + 1] ^= (l >> 59) ^ (h << 5);

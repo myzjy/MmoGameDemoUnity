@@ -235,7 +235,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.OpenSsl
             //
             // extract the key
             //
-            Debug.Assert(BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(pemObject.Type, "PRIVATE KEY"));
+            System.Diagnostics.Debug.Assert(BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(pemObject.Type, "PRIVATE KEY"));
 
             string type = pemObject.Type.Substring(0, pemObject.Type.Length - "PRIVATE KEY".Length).Trim();
             byte[] keyBytes = pemObject.Content;

@@ -104,7 +104,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
 
         public static void CMov(int cond, uint[] x, int xOff, uint[] z, int zOff)
         {
-            Debug.Assert(0 == cond || -1 == cond);
+            System.Diagnostics.Debug.Assert(0 == cond || -1 == cond);
 
             uint MASK = (uint)cond;
 
@@ -118,7 +118,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
 
         public static void CNegate(int negate, uint[] z)
         {
-            Debug.Assert(negate >> 1 == 0);
+            System.Diagnostics.Debug.Assert(negate >> 1 == 0);
 
             uint[] t = Create();
             Sub(t, z, t);
@@ -146,8 +146,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
 
         public static void CSwap(int swap, uint[] a, uint[] b)
         {
-            Debug.Assert(swap >> 1 == 0);
-            Debug.Assert(a != b);
+            System.Diagnostics.Debug.Assert(swap >> 1 == 0);
+            System.Diagnostics.Debug.Assert(a != b);
 
             uint mask = (uint)(0 - swap);
             for (int i = 0; i < Size; ++i)
@@ -727,7 +727,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
             //int x = (z[15] >> (28 - 1)) & 1;
             Reduce(z, 1);
             Reduce(z, -1);
-            Debug.Assert(z[15] >> 28 == 0U);
+            System.Diagnostics.Debug.Assert(z[15] >> 28 == 0U);
         }
 
         public static void One(uint[] z)
@@ -1020,7 +1020,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc7748
 
         public static void Sqr(uint[] x, int n, uint[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             Sqr(x, z);
 

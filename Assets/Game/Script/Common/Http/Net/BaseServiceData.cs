@@ -29,13 +29,13 @@ namespace GameSystem.ServiceDataPro
         public void RequestSeverPost(string urlName, Dictionary<string, string> formData,
             byte[] byteData, Action<HttpResponse> call, int timsout)
         {
-            Debug.Log($"{urlName}");
+            UnityEngine.Debug.Log($"{urlName}");
             ServericeBase _base = CreatePos();
             _base._querydict = formData;
             _serviceLoad.ServiceLoadJsonBgThread(urlName, _base, call.Execute, () =>
             {
 #if UNITY_EDITOR
-                ToolsDebug.Log("服务器链接 成功 数据返回成功");
+                Debug.Log("服务器链接 成功 数据返回成功");
 #endif
             }, res => { }, byteData, timsout);
         }

@@ -27,7 +27,7 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public virtual void OnHide()
         {
-            Debug.Log("隐藏");
+            UnityEngine.Debug.Log("隐藏");
             SelfUIView.OnClose();
         }
 

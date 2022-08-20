@@ -137,7 +137,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
         public static void Reduce(uint[] xx, uint[] z)
         {
-            Debug.Assert(xx[15] >> 30 == 0);
+            System.Diagnostics.Debug.Assert(xx[15] >> 30 == 0);
 
             uint xx07 = xx[7];
             Nat.ShiftUpBit(8, xx, 8, xx07, z, 0);
@@ -155,7 +155,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
         public static void Reduce27(uint x, uint[] z)
         {
-            Debug.Assert(x >> 26 == 0);
+            System.Diagnostics.Debug.Assert(x >> 26 == 0);
 
             uint z7 = z[7];
             uint c = (x << 1 | z7 >> 31);
@@ -177,7 +177,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
         public static void SquareN(uint[] x, int n, uint[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             uint[] tt = Nat256.CreateExt();
             Nat256.Square(x, tt);

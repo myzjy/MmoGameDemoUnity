@@ -40,9 +40,9 @@ namespace AssetBundles
                 string[] assetPaths = AssetDatabase.GetAssetPathsFromAssetBundle(assetbundle);
                 foreach (string assetPath in assetPaths)
                 {
-                    Debug.Log($"assetPath-->{assetPath}");
+                    UnityEngine.Debug.Log($"assetPath-->{assetPath}");
                     string packagePath = AssetBundleUtility.AssetsPathToPackagePath(assetPath);
-                    Debug.Log($"packagePath-->{packagePath}");
+                    UnityEngine.Debug.Log($"packagePath-->{packagePath}");
 
                     string mappingItem = $"{assetbundle}{PATTREN}{packagePath}";
                     mappingList.Add(mappingItem);
@@ -102,13 +102,13 @@ namespace AssetBundles
 
             if (!GameUtility.SafeWriteAllLines(outputFilePath, mappingList.ToArray()))
             {
-                Debug.LogError("BuildPathMapping failed!!! try rebuild it again!");
+                UnityEngine.Debug.LogError("BuildPathMapping failed!!! try rebuild it again!");
             }
             else
             {
                 AssetDatabase.Refresh();
                 AssetBundleEditorHelper.CreateAssetbundleForCurrent(outputFilePath);
-                Debug.Log("BuildPathMapping success...");
+                UnityEngine.Debug.Log("BuildPathMapping success...");
             }
 
             AssetDatabase.Refresh();

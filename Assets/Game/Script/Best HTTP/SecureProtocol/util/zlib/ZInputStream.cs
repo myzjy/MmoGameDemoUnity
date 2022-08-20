@@ -78,7 +78,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Zlib
         public ZInputStream(Stream input, ZStream z)
 			: base()
 		{
-			Debug.Assert(input.CanRead);
+			System.Diagnostics.Debug.Assert(input.CanRead);
 
             if (z == null)
             {
@@ -105,7 +105,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Zlib
 
         public ZInputStream(Stream input, int level, bool nowrap)
 		{
-			Debug.Assert(input.CanRead);
+			System.Diagnostics.Debug.Assert(input.CanRead);
 			
 			this.input = input;
             this.compress = true;

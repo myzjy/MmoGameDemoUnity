@@ -51,7 +51,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                     pos += length;
                 }
 
-                Debug.Assert(pos == totalLength);
+                System.Diagnostics.Debug.Assert(pos == totalLength);
                 return contents;
             }
             }

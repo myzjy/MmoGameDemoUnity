@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork;
 using ZJYFrameWork.AttributeCustom;
 using ZJYFrameWork.Common.Utility;
+using JsonConvert = Unity.Plastic.Newtonsoft.Json.JsonConvert;
 
 namespace GameEditor.ApiHttpsEditor
 {
@@ -61,22 +64,47 @@ namespace GameEditor.ApiHttpsEditor
         {
         }
 
-        #region Editor GUI
+        public static bool ValidImportObject(UnityEngine.Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
 
-        private void OnGUI()
+            if (!(obj is TextAsset))
+            {
+                return false;
+            }
+
+            string path = AssetDatabase.GetAssetPath(obj);
+            if (!path.EndsWith(".json"))
+            {
+                return false;
+            }
+
+            if (!path.Contains("Game/AssetBundle/Tutorial"))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        string[] m_langKeys;
+        string[] m_langValues;
+
+        void OnGUI()
         {
             EditorGUILayout.BeginHorizontal();
-
-            #region 中间处理层
-
             {
-                //转换选着
                 _mSelectInstructions =
                     EditorGUILayout.ObjectField(_mSelectInstructions, typeof(TextAsset), false) as TextAsset;
+
                 GUI.enabled = _mSelectInstructions != null;
                 if (GUILayout.Button("Reload", GUILayout.ExpandWidth(false)))
                 {
-                    if (EditorUtility.DisplayDialog("Reload", "进行刷新", "OK", "Cancel"))
+                    if (EditorUtility.DisplayDialog("Reload", "保存刷新", "OK", "Cancel"))
                     {
                         m_lastInstructions = null;
                     }
@@ -84,10 +112,8 @@ namespace GameEditor.ApiHttpsEditor
 
                 GUI.enabled = true;
             }
-
-            #endregion
-
             EditorGUILayout.EndHorizontal();
+
             if (_mSelectInstructions != m_lastInstructions)
             {
                 m_lastInstructions = _mSelectInstructions;
@@ -96,10 +122,19 @@ namespace GameEditor.ApiHttpsEditor
                 clipEnumType = null;
                 try
                 {
+                    if (_mSelectInstructions != null)
+                    {
+                        m_parsedInstructions = JsonConvert.DeserializeObject<Instructions>(m_lastInstructions.text);
+                        // Serializer.jsonSerializer.Deserialize<Instructions>(m_lastInstructions.text);
+                    }
+                    else
+                    {
+                        m_parsedInstructions = null;
+                    }
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    UnityEngine.Debug.LogError(e);
                     m_parsedInstructions = null;
                 }
             }
@@ -131,38 +166,33 @@ namespace GameEditor.ApiHttpsEditor
 
         void RenderInstructions(Instructions instructions)
         {
-            //背景颜色
             Color bgColor = GUI.backgroundColor;
             RenderInsert(null);
-            for (int i = 0; i < instructions.InstructionsList.Count; i++)
+            for (int j = 0; j < instructions.InstructionsList.Count; j++)
             {
-                var item = instructions.InstructionsList[i];
+                var i = instructions.InstructionsList[j];
                 GUI.backgroundColor = bgColor;
                 try
                 {
-                    #region Box
-
                     EditorGUILayout.BeginVertical(GUI.skin.box);
-
-                    #region 当前格子框
 
                     using (new EditorGUILayout.HorizontalScope())
                     {
                         if (GUILayout.Button("X", GUILayout.ExpandWidth(false)))
                         {
-                            instructions.InstructionsList.Remove(item);
+                            instructions.InstructionsList.Remove(i);
                             throw new Modified();
                         }
 
                         GUILayout.FlexibleSpace();
                         {
-                            var instruction = instructions.InstructionsList.ElementAt(i);
+                            var instruction = instructions.InstructionsList.ElementAt(j);
                             using (new EditorGUI.DisabledScope(instruction == null || instruction is NoneInstruction))
                             {
                                 if (GUILayout.Button("Copy", GUILayout.ExpandWidth(false)))
                                 {
                                     mHttpClip = instruction;
-                                    if (mHttpClip != null) m_clipName = mHttpClip.GetType().ToString();
+                                    m_clipName = mHttpClip.GetType().ToString();
                                 }
                             }
 
@@ -171,23 +201,29 @@ namespace GameEditor.ApiHttpsEditor
                                 if (GUILayout.Button("Paste", GUILayout.ExpandWidth(false)))
                                 {
                                     var obj = ClipToNewInstance(m_clipName);
-                                    instructions.InstructionsList[i] = (HttpsInstructions)obj;
+                                    instructions.InstructionsList[j] = (HttpsInstructions)obj;
                                     throw new Modified();
                                 }
                             }
                         }
                     }
 
-                    //根据当前片段是否一样进行修改
-                    GUI.backgroundColor = item.Equals(mHttpClip) ? Color.red : bgColor;
+                    GUI.backgroundColor = i.Equals(mHttpClip) ? Color.red : bgColor;
 
-                    #endregion
-
-                    #endregion
+                    var ret = RenderValue(instructions.InstructionsList[j], i.GetType(), i);
+                    if (ret.first)
+                    {
+                        instructions.InstructionsList[j] = ret.second as HttpsInstructions;
+                        throw new Modified();
+                    }
                 }
-                catch (Exception e)
+                finally
                 {
+                    EditorGUILayout.EndVertical();
                 }
+
+                GUI.backgroundColor = bgColor;
+                RenderInsert(i);
             }
         }
 
@@ -263,11 +299,6 @@ namespace GameEditor.ApiHttpsEditor
             return obj;
         }
 
-        /// <summary>
-        /// 是否有插入属性
-        /// </summary>
-        /// <param name="before"></param>
-        /// <exception cref="Modified"></exception>
         void RenderInsert(HttpsInstructions before)
         {
             if (GUILayout.Button("insert", GUILayout.ExpandWidth(false)))
@@ -287,10 +318,121 @@ namespace GameEditor.ApiHttpsEditor
             }
         }
 
-        #endregion
+        STuple<bool, object> RenderObject(object inst)
+        {
+            var flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
+                        BindingFlags.FlattenHierarchy;
+
+            foreach (var f in inst.GetType().GetFields(flags))
+            {
+                var attr = f.GetAttribute<SerializableFieldAttribute>();
+                if (attr != null)
+                {
+                    try
+                    {
+                        EditorGUILayout.BeginVertical(GUI.skin.box);
+                        RenderField(inst, f, attr);
+                    }
+                    finally
+                    {
+                        EditorGUILayout.EndVertical();
+                    }
+                }
+            }
+
+            return notChanged;
+        }
+
+        void RenderField(object inst, FieldInfo f, SerializableFieldAttribute attr)
+        {
+            try
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label(attr.description == null ? f.Name : attr.description);
+                var ret = RenderValue(inst, f.FieldType, f.GetValue(inst));
+                if (ret.first)
+                {
+                    f.SetValue(inst, ret.second);
+                    throw new Modified();
+                }
+            }
+            finally
+            {
+                EditorGUILayout.EndHorizontal();
+            }
+        }
 
 
-        private static List<Type> subClasses = SubClassTable.GetClassIE(typeof(InstructionType)).ToList();
+        static STuple<bool, object> notChanged = STuple.Create<bool, object>(false, null);
+
+        static STuple<bool, object> Test<T>(T value, object originalValue)
+        {
+            if (EqualityComparer<T>.Default.Equals(value, (T)originalValue))
+            {
+                return notChanged;
+            }
+            else
+            {
+                return STuple.Create(true, (object)value);
+            }
+        }
+
+        STuple<bool, object> RenderList(Type type, IList list)
+        {
+            if (list == null)
+                return STuple.Create(true, Activator.CreateInstance(typeof(List<>).MakeGenericType(type)));
+            try
+            {
+                EditorGUILayout.BeginVertical(GUI.skin.box);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var obj = list[i];
+                    var ret = RenderValue(list, type, obj);
+                    if (ret.first)
+                    {
+                        list[i] = ret.second;
+                        throw new Modified();
+                    }
+                }
+
+                return notChanged;
+            }
+            finally
+            {
+                EditorGUILayout.EndVertical();
+            }
+        }
+
+        STuple<bool, object> RenderArray(Type type, Array array)
+        {
+            if (array == null)
+            {
+                return STuple.Create(true, (object)Array.CreateInstance(type, 0));
+            }
+
+            try
+            {
+                EditorGUILayout.BeginVertical(GUI.skin.box);
+                for (int i = 0; i < array.GetLength(0); i++)
+                {
+                    var obj = array.GetValue(i);
+                    var ret = RenderValue(array, type, obj);
+                    if (ret.first)
+                    {
+                        array.SetValue(ret.second, i);
+                        throw new Modified();
+                    }
+                }
+
+                return notChanged;
+            }
+            finally
+            {
+                EditorGUILayout.EndVertical();
+            }
+        }
+
+        static List<Type> subClasses = SubClassTable.GetClassIE(typeof(InstructionType)).ToList();
 
         static string[] typeSelections = subClasses.Select(x =>
         {
@@ -304,6 +446,21 @@ namespace GameEditor.ApiHttpsEditor
                 return x.ToString();
             }
         }).ToArray();
+
+
+        STuple<bool, object> RenderInstruction(HttpsInstructions inst)
+        {
+            var idx = subClasses.FindIndex(x => x == inst.GetType());
+            var val = EditorGUILayout.Popup(idx, typeSelections);
+            if (val != idx)
+            {
+                return STuple.Create(true, (object)Activator.CreateInstance(subClasses[val]));
+            }
+            else
+            {
+                return notChanged;
+            }
+        }
 
         STuple<bool, object> RenderValue(object inst, Type type, object value)
         {
@@ -459,175 +616,9 @@ namespace GameEditor.ApiHttpsEditor
             }
         }
 
-        /// <summary>
-        /// 没有改变object
-        /// </summary>
-        static STuple<bool, object> notChanged = STuple.Create<bool, object>(false, null);
-
-        static STuple<bool, object> Test<T>(T value, object originalValue)
-        {
-            return EqualityComparer<T>.Default.Equals(value, (T)originalValue)
-                ? notChanged
-                : STuple.Create(true, (object)value);
-        }
-
-        /// <summary>
-        /// 渲染当前行
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <returns></returns>
-        STuple<bool, object> RenderObject(object inst)
-        {
-            var flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance |
-                        BindingFlags.FlattenHierarchy;
-
-            foreach (var f in inst.GetType().GetFields(flags))
-            {
-                var attr = f.GetAttribute<SerializableFieldAttribute>();
-                if (attr != null)
-                {
-                    try
-                    {
-                        EditorGUILayout.BeginVertical(GUI.skin.box);
-                        RenderField(inst, f, attr);
-                    }
-                    finally
-                    {
-                        EditorGUILayout.EndVertical();
-                    }
-                }
-            }
-
-            return notChanged;
-        }
-
-        /// <summary>
-        /// 渲染所制作的指令
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <returns></returns>
-        STuple<bool, object> RenderInstruction(HttpsInstructions inst)
-        {
-            //根据传递过来的指令或者数据 找出type
-            var idx = subClasses.FindIndex(x => x == inst.GetType());
-            //创建一个通用的弹出选择字段。
-            var val = EditorGUILayout.Popup(idx, typeSelections);
-            if (val != idx)
-            {
-                return STuple.Create(true, (object)Activator.CreateInstance(subClasses[val]));
-            }
-            else
-            {
-                return notChanged;
-            }
-        }
-
-        /// <summary>
-        /// 渲染当前field
-        /// </summary>
-        /// <param name="inst"></param>
-        /// <param name="f"></param>
-        /// <param name="attr"></param>
-        /// <exception cref="Modified"></exception>
-        void RenderField(object inst, FieldInfo f, SerializableFieldAttribute attr)
-        {
-            try
-            {
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label(attr.description == null ? f.Name : attr.description);
-                var ret = RenderValue(inst, f.FieldType, f.GetValue(inst));
-                if (ret.first)
-                {
-                    f.SetValue(inst, ret.second);
-                    throw new Modified();
-                }
-            }
-            finally
-            {
-                EditorGUILayout.EndHorizontal();
-            }
-        }
-
-        /// <summary>
-        /// 渲染列表 开始渲染
-        /// </summary>
-        /// <param name="type">需要渲染Type类型</param>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        /// <exception cref="Modified"></exception>
-        STuple<bool, object> RenderList(Type type, IList list)
-        {
-            if (list == null)
-                return STuple.Create(true, Activator.CreateInstance(typeof(List<>).MakeGenericType(type)));
-            try
-            {
-                EditorGUILayout.BeginVertical(GUI.skin.box);
-                for (int i = 0; i < list.Count; i++)
-                {
-                    var obj = list[i];
-                    var ret = RenderValue(list, type, obj);
-                    if (ret.first)
-                    {
-                        list[i] = ret.second;
-                        throw new Modified();
-                    }
-                }
-
-                return notChanged;
-            }
-            finally
-            {
-                EditorGUILayout.EndVertical();
-            }
-        }
-
-        /// <summary>
-        /// 渲染数组
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        /// <exception cref="Modified"></exception>
-        STuple<bool, object> RenderArray(Type type, Array array)
-        {
-            if (array == null)
-            {
-                return STuple.Create(true, (object)Array.CreateInstance(type, 0));
-            }
-
-            try
-            {
-                EditorGUILayout.BeginVertical(GUI.skin.box);
-                for (int i = 0; i < array.GetLength(0); i++)
-                {
-                    var obj = array.GetValue(i);
-                    var ret = RenderValue(array, type, obj);
-                    if (ret.first)
-                    {
-                        array.SetValue(ret.second, i);
-                        throw new Modified();
-                    }
-                }
-
-                return notChanged;
-            }
-            finally
-            {
-                EditorGUILayout.EndVertical();
-            }
-        }
-
         string[] SingleColmunsTarget =
         {
-            "Camera",
-            "Cosmic",
-            "Footer",
-            "Header",
-            "Ingame",
-            "Lottery",
-            "Menu",
-            "Parade",
-            "Street",
+            "Camera", "Cosmic", "Footer", "Header", "Ingame", "Lottery", "Menu", "Parade", "Street",
         };
 
         string TextSplitUpperColmuns(string text, string[] singleColmunsTarget, int firstColmunsCount = 3,
@@ -651,9 +642,9 @@ namespace GameEditor.ApiHttpsEditor
                 return text;
             }
 
-            var tmp = "";
-            var upperCount = 0;
-            var splitColmunsCount = firstColmunsCount;
+            string tmp = "";
+            int upperCount = 0;
+            int splitColmunsCount = firstColmunsCount;
 
             foreach (var n in text)
             {
@@ -685,6 +676,13 @@ namespace GameEditor.ApiHttpsEditor
             }
 
             return tmp;
+        }
+        public void Save()
+        {
+            var path = AssetDatabase.GetAssetPath(_mSelectInstructions);
+            File.WriteAllText(path,JsonConvert.SerializeObject(_mSelectInstructions));
+            AssetDatabase.Refresh();
+
         }
     }
 }

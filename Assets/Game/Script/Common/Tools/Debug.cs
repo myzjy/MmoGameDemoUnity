@@ -3,11 +3,11 @@ using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-public class ToolsDebug
+public static class Debug
 {
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration)
     {
-        Debug.DrawLine(start, end, color, duration);
+        UnityEngine.Debug.DrawLine(start, end, color, duration);
     }
 
     /// <summary>
@@ -15,11 +15,10 @@ public class ToolsDebug
     /// </summary>
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
-     [Conditional("UNITY_EDITOR")]
     public static void Log(object message)
     {
         
-        Debug.Log(message);
+        UnityEngine.Debug.Log(message);
     }
 
     /// <summary>
@@ -27,7 +26,7 @@ public class ToolsDebug
     /// </summary>
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
-    public static void Log(object message, Object context) => Debug.unityLogger.Log(LogType.Log, message, context);
+    public static void Log(object message, Object context) => UnityEngine.Debug.unityLogger.Log(LogType.Log, message, context);
 
     /// <summary>
     ///   <para>Logs a formatted message to the Unity Console.</para>
@@ -39,7 +38,7 @@ public class ToolsDebug
     /// <param name="logOptions">Option flags to treat the log message special.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogFormat">`Debug.LogFormat` on docs.unity3d.com</a></footer>
     public static void LogFormat(string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Log, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Log, format, args);
 
     /// <summary>
     ///   <para>Logs a formatted message to the Unity Console.</para>
@@ -51,7 +50,7 @@ public class ToolsDebug
     /// <param name="logOptions">Option flags to treat the log message special.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogFormat">`Debug.LogFormat` on docs.unity3d.com</a></footer>
     public static void LogFormat(Object context, string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Log, context, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Log, context, format, args);
 
     /// <summary>
     ///   <para>Logs a formatted message to the Unity Console.</para>
@@ -68,7 +67,7 @@ public class ToolsDebug
         string format,
         params object[] args)
     {
-        Debug.LogFormat(logType, logOptions, context, format, args);
+        UnityEngine.Debug.LogFormat(logType, logOptions, context, format, args);
     }
 
     /// <summary>
@@ -77,7 +76,7 @@ public class ToolsDebug
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogError">`Debug.LogError` on docs.unity3d.com</a></footer>
-    public static void LogError(object message) => Debug.unityLogger.Log(LogType.Error, message);
+    public static void LogError(object message) => UnityEngine.Debug.unityLogger.Log(LogType.Error, message);
 
     /// <summary>
     ///   <para>A variant of Debug.Log that logs an error message to the console.</para>
@@ -86,7 +85,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogError">`Debug.LogError` on docs.unity3d.com</a></footer>
     public static void LogError(object message, Object context) =>
-        Debug.unityLogger.Log(LogType.Error, message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Error, message, context);
 
     /// <summary>
     ///   <para>Logs a formatted error message to the Unity console.</para>
@@ -96,7 +95,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogErrorFormat">`Debug.LogErrorFormat` on docs.unity3d.com</a></footer>
     public static void LogErrorFormat(string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Error, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Error, format, args);
 
 
     /// <summary>
@@ -107,11 +106,11 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogErrorFormat">`Debug.LogErrorFormat` on docs.unity3d.com</a></footer>
     public static void LogErrorFormat(Object context, string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Error, context, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Error, context, format, args);
 
     public static void ClearDeveloperConsole()
     {
-        Debug.ClearDeveloperConsole();
+        UnityEngine.Debug.ClearDeveloperConsole();
     }
 
     /// <summary>
@@ -120,7 +119,7 @@ public class ToolsDebug
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogWarning">`Debug.LogWarning` on docs.unity3d.com</a></footer>
-    public static void LogWarning(object message) => Debug.unityLogger.Log(LogType.Warning, message);
+    public static void LogWarning(object message) => UnityEngine.Debug.unityLogger.Log(LogType.Warning, message);
 
     /// <summary>
     ///   <para>A variant of Debug.Log that logs a warning message to the console.</para>
@@ -129,7 +128,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogWarning">`Debug.LogWarning` on docs.unity3d.com</a></footer>
     public static void LogWarning(object message, Object context) =>
-        Debug.unityLogger.Log(LogType.Warning, message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Warning, message, context);
 
     /// <summary>
     ///   <para>Logs a formatted warning message to the Unity Console.</para>
@@ -139,7 +138,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogWarningFormat">`Debug.LogWarningFormat` on docs.unity3d.com</a></footer>
     public static void LogWarningFormat(string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Warning, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Warning, format, args);
 
     /// <summary>
     ///   <para>Logs a formatted warning message to the Unity Console.</para>
@@ -149,7 +148,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogWarningFormat">`Debug.LogWarningFormat` on docs.unity3d.com</a></footer>
     public static void LogWarningFormat(Object context, string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Warning, context, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Warning, context, format, args);
 
     /// <summary>
     ///   <para>Assert a condition and logs an error message to the Unity console on failure.</para>
@@ -163,7 +162,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed");
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed");
     }
 
     /// <summary>
@@ -178,7 +177,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed", context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed", context);
     }
 
     /// <summary>
@@ -193,7 +192,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, message);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, message);
     }
 
     [Conditional("UNITY_ASSERTIONS")]
@@ -201,7 +200,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, (object) message);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) message);
     }
 
     /// <summary>
@@ -216,7 +215,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, message, context);
     }
 
     [Conditional("UNITY_ASSERTIONS")]
@@ -224,7 +223,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.Log(LogType.Assert, (object) message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) message, context);
     }
 
     /// <summary>
@@ -240,7 +239,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.LogFormat(LogType.Assert, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Assert, format, args);
     }
 
     /// <summary>
@@ -260,7 +259,7 @@ public class ToolsDebug
     {
         if (condition)
             return;
-        Debug.unityLogger.LogFormat(LogType.Assert, context, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Assert, context, format, args);
     }
 
     /// <summary>
@@ -270,7 +269,7 @@ public class ToolsDebug
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogAssertion">`Debug.LogAssertion` on docs.unity3d.com</a></footer>
     [Conditional("UNITY_ASSERTIONS")]
-    public static void LogAssertion(object message) => Debug.unityLogger.Log(LogType.Assert, message);
+    public static void LogAssertion(object message) => UnityEngine.Debug.unityLogger.Log(LogType.Assert, message);
 
     /// <summary>
     ///   <para>A variant of Debug.Log that logs an assertion message to the console.</para>
@@ -280,7 +279,7 @@ public class ToolsDebug
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogAssertion">`Debug.LogAssertion` on docs.unity3d.com</a></footer>
     [Conditional("UNITY_ASSERTIONS")]
     public static void LogAssertion(object message, Object context) =>
-        Debug.unityLogger.Log(LogType.Assert, message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, message, context);
 
     /// <summary>
     ///   <para>Logs a formatted assertion message to the Unity console.</para>
@@ -291,7 +290,7 @@ public class ToolsDebug
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogAssertionFormat">`Debug.LogAssertionFormat` on docs.unity3d.com</a></footer>
     [Conditional("UNITY_ASSERTIONS")]
     public static void LogAssertionFormat(string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Assert, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Assert, format, args);
 
     /// <summary>
     ///   <para>Logs a formatted assertion message to the Unity console.</para>
@@ -302,18 +301,16 @@ public class ToolsDebug
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogAssertionFormat">`Debug.LogAssertionFormat` on docs.unity3d.com</a></footer>
     [Conditional("UNITY_ASSERTIONS")]
     public static void LogAssertionFormat(Object context, string format, params object[] args) =>
-        Debug.unityLogger.LogFormat(LogType.Assert, context, format, args);
+        UnityEngine.Debug.unityLogger.LogFormat(LogType.Assert, context, format, args);
     /// <summary>
     ///   <para>In the Build Settings dialog there is a check box called "Development Build".</para>
     /// </summary>
-    public static bool isDebugBuild
-    {
-        get { return Debug.isDebugBuild; }
-    }
+    public static bool isDebugBuild => UnityEngine.Debug.isDebugBuild;
+
     private static List<string> m_errorList = new List<string>();
 
     public static void LogError(string s, params object[] p)
     {
-        Debug.LogError((p != null && p.Length > 0 ? string.Format(s, p) : s));
+        UnityEngine.Debug.LogError((p != null && p.Length > 0 ? string.Format(s, p) : s));
     }
 }

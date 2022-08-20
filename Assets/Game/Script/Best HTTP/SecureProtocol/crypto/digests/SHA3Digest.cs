@@ -66,7 +66,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Digests
                 throw new ArgumentException("must be in the range [0,7]", "partialBits");
 
             int finalInput = (partialByte & ((1 << partialBits) - 1)) | (0x02 << partialBits);
-            Debug.Assert(finalInput >= 0);
+            System.Diagnostics.Debug.Assert(finalInput >= 0);
             int finalBits = partialBits + 2;
 
             if (finalBits >= 8)

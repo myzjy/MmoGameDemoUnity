@@ -168,7 +168,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         public static void SquareN(ulong[] x, int n, ulong[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             ulong[] tt = Nat.Create64(5);
             ImplSquare(x, tt);
@@ -236,7 +236,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             ulong t4 = H[6] ^ H[8];
             ulong t5 = H[7] ^ H[9];
 
-            Debug.Assert(t5 >> 44 == 0);
+            System.Diagnostics.Debug.Assert(t5 >> 44 == 0);
 
             // Calculate V
             ulong v0 =      (t4 << 1) ^ H[6];
@@ -257,7 +257,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             w1 ^= (w0 >> 44); w0 &= M44;
             w2 ^= (w1 >> 44); w1 &= M44;
 
-            Debug.Assert((w0 & 1UL) == 0);
+            System.Diagnostics.Debug.Assert((w0 & 1UL) == 0);
 
             // Divide W by t
 
@@ -292,7 +292,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             w2 ^= (w2 << 16);
             w2 ^= (w2 << 32);
 
-            Debug.Assert(w2 >> 42 == 0);
+            System.Diagnostics.Debug.Assert(w2 >> 42 == 0);
 
             zz[0] = u0; 
             zz[1] = u1 ^ w0      ^ H[2]; 
@@ -306,8 +306,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         protected static void ImplMulw(ulong[] u, ulong x, ulong y, ulong[] z, int zOff)
         {
-            Debug.Assert(x >> 45 == 0);
-            Debug.Assert(y >> 45 == 0);
+            System.Diagnostics.Debug.Assert(x >> 45 == 0);
+            System.Diagnostics.Debug.Assert(y >> 45 == 0);
 
             //u[0] = 0;
             u[1] = y;
@@ -338,7 +338,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             }
             while ((k -= 15) > 0);
 
-            Debug.Assert(h >> 25 == 0);
+            System.Diagnostics.Debug.Assert(h >> 25 == 0);
 
             z[zOff    ] = l & M44;
             z[zOff + 1] = (l >> 44) ^ (h << 20);

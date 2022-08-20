@@ -219,7 +219,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Digests
 
         private void PadAndSwitchToSqueezingPhase()
         {
-            Debug.Assert(bitsInQueue < rate);
+            System.Diagnostics.Debug.Assert(bitsInQueue < rate);
 
             dataQueue[bitsInQueue >> 3] |= (byte)(1 << (bitsInQueue & 7));
 

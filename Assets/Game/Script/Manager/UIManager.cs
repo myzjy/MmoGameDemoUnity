@@ -75,7 +75,7 @@ namespace ZJYFrameWork.UISerializable.Manager
 
             if (view == null)
             {
-                Debug.LogError($"当前查找并没注册{_type}");
+                UnityEngine.Debug.LogError($"当前查找并没注册{_type}");
                 return null;
             }
             else

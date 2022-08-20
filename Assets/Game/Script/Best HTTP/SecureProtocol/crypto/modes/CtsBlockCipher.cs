@@ -92,7 +92,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes
             if (bufOff == buf.Length)
             {
                 resultLen = cipher.ProcessBlock(buf, 0, output, outOff);
-				Debug.Assert(resultLen == blockSize);
+				System.Diagnostics.Debug.Assert(resultLen == blockSize);
 
 				Array.Copy(buf, blockSize, buf, 0, blockSize);
                 bufOff = blockSize;

@@ -181,7 +181,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         public static void SquareN(ulong[] x, int n, ulong[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             ulong[] tt = Nat192.CreateExt64();
             ImplSquare(x, tt);
@@ -247,7 +247,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             ulong t4 = H[6] ^ H[8];
             ulong t5 = H[7] ^ H[9];
 
-            Debug.Assert(t5 >> 55 == 0);
+            System.Diagnostics.Debug.Assert(t5 >> 55 == 0);
 
             // Calculate V
             ulong v0 =      (t4 << 1) ^ H[6];
@@ -268,7 +268,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             w1 ^= (w0 >> 55); w0 &= M55;
             w2 ^= (w1 >> 55); w1 &= M55;
 
-            Debug.Assert((w0 & 1UL) == 0UL);
+            System.Diagnostics.Debug.Assert((w0 & 1UL) == 0UL);
 
             // Divide W by t
 
@@ -303,7 +303,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             w2 ^= (w2 << 16);
             w2 ^= (w2 << 32);
 
-            Debug.Assert(w2 >> 52 == 0);
+            System.Diagnostics.Debug.Assert(w2 >> 52 == 0);
 
             zz[0] = u0; 
             zz[1] = u1 ^ w0      ^ H[2]; 
@@ -317,8 +317,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
 
         protected static void ImplMulw(ulong[] u, ulong x, ulong y, ulong[] z, int zOff)
         {
-            Debug.Assert(x >> 56 == 0);
-            Debug.Assert(y >> 56 == 0);
+            System.Diagnostics.Debug.Assert(x >> 56 == 0);
+            System.Diagnostics.Debug.Assert(y >> 56 == 0);
 
             //u[0] = 0;
             u[1] = y;
@@ -343,7 +343,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Sec
             }
             while ((k -= 9) > 0);
 
-            Debug.Assert(h >> 47 == 0);
+            System.Diagnostics.Debug.Assert(h >> 47 == 0);
 
             z[zOff    ] = l & M55;
             z[zOff + 1] = (l >> 55) ^ (h << 9);

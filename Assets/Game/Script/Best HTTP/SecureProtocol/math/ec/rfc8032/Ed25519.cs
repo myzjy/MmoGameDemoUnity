@@ -348,8 +348,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
         private static sbyte[] GetWnafVar(uint[] n, int width)
         {
-            Debug.Assert(n[ScalarUints - 1] <= L[ScalarUints - 1]);
-            Debug.Assert(2 <= width && width <= 8);
+            System.Diagnostics.Debug.Assert(n[ScalarUints - 1] <= L[ScalarUints - 1]);
+            System.Diagnostics.Debug.Assert(2 <= width && width <= 8);
 
             uint[] t = new uint[ScalarUints * 2];
             {
@@ -392,7 +392,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
                 }
             }
 
-            Debug.Assert(carry == 0);
+            System.Diagnostics.Debug.Assert(carry == 0);
 
             return ws;
         }
@@ -748,8 +748,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
         private static void PointLookup(int block, int index, PointPrecomp p)
         {
-            Debug.Assert(0 <= block && block < PrecompBlocks);
-            Debug.Assert(0 <= index && index < PrecompPoints);
+            System.Diagnostics.Debug.Assert(0 <= block && block < PrecompBlocks);
+            System.Diagnostics.Debug.Assert(0 <= index && index < PrecompPoints);
 
             int off = block * PrecompPoints * 3 * F.Size;
 
@@ -771,8 +771,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
             int sign = (int)(w >> (4 - 1)) ^ 1;
             int abs = ((int)w ^ -sign) & 7;
 
-            Debug.Assert(sign == 0 || sign == 1);
-            Debug.Assert(0 <= abs && abs < 8);
+            System.Diagnostics.Debug.Assert(sign == 0 || sign == 1);
+            System.Diagnostics.Debug.Assert(0 <= abs && abs < 8);
 
             for (int i = 0, off = 0; i < 8; ++i)
             {
@@ -799,7 +799,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
         private static int[] PointPrecompute(PointAffine p, int count)
         {
-            Debug.Assert(count > 0);
+            System.Diagnostics.Debug.Assert(count > 0);
 
             PointExt q = PointCopy(p);
             PointExt d = PointCopy(q);
@@ -827,7 +827,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
         private static PointExt[] PointPrecomputeVar(PointExt p, int count)
         {
-            Debug.Assert(count > 0);
+            System.Diagnostics.Debug.Assert(count > 0);
 
             PointExt d = new PointExt();
             PointAddVar(false, p, p, d);
@@ -920,7 +920,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
                         }
                     }
 
-                    Debug.Assert(k == PrecompPoints);
+                    System.Diagnostics.Debug.Assert(k == PrecompPoints);
 
                     int[] cs = F.CreateTable(PrecompPoints);
 
@@ -984,7 +984,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
                     }
                 }
 
-                Debug.Assert(off == precompBase.Length);
+                System.Diagnostics.Debug.Assert(off == precompBase.Length);
             }
         }
 
@@ -1107,7 +1107,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
             x09 -= t;
 
-            Debug.Assert(x09 == 0L || x09 == -1L);
+            System.Diagnostics.Debug.Assert(x09 == 0L || x09 == -1L);
 
             x00 += x09 & L0;
             x01 += x09 & L1;
@@ -1138,18 +1138,18 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
             uint[] n = new uint[ScalarUints];
             DecodeScalar(k, 0, n);
 
-            Debug.Assert(0U == (n[0] & 7));
-            Debug.Assert(1U == n[ScalarUints - 1] >> 30);
+            System.Diagnostics.Debug.Assert(0U == (n[0] & 7));
+            System.Diagnostics.Debug.Assert(1U == n[ScalarUints - 1] >> 30);
 
             Nat.ShiftDownBits(ScalarUints, n, 3, 1U);
 
             // Recode the scalar into signed-digit form
             {
-                uint c1 = Nat.CAdd(ScalarUints, ~(int)n[0] & 1, n, L, n);   Debug.Assert(c1 == 0U);
-                uint c2 = Nat.ShiftDownBit(ScalarUints, n, 0U);             Debug.Assert(c2 == (1U << 31));
+                uint c1 = Nat.CAdd(ScalarUints, ~(int)n[0] & 1, n, L, n);   System.Diagnostics.Debug.Assert(c1 == 0U);
+                uint c2 = Nat.ShiftDownBit(ScalarUints, n, 0U);             System.Diagnostics.Debug.Assert(c2 == (1U << 31));
             }
 
-            Debug.Assert(1U == n[ScalarUints - 1] >> 28);
+            System.Diagnostics.Debug.Assert(1U == n[ScalarUints - 1] >> 28);
 
             int[] table = PointPrecompute(p, 8);
             PointExt q = new PointExt();
@@ -1185,8 +1185,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
 
             // Recode the scalar into signed-digit form, then group comb bits in each block
             {
-                uint c1 = Nat.CAdd(ScalarUints, ~(int)n[0] & 1, n, L, n);   Debug.Assert(c1 == 0U);
-                uint c2 = Nat.ShiftDownBit(ScalarUints, n, 1U);             Debug.Assert(c2 == (1U << 31));
+                uint c1 = Nat.CAdd(ScalarUints, ~(int)n[0] & 1, n, L, n);   System.Diagnostics.Debug.Assert(c1 == 0U);
+                uint c2 = Nat.ShiftDownBit(ScalarUints, n, 1U);             System.Diagnostics.Debug.Assert(c2 == (1U << 31));
 
                 for (int i = 0; i < ScalarUints; ++i)
                 {
@@ -1207,8 +1207,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Rfc8032
                     int sign = (int)(w >> (PrecompTeeth - 1)) & 1;
                     int abs = ((int)w ^ -sign) & PrecompMask;
 
-                    Debug.Assert(sign == 0 || sign == 1);
-                    Debug.Assert(0 <= abs && abs < PrecompPoints);
+                    System.Diagnostics.Debug.Assert(sign == 0 || sign == 1);
+                    System.Diagnostics.Debug.Assert(0 <= abs && abs < PrecompPoints);
 
                     PointLookup(b, abs, p);
 

@@ -29,7 +29,7 @@ namespace GameData.Net
             Action finish,
             Action<bool> isAbort, byte[] bytes, int timeOut)
         {
-            Debug.Assert(_succes != null);
+            UnityEngine.Debug.Assert(_succes != null);
             var onComplte = new Action<HttpResponse>(json =>
             {
                 try
@@ -106,10 +106,10 @@ namespace GameData.Net
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError($"boby error-->{e}");
+                        UnityEngine.Debug.LogError($"boby error-->{e}");
                     }
 #if UNITY_EDITOR
-                    Debug.Log($"[HttpsResponse] {urlName}\n{data}");
+                    UnityEngine.Debug.Log($"[HttpsResponse] {urlName}\n{data}");
 #endif
                     if (_SiBase.NeedsRetry)
                     {

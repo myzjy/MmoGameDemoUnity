@@ -204,7 +204,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Generators
         // note: we know X is non-zero
         private static bool IsPowerOf2(int x)
         {
-            Debug.Assert(x != 0);
+            System.Diagnostics.Debug.Assert(x != 0);
 
             return (x & (x - 1)) == 0;
         }

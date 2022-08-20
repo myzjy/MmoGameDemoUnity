@@ -13,8 +13,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.IO
 
 		public TeeOutputStream(Stream output, Stream tee)
 		{
-			Debug.Assert(output.CanWrite);
-			Debug.Assert(tee.CanWrite);
+			System.Diagnostics.Debug.Assert(output.CanWrite);
+			System.Diagnostics.Debug.Assert(tee.CanWrite);
 
 			this.output = output;
 			this.tee = tee;

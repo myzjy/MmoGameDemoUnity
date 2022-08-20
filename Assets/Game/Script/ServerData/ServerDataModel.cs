@@ -58,7 +58,7 @@ public class ServerDataModel <T, T2> : IServerDataClear where T : IServerData<T2
 	{
 		if (items == null)
 		{
-			Debug.Log("items is null");
+			UnityEngine.Debug.Log("items is null");
 			return;
 		}
 		int count = items.Length;
@@ -80,7 +80,7 @@ public class ServerDataModel <T, T2> : IServerDataClear where T : IServerData<T2
 	{
 		if (item == null)
 		{
-			Debug.Log("item is null");
+			UnityEngine.Debug.Log("item is null");
 			return;
 		}
 		if (Count <= 0 || list == null)

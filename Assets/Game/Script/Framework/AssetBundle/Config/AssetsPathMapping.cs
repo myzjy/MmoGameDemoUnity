@@ -72,7 +72,7 @@ namespace Framework.AssetBundle.Config
         {
             if (string.IsNullOrEmpty(content))
             {
-                ToolsDebug.LogError("ResourceNameMap empty!!");
+                Debug.LogError("ResourceNameMap empty!!");
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace Framework.AssetBundle.Config
                 string[] splitArr = map.Split(new[] { PATTREN }, System.StringSplitOptions.None);
                 if (splitArr.Length < 2)
                 {
-                    ToolsDebug.LogError($"splitArr length < 2 : {map}");
+                    Debug.LogError($"splitArr length < 2 : {map}");
                     continue;
                 }
 

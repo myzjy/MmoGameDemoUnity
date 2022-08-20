@@ -104,7 +104,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 
             int bits = BigInteger.BitLen(namedBits);
             int bytes = (bits + 7) / 8;
-            Debug.Assert(0 < bytes && bytes <= 4);
+            System.Diagnostics.Debug.Assert(0 < bytes && bytes <= 4);
 
             byte[] data = new byte[1 + bytes];
 
@@ -114,7 +114,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                 namedBits >>= 8;
             }
 
-            Debug.Assert((namedBits & 0xFF) != 0);
+            System.Diagnostics.Debug.Assert((namedBits & 0xFF) != 0);
             data[bytes] = (byte)namedBits;
 
             int padBits = 0;
@@ -123,7 +123,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                 ++padBits;
             }
 
-            Debug.Assert(padBits < 8);
+            System.Diagnostics.Debug.Assert(padBits < 8);
             data[0] = (byte)padBits;
 
             this.contents = data;

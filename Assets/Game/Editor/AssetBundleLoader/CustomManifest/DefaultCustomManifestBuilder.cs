@@ -21,7 +21,7 @@ namespace ZJYFrameWork.AssetBundleLoader.Build
             var crc = GetAssetBundleCrc(name);
             var size = GetFileSize(name);
             var dependenciesIndex = GetDependenciesIndex(name);
-            ToolsDebug.Log($"name:{name},version:{version}");
+            Debug.Log($"name:{name},version:{version}");
             return new BundleData(name, version, crc, size, dependenciesIndex);
         }
     }

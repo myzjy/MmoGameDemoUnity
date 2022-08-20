@@ -25,7 +25,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint Add33At(int len, uint x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             ulong c = (ulong)z[zPos + 0] + x;
             z[zPos + 0] = (uint)c;
             c >>= 32;
@@ -37,7 +37,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint Add33At(int len, uint x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             ulong c = (ulong)z[zOff + zPos] + x;
             z[zOff + zPos] = (uint)c;
             c >>= 32;
@@ -95,7 +95,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint AddDWordAt(int len, ulong x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             ulong c = (ulong)z[zPos + 0] + (x & M);
             z[zPos + 0] = (uint)c;
             c >>= 32;
@@ -107,7 +107,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint AddDWordAt(int len, ulong x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             ulong c = (ulong)z[zOff + zPos] + (x & M);
             z[zOff + zPos] = (uint)c;
             c >>= 32;
@@ -190,7 +190,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint AddWordAt(int len, uint x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 1));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 1));
             ulong c = (ulong)x + z[zPos];
             z[zPos] = (uint)c;
             c >>= 32;
@@ -199,7 +199,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint AddWordAt(int len, uint x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 1));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 1));
             ulong c = (ulong)x + z[zOff + zPos];
             z[zOff + zPos] = (uint)c;
             c >>= 32;
@@ -413,7 +413,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int DecAt(int len, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= len);
+            System.Diagnostics.Debug.Assert(zPos <= len);
             for (int i = zPos; i < len; ++i)
             {
                 if (--z[i] != uint.MaxValue)
@@ -426,7 +426,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int DecAt(int len, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= len);
+            System.Diagnostics.Debug.Assert(zPos <= len);
             for (int i = zPos; i < len; ++i)
             {
                 if (--z[zOff + i] != uint.MaxValue)
@@ -523,7 +523,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 throw new ArgumentException();
 
             int len = (bits + 31) >> 5;
-            Debug.Assert(len > 0);
+            System.Diagnostics.Debug.Assert(len > 0);
             uint[] z = Create(len);
 
             // NOTE: Use a fixed number of loop iterations
@@ -544,7 +544,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 throw new ArgumentException();
 
             int len = (bits + 63) >> 6;
-            Debug.Assert(len > 0);
+            System.Diagnostics.Debug.Assert(len > 0);
             ulong[] z = Create64(len);
 
             // NOTE: Use a fixed number of loop iterations
@@ -620,7 +620,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint IncAt(int len, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= len);
+            System.Diagnostics.Debug.Assert(zPos <= len);
             for (int i = zPos; i < len; ++i)
             {
                 if (++z[i] != uint.MinValue)
@@ -633,7 +633,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint IncAt(int len, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= len);
+            System.Diagnostics.Debug.Assert(zPos <= len);
             for (int i = zPos; i < len; ++i)
             {
                 if (++z[zOff + i] != uint.MinValue)
@@ -684,7 +684,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 c += (long)x[i] - y[i];
                 c >>= 32;
             }
-            Debug.Assert(c == 0L || c == -1L);
+            System.Diagnostics.Debug.Assert(c == 0L || c == -1L);
             return (int)c;
         }
 
@@ -696,7 +696,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 c += (long)x[xOff + i] - y[yOff + i];
                 c >>= 32;
             }
-            Debug.Assert(c == 0L || c == -1L);
+            System.Diagnostics.Debug.Assert(c == 0L || c == -1L);
             return (int)c;
         }
 
@@ -815,7 +815,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint MulWordDwordAddAt(int len, uint x, ulong y, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 3));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 3));
             ulong c = 0, xVal = (ulong)x;
             c += xVal * (uint)y + z[zPos + 0];
             z[zPos + 0] = (uint)c;
@@ -879,7 +879,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftDownBits(int len, uint[] z, int bits, uint c)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             int i = len;
             while (--i >= 0)
             {
@@ -892,7 +892,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftDownBits(int len, uint[] z, int zOff, int bits, uint c)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             int i = len;
             while (--i >= 0)
             {
@@ -905,7 +905,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftDownBits(int len, uint[] x, int bits, uint c, uint[] z)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             int i = len;
             while (--i >= 0)
             {
@@ -918,7 +918,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftDownBits(int len, uint[] x, int xOff, int bits, uint c, uint[] z, int zOff)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             int i = len;
             while (--i >= 0)
             {
@@ -998,7 +998,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftUpBits(int len, uint[] z, int bits, uint c)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             for (int i = 0; i < len; ++i)
             {
                 uint next = z[i];
@@ -1010,7 +1010,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftUpBits(int len, uint[] z, int zOff, int bits, uint c)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             for (int i = 0; i < len; ++i)
             {
                 uint next = z[zOff + i];
@@ -1022,7 +1022,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static ulong ShiftUpBits64(int len, ulong[] z, int zOff, int bits, ulong c)
         {
-            Debug.Assert(bits > 0 && bits < 64);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 64);
             for (int i = 0; i < len; ++i)
             {
                 ulong next = z[zOff + i];
@@ -1034,7 +1034,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftUpBits(int len, uint[] x, int bits, uint c, uint[] z)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             for (int i = 0; i < len; ++i)
             {
                 uint next = x[i];
@@ -1046,7 +1046,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static uint ShiftUpBits(int len, uint[] x, int xOff, int bits, uint c, uint[] z, int zOff)
         {
-            Debug.Assert(bits > 0 && bits < 32);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 32);
             for (int i = 0; i < len; ++i)
             {
                 uint next = x[xOff + i];
@@ -1058,7 +1058,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static ulong ShiftUpBits64(int len, ulong[] x, int xOff, int bits, ulong c, ulong[] z, int zOff)
         {
-            Debug.Assert(bits > 0 && bits < 64);
+            System.Diagnostics.Debug.Assert(bits > 0 && bits < 64);
             for (int i = 0; i < len; ++i)
             {
                 ulong next = x[xOff + i];
@@ -1094,7 +1094,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 d += zz[zzPos];
                 zz[zzPos++] = (uint)d; d >>= 32;
             }
-            Debug.Assert(0UL == d);
+            System.Diagnostics.Debug.Assert(0UL == d);
 
             ShiftUpBit(extLen, zz, x[0] << 31);
         }
@@ -1125,7 +1125,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
                 d += zz[zzPos];
                 zz[zzPos++] = (uint)d; d >>= 32;
             }
-            Debug.Assert(0UL == d);
+            System.Diagnostics.Debug.Assert(0UL == d);
 
             ShiftUpBit(extLen, zz, zzOff, x[xOff] << 31);
         }
@@ -1215,7 +1215,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
         }
         public static int Sub33At(int len, uint x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             long c = (long)z[zPos + 0] - x;
             z[zPos + 0] = (uint)c;
             c >>= 32;
@@ -1227,7 +1227,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int Sub33At(int len, uint x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             long c = (long)z[zOff + zPos] - x;
             z[zOff + zPos] = (uint)c;
             c >>= 32;
@@ -1285,7 +1285,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int SubDWordAt(int len, ulong x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             long c = (long)z[zPos + 0] - (long)(x & M);
             z[zPos + 0] = (uint)c;
             c >>= 32;
@@ -1297,7 +1297,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int SubDWordAt(int len, ulong x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 2));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 2));
             long c = (long)z[zOff + zPos] - (long)(x & M);
             z[zOff + zPos] = (uint)c;
             c >>= 32;
@@ -1355,7 +1355,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int SubWordAt(int len, uint x, uint[] z, int zPos)
         {
-            Debug.Assert(zPos <= (len - 1));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 1));
             long c = (long)z[zPos] - x;
             z[zPos] = (uint)c;
             c >>= 32;
@@ -1364,7 +1364,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw
 
         public static int SubWordAt(int len, uint x, uint[] z, int zOff, int zPos)
         {
-            Debug.Assert(zPos <= (len - 1));
+            System.Diagnostics.Debug.Assert(zPos <= (len - 1));
             long c = (long)z[zOff + zPos] - x;
             z[zOff + zPos] = (uint)c;
             c >>= 32;

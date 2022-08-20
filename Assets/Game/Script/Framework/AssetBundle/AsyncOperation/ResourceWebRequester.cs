@@ -107,7 +107,7 @@ namespace Framework.AssetBundle.AsyncOperation
             request = new UnityWebRequest(url);
             if (request == null)
             {
-                ToolsDebug.LogError("New www failed!!!");
+                Debug.LogError("New www failed!!!");
                 isOver = true;
             }
             else
@@ -116,7 +116,7 @@ namespace Framework.AssetBundle.AsyncOperation
 
                 DownloadHandlerBuffer  Download  = new DownloadHandlerBuffer();
                 request.downloadHandler = Download;
-                ToolsDebug.Log("Downloading : " + url);
+                Debug.Log("Downloading : " + url);
                 request.SendWebRequest();
                 // while (!request.isDone)
                 // {
@@ -151,7 +151,7 @@ namespace Framework.AssetBundle.AsyncOperation
 
             if (request != null && !string.IsNullOrEmpty(request.error))
             {
-                ToolsDebug.LogError(request.error);
+                Debug.LogError(request.error);
             }
         }
 

@@ -142,7 +142,7 @@ namespace EditorCoroutines
 				.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (methodInfo == null)
 			{
-				Debug.LogError("Coroutine '" + methodName + "' couldn't be started, the method doesn't exist!");
+				UnityEngine.Debug.LogError("Coroutine '" + methodName + "' couldn't be started, the method doesn't exist!");
 			}
 			object returnValue;
 
@@ -162,7 +162,7 @@ namespace EditorCoroutines
 			}
 			else
 			{
-				Debug.LogError("Coroutine '" + methodName + "' couldn't be started, the method doesn't return an IEnumerator!");
+				UnityEngine.Debug.LogError("Coroutine '" + methodName + "' couldn't be started, the method doesn't return an IEnumerator!");
 			}
 
 			return null;
@@ -247,7 +247,7 @@ namespace EditorCoroutines
 		{
 			if (routine == null)
 			{
-				Debug.LogException(new Exception("IEnumerator is null!"), null);
+				UnityEngine.Debug.LogException(new Exception("IEnumerator is null!"), null);
 			}
 			EditorCoroutine coroutine = CreateCoroutine(routine, thisReference);
 			GoStartCoroutine(coroutine);
@@ -372,7 +372,7 @@ namespace EditorCoroutines
 			}
 			else
 			{
-				Debug.LogException(
+				UnityEngine.Debug.LogException(
 					new Exception("<" + coroutine.MethodName + "> yielded an unknown or unsupported type! (" + current.GetType() + ")"),
 					null);
 				coroutine.currentYield = new YieldDefault();

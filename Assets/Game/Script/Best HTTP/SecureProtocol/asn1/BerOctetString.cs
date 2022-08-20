@@ -50,7 +50,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                     pos += octets.Length;
                 }
 
-                Debug.Assert(pos == totalOctets);
+                System.Diagnostics.Debug.Assert(pos == totalOctets);
                 return str;
             }
             }

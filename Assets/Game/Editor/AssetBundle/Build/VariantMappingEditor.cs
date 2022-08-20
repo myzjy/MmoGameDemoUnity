@@ -64,13 +64,13 @@ namespace AssetBundles
             mappingList.Sort();
             if (!GameUtility.SafeWriteAllLines(outputFilePath, mappingList.ToArray()))
             {
-                Debug.LogError("BuildVariantMapping failed!!! try rebuild it again!");
+                UnityEngine.Debug.LogError("BuildVariantMapping failed!!! try rebuild it again!");
             }
             else
             {
                 AssetDatabase.Refresh();
                 AssetBundleEditorHelper.CreateAssetbundleForCurrent(outputFilePath);
-                Debug.Log("BuildVariantMapping success...");
+                UnityEngine.Debug.Log("BuildVariantMapping success...");
             }
             AssetDatabase.Refresh();
         }

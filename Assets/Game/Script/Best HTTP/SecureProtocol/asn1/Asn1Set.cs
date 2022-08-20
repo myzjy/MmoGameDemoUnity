@@ -307,7 +307,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
             {
                 byte[] a = (byte[])x, b = (byte[])y;
 #endif
-                Debug.Assert(a.Length >= 2 && b.Length >= 2);
+                System.Diagnostics.Debug.Assert(a.Length >= 2 && b.Length >= 2);
 
                 /*
                  * NOTE: Set elements in DER encodings are ordered first according to their tags (class and
@@ -333,7 +333,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                     if (ai != bi)
                         return ai < bi ? -1 : 1;
                 }
-                Debug.Assert(a.Length == b.Length);
+                System.Diagnostics.Debug.Assert(a.Length == b.Length);
                 return 0;
             }
         }

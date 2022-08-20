@@ -167,7 +167,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls
 
         internal int PreviewOutputRecordSize(int contentLength)
         {
-            Debug.Assert(contentLength <= m_plaintextLimit);
+            System.Diagnostics.Debug.Assert(contentLength <= m_plaintextLimit);
 
             return RecordFormat.FragmentOffset + m_writeCipher.GetCiphertextEncodeLimit(contentLength, m_plaintextLimit);
         }

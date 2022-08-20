@@ -16,7 +16,7 @@ public class EditorUtils
                 System.Diagnostics.Process.Start("open", folder);
                 break;
             default:
-                Debug.LogError(string.Format("Not support open folder on '{0}' platform.", Application.platform.ToString()));
+                UnityEngine.Debug.LogError(string.Format("Not support open folder on '{0}' platform.", Application.platform.ToString()));
                 break;
         }
     }

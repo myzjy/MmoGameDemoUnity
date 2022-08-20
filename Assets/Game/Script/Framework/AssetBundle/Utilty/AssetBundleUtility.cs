@@ -50,7 +50,7 @@ namespace Framework.AssetBundles.Utilty
                 case RuntimePlatform.IPhonePlayer:
                     return "iOS";
                 default:
-                    Debug.LogError("Error platform!!!");
+                    UnityEngine.Debug.LogError("Error platform!!!");
                     return null;
             }
         }
@@ -105,7 +105,7 @@ namespace Framework.AssetBundles.Utilty
             }
             else
             {
-                Debug.LogError("Asset path is not a package path!");
+                UnityEngine.Debug.LogError("Asset path is not a package path!");
                 return assetPath;
             }
         }

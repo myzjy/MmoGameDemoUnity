@@ -174,7 +174,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.GM
             z[7] = (uint)cc;
             cc >>= 32;
 
-            Debug.Assert(cc >= 0);
+            System.Diagnostics.Debug.Assert(cc >= 0);
 
             Reduce32((uint)cc, z);
         }
@@ -218,7 +218,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.GM
                 z[7] = (uint)cc;
                 cc >>= 32;
 
-                Debug.Assert(cc == 0 || cc == 1);
+                System.Diagnostics.Debug.Assert(cc == 0 || cc == 1);
             }
 
             if (cc != 0 || (z[7] >= P7 && Nat256.Gte(z, P)))
@@ -236,7 +236,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.GM
 
         public static void SquareN(uint[] x, int n, uint[] z)
         {
-            Debug.Assert(n > 0);
+            System.Diagnostics.Debug.Assert(n > 0);
 
             uint[] tt = Nat256.CreateExt();
             Nat256.Square(x, tt);

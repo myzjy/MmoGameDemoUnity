@@ -115,7 +115,7 @@ namespace ZJYFrameWork.AssetBundles
             // 说明：同时请求资源可以提高加载速度
             var manifestRequest = RequestAssetBundleAsync(manifest.AssetbundleName);
             var pathMapRequest = RequestAssetBundleAsync(assetsPathMapping.AssetbundleName);
-            Debug.Log(assetsPathMapping.AssetbundleName);
+            UnityEngine.Debug.Log(assetsPathMapping.AssetbundleName);
 
             yield return manifestRequest;
             var assetbundle = manifestRequest.assetbundle;
@@ -175,7 +175,7 @@ namespace ZJYFrameWork.AssetBundles
                 }
             }
 
-            ToolsDebug.Log($"AssetBundleResident Initialize use {(DateTime.Now - start).Milliseconds}ms");
+            Debug.Log($"AssetBundleResident Initialize use {(DateTime.Now - start).Milliseconds}ms");
             yield break;
         }
 
@@ -228,7 +228,7 @@ namespace ZJYFrameWork.AssetBundles
 
         public void SetAssetBundleResident(string assetbundleName, bool resident)
         {
-            ToolsDebug.Log("SetAssetBundleResident : " + assetbundleName + ", " + resident.ToString());
+            Debug.Log("SetAssetBundleResident : " + assetbundleName + ", " + resident.ToString());
             bool exist = assetbundleResident.Contains(assetbundleName);
             if (resident && !exist)
             {
@@ -315,7 +315,7 @@ namespace ZJYFrameWork.AssetBundles
 #endif
             if (!IsAssetBundleLoaded(assetbundleName))
             {
-                ToolsDebug.LogError($"Try to add assets cache from unloaded assetbundle :  {assetbundleName}");
+                Debug.LogError($"Try to add assets cache from unloaded assetbundle :  {assetbundleName}");
                 return;
             }
 
@@ -388,7 +388,7 @@ namespace ZJYFrameWork.AssetBundles
         {
             if (string.IsNullOrEmpty(DownloadUrl))
             {
-                ToolsDebug.LogError("You should set download url first!!!");
+                Debug.LogError("You should set download url first!!!");
                 return null;
             }
 
@@ -531,7 +531,7 @@ namespace ZJYFrameWork.AssetBundles
             bool status = MapAssetPath(newAssetPath, "", out assetbundleName, out assetName);
             if (!status)
             {
-                ToolsDebug.LogError("No assetbundle at asset path :" + newAssetPath);
+                Debug.LogError("No assetbundle at asset path :" + newAssetPath);
                 return null;
             }
 
@@ -614,7 +614,7 @@ namespace ZJYFrameWork.AssetBundles
 
                     // 解除创建器对AB持有的引用，一般创建器存在，则一定至少有一个加载器在等待并对该AB持有引用
                     int count = DecreaseReferenceCount(creater.assetbundleName);
-                    ToolsDebug.Assert(count > 0, "AssetBundle creater done but no one need it!!!");
+                    Debug.Assert(count > 0, "AssetBundle creater done but no one need it!!!");
                     if (count <= 0)
                     {
                         UnloadAssetBundle(creater.assetbundleName);
@@ -688,7 +688,7 @@ namespace ZJYFrameWork.AssetBundles
         public void TestHotfix()
         {
 #if UNITY_EDITOR || CLIENT_DEBUG
-            ToolsDebug.Log("********** AssetBundleManager : Call TestHotfix in cs...");
+            Debug.Log("********** AssetBundleManager : Call TestHotfix in cs...");
 #endif
         }
 

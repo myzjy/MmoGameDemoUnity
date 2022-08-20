@@ -440,7 +440,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                     if (radix == 2)
                     {
                         // NB: Can't reach here since we are parsing one char at a time
-                        Debug.Assert(false);
+                        System.Diagnostics.Debug.Assert(false);
 
                         // TODO Parse all bits at once
 //						b = b.ShiftLeft(s.Length);
@@ -448,7 +448,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                     else if (radix == 8)
                     {
                         // NB: Can't reach here since we are parsing one char at a time
-                        Debug.Assert(false);
+                        System.Diagnostics.Debug.Assert(false);
 
                         // TODO Parse all bits at once
 //						b = b.ShiftLeft(s.Length * 3);
@@ -526,7 +526,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                         inverse[index++] = (byte)~bytes[iBval++];
                     }
 
-                    Debug.Assert(iBval == end);
+                    System.Diagnostics.Debug.Assert(iBval == end);
 
                     while (inverse[--index] == byte.MaxValue)
                     {
@@ -1072,7 +1072,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 ++yStart;
             }
 
-            Debug.Assert(yStart < y.Length);
+            System.Diagnostics.Debug.Assert(yStart < y.Length);
 
             int xyCmp = CompareNoLeadingZeroes(xStart, x, yStart, y);
             int[] count;
@@ -1373,9 +1373,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
         private bool CheckProbablePrime(int certainty, Random random, bool randomlySelected)
         {
-            Debug.Assert(certainty > 0);
-            Debug.Assert(CompareTo(Two) > 0);
-            Debug.Assert(TestBit(0));
+            System.Diagnostics.Debug.Assert(certainty > 0);
+            System.Diagnostics.Debug.Assert(CompareTo(Two) > 0);
+            System.Diagnostics.Debug.Assert(TestBit(0));
 
 
             // Try to reduce the penalty for really small numbers
@@ -1427,9 +1427,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         {
             int bits = BitLength;
 
-            Debug.Assert(certainty > 0);
-            Debug.Assert(bits > 2);
-            Debug.Assert(TestBit(0));
+            System.Diagnostics.Debug.Assert(certainty > 0);
+            System.Diagnostics.Debug.Assert(bits > 2);
+            System.Diagnostics.Debug.Assert(TestBit(0));
 
             int iterations = ((certainty - 1) / 2) + 1;
             if (randomlySelected)
@@ -1453,7 +1453,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             // let n = 1 + d . 2^s
             BigInteger n = this;
             int s = n.GetLowestSetBitMaskFirst(-1 << 1);
-            Debug.Assert(s >= 1);
+            System.Diagnostics.Debug.Assert(s >= 1);
             BigInteger r = n.ShiftRight(s);
 
             // NOTE: Avoid conversion to/from Montgomery form and check for R/-R as result instead
@@ -1701,8 +1701,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
         private BigInteger ModInversePow2(BigInteger m)
         {
-            Debug.Assert(m.SignValue > 0);
-            Debug.Assert(m.BitCount == 1);
+            System.Diagnostics.Debug.Assert(m.SignValue > 0);
+            System.Diagnostics.Debug.Assert(m.BitCount == 1);
 
             if (!TestBit(0))
             {
@@ -1744,27 +1744,27 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         private static int ModInverse32(int d)
         {
             // Newton's method with initial estimate "correct to 4 bits"
-            Debug.Assert((d & 1) != 0);
+            System.Diagnostics.Debug.Assert((d & 1) != 0);
             int x = d + (((d + 1) & 4) << 1);   // d.x == 1 mod 2**4
-            Debug.Assert(((d * x) & 15) == 1);
+            System.Diagnostics.Debug.Assert(((d * x) & 15) == 1);
             x *= 2 - d * x;                     // d.x == 1 mod 2**8
             x *= 2 - d * x;                     // d.x == 1 mod 2**16
             x *= 2 - d * x;                     // d.x == 1 mod 2**32
-            Debug.Assert(d * x == 1);
+            System.Diagnostics.Debug.Assert(d * x == 1);
             return x;
         }
 
         private static long ModInverse64(long d)
         {
             // Newton's method with initial estimate "correct to 4 bits"
-            Debug.Assert((d & 1L) != 0);
+            System.Diagnostics.Debug.Assert((d & 1L) != 0);
             long x = d + (((d + 1L) & 4L) << 1);    // d.x == 1 mod 2**4
-            Debug.Assert(((d * x) & 15L) == 1L);
+            System.Diagnostics.Debug.Assert(((d * x) & 15L) == 1L);
             x *= 2 - d * x;                         // d.x == 1 mod 2**8
             x *= 2 - d * x;                         // d.x == 1 mod 2**16
             x *= 2 - d * x;                         // d.x == 1 mod 2**32
             x *= 2 - d * x;                         // d.x == 1 mod 2**64
-            Debug.Assert(d * x == 1L);
+            System.Diagnostics.Debug.Assert(d * x == 1L);
             return x;
         }
 
@@ -1880,7 +1880,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             }
 
             int[] windowList = GetWindowList(e.magnitude, extraBits);
-            Debug.Assert(windowList.Length > 0);
+            System.Diagnostics.Debug.Assert(windowList.Length > 0);
 
             int window = windowList[0];
             int mult = window & 0xFF, lastZeroes = window >> 8;
@@ -1969,7 +1969,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             int[] yAccum = new int[n + 1];
 
             int[] zVal = b.magnitude;
-            Debug.Assert(zVal.Length <= n);
+            System.Diagnostics.Debug.Assert(zVal.Length <= n);
             if (zVal.Length < n)
             {
                 int[] tmp = new int[n];
@@ -2005,7 +2005,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             }
 
             int[] windowList = GetWindowList(e.magnitude, extraBits);
-            Debug.Assert(windowList.Length > 1);
+            System.Diagnostics.Debug.Assert(windowList.Length > 1);
 
             int window = windowList[0];
             int mult = window & 0xFF, lastZeroes = window >> 8;
@@ -2058,7 +2058,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         private static int[] GetWindowList(int[] mag, int extraBits)
         {
             int v = mag[0];
-            Debug.Assert(v != 0);
+            System.Diagnostics.Debug.Assert(v != 0);
 
             int leadingBits = BitLen(v);
 
@@ -2161,7 +2161,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 }
                 else
                 {
-                    Debug.Assert((c >> 32) == 0);
+                    System.Diagnostics.Debug.Assert((c >> 32) == 0);
                 }
 
                 wBase += i;
@@ -2178,7 +2178,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             }
             else
             {
-                Debug.Assert((c >> 32) == 0);
+                System.Diagnostics.Debug.Assert((c >> 32) == 0);
             }
 
             return w;
@@ -2221,7 +2221,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 }
                 else
                 {
-                    Debug.Assert(val == 0);
+                    System.Diagnostics.Debug.Assert(val == 0);
                 }
             }
             while (i > 0);
@@ -2239,11 +2239,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 return mQuote; // already calculated
             }
 
-            Debug.Assert(this.sign > 0);
+            System.Diagnostics.Debug.Assert(this.sign > 0);
 
             int d = -magnitude[magnitude.Length - 1];
 
-            Debug.Assert((d & 1) != 0);
+            System.Diagnostics.Debug.Assert((d & 1) != 0);
 
             return mQuote = ModInverse32(d);
         }
@@ -2251,7 +2251,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         private static void MontgomeryReduce(int[] x, int[] m, uint mDash) // mDash = -m^(-1) mod b
         {
             // NOTE: Not a general purpose reduction (which would allow x up to twice the bitlength of m)
-            Debug.Assert(x.Length == m.Length);
+            System.Diagnostics.Debug.Assert(x.Length == m.Length);
 
             int n = m.Length;
 
@@ -2261,7 +2261,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 ulong t = x0 * mDash;
 
                 ulong carry = t * (uint)m[n - 1] + x0;
-                Debug.Assert((uint)carry == 0);
+                System.Diagnostics.Debug.Assert((uint)carry == 0);
                 carry >>= 32;
 
                 for (int j = n - 2; j >= 0; --j)
@@ -2272,7 +2272,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 }
 
                 x[0] = (int)carry;
-                Debug.Assert(carry >> 32 == 0);
+                System.Diagnostics.Debug.Assert(carry >> 32 == 0);
             }
 
             if (CompareTo(0, x, 0, m) >= 0)
@@ -2316,7 +2316,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
                 ulong prod2 = t * (uint)m[n - 1];
                 carry += (uint)prod2;
-                Debug.Assert((uint)carry == 0);
+                System.Diagnostics.Debug.Assert((uint)carry == 0);
                 carry = (carry >> 32) + (prod2 >> 32);
 
                 for (int j = n - 2; j >= 0; --j)
@@ -2344,7 +2344,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
                 ulong prod2 = t * (uint)m[n - 1];
                 carry += (uint)prod2;
-                Debug.Assert((uint)carry == 0);
+                System.Diagnostics.Debug.Assert((uint)carry == 0);
                 carry = (carry >> 32) + (prod1 >> 32) + (prod2 >> 32);
 
                 for (int j = n - 2; j >= 0; --j)
@@ -2393,7 +2393,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
                 ulong prod2 = t * (uint)m[n - 1];
                 carry += (uint)prod2;
-                Debug.Assert((uint)carry == 0);
+                System.Diagnostics.Debug.Assert((uint)carry == 0);
                 carry = (carry >> 32) + (prod2 >> 32);
 
                 for (int j = n - 2; j >= 0; --j)
@@ -2416,7 +2416,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 ulong t = a0 * mDash;
 
                 ulong carry = t * (uint)m[n - 1] + a0;
-                Debug.Assert((uint)carry == 0);
+                System.Diagnostics.Debug.Assert((uint)carry == 0);
                 carry >>= 32;
 
                 for (int j = n - 2; j > i; --j)
@@ -2469,13 +2469,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             ulong um = m;
             ulong prod2 = um * t;
             carry += (uint)prod2;
-            Debug.Assert((uint)carry == 0);
+            System.Diagnostics.Debug.Assert((uint)carry == 0);
             carry = (carry >> 32) + (prod2 >> 32);
             if (carry > um)
             {
                 carry -= um;
             }
-            Debug.Assert(carry < um);
+            System.Diagnostics.Debug.Assert(carry < um);
             return (uint)carry;
         }
 
@@ -2606,7 +2606,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         private int Remainder(
             int m)
         {
-            Debug.Assert(m > 0);
+            System.Diagnostics.Debug.Assert(m > 0);
 
             long acc = 0;
             for (int pos = 0; pos < magnitude.Length; ++pos)
@@ -2637,7 +2637,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 ++yStart;
             }
 
-            Debug.Assert(yStart < y.Length);
+            System.Diagnostics.Debug.Assert(yStart < y.Length);
 
             int xyCmp = CompareNoLeadingZeroes(xStart, x, yStart, y);
 
@@ -2654,7 +2654,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 {
                     c = ShiftLeft(y, shift);
                     cBitLength += shift;
-                    Debug.Assert(c[0] != 0);
+                    System.Diagnostics.Debug.Assert(c[0] != 0);
                 }
                 else
                 {
@@ -2798,7 +2798,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
         private BigInteger DivideWords(int w)
         {
-            Debug.Assert(w >= 0);
+            System.Diagnostics.Debug.Assert(w >= 0);
             int n = magnitude.Length;
             if (w >= n)
                 return Zero;
@@ -2809,7 +2809,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
         private BigInteger RemainderWords(int w)
         {
-            Debug.Assert(w >= 0);
+            System.Diagnostics.Debug.Assert(w >= 0);
             int n = magnitude.Length;
             if (w >= n)
                 return this;
@@ -2868,7 +2868,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
 
         private static int ShiftLeftOneInPlace(int[] x, int carry)
         {
-            Debug.Assert(carry == 0 || carry == 1);
+            System.Diagnostics.Debug.Assert(carry == 0 || carry == 1);
             int pos = x.Length;
             while (--pos >= 0)
             {
@@ -3015,7 +3015,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
                 }
             }
 
-            Debug.Assert(res[0] != 0);
+            System.Diagnostics.Debug.Assert(res[0] != 0);
 
             return new BigInteger(this.sign, res, false);
         }
@@ -3034,8 +3034,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             int		yStart,
             int[]	y)
         {
-            Debug.Assert(yStart < y.Length);
-            Debug.Assert(x.Length - xStart >= y.Length - yStart);
+            System.Diagnostics.Debug.Assert(yStart < y.Length);
+            System.Diagnostics.Debug.Assert(x.Length - xStart >= y.Length - yStart);
 
             int iT = x.Length;
             int iV = y.Length;
@@ -3408,7 +3408,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
             int w = magnitude.Length, offset = 0;
 
             uint word = (uint)(magnitude[--w] & firstWordMask);
-            Debug.Assert(magnitude[0] != 0);
+            System.Diagnostics.Debug.Assert(magnitude[0] != 0);
 
             while (word == 0)
             {
@@ -3613,9 +3613,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math
         private BigInteger FlipExistingBit(
             int n)
         {
-            Debug.Assert(sign > 0);
-            Debug.Assert(n >= 0);
-            Debug.Assert(n < BitLength - 1);
+            System.Diagnostics.Debug.Assert(sign > 0);
+            System.Diagnostics.Debug.Assert(n >= 0);
+            System.Diagnostics.Debug.Assert(n < BitLength - 1);
 
             int[] mag = (int[]) this.magnitude.Clone();
             mag[mag.Length - 1 - (n >> 5)] ^= (1 << (n & 31)); // Flip bit

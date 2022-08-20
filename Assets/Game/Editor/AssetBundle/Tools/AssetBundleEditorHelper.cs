@@ -53,7 +53,7 @@ namespace AssetBundles
         {
             if (Selection.objects == null || Selection.objects.Length == 0)
             {
-                Debug.LogWarning("You must select an object first");
+                UnityEngine.Debug.LogWarning("You must select an object first");
                 return false;
             }
 
@@ -198,7 +198,7 @@ namespace AssetBundles
             if (idx == -1)
             {
                 //not found
-                Debug.LogError(
+                UnityEngine.Debug.LogError(
                     string.Format("Assetbundle({0}) not found! check the name is correct with it's variant."));
                 return null;
             }
@@ -303,7 +303,7 @@ namespace AssetBundles
             AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
             if (importer == null)
             {
-                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+                UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
                     assetPath));
                 return;
             }
@@ -315,7 +315,7 @@ namespace AssetBundles
         {
             if (importer == null || !importer.IsValid)
             {
-                Debug.LogError("importer null or not valid!");
+                UnityEngine.Debug.LogError("importer null or not valid!");
                 return;
             }
             // string assetBundleName = Path.GetFileName(importer.assetPath);
@@ -334,7 +334,7 @@ namespace AssetBundles
             AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
             if (importer == null)
             {
-                Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+                UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
                     assetPath));
                 return;
             }
@@ -346,7 +346,7 @@ namespace AssetBundles
         {
             if (importer == null || !importer.IsValid)
             {
-                Debug.LogError("importer null or not valid!");
+                UnityEngine.Debug.LogError("importer null or not valid!");
                 return;
             }
 
@@ -474,14 +474,14 @@ namespace AssetBundles
             {
                 string assetPath = AssetDatabase.GetAssetPath(obj);
                 AssetImporter importer = AssetImporter.GetAtPath(assetPath);
-                ToolsDebug.Log($"importer.assetPath--->{importer.assetPath}");
+                Debug.Log($"importer.assetPath--->{importer.assetPath}");
                 string assetBundleName = Path.GetFileName(assetPath);
-                ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
+                Debug.Log($"assetBundleName-->{assetBundleName}");
                 importer.assetBundleName =
                     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
                     ASSETBUNDLE_EXT;
-                ToolsDebug.Log(assetPath);
-                ToolsDebug.Log(importer.assetBundleName);
+                Debug.Log(assetPath);
+                Debug.Log(importer.assetBundleName);
                 EditorUtility.SetDirty(obj);
             }
             AssetDatabase.Refresh();

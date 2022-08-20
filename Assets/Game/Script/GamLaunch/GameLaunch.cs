@@ -34,14 +34,14 @@ public class GameLaunch : MonoBehaviour
          */
         var startTime = DateTime.Now;
         yield return InitAppVersion();
-        ToolsDebug.Log($"InitAppVersion use {(DateTime.Now - startTime).Milliseconds}ms");
+        Debug.Log($"InitAppVersion use {(DateTime.Now - startTime).Milliseconds}ms");
         // 启动资源管理模块
         startTime = DateTime.Now;
         yield return AssetBundleManager.Instance.Initialize();
-        ToolsDebug.Log($"AssetBundleManager Initialize use {(DateTime.Now - startTime).Milliseconds}ms");
+        Debug.Log($"AssetBundleManager Initialize use {(DateTime.Now - startTime).Milliseconds}ms");
       
         startTime = DateTime.Now;
-        ToolsDebug.Log($"XLuaManager StartHotfix use {(DateTime.Now - startTime).Milliseconds}ms");
+        Debug.Log($"XLuaManager StartHotfix use {(DateTime.Now - startTime).Milliseconds}ms");
 
         // var data = AssetDatabase.GetAssetPathsFromAssetBundle(launchPrefabPath + AssetBundleConfig.AssetBundleSuffix);
         // yield return InitLaunchPrefab();
@@ -63,7 +63,7 @@ public class GameLaunch : MonoBehaviour
 
         var appVersionPath = AssetBundleUtility.GetPersistentDataPath(BuildUtils.AppVersionFileName);
         var persistentAppVersion = GameUtility.SafeReadAllText(appVersionPath);
-        ToolsDebug.Log($"streamingAppVersion = {streamingAppVersion}, persistentAppVersion = {persistentAppVersion}");
+        Debug.Log($"streamingAppVersion = {streamingAppVersion}, persistentAppVersion = {persistentAppVersion}");
 
         // 如果persistent目录版本比streamingAssets目录app版本低，说明是大版本覆盖安装，清理过时的缓存
         if (!string.IsNullOrEmpty(persistentAppVersion) &&
@@ -84,11 +84,11 @@ public class GameLaunch : MonoBehaviour
         var loader = AssetBundleManager.Instance.LoadAssetAsync(noticeTipPrefabPath, typeof(GameObject));
         yield return loader;
         noticeTipPrefab = loader.asset as GameObject;
-        ToolsDebug.Log($"Load noticeTipPrefab use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"Load noticeTipPrefab use {(DateTime.Now - start).Milliseconds}ms");
         loader.Dispose();
         if (noticeTipPrefab == null)
         {
-            ToolsDebug.LogError("LoadAssetAsync noticeTipPrefab err : " + noticeTipPrefabPath);
+            Debug.LogError("LoadAssetAsync noticeTipPrefab err : " + noticeTipPrefabPath);
             yield break;
         }
 
@@ -111,7 +111,7 @@ public class GameLaunch : MonoBehaviour
         var channelName = channelNameRequest.text;
         channelNameRequest.Dispose();
         ChannelManager.Instance.Init(channelName);
-        ToolsDebug.Log($"channelName = {channelName}");
+        Debug.Log($"channelName = {channelName}");
     }
 
     IEnumerator InitLaunchPrefab()
@@ -120,11 +120,11 @@ public class GameLaunch : MonoBehaviour
         var loader = AssetBundleManager.Instance.LoadAssetAsync(launchPrefabPath, typeof(GameObject));
         yield return loader;
         launchPrefab = loader.asset as GameObject;
-        ToolsDebug.Log($"Load launchPrefab use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"Load launchPrefab use {(DateTime.Now - start).Milliseconds}ms");
         loader.Dispose();
         if (launchPrefab == null)
         {
-            ToolsDebug.LogError("LoadAssetAsync launchPrefab err : " + launchPrefabPath);
+            Debug.LogError("LoadAssetAsync launchPrefab err : " + launchPrefabPath);
             yield break;
         }
 
@@ -138,7 +138,7 @@ public class GameLaunch : MonoBehaviour
         var luanchLayer = GameObject.Find("UIRoot/LuanchLayer");
         var start = DateTime.Now;
         GameObject go = GameObject.Instantiate(prefab);
-        ToolsDebug.Log($"Instantiate use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"Instantiate use {(DateTime.Now - start).Milliseconds}ms");
         go.transform.parent = luanchLayer.transform;
         var rectTransform = go.GetComponent<RectTransform>();
         rectTransform.offsetMax = Vector2.zero;

@@ -77,7 +77,7 @@ public class AssetBundleUpdater
         // 初始化本地版本信息
         var start = DateTime.Now;
         yield return InitLocalVersion();
-        ToolsDebug.Log($"InitLocalVersion use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"InitLocalVersion use {(DateTime.Now - start).Milliseconds}ms");
 
         // // 初始化SDK
         // start = DateTime.Now;
@@ -223,7 +223,7 @@ public class AssetBundleUpdater
             ChannelManager.Instance.noticeVersion = "1.0.0";
         }
 
-        ToolsDebug.Log(
+        Debug.Log(
             $"streamingResVersion = {streamingResVersion}, persistentResVersion = {persistentResVersion}, persistentNoticeVersion = {persistentNoticeVersion}");
     }
 
@@ -316,7 +316,7 @@ public class AssetBundleUpdater
         sb.AppendFormat("noticeVersion = {0}\n", ChannelManager.Instance.noticeVersion);
         sb.AppendFormat("serverAppVersion = {0}\n", serverAppVersion);
         sb.AppendFormat("serverResVersion = {0}\n", serverResVersion);
-        ToolsDebug.Log(sb.ToString());
+        Debug.Log(sb.ToString());
 #endif
 
         yield break;
@@ -330,7 +330,7 @@ public class AssetBundleUpdater
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
+            Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
                                 "\n err : " + request.error);
             request.Dispose();
 
@@ -350,7 +350,7 @@ public class AssetBundleUpdater
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
+            Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
                                 "\n err : " + request.error);
             request.Dispose();
 
@@ -406,7 +406,7 @@ public class AssetBundleUpdater
         if (www == null || !string.IsNullOrEmpty(www.error) || www.downloadHandler.data == null ||
             www.downloadHandler.data.Length == 0)
         {
-            ToolsDebug.LogError("Get url list for args {0} with err : {1}", args,
+            Debug.LogError("Get url list for args {0} with err : {1}", args,
                 www == null ? "www null" : (!string.IsNullOrEmpty(www.error) ? www.error : "bytes length 0"));
             yield return OutnetGetUrlList();
         }
@@ -416,7 +416,7 @@ public class AssetBundleUpdater
                 .GetString(www.downloadHandler.data).Trim());
         if (urlList == null)
         {
-            ToolsDebug.LogError("Get url list for args {0} with err : {1}", args, "Deserialize url list null!");
+            Debug.LogError("Get url list for args {0} with err : {1}", args, "Deserialize url list null!");
             yield return OutnetGetUrlList();
         }
 
@@ -475,10 +475,10 @@ public class AssetBundleUpdater
     IEnumerator CheckGameUpdate(bool isInternal)
     {
         // 检测资源更新
-        ToolsDebug.Log("Resource download url : " + URLSetting.SERVER_RESOURCE_URL);
+        Debug.Log("Resource download url : " + URLSetting.SERVER_RESOURCE_URL);
         var start = DateTime.Now;
         yield return CheckIfNeededUpdate(isInternal);
-        ToolsDebug.Log($"CheckIfNeededUpdate use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"CheckIfNeededUpdate use {(DateTime.Now - start).Milliseconds}ms");
 
         // Unity有个Bug会给空的名字，不记得在哪个版本修复了，这里强行过滤下
         for (int i = needDownloadList.Count - 1; i >= 0; i--)
@@ -491,14 +491,14 @@ public class AssetBundleUpdater
 
         if (needDownloadList.Count <= 0)
         {
-            ToolsDebug.Log("No resources to update...");
+            Debug.Log("No resources to update...");
             yield return UpdateFinish();
             yield break;
         }
 
         start = DateTime.Now;
         yield return GetDownloadAssetBundlesSize();
-        ToolsDebug.Log(
+        Debug.Log(
             $"GetDownloadAssetBundlesSize : {KBSizeToString(downloadSize)}, use {(DateTime.Now - start).Milliseconds}ms");
         if (ShowUpdatePrompt(downloadSize) || isInternal)
         {
@@ -514,17 +514,17 @@ public class AssetBundleUpdater
         rightslider.gameObject.SetActive(true);
         totalDownloadCount = needDownloadList.Count;
         finishedDownloadCount = 0;
-        ToolsDebug.Log(totalDownloadCount + " resources to update...");
+        Debug.Log(totalDownloadCount + " resources to update...");
 
         start = DateTime.Now;
         yield return StartUpdate();
-        ToolsDebug.Log($"Update use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"Update use {(DateTime.Now - start).Milliseconds}ms");
 
         leftslider.normalizedValue = 1.0f;
         rightslider.normalizedValue = 1.0f;
         start = DateTime.Now;
         yield return UpdateFinish();
-        ToolsDebug.Log($"UpdateFinish use {(DateTime.Now - start).Milliseconds}ms");
+        Debug.Log($"UpdateFinish use {(DateTime.Now - start).Milliseconds}ms");
 
         string noticeUrl = URLSetting.NOTICE_URL;
         if (string.IsNullOrEmpty(noticeUrl)) yield break;
@@ -579,7 +579,7 @@ public class AssetBundleUpdater
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " +
+            Debug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " +
                                 request.url +
                                 "\n err : " + request.error);
             request.Dispose();
@@ -609,7 +609,7 @@ public class AssetBundleUpdater
         {
             UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
             yield return UINoticeTip.Instance.WaitForResponse();
-            ToolsDebug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " +
+            Debug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " +
                                 request.url +
                                 "\n err : " + request.error);
             request.Dispose();
@@ -627,20 +627,20 @@ public class AssetBundleUpdater
         {
             if (string.IsNullOrEmpty(line))
             {
-                ToolsDebug.LogError("line empty!");
+                Debug.LogError("line empty!");
                 continue;
             }
 
             var slices = line.Split(separator, StringSplitOptions.None);
             if (slices.Length < 2)
             {
-                ToolsDebug.LogError("line split err : " + line);
+                Debug.LogError("line split err : " + line);
                 continue;
             }
 
             if (!int.TryParse(slices[1], out var size))
             {
-                ToolsDebug.LogError("size TryParse err : " + line);
+                Debug.LogError("size TryParse err : " + line);
             }
 
             lookup.Add(slices[0], size);
@@ -650,7 +650,7 @@ public class AssetBundleUpdater
         {
             if (!lookup.TryGetValue(assetbundle, out var size))
             {
-                ToolsDebug.LogError("no assetbundle size info : " + assetbundle);
+                Debug.LogError("no assetbundle size info : " + assetbundle);
             }
 
             downloadSize += size;
@@ -711,7 +711,7 @@ public class AssetBundleUpdater
             {
                 if (!string.IsNullOrEmpty(request.error))
                 {
-                    ToolsDebug.LogError("Error when downloading file : " + request.assetbundleName + "\n from url : " +
+                    Debug.LogError("Error when downloading file : " + request.assetbundleName + "\n from url : " +
                                         request.url + "\n err : " + request.error);
                     hasError = true;
                     needDownloadList.Add(request.assetbundleName);
@@ -719,7 +719,7 @@ public class AssetBundleUpdater
                 else
                 {
                     // TODO：是否需要显示下载流量进度？
-                    ToolsDebug.Log("Finish downloading file : " + request.assetbundleName + "\n from url : " +
+                    Debug.Log("Finish downloading file : " + request.assetbundleName + "\n from url : " +
                                    request.url);
                     downloadingRequest.RemoveAt(i);
                     finishedDownloadCount++;

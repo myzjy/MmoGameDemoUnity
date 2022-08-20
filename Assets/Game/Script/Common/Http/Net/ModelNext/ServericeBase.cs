@@ -96,7 +96,7 @@ namespace GameData.Net
         {
             if (_methods != HttpMethods.Get)
             {
-                Debug.Assert(_playdict.Count==0,"not dictionary");
+                UnityEngine.Debug.Assert(_playdict.Count==0,"not dictionary");
                 m_payloadStr = JsonConvert.SerializeObject(obj);
             }
             else

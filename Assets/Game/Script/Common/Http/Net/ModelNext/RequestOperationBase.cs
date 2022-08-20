@@ -219,7 +219,7 @@ namespace GameData.Net
                 //add appirits
                 if (!string.IsNullOrEmpty(PayloadStr))
                 {
-                    Debug.Log("Payload: " + PayloadStr);
+                    UnityEngine.Debug.Log("Payload: " + PayloadStr);
                     requestData.SetBody(Encoding.UTF8.GetBytes(PayloadStr));
                 }
                 else if (Payload.Count > 0)
@@ -269,7 +269,7 @@ namespace GameData.Net
                 //add appirits
                 if (!string.IsNullOrEmpty(PayloadStr))
                 {
-                    Debug.Log("Payload: " + PayloadStr);
+                    UnityEngine.Debug.Log("Payload: " + PayloadStr);
                     _ApiRequestData.SetBody(Encoding.UTF8.GetBytes(PayloadStr));
                 }
                 else if (Payload.Count > 0)
@@ -296,8 +296,8 @@ namespace GameData.Net
 
             if (data.IsError)
             {
-                Debug.LogError("HTTPRequestStates: Error：" + GetRequestUri());
-                Debug.LogWarning("Request Finished with Error! " + data.ErrorStrMessage);
+                UnityEngine.Debug.LogError("HTTPRequestStates: Error：" + GetRequestUri());
+                UnityEngine.Debug.LogWarning("Request Finished with Error! " + data.ErrorStrMessage);
                 if (_FailureCallBack != null)
                 {
                     _FailureCallBack(response, json);
@@ -305,7 +305,7 @@ namespace GameData.Net
             }
             else if (!data.IsDone)
             {
-                Debug.Log("HTTPRequestStates: Aborted");
+                UnityEngine.Debug.Log("HTTPRequestStates: Aborted");
                 if (_FailureCallBack != null)
                 {
                     _FailureCallBack(response, json);

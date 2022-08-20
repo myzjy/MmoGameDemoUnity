@@ -351,7 +351,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC
             int n = k.BitLength;
             int s = k.GetLowestSetBit();
 
-            Debug.Assert(k.TestBit(s));
+            System.Diagnostics.Debug.Assert(k.TestBit(s));
 
             BigInteger Uh = BigInteger.One;
             BigInteger Vl = BigInteger.Two;

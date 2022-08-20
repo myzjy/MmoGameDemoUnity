@@ -56,7 +56,7 @@ namespace AssetBundles.Config
             //判断是否设置了资源包财产名
             if (string.IsNullOrEmpty(AssetbundleName))
             {
-                ToolsDebug.LogError("请设置ManifestBundleName！！！");
+                Debug.LogError("请设置ManifestBundleName！！！");
             }
         }
 
@@ -70,7 +70,7 @@ namespace AssetBundles.Config
         {
             if (assetBundle == null)
             {
-                ToolsDebug.LogError("manifest LoadFromAssetBundle assetBundle is null");
+                Debug.LogError("manifest LoadFromAssetBundle assetBundle is null");
                 return;
             }
 
