@@ -7,7 +7,15 @@
         DateTime,
         Float,
         Class,
-        Enum
+        Enum,
+        Differentiate
+    }
+
+    public enum PostBack
+    {
+        Api,
+        Request,
+        Response,
     }
     
     public class HttpsInstructionsManager

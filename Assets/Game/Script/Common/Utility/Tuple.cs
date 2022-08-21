@@ -2,20 +2,21 @@
 {
     public static class STuple
     {
-        public static STuple<FIRST, SECOND> Create<FIRST, SECOND>(FIRST first, SECOND second)
+        public static STuple<TFirst, TSecond> Create<TFirst, TSecond>(TFirst first, TSecond second)
         {
-            return new STuple<FIRST, SECOND>(first, second);
+            Debug.Log($"first:{first},second:{second} ; FIRST Type:{typeof(TFirst)},SECOND Type:{typeof(TSecond)}");
+            return new STuple<TFirst, TSecond>(first, second);
         }
     }
-    public struct STuple<FIRST, SECOND>
+    public struct STuple<TFirst, TSecond>
     {
-        public FIRST first;
-        public SECOND second;
+        public TFirst First;
+        public TSecond Second;
 
-        public STuple(FIRST first, SECOND second)
+        public STuple(TFirst first, TSecond second)
         {
-            this.first = first;
-            this.second = second;
+            this.First = first;
+            this.Second = second;
         }
     }
 }

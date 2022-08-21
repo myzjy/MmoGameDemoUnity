@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using Serialization;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork;
@@ -124,8 +125,9 @@ namespace GameEditor.ApiHttpsEditor
                 {
                     if (_mSelectInstructions != null)
                     {
-                        m_parsedInstructions = JsonConvert.DeserializeObject<Instructions>(m_lastInstructions.text);
-                        // Serializer.jsonSerializer.Deserialize<Instructions>(m_lastInstructions.text);
+                        if (m_lastInstructions != null)
+                            m_parsedInstructions = //JsonConvert.DeserializeObject<Instructions>(m_lastInstructions.text);
+                                Serializer.jsonSerializer.Deserialize<Instructions>(m_lastInstructions.text);
                     }
                     else
                     {
@@ -144,7 +146,7 @@ namespace GameEditor.ApiHttpsEditor
                 EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button("Save"))
                 {
-                    // Save();
+                    Save();
                 }
 
                 EditorGUILayout.EndHorizontal();
@@ -211,9 +213,9 @@ namespace GameEditor.ApiHttpsEditor
                     GUI.backgroundColor = i.Equals(mHttpClip) ? Color.red : bgColor;
 
                     var ret = RenderValue(instructions.InstructionsList[j], i.GetType(), i);
-                    if (ret.first)
+                    if (ret.First)
                     {
-                        instructions.InstructionsList[j] = ret.second as HttpsInstructions;
+                        instructions.InstructionsList[j] = ret.Second as HttpsInstructions;
                         throw new Modified();
                     }
                 }
@@ -330,7 +332,10 @@ namespace GameEditor.ApiHttpsEditor
                 {
                     try
                     {
+                        Color bgColor = GUI.backgroundColor;
+                        GUI.backgroundColor = Color.gray;
                         EditorGUILayout.BeginVertical(GUI.skin.box);
+
                         RenderField(inst, f, attr);
                     }
                     finally
@@ -348,11 +353,11 @@ namespace GameEditor.ApiHttpsEditor
             try
             {
                 EditorGUILayout.BeginHorizontal();
-                GUILayout.Label(attr.description == null ? f.Name : attr.description);
+                GUILayout.Label(attr.Description == null ? f.Name : attr.Description);
                 var ret = RenderValue(inst, f.FieldType, f.GetValue(inst));
-                if (ret.first)
+                if (ret.First)
                 {
-                    f.SetValue(inst, ret.second);
+                    f.SetValue(inst, ret.Second);
                     throw new Modified();
                 }
             }
@@ -365,6 +370,13 @@ namespace GameEditor.ApiHttpsEditor
 
         static STuple<bool, object> notChanged = STuple.Create<bool, object>(false, null);
 
+        /// <summary>
+        /// 测试值 创建值
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="originalValue"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         static STuple<bool, object> Test<T>(T value, object originalValue)
         {
             if (EqualityComparer<T>.Default.Equals(value, (T)originalValue))
@@ -377,22 +389,20 @@ namespace GameEditor.ApiHttpsEditor
             }
         }
 
-        STuple<bool, object> RenderList(Type type, IList list)
+        private STuple<bool, object> RenderList(Type type, IList list)
         {
             if (list == null)
                 return STuple.Create(true, Activator.CreateInstance(typeof(List<>).MakeGenericType(type)));
             try
             {
                 EditorGUILayout.BeginVertical(GUI.skin.box);
-                for (int i = 0; i < list.Count; i++)
+                for (var i = 0; i < list.Count; i++)
                 {
                     var obj = list[i];
                     var ret = RenderValue(list, type, obj);
-                    if (ret.first)
-                    {
-                        list[i] = ret.second;
-                        throw new Modified();
-                    }
+                    if (!ret.First) continue;
+                    list[i] = ret.Second;
+                    throw new Modified();
                 }
 
                 return notChanged;
@@ -417,9 +427,9 @@ namespace GameEditor.ApiHttpsEditor
                 {
                     var obj = array.GetValue(i);
                     var ret = RenderValue(array, type, obj);
-                    if (ret.first)
+                    if (ret.First)
                     {
-                        array.SetValue(ret.second, i);
+                        array.SetValue(ret.Second, i);
                         throw new Modified();
                     }
                 }
@@ -439,7 +449,7 @@ namespace GameEditor.ApiHttpsEditor
             var attr = x.GetAttribute<DescribeAttribute>();
             if (attr != null)
             {
-                return attr.description;
+                return attr.Description;
             }
             else
             {
@@ -452,18 +462,12 @@ namespace GameEditor.ApiHttpsEditor
         {
             var idx = subClasses.FindIndex(x => x == inst.GetType());
             var val = EditorGUILayout.Popup(idx, typeSelections);
-            if (val != idx)
-            {
-                return STuple.Create(true, (object)Activator.CreateInstance(subClasses[val]));
-            }
-            else
-            {
-                return notChanged;
-            }
+            return val != idx ? STuple.Create(true, (object)Activator.CreateInstance(subClasses[val])) : notChanged;
         }
 
         STuple<bool, object> RenderValue(object inst, Type type, object value)
         {
+            // GUILayout.Box();
             if (type == typeof(int))
             {
                 return Test(EditorGUILayout.IntField((int)value), value);
@@ -483,10 +487,10 @@ namespace GameEditor.ApiHttpsEditor
 
             if (type.IsEnum)
             {
-                STuple<bool, object> ret = notChanged;
+                var ret = notChanged;
                 using (new EditorGUILayout.VerticalScope())
                 {
-                    bool sortTarget = sortInstruction == inst && sortEnumType == value.GetType();
+                    var sortTarget = sortInstruction == inst && sortEnumType == value.GetType();
 
                     if (!sortTarget)
                     {
@@ -494,13 +498,13 @@ namespace GameEditor.ApiHttpsEditor
                     }
                     else
                     {
-                        int selectedIndex = Array.IndexOf(sortEnumName,
+                        var selectedIndex = Array.IndexOf(sortEnumName,
                             TextSplitUpperColmuns(value.ToString(), SingleColmunsTarget));
-                        int index = EditorGUILayout.Popup(selectedIndex, sortEnumName);
+                        var index = EditorGUILayout.Popup(selectedIndex, sortEnumName);
                         if (index != selectedIndex)
                         {
-                            ret.first = true;
-                            ret.second = Enum.Parse(value.GetType(), sortEnumName[index].Replace("/", ""));
+                            ret.First = true;
+                            ret.Second = Enum.Parse(value.GetType(), sortEnumName[index].Replace("/", ""));
                         }
                     }
 
@@ -510,7 +514,7 @@ namespace GameEditor.ApiHttpsEditor
                         // Copy
                         if (GUILayout.Button("Copy", GUILayout.ExpandWidth(false)))
                         {
-                            var clipValue = ret.second != null ? ret.second : value;
+                            var clipValue = ret.Second != null ? ret.Second : value;
                             clipEnumValue = ((Enum)clipValue).ToString();
                             clipEnumType = clipValue.GetType();
                         }
@@ -521,8 +525,8 @@ namespace GameEditor.ApiHttpsEditor
                         {
                             if (GUILayout.Button("Paste", GUILayout.ExpandWidth(false)))
                             {
-                                ret.second = Enum.Parse(clipEnumType, clipEnumValue);
-                                ret.first = value != ret.second;
+                                ret.Second = Enum.Parse(clipEnumType, clipEnumValue);
+                                ret.First = value != ret.Second;
                             }
                         }
 
@@ -591,7 +595,7 @@ namespace GameEditor.ApiHttpsEditor
                 {
                     EditorGUILayout.BeginVertical(GUI.skin.box);
                     var ret = RenderInstruction((HttpsInstructions)value);
-                    if (ret.first) return ret;
+                    if (ret.First) return ret;
                     return RenderObject(value);
                 }
                 finally
@@ -677,12 +681,29 @@ namespace GameEditor.ApiHttpsEditor
 
             return tmp;
         }
+
         public void Save()
         {
+            var str = JsonConvert.SerializeObject(m_parsedInstructions);
             var path = AssetDatabase.GetAssetPath(_mSelectInstructions);
-            File.WriteAllText(path,JsonConvert.SerializeObject(_mSelectInstructions));
-            AssetDatabase.Refresh();
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            var obj = serializer.Deserialize(jtr);
+            if (obj != null)
+            {
+                StringWriter sw = new StringWriter();
+                JsonTextWriter jsonTextWriter = new JsonTextWriter(sw)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonTextWriter, obj);
+                File.WriteAllText(path, sw.ToString());
+            }
 
+            AssetDatabase.Refresh();
         }
     }
 }

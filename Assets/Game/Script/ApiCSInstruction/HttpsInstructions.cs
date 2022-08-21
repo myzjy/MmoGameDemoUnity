@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Serialization;
 using ZJYFrameWork.AttributeCustom;
 
 namespace ZJYFrameWork
@@ -9,10 +10,13 @@ namespace ZJYFrameWork
         public List<HttpsInstructions> InstructionsList=new List<HttpsInstructions>();
     }
     
-    [SubClass(typeof(InstructionType))]
-    public abstract class HttpsInstructions
+    [ObjSerializer.SuperClassAttribute(typeof(InstructionType))]
+    public abstract  class HttpsInstructions
     {
-        public abstract string HttpDescription();
+        public virtual string HttpDescription()
+        {
+            return "";
+        }
     }
 
    [SubClass(InstructionType.None)]

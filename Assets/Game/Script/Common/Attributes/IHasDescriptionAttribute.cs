@@ -3,6 +3,6 @@ namespace ZJYFrameWork.AttributeCustom
 {
     public interface IHasDescriptionAttribute
     {
-        string description { get; }
+        string Description { get; }
     }
 }

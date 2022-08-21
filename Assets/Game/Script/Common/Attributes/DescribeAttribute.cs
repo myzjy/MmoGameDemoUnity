@@ -5,11 +5,11 @@ namespace ZJYFrameWork.AttributeCustom
 {
     public class DescribeAttribute : Attribute, IHasDescriptionAttribute
     {
-        public string description { get; private set; }
+        public string Description { get; private set; }
 
         public DescribeAttribute(string description)
         {
-            this.description = description;
+            this.Description = description;
         }
     }
 
