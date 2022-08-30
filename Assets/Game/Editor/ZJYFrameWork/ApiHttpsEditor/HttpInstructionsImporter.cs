@@ -24,10 +24,13 @@ namespace ZJYFrameWork
             //将文本完全读到
             var text = File.ReadAllText(fullPath);
             var pack = JsonConvert.DeserializeObject<Instructions>(text);
+            //两次去掉后缀
             var baseName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(fullPath));
             //将字符串数组组合成一个路径
             var basePath = Path.Combine(Application.dataPath,
                 "Game/Editor/ZJYFrameWork/ApiHttpsEditor/Json/" + baseName);
+            
+            
         }
     }
 }

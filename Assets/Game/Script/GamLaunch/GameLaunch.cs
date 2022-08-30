@@ -37,7 +37,7 @@ public class GameLaunch : MonoBehaviour
         Debug.Log($"InitAppVersion use {(DateTime.Now - startTime).Milliseconds}ms");
         // 启动资源管理模块
         startTime = DateTime.Now;
-        yield return AssetBundleManager.Instance.Initialize();
+        // yield return AssetBundleManager.Instance.Initialize();
         Debug.Log($"AssetBundleManager Initialize use {(DateTime.Now - startTime).Milliseconds}ms");
       
         startTime = DateTime.Now;
@@ -48,52 +48,53 @@ public class GameLaunch : MonoBehaviour
         // yield return InitNoticeTipPrefab();
         // var obj = new GameObject();
         // obj.name = "AssetBundleUpdater";
-        yield return AssetBundleManager.Instance._updater.CheckUpdateOrDownloadGame();
+        // yield return AssetBundleManager.Instance._updater.CheckUpdateOrDownloadGame();
 
         // root.StartRoot();
     }
 
     private IEnumerator InitAppVersion()
     {
-        var appVersionRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.AppVersionFileName);
-        // ReSharper disable once AccessToDisposedClosure
-        yield return new WaitUntil(() => appVersionRequest.isDone);
-        var streamingAppVersion = appVersionRequest.text;
-        appVersionRequest.Dispose();
-
-        var appVersionPath = AssetBundleUtility.GetPersistentDataPath(BuildUtils.AppVersionFileName);
-        var persistentAppVersion = GameUtility.SafeReadAllText(appVersionPath);
-        Debug.Log($"streamingAppVersion = {streamingAppVersion}, persistentAppVersion = {persistentAppVersion}");
-
-        // 如果persistent目录版本比streamingAssets目录app版本低，说明是大版本覆盖安装，清理过时的缓存
-        if (!string.IsNullOrEmpty(persistentAppVersion) &&
-            BuildUtils.CheckIsNewVersion(persistentAppVersion, streamingAppVersion))
-        {
-            var path = AssetBundleUtility.GetPersistentDataPath();
-            GameUtility.SafeDeleteDir(path);
-        }
-
-        GameUtility.SafeWriteAllText(appVersionPath, streamingAppVersion);
+        // var appVersionRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.AppVersionFileName);
+        // // ReSharper disable once AccessToDisposedClosure
+        // yield return new WaitUntil(() => appVersionRequest.isDone);
+        // var streamingAppVersion = appVersionRequest.text;
+        // appVersionRequest.Dispose();
+        //
+        // var appVersionPath = AssetBundleUtility.GetPersistentDataPath(BuildUtils.AppVersionFileName);
+        // var persistentAppVersion = GameUtility.SafeReadAllText(appVersionPath);
+        // Debug.Log($"streamingAppVersion = {streamingAppVersion}, persistentAppVersion = {persistentAppVersion}");
+        //
+        // // 如果persistent目录版本比streamingAssets目录app版本低，说明是大版本覆盖安装，清理过时的缓存
+        // if (!string.IsNullOrEmpty(persistentAppVersion) &&
+        //     BuildUtils.CheckIsNewVersion(persistentAppVersion, streamingAppVersion))
+        // {
+        //     var path = AssetBundleUtility.GetPersistentDataPath();
+        //     GameUtility.SafeDeleteDir(path);
+        // }
+        //
+        // GameUtility.SafeWriteAllText(appVersionPath, streamingAppVersion);
         // ChannelManager.instance.appVersion = streamingAppVersion;
+        yield break;
     }
 
     //提示框
     IEnumerator InitNoticeTipPrefab()
     {
         var start = DateTime.Now;
-        var loader = AssetBundleManager.Instance.LoadAssetAsync(noticeTipPrefabPath, typeof(GameObject));
-        yield return loader;
-        noticeTipPrefab = loader.asset as GameObject;
-        Debug.Log($"Load noticeTipPrefab use {(DateTime.Now - start).Milliseconds}ms");
-        loader.Dispose();
-        if (noticeTipPrefab == null)
-        {
-            Debug.LogError("LoadAssetAsync noticeTipPrefab err : " + noticeTipPrefabPath);
-            yield break;
-        }
-
-        var go = InstantiateGameObject(noticeTipPrefab);
-        UINoticeTip.Instance.UIGameObject = go;
+        // var loader = AssetBundleManager.Instance.LoadAssetAsync(noticeTipPrefabPath, typeof(GameObject));
+        // yield return loader;
+        // noticeTipPrefab = loader.asset as GameObject;
+        // Debug.Log($"Load noticeTipPrefab use {(DateTime.Now - start).Milliseconds}ms");
+        // loader.Dispose();
+        // if (noticeTipPrefab == null)
+        // {
+        //     Debug.LogError("LoadAssetAsync noticeTipPrefab err : " + noticeTipPrefabPath);
+        //     yield break;
+        // }
+        //
+        // var go = InstantiateGameObject(noticeTipPrefab);
+        // UINoticeTip.Instance.UIGameObject = go;
 
         yield break;
     }
@@ -106,29 +107,29 @@ public class GameLaunch : MonoBehaviour
             yield break;
         }
 #endif
-        var channelNameRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.ChannelNameFileName);
-        yield return channelNameRequest;
-        var channelName = channelNameRequest.text;
-        channelNameRequest.Dispose();
-        ChannelManager.Instance.Init(channelName);
-        Debug.Log($"channelName = {channelName}");
+        // var channelNameRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.ChannelNameFileName);
+        // yield return channelNameRequest;
+        // var channelName = channelNameRequest.text;
+        // channelNameRequest.Dispose();
+        // ChannelManager.Instance.Init(channelName);
+        // Debug.Log($"channelName = {channelName}");
     }
 
     IEnumerator InitLaunchPrefab()
     {
         var start = DateTime.Now;
-        var loader = AssetBundleManager.Instance.LoadAssetAsync(launchPrefabPath, typeof(GameObject));
-        yield return loader;
-        launchPrefab = loader.asset as GameObject;
-        Debug.Log($"Load launchPrefab use {(DateTime.Now - start).Milliseconds}ms");
-        loader.Dispose();
-        if (launchPrefab == null)
-        {
-            Debug.LogError("LoadAssetAsync launchPrefab err : " + launchPrefabPath);
-            yield break;
-        }
-
-        var go = InstantiateGameObject(launchPrefab);
+        // var loader = AssetBundleManager.Instance.LoadAssetAsync(launchPrefabPath, typeof(GameObject));
+        // yield return loader;
+        // launchPrefab = loader.asset as GameObject;
+        // Debug.Log($"Load launchPrefab use {(DateTime.Now - start).Milliseconds}ms");
+        // loader.Dispose();
+        // if (launchPrefab == null)
+        // {
+        //     Debug.LogError("LoadAssetAsync launchPrefab err : " + launchPrefabPath);
+        //     yield break;
+        // }
+        //
+        // var go = InstantiateGameObject(launchPrefab);
         // updater = go.AddComponent<AssetBundleUpdater>();
         yield break;
     }

@@ -13,24 +13,34 @@ namespace Framework.AssetBundles.Utilty
         {
             ///暂停
             TIME_OUT = 0,
+
             ///WWW请求错误
             FAILED_WWW_REQUEST = 1,
+
             ///写入错误
             FAILED_WRITE_CACHEFILE = 2,
+
             ///读入错误
             FAILED_READ_CACHEFILE = 3,
+
             ///删除错误
             FAILED_DELETE_CACHEFILE = 4,
+
             ///文件夹创建错误
             FAILED_CREATE_DIRECTORY = 5,
+
             ///容量错误
             FAILED_DISK_FULL = 6,
+
             ///加载的捆绑的读入错误
             DOWNLOAD_BUNDLE_INVALID = 7,
+
             ///原因不明的错误
             UNKNOWN = 8,
+
             ///读取中断
             ABORT_LOADING_REQUSET = 9,
+
             ///加载的捆绑的读入错误
             CACHEFILE_BUNDLE_INVALID = 10,
         }
@@ -39,21 +49,49 @@ namespace Framework.AssetBundles.Utilty
         public string message;
         public string abError;
     }
+
+    public enum Priority
+    {
+        /// <summary>
+        /// 高
+        /// </summary>
+        High,
+
+        /// <summary>
+        /// 中
+        /// </summary>
+        Normal,
+
+        /// <summary>
+        /// 低
+        /// </summary>
+        Low,
+    }
+
+    public struct UnloadInfo
+    {
+        public UnityEngine.AssetBundle assetBundle;
+        public uint key;
+        public bool unloadAllLoadedObjects;
+    }
+
     public class AssetBundleUtility
     {
-        private static string GetPlatformName(RuntimePlatform platform)
+        /// <summary>
+        /// 附在URL后面的各平台前缀
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPlatformName()
         {
-            switch (platform)
-            {
-                case RuntimePlatform.Android:
-                    return "Android";
-                case RuntimePlatform.IPhonePlayer:
-                    return "iOS";
-                default:
-                    UnityEngine.Debug.LogError("Error platform!!!");
-                    return null;
-            }
+#if UNITY_ANDROID
+            return "android/";
+#elif UNITY_IOS
+            return "ios/";
+#else
+            return "pc/";
+#endif
         }
+
         /// <summary>
         /// 包路径到资产路径
         /// </summary>
@@ -65,8 +103,9 @@ namespace Framework.AssetBundles.Utilty
             sb.Append("Assets/");
             sb.Append(AssetBundleConfig.AssetsFolderName);
             sb.Append($"/{assetPath}");
-            return  sb.ToString();
+            return sb.ToString();
         }
+
         /// <summary>
         /// 资产包路径到资产包名称
         /// </summary>
@@ -80,6 +119,7 @@ namespace Framework.AssetBundles.Utilty
             {
                 assetPath = AssetsPathToPackagePath(assetPath);
             }
+
             //no " "
             assetPath = assetPath.Replace(" ", "");
             //there should not be any '.' in the assetbundle name
@@ -90,6 +130,7 @@ namespace Framework.AssetBundles.Utilty
             ab.Append(AssetBundleConfig.AssetBundleSuffix);
             return ab.ToString().ToLower();
         }
+
         /// <summary>
         /// 资产路径到包路径
         /// </summary>
@@ -100,7 +141,7 @@ namespace Framework.AssetBundles.Utilty
             string path = $"{AssetBundleConfig.AssetsFolderName}/";
             if (assetPath.Contains(path))
             {
-                int idnex = assetPath.IndexOf(path, StringComparison.Ordinal)+path.Length;
+                int idnex = assetPath.IndexOf(path, StringComparison.Ordinal) + path.Length;
                 return assetPath.Substring(idnex);
             }
             else
@@ -109,6 +150,7 @@ namespace Framework.AssetBundles.Utilty
                 return assetPath;
             }
         }
+
         /// <summary>
         /// 获取到对应路径
         /// </summary>
@@ -130,6 +172,7 @@ namespace Framework.AssetBundles.Utilty
             return outputPath;
 #endif
         }
+
         /// <summary>
         /// 检查持久文件是否存在
         /// </summary>
@@ -141,17 +184,21 @@ namespace Framework.AssetBundles.Utilty
             var path = GetPersistentDataPath(filePath);
             return File.Exists(path);
         }
+
         public static string GetPersistentFilePath(string assetPath = null)
         {
             return "file://" + GetPersistentDataPath(assetPath);
         }
+
         public static string GetStreamingAssetsFilePath(string assetPath = null)
         {
 #if UNITY_EDITOR
-            string outputPath = Path.Combine("file://" + Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
+            string outputPath = Path.Combine("file://" + Application.streamingAssetsPath,
+                AssetBundleConfig.AssetBundlesFolderName);
 #else
 #if UNITY_IPHONE || UNITY_IOS
-            string outputPath = Path.Combine("file://" + Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
+            string outputPath =
+ Path.Combine("file://" + Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
 #elif UNITY_ANDROID
             string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
 #else
@@ -162,8 +209,10 @@ namespace Framework.AssetBundles.Utilty
             {
                 outputPath = Path.Combine(outputPath, assetPath);
             }
+
             return outputPath;
         }
+
         // 注意：这个路径是给WWW读文件使用的url，如果要直接磁盘写persistentDataPath，使用GetPlatformPersistentDataPath
         public static string GetAssetBundleFileUrl(string filePath)
         {
@@ -176,6 +225,7 @@ namespace Framework.AssetBundles.Utilty
                 return GetStreamingAssetsFilePath(filePath);
             }
         }
+
         public static string GetStreamingAssetsDataPath(string assetPath = null)
         {
             string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
@@ -183,8 +233,10 @@ namespace Framework.AssetBundles.Utilty
             {
                 outputPath = Path.Combine(outputPath, assetPath);
             }
+
             return outputPath;
         }
+
         public static bool IsPackagePath(string assetPath)
         {
             string path = "Assets/" + AssetBundleConfig.AssetsFolderName + "/";

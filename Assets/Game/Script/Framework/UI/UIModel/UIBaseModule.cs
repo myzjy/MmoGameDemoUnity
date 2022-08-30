@@ -113,14 +113,14 @@ namespace ZJYFrameWork.UISerializable.UIModel
             switch (GetSortType())
             {
                 case UISortType.First:
-                    {
-                        selfView.GetSelfUIView.GetTransform.SetAsFirstSibling();
-                    }
+                {
+                    selfView.GetSelfUIView.GetTransform.SetAsFirstSibling();
+                }
                     break;
                 case UISortType.Last:
-                    {
-                        selfView.GetSelfUIView.GetTransform.SetAsLastSibling();
-                    }
+                {
+                    selfView.GetSelfUIView.GetTransform.SetAsLastSibling();
+                }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -146,52 +146,52 @@ namespace ZJYFrameWork.UISerializable.UIModel
         private IEnumerator InstancePrefab()
         {
             var start = DateTime.Now;
-
+            yield break;
             // var loader = AssetBundleManager.Instance.LoadAssetBundleAsync(PrefabName());
-            var loader = AssetBundleManager.Instance.LoadAssetAsync(PrefabName(), typeof(GameObject));
+            // var loader = AssetBundleManager.Instance.LoadAssetAsync(PrefabName(), typeof(GameObject));
             // IAddressableLoadAssetSystem _addressable = CommonManager.Instance.GetSystem<IAddressableLoadAssetSystem>();
-            yield return loader;
+            // yield return loader;
 
 
-            var obj = loader.asset as GameObject;
-#if UNITY_EDITOR
-            UnityEngine.Debug.Log($"{PrefabName()}读取成功！！{loader.asset}");
-#endif
-            var go = InstantiateGameObject(obj,
-                res =>
-                {
-                    var rtf = res.GetComponent<RectTransform>();
-                    var UIView = res.GetComponent<UIView>();
-                    if (rtf)
-                    {
-                        rtf.offsetMin = Vector2.zero;
-                        rtf.offsetMax = Vector2.one;
-                    }
+            // var obj = loader.asset as GameObject;
+// #if UNITY_EDITOR
+            // UnityEngine.Debug.Log($"{PrefabName()}读取成功！！{loader.asset}");
+// #endif
+            // var go = InstantiateGameObject(obj,
+            // res =>
+            // {
+            // var rtf = res.GetComponent<RectTransform>();
+            // var UIView = res.GetComponent<UIView>();
+            // if (rtf)
+            // {
+            // rtf.offsetMin = Vector2.zero;
+            // rtf.offsetMax = Vector2.one;
+            // }
 
-                    switch (GetSortType())
-                    {
-                        case UISortType.First:
-                            {
-                                res.transform.SetAsFirstSibling();
-                            }
-                            break;
-                        case UISortType.Last:
-                            {
-                                res.transform.SetAsLastSibling();
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+            // switch (GetSortType())
+            // {
+            // case UISortType.First:
+            // {
+            // res.transform.SetAsFirstSibling();
+            // }
+            // break;
+            // case UISortType.Last:
+            // {
+            // res.transform.SetAsLastSibling();
+            // }
+            // break;
+            // default:
+            // throw new ArgumentOutOfRangeException();
+            // }
 
-                    InstanceID = res.GetInstanceID();
-                    UIView.GetTransform.localScale = Vector3.one;
-                    UIView.GetTransform.localPosition = Vector3.zero;
-                    selfView.SetUIView(UIView);
-                    //默认调用
-                    selfView.OnHide();
-                    selfView.OnInit();
-                });
+            // InstanceID = res.GetInstanceID();
+            // UIView.GetTransform.localScale = Vector3.one;
+            // UIView.GetTransform.localPosition = Vector3.zero;
+            // selfView.SetUIView(UIView);
+            //// 默认调用
+            // selfView.OnHide();
+            // selfView.OnInit();
+            // });
         }
 
         private Transform GetPanelUIRoot(UICanvasType _canvas)
@@ -200,24 +200,24 @@ namespace ZJYFrameWork.UISerializable.UIModel
             switch (_canvas)
             {
                 case UICanvasType.BG:
-                    {
-                        return ROOT.GetBgTransformPanel;
-                    }
+                {
+                    return ROOT.GetBgTransformPanel;
+                }
                     break;
                 case UICanvasType.UI:
-                    {
-                        return ROOT.GetUITransformPanel;
-                    }
+                {
+                    return ROOT.GetUITransformPanel;
+                }
                     break;
                 case UICanvasType.TOP:
-                    {
-                        return ROOT.GetUITopTransformPanel;
-                    }
+                {
+                    return ROOT.GetUITopTransformPanel;
+                }
                     break;
                 case UICanvasType.NOTICE:
-                    {
-                        return ROOT.GetNoticeCanvasTransformPanel;
-                    }
+                {
+                    return ROOT.GetNoticeCanvasTransformPanel;
+                }
                     break;
                 case UICanvasType.LOADING:
 
@@ -230,7 +230,7 @@ namespace ZJYFrameWork.UISerializable.UIModel
                     return ROOT.GetActivieseCanvasTransformPanel;
                 }
                     break;
-                    
+
                 default:
                     break;
             }

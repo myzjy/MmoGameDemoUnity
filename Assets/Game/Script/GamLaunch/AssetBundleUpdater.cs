@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using AssetBundles.Config;
+// using AssetBundles.Config;
 using Common.GameChannel;
 using Common.Http;
 using Common.Utility;
@@ -43,9 +43,11 @@ public class AssetBundleUpdater
     private List<ResourceWebRequester> downloadingRequest = new List<ResourceWebRequester>();
     private int downloadSize = 0;
     private int totalDownloadCount = 0;
+
     private int finishedDownloadCount = 0;
-    private Manifest localManifest = null;
-    private Manifest hostManifest = null;
+
+    // private Manifest localManifest = null;
+    // private Manifest hostManifest = null;
     private Text statusText;
     private Slider leftslider;
     private Slider rightslider;
@@ -72,7 +74,7 @@ public class AssetBundleUpdater
     {
     }
 
-   public IEnumerator CheckUpdateOrDownloadGame()
+    public IEnumerator CheckUpdateOrDownloadGame()
     {
         // 初始化本地版本信息
         var start = DateTime.Now;
@@ -124,7 +126,7 @@ public class AssetBundleUpdater
     {
         // statusText.text = "正在准备资源...";
 #if UNITY_EDITOR || CLIENT_DEBUG
-        AssetBundleManager.Instance.TestHotfix();
+        // AssetBundleManager.Instance.TestHotfix();
 #endif
         // Logger.clientVerstion = clientAppVersion;
         ChannelManager.Instance.resVersion = serverResVersion;
@@ -192,40 +194,42 @@ public class AssetBundleUpdater
 
     IEnumerator InitLocalVersion()
     {
-        clientAppVersion = ChannelManager.Instance.appVersion;
-
-        var resVersionRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.ResVersionFileName);
-        yield return resVersionRequest;
-        var streamingResVersion = resVersionRequest.text;
-        resVersionRequest.Dispose();
-        var persistentResVersion = GameUtility.SafeReadAllText(resVersionPath);
-
-        if (string.IsNullOrEmpty(persistentResVersion))
-        {
-            clientResVersion = streamingResVersion;
-        }
-        else
-        {
-            clientResVersion = BuildUtils.CheckIsNewVersion(streamingResVersion, persistentResVersion)
-                ? persistentResVersion
-                : streamingResVersion;
-        }
-
-        GameUtility.SafeWriteAllText(resVersionPath, clientResVersion);
-
-        var persistentNoticeVersion = GameUtility.SafeReadAllText(noticeVersionPath);
-        if (!string.IsNullOrEmpty(persistentNoticeVersion))
-        {
-            ChannelManager.Instance.noticeVersion = persistentNoticeVersion;
-        }
-        else
-        {
-            ChannelManager.Instance.noticeVersion = "1.0.0";
-        }
-
-        Debug.Log(
-            $"streamingResVersion = {streamingResVersion}, persistentResVersion = {persistentResVersion}, persistentNoticeVersion = {persistentNoticeVersion}");
+        yield break;
+        //     clientAppVersion = ChannelManager.Instance.appVersion;
+        //
+        //     var resVersionRequest = AssetBundleManager.Instance.RequestAssetFileAsync(BuildUtils.ResVersionFileName);
+        //     yield return resVersionRequest;
+        //     var streamingResVersion = resVersionRequest.text;
+        //     resVersionRequest.Dispose();
+        //     var persistentResVersion = GameUtility.SafeReadAllText(resVersionPath);
+        //
+        //     if (string.IsNullOrEmpty(persistentResVersion))
+        //     {
+        //         clientResVersion = streamingResVersion;
+        //     }
+        //     else
+        //     {
+        //         clientResVersion = BuildUtils.CheckIsNewVersion(streamingResVersion, persistentResVersion)
+        //             ? persistentResVersion
+        //             : streamingResVersion;
+        //     }
+        //
+        //     GameUtility.SafeWriteAllText(resVersionPath, clientResVersion);
+        //
+        //     var persistentNoticeVersion = GameUtility.SafeReadAllText(noticeVersionPath);
+        //     if (!string.IsNullOrEmpty(persistentNoticeVersion))
+        //     {
+        //         ChannelManager.Instance.noticeVersion = persistentNoticeVersion;
+        //     }
+        //     else
+        //     {
+        //         ChannelManager.Instance.noticeVersion = "1.0.0";
+        //     }
+        //
+        //     Debug.Log(
+        //         $"streamingResVersion = {streamingResVersion}, persistentResVersion = {persistentResVersion}, persistentNoticeVersion = {persistentNoticeVersion}");
     }
+
 
     private IEnumerator InitSDK()
     {
@@ -324,68 +328,71 @@ public class AssetBundleUpdater
 
     IEnumerator DownloadLocalServerAppVersion()
     {
-        var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.AppVersionFileName);
-        yield return request;
-        if (request.error != null)
-        {
-            UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
-            yield return UINoticeTip.Instance.WaitForResponse();
-            Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
-                                "\n err : " + request.error);
-            request.Dispose();
-
-            // 内部版本本地服务器有问题直接跳过，不要卡住游戏
-            yield break;
-        }
-
-        serverAppVersion = request.text.Trim().Replace("\r", "");
-        request.Dispose();
+        yield break;
+        // var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.AppVersionFileName);
+        // yield return request;
+        // if (request.error != null)
+        // {
+        //     UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
+        //     yield return UINoticeTip.Instance.WaitForResponse();
+        //     Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
+        //                    "\n err : " + request.error);
+        //     request.Dispose();
+        //
+        //     // 内部版本本地服务器有问题直接跳过，不要卡住游戏
+        //     yield break;
+        // }
+        //
+        // serverAppVersion = request.text.Trim().Replace("\r", "");
+        // request.Dispose();
     }
 
     IEnumerator DownloadLocalServerResVersion()
     {
-        var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.ResVersionFileName);
-        yield return request;
-        if (request.error != null)
-        {
-            UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
-            yield return UINoticeTip.Instance.WaitForResponse();
-            Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
-                                "\n err : " + request.error);
-            request.Dispose();
-
-            // 内部版本本地服务器有问题直接跳过，不要卡住游戏
-            yield break;
-        }
-
-        serverResVersion = request.text.Trim().Replace("\r", "");
-        request.Dispose();
+        yield break;
+        // var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.ResVersionFileName);
+        // yield return request;
+        // if (request.error != null)
+        // {
+        //     UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
+        //     yield return UINoticeTip.Instance.WaitForResponse();
+        //     Debug.LogError("Download :  " + request.assetbundleName + "\n from url : " + request.url +
+        //                    "\n err : " + request.error);
+        //     request.Dispose();
+        //
+        //     // 内部版本本地服务器有问题直接跳过，不要卡住游戏
+        //     yield break;
+        // }
+        //
+        // serverResVersion = request.text.Trim().Replace("\r", "");
+        // request.Dispose();
     }
 
     IEnumerator InternalGetUrlList()
     {
-        // 内网服务器地址设置
-        var localSerUrlRequest =
-            AssetBundleManager.Instance.RequestAssetFileAsync(AssetBundleConfig.AssetBundleServerUrlFileName);
-        yield return localSerUrlRequest;
-#if UNITY_ANDROID
-        // TODO：GooglePlay下载还有待探索
-        // if (!ChannelManager.Instance.IsGooglePlay())
-        // {
-        string apkName = ChannelManager.Instance.GetProductName() + ".apk";
-        URLSetting.APP_DOWNLOAD_URL = localSerUrlRequest.text + apkName;
-        // }
-#elif UNITY_IPHONE
-        // TODO：ios下载还有待探索
-#endif
-        URLSetting.SERVER_RESOURCE_URL = localSerUrlRequest.text + BuildUtils.ManifestBundleName + "/";
-        localSerUrlRequest.Dispose();
-
-        // 从本地服务器拉一下App版本号
-        yield return DownloadLocalServerAppVersion();
-
-        // 从本地服务器拉一下资源版本号
-        yield return DownloadLocalServerResVersion();
+        yield break;
+//         // 内网服务器地址设置
+//         var localSerUrlRequest =
+//             AssetBundleManager.Instance.RequestAssetFileAsync(AssetBundleConfig.AssetBundleServerUrlFileName);
+//         yield return localSerUrlRequest;
+// #if UNITY_ANDROID
+//         // TODO：GooglePlay下载还有待探索
+//         // if (!ChannelManager.Instance.IsGooglePlay())
+//         // {
+//         string apkName = ChannelManager.Instance.GetProductName() + ".apk";
+//         URLSetting.APP_DOWNLOAD_URL = localSerUrlRequest.text + apkName;
+//         // }
+// #elif UNITY_IPHONE
+//         // TODO：ios下载还有待探索
+// #endif
+//         URLSetting.SERVER_RESOURCE_URL = localSerUrlRequest.text + BuildUtils.ManifestBundleName + "/";
+//         localSerUrlRequest.Dispose();
+//
+//         // 从本地服务器拉一下App版本号
+//         yield return DownloadLocalServerAppVersion();
+//
+//         // 从本地服务器拉一下资源版本号
+//         yield return DownloadLocalServerResVersion();
     }
 
     IEnumerator OutnetGetUrlList()
@@ -529,15 +536,15 @@ public class AssetBundleUpdater
         string noticeUrl = URLSetting.NOTICE_URL;
         if (string.IsNullOrEmpty(noticeUrl)) yield break;
         var url = noticeUrl + "?v" + timeStamp;
-        var request = AssetBundleManager.Instance.DownloadWebResourceAsync(url);
-        yield return request;
-        if (request.error == null)
-        {
-            var path = AssetBundleUtility.GetPersistentDataPath(BuildUtils.UpdateNoticeFileName);
-            GameUtility.SafeWriteAllText(path, request.text);
-        }
-
-        request.Dispose();
+        // var request = AssetBundleManager.Instance.DownloadWebResourceAsync(url);
+        // yield return request;
+        // if (request.error == null)
+        // {
+        //     var path = AssetBundleUtility.GetPersistentDataPath(BuildUtils.UpdateNoticeFileName);
+        //     GameUtility.SafeWriteAllText(path, request.text);
+        // }
+        //
+        // request.Dispose();
 
         yield break;
     }
@@ -556,105 +563,105 @@ public class AssetBundleUpdater
 
     IEnumerator CheckIfNeededUpdate(bool isInternal)
     {
-        localManifest = AssetBundleManager.Instance.GetCurManifest;
-        hostManifest = new Manifest();
-
-        string downloadManifestUrl = hostManifest.AssetbundleName;
-        if (!isInternal)
-        {
-            downloadManifestUrl += ("?v" + timeStamp);
-        }
-
-        yield return DownloadHostManifest(downloadManifestUrl, isInternal);
-
-        needDownloadList = localManifest.CompareTo(hostManifest);
+        // localManifest = AssetBundleManager.Instance.GetCurManifest;
+        // hostManifest = new Manifest();
+        //
+        // string downloadManifestUrl = hostManifest.AssetbundleName;
+        // if (!isInternal)
+        // {
+        //     downloadManifestUrl += ("?v" + timeStamp);
+        // }
+        //
+        // yield return DownloadHostManifest(downloadManifestUrl, isInternal);
+        //
+        // needDownloadList = localManifest.CompareTo(hostManifest);
         yield break;
     }
 
     IEnumerator DownloadHostManifest(string downloadManifestUrl, bool isInternal)
     {
-        var request = AssetBundleManager.Instance.DownloadAssetBundleAsync(downloadManifestUrl);
-        yield return request;
-        if (!string.IsNullOrEmpty(request.error))
-        {
-            UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
-            yield return UINoticeTip.Instance.WaitForResponse();
-            Debug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " +
-                                request.url +
-                                "\n err : " + request.error);
-            request.Dispose();
-            if (isInternal)
-            {
-                // 内部版本本地服务器有问题直接跳过，不要卡住游戏
-                yield break;
-            }
-
-            yield return DownloadHostManifest(downloadManifestUrl, isInternal);
-        }
-
-        var assetbundle = request.assetbundle;
-        hostManifest.LoadFromAssetBundle(assetbundle);
-        hostManifest.SaveBytes(request.bytes);
-        assetbundle.Unload(false);
-        request.Dispose();
+        // var request = AssetBundleManager.Instance.DownloadAssetBundleAsync(downloadManifestUrl);
+        // yield return request;
+        // if (!string.IsNullOrEmpty(request.error))
+        // {
+        //     UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
+        //     yield return UINoticeTip.Instance.WaitForResponse();
+        //     Debug.LogError("Download host manifest :  " + request.assetbundleName + "\n from url : " +
+        //                    request.url +
+        //                    "\n err : " + request.error);
+        //     request.Dispose();
+        //     if (isInternal)
+        //     {
+        //         // 内部版本本地服务器有问题直接跳过，不要卡住游戏
+        //         yield break;
+        //     }
+        //
+        //     yield return DownloadHostManifest(downloadManifestUrl, isInternal);
+        // }
+        //
+        // var assetbundle = request.assetbundle;
+        // hostManifest.LoadFromAssetBundle(assetbundle);
+        // hostManifest.SaveBytes(request.bytes);
+        // assetbundle.Unload(false);
+        // request.Dispose();
         yield break;
     }
 
     // ReSharper disable Unity.PerformanceAnalysis
     IEnumerator GetDownloadAssetBundlesSize()
     {
-        var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.AssetBundlesSizeFileName);
-        yield return request;
-        if (request.error != null)
-        {
-            UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
-            yield return UINoticeTip.Instance.WaitForResponse();
-            Debug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " +
-                                request.url +
-                                "\n err : " + request.error);
-            request.Dispose();
-            yield return GetDownloadAssetBundlesSize();
-        }
+        // var request = AssetBundleManager.Instance.DownloadAssetFileAsync(BuildUtils.AssetBundlesSizeFileName);
+        // yield return request;
+        // if (request.error != null)
+        // {
+        //     UINoticeTip.Instance.ShowOneButtonTip("网络错误", "检测更新失败，请确认网络已经连接！", "重试", null);
+        //     yield return UINoticeTip.Instance.WaitForResponse();
+        //     Debug.LogError("Download assetbundls_size :  " + request.assetbundleName + "\n from url : " +
+        //                    request.url +
+        //                    "\n err : " + request.error);
+        //     request.Dispose();
+        //     yield return GetDownloadAssetBundlesSize();
+        // }
+        //
+        // var content = request.text.Trim().Replace("\r", "");
+        // request.Dispose();
 
-        var content = request.text.Trim().Replace("\r", "");
-        request.Dispose();
-
-        downloadSize = 0;
-        var lines = content.Split('\n');
-        var lookup = new Dictionary<string, int>();
-        var separator = new[] { AssetBundleConfig.CommonMapPattren };
-        foreach (var line in lines)
-        {
-            if (string.IsNullOrEmpty(line))
-            {
-                Debug.LogError("line empty!");
-                continue;
-            }
-
-            var slices = line.Split(separator, StringSplitOptions.None);
-            if (slices.Length < 2)
-            {
-                Debug.LogError("line split err : " + line);
-                continue;
-            }
-
-            if (!int.TryParse(slices[1], out var size))
-            {
-                Debug.LogError("size TryParse err : " + line);
-            }
-
-            lookup.Add(slices[0], size);
-        }
-
-        foreach (var assetbundle in needDownloadList)
-        {
-            if (!lookup.TryGetValue(assetbundle, out var size))
-            {
-                Debug.LogError("no assetbundle size info : " + assetbundle);
-            }
-
-            downloadSize += size;
-        }
+        // downloadSize = 0;
+        // var lines = content.Split('\n');
+        // var lookup = new Dictionary<string, int>();
+        // var separator = new[] { AssetBundleConfig.CommonMapPattren };
+        // foreach (var line in lines)
+        // {
+        //     if (string.IsNullOrEmpty(line))
+        //     {
+        //         Debug.LogError("line empty!");
+        //         continue;
+        //     }
+        //
+        //     var slices = line.Split(separator, StringSplitOptions.None);
+        //     if (slices.Length < 2)
+        //     {
+        //         Debug.LogError("line split err : " + line);
+        //         continue;
+        //     }
+        //
+        //     if (!int.TryParse(slices[1], out var size))
+        //     {
+        //         Debug.LogError("size TryParse err : " + line);
+        //     }
+        //
+        //     lookup.Add(slices[0], size);
+        // }
+        //
+        // foreach (var assetbundle in needDownloadList)
+        // {
+        //     if (!lookup.TryGetValue(assetbundle, out var size))
+        //     {
+        //         Debug.LogError("no assetbundle size info : " + assetbundle);
+        //     }
+        //
+        //     downloadSize += size;
+        // }
 
         yield break;
     }
@@ -682,11 +689,11 @@ public class AssetBundleUpdater
         // 保存服务器资源版本号与Manifest
         GameUtility.SafeWriteAllText(resVersionPath, serverResVersion);
         clientResVersion = serverResVersion;
-        hostManifest.SaveToDiskCahce();
-
-        // 重启资源管理器
-        yield return AssetBundleManager.Instance.Cleanup();
-        yield return AssetBundleManager.Instance.Initialize();
+        // hostManifest.SaveToDiskCahce();
+        //
+        // // 重启资源管理器
+        // yield return AssetBundleManager.Instance.Cleanup();
+        // yield return AssetBundleManager.Instance.Initialize();
 
         // 重启Lua虚拟机
         // string luaAssetbundleName = XluaManager.Instance.AssetbundleName;
@@ -712,7 +719,7 @@ public class AssetBundleUpdater
                 if (!string.IsNullOrEmpty(request.error))
                 {
                     Debug.LogError("Error when downloading file : " + request.assetbundleName + "\n from url : " +
-                                        request.url + "\n err : " + request.error);
+                                   request.url + "\n err : " + request.error);
                     hasError = true;
                     needDownloadList.Add(request.assetbundleName);
                 }
@@ -720,7 +727,7 @@ public class AssetBundleUpdater
                 {
                     // TODO：是否需要显示下载流量进度？
                     Debug.Log("Finish downloading file : " + request.assetbundleName + "\n from url : " +
-                                   request.url);
+                              request.url);
                     downloadingRequest.RemoveAt(i);
                     finishedDownloadCount++;
                     var filePath = AssetBundleUtility.GetPersistentDataPath(request.assetbundleName);
@@ -731,16 +738,16 @@ public class AssetBundleUpdater
             }
         }
 
-        if (!hasError)
-        {
-            while (downloadingRequest.Count < MAX_DOWNLOAD_NUM && needDownloadList.Count > 0)
-            {
-                var fileName = needDownloadList[needDownloadList.Count - 1];
-                needDownloadList.RemoveAt(needDownloadList.Count - 1);
-                var request = AssetBundleManager.Instance.DownloadAssetBundleAsync(fileName);
-                downloadingRequest.Add(request);
-            }
-        }
+        // if (!hasError)
+        // {
+        //     while (downloadingRequest.Count < MAX_DOWNLOAD_NUM && needDownloadList.Count > 0)
+        //     {
+        //         var fileName = needDownloadList[needDownloadList.Count - 1];
+        //         needDownloadList.RemoveAt(needDownloadList.Count - 1);
+        //         var request = AssetBundleManager.Instance.DownloadAssetBundleAsync(fileName);
+        //         downloadingRequest.Add(request);
+        //     }
+        // }
 
         if (downloadingRequest.Count == 0)
         {

@@ -19,7 +19,7 @@ namespace AssetBundles
         
         public static void CheckAndDoRunning()
         {
-            WriteAssetBundleServerURL();
+            // WriteAssetBundleServerURL();
 
             bool needRunning = AssetBundleConfig.IsSimulateMode;
             bool isRunning = IsRunning();
@@ -28,7 +28,7 @@ namespace AssetBundles
                 KillRunningAssetBundleServer();
                 if (needRunning)
                 {
-                    Run();
+                    // Run();
                 }
             }
         }
@@ -73,23 +73,23 @@ namespace AssetBundles
 			}
 		}
 
-		static void Run ()
-		{
-			string args = string.Format("\"{0}\" {1}", AssetBundleConfig.LocalSvrAppWorkPath, Process.GetCurrentProcess().Id);
-            ProcessStartInfo startInfo = ExecuteInternalMono.GetProfileStartInfoForMono(MonoInstallationFinder.GetMonoInstallation("MonoBleedingEdge"), GetMonoProfileVersion(), AssetBundleConfig.LocalSvrAppPath, args, true);
-            startInfo.WorkingDirectory = AssetBundleConfig.LocalSvrAppWorkPath;
-			startInfo.UseShellExecute = false;
-			Process launchProcess = Process.Start(startInfo);
-			if (launchProcess == null || launchProcess.HasExited == true || launchProcess.Id == 0)
-			{
-                UnityEngine.Debug.LogError ("Unable Start AssetBundleServer process!");
-			}
-			else
-			{
-				instance.mServerPID = launchProcess.Id;
-                UnityEngine.Debug.Log("Local assetbundle server run!");
-            }
-        }
+		// static void Run ()
+		// {
+		// 	string args = string.Format("\"{0}\" {1}", AssetBundleConfig.LocalSvrAppWorkPath, Process.GetCurrentProcess().Id);
+  //           ProcessStartInfo startInfo = ExecuteInternalMono.GetProfileStartInfoForMono(MonoInstallationFinder.GetMonoInstallation("MonoBleedingEdge"), GetMonoProfileVersion(), AssetBundleConfig.LocalSvrAppPath, args, true);
+  //           startInfo.WorkingDirectory = AssetBundleConfig.LocalSvrAppWorkPath;
+		// 	startInfo.UseShellExecute = false;
+		// 	Process launchProcess = Process.Start(startInfo);
+		// 	if (launchProcess == null || launchProcess.HasExited == true || launchProcess.Id == 0)
+		// 	{
+  //               UnityEngine.Debug.LogError ("Unable Start AssetBundleServer process!");
+		// 	}
+		// 	else
+		// 	{
+		// 		instance.mServerPID = launchProcess.Id;
+  //               UnityEngine.Debug.Log("Local assetbundle server run!");
+  //           }
+  //       }
 
         static string GetMonoProfileVersion()
         {
@@ -113,26 +113,26 @@ namespace AssetBundles
             return profileVersion;
         }
 
-        public static string GetStreamingAssetBundleServerUrl()
-        {
-            string assetBundleServerUrl = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
-            assetBundleServerUrl = Path.Combine(assetBundleServerUrl, AssetBundleConfig.AssetBundleServerUrlFileName);
-            return assetBundleServerUrl;
-        }
+        // public static string GetStreamingAssetBundleServerUrl()
+        // {
+        //     string assetBundleServerUrl = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
+        //     assetBundleServerUrl = Path.Combine(assetBundleServerUrl, AssetBundleConfig.AssetBundleServerUrlFileName);
+        //     return assetBundleServerUrl;
+        // }
 
-        public static void WriteAssetBundleServerURL()
-        {
-            var path = GetStreamingAssetBundleServerUrl();
-            GameUtility.SafeWriteAllText(path, GetAssetBundleServerURL());
-            AssetDatabase.Refresh();
-        }
+        // public static void WriteAssetBundleServerURL()
+        // {
+        //     var path = GetStreamingAssetBundleServerUrl();
+        //     GameUtility.SafeWriteAllText(path, GetAssetBundleServerURL());
+        //     AssetDatabase.Refresh();
+        // }
 
-        public static void ClearAssetBundleServerURL()
-        {
-            var path = GetStreamingAssetBundleServerUrl();
-            GameUtility.SafeDeleteFile(path);
-            AssetDatabase.Refresh();
-        }
+        // public static void ClearAssetBundleServerURL()
+        // {
+        //     var path = GetStreamingAssetBundleServerUrl();
+        //     GameUtility.SafeDeleteFile(path);
+        //     AssetDatabase.Refresh();
+        // }
 
         public static string GetAssetBundleServerURL()
         {

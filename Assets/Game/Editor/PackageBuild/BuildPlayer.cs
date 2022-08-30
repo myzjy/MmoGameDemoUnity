@@ -143,15 +143,7 @@ public class BuildPlayer : Editor
     {
         BuildTarget buildTarget = BuildTarget.Android;
         PackageUtils.CopyAssetBundlesToStreamingAssets(buildTarget, channelName);
-        if (!isTest)
-        {
-            LaunchAssetBundleServer.ClearAssetBundleServerURL();
-        }
-        else
-        {
-            LaunchAssetBundleServer.WriteAssetBundleServerURL();
-        }
-        
+
         BaseChannel channel = ChannelManager.Instance.CreateChannel(channelName);
         SetPlayerSetting(channel);
 
@@ -177,14 +169,6 @@ public class BuildPlayer : Editor
     {
         BuildTarget buildTarget = BuildTarget.iOS;
         PackageUtils.CopyAssetBundlesToStreamingAssets(buildTarget, channelName);
-        if (!isTest)
-        {
-            LaunchAssetBundleServer.ClearAssetBundleServerURL();
-        }
-        else
-        {
-            LaunchAssetBundleServer.WriteAssetBundleServerURL();
-        }
 
         string buildFolder = Path.Combine(System.Environment.CurrentDirectory, XCodeOutputPath);
         buildFolder = Path.Combine(buildFolder, channelName);
