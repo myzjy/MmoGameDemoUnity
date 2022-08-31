@@ -91,27 +91,27 @@ namespace AssetBundles
   //           }
   //       }
 
-        static string GetMonoProfileVersion()
-        {
-            string path = Path.Combine(Path.Combine(MonoInstallationFinder.GetMonoInstallation("MonoBleedingEdge"), "lib"), "mono");
-
-            string[] folders = Directory.GetDirectories(path);
-            string[] foldersWithApi = folders.Where(f => f.Contains("-api")).ToArray();
-            string profileVersion = "0";
-
-            for (int i = 0; i < foldersWithApi.Length; i++)
-            {
-                foldersWithApi[i] = foldersWithApi[i].Split(Path.DirectorySeparatorChar).Last();
-                foldersWithApi[i] = foldersWithApi[i].Split('-').First();
-                
-                if (string.Compare(foldersWithApi[i], profileVersion) > 0)
-                {
-                    profileVersion = foldersWithApi[i];
-                }
-            }
-
-            return profileVersion;
-        }
+        // static string GetMonoProfileVersion()
+        // {
+        //     string path = Path.Combine(Path.Combine(MonoInstallationFinder.GetMonoInstallation("MonoBleedingEdge"), "lib"), "mono");
+        //
+        //     string[] folders = Directory.GetDirectories(path);
+        //     string[] foldersWithApi = folders.Where(f => f.Contains("-api")).ToArray();
+        //     string profileVersion = "0";
+        //
+        //     for (int i = 0; i < foldersWithApi.Length; i++)
+        //     {
+        //         foldersWithApi[i] = foldersWithApi[i].Split(Path.DirectorySeparatorChar).Last();
+        //         foldersWithApi[i] = foldersWithApi[i].Split('-').First();
+        //         
+        //         if (string.Compare(foldersWithApi[i], profileVersion) > 0)
+        //         {
+        //             profileVersion = foldersWithApi[i];
+        //         }
+        //     }
+        //
+        //     return profileVersion;
+        // }
 
         // public static string GetStreamingAssetBundleServerUrl()
         // {

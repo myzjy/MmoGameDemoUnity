@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using ZJYFrameWork.AssetBundleLoader;
 using ZJYFrameWork.AssetBundles;
 using Object = UnityEngine.Object;
@@ -151,8 +152,9 @@ namespace ZJYFrameWork
                     BaseAssetsAsyncLoader.assetbundleName, assetName, type);
             }
 
-            public void LoadScene()
+            public void LoadScene(string name, LoadSceneMode mode)
             {
+                Instance.GetAssetBundleLoaderImpl().LoadScene(BaseAssetsAsyncLoader.assetbundle, BaseAssetsAsyncLoader.assetbundleName, name, mode);
             }
 
             /// <summary>

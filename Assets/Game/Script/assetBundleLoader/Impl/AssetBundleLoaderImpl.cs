@@ -16,7 +16,7 @@ namespace ZJYFrameWork.AssetBundleLoader
             throw new NotImplementedException();
         }
 
-        public virtual bool RequestEmptyHolder(string name, AssetBundleLoaderBase.OnLoadedDelegate onloaded)
+        public virtual bool RequestEmptyHolder(string name, AssetBundleLoaderBase.OnLoadedDelegate onLoaded)
         {
             return false;
         }
@@ -60,7 +60,7 @@ namespace ZJYFrameWork.AssetBundleLoader
         {
         }
 
-        public void LoadScene(AssetBundle assetBundle, string assetBundleName, string name, LoadSceneMode mode)
+        public virtual void LoadScene(AssetBundle assetBundle, string assetBundleName, string name, LoadSceneMode mode)
         {
             throw new NotImplementedException();
         }

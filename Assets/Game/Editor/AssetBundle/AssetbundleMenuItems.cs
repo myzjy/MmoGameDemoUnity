@@ -14,8 +14,10 @@ namespace AssetBundleEditorTools.AssetBundleSet
     [InitializeOnLoad]
     public class AssetBundleMenuItems
     {
+        
         //%:ctrl,#:shift,&:alt
         const string kSimulateMode = "AssetBundles/Switch Model/Simulate Mode";
+        const string kSimulateModeLog = "AssetBundles/Switch Model/Download Log Mod";
         const string kEditorMode = "AssetBundles/Switch Model/Editor Mode";
         const string kToolRunAllCheckers = "AssetBundles/Run All Checkers";
         const string kToolBuildForCurrentSetting = "AssetBundles/Build For Current Setting";
@@ -99,7 +101,14 @@ namespace AssetBundleEditorTools.AssetBundleSet
             Menu.SetChecked(kEditorMode, AssetBundleConfig.IsEditorMode);
             return true;
         }
-
+        [MenuItem(kSimulateModeLog)]
+        public static void ToggleSimulateLogMode()
+        {
+            if (!AssetBundleConfig.IsEditorLogMode) return;
+            AssetBundleConfig.IsEditorLogMode = true;
+            CheckSimulateModelEnv();
+            // LaunchAssetBundleServer.CheckAndDoRunning();
+        }
         [MenuItem(kSimulateMode)]
         public static void ToggleSimulateMode()
         {

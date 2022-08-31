@@ -18,7 +18,9 @@ namespace Framework.AssetBundles.Config
         //后缀名
         public const string AssetBundleSuffix = ".assetbundle";
         private static int mIsEditorMode = -1;
+        private static int mIsEditorLogMode = -1;
         private const string kIsEditorMode = "IsEditorMode";
+        private const string kIsEditorModeLog = "IsEditorModeLog";
         private static int mIsSimulateMode = -1;
         private const string kIsSimulateMode = "IsSimulateMode";
         public const string CommonMapPattren = ",";
@@ -42,6 +44,32 @@ namespace Framework.AssetBundles.Config
                 string outputPath = Path.Combine(System.Environment.CurrentDirectory, AssetBundlesFolderName);
                 GameUtility.CheckDirAndCreateWhenNeeded(outputPath);
                 return outputPath;
+            }
+        }
+        public static bool IsEditorLogMode
+        {
+            get
+            {
+                if (mIsEditorLogMode == -1)
+                {
+                    if (!EditorPrefs.HasKey(kIsEditorModeLog))
+                    {
+                        EditorPrefs.SetBool(kIsEditorModeLog, false);
+                    }
+                    mIsEditorLogMode = EditorPrefs.GetBool(kIsEditorModeLog, true) ? 1 : 0;
+                }
+
+                return mIsEditorLogMode != 0;
+            }
+            set
+            {
+                int newValue = value ? 1 : 0;
+                if (newValue != mIsEditorLogMode)
+                {
+                    mIsEditorLogMode = newValue;
+                    EditorPrefs.SetBool(kIsEditorModeLog, value);
+                    
+                }
             }
         }
         public static bool IsEditorMode

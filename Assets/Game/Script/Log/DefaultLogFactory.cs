@@ -63,7 +63,7 @@ namespace ZJYFrameWork.Log
 
         protected virtual string Format(object message, string level)
         {
-            return string.Format("{0:yyyy-MM-dd HH:mm:ss.fff} [{1}] {2} - {3}", System.DateTime.Now, level, name, message);
+            return $"{System.DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{level}] {name} - {message}";
         }
 
         public virtual void Debug(object message)

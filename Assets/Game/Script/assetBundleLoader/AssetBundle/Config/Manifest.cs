@@ -52,7 +52,7 @@ namespace AssetBundles.Config
         public Manifest()
         {
             //资源包名
-            AssetbundleName = AssetBundleManager.ManifestBundleName;
+            // AssetbundleName = AssetBundleManager.ManifestBundleName;
             //判断是否设置了资源包财产名
             if (string.IsNullOrEmpty(AssetbundleName))
             {

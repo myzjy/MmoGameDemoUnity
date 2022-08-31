@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Framework.AssetBundles.Utilty;
 using UnityEngine;
+using ZJYFrameWork.assetBundleLoader;
 
 namespace ZJYFrameWork.AssetBundleLoader
 {
@@ -85,5 +87,67 @@ namespace ZJYFrameWork.AssetBundleLoader
         public ErrorInfo errorInfo;
 
         LoadingMethod method;
+
+        bool started;
+
+        /// <summary>
+        /// 是否还没有开始加载
+        /// </summary>
+        /// <returns>是否还没有开始加载</returns>
+        public bool IsNotStartedLoading()
+        {
+            return !started;
+        }
+        public void StartLoading()
+        {
+            started = true;
+
+            if(AssetBundleLoaderBase.Instance.IsCached(assetBundleName, hashString))
+            {
+                method = new LoadFromLocalStorageRequest();
+            }
+            else
+            {
+                method = new DownloadRequest();
+            }
+            method.SetRequestInfo(this);
+            method.StartLoading();
+        }
+        /// <summary>
+        /// 将加载处理结合起来(相同的东西已经在加载中时的处理)
+        /// </summary>
+        /// <param name="request"></param>
+        public void Join(RequestInfo request)
+        {
+            onLoaded += request.onLoaded;
+            onError += request.onError;
+            request.MarkStarted();
+        }
+        /// <summary>
+        /// 载入处理的更新
+        /// </summary>
+        /// <returns><c>true</c>,加载结束, <c>false</c>继续加载中</returns>
+        public bool Update()
+        {
+            return started && method.Update();
+        }
+        /// <summary>
+        /// 强制停止请求
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator AbortLoading()
+        {
+            return started ? method.AbortLoading() : Empty();
+        }
+
+        internal void MarkStarted()
+        {
+            started = true;
+        }
+
+        IEnumerator Empty()
+        {
+            yield break;
+        }
     }
 }
