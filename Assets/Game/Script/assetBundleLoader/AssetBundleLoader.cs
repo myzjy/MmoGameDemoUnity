@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using Framework.AssetBundle.AsyncOperation;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using UnityEditor;
+using UnityEngine;
 using ZJYFrameWork.AssetBundleLoader;
 using ZJYFrameWork.Log;
 
@@ -171,11 +173,6 @@ namespace ZJYFrameWork.AssetBundles
 
         public new static AssetBundleLoader Instance => AssetBundleLoaderBase.Instance as AssetBundleLoader;
 
-
-        public override string GetAssetBaseUrl()
-        {
-            throw new System.NotImplementedException();
-        }
 
         protected override AssetBundleLoaderImpl CreateImpl()
         {
@@ -457,16 +454,16 @@ namespace ZJYFrameWork.AssetBundles
         }
 
         /// <summary>
-        /// AssetBundleをロードし特定の中身を返す
-        /// エラーハンドリングの指定のないものは共通エラー処理として タイムアウトでは自動でリトライを行う
+        /// 加载AssetBundle，返回特定内容
+        /// 没有指定错误处理的东西作为共同错误处理超时自动进行重试
         /// </summary>
         /// <param name="assetBundleName">Asset bundle name.</param>
         /// <param name="onLoaded">On loaded.</param>
         /// <param name="onError">On error.</param>
         /// <param name="priority">Priority.</param>
         /// <param name="assetName">Asset name.</param>
-        /// <param name="isShowLoading">データローディング表示を行うかどうか.</param>
-        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        /// <param name="isShowLoading">是否进行数据加载显示</param>
+        /// <typeparam name="T">第1类参数.</typeparam>
         public void Load<T>(string assetBundleName, OnMainAssetLoadedDelegate<T> onLoaded = null,
             OnErrorDelegate onError = null, Priority priority = Priority.Normal, string assetName = null,
             bool isShowLoading = true, bool unloadAllLoadedObjects = false) where T : class
@@ -569,5 +566,192 @@ namespace ZJYFrameWork.AssetBundles
         }
 
 #endif
+        /// <summary>
+        /// 加载多个AssetBundle没有指定错误处理的东西作为共同错误处理超时自动进行重试
+        /// </summary>
+        /// <param name="assetBundleNames">Asset bundle names</param>
+        /// <param name="onLoad">OnLoad</param>
+        /// <param name="onError">onError</param>
+        /// <param name="priority">priority</param>
+        /// <param name="isShowLoading">是否进行数据加载显示</param>
+        public void Load(string[] assetBundleNames, OnMultiObjectLoadDelegate onLoad = null,
+            OnErrorDelegate onError = null, Priority priority = Priority.Normal, bool isShowLoading = true)
+        {
+            bool isDownload = false;
+            for (int i = 0; i < assetBundleNames.Length; ++i)
+            {
+#if UNITY_EDITOR && DEVELOP_BUILD
+                AddLog(assetBundleNames[i]);
+#endif
+                if (!IsCacheByFixedAssetBundleName(assetBundleNames[i]))
+                {
+#if UNITY_EDITOR && DEVELOP_BUILD
+                    if (AssetBundleConfig.IsEditorLogMode)
+                    {
+                        Debug.Log(string.Format(AssetBundleLogOutputText, assetBundleNames[i]));
+                    }
+#endif
+                    if (!isDownload && isShowLoading)
+                    {
+                        // CommonUIManager.I.DataLoading.AddShowCount();
+                    }
+
+                    isDownload = true;
+                }
+            }
+
+            OnMultiObjectLoadDelegate onLoadedAndSubShowCount = null;
+            if (onLoad != null)
+            {
+                onLoadedAndSubShowCount += onLoad;
+            }
+
+
+            System.Action onErrorSubShowCount = null;
+            if (isShowLoading)
+            {
+                onLoadedAndSubShowCount += (holders) =>
+                {
+                    // if (isDownload && CommonUIManager.IsValid())
+                    // {
+                    //     CommonUIManager.I.DataLoading.SubShowCount();
+                    // }
+                };
+                onErrorSubShowCount += () =>
+                {
+                    // if (isDownload && CommonUIManager.IsValid())
+                    // {
+                    //     CommonUIManager.I.DataLoading.SubShowCount();
+                    // }
+                };
+            }
+
+            //只发送一次重试
+            bool isSendRetryRequest = false;
+
+            base.Load(assetBundleNames, onLoadedAndSubShowCount, (errorInfo) =>
+            {
+                if (onErrorSubShowCount != null)
+                {
+                    onErrorSubShowCount();
+                }
+
+                System.Action retryCallback = null;
+                if (IsRetryableErrorType(errorInfo) && !isSendRetryRequest)
+                {
+                    isSendRetryRequest = true;
+                    retryCallback = () => { Load(assetBundleNames, onLoad, onError, priority, isShowLoading); };
+                }
+
+                LoadFailedCallback("", errorInfo, retryCallback, onError);
+            }, priority, null);
+        }
+
+        public IEnumerator LoadSync(string assetBundleName, OnLoadedDelegate onLoaded = null,
+            OnErrorDelegate onError = null, Priority priority = Priority.Normal, bool isShowLoading = true,
+            bool unloadAllLoadedObjects = false)
+        {
+            bool hasComplete = false;
+            onLoaded += (holder) => hasComplete = true;
+
+            if (onError != null)
+            {
+                onError += (error) => hasComplete = true;
+            }
+
+            Load(assetBundleName, onLoaded, onError, priority, isShowLoading, unloadAllLoadedObjects);
+            yield return new WaitUntil(() => hasComplete);
+        }
+
+        public IEnumerator LoadSync<T>(string assetBundleName, OnMainAssetLoadedDelegate<T> onLoaded = null,
+            OnErrorDelegate onError = null, Priority priority = Priority.Normal, string assetName = null,
+            bool isShowLoading = true, bool unloadAllLoadedObjects = false) where T : class
+        {
+            bool hasComplete = false;
+            onLoaded += (holder) => hasComplete = true;
+
+            if (onError != null)
+            {
+                onError += (error) => hasComplete = true;
+            }
+
+            Load<T>(assetBundleName, onLoaded, onError, priority, assetName, isShowLoading, unloadAllLoadedObjects);
+            yield return new WaitUntil(() => hasComplete);
+        }
+        protected override void OnErrorGlobal(ErrorInfo error)
+        {
+            Debug.LogFormat("ErrorType : {0} , Message : {1}", error.type.ToString(), error.message);
+            switch (error.type)
+            {
+                case ErrorInfo.Type.ABORT_LOADING_REQUSET:
+                    //请求中断时，对错误什么都不做
+                    break;
+                case ErrorInfo.Type.FAILED_WRITE_CACHEFILE:
+                case ErrorInfo.Type.FAILED_READ_CACHEFILE:
+                case ErrorInfo.Type.FAILED_CREATE_DIRECTORY:
+                case ErrorInfo.Type.FAILED_DELETE_CACHEFILE:
+                case ErrorInfo.Type.FAILED_DISK_FULL:
+                    // CommonUIManager.I.OpenDialog(Dialog.ButtonType.OK, string.Empty, GetErrorDialogMessage(error), (result) => {
+                    //     if (result == Dialog.Result.OK)
+                    //     {
+                    //         if (SoundManager.IsValid())
+                    //         {
+                    //             SoundManager.I.PlaySE(SE_ID.APPEAR_MENU_WINDOW);
+                    //         }
+                    //         SceneManager.I.BackToTitleForce();
+                    //     }
+                    // });
+                    break;
+                case ErrorInfo.Type.DOWNLOAD_BUNDLE_INVALID:
+                case ErrorInfo.Type.CACHEFILE_BUNDLE_INVALID:
+                default:
+                    // CommonUIManager.I.OpenDialog(Dialog.ButtonType.OK, string.Empty, GetErrorDialogMessage(error), (result) => {
+                    //     if (result == Dialog.Result.OK)
+                    //     {
+                    //         if (SoundManager.IsValid())
+                    //         {
+                    //             SoundManager.I.PlaySE(SE_ID.APPEAR_MENU_WINDOW);
+                    //         }
+                    //         SceneManager.I.BackToTitleForce();
+                    //     }
+                    // });
+                    break;
+            }
+        }
+
+        private string assetBaseUri = "";
+        public override string GetAssetBaseUrl()
+        {
+            return "assetBaseUri";
+        }
+        public void SetAssetBaseUri(string uri)
+        {
+            assetBaseUri = $"{uri}/assets/{AssetBundleUtility.GetPlatformName()}";
+        }
+        public static void ClearCache()
+        {
+            // // BGM止める
+            //
+            // // スクリーンフェードをかけておく
+            // CommonUIManager.I.ShowFade(onComplete: () => {
+            //     // 何もない空のシーンに飛ばす
+            //     UnityEngine.SceneManagement.SceneManager.LoadScene("Game/Scene/Empty");
+            // });
+        }
+
+        private new void LateUpdate()
+        {
+            if (!CanLoadAssetBundle)
+            {
+                return;
+            }
+            UnityEngine.Profiling.Profiler.BeginSample("1");
+            UnityEngine.Profiling.Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.BeginSample("2");
+            UnityEngine.Profiling.Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.BeginSample("3");
+            base.LateUpdate();
+            UnityEngine.Profiling.Profiler.EndSample();
+        }
     }
 }

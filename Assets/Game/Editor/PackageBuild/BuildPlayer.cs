@@ -74,7 +74,7 @@ public class BuildPlayer : Editor
         if (buildForPerChannel)
         {
             start = DateTime.Now;
-            CheckAssetBundles.SwitchChannel(channelName);
+            // CheckAssetBundles.SwitchChannel(channelName);
             UnityEngine.Debug.Log("Finished CheckAssetBundles.SwitchChannel! use " + (DateTime.Now - start).TotalSeconds + "s");
         }
 
@@ -104,7 +104,7 @@ public class BuildPlayer : Editor
             var channelName = current.ToString();
 
             start = DateTime.Now;
-            CheckAssetBundles.SwitchChannel(channelName);
+            // CheckAssetBundles.SwitchChannel(channelName);
             switchChannel = (DateTime.Now - start).TotalSeconds;
 
             start = DateTime.Now;

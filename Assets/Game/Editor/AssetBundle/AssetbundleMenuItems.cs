@@ -34,7 +34,7 @@ namespace AssetBundleEditorTools.AssetBundleSet
         const string kAssetDependencis = "Assets/AssetBundles/Asset Dependencis &#h";
         const string kAssetbundleAllDependencis = "Assets/AssetBundles/Assetbundle All Dependencis &#j";
         const string kAssetbundleDirectDependencis = "Assets/AssetBundles/Assetbundle Direct Dependencis &#k";
-
+        
         static AssetBundleMenuItems()
         {
             CheckSimulateModelEnv();
@@ -84,7 +84,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
                 PackageUtils.CopyCurSettingAssetBundlesToStreamingAssets();
             }
 
-            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kEditorMode, false)]
@@ -92,7 +91,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
         {
             if (!AssetBundleConfig.IsSimulateMode) return;
             AssetBundleConfig.IsEditorMode = true;
-            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kEditorMode, true)]
@@ -115,7 +113,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
             if (!AssetBundleConfig.IsEditorMode) return;
             AssetBundleConfig.IsSimulateMode = true;
             CheckSimulateModelEnv();
-            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kSimulateMode, true)]
@@ -175,7 +172,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
             // 真机上会对比这两个目录下的App版本号来删除，编辑器下暴力一点，直接删除
             ToolsClearPersistentAssets();
             PackageUtils.CopyCurSettingAssetBundlesToStreamingAssets();
-            LaunchAssetBundleServer.CheckAndDoRunning();
         }
 
         [MenuItem(kToolsOpenOutput, false, 1201)]

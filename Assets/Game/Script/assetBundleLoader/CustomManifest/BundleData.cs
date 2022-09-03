@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Framework.AssetBundles.Utilty;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace ZJYFrameWork.AssetBundleLoader.CustomManifest

@@ -339,14 +339,14 @@ public class PackageUtils
 
     public static void CheckAndRunAllCheckers(bool buildForPerChannel, bool forceRun)
     {
-        // 这东西有点浪费时间，没必要的时候不跑它
-        if (AssetBundleDispatcherInspector.hasAnythingModified || forceRun)
-        {
-            AssetBundleDispatcherInspector.hasAnythingModified = false;
-            var start = DateTime.Now;
-            CheckAssetBundles.Run(buildForPerChannel);
-            UnityEngine.Debug.Log("Finished CheckAssetBundles.Run! use " + (DateTime.Now - start).TotalSeconds + "s");
-        }
+        // // 这东西有点浪费时间，没必要的时候不跑它
+        // if (AssetBundleDispatcherInspector.hasAnythingModified || forceRun)
+        // {
+        //     AssetBundleDispatcherInspector.hasAnythingModified = false;
+        //     var start = DateTime.Now;
+        //     CheckAssetBundles.Run(buildForPerChannel);
+        //     UnityEngine.Debug.Log("Finished CheckAssetBundles.Run! use " + (DateTime.Now - start).TotalSeconds + "s");
+        // }
     }
     
     public static void CopyAndroidSDKResources(string channelName)
