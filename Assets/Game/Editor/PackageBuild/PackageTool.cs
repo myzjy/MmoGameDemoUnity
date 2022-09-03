@@ -38,7 +38,7 @@ public class PackageTool : EditorWindow
         buildTarget = EditorUserBuildSettings.activeBuildTarget;
         channelType = PackageUtils.GetCurSelectedChannel();
 
-        resVersion = ReadResVersionConfig();
+        // resVersion = ReadResVersionConfig();
         bundleVersion = PlayerSettings.bundleVersion;
 
         localServerType = PackageUtils.GetLocalServerType();
@@ -76,7 +76,6 @@ public class PackageTool : EditorWindow
 
             DrawAssetBundlesConfigGUI();
             DrawConfigGUI();
-            DrawLocalServerGUI();
             DrawAssetBundlesGUI();
             DrawXLuaGUI();
             DrawBuildPlayerGUI();
@@ -205,39 +204,39 @@ public class PackageTool : EditorWindow
 
     #region 本地服务器配置GUI
 
-    void DrawLocalServerGUI()
-    {
-        GUILayout.Space(3);
-        GUILayout.Label("-------------[AssetBundles Local Server]-------------");
-        GUILayout.Space(3);
-
-        GUILayout.BeginHorizontal();
-        var curSelected =
-            (LocalServerType)EditorGUILayout.EnumPopup("Local Server Type : ", localServerType, GUILayout.Width(300));
-        bool typeChanged = curSelected != localServerType;
-        if (typeChanged)
-        {
-            PackageUtils.SaveLocalServerType(curSelected);
-
-            localServerType = curSelected;
-            localServerIP = PackageUtils.GetLocalServerIP();
-        }
-
-        if (localServerType == LocalServerType.CurrentMachine)
-        {
-            GUILayout.Label(localServerIP);
-        }
-        else
-        {
-            localServerIP = GUILayout.TextField(localServerIP, GUILayout.Width(100));
-            if (GUILayout.Button("Save", GUILayout.Width(200)))
-            {
-                PackageUtils.SaveLocalServerIP(localServerIP);
-            }
-        }
-
-        GUILayout.EndHorizontal();
-    }
+    // void DrawLocalServerGUI()
+    // {
+    //     GUILayout.Space(3);
+    //     GUILayout.Label("-------------[AssetBundles Local Server]-------------");
+    //     GUILayout.Space(3);
+    //
+    //     GUILayout.BeginHorizontal();
+    //     var curSelected =
+    //         (LocalServerType)EditorGUILayout.EnumPopup("Local Server Type : ", localServerType, GUILayout.Width(300));
+    //     bool typeChanged = curSelected != localServerType;
+    //     if (typeChanged)
+    //     {
+    //         PackageUtils.SaveLocalServerType(curSelected);
+    //
+    //         localServerType = curSelected;
+    //         localServerIP = PackageUtils.GetLocalServerIP();
+    //     }
+    //
+    //     if (localServerType == LocalServerType.CurrentMachine)
+    //     {
+    //         GUILayout.Label(localServerIP);
+    //     }
+    //     else
+    //     {
+    //         localServerIP = GUILayout.TextField(localServerIP, GUILayout.Width(100));
+    //         if (GUILayout.Button("Save", GUILayout.Width(200)))
+    //         {
+    //             PackageUtils.SaveLocalServerIP(localServerIP);
+    //         }
+    //     }
+    //
+    //     GUILayout.EndHorizontal();
+    // }
 
     #endregion
 
@@ -426,40 +425,40 @@ public class PackageTool : EditorWindow
 
     #region 资源配置操作
 
-    public static string ReadResVersionConfig()
-    {
-        // 从数据库加载资源版本号
-        AssetBundleResVersionConfig config =
-            AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
-                AssetBundleResVersionConfig;
-        if (config == null)
-        {
-            config = CreateInstance<AssetBundleResVersionConfig>();
-            AssetDatabase.CreateAsset(config, AssetBundleResVersionConfig.RES_PATH);
-            AssetDatabase.Refresh();
-        }
+    // public static string ReadResVersionConfig()
+    // {
+    //     // 从数据库加载资源版本号
+    //     AssetBundleResVersionConfig config =
+    //         AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
+    //             AssetBundleResVersionConfig;
+    //     if (config == null)
+    //     {
+    //         config = CreateInstance<AssetBundleResVersionConfig>();
+    //         AssetDatabase.CreateAsset(config, AssetBundleResVersionConfig.RES_PATH);
+    //         AssetDatabase.Refresh();
+    //     }
+    //
+    //     return config.resVersion;
+    // }
 
-        return config.resVersion;
-    }
-
-    public static void SaveResVersionConfig(string curResVersion)
-    {
-        // 保存资源版本号到数据库
-        AssetBundleResVersionConfig config =
-            AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
-                AssetBundleResVersionConfig;
-        if (config == null)
-        {
-            config = CreateInstance<AssetBundleResVersionConfig>();
-            AssetDatabase.CreateAsset(config, AssetBundleResVersionConfig.RES_PATH);
-            AssetDatabase.Refresh();
-        }
-
-        config.resVersion = curResVersion;
-        EditorUtility.SetDirty(config);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-    }
+    // public static void SaveResVersionConfig(string curResVersion)
+    // {
+    //     // 保存资源版本号到数据库
+    //     AssetBundleResVersionConfig config =
+    //         AssetDatabase.LoadAssetAtPath(AssetBundleResVersionConfig.RES_PATH, typeof(AssetBundleResVersionConfig)) as
+    //             AssetBundleResVersionConfig;
+    //     if (config == null)
+    //     {
+    //         config = CreateInstance<AssetBundleResVersionConfig>();
+    //         AssetDatabase.CreateAsset(config, AssetBundleResVersionConfig.RES_PATH);
+    //         AssetDatabase.Refresh();
+    //     }
+    //
+    //     config.resVersion = curResVersion;
+    //     EditorUtility.SetDirty(config);
+    //     AssetDatabase.SaveAssets();
+    //     AssetDatabase.Refresh();
+    // }
 
     public static string ReadResVersionFile(BuildTarget target, ChannelType channel)
     {
@@ -506,7 +505,7 @@ public class PackageTool : EditorWindow
     {
         var buildTargetName = PackageUtils.GetPlatformName(buildTarget);
         SaveAllVersionFile(buildTarget, channelType);
-        SaveResVersionConfig(resVersion);
+        // SaveResVersionConfig(resVersion);
         PlayerSettings.bundleVersion = bundleVersion;
         if (!silence)
         {

@@ -248,68 +248,68 @@ namespace AssetBundleEditorTools.AssetBundleSet
             AssetBundleEditorHelper.CreaeteAssetBundleForFile(selectObjs);
         }
 
-
-        [MenuItem(kCreateAssetbundleForCurrent)]
-        public static void CreateAssetbundleForCurrent()
-        {
-            if (!AssetBundleEditorHelper.HasValidSelection()) return;
-            bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForCurrent Warning",
-                "Create assetbundle for cur selected objects will reset assetbundles which contains this dir, continue ?",
-                "Yes", "No");
-            if (!checkCreate)
-            {
-                return;
-            }
-
-            var selObjs = Selection.objects;
-            AssetBundleEditorHelper.CreateAssetbundleForCurrent(selObjs);
-            var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
-            removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs));
-            var removeStr = new StringBuilder(10);
-            int i = 0;
-            foreach (string str in removeList)
-            {
-                removeStr.Append($"[{++i}]{str}\n");
-            }
-
-            if (removeList.Count > 0)
-            {
-                UnityEngine.Debug.Log("CreateAssetbundleForCurrent done!\nRemove list :" +
-                                      "\n-------------------------------------------\n" + $"{removeStr}" +
-                                      "\n-------------------------------------------\n");
-            }
-        }
-
-        [MenuItem(kCreateAssetbundleForChildren)]
-        public static void CreateAssetbundleForChildren()
-        {
-            if (!AssetBundleEditorHelper.HasValidSelection()) return;
-            bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForChildren Warning",
-                "Create assetbundle for all children of cur selected objects will reset assetbundles which contains this dir, continue ?",
-                "Yes", "No");
-            if (!checkCreate)
-            {
-                return;
-            }
-
-            var selObjs = Selection.objects;
-            AssetBundleEditorHelper.CreateAssetbundleForChildren(selObjs);
-            var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
-            removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs, true, false));
-            var removeStr = new StringBuilder(10);
-            int i = 0;
-            foreach (string str in removeList)
-            {
-                removeStr.Append($"[{++i}]{str}\n");
-            }
-
-            if (removeList.Count > 0)
-            {
-                UnityEngine.Debug.Log("CreateAssetbundleForChildren done!\nRemove list :" +
-                                      "\n-------------------------------------------\n" + $"{removeStr}" +
-                                      "\n-------------------------------------------\n");
-            }
-        }
+        //
+        // [MenuItem(kCreateAssetbundleForCurrent)]
+        // public static void CreateAssetbundleForCurrent()
+        // {
+        //     if (!AssetBundleEditorHelper.HasValidSelection()) return;
+        //     bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForCurrent Warning",
+        //         "Create assetbundle for cur selected objects will reset assetbundles which contains this dir, continue ?",
+        //         "Yes", "No");
+        //     if (!checkCreate)
+        //     {
+        //         return;
+        //     }
+        //
+        //     var selObjs = Selection.objects;
+        //     AssetBundleEditorHelper.CreateAssetbundleForCurrent(selObjs);
+        //     var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
+        //     removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs));
+        //     var removeStr = new StringBuilder(10);
+        //     int i = 0;
+        //     foreach (string str in removeList)
+        //     {
+        //         removeStr.Append($"[{++i}]{str}\n");
+        //     }
+        //
+        //     if (removeList.Count > 0)
+        //     {
+        //         UnityEngine.Debug.Log("CreateAssetbundleForCurrent done!\nRemove list :" +
+        //                               "\n-------------------------------------------\n" + $"{removeStr}" +
+        //                               "\n-------------------------------------------\n");
+        //     }
+        // }
+        //
+        // [MenuItem(kCreateAssetbundleForChildren)]
+        // public static void CreateAssetbundleForChildren()
+        // {
+        //     if (!AssetBundleEditorHelper.HasValidSelection()) return;
+        //     bool checkCreate = EditorUtility.DisplayDialog("CreateAssetbundleForChildren Warning",
+        //         "Create assetbundle for all children of cur selected objects will reset assetbundles which contains this dir, continue ?",
+        //         "Yes", "No");
+        //     if (!checkCreate)
+        //     {
+        //         return;
+        //     }
+        //
+        //     var selObjs = Selection.objects;
+        //     AssetBundleEditorHelper.CreateAssetbundleForChildren(selObjs);
+        //     var removeList = AssetBundleEditorHelper.RemoveAssetbundleInParents(selObjs);
+        //     removeList.AddRange(AssetBundleEditorHelper.RemoveAssetbundleInChildren(selObjs, true, false));
+        //     var removeStr = new StringBuilder(10);
+        //     int i = 0;
+        //     foreach (string str in removeList)
+        //     {
+        //         removeStr.Append($"[{++i}]{str}\n");
+        //     }
+        //
+        //     if (removeList.Count > 0)
+        //     {
+        //         UnityEngine.Debug.Log("CreateAssetbundleForChildren done!\nRemove list :" +
+        //                               "\n-------------------------------------------\n" + $"{removeStr}" +
+        //                               "\n-------------------------------------------\n");
+        //     }
+        // }
 
         [MenuItem(kAssetDependencis)]
         public static void ListAssetDependencis()

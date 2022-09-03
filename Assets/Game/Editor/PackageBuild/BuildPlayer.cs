@@ -49,18 +49,18 @@ public class BuildPlayer : Editor
     
     private static void InnerBuildAssetBundles(BuildTarget buildTarget, string channelName, bool writeConfig)
     {
-        BuildAssetBundleOptions buildOption = BuildAssetBundleOptions.IgnoreTypeTreeChanges | BuildAssetBundleOptions.DeterministicAssetBundle;
-        string outputPath = PackageUtils.GetAssetBundleOutputPath(buildTarget, channelName);
-        AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(outputPath, buildOption, buildTarget);
-        if (manifest != null && writeConfig)
-        {
-            AssetsPathMappingEditor.BuildPathMapping(manifest);
-            VariantMappingEditor.BuildVariantMapping(manifest);
-            BuildPipeline.BuildAssetBundles(outputPath, buildOption, buildTarget);
-        }
-        WriteChannelNameFile(buildTarget, channelName);
-        WriteAssetBundleSize(buildTarget, channelName);
-        AssetDatabase.Refresh();
+        // BuildAssetBundleOptions buildOption = BuildAssetBundleOptions.IgnoreTypeTreeChanges | BuildAssetBundleOptions.DeterministicAssetBundle;
+        // string outputPath = PackageUtils.GetAssetBundleOutputPath(buildTarget, channelName);
+        // AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(outputPath, buildOption, buildTarget);
+        // if (manifest != null && writeConfig)
+        // {
+        //     AssetsPathMappingEditor.BuildPathMapping(manifest);
+        //     VariantMappingEditor.BuildVariantMapping(manifest);
+        //     BuildPipeline.BuildAssetBundles(outputPath, buildOption, buildTarget);
+        // }
+        // WriteChannelNameFile(buildTarget, channelName);
+        // WriteAssetBundleSize(buildTarget, channelName);
+        // AssetDatabase.Refresh();
     }
 
     public static void BuildAssetBundles(BuildTarget buildTarget, string channelName)

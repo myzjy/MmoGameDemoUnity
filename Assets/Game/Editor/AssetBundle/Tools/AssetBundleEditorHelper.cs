@@ -298,175 +298,175 @@ namespace AssetBundles
             return strList;
         }
 
-        public static void CreateAssetbundleForCurrent(string assetPath)
-        {
-            AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
-            if (importer == null)
-            {
-                UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
-                    assetPath));
-                return;
-            }
+        // public static void CreateAssetbundleForCurrent(string assetPath)
+        // {
+        //     AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
+        //     if (importer == null)
+        //     {
+        //         UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+        //             assetPath));
+        //         return;
+        //     }
+        //
+        //     CreateAssetbundleForCurrent(importer);
+        // }
 
-            CreateAssetbundleForCurrent(importer);
-        }
+        // public static void CreateAssetbundleForCurrent(AssetBundleImporter importer)
+        // {
+        //     if (importer == null || !importer.IsValid)
+        //     {
+        //         UnityEngine.Debug.LogError("importer null or not valid!");
+        //         return;
+        //     }
+        //     // string assetBundleName = Path.GetFileName(importer.assetPath);
+        //     // ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
+        //     // TODO：处理variant
+        //     // importer.assetBundleName =
+        //     //     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
+        //     //     AssetBundleConfig.AssetBundleSuffix;
+        //     importer.assetBundleName =  AssetBundleUtility.AssetBundlePathToAssetBundleName(importer.assetPath);
+        //     // importer.assetBundleName = ;
+        //     //importer.assetBundleVariant = null;
+        // }
 
-        public static void CreateAssetbundleForCurrent(AssetBundleImporter importer)
-        {
-            if (importer == null || !importer.IsValid)
-            {
-                UnityEngine.Debug.LogError("importer null or not valid!");
-                return;
-            }
-            // string assetBundleName = Path.GetFileName(importer.assetPath);
-            // ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
-            // TODO：处理variant
-            // importer.assetBundleName =
-            //     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
-            //     AssetBundleConfig.AssetBundleSuffix;
-            importer.assetBundleName =  AssetBundleUtility.AssetBundlePathToAssetBundleName(importer.assetPath);
-            // importer.assetBundleName = ;
-            //importer.assetBundleVariant = null;
-        }
+        // public static void CreateAssetbundleForChildren(string assetPath)
+        // {
+        //     AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
+        //     if (importer == null)
+        //     {
+        //         UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
+        //             assetPath));
+        //         return;
+        //     }
+        //
+        //     CreateAssetbundleForChildren(importer);
+        // }
 
-        public static void CreateAssetbundleForChildren(string assetPath)
-        {
-            AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
-            if (importer == null)
-            {
-                UnityEngine.Debug.LogError(string.Format("importer null! make sure object at path({0}) is a valid assetbundle!",
-                    assetPath));
-                return;
-            }
+        // public static void CreateAssetbundleForChildren(AssetBundleImporter importer)
+        // {
+        //     if (importer == null || !importer.IsValid)
+        //     {
+        //         UnityEngine.Debug.LogError("importer null or not valid!");
+        //         return;
+        //     }
+        //
+        //     List<AssetBundleImporter> childImporter = importer.GetChildren();
+        //     foreach (AssetBundleImporter child in childImporter)
+        //     {
+        //         if (!child.IsValid)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         CreateAssetbundleForCurrent(child);
+        //     }
+        // }
 
-            CreateAssetbundleForChildren(importer);
-        }
+        // public static List<string> RemoveAssetBundleInParents(string assetPath)
+        // {
+        //     List<string> removeList = new List<string>();
+        //     AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
+        //     if (importer == null)
+        //     {
+        //         return removeList;
+        //     }
+        //
+        //     AssetBundleImporter parentImporter = importer.GetParent();
+        //     while (parentImporter != null)
+        //     {
+        //         if (!string.IsNullOrEmpty(parentImporter.assetBundleName))
+        //         {
+        //             removeList.Add(string.Format("{0}{1}", parentImporter.assetPath,
+        //                 string.IsNullOrEmpty(parentImporter.assetBundleVariant)
+        //                     ? null
+        //                     : string.Format("({0})", parentImporter.assetBundleVariant)));
+        //             parentImporter.assetBundleName = null;
+        //         }
+        //
+        //         parentImporter = parentImporter.GetParent();
+        //     }
+        //
+        //     return removeList;
+        // }
 
-        public static void CreateAssetbundleForChildren(AssetBundleImporter importer)
-        {
-            if (importer == null || !importer.IsValid)
-            {
-                UnityEngine.Debug.LogError("importer null or not valid!");
-                return;
-            }
+        // public static List<string> RemoveAssetbundleInParents(Object[] objects)
+        // {
+        //     List<string> removeList = new List<string>();
+        //     foreach (Object obj in objects)
+        //     {
+        //         string assetPath = AssetDatabase.GetAssetPath(obj);
+        //         removeList.AddRange(RemoveAssetBundleInParents(assetPath));
+        //     }
+        //
+        //     return removeList;
+        // }
 
-            List<AssetBundleImporter> childImporter = importer.GetChildren();
-            foreach (AssetBundleImporter child in childImporter)
-            {
-                if (!child.IsValid)
-                {
-                    continue;
-                }
+        // public static List<string> RemoveAssetBundleInChildren(string assetPath, bool containsSelf,
+        //     bool countainsDirectly, REMOVE_TYPE removeType)
+        // {
+        //     List<string> removeList = new List<string>();
+        //     AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
+        //     if (importer == null)
+        //     {
+        //         return removeList;
+        //     }
+        //
+        //     //是否删除自身
+        //     if (containsSelf && !string.IsNullOrEmpty(importer.assetBundleName))
+        //     {
+        //         removeList.Add(string.Format("{0}{1}", importer.assetPath,
+        //             string.IsNullOrEmpty(importer.assetBundleVariant)
+        //                 ? null
+        //                 : string.Format("({0})", importer.assetBundleVariant)));
+        //         importer.assetBundleName = null;
+        //     }
+        //
+        //     List<AssetBundleImporter> childImporter = importer.GetChildren();
+        //     foreach (AssetBundleImporter child in childImporter)
+        //     {
+        //         if (!child.IsValid)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         if (!string.IsNullOrEmpty(child.assetBundleName) && countainsDirectly)
+        //         {
+        //             if (removeType == REMOVE_TYPE.ALL ||
+        //                 (removeType == REMOVE_TYPE.CHILDREN_DIR && child.IsFile == false) ||
+        //                 (removeType == REMOVE_TYPE.CHILDREN_FILES && child.IsFile == true)
+        //                )
+        //             {
+        //                 removeList.Add(string.Format("{0}{1}", child.assetPath,
+        //                     string.IsNullOrEmpty(child.assetBundleVariant)
+        //                         ? null
+        //                         : string.Format("({0})", child.assetBundleVariant)));
+        //                 child.assetBundleName = null;
+        //             }
+        //         }
+        //
+        //         if (!child.IsFile)
+        //         {
+        //             // 为目录，递归：递归时containsSelf设置为false，是否删除本身由removeType确定
+        //             removeList.AddRange(RemoveAssetBundleInChildren(child.assetPath, false, true, removeType));
+        //         }
+        //     }
+        //
+        //     return removeList;
+        // }
 
-                CreateAssetbundleForCurrent(child);
-            }
-        }
+        // public static List<string> RemoveAssetbundleInChildren(Object[] objects, bool countainsSelf = false,
+            // bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
+        // {
+            // List<string> removeList = new List<string>();
+            // foreach (Object obj in objects)
+            // {
+                // string assetPath = AssetDatabase.GetAssetPath(obj);
+                // removeList.AddRange(
+                    // RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
+            // }
 
-        public static List<string> RemoveAssetBundleInParents(string assetPath)
-        {
-            List<string> removeList = new List<string>();
-            AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
-            if (importer == null)
-            {
-                return removeList;
-            }
-
-            AssetBundleImporter parentImporter = importer.GetParent();
-            while (parentImporter != null)
-            {
-                if (!string.IsNullOrEmpty(parentImporter.assetBundleName))
-                {
-                    removeList.Add(string.Format("{0}{1}", parentImporter.assetPath,
-                        string.IsNullOrEmpty(parentImporter.assetBundleVariant)
-                            ? null
-                            : string.Format("({0})", parentImporter.assetBundleVariant)));
-                    parentImporter.assetBundleName = null;
-                }
-
-                parentImporter = parentImporter.GetParent();
-            }
-
-            return removeList;
-        }
-
-        public static List<string> RemoveAssetbundleInParents(Object[] objects)
-        {
-            List<string> removeList = new List<string>();
-            foreach (Object obj in objects)
-            {
-                string assetPath = AssetDatabase.GetAssetPath(obj);
-                removeList.AddRange(RemoveAssetBundleInParents(assetPath));
-            }
-
-            return removeList;
-        }
-
-        public static List<string> RemoveAssetBundleInChildren(string assetPath, bool containsSelf,
-            bool countainsDirectly, REMOVE_TYPE removeType)
-        {
-            List<string> removeList = new List<string>();
-            AssetBundleImporter importer = AssetBundleImporter.GetAtPath(assetPath);
-            if (importer == null)
-            {
-                return removeList;
-            }
-
-            //是否删除自身
-            if (containsSelf && !string.IsNullOrEmpty(importer.assetBundleName))
-            {
-                removeList.Add(string.Format("{0}{1}", importer.assetPath,
-                    string.IsNullOrEmpty(importer.assetBundleVariant)
-                        ? null
-                        : string.Format("({0})", importer.assetBundleVariant)));
-                importer.assetBundleName = null;
-            }
-
-            List<AssetBundleImporter> childImporter = importer.GetChildren();
-            foreach (AssetBundleImporter child in childImporter)
-            {
-                if (!child.IsValid)
-                {
-                    continue;
-                }
-
-                if (!string.IsNullOrEmpty(child.assetBundleName) && countainsDirectly)
-                {
-                    if (removeType == REMOVE_TYPE.ALL ||
-                        (removeType == REMOVE_TYPE.CHILDREN_DIR && child.IsFile == false) ||
-                        (removeType == REMOVE_TYPE.CHILDREN_FILES && child.IsFile == true)
-                       )
-                    {
-                        removeList.Add(string.Format("{0}{1}", child.assetPath,
-                            string.IsNullOrEmpty(child.assetBundleVariant)
-                                ? null
-                                : string.Format("({0})", child.assetBundleVariant)));
-                        child.assetBundleName = null;
-                    }
-                }
-
-                if (!child.IsFile)
-                {
-                    // 为目录，递归：递归时containsSelf设置为false，是否删除本身由removeType确定
-                    removeList.AddRange(RemoveAssetBundleInChildren(child.assetPath, false, true, removeType));
-                }
-            }
-
-            return removeList;
-        }
-
-        public static List<string> RemoveAssetbundleInChildren(Object[] objects, bool countainsSelf = false,
-            bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
-        {
-            List<string> removeList = new List<string>();
-            foreach (Object obj in objects)
-            {
-                string assetPath = AssetDatabase.GetAssetPath(obj);
-                removeList.AddRange(
-                    RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
-            }
-
-            return removeList;
-        }
+            // return removeList;
+        // }
 
         public static void CreaeteAssetBundleForFile(Object[] objects)
         {
@@ -490,20 +490,20 @@ namespace AssetBundles
 
         public static void CreateAssetbundleForCurrent(Object[] objects)
         {
-            foreach (Object obj in objects)
-            {
-                string assetPath = AssetDatabase.GetAssetPath(obj);
-                CreateAssetbundleForCurrent(assetPath);
-            }
+            // foreach (Object obj in objects)
+            // {
+                // string assetPath = AssetDatabase.GetAssetPath(obj);
+                // CreateAssetbundleForCurrent(assetPath);
+            // }
         }
 
         public static void CreateAssetbundleForChildren(Object[] objects)
         {
-            foreach (Object obj in objects)
-            {
-                string assetPath = AssetDatabase.GetAssetPath(obj);
-                CreateAssetbundleForChildren(assetPath);
-            }
+            // foreach (Object obj in objects)
+            // {
+                // string assetPath = AssetDatabase.GetAssetPath(obj);
+                // CreateAssetbundleForChildren(assetPath);
+            // }
         }
     }
 }
