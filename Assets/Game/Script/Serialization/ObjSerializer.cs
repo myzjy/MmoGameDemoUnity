@@ -64,6 +64,10 @@ namespace Serialization
             }
         }
 
+        public ObjSerializer()
+        {
+        }
+
         public static PureObject Serialize(object o, SerializationContext context = null)
         {
             return SerializeImpl(context == null ? new SerializationContext() : context, o);
@@ -435,6 +439,7 @@ namespace Serialization
 			s_dynamicDeserializationCount[ret.GetType()] = ++cnt;
 #endif
             context.Push(ret);
+            
             Exception lastException = null;
 
             foreach (var f in GetSerializeFields(actualClass))
