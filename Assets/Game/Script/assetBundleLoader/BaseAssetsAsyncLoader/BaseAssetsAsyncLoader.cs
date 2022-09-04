@@ -4,7 +4,7 @@
     {
         void Dispose();
     }
-    public class BaseAssetsAsyncLoader:BaseAssetsAsyncLoaderInterface
+    public sealed class BaseAssetsAsyncLoader:BaseAssetsAsyncLoaderInterface
     {
         public string assetbundleName
         {
@@ -22,7 +22,7 @@
         /// </summary>
         public AssetBundleLoaderBase.AssetBundleHolder.ReferenceCount refCount;
         
-        public virtual void Dispose()
+        public void Dispose()
         {
         }
     }
