@@ -684,24 +684,9 @@ namespace GameEditor.ApiHttpsEditor
 
         public void Save()
         {
-            var str = JsonConvert.SerializeObject(m_parsedInstructions);
             var path = AssetDatabase.GetAssetPath(_mSelectInstructions);
-            JsonSerializer serializer = new JsonSerializer();
-            TextReader tr = new StringReader(str);
-            JsonTextReader jtr = new JsonTextReader(tr);
-            var obj = serializer.Deserialize(jtr);
-            if (obj != null)
-            {
-                StringWriter sw = new StringWriter();
-                JsonTextWriter jsonTextWriter = new JsonTextWriter(sw)
-                {
-                    Formatting = Formatting.Indented,
-                    Indentation = 4,
-                    IndentChar = ' '
-                };
-                serializer.Serialize(jsonTextWriter, obj);
-                File.WriteAllText(path, sw.ToString());
-            }
+            File.WriteAllText(path, Serializer.jsonSerializer.Serialize(m_parsedInstructions));
+
 
             HttpInstructionsImporter.ProcessFile(path);
             AssetDatabase.Refresh();

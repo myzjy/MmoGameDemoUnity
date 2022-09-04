@@ -5,7 +5,7 @@ using Serialization;
 using UnityEditor;
 using ZJYFrameWork.AttributeCustom;
 
-namespace ZJYFrameWork.Common.Utility
+namespace Serialization
 {
     public class SubClassTable
     {

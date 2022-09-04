@@ -21,5 +21,9 @@ namespace Serialization
         {
             return ObjSerializer.Deserialize(type, MiniJSON.Json.Deserialize(str), context);
         }
+        public string Serialize(object obj, SerializationContext context = null)
+        {
+            return MiniJSON.Json.Serialize(ObjSerializer.Serialize(obj, context));
+        }
     }
 }
