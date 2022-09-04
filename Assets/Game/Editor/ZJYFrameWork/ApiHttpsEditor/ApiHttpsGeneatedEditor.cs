@@ -442,9 +442,9 @@ namespace GameEditor.ApiHttpsEditor
             }
         }
 
-        static List<Type> subClasses = SubClassTable.GetClassIE(typeof(InstructionType)).ToList();
+        public static List<Type> subClasses = SubClassTable.GetClassIE(typeof(InstructionType)).ToList();
 
-        static string[] typeSelections = subClasses.Select(x =>
+        public   static string[] typeSelections = subClasses.Select(x =>
         {
             var attr = x.GetAttribute<DescribeAttribute>();
             if (attr != null)
@@ -458,7 +458,7 @@ namespace GameEditor.ApiHttpsEditor
         }).ToArray();
 
 
-        STuple<bool, object> RenderInstruction(HttpsInstructions inst)
+        public STuple<bool, object> RenderInstruction(HttpsInstructions inst)
         {
             var idx = subClasses.FindIndex(x => x == inst.GetType());
             var val = EditorGUILayout.Popup(idx, typeSelections);
@@ -652,7 +652,7 @@ namespace GameEditor.ApiHttpsEditor
 
             foreach (var n in text)
             {
-                if (splitColmunsCount > 0 && char.IsUpper(n))
+                if (char.IsUpper(n))
                 {
                     ++upperCount;
                     if (upperCount >= splitColmunsCount)
@@ -703,6 +703,7 @@ namespace GameEditor.ApiHttpsEditor
                 File.WriteAllText(path, sw.ToString());
             }
 
+            HttpInstructionsImporter.ProcessFile(path);
             AssetDatabase.Refresh();
         }
     }

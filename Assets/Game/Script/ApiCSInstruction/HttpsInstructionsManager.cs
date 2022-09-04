@@ -8,7 +8,11 @@
         Float,
         Class,
         Enum,
-        Differentiate
+        Differentiate,
+        Api,
+        Request,
+        Response,
+        Model,
     }
 
     public enum PostBack

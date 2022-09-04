@@ -2,7 +2,12 @@
     "InstructionsList": [
         {
             "type": 1,
+            "InstructionString": "",
             "typeName": "Code"
+        },
+        {
+            "modelBool": false,
+            "tips": ""
         }
     ]
 }

@@ -12,14 +12,5 @@ namespace ZJYFrameWork.AttributeCustom
             this.Description = description;
         }
     }
-
-    public class SubClassAttribute : Attribute
-    {
-        public object label { get; private set; }
-
-        public SubClassAttribute(object label)
-        {
-            this.label = label;
-        }
-    }
+    
 }

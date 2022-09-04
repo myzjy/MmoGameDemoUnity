@@ -9,7 +9,7 @@ namespace ZJYFrameWork.Common.Utility
 {
     public class SubClassTable
     {
-        public static Type GetClass(ObjSerializer.SuperClassAttribute attr, object label)
+        public static Type GetClass(SuperClassAttribute attr, object label)
         {
             try
             {
