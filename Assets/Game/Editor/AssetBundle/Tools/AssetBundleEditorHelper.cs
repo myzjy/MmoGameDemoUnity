@@ -258,45 +258,45 @@ namespace AssetBundles
             return ret;
         }
 
-        public static List<string> GetDependancisFormBuildManifest(string manifestPath, Object[] objects,
-            bool isAll = true)
-        {
-            AssetBundleManifest manifest = PackageUtils.GetManifestFormLocal(manifestPath);
-            if (manifest == null)
-            {
-                return null;
-            }
-
-            List<string> names = GetObjectsAssetbundleNames(objects);
-            if (names == null || names.Count == 0)
-            {
-                return null;
-            }
-
-            List<string> strList = new List<string>();
-            foreach (string name in names)
-            {
-                string[] deps = null;
-                if (isAll)
-                {
-                    deps = manifest.GetAllDependencies(name);
-                }
-                else
-                {
-                    deps = manifest.GetDirectDependencies(name);
-                }
-
-                foreach (string dep in deps)
-                {
-                    if (!strList.Contains(dep))
-                    {
-                        strList.Add(dep);
-                    }
-                }
-            }
-
-            return strList;
-        }
+        // public static List<string> GetDependancisFormBuildManifest(string manifestPath, Object[] objects,
+        //     bool isAll = true)
+        // {
+        //     AssetBundleManifest manifest = PackageUtils.GetManifestFormLocal(manifestPath);
+        //     if (manifest == null)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     List<string> names = GetObjectsAssetbundleNames(objects);
+        //     if (names == null || names.Count == 0)
+        //     {
+        //         return null;
+        //     }
+        //
+        //     List<string> strList = new List<string>();
+        //     foreach (string name in names)
+        //     {
+        //         string[] deps = null;
+        //         if (isAll)
+        //         {
+        //             deps = manifest.GetAllDependencies(name);
+        //         }
+        //         else
+        //         {
+        //             deps = manifest.GetDirectDependencies(name);
+        //         }
+        //
+        //         foreach (string dep in deps)
+        //         {
+        //             if (!strList.Contains(dep))
+        //             {
+        //                 strList.Add(dep);
+        //             }
+        //         }
+        //     }
+        //
+        //     return strList;
+        // }
 
         // public static void CreateAssetbundleForCurrent(string assetPath)
         // {

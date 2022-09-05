@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using Common.Utility;
 using Framework.AssetBundles.Config;
+using UnityEditor;
 using UnityEngine;
 
 namespace Framework.AssetBundles.Utilty
@@ -91,66 +92,20 @@ namespace Framework.AssetBundles.Utilty
             return "pc/";
 #endif
         }
-
-        /// <summary>
-        /// 包路径到资产路径
-        /// </summary>
-        /// <param name="assetPath">资产路径</param>
-        /// <returns></returns>
-        public static string PackagePathToAssetsPath(string assetPath)
+        public static string GetPlatformName(BuildTarget buildTarget)
         {
-            var sb = new StringBuilder();
-            sb.Append("Assets/");
-            sb.Append(AssetBundleConfig.AssetsFolderName);
-            sb.Append($"/{assetPath}");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// 资产包路径到资产包名称
-        /// </summary>
-        /// <param name="assetPath">资产包路径</param>
-        /// <returns></returns>
-        public static string AssetBundlePathToAssetBundleName(string assetPath)
-        {
-            var ab = new StringBuilder();
-            if (string.IsNullOrEmpty(assetPath)) return null;
-            if (assetPath.StartsWith("Assets/"))
+            switch (buildTarget)
             {
-                assetPath = AssetsPathToPackagePath(assetPath);
-            }
-
-            //no " "
-            assetPath = assetPath.Replace(" ", "");
-            //there should not be any '.' in the assetbundle name
-            //otherwise the variant handling in client may go wrong
-            assetPath = assetPath.Replace(".", "_");
-            //add after suffix ".assetbundle" to the end
-            ab.Append(assetPath);
-            ab.Append(AssetBundleConfig.AssetBundleSuffix);
-            return ab.ToString().ToLower();
-        }
-
-        /// <summary>
-        /// 资产路径到包路径
-        /// </summary>
-        /// <param name="assetPath">资产包路径</param>
-        /// <returns></returns>
-        public static string AssetsPathToPackagePath(string assetPath)
-        {
-            string path = $"{AssetBundleConfig.AssetsFolderName}/";
-            if (assetPath.Contains(path))
-            {
-                int idnex = assetPath.IndexOf(path, StringComparison.Ordinal) + path.Length;
-                return assetPath.Substring(idnex);
-            }
-            else
-            {
-                UnityEngine.Debug.LogError("Asset path is not a package path!");
-                return assetPath;
+                case BuildTarget.Android:
+                    return "Android";
+                case BuildTarget.iOS:
+                    return "iOS";
+                default:
+                    Debug.LogError("Error buildTarget!!!");
+                    return null;
             }
         }
-
+        
         /// <summary>
         /// 获取到对应路径
         /// </summary>
