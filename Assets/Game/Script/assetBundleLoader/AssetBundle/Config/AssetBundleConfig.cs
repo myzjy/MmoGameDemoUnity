@@ -7,13 +7,8 @@ namespace Framework.AssetBundles.Config
 {
     public static class AssetBundleConfig
     {
-        public const string AssetsFolderName = "AddressablePaker";
-        public const string AssetsFolderNameS = "Game/AddressablePaker";
+   
         public const string AssetBundlesFolderName = "AssetBundles";
-        public const string AssetsPathMapFileName = "AssetsMap";//"AssetsMap.bytes";
-        public const string VariantsMapFileName = "VariantsMap.bytes";
-        public const string ChannelFolderName = "Channel";
-        // public const string localSvrAppPath = "Editor/AssetBundle/LocalServer/AssetBundleServer.exe";
 
         //后缀名
         public const string AssetBundleSuffix = ".assetbundle";
@@ -23,7 +18,6 @@ namespace Framework.AssetBundles.Config
         private const string kIsEditorModeLog = "IsEditorModeLog";
         private static int mIsSimulateMode = -1;
         private const string kIsSimulateMode = "IsSimulateMode";
-        public const string CommonMapPattren = ",";
         public const string CustomManifestPrefix = "custom_manifest/";
         public const string CustomManifestSuffix = "custom_manifest";
         
@@ -101,13 +95,7 @@ namespace Framework.AssetBundles.Config
                 }
             }
         }
-        // public static string LocalSvrAppPath
-        // {
-        //     get
-        //     {
-        //         return Path.Combine(Application.dataPath, localSvrAppPath);
-        //     }
-        // }
+      
         public static bool IsSimulateMode
         {
             get

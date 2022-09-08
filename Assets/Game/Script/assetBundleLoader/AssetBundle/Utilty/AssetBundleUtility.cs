@@ -106,96 +106,11 @@ namespace Framework.AssetBundles.Utilty
             }
         }
         
-        /// <summary>
-        /// 获取到对应路径
-        /// </summary>
-        /// <param name="assetPath">资源路径</param>
-        /// <returns></returns>
-        public static string GetPersistentDataPath(string assetPath = null)
-        {
-            //根据参数返回上一级目录
-            string outputPath = Path.Combine(Application.persistentDataPath, AssetBundleConfig.AssetBundlesFolderName);
-            if (!string.IsNullOrEmpty(assetPath))
-            {
-                //根据参数返回上一级目录
-                outputPath = Path.Combine(outputPath, assetPath);
-            }
-#if UNITY_EDITOR_WIN
-            // 路径替换
-            return GameUtility.FormatToSysFilePath(outputPath);
-#else
-            return outputPath;
-#endif
-        }
+     
+    
 
-        /// <summary>
-        /// 检查持久文件是否存在
-        /// </summary>
-        /// <param name="filePath">文件路径</param>
-        /// <returns></returns>
-        public static bool CheckPersistentFileExsits(string filePath)
-        {
-            //获取到对应路径 检查对应文件
-            var path = GetPersistentDataPath(filePath);
-            return File.Exists(path);
-        }
+       
 
-        public static string GetPersistentFilePath(string assetPath = null)
-        {
-            return "file://" + GetPersistentDataPath(assetPath);
-        }
-
-        public static string GetStreamingAssetsFilePath(string assetPath = null)
-        {
-#if UNITY_EDITOR
-            string outputPath = Path.Combine("file://" + Application.streamingAssetsPath,
-                AssetBundleConfig.AssetBundlesFolderName);
-#else
-#if UNITY_IPHONE || UNITY_IOS
-            string outputPath =
- Path.Combine("file://" + Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
-#elif UNITY_ANDROID
-            string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
-#else
-            Logger.LogError("Unsupported platform!!!");
-#endif
-#endif
-            if (!string.IsNullOrEmpty(assetPath))
-            {
-                outputPath = Path.Combine(outputPath, assetPath);
-            }
-
-            return outputPath;
-        }
-
-        // 注意：这个路径是给WWW读文件使用的url，如果要直接磁盘写persistentDataPath，使用GetPlatformPersistentDataPath
-        public static string GetAssetBundleFileUrl(string filePath)
-        {
-            if (CheckPersistentFileExsits(filePath))
-            {
-                return GetPersistentFilePath(filePath);
-            }
-            else
-            {
-                return GetStreamingAssetsFilePath(filePath);
-            }
-        }
-
-        public static string GetStreamingAssetsDataPath(string assetPath = null)
-        {
-            string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
-            if (!string.IsNullOrEmpty(assetPath))
-            {
-                outputPath = Path.Combine(outputPath, assetPath);
-            }
-
-            return outputPath;
-        }
-
-        public static bool IsPackagePath(string assetPath)
-        {
-            string path = "Assets/" + AssetBundleConfig.AssetsFolderName + "/";
-            return assetPath.StartsWith(path);
-        }
+      
     }
 }

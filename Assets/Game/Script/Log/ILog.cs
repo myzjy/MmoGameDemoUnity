@@ -3,7 +3,7 @@
 namespace ZJYFrameWork.Log
 {
     /// <summary>
-    /// 应用程序使用ILog接口将消息记录到Loxodon.Log框架中。
+    /// 应用程序使用ILog接口将消息记录到 ZJYFrameWork.Log框架中。
     /// </summary>
     /// <example>Simple example of logging messages
     ///  <code lang="C#">

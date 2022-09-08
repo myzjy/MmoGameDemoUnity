@@ -3,7 +3,6 @@ using System.Collections;
 using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
 using ZJYFrameWork.UISerializable.UIInitView;
-using ZJYFrameWork.AssetBundles;
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.UISerializable.Manager;
