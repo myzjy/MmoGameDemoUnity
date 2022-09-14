@@ -134,6 +134,11 @@ namespace ZJYFrameWork.Net
             SendNext();
         }
 
+        public void Retry(ApiRequest request)
+        {
+            request.Send();
+        }
+
         private void SendNext()
         {
             if (apiQueue.Count <= 0) return;

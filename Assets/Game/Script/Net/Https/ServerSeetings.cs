@@ -12,6 +12,7 @@
         
         
         public string ApiHttpsBaseUrl { get; private set; }
+        public string ApiWebSocketUrl{ get; private set; }
         
 #pragma warning disable CS0649
         private HostType _hostType;
