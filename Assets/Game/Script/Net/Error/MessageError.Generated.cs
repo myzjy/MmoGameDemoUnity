@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace ZJYFrameWork.Net
 {
-    public partial class MessageError:SeverModel
+    public partial class MessageError:Model
     {
         /// <summary>
         /// 错误Code
@@ -21,10 +21,12 @@ namespace ZJYFrameWork.Net
         /// 错误的信息具体内容
         /// </summary>
         public Error date { get; set; }
-        protected override string ToJson()
+        public override string ToJson(bool isPretty = false)
         {
             return MessageErrorSerializer.ToJson(this);
         }
+
+
         public override void Unpack(byte[] bytes)
         {
             MessageErrorSerializer.Unpack(this,bytes);

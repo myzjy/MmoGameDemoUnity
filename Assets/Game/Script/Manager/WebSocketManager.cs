@@ -1,9 +1,23 @@
 ﻿using System;
+using System.Text;
 using BestHTTP.WebSocket;
 using GameTools.Singletons;
+using MiniJSON;
+using Newtonsoft.Json;
 
 namespace ZJYFrameWork.UISerializable.Manager
 {
+    public class LoginDataServer
+    {
+        public int protocolId { get; set; }
+        public LoginServerDataSend packet { get; set; }
+    }
+
+    public class LoginServerDataSend
+    {
+        public string account { get; set; }
+        public string password { get; set; }
+    }
     /// <summary>
     /// WebSocket管理类
     /// </summary>
@@ -14,7 +28,7 @@ namespace ZJYFrameWork.UISerializable.Manager
         public override void OnAwake()
         {
             base.OnAwake();
-            Uri url = new Uri(NetworkManager.Instance.Settings.ApiWebSocketUrl);
+            Uri url = new Uri("http://192.168.0.105:5000/websocket");
             webSocket = new WebSocket(url);
 #if !UNITY_WEBGL || UNITY_EDITOR
             this.webSocket.StartPingThread = true;
@@ -30,14 +44,24 @@ namespace ZJYFrameWork.UISerializable.Manager
             // Subscribe to the WS events
             this.webSocket.OnOpen += OnOpen;
             this.webSocket.OnMessage += OnMessageReceived;
+            this.webSocket.OnBinary += OnMessageReceived;
             this.webSocket.OnClosed += OnClosed;
             this.webSocket.OnError += OnError;
             this.webSocket.Open();
         }
 
+        public void SendButton()
+        {
+            LoginDataServer data = new LoginDataServer();
+            data.protocolId = 1000;
+            data.packet = new LoginServerDataSend();
+            data.packet.account = "1111";
+            data.packet.password = "1111";
+            webSocket.Send(JsonConvert.SerializeObject(data));
+        }
         public void Send()
         {
-            // webSocket.Send();
+         
         }
 
         #region WebSocket Event Handlers
@@ -69,8 +93,13 @@ namespace ZJYFrameWork.UISerializable.Manager
         /// </summary>
         void OnMessageReceived(WebSocket ws, string message)
         {
+            Debug.Log(message);
         }
-
+        void OnMessageReceived(WebSocket ws, byte[] message)
+        {
+            var s = Encoding.UTF8.GetString(message);
+            Debug.Log(s);
+        }
         /// <summary>
         /// Called when the web socket closed
         /// </summary>

@@ -29,11 +29,11 @@ namespace ZJYFrameWork.AssetBundleLoader
         public virtual string GetCustomManifestName(AssetBundleLoaderBase loader, string hash)
         {
 #if UNITY_ANDROID
-            return $"{AssetBundleConfig.CustomManifestPrefix}/android_{AssetBundleConfig.AssetBundleSuffix}";
+            return $"{AssetBundleConfig.CustomManifestPrefix}/android_{AssetBundleConfig.CustomManifestSuffix}";
 #elif UNITY_IOS
-            return $"{AssetBundleConfig.CustomManifestPrefix}/ios_{AssetBundleConfig.AssetBundleSuffix}";
+            return $"{AssetBundleConfig.CustomManifestPrefix}/ios_{AssetBundleConfig.CustomManifestSuffix}";
 #else
-            return $"{AssetBundleConfig.CustomManifestPrefix}/pc_{AssetBundleConfig.AssetBundleSuffix}{loader.GetBundleExt()}";
+            return $"{AssetBundleConfig.CustomManifestPrefix}/pc_{AssetBundleConfig.CustomManifestSuffix}{loader.GetBundleExt()}";
 #endif
         }
 

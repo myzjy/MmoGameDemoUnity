@@ -1,7 +1,9 @@
 ﻿namespace ZJYFrameWork.UISerializable.Manager
 {
-    public class CommonUIManager
+    /// <summary>
+    /// 通知UI管理器
+    /// </summary>
+    public  class CommonUIManager : Singleton<CommonUIManager>
     {
-        
     }
 }

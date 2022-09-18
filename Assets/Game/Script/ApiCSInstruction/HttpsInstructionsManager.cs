@@ -10,13 +10,20 @@
         Enum,
         Differentiate,
         Api,
+        ApiEnd,
+
         Request,
+        RequestEnd,
+
         Response,
+        ResponseEnd,
+
         Model,
     }
 
     public enum PostBack
     {
+        None,
         Api,
         Request,
         Response,

@@ -1,7 +1,7 @@
 ﻿using  System.Text;
 namespace ZJYFrameWork.Net
 {
-    public partial class Error:SeverModel,IError
+    public partial class Error:Model,IError
     {
         /// <summary>
         /// 出现错误的CommandID
@@ -11,7 +11,7 @@ namespace ZJYFrameWork.Net
         /// 具体错误信息
         /// </summary>
         public string message { get; set; }
-        protected override string ToJson()
+        public override string ToJson(bool isPretty)
         {
             return ErrorSerializer.ToJson(this);
         }
