@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Log
 {
-    public class DefaultLogFactory: ILogFactory
+    public class DefaultLogFactory : ILogFactory
     {
         private Dictionary<string, ILog> repositories = new Dictionary<string, ILog>();
         private bool inUnity = true;
         private Level _level = Level.ALL;
+
         public DefaultLogFactory()
         {
         }
+
         public Level Level
         {
             get { return this._level; }
             set { this._level = value; }
         }
+
         public bool InUnity
         {
             get { return this.inUnity; }
@@ -49,17 +53,22 @@ namespace ZJYFrameWork.Log
             return log;
         }
     }
+
     internal class LogImpl : ILog
     {
         private string name;
         private DefaultLogFactory _factory;
+
         public LogImpl(string name, DefaultLogFactory factory)
         {
             this.name = name;
             this._factory = factory;
         }
 
-        public string Name { get { return this.name; } }
+        public string Name
+        {
+            get { return this.name; }
+        }
 
         protected virtual string Format(object message, string level)
         {
@@ -78,12 +87,17 @@ namespace ZJYFrameWork.Log
 
         public virtual void Debug(object message, Exception exception)
         {
-            Debug(string.Format("{0} Exception:{1}", message, exception));
+            Debug($"{message} Exception:{exception}");
         }
 
         public virtual void DebugFormat(string format, params object[] args)
         {
             Debug(string.Format(format, args));
+        }
+
+        public virtual void Info(string format, object arg0, object arg1)
+        {
+            Debug(StringUtils.Format(format, arg0, arg1));
         }
 
         public virtual void Info(object message)
@@ -98,7 +112,7 @@ namespace ZJYFrameWork.Log
 
         public virtual void Info(object message, Exception exception)
         {
-            Info(string.Format("{0} Exception:{1}", message, exception));
+            Info($"{message} Exception:{exception}");
         }
 
         public virtual void InfoFormat(string format, params object[] args)
@@ -118,7 +132,7 @@ namespace ZJYFrameWork.Log
 
         public virtual void Warn(object message, Exception exception)
         {
-            Warn(string.Format("{0} Exception:{1}", message, exception));
+            Warn($"{message} Exception:{exception}");
         }
 
         public virtual void WarnFormat(string format, params object[] args)

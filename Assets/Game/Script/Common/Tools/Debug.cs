@@ -1,23 +1,43 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.Log;
 using Debug = UnityEngine.Debug;
 
 public static class Debug
 {
+    private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleLoader));
+
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration)
     {
         UnityEngine.Debug.DrawLine(start, end, color, duration);
     }
-
     /// <summary>
-    ///   <para>Logs a message to the Unity Console.</para>
+    /// 打印信息级别日志，用于记录程序正常运行日志信息。
     /// </summary>
-    /// <param name="message">String or object to be converted to string representation for display.</param>
-    /// <param name="context">Object to which the message applies.</param>
+    /// <param name="format">日志格式。</param>
+    /// <param name="arg0">日志参数 0。</param>
+    /// <param name="arg1">日志参数 1。</param>
+    /// <remarks>仅在带有 ENABLE_LOG、ENABLE_INFO_LOG、ENABLE_DEBUG_AND_ABOVE_LOG 或 ENABLE_INFO_AND_ABOVE_LOG 预编译选项时生效。</remarks>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_INFO_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
+    [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
+    public static void Info(string format, object arg0, object arg1)
+    {
+        log.Info(format, arg0, arg1);
+    }
+    /// <summary>
+    /// 打印调试级别日志，用于记录调试类日志信息。
+    /// </summary>
+    /// <param name="message">日志内容。</param>
+    /// <remarks>仅在带有 DEBUG 预编译选项且带有 ENABLE_LOG、ENABLE_DEBUG_LOG 或 ENABLE_DEBUG_AND_ABOVE_LOG 预编译选项时生效。</remarks>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void Log(object message)
     {
-        
         UnityEngine.Debug.Log(message);
     }
 
@@ -26,7 +46,11 @@ public static class Debug
     /// </summary>
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
-    public static void Log(object message, Object context) => UnityEngine.Debug.unityLogger.Log(LogType.Log, message, context);
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
+    public static void Log(object message, Object context) =>
+        UnityEngine.Debug.unityLogger.Log(LogType.Log, message, context);
 
     /// <summary>
     ///   <para>Logs a formatted message to the Unity Console.</para>
@@ -37,6 +61,9 @@ public static class Debug
     /// <param name="logType">Type of message e.g. warn or error etc.</param>
     /// <param name="logOptions">Option flags to treat the log message special.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogFormat">`Debug.LogFormat` on docs.unity3d.com</a></footer>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogFormat(string format, params object[] args) =>
         UnityEngine.Debug.unityLogger.LogFormat(LogType.Log, format, args);
 
@@ -49,6 +76,9 @@ public static class Debug
     /// <param name="logType">Type of message e.g. warn or error etc.</param>
     /// <param name="logOptions">Option flags to treat the log message special.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogFormat">`Debug.LogFormat` on docs.unity3d.com</a></footer>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogFormat(Object context, string format, params object[] args) =>
         UnityEngine.Debug.unityLogger.LogFormat(LogType.Log, context, format, args);
 
@@ -60,6 +90,9 @@ public static class Debug
     /// <param name="context">Object to which the message applies.</param>
     /// <param name="logType">Type of message e.g. warn or error etc.</param>
     /// <param name="logOptions">Option flags to treat the log message special.</param>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogFormat(
         LogType logType,
         LogOption logOptions,
@@ -76,6 +109,9 @@ public static class Debug
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogError">`Debug.LogError` on docs.unity3d.com</a></footer>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogError(object message) => UnityEngine.Debug.unityLogger.Log(LogType.Error, message);
 
     /// <summary>
@@ -84,6 +120,9 @@ public static class Debug
     /// <param name="message">String or object to be converted to string representation for display.</param>
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogError">`Debug.LogError` on docs.unity3d.com</a></footer>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogError(object message, Object context) =>
         UnityEngine.Debug.unityLogger.Log(LogType.Error, message, context);
 
@@ -94,6 +133,9 @@ public static class Debug
     /// <param name="args">Format arguments.</param>
     /// <param name="context">Object to which the message applies.</param>
     /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogErrorFormat">`Debug.LogErrorFormat` on docs.unity3d.com</a></footer>
+    [Conditional("ENABLE_LOG")]
+    [Conditional("ENABLE_DEBUG_LOG")]
+    [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogErrorFormat(string format, params object[] args) =>
         UnityEngine.Debug.unityLogger.LogFormat(LogType.Error, format, args);
 
@@ -162,7 +204,7 @@ public static class Debug
     {
         if (condition)
             return;
-        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed");
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object)"Assertion failed");
     }
 
     /// <summary>
@@ -177,7 +219,7 @@ public static class Debug
     {
         if (condition)
             return;
-        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) "Assertion failed", context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object)"Assertion failed", context);
     }
 
     /// <summary>
@@ -200,7 +242,7 @@ public static class Debug
     {
         if (condition)
             return;
-        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) message);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object)message);
     }
 
     /// <summary>
@@ -223,7 +265,7 @@ public static class Debug
     {
         if (condition)
             return;
-        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object) message, context);
+        UnityEngine.Debug.unityLogger.Log(LogType.Assert, (object)message, context);
     }
 
     /// <summary>
@@ -302,6 +344,7 @@ public static class Debug
     [Conditional("UNITY_ASSERTIONS")]
     public static void LogAssertionFormat(Object context, string format, params object[] args) =>
         UnityEngine.Debug.unityLogger.LogFormat(LogType.Assert, context, format, args);
+
     /// <summary>
     ///   <para>In the Build Settings dialog there is a check box called "Development Build".</para>
     /// </summary>

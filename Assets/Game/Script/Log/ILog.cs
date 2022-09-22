@@ -26,7 +26,7 @@ namespace ZJYFrameWork.Log
         void Debug(object message, Exception exception);
 
         void DebugFormat(string format, params object[] args);
-
+        void Info(string format, object arg0, object arg1);
         void Info(object message);
 
         void Info(object message, Exception exception);
@@ -44,7 +44,7 @@ namespace ZJYFrameWork.Log
         void Error(object message, Exception exception);
 
         void ErrorFormat(string format, params object[] args);
-        
+
         void Fatal(object message);
 
         void Fatal(object message, Exception exception);

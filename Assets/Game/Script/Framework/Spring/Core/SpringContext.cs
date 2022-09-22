@@ -85,7 +85,7 @@ namespace ZJYFrameWork.Spring.Core
             return bean;
         }
 
-        
+
         /// <summary>
         /// 扫描
         /// </summary>
@@ -118,22 +118,21 @@ namespace ZJYFrameWork.Spring.Core
                 var fields = AssemblyUtils.GetFieldTypes(type);
                 foreach (var fieldInfo in fields)
                 {
-                    if (fieldInfo.IsDefined(typeof(AutowiredAttribute), false))
+                    if (!fieldInfo.IsDefined(typeof(AutowiredAttribute), false)) continue;
+                    var fieldType = fieldInfo.FieldType;
+                    try
                     {
-                        var fieldType = fieldInfo.FieldType;
-                        try
-                        {
-                            var autowiredFieldBean = GetBean(fieldType);
-                            fieldInfo.SetValue(beanObj, autowiredFieldBean);
-                        }
-                        catch (Exception e)
-                        {
-                            throw new Exception(StringUtils.Format("在类[{}]中注入[{}]类型异常"
-                                , beanObj.GetType().Name, fieldType.Name), e);
-                        }
+                        var autowiredFieldBean = GetBean(fieldType);
+                        fieldInfo.SetValue(beanObj, autowiredFieldBean);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(StringUtils.Format("在类[{}]中注入[{}]类型异常"
+                            , beanObj.GetType().Name, fieldType.Name), e);
                     }
                 }
             }
+
             // 调用被BeforePostConstruct注解标注的方法
             foreach (var pair in beanMap)
             {
@@ -145,6 +144,7 @@ namespace ZJYFrameWork.Spring.Core
                     method.Invoke(beanObj, null);
                 }
             }
+
             // 调用被PostConstruct注解标注的方法
             foreach (var pair in beanMap)
             {
@@ -156,6 +156,7 @@ namespace ZJYFrameWork.Spring.Core
                     method.Invoke(bean, null);
                 }
             }
+
             // 调用被AfterPostConstruct注解标注的方法
             foreach (var pair in beanMap)
             {
@@ -167,7 +168,21 @@ namespace ZJYFrameWork.Spring.Core
                     method.Invoke(bean, null);
                 }
             }
+
             scanFlag = true;
+        }
+
+        public static T GetBean<T>()
+        {
+            return (T)GetBean(typeof(T));
+        }
+
+        public static List<object> GetBeans(Type type)
+        {
+            return beanMap
+                .Where(it => type.IsAssignableFrom(it.Key))
+                .Select(it => it.Value)
+                .ToList();
         }
 
         public static object GetBean(Type type)
@@ -209,6 +224,26 @@ namespace ZJYFrameWork.Spring.Core
 
             return bean;
         }
+
+        public static List<object> GetAllBeans()
+        {
+            var list = new List<object>();
+            foreach (var pair in beanMap)
+            {
+                list.Add(pair.Value);
+            }
+
+            return list;
+        }
+
+        public static void Shutdown()
+        {
+            scanFlag = false;
+            scanPaths.Clear();
+            beanMap.Clear();
+            cachedBeanMap.Clear();
+        }
+
         public static void checkBean(object bean)
         {
             if (bean == null)
