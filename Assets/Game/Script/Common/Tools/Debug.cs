@@ -3,11 +3,13 @@ using System.Diagnostics;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles;
 using ZJYFrameWork.Log;
+using ZJYFrameWork.Spring.Utils;
 using Debug = UnityEngine.Debug;
 
 public static class Debug
 {
     private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleLoader));
+   
 
     public static void DrawLine(Vector3 start, Vector3 end, Color color, float duration)
     {
@@ -65,7 +67,7 @@ public static class Debug
     [Conditional("ENABLE_DEBUG_LOG")]
     [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogFormat(string format, params object[] args) =>
-        UnityEngine.Debug.unityLogger.LogFormat(LogType.Log, format, args);
+        log.Info(format, args);
 
     /// <summary>
     ///   <para>Logs a formatted message to the Unity Console.</para>
@@ -112,7 +114,8 @@ public static class Debug
     [Conditional("ENABLE_LOG")]
     [Conditional("ENABLE_DEBUG_LOG")]
     [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
-    public static void LogError(object message) => UnityEngine.Debug.unityLogger.Log(LogType.Error, message);
+    public static void LogError(object message) =>
+        UnityEngine.Debug.unityLogger.Log(LogType.Error, message);
 
     /// <summary>
     ///   <para>A variant of Debug.Log that logs an error message to the console.</para>
@@ -137,7 +140,7 @@ public static class Debug
     [Conditional("ENABLE_DEBUG_LOG")]
     [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
     public static void LogErrorFormat(string format, params object[] args) =>
-        UnityEngine.Debug.unityLogger.LogFormat(LogType.Error, format, args);
+        UnityEngine.Debug.unityLogger.Log(LogType.Error, StringUtils.Format(format, args));
 
 
     /// <summary>

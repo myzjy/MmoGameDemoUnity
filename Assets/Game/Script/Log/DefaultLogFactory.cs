@@ -95,9 +95,9 @@ namespace ZJYFrameWork.Log
             Debug(string.Format(format, args));
         }
 
-        public virtual void Info(string format, object arg0, object arg1)
+        public virtual void Info(string format,params object[] arg0)
         {
-            Debug(StringUtils.Format(format, arg0, arg1));
+            Debug(StringUtils.Format(format, arg0));
         }
 
         public virtual void Info(object message)

@@ -21,7 +21,7 @@ namespace ZJYFrameWork.Net
 
         public override void Shutdown()
         {
-            throw new System.NotImplementedException();
+            Close();
         }
 
         /// <summary>
