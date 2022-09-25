@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// added by wsh @ 2017.12.29
+///
 /// 功能：GUILayout通用工具类
 /// </summary>
 

@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Log;
 using ZJYFrameWork.Net.Dispatcher;
+using ZJYFrameWork.Procedure;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Base
 {
@@ -46,9 +50,21 @@ namespace ZJYFrameWork.Base
             get => runInBackground;
             set => Application.runInBackground = runInBackground = value;
         }
+        [SerializeField]
+        public string logHelperTypeName;
+        // protected override void Awake()
+        // {
+        //
+        //   
+        //     // Screen.sleepTimeout = neverSleep ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
+        //
+        //  
+        //     // StartSpring();
+        // }
 
-        protected override void Awake()
+        protected override void OnAwake()
         {
+            InitLogHelper();
             if (AssetBundleConfig.IsEditorMode)
             {
                 //编辑器下
@@ -57,11 +73,8 @@ namespace ZJYFrameWork.Base
             Application.targetFrameRate = frameRate;
             Time.timeScale = gameSpeed;
             Application.runInBackground = runInBackground;
-            // Screen.sleepTimeout = neverSleep ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
-
-            base.Awake();
+            base.OnAwake();
         }
-
         private int moduleSize = 0;
 
         private readonly List<AbstractManager> CachedModules = new List<AbstractManager>();
@@ -70,15 +83,18 @@ namespace ZJYFrameWork.Base
         {
             var scanPaths = new List<string>()
             {
-                "Game"
+                "ZJYFrameWork"
             };
             SpringContext.AddScanPath(scanPaths);
-
+            Debug.Log("扫描Bean类");
             //扫描Bean类
             SpringContext.Scan();
-
+            Debug.Log("扫描Bean类成功");
+            
+            Debug.Log("扫描网络协议模块");
             //网络扫描
             PacketDispatcher.Scan();
+            Debug.Log("扫描网络协议模块成功");
             //获取所有Module
             var moduleList = new List<AbstractManager>();
             var moduleComponents = SpringContext.GetBeans(typeof(AbstractManager));
@@ -88,6 +104,46 @@ namespace ZJYFrameWork.Base
             moduleList.ForEach(item => CachedModules.Add(item));
             //我当前module 有多少个
             moduleSize = (short)moduleList.Count;
+            //初始化流程状态
+            SpringContext.GetBean<ProcedureComponent>().StartProcedure();
+        }
+
+        private void LateUpdate()
+        {
+            for (var i = 0; i < moduleSize; i++)
+            {
+                CachedModules[i].Update(Time.deltaTime, Time.unscaledDeltaTime);
+            }
+        }
+        
+        private void InitLogHelper()
+        {
+            Type logHelperType = AssemblyUtils.GetTypeByName(logHelperTypeName);
+            if (logHelperType == null)
+            {
+                throw new Exception(StringUtils.Format("Can not find log helper type '{}'.", logHelperTypeName));
+            }
+
+            ILogFactory logHelper = (ILogFactory) Activator.CreateInstance(logHelperType);
+            if (logHelper == null)
+            {
+                throw new Exception(StringUtils.Format("Can not create log helper instance '{}'.", logHelperTypeName));
+            }
+
+            Debug.SetLogHelper(logHelper);
+        }
+        
+        private void OnApplicationQuit()
+        {
+            Application.lowMemory -= OnLowMemory;
+            StopAllCoroutines();
+        }
+        private void OnLowMemory()
+        {
+            Debug.Log("Low memory reported...");
+
+            // SpringContext.GetBean<IObjectPoolManager>().ReleaseAllUnused();
+            // SpringContext.GetBean<ResourceComponent>().ForceUnloadUnusedAssets(true);
         }
     }
 }

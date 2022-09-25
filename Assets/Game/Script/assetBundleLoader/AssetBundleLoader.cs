@@ -58,7 +58,7 @@ namespace ZJYFrameWork.AssetBundles
 
     public class AssetBundleLoader : AssetBundleLoaderBase
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleLoader));
+        // private static readonly ILog log = LogManager.GetLogger(typeof(AssetBundleLoader));
 #if DEVELOP_BUILD
         /// <summary>
         /// AB读取时是否添加了延迟(用于调试)
@@ -562,7 +562,7 @@ namespace ZJYFrameWork.AssetBundles
             }
 
             // var format = string.Format("{...}",CustomManifest.GetAllDependencies(name)) ?? throw new ArgumentNullException("string.Format(\"{...}\",CustomManifest.GetAllDependencies(name))");
-            log.Debug($"{name},{sb.ToString()}");
+            // log.Debug($"{name},{sb.ToString()}");
         }
 
 #endif

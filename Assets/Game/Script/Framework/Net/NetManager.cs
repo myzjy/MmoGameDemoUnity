@@ -16,7 +16,7 @@ namespace ZJYFrameWork.Net
         /// <exception cref="NotImplementedException"></exception>
         public override void Update(float elapseSeconds, float realElapseSeconds)
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
 
         public override void Shutdown()

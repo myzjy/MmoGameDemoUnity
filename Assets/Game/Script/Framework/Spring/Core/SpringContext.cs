@@ -99,11 +99,16 @@ namespace ZJYFrameWork.Spring.Core
 
             //获取所有类
             var types = AssemblyUtils.GetAllClassTypes();
+
             //获取所有被Ben注解标注的类
-            foreach (var type in types.Where(type => type.IsDefined(typeof(BeanAttribute), false)).Where(type =>
-                         scanPaths.Any(a => type.FullName != null && type.FullName.StartsWith(a))))
+            foreach (var type in types.Where(type => type.IsDefined(typeof(BeanAttribute), false))
+                         .Where(type =>
+                         {
+                             return scanPaths.Any(it => type.FullName != null && type.FullName.StartsWith(it));
+                         }))
             {
-                //注册Bean
+                Debug.Log($"{type.FullName}");
+
                 RegisterBean(type);
             }
 

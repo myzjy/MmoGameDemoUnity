@@ -1,4 +1,6 @@
-﻿namespace Common.Utility
+﻿using ZJYFrameWork;
+
+namespace Common.Utility
 {
     public class BuildUtils
     {
@@ -6,6 +8,7 @@
         /// 清单包名称
         /// </summary>
         public const string ManifestBundleName = "AssetBundles";
+
         public const string ChannelNameFileName = "channel_name.bytes";
         public const string AppVersionFileName = "app_version.bytes";
         public const string ResVersionFileName = "res_version.bytes";

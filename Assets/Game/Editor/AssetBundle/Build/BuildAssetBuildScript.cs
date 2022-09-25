@@ -1,4 +1,6 @@
-﻿namespace AssetBundles
+﻿using ZJYFrameWork;
+
+namespace AssetBundles
 {
     public class BuildAssetBuildScript
     {

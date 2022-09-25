@@ -31,6 +31,7 @@ namespace ZJYFrameWork.Net.Dispatcher
             var allBeans = SpringContext.GetAllBeans();
             foreach (var item in allBeans)
             {
+                RegisterPacketReceiver(item);
             }
         }
 

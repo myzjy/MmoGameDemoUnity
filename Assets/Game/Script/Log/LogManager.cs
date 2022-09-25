@@ -1,36 +1,33 @@
 ﻿using System;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Log
 {
-    public static class LogManager
+    public  class LogManager:ILogFactory
     {
-        private static readonly DefaultLogFactory _defaultFactory = new DefaultLogFactory();
-        private static ILogFactory _factory;
-
-        public static DefaultLogFactory Default { get { return _defaultFactory; } }
-
-        public static ILog GetLogger(Type type)
+        public void Log(Level level, object message)
         {
-            if (_factory != null)
-                return _factory.GetLogger(type);
+            switch (level)
+            {
+                case Level.DEBUG:
+                    UnityEngine.Debug.Log(StringUtils.Format("<color=#888888>{}</color>", message.ToString()));
+                    break;
 
-            return _defaultFactory.GetLogger(type);
-        }
+                case Level.INFO:
+                    UnityEngine.Debug.Log(message.ToString());
+                    break;
 
-        public static ILog GetLogger(string name)
-        {
-            if (_factory != null)
-                return _factory.GetLogger(name);
+                case Level.WARN:
+                    UnityEngine.Debug.LogWarning(message.ToString());
+                    break;
 
-            return _defaultFactory.GetLogger(name);
-        }
+                case Level.ERROR:
+                    UnityEngine.Debug.LogError(message.ToString());
+                    break;
 
-        public static void Registry(ILogFactory factory)
-        {
-            if (_factory != null && _factory != factory)
-                throw new Exception("Don't register log factory many times");
-
-            _factory = factory;
+                default:
+                    throw new Exception(message.ToString());
+            }
         }
     }
 }
