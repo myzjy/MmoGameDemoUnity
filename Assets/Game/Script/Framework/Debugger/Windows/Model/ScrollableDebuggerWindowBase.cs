@@ -26,7 +26,6 @@ namespace ZJYFrameWork.Debugger.Widows.Model
 
         public virtual void OnUpdate(float elapseSeconds, float realElapseSeconds)
         {
-            throw new System.NotImplementedException();
         }
 
         public void OnDraw()

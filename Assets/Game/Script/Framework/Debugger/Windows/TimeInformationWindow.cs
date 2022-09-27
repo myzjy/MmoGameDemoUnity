@@ -46,12 +46,7 @@ namespace ZJYFrameWork.Debugger.Windows
                 return "Slower";
             }
 
-            if (timeScale > 1f)
-            {
-                return "Faster";
-            }
-
-            return "Normal";
+            return timeScale > 1f ? "Faster" : "Normal";
         }
     }
 }

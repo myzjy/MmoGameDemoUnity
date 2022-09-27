@@ -53,14 +53,16 @@ namespace ZJYFrameWork.Debugger
         /// 系统相关配置
         /// </summary>
         private SystemInformationWindow systemInformationWindow = new SystemInformationWindow();
-           private EnvironmentInformationWindow environmentInformationWindow = new EnvironmentInformationWindow();
+
+        private EnvironmentInformationWindow environmentInformationWindow = new EnvironmentInformationWindow();
         private ScreenInformationWindow screenInformationWindow = new ScreenInformationWindow();
         private GraphicsInformationWindow graphicsInformationWindow = new GraphicsInformationWindow();
         private InputSummaryInformationWindow inputSummaryInformationWindow = new InputSummaryInformationWindow();
         private InputTouchInformationWindow inputTouchInformationWindow = new InputTouchInformationWindow();
         private InputLocationInformationWindow inputLocationInformationWindow = new InputLocationInformationWindow();
 
-        private InputAccelerationInformationWindow inputAccelerationInformationWindow = new InputAccelerationInformationWindow();
+        private InputAccelerationInformationWindow inputAccelerationInformationWindow =
+            new InputAccelerationInformationWindow();
 
         private InputGyroscopeInformationWindow inputGyroscopeInformationWindow = new InputGyroscopeInformationWindow();
 
@@ -72,30 +74,40 @@ namespace ZJYFrameWork.Debugger
         private ProfilerInformationWindow profilerInformationWindow = new ProfilerInformationWindow();
         private RuntimeMemorySummaryWindow runtimeMemorySummaryWindow = new RuntimeMemorySummaryWindow();
 
-        private RuntimeMemoryInformationWindow<Object> runtimeMemoryAllInformationWindow = new RuntimeMemoryInformationWindow<Object>();
+        private RuntimeMemoryInformationWindow<Object> runtimeMemoryAllInformationWindow =
+            new RuntimeMemoryInformationWindow<Object>();
 
-        private RuntimeMemoryInformationWindow<Texture> runtimeMemoryTextureInformationWindow = new RuntimeMemoryInformationWindow<Texture>();
+        private RuntimeMemoryInformationWindow<Texture> runtimeMemoryTextureInformationWindow =
+            new RuntimeMemoryInformationWindow<Texture>();
 
-        private RuntimeMemoryInformationWindow<Mesh> runtimeMemoryMeshInformationWindow = new RuntimeMemoryInformationWindow<Mesh>();
+        private RuntimeMemoryInformationWindow<Mesh> runtimeMemoryMeshInformationWindow =
+            new RuntimeMemoryInformationWindow<Mesh>();
 
-        private RuntimeMemoryInformationWindow<Material> runtimeMemoryMaterialInformationWindow = new RuntimeMemoryInformationWindow<Material>();
+        private RuntimeMemoryInformationWindow<Material> runtimeMemoryMaterialInformationWindow =
+            new RuntimeMemoryInformationWindow<Material>();
 
-        private RuntimeMemoryInformationWindow<Shader> runtimeMemoryShaderInformationWindow = new RuntimeMemoryInformationWindow<Shader>();
+        private RuntimeMemoryInformationWindow<Shader> runtimeMemoryShaderInformationWindow =
+            new RuntimeMemoryInformationWindow<Shader>();
 
-        private RuntimeMemoryInformationWindow<AnimationClip> runtimeMemoryAnimationClipInformationWindow = new RuntimeMemoryInformationWindow<AnimationClip>();
+        private RuntimeMemoryInformationWindow<AnimationClip> runtimeMemoryAnimationClipInformationWindow =
+            new RuntimeMemoryInformationWindow<AnimationClip>();
 
-        private RuntimeMemoryInformationWindow<AudioClip> runtimeMemoryAudioClipInformationWindow = new RuntimeMemoryInformationWindow<AudioClip>();
+        private RuntimeMemoryInformationWindow<AudioClip> runtimeMemoryAudioClipInformationWindow =
+            new RuntimeMemoryInformationWindow<AudioClip>();
 
-        private RuntimeMemoryInformationWindow<Font> runtimeMemoryFontInformationWindow = new RuntimeMemoryInformationWindow<Font>();
+        private RuntimeMemoryInformationWindow<Font> runtimeMemoryFontInformationWindow =
+            new RuntimeMemoryInformationWindow<Font>();
 
-        private RuntimeMemoryInformationWindow<TextAsset> runtimeMemoryTextAssetInformationWindow = new RuntimeMemoryInformationWindow<TextAsset>();
+        private RuntimeMemoryInformationWindow<TextAsset> runtimeMemoryTextAssetInformationWindow =
+            new RuntimeMemoryInformationWindow<TextAsset>();
 
-        private RuntimeMemoryInformationWindow<ScriptableObject> runtimeMemoryScriptableObjectInformationWindow = new RuntimeMemoryInformationWindow<ScriptableObject>();
+        private RuntimeMemoryInformationWindow<ScriptableObject> runtimeMemoryScriptableObjectInformationWindow =
+            new RuntimeMemoryInformationWindow<ScriptableObject>();
         // private OperationsWindow operationsWindow = new OperationsWindow();
 
         private FpsCounter fpsCounter;
 
-           [BeforePostConstruct]
+        [BeforePostConstruct]
         private void Init()
         {
             switch (activeWindow)
@@ -150,13 +162,14 @@ namespace ZJYFrameWork.Debugger
                 runtimeMemoryScriptableObjectInformationWindow);
             // if (SpringContext.GetBean<ObjectPoolComponent>() != null)
             // {
-                // RegisterDebuggerWindow("Profiler/Object Pool", objectPoolInformationWindow);
+            // RegisterDebuggerWindow("Profiler/Object Pool", objectPoolInformationWindow);
             // }
 
             // RegisterDebuggerWindow("Profiler/Reference Pool", referencePoolInformationWindow);
 
             // RegisterDebuggerWindow("Other/Operations", operationsWindow);
         }
+
         private void Update()
         {
             fpsCounter.Update(Time.deltaTime, Time.unscaledDeltaTime);
@@ -187,6 +200,7 @@ namespace ZJYFrameWork.Debugger
             GUI.matrix = cachedMatrix;
             GUI.skin = cachedGuiSkin;
         }
+
         /// <summary>
         /// 还原调试器窗口布局。
         /// </summary>
@@ -196,6 +210,7 @@ namespace ZJYFrameWork.Debugger
             windowRect = DefaultWindowRect;
             windowScale = DefaultWindowScale;
         }
+
         /// <summary>
         /// 注册调试器窗口。
         /// </summary>
@@ -206,6 +221,7 @@ namespace ZJYFrameWork.Debugger
         {
             debuggerManager.RegisterDebuggerWindow(path, debuggerWindow, args);
         }
+
         /// <summary>
         /// 解除注册调试器窗口。
         /// </summary>
@@ -215,11 +231,13 @@ namespace ZJYFrameWork.Debugger
         {
             return debuggerManager.UnregisterDebuggerWindow(path);
         }
+
         private void DrawWindow(int windowId)
         {
             GUI.DragWindow(dragRect);
             DrawDebuggerWindowGroup(debuggerManager.DebuggerWindowRoot);
         }
+
         private void DrawDebuggerWindowGroup(IDebuggerWindowGroup debuggerWindowGroup)
         {
             if (debuggerWindowGroup == null)
@@ -263,6 +281,7 @@ namespace ZJYFrameWork.Debugger
 
             debuggerWindowGroup.SelectedWindow.OnDraw();
         }
+
         private void DrawDebuggerWindowIcon(int windowId)
         {
             GUI.DragWindow(dragRect);

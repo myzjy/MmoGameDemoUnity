@@ -3,7 +3,7 @@
     /// <summary>
     /// 调试器窗口组接口
     /// </summary>
-    public interface IDebuggerWindowGroup
+    public interface IDebuggerWindowGroup:IDebuggerWindow
     {
         /// <summary>
         /// 获取调试器窗口数量
