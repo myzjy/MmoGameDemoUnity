@@ -18,6 +18,7 @@ namespace ZJYFrameWork.Base
         [SerializeField] public int frameRate = 30;
         [SerializeField] public float gameSpeed = 1f;
         [SerializeField] private bool runInBackground = true;
+        private const int DefaultDpi = 96; // default windows dpi
 
         /// <summary>
         /// 获取或设置游戏帧率。
@@ -50,8 +51,8 @@ namespace ZJYFrameWork.Base
             get => runInBackground;
             set => Application.runInBackground = runInBackground = value;
         }
-        [SerializeField]
-        public string logHelperTypeName;
+
+        [SerializeField] public string logHelperTypeName;
         // protected override void Awake()
         // {
         //
@@ -64,7 +65,14 @@ namespace ZJYFrameWork.Base
 
         protected override void OnAwake()
         {
+            Debug.Initialize();
             InitLogHelper();
+            ConverterUtils.ScreenDpi = Screen.dpi;
+            if (ConverterUtils.ScreenDpi <= 0)
+            {
+                ConverterUtils.ScreenDpi = DefaultDpi;
+            }
+
             if (AssetBundleConfig.IsEditorMode)
             {
                 //编辑器下
@@ -75,6 +83,7 @@ namespace ZJYFrameWork.Base
             Application.runInBackground = runInBackground;
             base.OnAwake();
         }
+
         private int moduleSize = 0;
 
         private readonly List<AbstractManager> CachedModules = new List<AbstractManager>();
@@ -90,7 +99,7 @@ namespace ZJYFrameWork.Base
             //扫描Bean类
             SpringContext.Scan();
             Debug.Log("扫描Bean类成功");
-            
+
             Debug.Log("扫描网络协议模块");
             //网络扫描
             PacketDispatcher.Scan();
@@ -115,7 +124,7 @@ namespace ZJYFrameWork.Base
                 CachedModules[i].Update(Time.deltaTime, Time.unscaledDeltaTime);
             }
         }
-        
+
         private void InitLogHelper()
         {
             Type logHelperType = AssemblyUtils.GetTypeByName(logHelperTypeName);
@@ -124,7 +133,7 @@ namespace ZJYFrameWork.Base
                 throw new Exception(StringUtils.Format("Can not find log helper type '{}'.", logHelperTypeName));
             }
 
-            ILogFactory logHelper = (ILogFactory) Activator.CreateInstance(logHelperType);
+            ILogFactory logHelper = (ILogFactory)Activator.CreateInstance(logHelperType);
             if (logHelper == null)
             {
                 throw new Exception(StringUtils.Format("Can not create log helper instance '{}'.", logHelperTypeName));
@@ -132,12 +141,13 @@ namespace ZJYFrameWork.Base
 
             Debug.SetLogHelper(logHelper);
         }
-        
+
         private void OnApplicationQuit()
         {
             Application.lowMemory -= OnLowMemory;
             StopAllCoroutines();
         }
+
         private void OnLowMemory()
         {
             Debug.Log("Low memory reported...");

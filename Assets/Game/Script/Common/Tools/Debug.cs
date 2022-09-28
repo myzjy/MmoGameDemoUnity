@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Debugger.Widows.Model.VO;
 using ZJYFrameWork.Log;
 using ZJYFrameWork.Spring.Utils;
 
@@ -9,6 +11,38 @@ namespace ZJYFrameWork
     public class Debug
     {
         private static ILogFactory log = new LogManager();
+        public static readonly Queue<LogNode> logNodes = new Queue<LogNode>();
+        private static int maxLine = 100;
+
+        public static void Initialize()
+        {
+            Application.logMessageReceived += OnLogMessageReceived;
+        }
+
+        private static void OnLogMessageReceived(string logMessage, string stackTrace, LogType logType)
+        {
+            if (logType == LogType.Assert)
+            {
+                logType = LogType.Error;
+            }
+
+            logNodes.Enqueue(LogNode.Create(logType, logMessage, stackTrace));
+            while (logNodes.Count > maxLine)
+            {
+                ReferenceCache.Release(logNodes.Dequeue());
+            }
+        }
+
+        public static void Shutdown()
+        {
+            Application.logMessageReceived -= OnLogMessageReceived;
+            Clear();
+        }
+
+        private static void Clear()
+        {
+            logNodes.Clear();
+        }
 
         /// <summary>
         /// 设置游戏框架日志辅助器。

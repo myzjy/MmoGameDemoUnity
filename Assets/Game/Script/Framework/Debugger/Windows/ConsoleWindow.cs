@@ -11,9 +11,9 @@ using ZJYFrameWork.Spring.Utils;
 namespace ZJYFrameWork.Debugger.Windows
 {
     [Serializable]
-    public sealed class ConsoleWindow:IDebuggerWindow
+    public sealed class ConsoleWindow : IDebuggerWindow
     {
-            private readonly Queue<LogNode> logNodes = new Queue<LogNode>();
+        private  Queue<LogNode> logNodes = new Queue<LogNode>();
         private readonly TextEditor textEditor = new TextEditor();
 
         private Vector2 logScrollPosition = Vector2.zero;
@@ -29,35 +29,25 @@ namespace ZJYFrameWork.Debugger.Windows
         private bool lastErrorFilter = true;
         private bool lastFatalFilter = true;
 
-        [SerializeField]
-        private bool lockScroll = true;
+        [SerializeField] private bool lockScroll = true;
 
-        [SerializeField]
-        private int maxLine = 100;
+        [SerializeField] private int maxLine = 100;
 
-        [SerializeField]
-        private bool infoFilter = true;
+        [SerializeField] private bool infoFilter = true;
 
-        [SerializeField]
-        private bool warningFilter = true;
+        [SerializeField] private bool warningFilter = true;
 
-        [SerializeField]
-        private bool errorFilter = true;
+        [SerializeField] private bool errorFilter = true;
 
-        [SerializeField]
-        private bool fatalFilter = true;
+        [SerializeField] private bool fatalFilter = true;
 
-        [SerializeField]
-        private Color32 infoColor = Color.white;
+        [SerializeField] private Color32 infoColor = Color.white;
 
-        [SerializeField]
-        private Color32 warningColor = Color.yellow;
+        [SerializeField] private Color32 warningColor = Color.yellow;
 
-        [SerializeField]
-        private Color32 errorColor = Color.red;
+        [SerializeField] private Color32 errorColor = Color.red;
 
-        [SerializeField]
-        private Color32 fatalColor = new Color(0.7f, 0.2f, 0.2f);
+        [SerializeField] private Color32 fatalColor = new Color(0.7f, 0.2f, 0.2f);
 
         public bool LockScroll
         {
@@ -141,6 +131,18 @@ namespace ZJYFrameWork.Debugger.Windows
 
         public void Initialize(params object[] args)
         {
+            if (Debug.logNodes.Count > 0)
+            {
+                var list = Debug.logNodes.ToArray();
+                foreach (var item in list)
+                {
+                    logNodes.Enqueue(item);
+                }
+            }
+
+            //卸载
+            Debug.Shutdown();
+            Debug.Log(logNodes.Count);
             Application.logMessageReceived += OnLogMessageReceived;
             // lockScroll = lastLockScroll = SpringContext.GetBean<ISettingManager>().GetBool("Debugger.Console.LockScroll", true);
             // infoFilter = lastInfoFilter = SpringContext.GetBean<ISettingManager>().GetBool("Debugger.Console.InfoFilter", true);
@@ -418,7 +420,7 @@ namespace ZJYFrameWork.Debugger.Windows
             Color32 color = GetLogStringColor(logNode.LogType);
             return StringUtils.Format("<color=#{}{}{}{}>[{}][{}] {}</color>",
                 color.r.ToString("x2"), color.g.ToString("x2"), color.b.ToString("x2"), color.a.ToString("x2"),
-                logNode.LogTime.ToString("HH:mm:ss.fff"), logNode.LogFrameCount.ToString(), logNode.LogMessage);
+                logNode.LogTime, logNode.LogFrameCount.ToString(), logNode.LogMessage);
         }
 
         public Color32 GetLogStringColor(LogType logType)

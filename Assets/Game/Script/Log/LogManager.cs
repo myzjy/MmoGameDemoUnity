@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using ZJYFrameWork.Debugger.Widows.Model.VO;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Log
 {
-    public  class LogManager:ILogFactory
+    public class LogManager : ILogFactory
     {
         public void Log(Level level, object message)
         {

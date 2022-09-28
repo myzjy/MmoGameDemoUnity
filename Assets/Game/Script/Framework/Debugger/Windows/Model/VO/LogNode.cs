@@ -10,63 +10,43 @@ namespace ZJYFrameWork.Debugger.Widows.Model.VO
     /// </summary>
     public sealed class LogNode:IReference
     {
-        private DateTime logTime;
-        private int logFrameCount;
-        private LogType logType;
-        private string logMessage;
-        private string stackTrack;
-
-         /// <summary>
+        /// <summary>
         /// 初始化日志记录结点的新实例。
         /// </summary>
         public LogNode()
         {
-            logTime = default(DateTime);
-            logFrameCount = 0;
-            logType = LogType.Error;
-            logMessage = null;
-            stackTrack = null;
+            LogTime =default;
+        
+            LogFrameCount = 0;
+            LogType = LogType.Error;
+            LogMessage = null;
+            StackTrack = null;
         }
 
         /// <summary>
         /// 获取日志时间。
         /// </summary>
-        public DateTime LogTime
-        {
-            get { return logTime; }
-        }
+        public DateTime LogTime { get; private set; }
 
         /// <summary>
         /// 获取日志帧计数。
         /// </summary>
-        public int LogFrameCount
-        {
-            get { return logFrameCount; }
-        }
+        public int LogFrameCount { get; private set; }
 
         /// <summary>
         /// 获取日志类型。
         /// </summary>
-        public LogType LogType
-        {
-            get { return logType; }
-        }
+        public LogType LogType { get; private set; }
 
         /// <summary>
         /// 获取日志内容。
         /// </summary>
-        public string LogMessage
-        {
-            get { return logMessage; }
-        }
+        public string LogMessage { get; private set; }
 
         /// <summary>
         /// 获取日志堆栈信息。
         /// </summary>
-        public string StackTrack
-        {
-            get { return stackTrack; }
-        }
+        public string StackTrack { get; private set; }
 
         /// <summary>
         /// 创建日志记录结点。
@@ -77,12 +57,12 @@ namespace ZJYFrameWork.Debugger.Widows.Model.VO
         /// <returns>创建的日志记录结点。</returns>
         public static LogNode Create(LogType logType, string logMessage, string stackTrack)
         {
-            LogNode logNode = ReferenceCache.Acquire<LogNode>();
-            logNode.logTime = DateTime.UtcNow;
-            logNode.logFrameCount = Time.frameCount;
-            logNode.logType = logType;
-            logNode.logMessage = logMessage;
-            logNode.stackTrack = stackTrack;
+            var logNode = ReferenceCache.Acquire<LogNode>();
+            logNode.LogTime = DateTime.UtcNow.AddHours(8);
+            logNode.LogFrameCount = Time.frameCount;
+            logNode.LogType = logType;
+            logNode.LogMessage = logMessage;
+            logNode.StackTrack = stackTrack;
             return logNode;
         }
 
@@ -91,11 +71,11 @@ namespace ZJYFrameWork.Debugger.Widows.Model.VO
         /// </summary>
         public void Clear()
         {
-            logTime = default(DateTime);
-            logFrameCount = 0;
-            logType = LogType.Error;
-            logMessage = null;
-            stackTrack = null;
+            LogTime = default(DateTime);
+            LogFrameCount = 0;
+            LogType = LogType.Error;
+            LogMessage = null;
+            StackTrack = null;
         }
     }
 }

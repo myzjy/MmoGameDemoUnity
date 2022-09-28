@@ -110,6 +110,7 @@ namespace ZJYFrameWork.Debugger
         [BeforePostConstruct]
         private void Init()
         {
+            Debug.Log("初始化");
             switch (activeWindow)
             {
                 case DebuggerActiveWindowType.AlwaysOpen:
