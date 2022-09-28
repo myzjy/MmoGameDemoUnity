@@ -25,7 +25,7 @@ public class SymbolWindows : EditorWindow
         }
     }
 
-    private List<SymbolData> m_symbolDataList = new List<SymbolData>()
+    private readonly List<SymbolData> _mSymbolDataList = new List<SymbolData>()
     {
         new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
         new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
@@ -35,12 +35,9 @@ public class SymbolWindows : EditorWindow
         new SymbolData("LOGGER_ON","LOG"),
         new SymbolData("DEVELOP_BUILD","开发模式"),
         new SymbolData("DISABLE_SERVERSENT_EVENTS",""),
-        new SymbolData("BESTHTTP_DISABLE_SIGNALR","开发模式"),
-        new SymbolData("BESTHTTP_DISABLE_SOCKETIO","开发模式"),
-        new SymbolData("BESTHTTP_DISABLE_UNITY_FORM","开发模式"),
-        new SymbolData("DEVELOP_BUILD","开发模式"),
-        new SymbolData("DEVELOP_BUILD","开发模式"),
-        new SymbolData("DEVELOP_BUILD","开发模式"),
+        new SymbolData("BESTHTTP_DISABLE_SIGNALR",""),
+        new SymbolData("BESTHTTP_DISABLE_SOCKETIO",""),
+        new SymbolData("BESTHTTP_DISABLE_UNITY_FORM",""),
 
     };
 
@@ -57,7 +54,7 @@ public class SymbolWindows : EditorWindow
         var defineSymbols = PlayerSettings
             .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
             .Split(';');
-        foreach (var n in m_symbolDataList)
+        foreach (var n in _mSymbolDataList)
         {
             n.IsEnable = defineSymbols.Any(c => c == n.name);
         }
@@ -71,7 +68,7 @@ public class SymbolWindows : EditorWindow
 
         verticalVec = EditorGUILayout.BeginScrollView(
             verticalVec, GUILayout.Height(position.height));
-        foreach (var item in m_symbolDataList)
+        foreach (var item in _mSymbolDataList)
         {
             EditorGUILayout.BeginHorizontal(GUI.skin.box);
             item.IsEnable = EditorGUILayout.Toggle(item.IsEnable, GUILayout.Width(16));
@@ -82,7 +79,7 @@ public class SymbolWindows : EditorWindow
 
         if (GUILayout.Button("Save"))
         {
-            var strs = m_symbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToArray();
+            var strs = _mSymbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToArray();
 
             PlayerSettings.SetScriptingDefineSymbolsForGroup(
                 BuildTargetGroup.Android,
