@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using Object = UnityEngine.Object;
@@ -30,15 +31,7 @@ namespace AssetBundles
 
             public bool ContainsType(System.Type tpye)
             {
-                foreach (Object obj in objs)
-                {
-                    if (obj.GetType().Equals(tpye))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
+                return objs.Any(obj => obj.GetType() == tpye);
             }
         }
 
@@ -67,40 +60,35 @@ namespace AssetBundles
 
         public static List<AssetEntry> GetDependencyList(Object[] objects, bool reverse)
         {
-            Object[] deps = GetDependencisObjs(objects, reverse);
+            var deps = GetDependencisObjs(objects, reverse);
 
-            List<AssetEntry> list = new List<AssetEntry>();
+            var list = new List<AssetEntry>();
 
-            foreach (Object obj in deps)
+            foreach (var obj in deps)
             {
-                string path = AssetDatabase.GetAssetPath(obj);
+                var path = AssetDatabase.GetAssetPath(obj);
 
-                if (!string.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path)) continue;
+                var found = false;
+
+                foreach (var ent in list.Where(ent => ent.path.Equals(path)))
                 {
-                    bool found = false;
+                    if (!ent.ContainsType(obj.GetType())) ent.objs.Add(obj);
+                    found = true;
+                    break;
+                }
 
-                    foreach (AssetEntry ent in list)
+                if (found) continue;
+                {
+                    var ent = new AssetEntry
                     {
-                        if (ent.path.Equals(path))
-                        {
-                            if (!ent.ContainsType(obj.GetType())) ent.objs.Add(obj);
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        AssetEntry ent = new AssetEntry();
-                        ent.path = path;
-                        ent.objs.Add(obj);
-                        list.Add(ent);
-                    }
+                        path = path
+                    };
+                    ent.objs.Add(obj);
+                    list.Add(ent);
                 }
             }
 
-            deps = null;
-            objects = null;
             return list;
         }
 
@@ -455,17 +443,17 @@ namespace AssetBundles
         // }
 
         // public static List<string> RemoveAssetbundleInChildren(Object[] objects, bool countainsSelf = false,
-            // bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
+        // bool countainsDirectly = true, REMOVE_TYPE removeType = REMOVE_TYPE.ALL)
         // {
-            // List<string> removeList = new List<string>();
-            // foreach (Object obj in objects)
-            // {
-                // string assetPath = AssetDatabase.GetAssetPath(obj);
-                // removeList.AddRange(
-                    // RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
-            // }
+        // List<string> removeList = new List<string>();
+        // foreach (Object obj in objects)
+        // {
+        // string assetPath = AssetDatabase.GetAssetPath(obj);
+        // removeList.AddRange(
+        // RemoveAssetBundleInChildren(assetPath, countainsSelf, countainsDirectly, removeType));
+        // }
 
-            // return removeList;
+        // return removeList;
         // }
 
         public static void CreaeteAssetBundleForFile(Object[] objects)
@@ -484,6 +472,7 @@ namespace AssetBundles
                 Debug.Log(importer.assetBundleName);
                 EditorUtility.SetDirty(obj);
             }
+
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
         }
@@ -492,8 +481,8 @@ namespace AssetBundles
         {
             // foreach (Object obj in objects)
             // {
-                // string assetPath = AssetDatabase.GetAssetPath(obj);
-                // CreateAssetbundleForCurrent(assetPath);
+            // string assetPath = AssetDatabase.GetAssetPath(obj);
+            // CreateAssetbundleForCurrent(assetPath);
             // }
         }
 
@@ -501,8 +490,8 @@ namespace AssetBundles
         {
             // foreach (Object obj in objects)
             // {
-                // string assetPath = AssetDatabase.GetAssetPath(obj);
-                // CreateAssetbundleForChildren(assetPath);
+            // string assetPath = AssetDatabase.GetAssetPath(obj);
+            // CreateAssetbundleForChildren(assetPath);
             // }
         }
     }

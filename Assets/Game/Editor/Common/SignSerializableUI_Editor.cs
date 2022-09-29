@@ -30,7 +30,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
 
             names[cms.Length] = "GameObject";
             gizmos.MaskIndex = EditorGUILayout.MaskField("选择组件", gizmos.MaskIndex, names);
-            bool isChange = false;
             for (var i = 0; i < cms.Length; i++)
             {
                 if (0 == (1 << i & gizmos.MaskIndex))
@@ -38,7 +37,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     if (gizmos.Contains(cms[i]))
                     {
                         gizmos.Delete(cms[i]);
-                        isChange = true;
                     }
                 }
                 else
@@ -52,7 +50,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                             Path = ViewSignSerializableUI.GetObjPath(cms[i])
                         };
                         gizmos.KodComs.Add(KeyData);
-                        isChange = true;
                     }
                 }
             }
@@ -66,7 +63,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     if (newKey != item.UI_Serializable_Key)
                     {
                         item.UI_Serializable_Key = newKey;
-                        isChange = true;
                     }
 
                     EditorGUILayout.LabelField("selectObj:", GUILayout.Width(60));
@@ -91,7 +87,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                         Path = ViewSignSerializableUI.GetObjPath(obj)
                     };
                     gizmos.KodComs.Add(KeyData);
-                    isChange = true;
                 }
             }
             else
@@ -99,7 +94,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                 if (gizmos.Contains(obj))
                 {
                     gizmos.Delete(obj);
-                    isChange = true;
                 }
             }
 

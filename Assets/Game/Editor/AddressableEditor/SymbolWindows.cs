@@ -29,9 +29,7 @@ public class SymbolWindows : EditorWindow
     {
         new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
         new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
-        new SymbolData("USE_BSET_HTTP", "用户基础Https"),
         new SymbolData("USE_DEBUG_TOOLS", "用户调试"),
-        new SymbolData("HOTFIX_ENABLE","xlua"),
         new SymbolData("LOGGER_ON","LOG"),
         new SymbolData("DEVELOP_BUILD","开发模式"),
         new SymbolData("DISABLE_SERVERSENT_EVENTS",""),

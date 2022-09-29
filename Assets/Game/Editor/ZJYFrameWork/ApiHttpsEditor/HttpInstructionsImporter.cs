@@ -29,7 +29,6 @@ namespace ZJYFrameWork
             }
 
             //后缀名
-            var VScript = ".cs";
 
             //将文本完全读到
             var text = File.ReadAllText(fullPath);
