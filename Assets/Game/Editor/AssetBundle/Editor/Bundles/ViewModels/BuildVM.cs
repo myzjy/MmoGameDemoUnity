@@ -16,7 +16,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
     public class BuildVM : AbstractViewModel
     {
         private const string PREFIX = "ZJYFrameWork::Bundle::";
-        public const string PATH = "Assets/LoxodonFramework/Editor/AppData/Bundle/BuildSetting.json";
+        public const string PATH = "Assets/Game/Editor/AssetBundle/Editor/BuildSetting.json";
         public const string DEFAULT_OUTPUT = "AssetBundles";
 
         [SerializeField] private CompressOptions compression;
