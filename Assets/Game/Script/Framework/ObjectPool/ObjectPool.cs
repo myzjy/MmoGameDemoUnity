@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ZJYFrameWork.Collection;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.ObjectPool
 {
-  /// <summary>
+    /// <summary>
     /// 对象池。
     /// </summary>
     /// <typeparam name="T">对象类型。</typeparam>
@@ -191,7 +192,7 @@ namespace ZJYFrameWork.ObjectPool
                 {
                     if (allowMultiSpawn || !internalObject.IsInUse)
                     {
-                        return (T) internalObject.Spawn();
+                        return (T)internalObject.Spawn();
                     }
                 }
             }
@@ -450,13 +451,7 @@ namespace ZJYFrameWork.ObjectPool
                 throw new Exception("Target is invalid.");
             }
 
-            T internalObject = null;
-            if (targetObjectMap.TryGetValue(target, out internalObject))
-            {
-                return internalObject;
-            }
-
-            return null;
+            return targetObjectMap.TryGetValue(target, out var internalObject) ? internalObject : null;
         }
 
         public bool ReleaseObject(object obj)
@@ -471,7 +466,7 @@ namespace ZJYFrameWork.ObjectPool
             {
                 return false;
             }
-            
+
             if (internalObject.IsInUse || internalObject.Locked || !internalObject.CustomCanReleaseFlag)
             {
                 return false;
@@ -493,48 +488,37 @@ namespace ZJYFrameWork.ObjectPool
             }
 
             results.Clear();
-            foreach (var objectInMap in targetObjectMap)
-            {
-                var internalObject = objectInMap.Value;
-                if (internalObject.IsInUse || internalObject.Locked || !internalObject.CustomCanReleaseFlag)
-                {
-                    continue;
-                }
-
-                results.Add(internalObject);
-            }
+            results.AddRange(targetObjectMap.Select(objectInMap => objectInMap.Value).Where(internalObject =>
+                !internalObject.IsInUse && !internalObject.Locked && internalObject.CustomCanReleaseFlag));
         }
 
-        private List<T> DefaultReleaseObjectFilterCallback(List<T> candidateObjects, int toReleaseCount, DateTime expireTime)
+        private List<T> DefaultReleaseObjectFilterCallback(List<T> candidateObjects, int toReleaseCount,
+            DateTime expireTime)
         {
             cachedToReleaseObjects.Clear();
 
             if (expireTime > DateTime.MinValue)
             {
-                for (int i = candidateObjects.Count - 1; i >= 0; i--)
+                for (var i = candidateObjects.Count - 1; i >= 0; i--)
                 {
-                    if (candidateObjects[i].LastUseTime <= expireTime)
-                    {
-                        cachedToReleaseObjects.Add(candidateObjects[i]);
-                        candidateObjects.RemoveAt(i);
-                        continue;
-                    }
+                    if (candidateObjects[i].LastUseTime > expireTime) continue;
+                    cachedToReleaseObjects.Add(candidateObjects[i]);
+                    candidateObjects.RemoveAt(i);
+                    continue;
                 }
 
                 toReleaseCount -= cachedToReleaseObjects.Count;
             }
 
-            for (int i = 0; toReleaseCount > 0 && i < candidateObjects.Count; i++)
+            for (var i = 0; toReleaseCount > 0 && i < candidateObjects.Count; i++)
             {
-                for (int j = i + 1; j < candidateObjects.Count; j++)
+                for (var j = i + 1; j < candidateObjects.Count; j++)
                 {
                     if (candidateObjects[i].Priority > candidateObjects[j].Priority
                         || candidateObjects[i].Priority == candidateObjects[j].Priority &&
                         candidateObjects[i].LastUseTime > candidateObjects[j].LastUseTime)
                     {
-                        T temp = candidateObjects[i];
-                        candidateObjects[i] = candidateObjects[j];
-                        candidateObjects[j] = temp;
+                        (candidateObjects[i], candidateObjects[j]) = (candidateObjects[j], candidateObjects[i]);
                     }
                 }
 

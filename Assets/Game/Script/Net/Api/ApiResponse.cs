@@ -35,7 +35,7 @@ namespace ZJYFrameWork.Net
             this.bhResponse = bhResponse;
             this.ElapsedMilliseconds = elapsedMilliseconds;
 
-            // ValidateResponse(request.bhRequest, bhResponse);
+            ValidateResponse(request._bhRequest, bhResponse);
 
             if (bhResponse == null)
             {

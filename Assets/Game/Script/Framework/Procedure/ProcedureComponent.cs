@@ -6,18 +6,14 @@ using ZJYFrameWork.Spring.Utils;
 // ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.Procedure
 {
-    
     [DisallowMultipleComponent]
     [AddComponentMenu("Game/FrameWork/Procedure")]
     public sealed class ProcedureComponent : SpringComponent
     {
-        [SerializeField]
-        private string[] availableProcedureTypeNames;
-        [SerializeField]
-        private string entranceProcedureTypeName;
-        [Autowired]
-        private IProcedureFsmManager procedureFsmManager;
-        
+        [SerializeField] private string[] availableProcedureTypeNames;
+        [SerializeField] private string entranceProcedureTypeName;
+        [Autowired] private IProcedureFsmManager procedureFsmManager;
+
         /// <summary>
         /// 启动
         /// </summary>

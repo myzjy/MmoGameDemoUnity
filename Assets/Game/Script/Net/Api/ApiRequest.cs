@@ -8,7 +8,7 @@ namespace ZJYFrameWork.Net
     {
         private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
 
-        private readonly HTTPRequest _bhRequest;
+        internal HTTPRequest _bhRequest;
 
         public Uri Uri { get; private set; }
         public HTTPMethods Method { get; private set; }

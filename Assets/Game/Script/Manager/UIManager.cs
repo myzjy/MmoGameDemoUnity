@@ -53,7 +53,6 @@ namespace ZJYFrameWork.UISerializable.Manager
             // addressableLoadHistory = new AddressableLoadHistory();
             UIViewDict = new Dictionary<Type, IUIView>();
             UIViewDict.Add(typeof(IUISystemModule), new UISystemManager());
-            UIViewDict.Add(typeof(UIModuleSystemController), new UISystemModuleController());
             isInit = true;
             // List<MethodInfo> rpcMethodInfos =SupportClassPun.GetMethods();
         }

@@ -1,9 +1,10 @@
 ﻿using ZJYFrameWork.Game.Framwork;
 
-namespace ZJYFrameWork.UISerializable.UIModel
+namespace ZJYFrameWork.UISerializable
 {
     public interface UIModelInterface
     {
+        string PrefabName();
         /// <summary>
         /// UI层级类型
         /// </summary>

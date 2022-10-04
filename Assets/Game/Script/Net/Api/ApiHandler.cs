@@ -46,7 +46,7 @@ namespace ZJYFrameWork.Net
 
             this.beasUrl = new Uri(baseUri);
             this.authToken = authToken;
-            
+
             this.logger = UnityEngine.Debug.unityLogger;
 
             return this;
@@ -78,7 +78,7 @@ namespace ZJYFrameWork.Net
             ApiRequest request = new ApiRequest(
                 method: api.Method,
                 uri: new Uri(beasUrl, relativePath),
-                data:data,
+                data: data,
                 onBeforeSend: req => OnBeforeSendCallback(request: req, api),
                 onSuccess: res => StartCoroutine(OnSuccessRoutine(res, api)),
                 onError: res => StartCoroutine(OnErrorRoutine(res, api)));
@@ -86,11 +86,12 @@ namespace ZJYFrameWork.Net
             {
                 request.SetHeader("Authorization", authToken);
             }
+
             LogRequest(request, api.Param);
 
             apiQueue.Enqueue(request);
 
-            if(apiQueue.Count == 1)
+            if (apiQueue.Count == 1)
             {
                 SendNext();
             }
@@ -145,10 +146,12 @@ namespace ZJYFrameWork.Net
             var request = apiQueue.Peek();
             request.Send();
         }
+
         public void ResetQueue()
         {
             apiQueue.Clear();
         }
+
         private void OnCompleteCallbackHandler(ApiResponse response, Action callback)
         {
             if (onCompleteGlobal != null)
@@ -250,7 +253,7 @@ namespace ZJYFrameWork.Net
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             Debug.Log($"[ApiRequest] {request.Method.ToString().ToUpper()} {request.Uri.AbsoluteUri}\n" +
-                           $"{request.DumpHeaders()}\n\n{JsonConvert.SerializeObject(data)}\n");
+                      $"{request.DumpHeaders()}\n\n{JsonConvert.SerializeObject(data)}\n");
 #endif
         }
 

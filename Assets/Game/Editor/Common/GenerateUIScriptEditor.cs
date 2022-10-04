@@ -22,13 +22,13 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         //     var m_setting = AddressableAssetSettingsDefaultObject.Settings;
         //     var res = ContentUpdateScript.BuildContentUpdate(m_setting, pat);
         // }
-        
-        
-        private static string TemplateCS = $"using FZYXBuildfreely.UISerializable.UIInitView;\n" +
+
+
+        private static string TemplateCS = $"using ZJYFrameWork.UISerializable.UIInitView;\n" +
                                            $"using UnityEngine;\n" +
                                            $"using UnityEngine.UI;\n" +
                                            $"\n" +
-                                           $"namespace FZYXBuildfreely.UISerializable\n" +
+                                           $"namespace ZJYFrameWork.UISerializable\n" +
                                            $"{{\n" +
                                            $"    public class ${{ClassName}}:UIViewInterface\n" +
                                            $"    {{\n" +
@@ -46,11 +46,17 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         [MenuItem("Tools/UI/GenerateUIScript")]
         private static void GenerateUI()
         {
-            var target = $"{Application.dataPath}/Game/AssetBundle/UI/Prefab/NewPrefab/";
+            var target = $"{Application.dataPath}/Game/AssetBundles/UI/Prefabs/";
             var template = $"{Application.dataPath}/../NewPrefab/";
-            var outputPath = $"{Application.dataPath}/Game/Scripts/GenerateScripts/UIModules/";
+            var outputPath = $"{Application.dataPath}/Game/Hoftix/Script/GenerateScripts/UIModules/";
             var outputProCsPath = $"{Application.dataPath}/../Assembly-CSharp.csproj";
             var UISObjet = new DirectoryInfo(target);
+            var outputPathDirectoryInfo = new DirectoryInfo(outputPath);
+            if (!outputPathDirectoryInfo.Exists)
+            {
+                Directory.CreateDirectory(outputPath);
+            }
+
             var UIInfos = UISObjet.GetFiles("*.*", SearchOption.AllDirectories);
 
             //输出

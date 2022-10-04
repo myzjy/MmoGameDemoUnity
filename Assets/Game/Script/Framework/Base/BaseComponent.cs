@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Event;
 using ZJYFrameWork.Log;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Procedure;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Base
 {
     //只应许添加一个组件
     [DisallowMultipleComponent]
+    [AddComponentMenu("Game/Framework/Base")]
     public sealed class BaseComponent : SpringComponent
     {
         [SerializeField] public int frameRate = 30;
@@ -100,10 +104,14 @@ namespace ZJYFrameWork.Base
             SpringContext.Scan();
             Debug.Log("扫描Bean类成功");
 
+            Debug.Log("开始扫描事件");
+            EventBus.Scan();
+            Debug.Log("事件扫描成功");
             Debug.Log("扫描网络协议模块");
             //网络扫描
             PacketDispatcher.Scan();
             Debug.Log("扫描网络协议模块成功");
+            UIComponentManager.InitUIModelComponent();
             //获取所有Module
             var moduleList = new List<AbstractManager>();
             var moduleComponents = SpringContext.GetBeans(typeof(AbstractManager));
@@ -115,6 +123,7 @@ namespace ZJYFrameWork.Base
             moduleSize = (short)moduleList.Count;
             //初始化流程状态
             SpringContext.GetBean<ProcedureComponent>().StartProcedure();
+            SpringContext.GetBean<NetworkManager>().Init();
         }
 
         private void LateUpdate()

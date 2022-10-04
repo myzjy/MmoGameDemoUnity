@@ -23,11 +23,11 @@ namespace ZJYFrameWork.Debugger.Windows
         private int errorCount = 0;
         private int fatalCount = 0;
         private LogNode selectedNode = null;
-        private bool lastLockScroll = true;
-        private bool lastInfoFilter = true;
-        private bool lastWarningFilter = true;
-        private bool lastErrorFilter = true;
-        private bool lastFatalFilter = true;
+        private bool _lastLockScroll = true;
+        private bool _lastInfoFilter = true;
+        private bool _lastWarningFilter = true;
+        private bool _lastErrorFilter = true;
+        private bool _lastFatalFilter = true;
 
         [SerializeField] private bool lockScroll = true;
 

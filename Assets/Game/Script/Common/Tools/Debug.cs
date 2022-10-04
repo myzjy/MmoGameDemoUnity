@@ -170,9 +170,6 @@ namespace ZJYFrameWork
         /// <param name="message">String or object to be converted to string representation for display.</param>
         /// <param name="context">Object to which the message applies.</param>
         /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogError">`Debug.LogError` on docs.unity3d.com</a></footer>
-        [Conditional("ENABLE_LOG")]
-        [Conditional("ENABLE_DEBUG_LOG")]
-        [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void LogError(object message)
         {
             if (log == null)

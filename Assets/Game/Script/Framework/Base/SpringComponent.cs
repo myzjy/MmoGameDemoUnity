@@ -12,7 +12,6 @@ namespace ZJYFrameWork.Base
     /// </summary>
     public abstract class SpringComponent : MonoBehaviour
     {
-        
         protected virtual void Awake()
         {
             OnAwake();
@@ -20,7 +19,6 @@ namespace ZJYFrameWork.Base
 
         protected virtual void OnAwake()
         {
-            
             //注册
             SpringContext.RegisterBean(this);
             var startSpringFlag = true;
@@ -30,7 +28,6 @@ namespace ZJYFrameWork.Base
             {
                 if (list.Any(it =>
                     {
-                        
                         Debug.Log($"it.GetType():{it.GetType()}");
                         Debug.Log($"subType:{subType}");
                         return it.GetType() == subType;
@@ -46,7 +43,6 @@ namespace ZJYFrameWork.Base
             if (!startSpringFlag) return;
             Debug.Log("开始扫描");
             SpringContext.GetBean<BaseComponent>().StartSpring();
-            
         }
     }
 }

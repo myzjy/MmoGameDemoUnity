@@ -295,7 +295,7 @@ namespace ZJYFrameWork.Spring.Utils
             {
                 return ConverterUtils.GetBytes(str);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return CollectionUtils.EMPTY_BYTE_ARRAY;
             }

@@ -82,7 +82,7 @@ PlayerSettings:
   androidFullscreenMode: 1
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
-  runInBackground: 0
+  runInBackground: 1
   captureSingleScreen: 0
   muteOtherAudioSources: 0
   Prepare IOS For Recording: 0
@@ -165,6 +165,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.DefaultCompany.MmoGameDemoUnity
+    Standalone: com.DefaultCompany.MmoGameDemoUnity
   buildNumber:
     Standalone: 0
     iPhone: 0
@@ -544,9 +545,9 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    1: LOGGER_ON;DEVELOP_BUILD;DISABLE_SERVERSENT_EVENTS;BESTHTTP_DISABLE_SIGNALR;BESTHTTP_DISABLE_SOCKETIO;BESTHTTP_DISABLE_UNITY_FORM;DEVELOP_BUILD;DEVELOP_BUILD;DEVELOP_BUILD
-    4: LOGGER_ON;DEVELOP_BUILD;DISABLE_SERVERSENT_EVENTS;BESTHTTP_DISABLE_SIGNALR;BESTHTTP_DISABLE_SOCKETIO;BESTHTTP_DISABLE_UNITY_FORM;DEVELOP_BUILD;DEVELOP_BUILD;DEVELOP_BUILD
-    7: LOGGER_ON;DEVELOP_BUILD;DISABLE_SERVERSENT_EVENTS;BESTHTTP_DISABLE_SIGNALR;BESTHTTP_DISABLE_SOCKETIO;BESTHTTP_DISABLE_UNITY_FORM;DEVELOP_BUILD;DEVELOP_BUILD;DEVELOP_BUILD
+    1: API_6
+    4: API_6
+    7: API_6
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

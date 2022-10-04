@@ -56,7 +56,7 @@ namespace ZJYFrameWork
             List<IntInstruction> list = pack.InstructionsList.Select(i => i as IntInstruction).ToList();
 
             List<IntInstruction> ApiBoolList = list.Where(a => a.ApiBool).ToList();
-            List<IntInstruction> ResponseBoolList = list.Where(a => a.ResponseBool).ToList();
+            List<IntInstruction> responseBoolList = list.Where(a => a.ResponseBool).ToList();
             List<IntInstruction> RequestBoolList = list.Where(a => a.RequestBool).ToList();
             List<IntInstruction> modelBoolList = list.Where(a => a.modelBool).ToList();
 
@@ -100,7 +100,7 @@ namespace ZJYFrameWork
             stringResponse.Append(
                 $"\tpublic partial  class {baseName}Response:Model\n");
             stringResponse.Append($"\t{{\n");
-            foreach (var item in ResponseBoolList)
+            foreach (var item in responseBoolList)
             {
             }
 
@@ -130,7 +130,7 @@ namespace ZJYFrameWork
             stringRequest.Append(
                 $"\tpublic partial  class {baseName}Request:Model\n");
             stringRequest.Append($"\t{{\n");
-            foreach (var item in ResponseBoolList)
+            foreach (var item in responseBoolList)
             {
             }
 

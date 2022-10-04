@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
 using ZJYFrameWork.UISerializable.UIInitView;
@@ -8,28 +9,24 @@ using UnityEngine.UI;
 using ZJYFrameWork.UISerializable.Manager;
 using Object = UnityEngine.Object;
 
-namespace ZJYFrameWork.UISerializable.UIModel
+namespace ZJYFrameWork.UISerializable
 {
-    public class UIBaseModule<T_UI_View, T_UI_PanelView> : UIModelInterface
-        where T_UI_View : UIBaseView<T_UI_PanelView>, new()
-        where T_UI_PanelView : UIViewInterface, new()
+    public abstract class UIBaseModule<TuiView, TuiPanelView> : UIModelInterface
+        where TuiView : UIBaseView<TuiPanelView>, new()
+        where TuiPanelView : UIViewInterface, new()
     {
-        public T_UI_View selfView;
+        public TuiView selfView;
 
         public UIBaseModule()
         {
-            selfView = new T_UI_View();
+            selfView = new TuiView();
         }
 
         /// <summary>
         /// 预制体 UI名
         /// </summary>
         /// <returns></returns>
-        protected virtual string PrefabName()
-        {
-            //这个地方放预制体名字应该是由服务器传递数据过来我们读
-            return string.Empty;
-        }
+        public abstract string PrefabName();
 
 
         public int InstanceID { get; protected set; }
@@ -46,7 +43,7 @@ namespace ZJYFrameWork.UISerializable.UIModel
 
         public virtual string[] Notification()
         {
-            return new string[] { };
+            return Array.Empty<string>();
         }
 
         public virtual void NotificationHandler(UINotification _eventNotification)
@@ -202,22 +199,18 @@ namespace ZJYFrameWork.UISerializable.UIModel
                 {
                     return ROOT.GetBgTransformPanel;
                 }
-                    break;
                 case UICanvasType.UI:
                 {
                     return ROOT.GetUITransformPanel;
                 }
-                    break;
                 case UICanvasType.TOP:
                 {
                     return ROOT.GetUITopTransformPanel;
                 }
-                    break;
                 case UICanvasType.NOTICE:
                 {
                     return ROOT.GetNoticeCanvasTransformPanel;
                 }
-                    break;
                 case UICanvasType.LOADING:
 
                     break;

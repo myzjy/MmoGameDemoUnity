@@ -1,18 +1,20 @@
-﻿namespace Net.Https
+﻿using ZJYFrameWork.Spring.Core;
+
+namespace ZJYFrameWork.WebRequest
 {
-    public class ServerSettings
+    public enum HostType
     {
-        public enum HostType
-        {
-            Develop,
-            Test,
-            Online,
-            None = 99,
-        }
+        Develop,
+        Test,
+        Online,
+        None = 99,
+    }
 
-
-        public string ApiHttpsBaseUrl { get; private set; }
-        public string ApiWebSocketUrl { get; private set; }
+    [Bean]
+    public class ServerSettings : IServerSettings
+    {
+        public virtual string ApiHttpsBaseUrl { get; set; }
+        public virtual string ApiWebSocketUrl { get; set; }
 
 #pragma warning disable CS0649
         private HostType _hostType;
@@ -20,8 +22,24 @@
 
         // ReSharper disable once ConvertToAutoProperty
         public HostType Host => _hostType;
+        
+        public void SetHost(HostType type)
+        {
+            _hostType = type;
+            switch (_hostType)
+            {
+                case HostType.Develop:
+                    break;
+                case HostType.Test:
+                    ApiHttpsBaseUrl = "http://192.168.0.105:5000";
+                    ApiWebSocketUrl = "ws://192.168.0.105:5000/websocket";
+                    break;
+                case HostType.Online:
+                    break;
+            }
+        }
 
-        public ServerSettings()
+        public void Load()
         {
 #if UNITY_EDITOR
             HostType type =
@@ -34,26 +52,6 @@
 			HostType type = GetHostBySysmol();
 #endif
             SetHost(type);
-        }
-
-        public void SetHost(HostType type)
-        {
-            _hostType = type;
-            switch (_hostType)
-            {
-                case HostType.Develop:
-                    ApiHttpsBaseUrl = "http://fz-game-ttl-dev.focusgames.cn";
-                    break;
-                case HostType.Test:
-                    ApiHttpsBaseUrl = "http://192.168.0.105:5000";
-                    break;
-                case HostType.Online:
-                    ApiHttpsBaseUrl = "http://fz-game-ttl-online.focusgames.cn";
-                    break;
-            }
-#if UNITY_ANDROID
-            //AssetBaseUri = AssetBaseUri.Replace("https", "http");
-#endif
         }
 
         private HostType GetHostBySysmol()

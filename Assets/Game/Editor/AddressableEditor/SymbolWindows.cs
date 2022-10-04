@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using ZJYFrameWork.WebRequest;
 
 #if UNITY_EDITOR
 
@@ -30,13 +31,15 @@ public class SymbolWindows : EditorWindow
         new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
         new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
         new SymbolData("USE_DEBUG_TOOLS", "用户调试"),
-        new SymbolData("LOGGER_ON","LOG"),
-        new SymbolData("DEVELOP_BUILD","开发模式"),
-        new SymbolData("DISABLE_SERVERSENT_EVENTS",""),
-        new SymbolData("BESTHTTP_DISABLE_SIGNALR",""),
-        new SymbolData("BESTHTTP_DISABLE_SOCKETIO",""),
-        new SymbolData("BESTHTTP_DISABLE_UNITY_FORM",""),
-
+        new SymbolData("LOGGER_ON", "LOG"),
+        new SymbolData("DEVELOP_BUILD", "开发模式"),
+        new SymbolData("DISABLE_SERVERSENT_EVENTS", ""),
+        new SymbolData("BESTHTTP_DISABLE_SIGNALR", ""),
+        new SymbolData("BESTHTTP_DISABLE_SOCKETIO", ""),
+        new SymbolData("BESTHTTP_DISABLE_UNITY_FORM", ""),
+        new SymbolData("ENABLE_DEBUG_LOG", ""),
+        new SymbolData("ENABLE_LOG", ""),
+        new SymbolData("ENABLE_DEBUG_AND_ABOVE_LOG", ""),
     };
 
 
@@ -96,6 +99,37 @@ public class SymbolWindows : EditorWindow
 
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
+    }
+
+    private static List<SymbolData> symbolDataList = new List<SymbolData>();
+
+    public static void OnSaveData()
+    {
+        var defineSymbols = PlayerSettings
+            .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
+
+        foreach (var itemString in symbolDataList)
+        {
+            itemString.IsEnable = defineSymbols.Any(c => c == itemString.name);
+        }
+
+        var str = symbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToList();
+        HostType type =
+            (HostType)EditorPrefs.GetInt("Tools/Skip Server Select/",
+                (int)HostType.None);
+        str.Add($"API_{type.ToString().ToUpper()}");
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.Android,
+            string.Join(";", str)
+        );
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.Standalone,
+            string.Join(";", str)
+        );
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.iOS,
+            string.Join(";", str)
+        );
     }
 }
 #endif

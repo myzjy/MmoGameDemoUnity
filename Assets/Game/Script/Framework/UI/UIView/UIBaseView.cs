@@ -5,22 +5,17 @@ using UnityEngine.UI;
 
 namespace ZJYFrameWork.UISerializable
 {
-    public class UIBaseView<PanelView> where PanelView : UIViewInterface, new()
+    public abstract class UIBaseView<PanelView> where PanelView : UIViewInterface, new()
     {
         /// <summary>
         /// UI实例化时调用 OnInit
         /// </summary>
-        public virtual void OnInit()
-        {
-        }
+        public abstract void OnInit();
 
         /// <summary>
         /// 当物体打开时调用
         /// </summary>
-        public virtual void OnShow()
-        {
-
-        }
+        public abstract void OnShow();
 
         /// <summary>
         /// 当Canvas CanvasGroup GraphicRaycaster 设置为不激活时调用

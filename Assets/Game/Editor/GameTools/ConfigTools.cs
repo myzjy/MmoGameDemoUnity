@@ -234,13 +234,13 @@ public class ConfigTools : EditorWindow
         SavePath();
     }
 
-    static private void SavePath()
+    private static void SavePath()
     {
         EditorPrefs.SetString("xlsxFolder", xlsxFolder);
         EditorPrefs.SetString("protoFolder", protoFolder);
     }
 
-    static private void ReadPath()
+    private static void ReadPath()
     {
         xlsxFolder = EditorPrefs.GetString("xlsxFolder");
         protoFolder = EditorPrefs.GetString("protoFolder");
