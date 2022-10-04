@@ -8,6 +8,9 @@ using ZJYFrameWork.Asynchronous;
 
 namespace ZJYFrameWork.AssetBundles.Bundle
 {
+    /// <summary>
+    /// 下载的示例代码
+    /// </summary>
     public class DownloadExample : MonoBehaviour
     {
         private IResources resources;
