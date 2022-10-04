@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using System.Collections;
+using Framework.AssetBundles.Config;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -27,7 +30,7 @@ namespace ZJYFrameWork.Examples.Bundle
             {
 #if UNITY_EDITOR
                 GUILayout.Space(20);
-                if (SimulationSetting.IsSimulationMode)
+                if (AssetBundleConfig.IsEditorMode)
                 {
                     GUILayout.Label("The variant is not supported in the simulation mode");
                 }
@@ -81,3 +84,4 @@ namespace ZJYFrameWork.Examples.Bundle
         }
     }
 }
+#endif

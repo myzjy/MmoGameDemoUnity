@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+using System;
 
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Security.Cryptography;
@@ -75,3 +76,4 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         }
     }
 }
+#endif

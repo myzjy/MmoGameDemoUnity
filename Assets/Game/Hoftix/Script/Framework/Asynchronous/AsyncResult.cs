@@ -30,7 +30,6 @@ namespace ZJYFrameWork.Asynchronous
 {
     public class AsyncResult : IAsyncResult, IPromise
     {
-        //private static readonly ILog log = LogManager.GetLogger(typeof(AsyncResult));
 
         private bool done = false;
         private object result = null;

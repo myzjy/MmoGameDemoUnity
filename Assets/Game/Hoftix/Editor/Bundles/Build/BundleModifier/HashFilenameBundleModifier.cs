@@ -23,7 +23,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         public virtual void Modify(BundleData bundleData)
         {
             BundleInfo bundleInfo = bundleData.BundleInfo;
-            string name = string.Format("{0}-{1}-{2}-{3}", bundleInfo.FullName, bundleInfo.Hash.ToString(), bundleInfo.CRC, bundleInfo.IsEncrypted ? bundleInfo.Encoding : "");
+            string name =
+                $"{bundleInfo.FullName}-{bundleInfo.Hash.ToString()}-{bundleInfo.CRC}-{(bundleInfo.IsEncrypted ? bundleInfo.Encoding : "")}";
             bundleInfo.Filename = BitConverter.ToString(MD5.ComputeHash(Encoding.ASCII.GetBytes(name))).Replace("-", "").ToLower();
         }
     }

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using UnityEngine;
 
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Contexts;
@@ -27,3 +29,4 @@ namespace ZJYFrameWork.Examples.Bundle
 
     }
 }
+#endif

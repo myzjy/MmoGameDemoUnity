@@ -6,7 +6,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 {
     public class MainWindow : EditorWindow
     {
-        [MenuItem("Tools/Loxodon/Build AssetBundle")]
+        [MenuItem("Tools/FrameWork/Build AssetBundle")]
         static void ShowWindow()
         {
             var window = GetWindow<MainWindow>(false, "AssetBundle");

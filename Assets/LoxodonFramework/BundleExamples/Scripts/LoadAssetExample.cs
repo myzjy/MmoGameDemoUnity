@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -82,3 +84,4 @@ namespace Loxodon.Framework.Examples.Bundle
         }
     }
 }
+#endif

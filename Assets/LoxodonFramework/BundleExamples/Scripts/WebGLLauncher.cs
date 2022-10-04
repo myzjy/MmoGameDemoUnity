@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using System;
 using System.Collections;
 using System.Text;
 using UnityEngine;
@@ -108,3 +110,4 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #endif
     }
 }
+#endif

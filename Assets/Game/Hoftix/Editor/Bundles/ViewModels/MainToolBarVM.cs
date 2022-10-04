@@ -7,7 +7,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
     [System.Serializable]
     public class MainToolBarVM : AbstractViewModel
     {
-        private const string PREFIX = "Loxodon::Framework::Bundle::";
+        private const string PREFIX = "ZJYFrameWork::Bundle::";
         private const string CURRENT_MENU_INDEX_KEY = "CURR_MENU_INDEX";
 
         [SerializeField]

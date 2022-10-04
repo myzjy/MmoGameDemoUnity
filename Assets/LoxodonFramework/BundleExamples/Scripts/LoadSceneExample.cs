@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -73,3 +75,4 @@ namespace ZJYFrameWork.Examples.Bundle
     }
 
 }
+#endif

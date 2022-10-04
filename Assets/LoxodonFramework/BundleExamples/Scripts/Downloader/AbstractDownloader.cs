@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+using System;
 using System.Text;
 using System.IO;
 using System.Collections;
@@ -223,3 +224,4 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise, List<BundleInfo> bundles);
     }
 }
+#endif

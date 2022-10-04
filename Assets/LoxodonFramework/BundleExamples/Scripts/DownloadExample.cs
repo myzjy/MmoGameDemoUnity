@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+using System;
 using System.IO;
 using UnityEngine;
 using System.Collections;
@@ -22,7 +23,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #if UNITY_WEBGL && !UNITY_EDITOR
             Uri baseUri = new Uri(BundleUtil.GetReadOnlyDirectory());
 #elif UNITY_EDITOR
-            DirectoryInfo dir = new DirectoryInfo(string.Format("./AssetBundles/{0}/1.0.0/", UnityEditor.EditorUserBuildSettings.activeBuildTarget));
+            DirectoryInfo dir =
+ new DirectoryInfo(string.Format("./AssetBundles/{0}/1.0.0/", UnityEditor.EditorUserBuildSettings.activeBuildTarget));
 
             if (!dir.Exists)
             {
@@ -92,7 +94,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             this.downloading = true;
             try
             {
-                IProgressResult<Progress, BundleManifest> manifestResult = this.downloader.DownloadManifest(BundleSetting.ManifestFilename);
+                IProgressResult<Progress, BundleManifest> manifestResult =
+ this.downloader.DownloadManifest(BundleSetting.ManifestFilename);
 
                 yield return manifestResult.WaitForDone();
 
@@ -157,7 +160,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             IBundleManifestLoader manifestLoader = new BundleManifestLoader();
 
             /* Loads BundleManifest. */
-            BundleManifest manifest = manifestLoader.Load(BundleUtil.GetStorableDirectory() + BundleSetting.ManifestFilename);
+            BundleManifest manifest =
+ manifestLoader.Load(BundleUtil.GetStorableDirectory() + BundleSetting.ManifestFilename);
 
             //manifest.ActiveVariants = new string[] { "", "sd" };
             //manifest.ActiveVariants = new string[] { "", "hd" };
@@ -198,3 +202,4 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         }
     }
 }
+#endif

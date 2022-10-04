@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -75,3 +77,4 @@ namespace ZJYFrameWork.Examples.Bundle
         }
     }
 }
+#endif

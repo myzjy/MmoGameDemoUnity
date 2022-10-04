@@ -40,6 +40,7 @@ public class SymbolWindows : EditorWindow
         new SymbolData("ENABLE_DEBUG_LOG", ""),
         new SymbolData("ENABLE_LOG", ""),
         new SymbolData("ENABLE_DEBUG_AND_ABOVE_LOG", ""),
+        new SymbolData("ASSET_BUNDLE_DEVELOP_EDITOR", "AssetBundles编辑模式")
     };
 
 

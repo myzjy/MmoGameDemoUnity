@@ -15,43 +15,27 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
     [Serializable]
     public class BuildVM : AbstractViewModel
     {
-        private const string PREFIX = "Loxodon::Framework::Bundle::";
+        private const string PREFIX = "ZJYFrameWork::Bundle::";
         public const string PATH = "Assets/LoxodonFramework/Editor/AppData/Bundle/BuildSetting.json";
         public const string DEFAULT_OUTPUT = "AssetBundles";
 
-        [SerializeField]
-        private CompressOptions compression;
-        [SerializeField]
-        private string outputPath = DEFAULT_OUTPUT;
-        [SerializeField]
-        private bool usePlayerSettingVersion;
-        [SerializeField]
-        private string dataVersion;
-        [SerializeField]
-        private BuildAssetBundleOptions buildAssetBundleOptions;
-        [SerializeField]
-        private bool copyToStreaming;
-        [SerializeField]
-        private bool useHashFilename;
-        [SerializeField]
-        private bool encryption;
-        [SerializeField]
-        private Algorithm algorithm = Algorithm.AES128_CBC_PKCS7;
-        [SerializeField]
-        private string iv;
-        [SerializeField]
-        private string key;
-        [SerializeField]
-        private EncryptionFilterType filterType;
-        [SerializeField]
-        private string filterExpression;
-        [SerializeField]
-        private string bundleNames;
+        [SerializeField] private CompressOptions compression;
+        [SerializeField] private string outputPath = DEFAULT_OUTPUT;
+        [SerializeField] private bool usePlayerSettingVersion;
+        [SerializeField] private string dataVersion;
+        [SerializeField] private BuildAssetBundleOptions buildAssetBundleOptions;
+        [SerializeField] private bool copyToStreaming;
+        [SerializeField] private bool useHashFilename;
+        [SerializeField] private bool encryption;
+        [SerializeField] private Algorithm algorithm = Algorithm.AES128_CBC_PKCS7;
+        [SerializeField] private string iv;
+        [SerializeField] private string key;
+        [SerializeField] private EncryptionFilterType filterType;
+        [SerializeField] private string filterExpression;
+        [SerializeField] private string bundleNames;
 
-        [NonSerialized]
-        private BuildTarget buildTarget;
-        [NonSerialized]
-        private bool advancedSettings = false;
+        [NonSerialized] private BuildTarget buildTarget;
+        [NonSerialized] private bool advancedSettings = false;
 
         public BuildVM()
         {
@@ -66,8 +50,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             get { return this.buildTarget; }
             set
             {
-                if (this.Set<BuildTarget>(ref this.buildTarget, value, () => BuildTarget))
-                    EditorPrefs.SetInt(PREFIX + "BuildTarget", (int)value);
+                this.Set<BuildTarget>(ref this.buildTarget, value, () => BuildTarget);
+                // EditorPrefs.SetInt(PREFIX + "BuildTarget", (int)value);
             }
         }
 
@@ -145,14 +129,15 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             get { return this.buildAssetBundleOptions; }
             set
             {
-                if (this.Set<BuildAssetBundleOptions>(ref this.buildAssetBundleOptions, value, () => BuildAssetBundleOptions))
+                if (this.Set<BuildAssetBundleOptions>(ref this.buildAssetBundleOptions, value,
+                        () => BuildAssetBundleOptions))
                     this.Save();
             }
         }
 
         public bool CopyToStreaming
         {
-            get { return this.copyToStreaming; }
+            get => this.copyToStreaming;
             set
             {
                 if (this.Set<bool>(ref this.copyToStreaming, value, () => CopyToStreaming))
@@ -172,7 +157,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public bool Encryption
         {
-            get { return this.encryption; }
+            get => this.encryption;
             set
             {
                 if (this.Set<bool>(ref this.encryption, value, () => Encryption))
@@ -199,6 +184,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     this.Save();
             }
         }
+
         public string KEY
         {
             get { return this.key; }
@@ -218,6 +204,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     this.Save();
             }
         }
+
         public string FilterExpression
         {
             get { return this.filterExpression; }
@@ -227,6 +214,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     this.Save();
             }
         }
+
         public string BundleNames
         {
             get { return this.bundleNames; }
@@ -241,7 +229,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         {
             this.Load();
 
-            this.buildTarget = (BuildTarget)EditorPrefs.GetInt(PREFIX + "BuildTarget", (int)EditorUserBuildSettings.activeBuildTarget);
+            this.buildTarget = (BuildTarget)EditorPrefs.GetInt(PREFIX + "BuildTarget",
+                (int)EditorUserBuildSettings.activeBuildTarget);
             this.advancedSettings = EditorPrefs.GetBool(PREFIX + "AdvancedSettings", this.advancedSettings);
         }
 
@@ -272,13 +261,12 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 if (!File.Exists(PATH))
                 {
                     FileInfo info = new FileInfo(PATH);
-                    if (!info.Directory.Exists)
+                    if (info.Directory is { Exists: false })
                         info.Directory.Create();
                 }
 
                 string json = JsonUtility.ToJson(this);
                 File.WriteAllText(PATH, json);
-
             }
             catch (System.Exception e)
             {
@@ -342,7 +330,9 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 //open the folder 
                 EditorUtility.OpenWithDefaultApp(dir.FullName);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
 
             Debug.LogFormat("Build OK.Please check the folder:{0}", dir.FullName);
 
@@ -364,23 +354,14 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 switch (this.FilterType)
                 {
                     case EncryptionFilterType.All:
-                        filter = bundle =>
-                        {
-                            return true;
-                        };
+                        filter = bundle => { return true; };
                         break;
                     case EncryptionFilterType.RegularExpression:
-                        filter = bundle =>
-                        {
-                            return Regex.IsMatch(bundle.FullName, this.filterExpression);
-                        };
+                        filter = bundle => { return Regex.IsMatch(bundle.FullName, this.filterExpression); };
                         break;
                     case EncryptionFilterType.BundleNameList:
                         string[] bundles = Regex.Split(this.bundleNames, @"(\s)", RegexOptions.IgnorePatternWhitespace);
-                        filter = bundle =>
-                        {
-                            return Array.IndexOf(bundles, bundle.FullName) >= 0;
-                        };
+                        filter = bundle => { return Array.IndexOf(bundles, bundle.FullName) >= 0; };
                         break;
                 }
 
@@ -396,12 +377,14 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public virtual IStreamEncryptor GetEncryptor()
         {
-            return CryptographUtil.GetEncryptor(this.Algorithm, Encoding.ASCII.GetBytes(this.KEY), Encoding.ASCII.GetBytes(this.IV));
+            return CryptographUtil.GetEncryptor(this.Algorithm, Encoding.ASCII.GetBytes(this.KEY),
+                Encoding.ASCII.GetBytes(this.IV));
         }
 
         public virtual IStreamDecryptor GetDecryptor()
         {
-            return CryptographUtil.GetDecryptor(this.Algorithm, Encoding.ASCII.GetBytes(this.KEY), Encoding.ASCII.GetBytes(this.IV));
+            return CryptographUtil.GetDecryptor(this.Algorithm, Encoding.ASCII.GetBytes(this.KEY),
+                Encoding.ASCII.GetBytes(this.IV));
         }
 
         public virtual void ClearFromStreamingAssets()
@@ -427,7 +410,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 AssetDatabase.StartAssetEditing();
                 BundleBuilder builder = new BundleBuilder();
 
-                DirectoryInfo src = new DirectoryInfo(builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.DataVersion));
+                DirectoryInfo src =
+                    new DirectoryInfo(builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.DataVersion));
                 DirectoryInfo dest = new DirectoryInfo(BundleUtil.GetReadOnlyDirectory());
 
                 if (dest.Exists)
@@ -473,8 +457,10 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                         break;
 #endif
                 }
+
                 return Security.Cryptography.RijndaelCryptograph.GenerateKey(keySize);
             }
+
             return string.Empty;
         }
 
@@ -497,6 +483,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 path = path.Remove(0, projectPath.Length + 1);
             this.OutputPath = path;
         }
+
         public virtual void ResetOutputFolder()
         {
             this.OutputPath = DEFAULT_OUTPUT;
@@ -513,14 +500,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
     public enum CompressOptions
     {
-        [Remark("No Compression")]
-        Uncompressed = 0,
+        [Remark("No Compression")] Uncompressed = 0,
 
         [Remark("Standard Compression (LZMA)")]
-        StandardCompression,/*LZMA*/
+        StandardCompression, /*LZMA*/
 
         [Remark("Chunk Based Compression (LZ4)")]
-        ChunkBasedCompression/*LZ4*/
+        ChunkBasedCompression /*LZ4*/
     }
 
     public enum EncryptionFilterType

@@ -13,7 +13,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 #pragma warning disable 0414, 0219
     public class RedundancyAnalysisPanel : Panel
     {
-        private const string BUNDLE_ROOT_KEY = "Loxodon::Framework::Bundle::ROOT";
+        private const string BundleRootKey = "ZJYFrameWork::Bundle::ROOT";
         private ProgressBar progressBar;
 
         private BuildVM buildVM;
@@ -39,11 +39,11 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
                 if (GUILayout.Button("Open Folder"))
                 {
-                    var dir = new DirectoryInfo(EditorPrefs.GetString(BUNDLE_ROOT_KEY, @".\"));
+                    var dir = new DirectoryInfo(EditorPrefs.GetString(BundleRootKey, @".\"));
                     var path = EditorUtility.OpenFolderPanel("AssetBundle Folder", dir.Parent.FullName, dir.Name);
                     if (!string.IsNullOrEmpty(path))
                     {
-                        EditorPrefs.SetString(BUNDLE_ROOT_KEY, path);
+                        EditorPrefs.SetString(BundleRootKey, path);
                         dir = new DirectoryInfo(path);
                         EditorExecutors.RunOnCoroutine(DoTask(dir));
                     }

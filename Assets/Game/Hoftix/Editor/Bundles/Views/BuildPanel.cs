@@ -38,44 +38,46 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         {
             buildOptionList = new List<CheckBoxData<BuildAssetBundleOptions>>();
             buildOptionList.Add(new CheckBoxData<BuildAssetBundleOptions>(
-                "Append Hash",
-                "Append the hash to the assetBundle name.",
+                "添加hash名",
+                "assetBundle名称进行hash模糊化.",
                 (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.AppendHashToAssetBundleName) > 0,
                 BuildAssetBundleOptions.AppendHashToAssetBundleName));
             buildOptionList.Add(new CheckBoxData<BuildAssetBundleOptions>(
-                "Exclude Type Information",
-                "Do not include type information within the asset bundle (don't write type tree).",
+                "排除类型信息",
+                "不要在资产包中包含类型信息(不要编写类型树)。",
                 (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.DisableWriteTypeTree) > 0,
                 BuildAssetBundleOptions.DisableWriteTypeTree));
             buildOptionList.Add(new CheckBoxData<BuildAssetBundleOptions>(
-                "Ignore Type Tree Changes",
-                "Ignore the type tree changes when doing the incremental build check.",
-               (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.IgnoreTypeTreeChanges) > 0,
+                "忽略类型树的更改",
+                "在执行增量构建检查时，忽略类型树更改.",
+                (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.IgnoreTypeTreeChanges) > 0,
                 BuildAssetBundleOptions.IgnoreTypeTreeChanges));
 #if UNITY_5_6_OR_NEWER
             buildOptionList.Add(new CheckBoxData<BuildAssetBundleOptions>(
-                "Strict Mode",
-                "Do not allow the build to succeed if any errors are reporting during it.",
+                "严格遵循标准模式",
+                "如果在构建过程中报告了任何错误，是否不允许构建成功.",
                 (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.StrictMode) > 0,
                 BuildAssetBundleOptions.StrictMode));
             buildOptionList.Add(new CheckBoxData<BuildAssetBundleOptions>(
-                "Dry Run Build",
-                "Do a dry run build.",
+                "保持运行构建",
+                "做一个演练构建.",
                 (this.buildVM.BuildAssetBundleOptions & BuildAssetBundleOptions.DryRunBuild) > 0,
                 BuildAssetBundleOptions.DryRunBuild));
 #endif
 
-            this.outputPathContent = new GUIContent("Output Path", "");
-            this.dataVersionContent = new GUIContent("Data Version", "The AssetBundle's data version.");
-            this.usePlaySettingVersionContent = new GUIContent("Use PlayerSetting Version", "Use the PlayerSetting version.");
-            this.copyToStreamingContent = new GUIContent("Copy to StreamingAssets", "After build completes, will copy all build content to Assets/StreamingAssets/bundles for use in stand-alone player.");
-            this.useHashFilenameContent = new GUIContent("Use Hash Filename", "");
-            this.encryptionContent = new GUIContent("Encryption", "Encrypts the AssetBundle's data.");
-            this.algorithmContent = new GUIContent("Algorithm", "Choose AES128_CBC_PKCS7, AES192_CBC_PKCS7 or AES256_CBC_PKCS7");
+            this.outputPathContent = new GUIContent("输出路径", "");
+            this.dataVersionContent = new GUIContent("AssetBundle版本", "AssetBundle的数据版本。");
+            this.usePlaySettingVersionContent = new GUIContent("使用PlayerSetting版本", "使用PlayerSetting版本.");
+            this.copyToStreamingContent = new GUIContent("C复制到StreamingAssets",
+                "构建完成后，将复制所有构建内容到Assets/StreamingAssets/bundle，以在独立的播放器中使用。");
+            this.useHashFilenameContent = new GUIContent("使用hash文件名", "");
+            this.encryptionContent = new GUIContent("加密", "加密AssetBundle的数据。");
+            this.algorithmContent =
+                new GUIContent("加密算法", "Choose AES128_CBC_PKCS7, AES192_CBC_PKCS7 or AES256_CBC_PKCS7");
             this.filterTypeContent = new GUIContent("Bundles", "");
 
-            this.buildTargetContent = new GUIContent("Build Target", "Choose target platform to build for.");
-            this.compressionContent = new GUIContent("Compression", "Choose no compress, standard (LZMA), or chunk based (LZ4)");
+            this.buildTargetContent = new GUIContent("构建平台", "选择目标平台进行构建.");
+            this.compressionContent = new GUIContent("压缩格式", "选择不压缩、标准(LZMA)或基于标准(LZ4)");
         }
 
         public override void OnGUI(Rect rect)
@@ -90,24 +92,33 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             //this.buildVM.BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup(buildTargetContent, this.buildVM.BuildTarget);
 
             this.buildVM.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-            EditorGUILayout.LabelField(this.buildTargetContent, new GUIContent(buildVM.BuildTarget.ToString()), GUILayout.Width(300f), GUILayout.Height(20));
+            EditorGUILayout.LabelField(this.buildTargetContent, new GUIContent(buildVM.BuildTarget.ToString()),
+                GUILayout.Width(300f), GUILayout.Height(20));
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Switch Platform", GUILayout.Width(200f)))
+            if (GUILayout.Button("切换平台", GUILayout.Width(200f)))
             {
                 EditorWindow.GetWindow(Type.GetType("UnityEditor.BuildPlayerWindow,UnityEditor"));
                 GUIUtility.ExitGUI();
             }
+
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
 
             GUILayout.BeginHorizontal();
             if (this.buildVM.UsePlayerSettingVersion)
-                EditorGUILayout.LabelField(this.dataVersionContent, new GUIContent(buildVM.DataVersion), GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
+            {
+                EditorGUILayout.LabelField(this.dataVersionContent, new GUIContent(buildVM.DataVersion),
+                    GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
+            }
             else
-                buildVM.DataVersion = EditorGUILayout.TextField(this.dataVersionContent, buildVM.DataVersion, GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
+            {
+                buildVM.DataVersion = EditorGUILayout.TextField(this.dataVersionContent, buildVM.DataVersion,
+                    GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
+            }
 
-            this.buildVM.UsePlayerSettingVersion = EditorGUILayout.ToggleLeft(this.usePlaySettingVersionContent, this.buildVM.UsePlayerSettingVersion);
+            this.buildVM.UsePlayerSettingVersion = EditorGUILayout.ToggleLeft(this.usePlaySettingVersionContent,
+                this.buildVM.UsePlayerSettingVersion);
 
             GUILayout.FlexibleSpace();
 
@@ -119,11 +130,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     GUIUtility.ExitGUI();
                 }
             }
+
             GUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
             GUILayout.BeginHorizontal();
-            this.buildVM.OutputPath = EditorGUILayout.TextField(this.outputPathContent, this.buildVM.OutputPath, GUILayout.Height(20));
+            this.buildVM.OutputPath =
+                EditorGUILayout.TextField(this.outputPathContent, this.buildVM.OutputPath, GUILayout.Height(20));
 
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
@@ -134,12 +147,14 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 this.Repaint();
                 GUIUtility.ExitGUI();
             }
+
             if (GUILayout.Button("Reset", GUILayout.MaxWidth(100f), GUILayout.MinHeight(25f)))
             {
                 this.buildVM.ResetOutputFolder();
                 this.Repaint();
                 GUIUtility.ExitGUI();
             }
+
             if (GUILayout.Button("Open", GUILayout.MaxWidth(100f), GUILayout.MinHeight(25f)))
             {
                 this.buildVM.OpenOutputFolder();
@@ -151,8 +166,10 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             EditorGUILayout.Space();
 
             GUILayout.BeginHorizontal();
-            this.buildVM.CopyToStreaming = EditorGUILayout.ToggleLeft(this.copyToStreamingContent, this.buildVM.CopyToStreaming);
-            this.buildVM.UseHashFilename = EditorGUILayout.ToggleLeft(this.useHashFilenameContent, this.buildVM.UseHashFilename);
+            this.buildVM.CopyToStreaming =
+                EditorGUILayout.ToggleLeft(this.copyToStreamingContent, this.buildVM.CopyToStreaming);
+            this.buildVM.UseHashFilename =
+                EditorGUILayout.ToggleLeft(this.useHashFilenameContent, this.buildVM.UseHashFilename);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -170,8 +187,10 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 EditorGUI.indentLevel += 1;
 
                 GUILayout.BeginHorizontal();
-                this.buildVM.Compression = (CompressOptions)EditorGUILayout.IntPopup(compressionContent, (int)this.buildVM.Compression,
-                    new GUIContent[]{
+                this.buildVM.Compression = (CompressOptions)EditorGUILayout.IntPopup(compressionContent,
+                    (int)this.buildVM.Compression,
+                    new GUIContent[]
+                    {
                         new GUIContent(CompressOptions.Uncompressed.GetRemark()),
                         new GUIContent(CompressOptions.StandardCompression.GetRemark()),
                         new GUIContent(CompressOptions.ChunkBasedCompression.GetRemark())
@@ -189,12 +208,15 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     if (newValue != buildOption.Value)
                     {
                         buildOption.Value = newValue;
-                        if (buildOption.Value && (buildOption.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges || buildOption.Tag == BuildAssetBundleOptions.DisableWriteTypeTree))
+                        if (buildOption.Value && (buildOption.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges ||
+                                                  buildOption.Tag == BuildAssetBundleOptions.DisableWriteTypeTree))
                         {
                             for (int j = 0; j < buildOptionList.Count; j++)
                             {
                                 var checkBox2 = buildOptionList[j];
-                                if (buildOption != checkBox2 && (checkBox2.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges || checkBox2.Tag == BuildAssetBundleOptions.DisableWriteTypeTree) && checkBox2.Value)
+                                if (buildOption != checkBox2 &&
+                                    (checkBox2.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges ||
+                                     checkBox2.Tag == BuildAssetBundleOptions.DisableWriteTypeTree) && checkBox2.Value)
                                 {
                                     checkBox2.Value = false;
                                     break;
@@ -203,13 +225,15 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                         }
 
                         BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
-                        for (int j = 0; j < buildOptionList.Count; j++)
+                        foreach (var t in buildOptionList)
                         {
-                            if (buildOptionList[j].Value)
-                                options |= buildOptionList[j].Tag;
+                            if (t.Value)
+                                options |= t.Tag;
                         }
+
                         this.buildVM.BuildAssetBundleOptions = options;
                     }
+
                     GUILayout.FlexibleSpace();
                     GUILayout.EndHorizontal();
                 }
@@ -227,50 +251,55 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     int indent2 = EditorGUI.indentLevel;
                     EditorGUI.indentLevel += 1;
                     GUILayout.BeginHorizontal();
-                    this.buildVM.Algorithm = (Algorithm)EditorGUILayout.EnumPopup(this.algorithmContent, this.buildVM.Algorithm, GUILayout.Height(20));
+                    this.buildVM.Algorithm = (Algorithm)EditorGUILayout.EnumPopup(this.algorithmContent,
+                        this.buildVM.Algorithm, GUILayout.Height(20));
 #if UNITY_2018_1_OR_NEWER && !NETFX_CORE && !UNITY_WSA && !UNITY_WSA_10_0
                     Color oldColor = GUI.color;
                     GUI.color = Color.red;
-                    if (Application.systemLanguage == SystemLanguage.Chinese)
                         EditorGUILayout.LabelField("推荐(AES128_CTR_NONE) 支持字节流，有更好的性能");
-                    else
-                        EditorGUILayout.LabelField("AES128_CTR_NONE is recommended, it has better performance");
                     GUI.color = oldColor;
 #endif
                     GUILayout.EndHorizontal();
 
                     EditorGUILayout.Space();
                     GUILayout.BeginHorizontal();
-                    this.buildVM.IV = EditorGUILayout.TextField("IV", this.buildVM.IV, GUILayout.MinWidth(230f), GUILayout.Height(20));
+                    this.buildVM.IV = EditorGUILayout.TextField("IV", this.buildVM.IV, GUILayout.MinWidth(230f),
+                        GUILayout.Height(20));
 
                     if (GUILayout.Button("Generate IV", GUILayout.Width(100f)))
                     {
                         this.buildVM.IV = this.buildVM.GenerateIV();
                     }
+
                     GUILayout.EndHorizontal();
                     EditorGUILayout.Space();
                     GUILayout.BeginHorizontal();
-                    this.buildVM.KEY = EditorGUILayout.TextField("KEY", this.buildVM.KEY, GUILayout.MinWidth(230f), GUILayout.Height(20));
+                    this.buildVM.KEY = EditorGUILayout.TextField("KEY", this.buildVM.KEY, GUILayout.MinWidth(230f),
+                        GUILayout.Height(20));
                     if (GUILayout.Button("Generate KEY", GUILayout.Width(100f)))
                     {
                         this.buildVM.KEY = this.buildVM.GenerateKey();
                     }
+
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                     //EditorGUILayout.LabelField(new GUIContent("Bundles", "All the names of Assetbundle that need to be encrypted."));
-                    this.buildVM.FilterType = (EncryptionFilterType)EditorGUILayout.EnumPopup(this.filterTypeContent, this.buildVM.FilterType, GUILayout.Height(20));
+                    this.buildVM.FilterType = (EncryptionFilterType)EditorGUILayout.EnumPopup(this.filterTypeContent,
+                        this.buildVM.FilterType, GUILayout.Height(20));
                     GUILayout.EndHorizontal();
                     EditorGUILayout.Space();
 
                     if (this.buildVM.FilterType == EncryptionFilterType.BundleNameList)
                     {
                         this.textScrollPosition = EditorGUILayout.BeginScrollView(textScrollPosition);
-                        this.buildVM.BundleNames = EditorGUILayout.TextArea(this.buildVM.BundleNames, GUILayout.Height(rect.height - 80));
+                        this.buildVM.BundleNames = EditorGUILayout.TextArea(this.buildVM.BundleNames,
+                            GUILayout.Height(rect.height - 80));
                         EditorGUILayout.EndScrollView();
                     }
                     else if (this.buildVM.FilterType == EncryptionFilterType.RegularExpression)
                     {
-                        this.buildVM.FilterExpression = EditorGUILayout.TextField("", this.buildVM.FilterExpression, GUILayout.MinWidth(230f), GUILayout.Height(20));
+                        this.buildVM.FilterExpression = EditorGUILayout.TextField("", this.buildVM.FilterExpression,
+                            GUILayout.MinWidth(230f), GUILayout.Height(20));
                     }
 
                     EditorGUI.indentLevel = indent2;
@@ -289,7 +318,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("Rebuild", GUILayout.Width(250f), GUILayout.MinHeight(40f)))
             {
-                if (!this.buildVM.VersionExists() || EditorUtility.DisplayDialog("Version already exist", "The version already exist!Are you sure you want to replace this version?", "Yes", "No"))
+                if (!this.buildVM.VersionExists() || EditorUtility.DisplayDialog("Version already exist",
+                        "The version already exist!Are you sure you want to replace this version?", "Yes", "No"))
                 {
                     EditorApplication.delayCall += () => this.buildVM.Build(true);
                 }
@@ -297,11 +327,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
             if (GUILayout.Button("Build", GUILayout.Width(250f), GUILayout.MinHeight(40f)))
             {
-                if (!this.buildVM.VersionExists() || EditorUtility.DisplayDialog("Version already exist", "The version already exist!Are you sure you want to replace this version?", "Yes", "No"))
+                if (!this.buildVM.VersionExists() || EditorUtility.DisplayDialog("Version already exist",
+                        "The version already exist!Are you sure you want to replace this version?", "Yes", "No"))
                 {
                     EditorApplication.delayCall += () => this.buildVM.Build(false);
                 }
             }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -316,6 +348,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
                 EditorApplication.delayCall += () => this.buildVM.CopyToStreamingAssets();
             }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -348,11 +381,20 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     this.options = new GUILayoutOption[] { };
             }
 
-            public string PrefsKey { get { return this.prefsKey; } }
+            public string PrefsKey
+            {
+                get { return this.prefsKey; }
+            }
 
-            public GUIContent Content { get { return this.content; } }
+            public GUIContent Content
+            {
+                get { return this.content; }
+            }
 
-            public GUILayoutOption[] Options { get { return this.options; } }
+            public GUILayoutOption[] Options
+            {
+                get { return this.options; }
+            }
 
             public T Value
             {
@@ -363,7 +405,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public class CheckBoxData : PropertyData<bool>
         {
-            public CheckBoxData(string text, string tooltip, bool value) : this(new GUIContent(text, tooltip), value, null)
+            public CheckBoxData(string text, string tooltip, bool value) : this(new GUIContent(text, tooltip), value,
+                null)
             {
             }
 
@@ -371,7 +414,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
             }
 
-            public CheckBoxData(GUIContent content, bool value, GUILayoutOption[] options) : base(content, value, options)
+            public CheckBoxData(GUIContent content, bool value, GUILayoutOption[] options) : base(content, value,
+                options)
             {
             }
         }
@@ -380,7 +424,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         {
             protected T tag;
 
-            public CheckBoxData(string text, string tooltip, bool value, T tag) : this(new GUIContent(text, tooltip), value, tag, null)
+            public CheckBoxData(string text, string tooltip, bool value, T tag) : this(new GUIContent(text, tooltip),
+                value, tag, null)
             {
             }
 
@@ -388,7 +433,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
             }
 
-            public CheckBoxData(GUIContent content, bool value, T tag, GUILayoutOption[] options) : base(content, value, options)
+            public CheckBoxData(GUIContent content, bool value, T tag, GUILayoutOption[] options) : base(content, value,
+                options)
             {
                 this.tag = tag;
             }

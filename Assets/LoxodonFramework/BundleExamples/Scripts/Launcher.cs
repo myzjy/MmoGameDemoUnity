@@ -1,7 +1,9 @@
-﻿using System;
-using System.Text;
-using UnityEngine;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
 
+using System;
+using System.Text;
+using Framework.AssetBundles.Config;
+using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Contexts;
 using ZJYFrameWork.Security.Cryptography;
@@ -20,7 +22,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         private IResources resources;
 
         void Awake()
-        {           
+        {
             DontDestroyOnLoad(this.gameObject);
             this.resources = CreateResources();
 
@@ -32,7 +34,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         {
             IResources resources = null;
 #if UNITY_EDITOR
-            if (SimulationSetting.IsSimulationMode)
+            if (AssetBundleConfig.IsEditorMode)
             {
                 Debug.Log("Use SimulationResources. Run In Editor");
 
@@ -53,7 +55,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 IBundleManifestLoader manifestLoader = new BundleManifestLoader();
 
                 /* Loads BundleManifest. */
-                BundleManifest manifest = manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + BundleSetting.ManifestFilename);
+                BundleManifest manifest =
+                    manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + BundleSetting.ManifestFilename);
 
                 //manifest.ActiveVariants = new string[] { "", "sd" };
                 manifest.ActiveVariants = new string[] { "", "hd" };
@@ -67,10 +70,12 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
                 /* AES128_CBC_PKCS7 */
                 //RijndaelCryptograph rijndaelCryptograph = new RijndaelCryptograph(128, Encoding.ASCII.GetBytes(this.key), Encoding.ASCII.GetBytes(this.iv));
-                IStreamDecryptor decryptor = CryptographUtil.GetDecryptor(Algorithm.AES128_CBC_PKCS7, Encoding.ASCII.GetBytes(this.key), Encoding.ASCII.GetBytes(this.iv));
+                IStreamDecryptor decryptor = CryptographUtil.GetDecryptor(Algorithm.AES128_CBC_PKCS7,
+                    Encoding.ASCII.GetBytes(this.key), Encoding.ASCII.GetBytes(this.iv));
 
                 /* Use a custom BundleLoaderBuilder */
-                ILoaderBuilder builder = new CustomBundleLoaderBuilder(new Uri(BundleUtil.GetReadOnlyDirectory()), false, decryptor);
+                ILoaderBuilder builder =
+                    new CustomBundleLoaderBuilder(new Uri(BundleUtil.GetReadOnlyDirectory()), false, decryptor);
 
                 /* Create a BundleManager */
                 IBundleManager manager = new BundleManager(manifest, builder);
@@ -78,6 +83,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 /* Create a BundleResources */
                 resources = new BundleResources(pathInfoParser, manager);
             }
+
             return resources;
         }
 
@@ -87,14 +93,12 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             if (style == null)
             {
                 style = new GUIStyle();
-                style.normal.textColor = new Color(1,0,0);
+                style.normal.textColor = new Color(1, 0, 0);
             }
 
-            if (SimulationSetting.IsSimulationMode)
-                GUI.Label(position, contentON, style);
-            else
-                GUI.Label(position, contentOFF, style);
+            GUI.Label(position, AssetBundleConfig.IsEditorMode ? contentON : contentOFF, style);
         }
 #endif
     }
 }
+#endif

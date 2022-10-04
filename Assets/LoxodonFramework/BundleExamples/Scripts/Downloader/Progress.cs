@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+using System;
 
 namespace ZJYFrameWork.AssetBundles.Bundle
 {
@@ -140,3 +141,4 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         }
     }
 }
+#endif

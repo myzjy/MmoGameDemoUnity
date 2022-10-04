@@ -8,12 +8,15 @@ using UnityEditor;
 
 namespace ZJYFrameWork.Editors
 {
+    /// <summary>
+    /// 启动自动运行编译脚本
+    /// </summary>
     [InitializeOnLoad]
     public class EditorExecutors
     {
-        private static bool running = false;
-        private static List<Task> pending = new List<Task>();
-        private static List<IEnumerator> routines = new List<IEnumerator>();
+        private static bool _running = false;
+        private static readonly List<Task> Pending = new List<Task>();
+        private static readonly List<IEnumerator> Routines = new List<IEnumerator>();
 
         static EditorExecutors()
         {
@@ -24,8 +27,8 @@ namespace ZJYFrameWork.Editors
             if (routine == null)
                 return;
 
-            pending.RemoveAll(r => r.ID == routine.ID);
-            pending.Add(routine);
+            Pending.RemoveAll(r => r.ID == routine.ID);
+            Pending.Add(routine);
 
             RegisterUpdate();
         }
@@ -35,72 +38,72 @@ namespace ZJYFrameWork.Editors
             if (routine == null)
                 return;
 
-            routines.Add(routine);
+            Routines.Add(routine);
 
             RegisterUpdate();
         }
 
         private static void RegisterUpdate()
         {
-            if (running)
+            if (_running)
                 return;
 
             if (!EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 EditorApplication.update += OnUpdate;
-                running = true;
+                _running = true;
             }
         }
 
         private static void UnregisterUpdate()
         {
-            if (!running)
+            if (!_running)
                 return;
 
             EditorApplication.update -= OnUpdate;
-            running = false;
+            _running = false;
         }
 
         private static void OnUpdate()
         {
-            if (routines.Count <= 0 && pending.Count <= 0)
+            if (Routines.Count <= 0 && Pending.Count <= 0)
             {
                 UnregisterUpdate();
                 return;
             }
 
-            for (int i = routines.Count - 1; i >= 0; i--)
+            for (int i = Routines.Count - 1; i >= 0; i--)
             {
                 try
                 {
-                    var routine = routines[i];
+                    var routine = Routines[i];
                     if (!routine.MoveNext())
-                        routines.RemoveAt(i);
+                        Routines.RemoveAt(i);
                 }
                 catch (Exception e)
                 {
-                    routines.RemoveAt(i);
+                    Routines.RemoveAt(i);
                     UnityEngine.Debug.LogError(e);
                 }
             }
 
-            for (int i = pending.Count - 1; i >= 0; i--)
+            for (int i = Pending.Count - 1; i >= 0; i--)
             {
-                var routine = pending[i];
+                var routine = Pending[i];
                 if (routine == null)
                     continue;
 
                 if (routine.CanExecute())
                 {
-                    routines.Add(routine);
-                    pending.RemoveAt(i);
+                    Routines.Add(routine);
+                    Pending.RemoveAt(i);
                 }
             }
         }
 
         private static void DoRunAsync(Action action)
         {
-            ThreadPool.QueueUserWorkItem((state) => { action(); });
+            ThreadPool.QueueUserWorkItem((_) => { action(); });
         }
 
         public static void RunAsyncNoReturn(Action action)
@@ -158,7 +161,7 @@ namespace ZJYFrameWork.Editors
                 {
                     action(result);
                     if (!result.IsDone)
-                        result.SetResult(null);
+                        result.SetResult();
                 }
                 catch (Exception e)
                 {
@@ -178,7 +181,7 @@ namespace ZJYFrameWork.Editors
                 {
                     action(result);
                     if (!result.IsDone)
-                        result.SetResult(null);
+                        result.SetResult();
                 }
                 catch (Exception e)
                 {
@@ -198,7 +201,7 @@ namespace ZJYFrameWork.Editors
                 {
                     action(result);
                     if (!result.IsDone)
-                        result.SetResult(null);
+                        result.SetResult();
                 }
                 catch (Exception e)
                 {
@@ -209,7 +212,8 @@ namespace ZJYFrameWork.Editors
             return result;
         }
 
-        public static IProgressResult<TProgress, TResult> RunAsync<TProgress, TResult>(Action<IProgressPromise<TProgress, TResult>> action)
+        public static IProgressResult<TProgress, TResult> RunAsync<TProgress, TResult>(
+            Action<IProgressPromise<TProgress, TResult>> action)
         {
             ProgressResult<TProgress, TResult> result = new ProgressResult<TProgress, TResult>(true);
             DoRunAsync(() =>
@@ -218,7 +222,7 @@ namespace ZJYFrameWork.Editors
                 {
                     action(result);
                     if (!result.IsDone)
-                        result.SetResult(null);
+                        result.SetResult();
                 }
                 catch (Exception e)
                 {
@@ -250,16 +254,25 @@ namespace ZJYFrameWork.Editors
             this.startTime = System.DateTime.Now.Ticks / 10000;
         }
 
-        public int ID { get { return this.id; } }
+        public int ID
+        {
+            get { return this.id; }
+        }
 
-        public int Delay { get { return this.delay; } }
+        public int Delay
+        {
+            get { return this.delay; }
+        }
 
         public bool CanExecute()
         {
             return System.DateTime.Now.Ticks / 10000 - startTime > delay;
         }
 
-        public object Current { get { return routine.Current; } }
+        public object Current
+        {
+            get { return routine.Current; }
+        }
 
         public bool MoveNext()
         {
