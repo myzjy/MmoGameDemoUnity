@@ -9,8 +9,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
     /// <summary>
     /// A common interface for the asset loader.
     /// </summary>
-	public interface IResources : IBundleManager
+	public interface IResources 
     {
+        void SetIPathAndBundleResource(IPathInfoParser pathInfo, IBundleManager manager);
         /// <summary>
         /// Synchronously loads binary data.The related AssetBundle must already be loaded, otherwise returns null.
         /// </summary>
@@ -217,6 +218,42 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <param name="mode"></param>
         /// <returns></returns>
         ISceneLoadingResult<Scene> LoadSceneAsync(string path, LoadSceneMode mode = LoadSceneMode.Single);
+                /// <summary>
+        /// Gets a bundle for the given bundle's name.If the Assetbundle isn't loaded, returns null.
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <returns></returns>
+        IBundle GetBundle(string bundleName);
+
+        /// <summary>
+        /// Asynchronously loads a bundle for the given bundle's name.
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <returns></returns>
+        IProgressResult<float, IBundle> LoadBundle(string bundleName);
+
+        /// <summary>
+        /// Asynchronously loads a bundle for the given bundle's name.
+        /// </summary>
+        /// <param name="bundleName"></param>
+        /// <param name="priority">Positive or negative, the default value is 0.When multiple asynchronous operations are queued up, the operation with the higher priority will be executed first. Once an operation has been started on the background thread, changing the priority will have no effect anymore.</param>
+        /// <returns></returns>
+        IProgressResult<float, IBundle> LoadBundle(string bundleName, int priority);
+
+        /// <summary>
+        /// Asynchronously loads a group of bundles for the given bundle's names.
+        /// </summary>
+        /// <param name="bundleNames"></param>
+        /// <returns></returns>
+        IProgressResult<float, IBundle[]> LoadBundle(params string[] bundleNames);
+
+        /// <summary>
+        /// Asynchronously loads a group of bundles for the given bundle's names.
+        /// </summary>
+        /// <param name="bundleNames"></param>
+        /// <param name="priority">Positive or negative, the default value is 0.When multiple asynchronous operations are queued up, the operation with the higher priority will be executed first. Once an operation has been started on the background thread, changing the priority will have no effect anymore.</param>
+        /// <returns></returns>
+        IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority);
 
     }
 

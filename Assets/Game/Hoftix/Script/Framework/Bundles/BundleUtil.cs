@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Framework.AssetBundles.Config;
 using ZJYFrameWork.Execution;
 
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -24,7 +25,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         static BundleUtil()
         {
-            Root = BundleSetting.BundleRoot;
+            Root = AssetBundleConfig.BundleRoot;
 #if UNITY_IOS
             UnityEngine.iOS.Device.SetNoBackupFlag(GetStorableDirectory());
 #endif
@@ -35,9 +36,21 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// </summary>
         private static string Root
         {
-            get { return root; }
+            get
+            {
+                if (!string.IsNullOrEmpty(root)) return root;
+                root = AssetBundleConfig.BundleRoot;
+                temporaryCacheDirectory = temporaryCachePath + "/" + root + "/";
+                storableDirectory = persistentDataPath + "/" + root + "/";
+                readOnlyDirectory = streamingAssetsPath + "/" + root + "/";
+                return root;
+            }
             set
             {
+                if (string.IsNullOrEmpty(root))
+                {
+                    root = AssetBundleConfig.BundleRoot;
+                }
                 root = value;
                 temporaryCacheDirectory = temporaryCachePath + "/" + root + "/";
                 storableDirectory = persistentDataPath + "/" + root + "/";
@@ -47,8 +60,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public static string GetTemporaryCacheDirectory()
         {
-            if (!Root.Equals(BundleSetting.BundleRoot))
-                Root = BundleSetting.BundleRoot;
+            if (!Root.Equals(AssetBundleConfig.BundleRoot))
+                Root = AssetBundleConfig.BundleRoot;
 
             return temporaryCacheDirectory;
         }
@@ -59,8 +72,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <returns>The storable directory.</returns>
         public static string GetStorableDirectory()
         {
-            if (!Root.Equals(BundleSetting.BundleRoot))
-                Root = BundleSetting.BundleRoot;
+            if (!Root.Equals(AssetBundleConfig.BundleRoot))
+                Root = AssetBundleConfig.BundleRoot;
 
             return storableDirectory;
         }
@@ -71,8 +84,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <returns>The read only directory.</returns>
         public static string GetReadOnlyDirectory()
         {
-            if (!Root.Equals(BundleSetting.BundleRoot))
-                Root = BundleSetting.BundleRoot;
+            if (!Root.Equals(AssetBundleConfig.BundleRoot))
+                Root = AssetBundleConfig.BundleRoot;
 
             return readOnlyDirectory;
         }
@@ -226,7 +239,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                         return;
 
                     List<string> files = new List<string>();
-                    FileInfo manifestFileInfo = new FileInfo(GetStorableDirectory() + BundleSetting.ManifestFilename);
+                    FileInfo manifestFileInfo = new FileInfo(GetStorableDirectory() + AssetBundleConfig.ManifestFilename);
                     files.Add(manifestFileInfo.FullName);
 
                     BundleInfo[] bundleInfos = manifest.GetAll();

@@ -15,11 +15,17 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 {
 #if UNITY_2017_1_OR_NEWER
     [Obsolete("Please use \"UnityWebRequestDownloader\" instead of this class.")]
+#else
+    [Bean]
 #endif
     public class WWWDownloader : AbstractDownloader
     {
         protected bool useCache = false;
 
+        public WWWDownloader()
+        {
+            
+        }
         public WWWDownloader(Uri baseUri, bool useCache) : this(baseUri, SystemInfo.processorCount * 2, useCache)
         {
         }
@@ -37,9 +43,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             long downloadedSize = 0;
             Progress progress = new Progress();
             List<BundleInfo> list = new List<BundleInfo>();
-            for (int i = 0; i < bundles.Count; i++)
+            foreach (var info in bundles)
             {
-                var info = bundles[i];
                 totalSize += info.FileSize;
                 if (BundleUtil.Exists(info))
                 {
@@ -137,8 +142,9 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         catch (Exception e)
                         {
                             promise.SetException(e);
-                            ZJYFrameWork.Debug.Log("Downloads AssetBundle '{0}' failure from the address '{1}'.Reason:{2}",
-                                    _bundleInfo.FullName, GetAbsoluteUri(_bundleInfo.Filename), e);
+                            ZJYFrameWork.Debug.Log(
+                                "Downloads AssetBundle '{0}' failure from the address '{1}'.Reason:{2}",
+                                _bundleInfo.FullName, GetAbsoluteUri(_bundleInfo.Filename), e);
                             yield break;
                         }
                     }
@@ -151,6 +157,11 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             }
 
             promise.SetResult(true);
+        }
+
+        protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise, BundleInfo bundleInfo)
+        {
+            throw new NotImplementedException();
         }
 #else
         protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise, List<BundleInfo> bundles)

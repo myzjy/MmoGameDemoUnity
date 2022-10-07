@@ -1,7 +1,8 @@
-﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
+﻿// #if ASSET_BUNDLE_DEVELOP_EDITOR
 
 using System;
 using System.Text;
+using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -27,7 +28,7 @@ namespace ZJYFrameWork.Examples.Bundle
 
             /* Loads BundleManifest. */
             BundleManifest manifest =
-                manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + BundleSetting.ManifestFilename);
+                manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + AssetBundleConfig.ManifestFilename);
 
             /* Create a PathInfoParser. */
             IPathInfoParser pathInfoParser = new AutoMappingPathInfoParser(manifest);
@@ -82,4 +83,3 @@ namespace ZJYFrameWork.Examples.Bundle
         }
     }
 }
-#endif

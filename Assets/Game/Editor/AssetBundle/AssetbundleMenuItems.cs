@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AssetBundles;
-using Common.Utility;
 using Framework.AssetBundles.Config;
 using UnityEditor;
 using UnityEngine;
@@ -37,14 +36,10 @@ namespace AssetBundleEditorTools.AssetBundleSet
         
         static AssetBundleMenuItems()
         {
-            CheckSimulateModelEnv();
+       
         }
 
-        static void CheckSimulateModelEnv()
-        {
-
-
-        }
+     
 
         [MenuItem(kEditorMode, false)]
         public static void ToggleEditorMode()
@@ -64,7 +59,7 @@ namespace AssetBundleEditorTools.AssetBundleSet
         {
             if (!AssetBundleConfig.IsEditorLogMode) return;
             AssetBundleConfig.IsEditorLogMode = true;
-            CheckSimulateModelEnv();
+       
             // LaunchAssetBundleServer.CheckAndDoRunning();
         }
         [MenuItem(kSimulateMode)]
@@ -72,7 +67,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
         {
             if (!AssetBundleConfig.IsEditorMode) return;
             AssetBundleConfig.IsSimulateMode = true;
-            CheckSimulateModelEnv();
         }
 
         [MenuItem(kSimulateMode, true)]

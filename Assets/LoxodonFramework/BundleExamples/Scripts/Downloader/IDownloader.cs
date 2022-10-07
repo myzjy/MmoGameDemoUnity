@@ -32,6 +32,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         /// <param name="bundles"></param>
         /// <returns></returns>
         IProgressResult<Progress, bool> DownloadBundles(List<BundleInfo> bundles);
+        IProgressResult<Progress, bool> DownloadBundles(BundleInfo bundles);
     }
 }
 #endif

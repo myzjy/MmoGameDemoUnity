@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundles;
 using Path = System.IO.Path;
@@ -28,7 +29,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 List<FileInfo> files = new List<FileInfo>();
                 foreach (FileInfo file in dir.GetFiles("*", SearchOption.TopDirectoryOnly))
                 {
-                    if (file.Name.EndsWith(BundleSetting.ManifestFilename))
+                    if (file.Name.EndsWith(AssetBundleConfig.ManifestFilename))
                     {
                         files.Add(file);
                         continue;
@@ -46,7 +47,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
                 files.Sort((x, y) => y.LastWriteTime.CompareTo(x.LastWriteTime));
 
-                if (files[0].Name.Equals(BundleSetting.ManifestFilename))
+                if (files[0].Name.Equals(AssetBundleConfig.ManifestFilename))
                 {
                     BundleManifest manifest = BundleManifest.Parse(File.ReadAllText(files[0].FullName, Encoding.UTF8));
                     return container.LoadAssetBundle(dir.FullName, decryptor, manifest.GetAll());
@@ -97,7 +98,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     List<string> filenames = new List<string>();
                     foreach (FileInfo file in dir.GetFiles("*", SearchOption.AllDirectories))
                     {
-                        if (file.FullName.EndsWith(BundleSetting.ManifestFilename) || file.FullName.EndsWith(".manifest"))
+                        if (file.FullName.EndsWith(AssetBundleConfig.ManifestFilename) || file.FullName.EndsWith(".manifest"))
                             continue;
 
                         filenames.Add(file.FullName);

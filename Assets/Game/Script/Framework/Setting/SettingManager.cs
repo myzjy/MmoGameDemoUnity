@@ -38,7 +38,6 @@ namespace ZJYFrameWork.Setting
                 throw new Exception("ServerSetting helper is invalid.");
             }
 
-            Debug.Log(Settings.ApiHttpsBaseUrl);
             return Settings.ApiHttpsBaseUrl;
         }
 
@@ -50,6 +49,16 @@ namespace ZJYFrameWork.Setting
             }
 
             return Settings.ApiWebSocketUrl;
+        }
+
+        public string GetAssetBundleUrl()
+        {
+            if (Settings == null)
+            {
+                throw new Exception("ServerSetting helper is invalid.");
+            }
+
+            return Settings.AssetBundleUrl;
         }
 
         public HostType GetSelectHostType()

@@ -2,10 +2,11 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
-    public class SimulationAutoMappingPathInfoParser : IPathInfoParser
+    public sealed class SimulationAutoMappingPathInfoParser : IPathInfoParser
     {
         private Dictionary<string, string> dict = new Dictionary<string, string>();
 
@@ -14,7 +15,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.Initialize();
         }
 
-        protected virtual void Initialize()
+        public void Initialize()
         {
             Regex regex = new Regex("^assets/", RegexOptions.IgnoreCase);
             foreach (string bundleName in AssetDatabaseHelper.GetUsedAssetBundleNames())
@@ -29,17 +30,15 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        public virtual AssetPathInfo Parse(string path)
+        public AssetPathInfo Parse(string path)
         {
-            string bundleName;
-            if (!this.dict.TryGetValue(path.ToLower(), out bundleName))
-            {
-                Debug.Log("Not found the AssetBundle,please check the configuration of the asset '{0}'.", path);
-                return null;
-            }
+            if (this.dict.TryGetValue(path.ToLower(), out var bundleName)) return new AssetPathInfo(bundleName, path);
+            Debug.Log("Not found the AssetBundle,please check the configuration of the asset '{0}'.", path);
+            return null;
 
-            return new AssetPathInfo(bundleName, path);
         }
+
+        public BundleManifest BundleManifest { get; set; }
     }
 }
 #endif

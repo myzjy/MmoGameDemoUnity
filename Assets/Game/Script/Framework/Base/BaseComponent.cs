@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Log;
@@ -77,9 +78,23 @@ namespace ZJYFrameWork.Base
                 ConverterUtils.ScreenDpi = DefaultDpi;
             }
 
+            //保证
+            SpringContext.RegisterBean<BundleManifestLoader>();
             if (AssetBundleConfig.IsEditorMode)
             {
                 //编辑器下
+                Debug.Log("Use SimulationResources. Run In Editor");
+
+                SpringContext.RegisterBean<SimulationBundleManager>();
+                //管理类路径类
+                SpringContext.RegisterBean<SimulationAutoMappingPathInfoParser>();
+                //本地读取资源bean类
+                SpringContext.RegisterBean<SimulationResources>();
+            }
+            else
+            {
+                Debug.Log("Use playResource");
+                
             }
 
             Application.targetFrameRate = frameRate;

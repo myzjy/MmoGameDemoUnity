@@ -31,6 +31,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         private const float WEIGHT = 0.7f;
 
         private bool useCache;
+
+        public UnityWebRequestBundleLoader() : base()
+        {
+            
+        }
         public UnityWebRequestBundleLoader(System.Uri uri, BundleInfo bundleInfo, BundleManager manager, bool useCache = true) : base(uri, bundleInfo, manager)
         {
             this.useCache = useCache | this.IsRemoteUri();
@@ -64,7 +69,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     {
                         //if (www.downloadProgress >= 0)
                         //    promise.UpdateProgress(weight * www.downloadProgress);
-                        if (www.downloadedBytes >= 0 && totalSize > 0)
+                        if (totalSize > 0)
                             promise.UpdateProgress(weight * (float)www.downloadedBytes / totalSize);
                         yield return null;
                     }

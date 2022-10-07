@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Framework.AssetBundles.Config;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Asynchronous;
 
@@ -24,11 +25,13 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             Uri baseUri = new Uri(BundleUtil.GetReadOnlyDirectory());
 #elif UNITY_EDITOR
             DirectoryInfo dir =
- new DirectoryInfo(string.Format("./AssetBundles/{0}/1.0.0/", UnityEditor.EditorUserBuildSettings.activeBuildTarget));
+                new DirectoryInfo($"./AssetBundles/{UnityEditor.EditorUserBuildSettings.activeBuildTarget}/1.0.0/");
 
             if (!dir.Exists)
             {
-                Debug.LogFormat("The '{0}' directory does not exist, please make sure the path is correct and the assetbundle file exists in the directory.", dir.FullName);
+                Debug.LogFormat(
+                    "The '{0}' directory does not exist, please make sure the path is correct and the assetbundle file exists in the directory.",
+                    dir.FullName);
                 return;
             }
 
@@ -75,7 +78,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
                 if (GUILayout.Button("Load an asset"))
                 {
-                    if (!File.Exists(BundleUtil.GetStorableDirectory() + BundleSetting.ManifestFilename))
+                    if (!File.Exists(BundleUtil.GetStorableDirectory() + AssetBundleConfig.ManifestFilename))
                     {
                         Debug.LogFormat("Please download assetbundles first,try again.");
                     }
@@ -84,6 +87,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         this.LoadAsset("LoxodonFramework/BundleExamples/Models/Red/Red.prefab");
                     }
                 }
+
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
             }
@@ -95,7 +99,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             try
             {
                 IProgressResult<Progress, BundleManifest> manifestResult =
- this.downloader.DownloadManifest(BundleSetting.ManifestFilename);
+                    this.downloader.DownloadManifest(AssetBundleConfig.ManifestFilename);
 
                 yield return manifestResult.WaitForDone();
 
@@ -121,7 +125,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 IProgressResult<Progress, bool> downloadResult = this.downloader.DownloadBundles(bundles);
                 downloadResult.Callbackable().OnProgressCallback(p =>
                 {
-                    Debug.LogFormat("Downloading {0:F2}KB/{1:F2}KB {2:F3}KB/S", p.GetCompletedSize(UNIT.KB), p.GetTotalSize(UNIT.KB), p.GetSpeed(UNIT.KB));
+                    Debug.LogFormat("Downloading {0:F2}KB/{1:F2}KB {2:F3}KB/S", p.GetCompletedSize(UNIT.KB),
+                        p.GetTotalSize(UNIT.KB), p.GetSpeed(UNIT.KB));
                 });
 
                 yield return downloadResult.WaitForDone();
@@ -143,7 +148,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #if UNITY_EDITOR
                 UnityEditor.EditorUtility.OpenWithDefaultApp(BundleUtil.GetStorableDirectory());
 #endif
-
             }
             finally
             {
@@ -161,7 +165,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
             /* Loads BundleManifest. */
             BundleManifest manifest =
- manifestLoader.Load(BundleUtil.GetStorableDirectory() + BundleSetting.ManifestFilename);
+                manifestLoader.Load(BundleUtil.GetStorableDirectory() + AssetBundleConfig.ManifestFilename);
 
             //manifest.ActiveVariants = new string[] { "", "sd" };
             //manifest.ActiveVariants = new string[] { "", "hd" };
@@ -192,7 +196,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         throw r.Exception;
 
                     GameObject.Instantiate(r.Result);
-
                 }
                 catch (Exception e)
                 {

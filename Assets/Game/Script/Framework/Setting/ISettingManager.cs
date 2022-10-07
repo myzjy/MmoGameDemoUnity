@@ -16,6 +16,12 @@ namespace ZJYFrameWork.Setting
         /// <returns></returns>
         string GetWebSocketBase();
 
+        /// <summary>
+        /// AssetBundle Url
+        /// </summary>
+        /// <returns></returns>
+        string GetAssetBundleUrl();
+
         HostType GetSelectHostType();
 
     }

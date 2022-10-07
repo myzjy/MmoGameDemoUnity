@@ -16,6 +16,7 @@ namespace ZJYFrameWork.WebRequest
         /// socketUrl
         /// </summary>
         string ApiWebSocketUrl { get; set; }
+        string AssetBundleUrl { get; }
 
         /// <summary>
         /// 当前服务器

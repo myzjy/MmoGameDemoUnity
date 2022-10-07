@@ -1,19 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
-    public class AutoMappingPathInfoParser : IPathInfoParser, IManifestUpdatable
+    public sealed class AutoMappingPathInfoParser : IPathInfoParser, IManifestUpdatable
     {
         private BundleManifest bundleManifest;
         private Dictionary<string, string> dict = new Dictionary<string, string>();
-
+        public AutoMappingPathInfoParser()
+        {
+        }
         public AutoMappingPathInfoParser(BundleManifest manifest)
         {
             this.BundleManifest = manifest;
         }
 
-        public virtual BundleManifest BundleManifest
+        public BundleManifest BundleManifest
         {
             get { return this.bundleManifest; }
             set
@@ -26,7 +29,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual void Initialize()
+        public void Initialize()
         {
             if (this.dict != null)
                 this.dict.Clear();
@@ -51,7 +54,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        public virtual AssetPathInfo Parse(string path)
+        public AssetPathInfo Parse(string path)
         {
             string bundleName;
             if (!this.dict.TryGetValue(path.ToLower(), out bundleName))

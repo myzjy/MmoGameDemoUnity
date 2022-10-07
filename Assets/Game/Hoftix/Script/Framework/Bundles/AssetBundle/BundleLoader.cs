@@ -3,11 +3,12 @@ using UnityEngine;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
 using System;
+
 //using Loxodon.Log;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
-    public abstract class BundleLoader:IDisposable
+    public abstract class BundleLoader : IDisposable
     {
         private BundleInfo bundleInfo;
 
@@ -19,6 +20,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         private ProgressResult<float, AssetBundle> loadResult;
         private ITaskExecutor executor;
         private BundleManager manager;
+
+        public BundleLoader()
+        {
+        }
 
         public BundleLoader(System.Uri uri, BundleInfo bundleInfo, BundleManager manager)
         {
@@ -32,11 +37,20 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.executor = this.manager.Executor;
         }
 
-        public virtual string Name { get { return this.bundleInfo.Name; } }
+        public virtual string Name
+        {
+            get { return this.bundleInfo.Name; }
+        }
 
-        public virtual BundleInfo BundleInfo { get { return this.bundleInfo; } }
+        public virtual BundleInfo BundleInfo
+        {
+            get { return this.bundleInfo; }
+        }
 
-        public virtual int RefCount { get { return this.refCount; } }
+        public virtual int RefCount
+        {
+            get { return this.refCount; }
+        }
 
         public virtual int Priority
         {
@@ -50,9 +64,15 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual System.Uri Uri { get { return this.uri; } }
+        protected virtual System.Uri Uri
+        {
+            get { return this.uri; }
+        }
 
-        protected virtual BundleManager BundleManager { get { return this.manager; } }
+        protected virtual BundleManager BundleManager
+        {
+            get { return this.manager; }
+        }
 
         protected virtual string GetAbsoluteUri()
         {
@@ -81,14 +101,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             this.Retain();
             InterceptableEnumerator enumerator = new InterceptableEnumerator(task);
-            enumerator.RegisterCatchBlock(e =>
-            {
-                promise.SetException(e);
-            });
-            enumerator.RegisterFinallyBlock(() =>
-            {
-                this.Release();
-            });
+            enumerator.RegisterCatchBlock(e => { promise.SetException(e); });
+            enumerator.RegisterFinallyBlock(() => { this.Release(); });
             return enumerator;
         }
 
@@ -121,7 +135,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (this.loadResult == null || this.loadResult.Exception != null)
             {
                 this.loadResult = new ProgressResult<float, AssetBundle>();
-                LoadingTask<float, AssetBundle> task = new LoadingTask<float, AssetBundle>(loadResult, Wrap(DoLoadAssetBundle(loadResult), loadResult), this);
+                LoadingTask<float, AssetBundle> task = new LoadingTask<float, AssetBundle>(loadResult,
+                    Wrap(DoLoadAssetBundle(loadResult), loadResult), this);
                 this.executor.Execute(task);
                 this.loadResult.Callbackable().OnCallback(r =>
                 {
@@ -136,6 +151,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         protected abstract IEnumerator DoLoadAssetBundle(IProgressPromise<float, AssetBundle> promise);
 
         #region IDisposable Support
+
         private bool disposed = false;
 
         protected virtual void Dispose(bool disposing)
@@ -162,10 +178,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             Dispose(true);
         }
+
         #endregion
     }
 
     #region LoadingTask Support
+
     class LoadingTask<TProgress, TResult> : ITask
     {
         private long startTime = 0L;
@@ -181,11 +199,20 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.startTime = System.DateTime.Now.Ticks / 10000;
         }
 
-        public bool IsDone { get { return this.result.IsDone; } }
+        public bool IsDone
+        {
+            get { return this.result.IsDone; }
+        }
 
-        public int Priority { get { return this.loader.Priority; } }
+        public int Priority
+        {
+            get { return this.loader.Priority; }
+        }
 
-        public long StartTime { get { return this.startTime; } }
+        public long StartTime
+        {
+            get { return this.startTime; }
+        }
 
         public virtual IEnumerator GetRoutin()
         {
@@ -193,6 +220,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         }
 
         #region IDisposable Support
+
         private bool disposed = false;
 
         protected virtual void Dispose(bool disposing)
@@ -210,7 +238,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             Dispose(true);
         }
+
         #endregion
     }
+
     #endregion
 }

@@ -17,7 +17,7 @@ using Ionic.Zip;
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
 #pragma warning disable 0414, 0219
-    public class BundleManifestLoader : IBundleManifestLoader
+    public sealed class BundleManifestLoader : IBundleManifestLoader
     {
 
 #if UNITY_ANDROID  && !UNITY_EDITOR
@@ -32,7 +32,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return url.Substring(url.LastIndexOf("!") + 2);
         }
 #endif
-        public virtual BundleManifest Load(string path)
+        public BundleManifest Load(string path)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (Regex.IsMatch(path, @"(jar:file:///)|(\.jar)|(\.apk)|(\.obb)|(\.zip)", RegexOptions.IgnoreCase))
@@ -64,14 +64,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 #endif
         }
 
-        public virtual IAsyncResult<BundleManifest> LoadAsync(string path)
+        public IAsyncResult<BundleManifest> LoadAsync(string path)
         {
             AsyncResult<BundleManifest> result = new AsyncResult<BundleManifest>();
             Executors.RunOnCoroutine(DoLoadAsync(result, path), result);
             return result;
         }
 
-        protected virtual IEnumerator DoLoadAsync(IPromise<BundleManifest> promise, string path)
+        private IEnumerator DoLoadAsync(IPromise<BundleManifest> promise, string path)
         {
             string absoluteUri = "";
             try

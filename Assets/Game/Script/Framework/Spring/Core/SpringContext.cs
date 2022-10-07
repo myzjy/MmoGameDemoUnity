@@ -155,13 +155,12 @@ namespace ZJYFrameWork.Spring.Core
             {
                 var type = pair.Key;
                 var bean = pair.Value;
-                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(type, typeof(PostConstruct));
+                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(type, typeof(PostConstructAttribute));
                 foreach (var method in methods)
                 {
                     method.Invoke(bean, null);
                 }
             }
-
             // 调用被AfterPostConstruct注解标注的方法
             foreach (var pair in beanMap)
             {

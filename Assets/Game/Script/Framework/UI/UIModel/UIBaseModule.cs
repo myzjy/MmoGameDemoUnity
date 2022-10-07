@@ -87,17 +87,17 @@ namespace ZJYFrameWork.UISerializable
 
         private bool isResuse = false;
 
-        protected IEnumerator InstanceOrReuse(Action action = null)
+        protected void InstanceOrReuse(Action action = null)
         {
             if (isResuse)
             {
-                if (InstanceID == 0) yield break;
+                if (InstanceID == 0) return;
                 //从
                 ReUse();
             }
             else
             {
-                yield return InstancePrefab();
+                InstancePrefab();
                 isResuse = true;
             }
         }
@@ -139,10 +139,10 @@ namespace ZJYFrameWork.UISerializable
             return go;
         }
 
-        private IEnumerator InstancePrefab()
+        private void InstancePrefab()
         {
             var start = DateTime.Now;
-            yield break;
+           
             // var loader = AssetBundleManager.Instance.LoadAssetBundleAsync(PrefabName());
             // var loader = AssetBundleManager.Instance.LoadAssetAsync(PrefabName(), typeof(GameObject));
             // IAddressableLoadAssetSystem _addressable = CommonManager.Instance.GetSystem<IAddressableLoadAssetSystem>();

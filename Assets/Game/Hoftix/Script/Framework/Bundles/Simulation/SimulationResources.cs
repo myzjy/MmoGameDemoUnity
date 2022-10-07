@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
+using ZJYFrameWork.Spring.Core;
 #if UNITY_2018_3_OR_NEWER
 using UnityEditor.SceneManagement;
 #endif
@@ -13,9 +14,13 @@ namespace ZJYFrameWork.AssetBundles.Bundles
     {
         protected const string ASSETS = "Assets/";
 
-        public SimulationResources() : this(new SimulationAutoMappingPathInfoParser(), new SimulationBundleManager())
+        public SimulationResources() : base()
         {
+            
         }
+        // public SimulationResources() : this(new SimulationAutoMappingPathInfoParser(), new SimulationBundleManager())
+        // {
+        // }
 
         public SimulationResources(IPathInfoParser pathInfoParser) : base(pathInfoParser, new SimulationBundleManager(), false)
         {
@@ -31,11 +36,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (pathInfo == null)
             {
                 promise.Progress = 0f;
-                promise.SetException(string.Format("Parses the path info '{0}' failure.", path));
+                promise.SetException($"Parses the path info '{path}' failure.");
                 yield break;
             }
 
-            var name = string.Format("{0}{1}", ASSETS, pathInfo.AssetName);
+            var name = $"{ASSETS}{pathInfo.AssetName}";
 #if UNITY_2018_3_OR_NEWER
             AsyncOperation operation = EditorSceneManager.LoadSceneAsyncInPlayMode(name, new LoadSceneParameters(mode));
 #else
@@ -43,7 +48,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 #endif
             if (operation == null)
             {
-                promise.SetException(string.Format("Not found the scene '{0}'.", path));
+                promise.SetException($"Not found the scene '{path}'.");
                 yield break;
             }
 
@@ -71,7 +76,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             Scene scene = SceneManager.GetSceneByName(Path.GetFileNameWithoutExtension(pathInfo.AssetName));
             if (!scene.IsValid())
             {
-                promise.SetException(string.Format("Not found the scene '{0}'.", path));
+                promise.SetException($"Not found the scene '{path}'.");
                 yield break;
             }
 

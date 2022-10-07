@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using Common.Utility;
-using Framework.AssetBundles.Config;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace Framework.AssetBundles.Utilty

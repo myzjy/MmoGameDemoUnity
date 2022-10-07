@@ -7,6 +7,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
     {
         private Uri baseUri;
 
+        public AbstractLoaderBuilder()
+        {
+            
+        }
         public AbstractLoaderBuilder(Uri baseUri)
         {
             this.BaseUri = baseUri;

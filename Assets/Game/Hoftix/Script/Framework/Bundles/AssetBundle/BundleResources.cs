@@ -8,6 +8,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 {
     public class BundleResources : AbstractResources, IManifestUpdatable
     {
+        public BundleResources()
+        {
+            
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -34,8 +38,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             get
             {
-                var manifestUpdatable = bundleManager as IManifestUpdatable;
-                if (manifestUpdatable != null)
+                if (bundleManager is IManifestUpdatable manifestUpdatable)
                     return manifestUpdatable.BundleManifest;
 
                 manifestUpdatable = pathInfoParser as IManifestUpdatable;
@@ -47,8 +50,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
             set
             {
-                var manifestUpdatable = bundleManager as IManifestUpdatable;
-                if (manifestUpdatable != null)
+                if (bundleManager is IManifestUpdatable manifestUpdatable)
                     manifestUpdatable.BundleManifest = value;
 
                 manifestUpdatable = pathInfoParser as IManifestUpdatable;
@@ -63,7 +65,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (pathInfo == null)
             {
                 promise.Progress = 1f;
-                promise.SetException(string.Format("Parses the path info '{0}' failure.", path));
+                promise.SetException($"Parses the path info '{path}' failure.");
                 yield break;
             }
 

@@ -19,7 +19,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         protected IBundleManager bundleManager;
         protected bool useWeakCache;
 
-        public AbstractResources(IPathInfoParser pathInfoParser, IBundleManager manager, bool useWeakCache)
+        protected AbstractResources()
+        {
+        }
+
+        protected AbstractResources(IPathInfoParser pathInfoParser, IBundleManager manager, bool useWeakCache)
         {
             this.pathInfoParser = pathInfoParser;
             this.bundleManager = manager;
@@ -78,10 +82,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             get { return this.bundleManager; }
         }
 
-        public virtual IPathInfoParser PathInfoParser
-        {
-            get { return this.pathInfoParser; }
-        }
+        public virtual IPathInfoParser PathInfoParser => this.pathInfoParser;
 
         #region IBundleManager Support
 
@@ -113,6 +114,13 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         #endregion
 
         #region IResource Support
+
+        public void SetIPathAndBundleResource(IPathInfoParser pathInfo, IBundleManager manager)
+        {
+            this.pathInfoParser = pathInfo;
+            this.bundleManager = manager;
+            useWeakCache = true;
+        }
 
         public virtual byte[] LoadData(string path)
         {
@@ -568,7 +576,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
                 if (pathInfo == null || pathInfo.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{}' failure.", path);
+                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{}' failure.",
+                        path);
                     continue;
                 }
 
@@ -709,7 +718,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
                 if (pathInfo == null || pathInfo.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.", path);
+                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.",
+                        path);
                     continue;
                 }
 
@@ -853,7 +863,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
                 if (pathInfo == null || pathInfo.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.", path);
+                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.",
+                        path);
                     continue;
                 }
 

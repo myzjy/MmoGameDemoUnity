@@ -6,5 +6,11 @@
         {
             return new AssetPathInfo("", path);
         }
+
+        public BundleManifest BundleManifest { get; set; }
+        public void Initialize()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

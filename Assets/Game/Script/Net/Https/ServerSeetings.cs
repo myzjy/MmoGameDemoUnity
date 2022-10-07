@@ -21,8 +21,14 @@ namespace ZJYFrameWork.WebRequest
 #pragma warning restore CS0649
 
         // ReSharper disable once ConvertToAutoProperty
+        public string AssetBundleUrl
+        {
+            get => mAssetBundle;
+        }
+
+        private string mAssetBundle;
         public HostType Host => _hostType;
-        
+
         public void SetHost(HostType type)
         {
             _hostType = type;
@@ -33,6 +39,7 @@ namespace ZJYFrameWork.WebRequest
                 case HostType.Test:
                     ApiHttpsBaseUrl = "http://192.168.0.105:5000";
                     ApiWebSocketUrl = "ws://192.168.0.105:5000/websocket";
+                    mAssetBundle = "http://192.168.0.105:5000/assetbundle/android";
                     break;
                 case HostType.Online:
                     break;

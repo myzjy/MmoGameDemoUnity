@@ -18,6 +18,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         protected ILoaderBuilder loaderBuilder;
         protected ITaskExecutor executor;
 
+        public BundleManager()
+        {
+            
+        }
         public BundleManager(BundleManifest manifest, ILoaderBuilder builder) : this(manifest, builder, null, 100)
         {
         }

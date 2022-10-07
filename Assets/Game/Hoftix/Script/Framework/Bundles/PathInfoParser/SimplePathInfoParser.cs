@@ -18,6 +18,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
     public class SimplePathInfoParser : IPathInfoParser
     {
         private string[] separators;
+        private IPathInfoParser _pathInfoParserImplementation;
 
         public SimplePathInfoParser(string separator) : this(new string[] { separator })
         {
@@ -30,7 +31,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         protected virtual string BundleNameNormalize(string bundleName)
         {
-            int index = bundleName.IndexOf(".");
+            int index = bundleName.IndexOf(".", StringComparison.Ordinal);
             if (index < 0)
                 return bundleName.ToLower();
             return bundleName.Substring(0, index).ToLower();
@@ -50,6 +51,17 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             var bundleName = BundleNameNormalize(texts[0]);
             var assetName = texts[1];
             return new AssetPathInfo(bundleName, assetName);
+        }
+
+        public BundleManifest BundleManifest
+        {
+            get => _pathInfoParserImplementation.BundleManifest;
+            set => _pathInfoParserImplementation.BundleManifest = value;
+        }
+
+        public void Initialize()
+        {
+            throw new NotImplementedException();
         }
     }
 }

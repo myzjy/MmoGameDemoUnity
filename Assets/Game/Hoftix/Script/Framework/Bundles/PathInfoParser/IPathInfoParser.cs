@@ -8,5 +8,8 @@
         /// <param name="path"></param>
         /// <returns></returns>
         AssetPathInfo Parse(string path);
+
+        BundleManifest BundleManifest { get; set; }
+        void Initialize();
     }
 }

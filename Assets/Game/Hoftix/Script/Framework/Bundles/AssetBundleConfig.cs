@@ -1,15 +1,9 @@
-﻿using System.IO;
-using Common.Utility;
-using UnityEditor;
-using  UnityEngine;
+﻿using UnityEditor;
 
 namespace Framework.AssetBundles.Config
 {
     public static class AssetBundleConfig
     {
-   
-        public const string AssetBundlesFolderName = "AssetBundles";
-
         //后缀名
         public const string AssetBundleSuffix = ".assetbundle";
         private static int mIsEditorMode = -1;
@@ -18,28 +12,12 @@ namespace Framework.AssetBundles.Config
         private const string kIsEditorModeLog = "IsEditorModeLog";
         private static int mIsSimulateMode = -1;
         private const string kIsSimulateMode = "IsSimulateMode";
-        public const string CustomManifestPrefix = "custom_manifest/";
-        public const string CustomManifestSuffix = "custom_manifest";
+        public const string BundleRoot = "AssetBundles";
+        public const string ManifestFilename = "manifest.dat";
         
 #if UNITY_EDITOR
                 
-        public static string LocalSvrAppWorkPath
-        {
-            get
-            {
-                return AssetBundlesBuildOutputPath;
-            }
-        }
-        
-        public static string AssetBundlesBuildOutputPath
-        {
-            get
-            {
-                string outputPath = Path.Combine(System.Environment.CurrentDirectory, AssetBundlesFolderName);
-                GameUtility.CheckDirAndCreateWhenNeeded(outputPath);
-                return outputPath;
-            }
-        }
+   
         public static bool IsEditorLogMode
         {
             get

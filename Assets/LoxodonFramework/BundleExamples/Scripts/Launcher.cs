@@ -56,7 +56,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
                 /* Loads BundleManifest. */
                 BundleManifest manifest =
-                    manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + BundleSetting.ManifestFilename);
+                    manifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + AssetBundleConfig.ManifestFilename);
 
                 //manifest.ActiveVariants = new string[] { "", "sd" };
                 manifest.ActiveVariants = new string[] { "", "hd" };

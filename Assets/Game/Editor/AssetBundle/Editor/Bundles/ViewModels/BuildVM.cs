@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using UnityEngine.Serialization;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Attributes;
 using ZJYFrameWork.Bundles.Editors;
@@ -22,14 +23,39 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         [SerializeField] private CompressOptions compression;
         [SerializeField] private string outputPath = DEFAULT_OUTPUT;
         [SerializeField] private bool usePlayerSettingVersion;
-        [SerializeField] private string dataVersion;
+
+        /// <summary>
+        /// app版本号
+        /// </summary>
+        [SerializeField] private string appDataVersion;
+
+        /// <summary>
+        /// 资源版本号
+        /// </summary>
+        [SerializeField] private string resDataVersion;
+
+        /// <summary>
+        /// 客户端脚本版本号
+        /// </summary>
+        [SerializeField] private string silenceDataVersion;
+
         [SerializeField] private BuildAssetBundleOptions buildAssetBundleOptions;
         [SerializeField] private bool copyToStreaming;
         [SerializeField] private bool useHashFilename;
         [SerializeField] private bool encryption;
+
+        /// <summary>
+        /// 加密格式
+        /// </summary>
         [SerializeField] private Algorithm algorithm = Algorithm.AES128_CBC_PKCS7;
+
+        #region 秘钥
+
         [SerializeField] private string iv;
         [SerializeField] private string key;
+
+        #endregion
+
         [SerializeField] private EncryptionFilterType filterType;
         [SerializeField] private string filterExpression;
         [SerializeField] private string bundleNames;
@@ -39,7 +65,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public BuildVM()
         {
-            this.dataVersion = "1.0.0";
+            // this.appDataVersion = "1000001";
             this.copyToStreaming = true;
             this.useHashFilename = true;
             this.encryption = false;
@@ -88,14 +114,14 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             }
         }
 
-        public string DataVersion
+        public string AppDataVersion
         {
             get
             {
                 if (this.usePlayerSettingVersion)
                     return PlayerSettings.bundleVersion;
 
-                return this.dataVersion;
+                return this.appDataVersion;
             }
             set
             {
@@ -109,7 +135,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     return;
                 }
 
-                if (this.Set<string>(ref this.dataVersion, value, () => DataVersion))
+                if (this.Set<string>(ref this.appDataVersion, value, () => AppDataVersion))
                     this.Save();
             }
         }
@@ -254,6 +280,9 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             }
         }
 
+        /// <summary>
+        /// 用json保存
+        /// </summary>
         protected virtual void Save()
         {
             try
@@ -277,7 +306,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
         public virtual bool VersionExists()
         {
             BundleBuilder builder = new BundleBuilder();
-            string versionOutput = builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.DataVersion);
+            string versionOutput = builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.AppDataVersion);
             return Directory.Exists(versionOutput);
         }
 
@@ -296,7 +325,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            BuildAssetBundleOptions options = BuildAssetBundleOptions.DeterministicAssetBundle;
+            var options = BuildAssetBundleOptions.DeterministicAssetBundle;
             switch (this.Compression)
             {
                 case CompressOptions.Uncompressed:
@@ -305,6 +334,10 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 case CompressOptions.ChunkBasedCompression:
                     options |= BuildAssetBundleOptions.ChunkBasedCompression;
                     break;
+                case CompressOptions.StandardCompression:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (forceRebuild)
@@ -314,7 +347,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
             List<IBundleModifier> bundleModifierChain = this.CreateBundleModifierChain();
             BundleBuilder builder = new BundleBuilder();
-            builder.Build(path, this.BuildTarget, options, this.DataVersion, bundleModifierChain);
+            builder.Build(path, this.BuildTarget, options, this.AppDataVersion, bundleModifierChain);
 
 #if UNITY_5_6_OR_NEWER
             if ((options & BuildAssetBundleOptions.DryRunBuild) > 0)
@@ -354,18 +387,18 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 switch (this.FilterType)
                 {
                     case EncryptionFilterType.All:
-                        filter = bundle => { return true; };
+                        filter = bundle => true;
                         break;
                     case EncryptionFilterType.RegularExpression:
-                        filter = bundle => { return Regex.IsMatch(bundle.FullName, this.filterExpression); };
+                        filter = bundle => Regex.IsMatch(bundle.FullName, this.filterExpression);
                         break;
                     case EncryptionFilterType.BundleNameList:
-                        string[] bundles = Regex.Split(this.bundleNames, @"(\s)", RegexOptions.IgnorePatternWhitespace);
-                        filter = bundle => { return Array.IndexOf(bundles, bundle.FullName) >= 0; };
+                        var bundles = Regex.Split(this.bundleNames, @"(\s)", RegexOptions.IgnorePatternWhitespace);
+                        filter = bundle => Array.IndexOf(bundles, bundle.FullName) >= 0;
                         break;
                 }
 
-                IStreamEncryptor encryptor = this.GetEncryptor();
+                var encryptor = this.GetEncryptor();
                 bundleModifierChain.Add(new CryptographBundleModifier(encryptor, filter));
             }
 
@@ -411,7 +444,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 BundleBuilder builder = new BundleBuilder();
 
                 DirectoryInfo src =
-                    new DirectoryInfo(builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.DataVersion));
+                    new DirectoryInfo(builder.GetVersionOutput(this.OutputPath, this.BuildTarget, this.AppDataVersion));
                 DirectoryInfo dest = new DirectoryInfo(BundleUtil.GetReadOnlyDirectory());
 
                 if (dest.Exists)

@@ -545,9 +545,9 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLDecompressionFallback: 0
   scriptingDefineSymbols:
-    1: API_6
-    4: API_6
-    7: API_6
+    1: ASSET_BUNDLE_DEVELOP_EDITOR
+    4: ASSET_BUNDLE_DEVELOP_EDITOR
+    7: ASSET_BUNDLE_DEVELOP_EDITOR
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

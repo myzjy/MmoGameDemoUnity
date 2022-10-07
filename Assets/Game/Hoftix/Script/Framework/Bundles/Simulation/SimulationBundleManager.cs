@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using ZJYFrameWork.Asynchronous;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
-    public class SimulationBundleManager : IBundleManager
+    public sealed class SimulationBundleManager : IBundleManager
     {
         private Dictionary<string, SimulationBundle> bundles;
         private List<string> bundleNames;
@@ -16,7 +17,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.bundleNames = AssetDatabaseHelper.GetUsedAssetBundleNames();
         }
 
-        public virtual void AddBundle(SimulationBundle bundle)
+        public void AddBundle(SimulationBundle bundle)
         {
             if (this.bundles == null)
                 return;
@@ -24,7 +25,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.bundles.Add(bundle.Name, bundle);
         }
 
-        public virtual void RemoveBundle(SimulationBundle bundle)
+        public void RemoveBundle(SimulationBundle bundle)
         {
             if (this.bundles == null)
                 return;
@@ -32,25 +33,24 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             this.bundles.Remove(bundle.Name);
         }
 
-        protected virtual SimulationBundle GetOrCreateBundle(string bundleName)
+        private SimulationBundle GetOrCreateBundle(string bundleName)
         {
             var bundleNameWhitoutExtension = Path.GetFilePathWithoutExtension(bundleName).ToLower();
             var extension = Path.GetExtension(bundleName).ToLower();
             var bundleNameWhitExtension = string.IsNullOrEmpty(extension)
                 ? bundleNameWhitoutExtension
-                : string.Format("{0}.{1}", bundleNameWhitoutExtension, extension);
+                : $"{bundleNameWhitoutExtension}.{extension}";
 
             if (bundleNames.IndexOf(bundleNameWhitExtension) < 0)
-                throw new Exception(string.Format("Not found the AssetBundle '{0}'.", bundleNameWhitExtension));
+                throw new Exception($"Not found the AssetBundle '{bundleNameWhitExtension}'.");
 
-            SimulationBundle bundle;
-            if (this.bundles.TryGetValue(bundleNameWhitoutExtension, out bundle))
+            if (this.bundles.TryGetValue(bundleNameWhitoutExtension, out var bundle))
                 return bundle;
 
             return new SimulationBundle(bundleNameWhitoutExtension, extension, this);
         }
 
-        public virtual IBundle GetBundle(string bundleName)
+        public IBundle GetBundle(string bundleName)
         {
             if (this.bundles == null)
                 return null;
@@ -61,12 +61,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return null;
         }
 
-        public virtual IProgressResult<float, IBundle> LoadBundle(string bundleName)
+        public IProgressResult<float, IBundle> LoadBundle(string bundleName)
         {
             return this.LoadBundle(bundleName, 0);
         }
 
-        public virtual IProgressResult<float, IBundle> LoadBundle(string bundleName, int priority)
+        public IProgressResult<float, IBundle> LoadBundle(string bundleName, int priority)
         {
             try
             {
@@ -82,12 +82,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        public virtual IProgressResult<float, IBundle[]> LoadBundle(params string[] bundleNames)
+        public IProgressResult<float, IBundle[]> LoadBundle(params string[] bundleNames)
         {
             return this.LoadBundle(bundleNames, 0);
         }
 
-        public virtual IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority)
+        public IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority)
         {
             try
             {

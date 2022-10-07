@@ -108,12 +108,12 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             GUILayout.BeginHorizontal();
             if (this.buildVM.UsePlayerSettingVersion)
             {
-                EditorGUILayout.LabelField(this.dataVersionContent, new GUIContent(buildVM.DataVersion),
+                EditorGUILayout.LabelField(this.dataVersionContent, new GUIContent(buildVM.AppDataVersion),
                     GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
             }
             else
             {
-                buildVM.DataVersion = EditorGUILayout.TextField(this.dataVersionContent, buildVM.DataVersion,
+                buildVM.AppDataVersion = EditorGUILayout.TextField(this.dataVersionContent, buildVM.AppDataVersion,
                     GUILayout.MinWidth(230f), GUILayout.MaxWidth(250f), GUILayout.Height(20));
             }
 
@@ -256,7 +256,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 #if UNITY_2018_1_OR_NEWER && !NETFX_CORE && !UNITY_WSA && !UNITY_WSA_10_0
                     Color oldColor = GUI.color;
                     GUI.color = Color.red;
-                        EditorGUILayout.LabelField("推荐(AES128_CTR_NONE) 支持字节流，有更好的性能");
+                    EditorGUILayout.LabelField("推荐(AES128_CTR_NONE) 支持字节流，有更好的性能");
                     GUI.color = oldColor;
 #endif
                     GUILayout.EndHorizontal();

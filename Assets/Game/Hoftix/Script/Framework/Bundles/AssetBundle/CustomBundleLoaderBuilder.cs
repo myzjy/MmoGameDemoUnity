@@ -1,16 +1,21 @@
-﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
-using System;
+﻿using System;
 
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Security.Cryptography;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundle
 {
-    public class CustomBundleLoaderBuilder : AbstractLoaderBuilder
+    [Bean]
+    public  class CustomBundleLoaderBuilder : AbstractLoaderBuilder
     {
         private bool useCache;
         private IStreamDecryptor decryptor;
 
+        public CustomBundleLoaderBuilder()
+        {
+            
+        }
         public CustomBundleLoaderBuilder(Uri baseUri, bool useCache) : this(baseUri, useCache, null)
         {
         }
@@ -76,4 +81,3 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         }
     }
 }
-#endif

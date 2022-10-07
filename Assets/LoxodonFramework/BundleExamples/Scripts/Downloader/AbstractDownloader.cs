@@ -19,7 +19,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         private Uri baseUri;
         private int maxTaskCount;
 
-        public AbstractDownloader() : this(null, SystemInfo.processorCount * 2)
+        public AbstractDownloader()
         {
         }
 
@@ -31,11 +31,11 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
         public virtual Uri BaseUri
         {
-            get { return this.baseUri; }
+            get => this.baseUri;
             set
             {
                 if (value == null || !this.IsAllowedAbsoluteUri(value))
-                    throw new NotSupportedException(string.Format("Invalid uri:{0}", value == null ? "null" : value.OriginalString));
+                    throw new NotSupportedException($"Invalid uri:{(value == null ? "null" : value.OriginalString)}");
 
                 this.baseUri = value;
             }
@@ -43,8 +43,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
         public virtual int MaxTaskCount
         {
-            get { return this.maxTaskCount; }
-            set { this.maxTaskCount = Mathf.Max(value > 0 ? value : SystemInfo.processorCount * 2, 1); }
+            get => this.maxTaskCount;
+            set => this.maxTaskCount = Mathf.Max(value > 0 ? value : SystemInfo.processorCount * 2, 1);
         }
 
         protected virtual bool IsAllowedAbsoluteUri(Uri uri)
@@ -55,10 +55,11 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             if ("http".Equals(uri.Scheme) || "https".Equals(uri.Scheme) || "ftp".Equals(uri.Scheme))
                 return true;
 
-            if (RuntimePlatform.Android.Equals(Application.platform) && uri.Scheme.Equals("jar", StringComparison.OrdinalIgnoreCase))
+            if (RuntimePlatform.Android.Equals(Application.platform) &&
+                uri.Scheme.Equals("jar", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if ("file".Equals(uri.Scheme) && uri.OriginalString.IndexOf("jar:") < 0)
+            if ("file".Equals(uri.Scheme) && uri.OriginalString.IndexOf("jar:", StringComparison.Ordinal) < 0)
                 return true;
 
             return false;
@@ -93,7 +94,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             return result;
         }
 
-        protected virtual IEnumerator DoDownloadManifest(string relativePath, IProgressPromise<Progress, BundleManifest> promise)
+        protected virtual IEnumerator DoDownloadManifest(string relativePath,
+            IProgressPromise<Progress, BundleManifest> promise)
         {
             Progress progress = new Progress();
             promise.UpdateProgress(progress);
@@ -118,6 +120,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         progress.CompletedSize = (long)www.downloadedBytes;
                         promise.UpdateProgress(progress);
                     }
+
                     yield return null;
                 }
 
@@ -190,7 +193,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             return result;
         }
 
-        protected virtual IEnumerator DoAnalyzeDownloadList(IProgressPromise<float, List<BundleInfo>> promise, BundleManifest manifest)
+        protected virtual IEnumerator DoAnalyzeDownloadList(IProgressPromise<float, List<BundleInfo>> promise,
+            BundleManifest manifest)
         {
             List<BundleInfo> downloads = new List<BundleInfo>();
             BundleInfo[] bundleInfos = manifest.GetAll();
@@ -205,12 +209,14 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                     yield return null;
                     last = Time.realtimeSinceStartup;
                 }
+
                 promise.UpdateProgress((i + 1) / (float)length);
                 if (BundleUtil.Exists(info))
                     continue;
 
                 downloads.Add(info);
             }
+
             promise.SetResult(downloads);
         }
 
@@ -221,7 +227,15 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             return result;
         }
 
-        protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise, List<BundleInfo> bundles);
+        public IProgressResult<Progress, bool> DownloadBundles(BundleInfo bundles)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
+            List<BundleInfo> bundles);
+        protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
+            BundleInfo bundleInfo);
     }
 }
 #endif

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Framework.AssetBundles.Config;
 using UnityEngine;
 using UnityEditor;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -31,6 +32,7 @@ namespace ZJYFrameWork.Bundles.Editors
                 if (scene.enabled)
                     levels.Add(scene.path);
             }
+
             return levels;
         }
 
@@ -42,9 +44,10 @@ namespace ZJYFrameWork.Bundles.Editors
                 return files;
 
             DirectoryInfo dir = new DirectoryInfo(platformOutput);
-            foreach (FileInfo info in dir.GetFiles(BundleSetting.ManifestFilename, SearchOption.AllDirectories))
+            foreach (FileInfo info in dir.GetFiles(AssetBundleConfig.ManifestFilename, SearchOption.AllDirectories))
             {
-                if (info.FullName.Replace(@"\", "/").EndsWith(string.Format("{0}/{1}", GenOutputPath, BundleSetting.ManifestFilename)))
+                if (info.FullName.Replace(@"\", "/")
+                    .EndsWith(string.Format("{0}/{1}", GenOutputPath, AssetBundleConfig.ManifestFilename)))
                     continue;
 
                 files.Add(info);
@@ -62,7 +65,8 @@ namespace ZJYFrameWork.Bundles.Editors
             return files[0];
         }
 
-        public virtual FileInfo GetPreviousBundleManifestFile(string outputPath, BuildTarget buildTarget, string version)
+        public virtual FileInfo GetPreviousBundleManifestFile(string outputPath, BuildTarget buildTarget,
+            string version)
         {
             List<FileInfo> files = this.FindBundleManifestFiles(outputPath, buildTarget);
             if (files.Count == 0)
@@ -76,6 +80,7 @@ namespace ZJYFrameWork.Bundles.Editors
 
                 return info;
             }
+
             return null;
         }
 
@@ -92,6 +97,7 @@ namespace ZJYFrameWork.Bundles.Editors
                 var json = File.ReadAllText(info.FullName);
                 bundles.Add(BundleManifest.Parse(json));
             }
+
             return bundles;
         }
 
@@ -104,7 +110,8 @@ namespace ZJYFrameWork.Bundles.Editors
             return BundleManifest.Parse(json);
         }
 
-        public virtual BundleManifest GetPreviousBundleManifest(string outputPath, BuildTarget buildTarget, string version)
+        public virtual BundleManifest GetPreviousBundleManifest(string outputPath, BuildTarget buildTarget,
+            string version)
         {
             FileInfo file = this.GetPreviousBundleManifestFile(outputPath, buildTarget, version);
             if (file == null)
@@ -130,30 +137,36 @@ namespace ZJYFrameWork.Bundles.Editors
             return platformOutput + "/" + version;
         }
 
-        public virtual BundleManifest CopyAssetBundleAndManifest(DirectoryInfo src, DirectoryInfo dest, List<IBundleModifier> bundleModifierChain = null, IBundleFilter bundleFilter = null)
+        public virtual BundleManifest CopyAssetBundleAndManifest(DirectoryInfo src, DirectoryInfo dest,
+            List<IBundleModifier> bundleModifierChain = null, IBundleFilter bundleFilter = null)
         {
             if (!src.Exists)
-                throw new DirectoryNotFoundException(string.Format("Not found the directory '{0}'.", src.FullName));
+                throw new DirectoryNotFoundException($"Not found the directory '{src.FullName}'.");
 
             try
             {
-                string json = File.ReadAllText(System.IO.Path.Combine(src.FullName, BundleSetting.ManifestFilename).Replace(@"\", "/"));
+                string json = File.ReadAllText(System.IO.Path.Combine(src.FullName, AssetBundleConfig.ManifestFilename)
+                    .Replace(@"\", "/"));
                 BundleManifest manifest = BundleManifest.Parse(json);
                 manifest = this.CopyAssetBundle(manifest, src, dest, bundleModifierChain, bundleFilter);
                 if (manifest != null)
-                    File.WriteAllText(System.IO.Path.Combine(dest.FullName, BundleSetting.ManifestFilename).Replace(@"\", "/"), manifest.ToJson());
+                    File.WriteAllText(
+                        System.IO.Path.Combine(dest.FullName, AssetBundleConfig.ManifestFilename).Replace(@"\", "/"),
+                        manifest.ToJson());
                 return manifest;
             }
             catch (System.Exception e)
             {
-                throw new System.Exception(string.Format("Copy AssetBundles failure from {0} to {1}.", src.FullName, dest.FullName), e);
+                throw new System.Exception(
+                    $"Copy AssetBundles failure from {src.FullName} to {dest.FullName}.", e);
             }
         }
 
-        public virtual BundleManifest CopyAssetBundle(BundleManifest manifest, DirectoryInfo src, DirectoryInfo dest, List<IBundleModifier> bundleModifierChain = null, IBundleFilter bundleFilter = null)
+        public virtual BundleManifest CopyAssetBundle(BundleManifest manifest, DirectoryInfo src, DirectoryInfo dest,
+            List<IBundleModifier> bundleModifierChain = null, IBundleFilter bundleFilter = null)
         {
             if (!src.Exists)
-                throw new DirectoryNotFoundException(string.Format("Not found the directory '{0}'.", src.FullName));
+                throw new DirectoryNotFoundException($"Not found the directory '{src.FullName}'.");
 
             try
             {
@@ -162,7 +175,8 @@ namespace ZJYFrameWork.Bundles.Editors
                     if (bundleFilter != null && !bundleFilter.IsValid(bundleInfo))
                         continue;
 
-                    FileInfo srcFile = new FileInfo(System.IO.Path.Combine(src.FullName, bundleInfo.Filename).Replace(@"\", "/"));
+                    FileInfo srcFile =
+                        new FileInfo(System.IO.Path.Combine(src.FullName, bundleInfo.Filename).Replace(@"\", "/"));
                     byte[] data = File.ReadAllBytes(srcFile.FullName);
                     BundleData bundleData = new BundleData(bundleInfo, data);
                     if (bundleModifierChain != null && bundleModifierChain.Count > 0)
@@ -173,7 +187,8 @@ namespace ZJYFrameWork.Bundles.Editors
                         }
                     }
 
-                    FileInfo destFile = new FileInfo(System.IO.Path.Combine(dest.FullName, bundleInfo.Filename).Replace(@"\", "/"));
+                    FileInfo destFile = new FileInfo(System.IO.Path.Combine(dest.FullName, bundleInfo.Filename)
+                        .Replace(@"\", "/"));
                     if (destFile.Exists)
                         destFile.Delete();
 
@@ -182,15 +197,18 @@ namespace ZJYFrameWork.Bundles.Editors
 
                     File.WriteAllBytes(destFile.FullName, bundleData.Data);
                 }
+
                 return manifest;
             }
             catch (System.Exception e)
             {
-                throw new System.Exception(string.Format("Copy AssetBundles failure from {0} to {1}.", src.FullName, dest.FullName), e);
+                throw new System.Exception(
+                    string.Format("Copy AssetBundles failure from {0} to {1}.", src.FullName, dest.FullName), e);
             }
         }
 
-        public virtual List<BundleInfo> GetDeltaUpdates(BundleManifest previousVersion, BundleManifest currentVersion, bool compareCRC = false)
+        public virtual List<BundleInfo> GetDeltaUpdates(BundleManifest previousVersion, BundleManifest currentVersion,
+            bool compareCRC = false)
         {
             List<BundleInfo> bundles = new List<BundleInfo>();
 
@@ -207,19 +225,23 @@ namespace ZJYFrameWork.Bundles.Editors
                     continue;
                 }
 
-                if (previous.Hash.Equals(bundle.Hash) && previous.Encoding.Equals(bundle.Encoding) && (!compareCRC || previous.CRC == bundle.CRC))
+                if (previous.Hash.Equals(bundle.Hash) && previous.Encoding.Equals(bundle.Encoding) &&
+                    (!compareCRC || previous.CRC == bundle.CRC))
                     continue;
 
                 bundles.Add(bundle);
             }
+
             return bundles;
         }
 
-        public virtual void Build(string outputPath, BuildTarget buildTarget, BuildAssetBundleOptions options, string version, List<IBundleModifier> bundleModifierChain = null)
+        public virtual void Build(string outputPath, BuildTarget buildTarget, BuildAssetBundleOptions options,
+            string version, List<IBundleModifier> bundleModifierChain = null)
         {
             if (EditorUserBuildSettings.activeBuildTarget != buildTarget)
             {
-                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildPipeline.GetBuildTargetGroup(buildTarget), buildTarget))
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildPipeline.GetBuildTargetGroup(buildTarget),
+                        buildTarget))
                     throw new System.Exception("Switch BuildTarget failure.");
             }
 
@@ -259,17 +281,21 @@ namespace ZJYFrameWork.Bundles.Editors
             {
                 AssetDatabase.StartAssetEditing();
 
-                BundleManifest lastVersionBundleManifest = this.GetPreviousBundleManifest(outputPath, buildTarget, version);
+                BundleManifest lastVersionBundleManifest =
+                    this.GetPreviousBundleManifest(outputPath, buildTarget, version);
                 List<BundleInfo> lastBundles = new List<BundleInfo>();
                 if (lastVersionBundleManifest != null)
                     lastBundles.AddRange(lastVersionBundleManifest.GetAll());
 
                 BundleManifest bundleManifest = this.CreateBundleManifest(genOutput, manifest, version);
 
-                bundleManifest = this.CopyAssetBundle(bundleManifest, new DirectoryInfo(genOutput), new DirectoryInfo(versionOutput), bundleModifierChain);
-                File.WriteAllText(string.Format("{0}/{1}", versionOutput, BundleSetting.ManifestFilename), bundleManifest.ToJson());
+                bundleManifest = this.CopyAssetBundle(bundleManifest, new DirectoryInfo(genOutput),
+                    new DirectoryInfo(versionOutput), bundleModifierChain);
+                File.WriteAllText($"{versionOutput}/{AssetBundleConfig.ManifestFilename}",
+                    bundleManifest.ToJson());
 
-                File.WriteAllText(string.Format("{0}/{1}_{2}.csv", platformOutput, ManifestPrefix, version), this.ToCSV(lastBundles.ToArray(), bundleManifest.GetAll()));
+                File.WriteAllText($"{platformOutput}/{ManifestPrefix}_{version}.csv",
+                    this.ToCSV(lastBundles.ToArray(), bundleManifest.GetAll()));
             }
             finally
             {
@@ -299,7 +325,8 @@ namespace ZJYFrameWork.Bundles.Editors
         /// <param name="version"></param>
         /// <param name="defaultVariant"></param>
         /// <returns></returns>
-        public virtual BundleManifest CreateBundleManifest(string rootFolder, string version, string defaultVariant = null)
+        public virtual BundleManifest CreateBundleManifest(string rootFolder, string version,
+            string defaultVariant = null)
         {
             DirectoryInfo root = new DirectoryInfo(rootFolder);
             if (!root.Exists)
@@ -320,7 +347,8 @@ namespace ZJYFrameWork.Bundles.Editors
         /// <param name="version"></param>
         /// <param name="defaultVariant"></param>
         /// <returns></returns>
-        public virtual BundleManifest CreateBundleManifest(string rootFolder, AssetBundleManifest manifest, string version, string defaultVariant = null)
+        public virtual BundleManifest CreateBundleManifest(string rootFolder, AssetBundleManifest manifest,
+            string version, string defaultVariant = null)
         {
             if (manifest == null)
                 throw new System.ArgumentNullException("manifest");
@@ -361,9 +389,12 @@ namespace ZJYFrameWork.Bundles.Editors
             Hash128 hash = manifest.GetAssetBundleHash(filename);
             string variant = file.Extension.Replace(".", "");
             string[] dependencies = manifest.GetDirectDependencies(filename);
-            string[] assets = AssetDatabase.GetAssetPathsFromAssetBundle(string.IsNullOrEmpty(variant) ? bundleName : string.Format("{0}.{1}", bundleName, variant));
+            string[] assets = AssetDatabase.GetAssetPathsFromAssetBundle(string.IsNullOrEmpty(variant)
+                ? bundleName
+                : string.Format("{0}.{1}", bundleName, variant));
             bool isStreamedScene = ArrayUtility.Find(assets, name => name.EndsWith(".unity")) != null;
-            return new BundleInfo(bundleName, variant, hash, crc, size, filename, true, assets, dependencies, isStreamedScene);
+            return new BundleInfo(bundleName, variant, hash, crc, size, filename, true, assets, dependencies,
+                isStreamedScene);
         }
 
         /// <summary>
@@ -392,6 +423,7 @@ namespace ZJYFrameWork.Bundles.Editors
                 buf.Append("\"").Append(bundle.Published).Append("\"").Append(",");
                 buf.Append("\"").Append(bundle.Filename).Append("\"").Append("\r\n");
             }
+
             return buf.ToString();
         }
 
@@ -492,6 +524,7 @@ namespace ZJYFrameWork.Bundles.Editors
         {
             private BundleInfo bundleInfo1;
             private BundleInfo bundleInfo2;
+
             public BundleInfoPair(BundleInfo bundleInfo1, BundleInfo bundleInfo2)
             {
                 this.bundleInfo1 = bundleInfo1;
@@ -520,7 +553,9 @@ namespace ZJYFrameWork.Bundles.Editors
                     if (this.bundleInfo1 == null && this.bundleInfo2 != null)
                         return BundleState.ADDED;
 
-                    if (this.bundleInfo1.Hash.Equals(this.bundleInfo2.Hash) && this.bundleInfo1.Encoding == this.bundleInfo2.Encoding && this.bundleInfo1.CRC == this.bundleInfo2.CRC)
+                    if (this.bundleInfo1.Hash.Equals(this.bundleInfo2.Hash) &&
+                        this.bundleInfo1.Encoding == this.bundleInfo2.Encoding &&
+                        this.bundleInfo1.CRC == this.bundleInfo2.CRC)
                         return BundleState.UNCHANGED;
 
                     return BundleState.CHANGED;

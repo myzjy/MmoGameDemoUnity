@@ -122,9 +122,6 @@ namespace ZJYFrameWork
         /// <param name="logType">Type of message e.g. warn or error etc.</param>
         /// <param name="logOptions">Option flags to treat the log message special.</param>
         /// <footer><a href="https://docs.unity3d.com/2019.4/Documentation/ScriptReference/30_search.html?q=Debug.LogFormat">`Debug.LogFormat` on docs.unity3d.com</a></footer>
-        [Conditional("ENABLE_LOG")]
-        [Conditional("ENABLE_DEBUG_LOG")]
-        [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void LogFormat(string format, params object[] args) =>
             log.Log(Level.DEBUG, StringUtils.Format(format, args));
 
