@@ -178,7 +178,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             if (name.StartsWith(ASSETS, System.StringComparison.OrdinalIgnoreCase) || name.IndexOf("/") < 0)
                 return name;
-            return string.Format("{0}{1}", ASSETS, name);
+            return $"{ASSETS}{name}";
         }
 
         protected IProgressResult<TProgress, TResult> Execute<TProgress, TResult>(System.Func<IProgressPromise<TProgress, TResult>, IEnumerator> func)
@@ -215,12 +215,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         protected string Key(string name, System.Type type)
         {
-            return string.Format("{0}-{1}", name, type);
+            return $"{name}-{type}";
         }
 
         protected string Key(string name, System.Type type, string flag)
         {
-            return string.Format("{0}-{1}-{2}", name, type, flag);
+            return $"{name}-{type}-{flag}";
         }
 
         public virtual IProgressResult<float, Object> LoadAssetAsync(string name, System.Type type)
@@ -246,8 +246,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         protected virtual IEnumerator DoLoadAssetAsync(IProgressPromise<float, Object> promise, string name, System.Type type)
         {
             string key = Key(name, type);
-            AssetBundleRequest request;
-            if (!this.requestCache.TryGetValue(key, out request))
+            if (!this.requestCache.TryGetValue(key, out var request))
             {
                 var fullName = GetFullName(name);
                 request = this.assetBundle.LoadAssetAsync(fullName, type);

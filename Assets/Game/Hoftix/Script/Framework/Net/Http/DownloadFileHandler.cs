@@ -46,7 +46,7 @@ namespace ZJYFrameWork.Net.Http
             if (this.tmpFileInfo.Exists)
                 tmpFileInfo.Delete();
 
-            if (!tmpFileInfo.Directory.Exists)
+            if (tmpFileInfo.Directory is { Exists: false })
                 tmpFileInfo.Directory.Create();
 
             this.fileStream = tmpFileInfo.Create();

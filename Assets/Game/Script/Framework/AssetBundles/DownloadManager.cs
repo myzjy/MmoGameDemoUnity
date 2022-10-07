@@ -71,6 +71,45 @@ namespace ZJYFrameWork.AssetBundles
         {
             get { return progress.GetSpeed(); }
         }
+        private EventHandler<DownloadStartEventArgs> _mDownloadStartEventHandler;
+        private EventHandler<DownloadUpdateEventArgs> _mDownloadUpdateEventHandler;
+        private EventHandler<DownloadSuccessEventArgs> _mDownloadSuccessEventHandler;
+        private EventHandler<DownloadFailureEventArgs> _mDownloadFailureEventHandler;
+        /// <summary>
+        /// 下载开始事件。
+        /// </summary>
+        public event EventHandler<DownloadStartEventArgs> DownloadStart
+        {
+            add => _mDownloadStartEventHandler += value;
+            remove => _mDownloadStartEventHandler -= value;
+        }
+
+        /// <summary>
+        /// 下载更新事件。
+        /// </summary>
+        public event EventHandler<DownloadUpdateEventArgs> DownloadUpdate
+        {
+            add => _mDownloadUpdateEventHandler += value;
+            remove => _mDownloadUpdateEventHandler -= value;
+        }
+
+        /// <summary>
+        /// 下载成功事件。
+        /// </summary>
+        public event EventHandler<DownloadSuccessEventArgs> DownloadSuccess
+        {
+            add => _mDownloadSuccessEventHandler += value;
+            remove => _mDownloadSuccessEventHandler -= value;
+        }
+
+        /// <summary>
+        /// 下载失败事件。
+        /// </summary>
+        public event EventHandler<DownloadFailureEventArgs> DownloadFailure
+        {
+            add => _mDownloadFailureEventHandler += value;
+            remove => _mDownloadFailureEventHandler -= value;
+        }
 
         /// <summary>
         /// 进度条
@@ -121,27 +160,27 @@ namespace ZJYFrameWork.AssetBundles
 
         public bool RemoveDownload(BundleInfo serialBundleInfo)
         {
-            throw new System.NotImplementedException();
+            return taskPool.RemoveTask(serialBundleInfo);
         }
 
         public void RemoveAllDownloads()
         {
-            throw new System.NotImplementedException();
+            taskPool.RemoveAllTasks();
         }
 
-        [AfterPostConstruct]
+        [PostConstruct]
         public void Init()
         {
-            if (AssetBundleConfig.IsEditorMode)
-            {
-                Debug.Log("编辑器模式");
-#if UNITY_EDITOR
-                Uri baseUri = new Uri(BundleUtil.GetReadOnlyDirectory());
-                Debug.Log($"{baseUri.AbsoluteUri}");
-#endif
-                Downloader.BaseUri = baseUri;
-                Downloader.MaxTaskCount = SystemInfo.processorCount * 2;
-            }
+            // if (AssetBundleConfig.IsEditorMode)
+            // {
+            //     Debug.Log("编辑器模式");
+// #if UNITY_EDITOR
+            Uri baseUri = new Uri(BundleUtil.GetReadOnlyDirectory());
+            Debug.Log($"{baseUri.AbsoluteUri}");
+// #endif
+            Downloader.BaseUri = baseUri;
+            Downloader.MaxTaskCount = SystemInfo.processorCount * 2;
+            // }
         }
     }
 }

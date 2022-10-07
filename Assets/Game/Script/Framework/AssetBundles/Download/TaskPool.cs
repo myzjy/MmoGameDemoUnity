@@ -66,6 +66,33 @@ namespace ZJYFrameWork.AssetBundles.Download
             workingAgents.Clear();
         }
 
+        public bool RemoveTask(BundleInfo taskBundleInfo)
+        {
+            foreach (T task in waitingTasks)
+            {
+                if (task.SerialBundleInfo == taskBundleInfo)
+                {
+                    waitingTasks.Remove(task);
+                    ReferenceCache.Release(task);
+                    return true;
+                }
+            }
+            foreach (T workingAgent in workingAgents)
+            {
+                if (workingAgent.SerialBundleInfo == taskBundleInfo)
+                {
+                    T task = workingAgent;
+                    // workingAgent.Reset();
+                    freeAgents.Push(workingAgent);
+                    workingAgents.Remove(workingAgent);
+                    ReferenceCache.Release(task);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// 增加任务代理。
         /// </summary>

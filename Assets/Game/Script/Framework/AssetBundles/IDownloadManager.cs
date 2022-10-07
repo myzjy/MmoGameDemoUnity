@@ -1,4 +1,6 @@
-﻿using ZJYFrameWork.AssetBundles.Bundles;
+﻿using System;
+using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.AssetBundles.Download;
 
 namespace ZJYFrameWork.AssetBundles
 {
@@ -41,7 +43,25 @@ namespace ZJYFrameWork.AssetBundles
         /// 获取当前下载速度。
         /// </summary>
         float CurrentSpeed { get; }
+        /// <summary>
+        /// 下载开始事件。
+        /// </summary>
+        event EventHandler<DownloadStartEventArgs> DownloadStart;
 
+        /// <summary>
+        /// 下载更新事件。
+        /// </summary>
+        event EventHandler<DownloadUpdateEventArgs> DownloadUpdate;
+
+        /// <summary>
+        /// 下载成功事件。
+        /// </summary>
+        event EventHandler<DownloadSuccessEventArgs> DownloadSuccess;
+
+        /// <summary>
+        /// 下载失败事件。
+        /// </summary>
+        event EventHandler<DownloadFailureEventArgs> DownloadFailure;
         /// <summary>
         /// 增加下载任务。
         /// </summary>
