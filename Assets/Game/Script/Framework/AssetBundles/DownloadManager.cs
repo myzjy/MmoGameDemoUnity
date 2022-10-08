@@ -71,10 +71,12 @@ namespace ZJYFrameWork.AssetBundles
         {
             get { return progress.GetSpeed(); }
         }
+
         private EventHandler<DownloadStartEventArgs> _mDownloadStartEventHandler;
         private EventHandler<DownloadUpdateEventArgs> _mDownloadUpdateEventHandler;
         private EventHandler<DownloadSuccessEventArgs> _mDownloadSuccessEventHandler;
         private EventHandler<DownloadFailureEventArgs> _mDownloadFailureEventHandler;
+
         /// <summary>
         /// 下载开始事件。
         /// </summary>
@@ -153,7 +155,8 @@ namespace ZJYFrameWork.AssetBundles
                 throw new Exception("bundleInfo  is invalid.");
             }
 
-            DownloadTask downloadTask = DownloadTask.Create(bundleInfo, downloadPath: bundleInfo.FullName,
+            DownloadTask downloadTask = DownloadTask.Create(bundleInfo, Downloader.BaseUri,
+                downloadPath: BundleUtil.GetStorableDirectory() + bundleInfo.Filename,
                 DefaultPriority, (int)bundleInfo.FileSize, Timeout, null);
             taskPool.AddTask(downloadTask);
         }

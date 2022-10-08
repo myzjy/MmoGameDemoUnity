@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.AssetBundles.Bundles;
+﻿using System;
+using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Collection.Reference;
 
 namespace ZJYFrameWork.AssetBundles.Download
@@ -23,7 +24,7 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <summary>
         /// 下载路径url
         /// </summary>
-        private string m_DownloadUri;
+        private Uri m_DownloadUri;
 
         /// <summary>
         /// 大小
@@ -75,7 +76,7 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <summary>
         /// 获取原始下载地址。
         /// </summary>
-        public string DownloadUri
+        public Uri DownloadUri
         {
             get { return m_DownloadUri; }
         }
@@ -123,12 +124,13 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <param name="timeout">下载超时时长，以秒为单位。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <returns>创建的下载任务。</returns>
-        public static DownloadTask Create(BundleInfo bundleInfo,string downloadPath, int priority, int flushSize,
+        public static DownloadTask Create(BundleInfo bundleInfo,Uri mUrl,string downloadPath, int priority, int flushSize,
             float timeout, object userData)
         {
             DownloadTask downloadTask = ReferenceCache.Acquire<DownloadTask>();
             downloadTask.Initialize(bundleInfo, priority);
             downloadTask.m_DownloadPath = downloadPath;
+            downloadTask.m_DownloadUri = mUrl;
             downloadTask.m_FlushSize = flushSize;
             downloadTask.m_Timeout = timeout;
             downloadTask.m_UserData = userData;

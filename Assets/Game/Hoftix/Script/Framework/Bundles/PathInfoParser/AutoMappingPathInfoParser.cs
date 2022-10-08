@@ -36,7 +36,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
             if (this.dict == null)
                 this.dict = new Dictionary<string, string>();
-
+            if (this.bundleManifest == null)
+            {
+                return;
+            }
             Regex regex = new Regex("^assets/", RegexOptions.IgnoreCase);
             BundleInfo[] bundleInfos = this.bundleManifest.GetAll();
             foreach (BundleInfo info in bundleInfos)
@@ -45,9 +48,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     continue;
 
                 var assets = info.Assets;
-                for (int i = 0; i < assets.Length; i++)
+                foreach (var t in assets)
                 {
-                    var assetPath = assets[i].ToLower();
+                    var assetPath = t.ToLower();
                     var key = regex.Replace(assetPath, "");
                     dict[key] = info.Name;
                 }
@@ -56,8 +59,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public AssetPathInfo Parse(string path)
         {
-            string bundleName;
-            if (!this.dict.TryGetValue(path.ToLower(), out bundleName))
+            if (!this.dict.TryGetValue(path.ToLower(), out var bundleName))
                 return null;
 
             return new AssetPathInfo(bundleName, path);

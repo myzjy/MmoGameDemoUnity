@@ -59,6 +59,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return false;
         }
 
+
+        public void SetLoaderBuilder(Uri baseUrl)
+        {
+            BaseUri = baseUrl;
+        }
+
         public abstract BundleLoader Create(BundleManager manager, BundleInfo bundleInfo);
     }
 }
