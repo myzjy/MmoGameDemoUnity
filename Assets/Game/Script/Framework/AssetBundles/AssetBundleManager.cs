@@ -87,6 +87,7 @@ namespace ZJYFrameWork.AssetBundles
             //修正bundleManifest
             _pathInfoParser.BundleManifest = BundleManifest;
             _loaderBuilder.SetLoaderBuilder(new Uri(BundleUtil.GetReadOnlyDirectory()));
+            _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
             //设置bundle 当有更新的时候就需要从新设置
             Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
 
@@ -113,6 +114,15 @@ namespace ZJYFrameWork.AssetBundles
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetBundleManifest(BundleManifest bundleManifest)
+        {
+            BundleManifest = bundleManifest;
+            _pathInfoParser.BundleManifest = BundleManifest;
+            _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+            //设置bundle 当有更新的时候就需要从新设置
+            Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
         }
 
         public override void Update(float elapseSeconds, float realElapseSeconds)

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Download;
+using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Spring.Core;
 
@@ -21,6 +23,8 @@ namespace ZJYFrameWork.AssetBundles
         /// 下载接口
         /// </summary>
         [Autowired] private IDownloader Downloader;
+
+        [Autowired] private AssetBundleManager _assetBundleManager;
 
         public int TotalAgentCount
         {
@@ -184,6 +188,64 @@ namespace ZJYFrameWork.AssetBundles
             Downloader.BaseUri = baseUri;
             Downloader.MaxTaskCount = SystemInfo.processorCount * 2;
             // }
+        }
+
+        /// <summary>
+        /// 第一次下载，没有manifest的时候
+        /// </summary>
+        public void StartFirstDownload()
+        {
+            IProgressResult<Progress, BundleManifest> manifestResult =
+                this.Downloader.DownloadManifest(AssetBundleConfig.ManifestFilename);
+            manifestResult.Callbackable().OnProgressCallback(res =>
+            {
+                Debug.Log("下载[{}]文件，当前已下载大小：{}KB,文件所需总下载：{}", AssetBundleConfig.ManifestFilename,
+                    res.GetCompletedSize(UNIT.KB), res.GetTotalSize(UNIT.KB));
+            });
+            manifestResult.Callbackable().OnCallback(p =>
+            {
+                if (p.Result == null)
+                {
+                    Debug.Log("下载manifest出错");
+                    return;
+                }
+
+                _assetBundleManager.SetBundleManifest(p.Result);
+                GetDownBundleLists(p.Result);
+            });
+        }
+
+        /// <summary>
+        /// 最新的所下载资源
+        /// </summary>
+        private List<BundleInfo> newDownBundleInfoList = new List<BundleInfo>();
+
+        /// <summary>
+        /// 获取manifest内部需要下载的
+        /// </summary>
+        /// <param name="manifest"></param>
+        public void GetDownBundleLists(BundleManifest manifest)
+        {
+            IProgressResult<float, List<BundleInfo>> bundlesResult = this.Downloader.GetDownloadList(manifest);
+            bundlesResult.Callbackable().OnCallback(p =>
+            {
+                if (p.Result == null)
+                {
+                    Debug.Log("bundle信息出错");
+                    return;
+                }
+
+                var list = p.Result;
+                if (list.Count <= 0)
+                {
+                    UnityEngine.Debug.Log("没有需要下载资源");
+                    return;
+                }
+
+                newDownBundleInfoList = new List<BundleInfo>();
+                newDownBundleInfoList.AddRange(list);
+                // _assetBundleManager.SetBundleManifest(p.Result);
+            });
         }
     }
 }

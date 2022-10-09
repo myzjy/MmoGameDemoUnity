@@ -21,8 +21,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             get { return this.bundleManifest; }
             set
             {
-                if (this.bundleManifest == value)
-                    return;
+                // if (this.bundleManifest == value)
+                //     return;
 
                 this.bundleManifest = value;
                 this.Initialize();

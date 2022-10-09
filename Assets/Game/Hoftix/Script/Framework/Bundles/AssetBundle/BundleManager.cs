@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
 
@@ -34,7 +34,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             this.BundleManifest = manifest;
             this.loaderBuilder = builder;
-            this.executor = executor != null ? executor : new PriorityTaskExecutor();
+            this.executor = executor ?? new PriorityTaskExecutor();
             this.loaders = new Dictionary<string, BundleLoader>();
             this.bundles = new Dictionary<string, DefaultBundle>();
             if (lruCacheCapacity > 0)
@@ -89,10 +89,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public virtual void RemoveBundleLoader(BundleLoader loader)
         {
-            if (this.loaders == null)
-                return;
-
-            this.loaders.Remove(loader.Name);
+            this.loaders?.Remove(loader.Name);
         }
 
         private BundleLoader GetBundleLoader(string bundleName)
@@ -100,8 +97,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (this.loaders == null)
                 return null;
 
-            BundleLoader loader;
-            if (this.loaders.TryGetValue(bundleName, out loader))
+            if (this.loaders.TryGetValue(bundleName, out var loader))
                 return loader;
             return null;
         }
@@ -133,39 +129,25 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public virtual List<BundleLoader> GetOrCreateDependencies(BundleInfo bundleInfo, bool recursive, int priority)
         {
-            List<BundleLoader> dependencies = new List<BundleLoader>();
             bool useCache = !bundleInfo.IsStreamedScene;
             BundleInfo[] bundleInfos = this.BundleManifest.GetDependencies(bundleInfo.Name, recursive);
 
-            foreach (BundleInfo info in bundleInfos)
-            {
-                BundleLoader loader = GetOrCreateBundleLoader(info, priority, useCache);
-                dependencies.Add(loader);
-            }
-
-            return dependencies;
+            return bundleInfos.Select(info => GetOrCreateBundleLoader(info, priority, useCache)).ToList();
         }
 
         public virtual void AddBundle(DefaultBundle bundle)
         {
-            if (this.bundles == null)
-                return;
-
-            this.bundles.Add(bundle.Name, bundle);
+            this.bundles?.Add(bundle.Name, bundle);
         }
 
         public virtual void RemoveBundle(DefaultBundle bundle)
         {
-            if (this.bundles == null)
-                return;
-
-            this.bundles.Remove(bundle.Name);
+            this.bundles?.Remove(bundle.Name);
         }
 
         public virtual DefaultBundle GetOrCreateBundle(BundleInfo bundleInfo, int priority)
         {
-            DefaultBundle bundle;
-            if (this.bundles.TryGetValue(bundleInfo.Name, out bundle))
+            if (this.bundles.TryGetValue(bundleInfo.Name, out var bundle))
                 return bundle;
 
             bundle = new DefaultBundle(bundleInfo, this);
@@ -187,8 +169,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (info == null)
                 return null;
 
-            DefaultBundle bundle;
-            if (!this.bundles.TryGetValue(info.Name, out bundle))
+            if (!this.bundles.TryGetValue(info.Name, out var bundle))
                 return null;
 
             return bundle.IsReady ? new InternalBundleWrapper(bundle) : null;
@@ -286,6 +267,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             {
                 return new ImmutableProgressResult<float, IBundle[]>(e, 0f);
             }
+        }
+
+        public void SetManifestAndLoadBuilder(BundleManifest manifest, ILoaderBuilder builder)
+        {
+            this.BundleManifest = manifest;
+            this.loaderBuilder = builder;
         }
 
         public virtual IProgressResult<float, IBundle[]> LoadBundle(BundleInfo[] bundleInfos, int priority)

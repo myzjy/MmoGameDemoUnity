@@ -44,5 +44,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <returns></returns>
         IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority);
 
+        /// <summary>
+        /// 进行设置 manifest和读取器
+        /// </summary>
+        /// <param name="manifest"></param>
+        /// <param name="builder"></param>
+        void SetManifestAndLoadBuilder(BundleManifest manifest, ILoaderBuilder builder);
+
     }
 }

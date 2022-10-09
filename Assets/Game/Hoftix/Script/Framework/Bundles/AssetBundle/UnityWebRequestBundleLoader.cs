@@ -24,7 +24,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         }
     }
 
-    public class UnityWebRequestBundleLoader : BundleLoader
+    public sealed class UnityWebRequestBundleLoader : BundleLoader
     {
         //private static readonly ILog log = LogManager.GetLogger(typeof(UnityWebRequestBundleLoader));
 

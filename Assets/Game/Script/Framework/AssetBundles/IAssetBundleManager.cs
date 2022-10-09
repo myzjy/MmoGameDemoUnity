@@ -79,12 +79,18 @@ namespace ZJYFrameWork.AssetBundles
         /// 加载assetBundle IBundle
         /// </summary>
         /// <param name="assetBundle"></param>
-        void LoadAssetBundle(string assetBundle,LoadAssetCallbacks loadAssetCallbacks);
+        void LoadAssetBundle(string assetBundle, LoadAssetCallbacks loadAssetCallbacks);
 
         /// <summary>
         /// 加载出具体的asset资源
         /// </summary>
         /// <param name="assetBundle"></param>
-        void LoadAsset(string assetBundle,LoadAssetCallbacks loadAssetCallbacks);
+        void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks);
+
+        /// <summary>
+        /// 设置bundleManifest
+        /// </summary>
+        /// <param name="bundleManifest"></param>
+        void SetBundleManifest(BundleManifest bundleManifest);
     }
 }

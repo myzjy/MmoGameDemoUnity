@@ -47,5 +47,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
             return new ImmutableProgressResult<float, IBundle[]>(bundles, 1f);
         }
+
+        public void SetManifestAndLoadBuilder(BundleManifest manifest, ILoaderBuilder builder)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

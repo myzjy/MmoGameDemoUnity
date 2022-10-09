@@ -39,7 +39,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (RuntimePlatform.Android.Equals(Application.platform) && uri.Scheme.Equals("jar", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if ("file".Equals(uri.Scheme) && uri.OriginalString.IndexOf("jar:") < 0)
+            if ("file".Equals(uri.Scheme) && uri.OriginalString.IndexOf("jar:", StringComparison.Ordinal) < 0)
                 return true;
 
             return false;

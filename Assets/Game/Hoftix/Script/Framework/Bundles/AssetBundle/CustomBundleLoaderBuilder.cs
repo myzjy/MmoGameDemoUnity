@@ -65,7 +65,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 if (this.decryptor != null && bundleInfo.Encoding.Equals(decryptor.AlgorithmName))
                     return new CryptographBundleLoader(new Uri(loadBaseUri, bundleInfo.Filename), bundleInfo, manager, decryptor);
 
-                throw new NotSupportedException(string.Format("Not support the encryption algorithm '{0}'.", bundleInfo.Encoding));
+                throw new NotSupportedException($"Not support the encryption algorithm '{bundleInfo.Encoding}'.");
             }
 
 

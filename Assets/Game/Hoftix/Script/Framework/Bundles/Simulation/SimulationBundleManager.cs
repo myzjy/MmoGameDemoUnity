@@ -114,6 +114,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 return new ImmutableProgressResult<float, IBundle[]>(e, 0f);
             }
         }
+
+        public void SetManifestAndLoadBuilder(BundleManifest manifest, ILoaderBuilder builder)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 #endif
