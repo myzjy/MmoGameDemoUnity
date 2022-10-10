@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
@@ -159,8 +160,10 @@ namespace ZJYFrameWork.AssetBundles
                 throw new Exception("bundleInfo  is invalid.");
             }
 
-            DownloadTask downloadTask = DownloadTask.Create(bundleInfo, Downloader.BaseUri,
-                downloadPath: BundleUtil.GetStorableDirectory() + bundleInfo.Filename,
+            Uri url = Downloader.GetAbsoluteUrl(bundleInfo.Filename);
+            var fullname = $"{BundleUtil.GetStorableDirectory()}{bundleInfo.Filename}";
+            DownloadTask downloadTask = DownloadTask.Create(bundleInfo, url,
+                downloadPath: fullname,
                 DefaultPriority, (int)bundleInfo.FileSize, Timeout, null);
             taskPool.AddTask(downloadTask);
         }
@@ -173,6 +176,11 @@ namespace ZJYFrameWork.AssetBundles
         public void RemoveAllDownloads()
         {
             taskPool.RemoveAllTasks();
+        }
+
+        public IEnumerable StartIDownAssetBundle()
+        {
+            throw new NotImplementedException();
         }
 
         [PostConstruct]
@@ -193,7 +201,7 @@ namespace ZJYFrameWork.AssetBundles
         /// <summary>
         /// 第一次下载，没有manifest的时候
         /// </summary>
-        public void StartFirstDownload()
+        public IEnumerator StartFirstDownload()
         {
             IProgressResult<Progress, BundleManifest> manifestResult =
                 this.Downloader.DownloadManifest(AssetBundleConfig.ManifestFilename);
@@ -202,6 +210,8 @@ namespace ZJYFrameWork.AssetBundles
                 Debug.Log("下载[{}]文件，当前已下载大小：{}KB,文件所需总下载：{}", AssetBundleConfig.ManifestFilename,
                     res.GetCompletedSize(UNIT.KB), res.GetTotalSize(UNIT.KB));
             });
+            yield return manifestResult.WaitForDone();
+
             manifestResult.Callbackable().OnCallback(p =>
             {
                 if (p.Result == null)
@@ -211,8 +221,13 @@ namespace ZJYFrameWork.AssetBundles
                 }
 
                 _assetBundleManager.SetBundleManifest(p.Result);
-                GetDownBundleLists(p.Result);
             });
+            yield return manifestResult.WaitForDone();
+            if (_assetBundleManager.BundleManifest == null)
+            {
+            }
+
+            yield return GetDownBundleLists(_assetBundleManager.BundleManifest);
         }
 
         /// <summary>
@@ -224,9 +239,11 @@ namespace ZJYFrameWork.AssetBundles
         /// 获取manifest内部需要下载的
         /// </summary>
         /// <param name="manifest"></param>
-        public void GetDownBundleLists(BundleManifest manifest)
+        public IEnumerator GetDownBundleLists(BundleManifest manifest)
         {
             IProgressResult<float, List<BundleInfo>> bundlesResult = this.Downloader.GetDownloadList(manifest);
+
+            yield return bundlesResult.WaitForDone();
             bundlesResult.Callbackable().OnCallback(p =>
             {
                 if (p.Result == null)
@@ -246,6 +263,16 @@ namespace ZJYFrameWork.AssetBundles
                 newDownBundleInfoList.AddRange(list);
                 // _assetBundleManager.SetBundleManifest(p.Result);
             });
+            yield return bundlesResult.WaitForDone();
+        }
+
+        public void DownloadAssetBundles(List<BundleInfo> bundleInfos)
+        {
+            foreach (var item in bundleInfos)
+            {
+                //开始添加下载任务
+                AddDownload(item);
+            }
         }
     }
 }

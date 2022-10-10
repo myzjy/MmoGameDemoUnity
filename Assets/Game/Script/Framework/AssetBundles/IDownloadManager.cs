@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Download;
 
@@ -88,5 +89,7 @@ namespace ZJYFrameWork.AssetBundles
         /// 移除所有下载任务。
         /// </summary>
         void RemoveAllDownloads();
+        IEnumerable StartIDownAssetBundle();
+
     }
 }

@@ -14,7 +14,7 @@ namespace ZJYFrameWork.AssetBundles
     public class AssetBundlesComponent : SpringComponent
     {
         [Autowired] private IAssetBundleManager AssetBundleManager;
-
+        [Autowired] private IDownloadManager DownloadManager;
         protected override void OnAwake()
         {
             base.OnAwake();
@@ -26,6 +26,11 @@ namespace ZJYFrameWork.AssetBundles
             //设置bundle 当有更新的时候就需要从新设置
             AssetBundleManager.SetAssetBundle();
             // Resources.SetIPathAndBundleResource(_pathInfoParser,_bundleManager);
+        }
+
+        public void StartDownAssetBundle()
+        {
+            
         }
     }
 }

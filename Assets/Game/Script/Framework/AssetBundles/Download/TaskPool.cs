@@ -12,7 +12,10 @@ namespace ZJYFrameWork.AssetBundles.Download
         private readonly CachedLinkedList<T> workingAgents = new CachedLinkedList<T>();
 
         private readonly CachedLinkedList<T> waitingTasks = new CachedLinkedList<T>();
-
+        /// <summary>
+        /// 任务是否添加结束
+        /// </summary>
+        public bool isaAddTaskStop { get; set; }
         /// <summary>
         /// 获取可用任务代理数量。
         /// </summary>
@@ -28,6 +31,10 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
+            if (!isaAddTaskStop && waitingTasks.Count > 0)
+            {
+                
+            }
         }
 
         /// <summary>

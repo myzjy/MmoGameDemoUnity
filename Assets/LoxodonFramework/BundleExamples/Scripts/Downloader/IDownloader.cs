@@ -11,7 +11,26 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         Uri BaseUri { get; set; }
 
         int MaxTaskCount { get; set; }
+        /// <summary>
+        /// 获取绝对路径的url
+        /// </summary>
+        /// <param name="relativePath">绝对路径的地址</param>
+        /// <returns>绝对路径的url</returns>
+        string GetAbsoluteUri(string relativePath);
 
+        /// <summary>
+        /// 传入一个绝对路径地址，返回一个对应的绝对路径地址
+        /// </summary>
+        /// <param name="relativePath">绝对路径地址</param>
+        /// <returns></returns>
+        string GetAbsolutePath(string relativePath);
+
+        /// <summary>
+        /// 获取url
+        /// </summary>
+        /// <param name="relativePath"></param>
+        /// <returns></returns>
+        Uri GetAbsoluteUrl(string relativePath);
         /// <summary>
         /// Get a list of files that need to be downloaded.
         /// </summary>

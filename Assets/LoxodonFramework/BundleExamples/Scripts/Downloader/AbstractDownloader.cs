@@ -65,26 +65,36 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             return false;
         }
 
-        protected virtual string GetAbsoluteUri(string relativePath)
+        public virtual string GetAbsoluteUri(string relativePath)
         {
             string path = this.BaseUri.AbsoluteUri;
             if (this.BaseUri.Scheme.Equals("jar") && !path.StartsWith("jar:file://"))
                 path = path.Replace("jar:file:", "jar:file://");
 
             if (path.EndsWith("/"))
-                return path + relativePath;
-            return path + "/" + relativePath;
+                return $"{path}/{relativePath}";
+            return $"{path}/{relativePath}";
         }
 
-        protected virtual string GetAbsolutePath(string relativePath)
+        /// <summary>
+        /// 传入一个绝对路径地址，返回一个对应的绝对路径地址
+        /// </summary>
+        /// <param name="relativePath">绝对路径地址</param>
+        /// <returns></returns>
+        public virtual string GetAbsolutePath(string relativePath)
         {
             string path = this.BaseUri.AbsolutePath;
             if (this.BaseUri.Scheme.Equals("jar"))
                 path = path.Replace("file://", "jar:file://");
 
-            if (path.EndsWith("/"))
-                return path + relativePath;
-            return path + "/" + relativePath;
+            return $"{path}/{relativePath}";
+        }
+
+        public virtual Uri GetAbsoluteUrl(string relativePath)
+        {
+            Uri uri = new Uri(this.BaseUri, relativePath);
+            Debug.Log(uri.AbsoluteUri);
+            return uri;
         }
 
         public IProgressResult<Progress, BundleManifest> DownloadManifest(string relativePath)

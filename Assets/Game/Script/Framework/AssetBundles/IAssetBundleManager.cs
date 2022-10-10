@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.AssetBundles.Bundles;
+﻿using System.Collections;
+using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 
 namespace ZJYFrameWork.AssetBundles
@@ -73,6 +74,7 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         int ResourcePriority { get; set; }
 
+        BundleManifest BundleManifest { get; set; }
         void SetAssetBundle();
 
         /// <summary>
@@ -92,5 +94,7 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         /// <param name="bundleManifest"></param>
         void SetBundleManifest(BundleManifest bundleManifest);
+
+        IEnumerable StartIDownAssetBundle();
     }
 }

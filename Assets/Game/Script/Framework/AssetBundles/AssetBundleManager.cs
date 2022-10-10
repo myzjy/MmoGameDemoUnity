@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -68,7 +69,7 @@ namespace ZJYFrameWork.AssetBundles
         /// <summary>
         /// 管理manifest
         /// </summary>
-        private BundleManifest BundleManifest = null;
+        public BundleManifest BundleManifest { get; set; }
 
         /// <summary>
         /// 下载接口
@@ -123,6 +124,11 @@ namespace ZJYFrameWork.AssetBundles
             _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
             //设置bundle 当有更新的时候就需要从新设置
             Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
+        }
+
+        public IEnumerable StartIDownAssetBundle()
+        {
+            throw new NotImplementedException();
         }
 
         public override void Update(float elapseSeconds, float realElapseSeconds)

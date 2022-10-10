@@ -118,7 +118,7 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// </summary>
         /// <param name="bundleInfo">需要下载</param>
         /// <param name="downloadPath">下载后存放路径。</param>
-        /// <param name="downloadUri">原始下载地址。</param>
+        /// <param name="mUrl">原始下载地址。</param>
         /// <param name="priority">下载任务的优先级。</param>
         /// <param name="flushSize">将缓冲区写入磁盘的临界大小。</param>
         /// <param name="timeout">下载超时时长，以秒为单位。</param>
