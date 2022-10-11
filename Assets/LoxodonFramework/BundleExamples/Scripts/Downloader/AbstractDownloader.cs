@@ -237,7 +237,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             return result;
         }
 
-        public IProgressResult<Progress, bool> DownloadBundles(BundleInfo bundles)
+        public virtual IProgressResult<Progress, bool> DownloadBundles(BundleInfo bundles)
         {
             throw new NotImplementedException();
         }

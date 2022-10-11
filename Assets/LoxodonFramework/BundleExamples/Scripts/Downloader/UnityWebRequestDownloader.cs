@@ -28,6 +28,17 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         {
         }
 
+        public override IProgressResult<Progress, bool> DownloadBundles(BundleInfo bundles)
+        {
+            ProgressResult<Progress, bool> result = new ProgressResult<Progress, bool>();
+
+            
+            result.SetResult(true);
+            
+            
+            return result;
+        }
+
         protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
             List<BundleInfo> bundles)
         {
@@ -61,7 +72,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 var fullname = BundleUtil.GetStorableDirectory() + bundleInfo.Filename;
                 var www = new UnityWebRequest(GetAbsoluteUri(bundleInfo.Filename));
                 www.downloadHandler = new DownloadFileHandler(fullname);
-
+                www.timeout = 30;
 #if UNITY_2018_1_OR_NEWER
                 www.SendWebRequest();
 #else

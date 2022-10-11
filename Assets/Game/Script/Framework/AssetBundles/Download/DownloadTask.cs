@@ -1,4 +1,5 @@
 ﻿using System;
+using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Collection.Reference;
 
@@ -54,6 +55,7 @@ namespace ZJYFrameWork.AssetBundles.Download
             m_Timeout = 0f;
             m_UserData = null;
         }
+
         public BundleInfo AssetBundleInfo
         {
             get { return mBundleInfo; }
@@ -113,6 +115,8 @@ namespace ZJYFrameWork.AssetBundles.Download
             get { return m_DownloadPath; }
         }
 
+        public override IDownloader Downloader { get; set; }
+
         /// <summary>
         /// 创建下载任务。
         /// </summary>
@@ -123,9 +127,11 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <param name="flushSize">将缓冲区写入磁盘的临界大小。</param>
         /// <param name="timeout">下载超时时长，以秒为单位。</param>
         /// <param name="userData">用户自定义数据。</param>
+        /// <param name="downloader"></param>
         /// <returns>创建的下载任务。</returns>
-        public static DownloadTask Create(BundleInfo bundleInfo,Uri mUrl,string downloadPath, int priority, int flushSize,
-            float timeout, object userData)
+        public static DownloadTask Create(BundleInfo bundleInfo, Uri mUrl, string downloadPath, int priority,
+            int flushSize,
+            float timeout, object userData, IDownloader downloader)
         {
             DownloadTask downloadTask = ReferenceCache.Acquire<DownloadTask>();
             downloadTask.Initialize(bundleInfo, priority);
@@ -134,8 +140,10 @@ namespace ZJYFrameWork.AssetBundles.Download
             downloadTask.m_FlushSize = flushSize;
             downloadTask.m_Timeout = timeout;
             downloadTask.m_UserData = userData;
+            downloadTask.Downloader = downloader;
             return downloadTask;
         }
+
         /// <summary>
         /// 清理下载任务。
         /// </summary>

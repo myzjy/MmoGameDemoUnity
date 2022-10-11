@@ -164,7 +164,7 @@ namespace ZJYFrameWork.AssetBundles
             var fullname = $"{BundleUtil.GetStorableDirectory()}{bundleInfo.Filename}";
             DownloadTask downloadTask = DownloadTask.Create(bundleInfo, url,
                 downloadPath: fullname,
-                DefaultPriority, (int)bundleInfo.FileSize, Timeout, null);
+                DefaultPriority, (int)bundleInfo.FileSize, Timeout, null, Downloader);
             taskPool.AddTask(downloadTask);
         }
 
@@ -264,15 +264,20 @@ namespace ZJYFrameWork.AssetBundles
                 // _assetBundleManager.SetBundleManifest(p.Result);
             });
             yield return bundlesResult.WaitForDone();
+            DownloadAssetBundles(newDownBundleInfoList);
         }
 
-        public void DownloadAssetBundles(List<BundleInfo> bundleInfos)
+        private void DownloadAssetBundles(List<BundleInfo> bundleInfos)
         {
-            foreach (var item in bundleInfos)
+            var down = Downloader.DownloadBundles(bundleInfos);
+            down.Callbackable().OnProgressCallback(res =>
             {
-                //开始添加下载任务
-                AddDownload(item);
-            }
+                
+            });
+            down.Callbackable().OnCallback(res =>
+            {
+                
+            });
         }
     }
 }

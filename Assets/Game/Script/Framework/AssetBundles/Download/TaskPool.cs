@@ -16,6 +16,7 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// 任务是否添加结束
         /// </summary>
         public bool isaAddTaskStop { get; set; }
+        
         /// <summary>
         /// 获取可用任务代理数量。
         /// </summary>
@@ -31,7 +32,7 @@ namespace ZJYFrameWork.AssetBundles.Download
         /// <param name="realElapseSeconds">真实流逝时间，以秒为单位。</param>
         public void Update(float elapseSeconds, float realElapseSeconds)
         {
-            if (!isaAddTaskStop && waitingTasks.Count > 0)
+            if (isaAddTaskStop && waitingTasks.Count > 0)
             {
                 
             }
@@ -98,6 +99,15 @@ namespace ZJYFrameWork.AssetBundles.Download
             }
 
             return false;
+        }
+
+        private void ProcessRunningTasks(float elapseSeconds, float realElapseSeconds)
+        {
+            LinkedListNode<T> current = waitingTasks.First;
+            while (current != null && FreeAgentCount > 0)
+            {
+                // current.Value.
+            }
         }
 
         /// <summary>

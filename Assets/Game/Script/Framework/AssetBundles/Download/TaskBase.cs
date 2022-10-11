@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.AssetBundles.Bundles;
+﻿using ZJYFrameWork.AssetBundles.Bundle;
+using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Collection.Reference;
 
 namespace ZJYFrameWork.AssetBundles.Download
@@ -26,6 +27,23 @@ namespace ZJYFrameWork.AssetBundles.Download
         }
 
         /// <summary>
+        /// 任务是否开始了，或者正在进行中
+        /// </summary>
+        public bool IsTaskDone
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 当前任务是否已经结束了
+        /// </summary>
+        public bool IsEndTaskDone
+        {
+            get;
+            set;
+        }
+        /// <summary>
         /// 获取任务的优先级。
         /// </summary>
         public int Priority
@@ -41,7 +59,7 @@ namespace ZJYFrameWork.AssetBundles.Download
             get { return m_Done; }
             set { m_Done = value; }
         }
-
+        public virtual IDownloader Downloader { get; set; }
         /// <summary>
         /// 获取任务描述。
         /// </summary>
