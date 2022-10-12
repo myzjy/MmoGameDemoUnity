@@ -18,6 +18,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
     {
         private Uri baseUri;
         private int maxTaskCount;
+        protected IDownloadManager DownloadManager;
 
         public AbstractDownloader()
         {
@@ -242,8 +243,14 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             throw new NotImplementedException();
         }
 
+        public void SetDownManager(IDownloadManager _downloadManager)
+        {
+            DownloadManager = _downloadManager;
+        }
+
         protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
             List<BundleInfo> bundles);
+
         protected abstract IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
             BundleInfo bundleInfo);
     }

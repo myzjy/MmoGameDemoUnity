@@ -90,6 +90,24 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         void RemoveAllDownloads();
         IEnumerable StartIDownAssetBundle();
+        /// <summary>
+        /// 下载开始事件。
+        /// </summary>
+         EventHandler<DownloadStartEventArgs> GetDownloadStart { get; }
 
+        /// <summary>
+        /// 下载更新事件。
+        /// </summary>
+         EventHandler<DownloadUpdateEventArgs> GetDownloadUpdate{ get; }
+
+        /// <summary>
+        /// 下载成功事件。
+        /// </summary>
+         EventHandler<DownloadSuccessEventArgs> GetDownloadSuccess{ get; }
+
+        /// <summary>
+        /// 下载失败事件。
+        /// </summary>
+         EventHandler<DownloadFailureEventArgs> GetDownloadFailure{ get; }
     }
 }

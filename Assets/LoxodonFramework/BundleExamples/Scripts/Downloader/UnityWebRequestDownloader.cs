@@ -7,6 +7,8 @@ using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Net.Http;
 using UnityEngine;
 using UnityEngine.Networking;
+using ZJYFrameWork.AssetBundles.Download;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundle
@@ -32,10 +34,10 @@ namespace ZJYFrameWork.AssetBundles.Bundle
         {
             ProgressResult<Progress, bool> result = new ProgressResult<Progress, bool>();
 
-            
+
             result.SetResult(true);
-            
-            
+
+
             return result;
         }
 
@@ -69,8 +71,15 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             for (var i = 0; i < list.Count; i++)
             {
                 var bundleInfo = list[i];
+
                 var fullname = BundleUtil.GetStorableDirectory() + bundleInfo.Filename;
                 var www = new UnityWebRequest(GetAbsoluteUri(bundleInfo.Filename));
+                DownloadStartEventArgs downloadStartEventArgs = DownloadStartEventArgs.Create(bundleInfo,
+                    downloadPath: fullname, GetAbsoluteUri(bundleInfo.Filename), bundleInfo.FileSize, bundleInfo);
+
+                DownloadManager.GetDownloadStart(null, downloadStartEventArgs);
+                ReferenceCache.Release(downloadStartEventArgs);
+
                 www.downloadHandler = new DownloadFileHandler(fullname);
                 www.timeout = 30;
 #if UNITY_2018_1_OR_NEWER
@@ -88,11 +97,16 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         var task = tasks[j];
                         BundleInfo _bundleInfo = task.Key;
                         UnityWebRequest _www = task.Value;
-
+                        var downFilenamePath = BundleUtil.GetStorableDirectory() + bundleInfo.Filename;
                         if (!_www.isDone)
                         {
                             tmpSize += (long)Math.Max(0,
                                 _www.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
+                            DownloadUpdateEventArgs eventArgs=DownloadUpdateEventArgs.Create(serialId:_bundleInfo,downloadPath:downFilenamePath,downloadUri:_www.url
+                                    ,currentLength:tmpSize,_bundleInfo);
+                            DownloadManager.GetDownloadUpdate(this,eventArgs);
+                            ReferenceCache.Release(eventArgs);
+                            
                             continue;
                         }
 
@@ -200,25 +214,25 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #else
                         if (_www.isError)
 #endif
+                        {
+                            promise.SetException(new Exception(_www.error));
+                            ZJYFrameWork.Debug.Log("从地址'[{}]'下载AssetBundle '[{}]'失败。原因:[{}]", _bundleInfo.FullName,
+                                GetAbsoluteUri(_bundleInfo.Filename), _www.error);
+                            _www.Dispose();
+
+                            try
                             {
-                                promise.SetException(new Exception(_www.error));
-                                ZJYFrameWork.Debug.Log("从地址'[{}]'下载AssetBundle '[{}]'失败。原因:[{}]", _bundleInfo.FullName,
-                                    GetAbsoluteUri(_bundleInfo.Filename), _www.error);
-                                _www.Dispose();
-
-                                try
+                                foreach (var kv in tasks)
                                 {
-                                    foreach (var kv in tasks)
-                                    {
-                                        kv.Value.Dispose();
-                                    }
+                                    kv.Value.Dispose();
                                 }
-                                catch (Exception)
-                                {
-                                }
-
-                                yield break;
                             }
+                            catch (Exception)
+                            {
+                            }
+
+                            yield break;
+                        }
 
                         _www.Dispose();
                     }

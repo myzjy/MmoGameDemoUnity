@@ -108,5 +108,10 @@ namespace ZJYFrameWork.AssetBundles
                 ResourceUpdateFailure(updateInfo, e.DownloadUri, 1, 1, e.ErrorMessage);
             }
         }
+
+        public void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            
+        }
     }
 }

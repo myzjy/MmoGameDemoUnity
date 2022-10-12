@@ -153,6 +153,11 @@ namespace ZJYFrameWork.AssetBundles
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// 在没有第一次下载所有资源，遗漏的资源，进行添加任务池
+        /// </summary>
+        /// <param name="bundleInfo"></param>
+        /// <exception cref="Exception"></exception>
         public void AddDownload(BundleInfo bundleInfo)
         {
             if (bundleInfo == null)
@@ -183,6 +188,23 @@ namespace ZJYFrameWork.AssetBundles
             throw new NotImplementedException();
         }
 
+        public EventHandler<DownloadStartEventArgs> GetDownloadStart
+        {
+            get => _mDownloadStartEventHandler;
+        }
+        public EventHandler<DownloadUpdateEventArgs> GetDownloadUpdate
+        {
+            get => _mDownloadUpdateEventHandler;
+        }
+        public EventHandler<DownloadSuccessEventArgs> GetDownloadSuccess
+        {
+            get => _mDownloadSuccessEventHandler;
+        }
+        public EventHandler<DownloadFailureEventArgs> GetDownloadFailure
+        {
+            get => _mDownloadFailureEventHandler;
+        }
+
         [PostConstruct]
         public void Init()
         {
@@ -205,6 +227,7 @@ namespace ZJYFrameWork.AssetBundles
         {
             IProgressResult<Progress, BundleManifest> manifestResult =
                 this.Downloader.DownloadManifest(AssetBundleConfig.ManifestFilename);
+            // DownloadStart()
             manifestResult.Callbackable().OnProgressCallback(res =>
             {
                 Debug.Log("下载[{}]文件，当前已下载大小：{}KB,文件所需总下载：{}", AssetBundleConfig.ManifestFilename,
@@ -269,7 +292,9 @@ namespace ZJYFrameWork.AssetBundles
 
         private void DownloadAssetBundles(List<BundleInfo> bundleInfos)
         {
+            Downloader.SetDownManager(this);
             var down = Downloader.DownloadBundles(bundleInfos);
+           
             down.Callbackable().OnProgressCallback(res =>
             {
                 
