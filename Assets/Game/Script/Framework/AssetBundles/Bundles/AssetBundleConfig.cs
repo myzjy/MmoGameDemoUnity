@@ -14,10 +14,9 @@ namespace Framework.AssetBundles.Config
         private const string kIsSimulateMode = "IsSimulateMode";
         public const string BundleRoot = "AssetBundles";
         public const string ManifestFilename = "manifest.dat";
-        
+
 #if UNITY_EDITOR
-                
-   
+
         public static bool IsEditorLogMode
         {
             get
@@ -28,6 +27,7 @@ namespace Framework.AssetBundles.Config
                     {
                         EditorPrefs.SetBool(kIsEditorModeLog, false);
                     }
+
                     mIsEditorLogMode = EditorPrefs.GetBool(kIsEditorModeLog, true) ? 1 : 0;
                 }
 
@@ -40,10 +40,10 @@ namespace Framework.AssetBundles.Config
                 {
                     mIsEditorLogMode = newValue;
                     EditorPrefs.SetBool(kIsEditorModeLog, value);
-                    
                 }
             }
         }
+
         public static bool IsEditorMode
         {
             get
@@ -54,6 +54,7 @@ namespace Framework.AssetBundles.Config
                     {
                         EditorPrefs.SetBool(kIsEditorMode, false);
                     }
+
                     mIsEditorMode = EditorPrefs.GetBool(kIsEditorMode, true) ? 1 : 0;
                 }
 
@@ -73,7 +74,7 @@ namespace Framework.AssetBundles.Config
                 }
             }
         }
-      
+
         public static bool IsSimulateMode
         {
             get
@@ -84,6 +85,7 @@ namespace Framework.AssetBundles.Config
                     {
                         EditorPrefs.SetBool(kIsSimulateMode, true);
                     }
+
                     mIsSimulateMode = EditorPrefs.GetBool(kIsSimulateMode, true) ? 1 : 0;
                 }
 
@@ -105,6 +107,5 @@ namespace Framework.AssetBundles.Config
             }
         }
 #endif
-
     }
 }

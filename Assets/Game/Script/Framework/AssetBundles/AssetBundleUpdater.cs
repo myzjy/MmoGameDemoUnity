@@ -12,6 +12,7 @@ namespace ZJYFrameWork.AssetBundles
     /// <summary>
     /// 更新器
     /// </summary>
+    [Bean]
     public sealed class AssetBundleUpdater
     {
         [Autowired] private readonly AssetBundleManager resourceManager;

@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine;
 using System.IO;
 using System.Text;
-
+using System.Text.RegularExpressions;
+using Ionic.Zip;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.Asynchronous;
 #if UNITY_2017_1_OR_NEWER
@@ -42,8 +43,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     string entryName = this.GetCompressedEntryName(path);
                     if (!zip.ContainsEntry(entryName))
                     {
-                        if(log.IsErrorEnabled)
-                            log.ErrorFormat("Not found the BundleManifest '{0}'.", path);
+                      
+                            Debug.LogError("Not found the BundleManifest '{0}'.", path);
                         return null;
                     }
 

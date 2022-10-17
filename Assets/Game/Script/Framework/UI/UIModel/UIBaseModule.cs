@@ -55,16 +55,17 @@ namespace ZJYFrameWork.UISerializable
             return selfView?.GetSelfUIView;
         }
 
+        public void Refresh()
+        {
+            
+        }
+
         public bool IsActive
         {
             get
             {
                 if (selfView != null)
                 {
-                    // if (selfView.GetSelfUIView.GetSelfObject != null)
-                    // {
-                    //     return selfView.GetSelfUIView.GetSelfObject && selfView.GetSelfUIView.GetSelfObject.activeSelf;
-                    // }
                     if (selfView.GetSelfUIView.GetSelfObjCanvasGroup)
                     {
                         var isActive = selfView.GetSelfUIView.GetSelfObjCanvasGroup.alpha > 0;

@@ -1947,7 +1947,7 @@ GameObject:
   - component: {fileID: 9027649502402117427}
   - component: {fileID: 8839901031242455089}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: password_IF
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3283,7 +3283,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4378535149520221427
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3887,6 +3887,7 @@ GameObject:
   - component: {fileID: 2142282900410940838}
   - component: {fileID: 3450830263645320339}
   - component: {fileID: 2781164686901000692}
+  - component: {fileID: 7717076792245837084}
   m_Layer: 5
   m_Name: LoginBtn
   m_TagString: Untagged
@@ -3996,6 +3997,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7717076792245837084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4101088382634469220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: LoginBtn_Button
+    UI_Serializable_Obj: {fileID: 2781164686901000692}
+    Path: LoginPart/LoginBtn
+  maskIndex: 8
 --- !u!1 &4113055662432302266
 GameObject:
   m_ObjectHideFlags: 0
@@ -6093,7 +6111,7 @@ GameObject:
   - component: {fileID: 9132365325181781174}
   - component: {fileID: 1933884346738828386}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: UserName_IF
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7025,13 +7043,14 @@ GameObject:
   m_Component:
   - component: {fileID: 226294053470361185}
   - component: {fileID: 4548462337066523778}
+  - component: {fileID: 2681772145587560702}
   m_Layer: 5
   m_Name: LoginPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &226294053470361185
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7068,8 +7087,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kodComs: []
-  maskIndex: 0
+  kodComs:
+  - UI_Serializable_Key: LoginPart
+    UI_Serializable_Obj: {fileID: 7320187304149993461}
+    Path: LoginPart
+  maskIndex: 4
+--- !u!114 &2681772145587560702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7320187304149993461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9bf057a4ca44355a834455715ad9172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataViewList:
+  - {fileID: 7717076792245837084}
+  - {fileID: 663313220370998969}
+  - {fileID: 4548462337066523778}
+  LoginBtn: {fileID: 0}
+  RegisterBtn: {fileID: 0}
 --- !u!1 &7418065423706028953
 GameObject:
   m_ObjectHideFlags: 0
@@ -8296,6 +8336,7 @@ GameObject:
   - component: {fileID: 3554672545178735168}
   - component: {fileID: 2882272766662178369}
   - component: {fileID: 7399565611003175795}
+  - component: {fileID: 663313220370998969}
   m_Layer: 5
   m_Name: RegisterBtn
   m_TagString: Untagged
@@ -8405,6 +8446,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &663313220370998969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8613637727540871330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: RegisterBtn_Button
+    UI_Serializable_Obj: {fileID: 7399565611003175795}
+    Path: LoginPart/RegisterBtn
+  maskIndex: 8
 --- !u!1 &9054763706121575565
 GameObject:
   m_ObjectHideFlags: 0

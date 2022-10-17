@@ -18,6 +18,7 @@ namespace ZJYFrameWork.Editors.Inspector
 
             serializedObject.Update();
             NetworkManager t = (NetworkManager)target;
+            EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             EditorGUILayout.LabelField("Token:",
                 string.IsNullOrEmpty(t.UserAuth.AuthToken) ? "None" : t.UserAuth.AuthToken);
             if (Application.isPlaying)
@@ -36,7 +37,11 @@ namespace ZJYFrameWork.Editors.Inspector
                 EditorGUILayout.LabelField("WebServerIP:", "None");
             }
 
-            EditorGUILayout.PropertyField(UserAuth, true);
+            EditorGUILayout.PropertyField(UserAuth, true);         
+            EditorGUI.EndDisabledGroup();
+            serializedObject.ApplyModifiedProperties();
+
+            
         }
 
         private string HostString(HostType nowHostType)

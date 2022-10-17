@@ -9,7 +9,8 @@ using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles
 {
-    public abstract class AssetBundleManager : AbstractManager, IAssetBundleManager
+    [Bean]
+    public class AssetBundleManager : AbstractManager, IAssetBundleManager
     {
         /// <summary>
         /// 资源读取接口 需要在下载接口走完之后，查看有没有需要下载
@@ -83,12 +84,20 @@ namespace ZJYFrameWork.AssetBundles
         {
             BundleManifestLoader = SpringContext.GetBean<BundleManifestLoader>();
             BundleManifest =
-                BundleManifestLoader.Load(BundleUtil.GetStorableDirectory() + AssetBundleConfig.ManifestFilename);
+                BundleManifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + AssetBundleConfig.ManifestFilename);
 
             //修正bundleManifest
             _pathInfoParser.BundleManifest = BundleManifest;
             _loaderBuilder.SetLoaderBuilder(new Uri(BundleUtil.GetReadOnlyDirectory()));
-            _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+#if UNITY_EDITOR
+            if (!AssetBundleConfig.IsEditorMode)
+            {
+                _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+            }
+#else
+  _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+#endif
+
             //设置bundle 当有更新的时候就需要从新设置
             Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
 
@@ -108,7 +117,6 @@ namespace ZJYFrameWork.AssetBundles
             }
             else
             {
-                
             }
         }
 

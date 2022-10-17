@@ -85,5 +85,12 @@ namespace ZJYFrameWork.UISerializable
             viewPanel = new PanelView();
             viewPanel.Init(SelfUIView);
         }
+
+        public void Refresh()
+        {
+            SelfUIView = null;
+            viewPanel = new PanelView();
+            
+        }
     }
 }

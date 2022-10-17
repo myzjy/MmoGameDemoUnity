@@ -87,19 +87,7 @@ namespace Framework.AssetBundles.Utilty
             return "pc/";
 #endif
         }
-        public static string GetPlatformName(BuildTarget buildTarget)
-        {
-            switch (buildTarget)
-            {
-                case BuildTarget.Android:
-                    return "Android";
-                case BuildTarget.iOS:
-                    return "iOS";
-                default:
-                    Debug.LogError("Error buildTarget!!!");
-                    return null;
-            }
-        }
+       
         
      
     

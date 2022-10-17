@@ -19,5 +19,7 @@ namespace ZJYFrameWork.UISerializable
         string[] Notification();
         void NotificationHandler(UINotification _eventNotification);
         UIView GetUIView();
+
+        void Refresh();
     }
 }

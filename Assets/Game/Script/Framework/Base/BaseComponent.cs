@@ -80,6 +80,8 @@ namespace ZJYFrameWork.Base
 
             //保证
             SpringContext.RegisterBean<BundleManifestLoader>();
+#if UNITY_EDITOR
+
             if (AssetBundleConfig.IsEditorMode)
             {
                 //编辑器下
@@ -92,9 +94,9 @@ namespace ZJYFrameWork.Base
                 SpringContext.RegisterBean<SimulationResources>();
             }
             else
+#endif
             {
                 Debug.Log("Use playResource");
-                
             }
 
             Application.targetFrameRate = frameRate;

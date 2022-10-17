@@ -28,13 +28,14 @@ using System.IO;
 using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
-using UnityEditor.Sprites;
 using ZJYFrameWork.AssetBundles.Net;
 using ZJYFrameWork.Execution;
+using ZJYFrameWork.Spring.Core;
 
 
 namespace ZJYFrameWork.Net.Http
 {
+    [Bean]
     public class UnityWebRequestFileDownloader : FileDownloaderBase
     {
         public UnityWebRequestFileDownloader() : base()

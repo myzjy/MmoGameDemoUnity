@@ -225,7 +225,7 @@ namespace Serialization
 		public static object DeserializeDateTime(SerializationContext context, Type t, PureObject o)
 		{
 			o = o ?? 0;
-			return DateTimeUtil.FromUnixTimeStamp((double)Convert.ChangeType(o, typeof(System.Double)));
+			return DateTimeUtil.TimestampToDateTime((long)Convert.ChangeType(o, typeof(System.Int64)));
 		}
 
 		public static object DeserializeTimeSpan(SerializationContext context, Type t, PureObject o)

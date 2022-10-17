@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Spring.Core;
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
     public sealed class SimulationBundleManager : IBundleManager
