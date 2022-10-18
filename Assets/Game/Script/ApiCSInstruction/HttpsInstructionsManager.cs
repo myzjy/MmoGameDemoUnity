@@ -28,6 +28,12 @@
         Request,
         Response,
     }
+
+    public enum HttpMethods
+    {
+        Get,
+        Post
+    }
     
     public class HttpsInstructionsManager
     {

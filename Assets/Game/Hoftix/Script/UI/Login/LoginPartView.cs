@@ -24,6 +24,16 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public Button RegisterBtn;
 
+        /// <summary>
+        /// 账号输入框
+        /// </summary>
+        public InputField account;
+
+        /// <summary>
+        /// 密码输入框
+        /// </summary>
+        public InputField password;
+
         public void Bind()
         {
             //登录面板
@@ -32,12 +42,17 @@ namespace ZJYFrameWork.UISerializable
             LoginBtn = GetObjType<Button>("LoginBtn_Button");
             //注册--->进入注册界面，进行账号注册
             RegisterBtn = GetObjType<Button>("RegisterBtn_Button");
+            //账号输入框
+            account = GetObjType<InputField>("account");
+            //密码输入框
+            password = GetObjType<InputField>("password");
         }
+
         private long clickLoginTime;
         public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
 
         /// <summary>
-        /// 登录事件
+        /// 登录事件 第一次登录或者登录其他账号的时候
         /// </summary>
         private void ClickLogin()
         {
@@ -45,6 +60,8 @@ namespace ZJYFrameWork.UISerializable
             {
                 return;
             }
+
+            Debug.Log("账号密码登录[account:{}][password:{}]", account.text, password.text);
         }
 
         public void Show()

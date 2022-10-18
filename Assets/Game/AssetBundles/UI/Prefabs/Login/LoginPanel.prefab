@@ -1946,6 +1946,7 @@ GameObject:
   - component: {fileID: 8987683759904623553}
   - component: {fileID: 9027649502402117427}
   - component: {fileID: 8839901031242455089}
+  - component: {fileID: 6926591055983717950}
   m_Layer: 5
   m_Name: password_IF
   m_TagString: Untagged
@@ -2077,6 +2078,23 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &6926591055983717950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963109053854191491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: password
+    UI_Serializable_Obj: {fileID: 8839901031242455089}
+    Path: LoginPart/password/password_IF
+  maskIndex: 8
 --- !u!1 &1989986421890955788
 GameObject:
   m_ObjectHideFlags: 0
@@ -6110,6 +6128,7 @@ GameObject:
   - component: {fileID: 5137593494138224673}
   - component: {fileID: 9132365325181781174}
   - component: {fileID: 1933884346738828386}
+  - component: {fileID: 1999889696300109558}
   m_Layer: 5
   m_Name: UserName_IF
   m_TagString: Untagged
@@ -6241,6 +6260,23 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &1999889696300109558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6695593675951194200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: account
+    UI_Serializable_Obj: {fileID: 1933884346738828386}
+    Path: LoginPart/UserName/UserName_IF
+  maskIndex: 8
 --- !u!1 &6728722720722737629
 GameObject:
   m_ObjectHideFlags: 0
@@ -7108,6 +7144,9 @@ MonoBehaviour:
   - {fileID: 7717076792245837084}
   - {fileID: 663313220370998969}
   - {fileID: 4548462337066523778}
+  - {fileID: 1999889696300109558}
+  - {fileID: 6926591055983717950}
+  LoginPart: {fileID: 0}
   LoginBtn: {fileID: 0}
   RegisterBtn: {fileID: 0}
 --- !u!1 &7418065423706028953
