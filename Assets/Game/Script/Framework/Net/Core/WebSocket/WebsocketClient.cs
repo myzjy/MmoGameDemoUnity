@@ -57,28 +57,16 @@ namespace ZJYFrameWork.Net.Core.Websocket
 
         internal void HandleOnMessage(byte[] content)
         {
-            var json = StringUtils.BytesToString(content);
-          
-            var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            
-            
-            
-            jsonDict.TryGetValue("protocolId", out var protocolStr);
-            
-            if (protocolStr != null)
-            {
-                var protocolId = short.Parse(protocolStr);
-                jsonDict.TryGetValue("packet",out var packetString);
-                // var packetStr = 
-            }
 
-            // var byteBuffer = ByteBuffer.ValueOf();
-            // byteBuffer.WriteBytes(content);
+         
 
-            // byteBuffer.ReadRawInt();
-            // var packet = ProtocolManager.Read(byteBuffer);
+            var byteBuffer = ByteBuffer.ValueOf();
+            byteBuffer.WriteBytes(content);
+
+            byteBuffer.ReadRawInt();
+            var packet = ProtocolManager.Read(byteBuffer);
             // // queue it
-            // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+            receiveQueue.Enqueue(new Message(MessageType.Data, packet));
         }
     }
 }

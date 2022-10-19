@@ -152,7 +152,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             readOffset += count;
             return bytes;
         }
-
         public abstract void WriteShort(short value);
         public abstract short ReadShort();
 

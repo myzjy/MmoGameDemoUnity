@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -45,11 +47,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     type.IsClass && !type.IsAbstract && typeof(IProtocolRegistration).IsAssignableFrom(type)));
             }
 
-            foreach (var protocolRegistration in protocolRegistrationTypeList.Select(protocolType => (IProtocolRegistration)Activator.CreateInstance(protocolType)))
+            foreach (var protocolRegistration in protocolRegistrationTypeList.Select(protocolType =>
+                         (IProtocolRegistration)Activator.CreateInstance(protocolType)))
             {
                 protocolList[protocolRegistration.ProtocolId()] = protocolRegistration;
             }
         }
+
         public static IProtocolRegistration GetProtocol(short protocolId)
         {
             var protocol = protocolList[protocolId];
@@ -60,6 +64,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
             return protocol;
         }
+
         public static void Write(ByteBuffer byteBuffer, IPacket packet)
         {
             var protocolId = packet.ProtocolId();
@@ -72,8 +77,22 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public static IPacket Read(ByteBuffer byteBuffer)
         {
-            var protocolId = byteBuffer.ReadShort();
-            return GetProtocol(protocolId).Read(byteBuffer);
+            ;
+            var json = StringUtils.BytesToString(byteBuffer.ToBytes());
+            var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+
+            jsonDict.TryGetValue("protocolId", out var protocolStr);
+
+            if (protocolStr != null)
+            {
+                var protocolId = short.Parse(protocolStr);
+                return GetProtocol(protocolId).Read(byteBuffer);
+            }
+
+            Debug.Log("接受消息协议出错");
+
+            return null;
         }
     }
 }
