@@ -55,11 +55,20 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
         }
 
+        internal void HandleOnMessage(string message)
+        {
+            var byteBuffer = ByteBuffer.ValueOf();
+            var byteString = StringUtils.Bytes(message);
+            byteBuffer.WriteBytes(byteString);
+
+            byteBuffer.ReadRawInt();
+            var packet = ProtocolManager.Read(byteBuffer);
+            // // queue it
+            receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+        }
+
         internal void HandleOnMessage(byte[] content)
         {
-
-         
-
             var byteBuffer = ByteBuffer.ValueOf();
             byteBuffer.WriteBytes(content);
 

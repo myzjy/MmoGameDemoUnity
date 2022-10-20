@@ -613,7 +613,7 @@ namespace BestHTTP.SignalR
         }
 
         /// <summary>
-        /// Initiates a reconnect to the SignalR server.
+        /// 发起与SignalR服务器的重新连接。
         /// </summary>
         public void Reconnect()
         {

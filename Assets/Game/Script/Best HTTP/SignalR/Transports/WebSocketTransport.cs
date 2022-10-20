@@ -31,17 +31,17 @@ namespace BestHTTP.SignalR.Transports
         #region Overrides from TransportBase
 
         /// <summary>
-        /// Websocket transport specific connection logic. It will create a WebSocket instance, and starts to connect to the server.
+        /// Websocket传输特定的连接逻辑。它将创建一个WebSocket实例，并开始连接到服务器。
         /// </summary>
         public override void Connect()
         {
             if (wSocket != null)
             {
-                HTTPManager.Logger.Warning("WebSocketTransport", "Start - WebSocket already created!");
+                HTTPManager.Logger.Warning("WebSocketTransport", "开始- WebSocket已经创建!");
                 return;
             }
 
-            // Skip the Connecting state if we are reconnecting. If the connect succeeds, we will set the Started state directly
+            // 如果我们正在重新连接，则跳过连接状态。如果连接成功，我们将直接设置Started状态
             if (this.State != TransportStates.Reconnecting)
                 this.State = TransportStates.Connecting;
 
@@ -59,11 +59,11 @@ namespace BestHTTP.SignalR.Transports
             wSocket.OnError += WSocket_OnError;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // prepare the internal http request
+            //准备内部HTTP请求
             wSocket.OnInternalRequestCreated = (ws, internalRequest) => Connection.PrepareRequest(internalRequest, requestType);
 #endif
 
-            // start opening the websocket protocol
+            // 开始打开websocket协议
             wSocket.Open();
         }
 

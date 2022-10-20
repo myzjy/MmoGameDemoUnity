@@ -305,7 +305,7 @@ namespace BestHTTP.SignalR.Transports
         #region Helper Functions
 
         /// <summary>
-        /// Start the reconnect process
+        /// 启动重新连接进程
         /// </summary>
         public void Reconnect()
         {

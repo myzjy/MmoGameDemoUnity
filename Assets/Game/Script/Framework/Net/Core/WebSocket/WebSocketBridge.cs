@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using AOT;
 using BestHTTP.JSON.LitJson;
+using BestHTTP.SignalR;
+using BestHTTP.SignalR.Messages;
+using BestHTTP.SignalR.Transports;
 using BestHTTP.WebSocket;
 using BestHTTP.WebSocket.Frames;
 using Newtonsoft.Json;
@@ -15,13 +18,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         /// <summary>
         /// webSocket
         /// </summary>
-        private WebSocket _webSocket = new WebSocket(null)
-        {
-            OnOpen = null,
-            OnMessage = null,
-            OnError = null,
-            OnClosed = null
-        };
+        private WebSocket _webSocket;
 
         public WebsocketClient websocketClient;
 
@@ -72,11 +69,40 @@ namespace ZJYFrameWork.Net.Core.Websocket
             _webSocket.OnClosed = callback;
         }
 
+        /// <summary>
+        /// The current state of the transport.
+        /// </summary>
+        public TransportStates State
+        {
+            get { return _state; }
+            protected set
+            {
+                TransportStates old = _state;
+                _state = value;
+            }
+        }
+
+        public TransportStates _state;
+
         public void Initialize()
         {
+            if (websocketClient != null)
+            {
+                Debug.Log("开始- WebSocket已经创建!");
+                return;
+            }
+
+            _webSocket = new WebSocket(null)
+            {
+                OnOpen = null,
+                OnMessage = null,
+                OnError = null,
+                OnClosed = null
+            };
             WebSocketSetOnOpen(DelegateOnOpenEvent);
             initialized = true;
         }
+        
 
         [MonoPInvokeCallback(typeof(OnWebSocketOpenDelegate))]
         public void DelegateOnOpenEvent(WebSocket webSocket)
@@ -85,13 +111,19 @@ namespace ZJYFrameWork.Net.Core.Websocket
         }
 
         [MonoPInvokeCallback(typeof(OnWebSocketMessageDelegate))]
-        public static void DelegateOnMessageEvent(WebSocket webSocket, string message)
+        public void DelegateOnMessageEvent(WebSocket webSocket, string message)
         {
             try
             {
+                if (webSocket != _webSocket)
+                {
+                    return;
+                }
+
                 //
                 if (webSocket.IsOpen)
                 {
+                    websocketClient.HandleOnMessage(message);
                 }
             }
             catch (Exception e)
@@ -109,7 +141,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 //
                 if (webSocket.IsOpen)
                 {
-                   
                 }
             }
             catch (Exception e)
