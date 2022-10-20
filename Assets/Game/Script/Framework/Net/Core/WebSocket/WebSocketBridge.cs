@@ -86,21 +86,26 @@ namespace ZJYFrameWork.Net.Core.Websocket
 
         public void Initialize()
         {
-            if (websocketClient != null)
-            {
-                Debug.Log("开始- WebSocket已经创建!");
-                return;
-            }
-
-            _webSocket = new WebSocket(null)
-            {
-                OnOpen = null,
-                OnMessage = null,
-                OnError = null,
-                OnClosed = null
-            };
             WebSocketSetOnOpen(DelegateOnOpenEvent);
+            WebSocketSetOnMessage(DelegateOnMessageEvent);
+            WebSocketSetOnError(DelegateOnErrorEvent);
+
             initialized = true;
+        }
+
+        /// <summary>
+        /// 开始链接
+        /// </summary>
+        /// <param name="url"></param>
+        public void WebSocketConnect(string url)
+        {
+            Uri uri = new Uri(url);
+            _webSocket = new WebSocket(uri);
+            if (!initialized)
+            {
+                Initialize();
+            }
+            _webSocket.Open();
         }
         
 
@@ -134,7 +139,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         }
 
         [MonoPInvokeCallback(typeof(OnWebSocketBinaryDelegate))]
-        public static void DelegateOnBinaryEvent(WebSocket webSocket, byte[] data)
+        public  void DelegateOnBinaryEvent(WebSocket webSocket, byte[] data)
         {
             try
             {
@@ -148,6 +153,16 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 Debug.Log(e);
                 throw;
             }
+        }
+        [MonoPInvokeCallback(typeof(OnWebSocketErrorDelegate))]
+        public  void DelegateOnErrorEvent(WebSocket webSocket, string reason)
+        {
+            // websocketClient.HandleOnError();
+        }
+        [MonoPInvokeCallback(typeof(OnWebSocketClosedDelegate))]
+        public static void DelegateOnCloseEvent(WebSocket webSocket, UInt16 code, string message)
+        {
+            // websocketClient.HandleOnClose();
         }
     }
 }
