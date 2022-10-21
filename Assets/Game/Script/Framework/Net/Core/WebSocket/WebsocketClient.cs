@@ -18,9 +18,9 @@ namespace ZJYFrameWork.Net.Core.Websocket
 
         public override void Start()
         {
-            if (!_webSocketBridge.initialized)
-            {
-            }
+            _webSocketBridge.websocketClient = this;
+            _webSocketBridge.WebSocketClose();
+            _webSocketBridge.WebSocketConnect(url);
         }
 
         public override bool Connected()
@@ -30,12 +30,12 @@ namespace ZJYFrameWork.Net.Core.Websocket
 
         public override void Close()
         {
-            throw new System.NotImplementedException();
+            _webSocketBridge.WebSocketClose();
         }
 
         public override string ToConnectUrl()
         {
-            throw new System.NotImplementedException();
+            return url;
         }
 
         protected override void SendMessagesBlocking(byte[] messages, int offset, int size)
@@ -46,6 +46,12 @@ namespace ZJYFrameWork.Net.Core.Websocket
         protected override bool ReadMessageBlocking(out byte[] content)
         {
             throw new System.NotImplementedException();
+        }
+
+        public override bool Send(byte[] data)
+        {
+            _webSocketBridge.WebSocketSend(data);
+            return true;
         }
 
         /// <summary>
@@ -76,6 +82,15 @@ namespace ZJYFrameWork.Net.Core.Websocket
             var packet = ProtocolManager.Read(byteBuffer);
             // // queue it
             receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+        }
+
+        internal void HandleOnError(string reason)
+        {
+            // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
+        }
+
+        internal void HandleOnClose(ushort code, string message)
+        {
         }
     }
 }

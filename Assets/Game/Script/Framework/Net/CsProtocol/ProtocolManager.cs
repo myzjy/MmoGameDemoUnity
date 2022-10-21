@@ -68,8 +68,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         public static void Write(ByteBuffer byteBuffer, IPacket packet)
         {
             var protocolId = packet.ProtocolId();
-            // 写入协议号
-            byteBuffer.WriteShort(protocolId);
+            // // 写入协议号
+            // byteBuffer.WriteShort(protocolId);
 
             // 写入包体
             GetProtocol(protocolId).Write(byteBuffer, packet);

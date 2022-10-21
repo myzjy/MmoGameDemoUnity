@@ -13,7 +13,8 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.Core.Websocket
 {
-    public class WebSocketBridge
+    public class
+        WebSocketBridge
     {
         /// <summary>
         /// webSocket
@@ -23,6 +24,25 @@ namespace ZJYFrameWork.Net.Core.Websocket
         public WebsocketClient websocketClient;
 
         public bool initialized = false;
+
+        public void WebSocketClose()
+        {
+            if (_webSocket == null)
+            {
+                return;
+            }
+
+            if (_webSocket.State >= WebSocketStates.Closing)
+            {
+                Debug.Log($"当前Socket状态{_webSocket.State}");
+                return;
+            }
+        }
+
+        public void WebSocketSend(byte[] dataPtr)
+        {
+            _webSocket.Send(dataPtr);
+        }
 
         /// <summary>
         /// 当socket打开成功的回调
@@ -88,8 +108,9 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
             WebSocketSetOnOpen(DelegateOnOpenEvent);
             WebSocketSetOnMessage(DelegateOnMessageEvent);
+            WebSocketSetOnBinary(DelegateOnBinaryEvent);
             WebSocketSetOnError(DelegateOnErrorEvent);
-
+            WebSocketSetOnClose(DelegateOnCloseEvent);
             initialized = true;
         }
 
@@ -105,9 +126,11 @@ namespace ZJYFrameWork.Net.Core.Websocket
             {
                 Initialize();
             }
+
+            //打开
             _webSocket.Open();
         }
-        
+
 
         [MonoPInvokeCallback(typeof(OnWebSocketOpenDelegate))]
         public void DelegateOnOpenEvent(WebSocket webSocket)
@@ -139,7 +162,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         }
 
         [MonoPInvokeCallback(typeof(OnWebSocketBinaryDelegate))]
-        public  void DelegateOnBinaryEvent(WebSocket webSocket, byte[] data)
+        public void DelegateOnBinaryEvent(WebSocket webSocket, byte[] data)
         {
             try
             {
@@ -154,15 +177,20 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 throw;
             }
         }
+
         [MonoPInvokeCallback(typeof(OnWebSocketErrorDelegate))]
-        public  void DelegateOnErrorEvent(WebSocket webSocket, string reason)
+        public void DelegateOnErrorEvent(WebSocket webSocket, string reason)
         {
-            // websocketClient.HandleOnError();
+            websocketClient.HandleOnError(reason);
         }
+
         [MonoPInvokeCallback(typeof(OnWebSocketClosedDelegate))]
-        public static void DelegateOnCloseEvent(WebSocket webSocket, UInt16 code, string message)
+        public void DelegateOnCloseEvent(WebSocket webSocket, ushort code, string message)
         {
-            // websocketClient.HandleOnClose();
+            string reason = $"{code} : {message}";
+
+            Debug.Log(reason);
+            websocketClient.HandleOnClose(code, message);
         }
     }
 }
