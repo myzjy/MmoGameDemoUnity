@@ -1,26 +1,66 @@
-﻿using ZJYFrameWork.Net;
+﻿using System;
+using DG.Tweening;
+using ZJYFrameWork.Common;
+using ZJYFrameWork.Event;
+using ZJYFrameWork.Net;
+using ZJYFrameWork.Net.Core.Model;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Module.Login.Service
 {
     [Bean]
-    public class LoginService:ILoginService
+    public class LoginService : ILoginService
     {
-        [Autowired]
-        private INetManager netManager;
+        [Autowired] private INetManager netManager;
+
+        [Autowired] private ISettingManager settingManager;
+        [Autowired] private LoginClientCacheData LoginCacheData;
+
         public void ConnectToGateway()
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                var webSocketGatewayUrl = SpringContext.GetBean<ISettingManager>().GetWebSocketBase();
+                netManager.Connect(webSocketGatewayUrl);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"链接网络发生未知异常:{e}");
+                var sequence = DOTween.Sequence();
+                sequence.AppendInterval(3f);
+                sequence.AppendCallback(() => { EventBus.SyncSubmit(NetErrorEvent.ValueOf()); });
+            }
         }
 
         public void LoginByToken()
         {
-            throw new System.NotImplementedException();
+            var sequence = DOTween.Sequence();
         }
 
         public void LoginByAccount()
         {
-            throw new System.NotImplementedException();
+            var sequence = DOTween.Sequence();
+            sequence.AppendCallback(() =>
+            {
+                LoginCacheData.loginError = false;
+                netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
+            });
+            sequence.AppendInterval(3f);
+            sequence.AppendCallback(() =>
+            {
+                if (LoginCacheData.loginFlag)
+                {
+                    return;
+                }
+                if (LoginCacheData.loginError)
+                {
+                    return;
+                }
+
+                LoginByAccount();
+            });
         }
 
         public void Logout()

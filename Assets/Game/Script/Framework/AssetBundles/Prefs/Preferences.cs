@@ -62,7 +62,7 @@ namespace ZJYFrameWork.Prefs
 
 
         /// <summary>
-        /// Retrieve a global preferences.
+        /// 检索全局首选项
         /// </summary>
         /// <returns></returns>
         public static Preferences GetGlobalPreferences()

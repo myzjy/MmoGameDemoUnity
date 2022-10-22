@@ -48,6 +48,11 @@ namespace ZJYFrameWork.UISerializable
             account = GetObjType<InputField>("account");
             //密码输入框
             password = GetObjType<InputField>("password");
+            LoginBtn.onClick.RemoveAllListeners();
+            LoginBtn.onClick.AddListener(() =>
+            {
+                ClickLogin();
+            });
         }
 
         private long clickLoginTime;

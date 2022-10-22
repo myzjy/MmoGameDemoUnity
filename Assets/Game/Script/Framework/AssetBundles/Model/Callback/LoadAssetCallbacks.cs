@@ -3,7 +3,8 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.AssetBundles.Model.Callback
 {
-    public delegate void LoadAssetSuccessCallback(string assetName, object asset, float duration, object userData);
+    public delegate void LoadAssetSuccessCallback(string assetName, UnityEngine.Object asset, float duration,
+        object userData);
 
     public delegate void LoadAssetFailureCallback(string assetName, LoadResourceStatus status, string errorMessage,
         object userData);
@@ -97,6 +98,7 @@ namespace ZJYFrameWork.AssetBundles.Model.Callback
             LoadAssetFailureCallback loadAssetFailureCallback, LoadAssetUpdateCallback loadAssetUpdateCallback,
             LoadAssetDependencyAssetCallback loadAssetDependencyAssetCallback)
         {
+            Debug.LogError(loadAssetSuccessCallback);
             Debug.Assert(loadAssetSuccessCallback == null);
 
             this.LoadAssetSuccessCallback = loadAssetSuccessCallback;

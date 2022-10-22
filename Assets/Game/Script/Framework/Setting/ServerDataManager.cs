@@ -12,6 +12,7 @@ namespace ZJYFrameWork.Setting
         [AfterPostConstruct]
         public void Init()
         {
+          
         }
 
         /// <summary>
@@ -24,5 +25,7 @@ namespace ZJYFrameWork.Setting
             LoginCacheData.account = account;
             LoginCacheData.password = password;
         }
+        
+        public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
     }
 }

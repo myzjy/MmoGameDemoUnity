@@ -6,6 +6,11 @@ using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
 using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.Model;
+using ZJYFrameWork.AssetBundles.Model.Callback;
+using ZJYFrameWork.ObjectPool;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
 using Object = UnityEngine.Object;
 
@@ -16,10 +21,13 @@ namespace ZJYFrameWork.UISerializable
         where TuiPanelView : UIViewInterface, new()
     {
         public TuiView selfView;
+        private readonly LoadAssetCallbacks _loadAssetCallbacks;
 
         public UIBaseModule()
         {
             selfView = new TuiView();
+            _loadAssetCallbacks =
+                new LoadAssetCallbacks(LoadAssetSuccessCallback, LoadAssetFailureCallback, null, null);
         }
 
         /// <summary>
@@ -57,7 +65,6 @@ namespace ZJYFrameWork.UISerializable
 
         public void Refresh()
         {
-            
         }
 
         public bool IsActive
@@ -128,9 +135,7 @@ namespace ZJYFrameWork.UISerializable
         {
             UIRoot ROOT = UIManager.Instance.GetRoot();
             var parent = GetPanelUIRoot(GetCanvasType());
-            var start = DateTime.Now;
             GameObject go = Object.Instantiate(prefab, parent.transform, true);
-            Debug.Log($"Instantiate use {(DateTime.Now - start).Milliseconds}ms");
             var rectTransform = go.GetComponent<RectTransform>();
             rectTransform.offsetMax = Vector2.zero;
             rectTransform.offsetMin = Vector2.zero;
@@ -140,55 +145,10 @@ namespace ZJYFrameWork.UISerializable
             return go;
         }
 
+
         private void InstancePrefab()
         {
-            var start = DateTime.Now;
-           
-            // var loader = AssetBundleManager.Instance.LoadAssetBundleAsync(PrefabName());
-            // var loader = AssetBundleManager.Instance.LoadAssetAsync(PrefabName(), typeof(GameObject));
-            // IAddressableLoadAssetSystem _addressable = CommonManager.Instance.GetSystem<IAddressableLoadAssetSystem>();
-            // yield return loader;
-
-
-            // var obj = loader.asset as GameObject;
-// #if UNITY_EDITOR
-            // UnityEngine.Debug.Log($"{PrefabName()}读取成功！！{loader.asset}");
-// #endif
-            // var go = InstantiateGameObject(obj,
-            // res =>
-            // {
-            // var rtf = res.GetComponent<RectTransform>();
-            // var UIView = res.GetComponent<UIView>();
-            // if (rtf)
-            // {
-            // rtf.offsetMin = Vector2.zero;
-            // rtf.offsetMax = Vector2.one;
-            // }
-
-            // switch (GetSortType())
-            // {
-            // case UISortType.First:
-            // {
-            // res.transform.SetAsFirstSibling();
-            // }
-            // break;
-            // case UISortType.Last:
-            // {
-            // res.transform.SetAsLastSibling();
-            // }
-            // break;
-            // default:
-            // throw new ArgumentOutOfRangeException();
-            // }
-
-            // InstanceID = res.GetInstanceID();
-            // UIView.GetTransform.localScale = Vector3.one;
-            // UIView.GetTransform.localPosition = Vector3.zero;
-            // selfView.SetUIView(UIView);
-            //// 默认调用
-            // selfView.OnHide();
-            // selfView.OnInit();
-            // });
+            SpringContext.GetBean<AssetBundleManager>().LoadAsset(PrefabName(), _loadAssetCallbacks);
         }
 
         private Transform GetPanelUIRoot(UICanvasType _canvas)
@@ -229,6 +189,53 @@ namespace ZJYFrameWork.UISerializable
             }
 
             return null;
+        }
+
+// GameObject
+        private void LoadAssetSuccessCallback(string assetName, UnityEngine.Object asset, float duration,
+            object userData)
+        {
+            // ObjectBase objectBase =(ObjectBase) userData;
+            var obj = asset as GameObject;
+            InstantiateGameObject(obj, res =>
+            {
+                var rtf = res.GetComponent<RectTransform>();
+                var UIView = res.GetComponent<UIView>();
+                if (rtf)
+                {
+                    rtf.offsetMin = Vector2.zero;
+                    rtf.offsetMax = Vector2.one;
+                }
+
+                switch (GetSortType())
+                {
+                    case UISortType.First:
+                    {
+                        res.transform.SetAsFirstSibling();
+                    }
+                        break;
+                    case UISortType.Last:
+                    {
+                        res.transform.SetAsLastSibling();
+                    }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                InstanceID = res.GetInstanceID();
+                UIView.GetTransform.localScale = Vector3.one;
+                UIView.GetTransform.localPosition = Vector3.zero;
+                selfView.SetUIView(UIView);
+                // 默认调用
+                selfView.OnHide();
+                selfView.OnInit();
+            });
+        }
+
+        private void LoadAssetFailureCallback(string soundAssetName, LoadResourceStatus status, string errorMessage,
+            object userData)
+        {
         }
     }
 }

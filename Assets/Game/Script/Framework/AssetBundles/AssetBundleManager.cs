@@ -5,6 +5,7 @@ using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.ObjectPool;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles
@@ -17,6 +18,7 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         [Autowired] private IResources Resources;
 
+        [Autowired] private IObjectPoolManager objectPoolManager;
         public string BundleRoot => AssetBundleConfig.BundleRoot;
 
         public string StorableDirectory
@@ -122,7 +124,8 @@ namespace ZJYFrameWork.AssetBundles
 
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
-            throw new NotImplementedException();
+            var obj = Resources.LoadAsset(assetBundle);
+            loadAssetCallbacks.LoadAssetSuccessCallback(assetBundle, obj, 0, null);
         }
 
         public void SetBundleManifest(BundleManifest bundleManifest)

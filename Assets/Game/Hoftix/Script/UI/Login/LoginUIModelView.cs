@@ -51,11 +51,10 @@ namespace ZJYFrameWork.UISerializable
             switch (_eventNotification.GetEventName)
             {
                 case UINotifEnum.OPEN_LOGIN_UI:
-                    // selfView.viewPanel
+                    InstanceOrReuse();
                     break;
                 case UINotifEnum.CLOSE_LOGIN_UI:
                     break;
-                    
             }
         }
     }
