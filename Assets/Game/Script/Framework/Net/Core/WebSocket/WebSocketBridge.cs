@@ -169,6 +169,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 //
                 if (webSocket.IsOpen)
                 {
+                    websocketClient.HandleOnMessage(data);
                 }
             }
             catch (Exception e)
