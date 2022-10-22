@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -72,6 +73,8 @@ namespace ZJYFrameWork.UISerializable
             var accountString = account.text;
             var passwordString = password.text;
             SpringContext.GetBean<ServerDataManager>().SetCacheAccountAndPassword(accountString, passwordString);
+            SpringContext.GetBean<ILoginService>().ConnectToGateway();
+
         }
 
         public void Show()

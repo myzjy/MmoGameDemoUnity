@@ -42,12 +42,12 @@ namespace ZJYFrameWork.Asynchronous
         Exception Exception { get; }
 
         /// <summary>
-        /// Returns <code>true</code> if the asynchronous operation is finished.
+        /// 如果异步操作完成，返回<code>true</code>。
         /// </summary>
         bool IsDone { get; }
 
         /// <summary>
-        /// Returns <code>true</code> if the asynchronous operation was cancelled before it completed normally.
+        ///如果异步操作在正常完成之前被取消，则返回<code>true</code>
         /// </summary>
         bool IsCancelled { get; }
 
@@ -82,7 +82,6 @@ namespace ZJYFrameWork.Asynchronous
         /// </summary>
         /// <returns></returns>
         object WaitForDone();
-
     }
 
     /// <summary>

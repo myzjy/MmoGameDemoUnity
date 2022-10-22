@@ -228,7 +228,6 @@ namespace ZJYFrameWork.UISerializable
                 UIView.GetTransform.localPosition = Vector3.zero;
                 selfView.SetUIView(UIView);
                 // 默认调用
-                selfView.OnHide();
                 selfView.OnInit();
             });
         }
@@ -236,6 +235,7 @@ namespace ZJYFrameWork.UISerializable
         private void LoadAssetFailureCallback(string soundAssetName, LoadResourceStatus status, string errorMessage,
             object userData)
         {
+            Debug.LogError(errorMessage);
         }
     }
 }

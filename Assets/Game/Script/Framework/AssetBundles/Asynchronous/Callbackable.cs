@@ -63,13 +63,13 @@ namespace ZJYFrameWork.Asynchronous
     public interface IProgressCallbackable<TProgress, TResult>
     {
         /// <summary>
-        /// Called when the task is finished.
+        ///在任务完成时调用。
         /// </summary>
         /// <param name="callback"></param>
         void OnCallback(Action<IProgressResult<TProgress, TResult>> callback);
 
         /// <summary>
-        /// Called when the progress update.
+        /// 进度更新时调用。
         /// </summary>
         /// <param name="callback"></param>
         void OnProgressCallback(Action<TProgress> callback);
@@ -425,7 +425,7 @@ namespace ZJYFrameWork.Asynchronous
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
+                        Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
                     }
                     return;
                 }

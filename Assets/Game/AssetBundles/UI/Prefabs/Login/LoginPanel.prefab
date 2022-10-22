@@ -1842,6 +1842,7 @@ GameObject:
   - component: {fileID: 3906649977639287490}
   - component: {fileID: 8113988621728076368}
   - component: {fileID: 9019789888483295301}
+  - component: {fileID: 5635103283465375700}
   m_Layer: 5
   m_Name: LoginPanel
   m_TagString: Untagged
@@ -1930,10 +1931,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d51f3e12bada403ca980a96ce4126294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  dataViewList:
+  - {fileID: 4548462337066523778}
   mSelfObj: {fileID: 1899562274783211712}
   MTransform: {fileID: 7960560374260678589}
-  MObjCanvasGroup: {fileID: 0}
+  MObjCanvasGroup: {fileID: 5635103283465375700}
+--- !u!225 &5635103283465375700
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899562274783211712}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1963109053854191491
 GameObject:
   m_ObjectHideFlags: 0
@@ -7127,7 +7141,10 @@ MonoBehaviour:
   - UI_Serializable_Key: LoginPart
     UI_Serializable_Obj: {fileID: 7320187304149993461}
     Path: LoginPart
-  maskIndex: 4
+  - UI_Serializable_Key: LoginPartView
+    UI_Serializable_Obj: {fileID: 2681772145587560702}
+    Path: LoginPart
+  maskIndex: 6
 --- !u!114 &2681772145587560702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7149,6 +7166,8 @@ MonoBehaviour:
   LoginPart: {fileID: 0}
   LoginBtn: {fileID: 0}
   RegisterBtn: {fileID: 0}
+  account: {fileID: 0}
+  password: {fileID: 0}
 --- !u!1 &7418065423706028953
 GameObject:
   m_ObjectHideFlags: 0

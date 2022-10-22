@@ -62,7 +62,7 @@ namespace ZJYFrameWork.Asynchronous
         }
 
         /// <summary>
-        /// Returns  "true" if this task finished.
+        /// 如果此任务已完成，则返回"true"。
         /// </summary>
         public virtual bool IsDone
         {

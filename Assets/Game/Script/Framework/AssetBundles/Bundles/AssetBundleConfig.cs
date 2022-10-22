@@ -14,6 +14,8 @@ namespace Framework.AssetBundles.Config
         private const string kIsSimulateMode = "IsSimulateMode";
         public const string BundleRoot = "AssetBundles";
         public const string ManifestFilename = "manifest.dat";
+        public const string SpriteAtlasSuffix = ".spriteatlas";
+        public const string SpriteAtlasABSuffix = "_spriteatlas.assetbundle";
 
 #if UNITY_EDITOR
 

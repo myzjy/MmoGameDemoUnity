@@ -3,6 +3,7 @@ using System.Collections;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.ObjectPool;
@@ -124,8 +125,44 @@ namespace ZJYFrameWork.AssetBundles
 
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
-            var obj = Resources.LoadAsset(assetBundle);
-            loadAssetCallbacks.LoadAssetSuccessCallback(assetBundle, obj, 0, null);
+            var abName = $"{assetBundle}{AssetBundleConfig.AssetBundleSuffix}";
+            var obj = Resources.LoadAssetAsync(abName);
+            obj.WaitForDone();
+            obj.Callbackable().OnProgressCallback(res => { Debug.Log("{[]}加载进度：{[]%}", abName, res * 100.0f); });
+            obj.Callbackable().OnCallback(res =>
+            {
+                if (res.Exception == null)
+                {
+                    if (res.IsDone)
+                    {
+                        if (res.IsCancelled)
+                        {
+                            loadAssetCallbacks.LoadAssetFailureCallback(abName, LoadResourceStatus.AssetError,
+                                "加载完成前，被取消了", null);
+                            // loadAssetCallbacks.LoadAssetUpdateCallback
+                        }
+                        else
+                        {
+                            if (res.Result != null)
+                            {
+                                loadAssetCallbacks.LoadAssetSuccessCallback(abName, res.Result,1,null);
+                            }
+                            
+                            else
+                            {
+                                loadAssetCallbacks.LoadAssetFailureCallback(abName, LoadResourceStatus.AssetError,
+                                    "加载完成前,资源为空", null);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    loadAssetCallbacks.LoadAssetFailureCallback(abName, LoadResourceStatus.AssetError,
+                        res.Exception.Message, null);
+                }
+            });
+            // loadAssetCallbacks.LoadAssetSuccessCallback(assetBundle, obj, 0, null);
         }
 
         public void SetBundleManifest(BundleManifest bundleManifest)
