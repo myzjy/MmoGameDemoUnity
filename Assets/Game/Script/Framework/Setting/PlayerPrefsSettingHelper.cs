@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text;
+using Newtonsoft.Json;
+using UnityEngine;
+using ZJYFrameWork.Constant;
+using ZJYFrameWork.Debugger.Widows.Model;
 using ZJYFrameWork.Prefs;
 using ZJYFrameWork.Spring.Core;
 
@@ -8,11 +12,16 @@ namespace ZJYFrameWork.Setting
     public class PlayerPrefsSettingHelper : ISettingHelper
     {
         private Preferences _preferences;
+        private string name;
+        protected static readonly string GLOBAL_NAME = "_GLOBAL_";
 
-        [AfterPostConstruct]
+        [BeforePostConstruct]
         private void Init()
         {
             _preferences = Preferences.GetGlobalPreferences();
+            Debug.Log(_preferences);
+            if (string.IsNullOrEmpty(this.name))
+                this.name = GLOBAL_NAME;
         }
 
         public bool Load()
@@ -22,7 +31,8 @@ namespace ZJYFrameWork.Setting
 
         public bool Save()
         {
-            _preferences.Save();
+            PlayerPrefs.Save();
+
             return true;
         }
 
@@ -37,13 +47,36 @@ namespace ZJYFrameWork.Setting
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected string Key(string key)
+        {
+            StringBuilder buf = new StringBuilder(this.Name);
+            buf.Append(".").Append(key);
+            return buf.ToString();
+        }
+
+        /// <summary>
+        /// The name of the preferences
+        /// </summary>
+        public string Name
+        {
+            get { return this.name; }
+            protected set { this.name = value; }
+        }
+
+        /// <summary>
         /// 检查是否存在指定游戏配置项。
         /// </summary>
         /// <param name="settingName">要检查游戏配置项的名称。</param>
         /// <returns>指定的游戏配置项是否存在。</returns>
         public bool HasSetting(string settingName)
         {
-            return _preferences.ContainsKey(settingName);
+            Debug.Log(Key(settingName));
+            var keys = Key(settingName);
+            return !string.IsNullOrEmpty(PlayerPrefs.GetString(keys));
         }
 
         /// <summary>
@@ -53,12 +86,13 @@ namespace ZJYFrameWork.Setting
         /// <returns>是否移除指定游戏配置项成功。</returns>
         public bool RemoveSetting(string settingName)
         {
-            if (!_preferences.ContainsKey(settingName))
+            if (!HasSetting(settingName))
             {
                 return false;
             }
 
-            _preferences.Remove(settingName);
+            var keys = Key(settingName);
+            PlayerPrefs.DeleteKey(keys);
             return true;
         }
 
@@ -68,7 +102,8 @@ namespace ZJYFrameWork.Setting
         public void RemoveAllSettings()
         {
             //移除
-            _preferences.RemoveAll();
+            PlayerPrefs.DeleteAll();
+            // _preferences.RemoveAll();
         }
 
         /// <summary>
@@ -78,7 +113,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的布尔值。</returns>
         public bool GetBool(string settingName)
         {
-            return _preferences.GetBool(settingName);
+            return GetObject<bool>(settingName);
         }
 
         /// <summary>
@@ -89,7 +124,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的布尔值。</returns>
         public bool GetBool(string settingName, bool defaultValue)
         {
-            return _preferences.GetBool(settingName, defaultValue);
+            return GetObject(settingName, defaultValue);
         }
 
         /// <summary>
@@ -99,7 +134,9 @@ namespace ZJYFrameWork.Setting
         /// <param name="value">要写入的布尔值。</param>
         public void SetBool(string settingName, bool value)
         {
-            _preferences.SetBool(settingName, value);
+            var key = Key(settingName);
+
+            SetObject(key, value);
         }
 
         /// <summary>
@@ -109,7 +146,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的整数值。</returns>
         public int GetInt(string settingName)
         {
-            return _preferences.GetInt(settingName);
+            return GetObject<int>(settingName);
         }
 
         /// <summary>
@@ -120,7 +157,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的整数值。</returns>
         public int GetInt(string settingName, int defaultValue)
         {
-            return _preferences.GetInt(settingName, defaultValue);
+            return GetObject(settingName, defaultValue);
         }
 
         /// <summary>
@@ -130,7 +167,9 @@ namespace ZJYFrameWork.Setting
         /// <param name="value">要写入的整数值。</param>
         public void SetInt(string settingName, int value)
         {
-            _preferences.SetInt(settingName, value);
+            var key = Key(settingName);
+
+            SetObject(key, value);
         }
 
         /// <summary>
@@ -140,7 +179,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的浮点数值。</returns>
         public float GetFloat(string settingName)
         {
-            return _preferences.GetFloat(settingName);
+            return GetObject<float>(settingName);
         }
 
         /// <summary>
@@ -151,7 +190,7 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的浮点数值。</returns>
         public float GetFloat(string settingName, float defaultValue)
         {
-            return _preferences.GetFloat(settingName, defaultValue);
+            return GetObject(settingName, defaultValue);
         }
 
         /// <summary>
@@ -161,7 +200,9 @@ namespace ZJYFrameWork.Setting
         /// <param name="value">要写入的浮点数值。</param>
         public void SetFloat(string settingName, float value)
         {
-            _preferences.SetFloat(settingName, value);
+            var key = Key(settingName);
+
+            SetObject(key, value);
         }
 
         /// <summary>
@@ -171,7 +212,12 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的字符串值。</returns>
         public string GetString(string settingName)
         {
-            return _preferences.GetString(settingName);
+            var key = Key(settingName);
+            if (!HasSetting(settingName))
+                return "";
+
+            string str = PlayerPrefs.GetString(Key(key));
+            return str;
         }
 
         /// <summary>
@@ -182,7 +228,14 @@ namespace ZJYFrameWork.Setting
         /// <returns>读取的字符串值。</returns>
         public string GetString(string settingName, string defaultValue)
         {
-            return _preferences.GetString(settingName, defaultValue);
+            var key = Key(settingName);
+            if (!HasSetting(settingName))
+                return defaultValue;
+
+            string str = PlayerPrefs.GetString(Key(key));
+            if (string.IsNullOrEmpty(str))
+                return defaultValue;
+            return str;
         }
 
         /// <summary>
@@ -192,7 +245,11 @@ namespace ZJYFrameWork.Setting
         /// <param name="value">要写入的字符串值。</param>
         public void SetString(string settingName, string value)
         {
-            _preferences.SetString(settingName, value);
+            var key = Key(settingName);
+            string str = value == null ? "" : JsonConvert.SerializeObject(value);
+
+
+            PlayerPrefs.SetString(key, str);
         }
 
         /// <summary>

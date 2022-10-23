@@ -32,6 +32,7 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
         public void AtLoginResponse(LoginResponse response)
         {
             var token = response.token;
+            LoginCacheData.loginFlag = true;
             Debug.Log("登录返回[token:{}]", token);
         }
 

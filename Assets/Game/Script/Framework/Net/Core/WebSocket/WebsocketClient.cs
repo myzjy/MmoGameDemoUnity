@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using BestHTTP.WebSocket;
 using Newtonsoft.Json;
+using ZJYFrameWork.Event;
+using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
@@ -59,6 +61,8 @@ namespace ZJYFrameWork.Net.Core.Websocket
         /// </summary>
         internal void HandleOnOpen(WebSocket ws)
         {
+            Debug.Log("成功打开");
+            EventBus.AsyncSubmit(NetOpenEvent.ValueOf());
         }
 
         internal void HandleOnMessage(string message)

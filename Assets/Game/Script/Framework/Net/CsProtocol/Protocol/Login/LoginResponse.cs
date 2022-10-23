@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
@@ -7,6 +8,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
     public class LoginResponse : IPacket
     {
         public string token;
+        public long uid;
 
         public static LoginResponse ValueOf(string token)
         {
@@ -46,9 +48,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         public IPacket Read(ByteBuffer buffer)
         {
             var json = StringUtils.BytesToString(buffer.ToBytes());
-            var message = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
-
-            var packet = (LoginRequest)message.packet;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = JsonConvert.DeserializeObject<LoginResponse>(dict["packet"].ToString());
 
             return packet;
         }

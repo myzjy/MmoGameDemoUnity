@@ -37,9 +37,9 @@ namespace ZJYFrameWork.WebRequest
                 case HostType.Develop:
                     break;
                 case HostType.Test:
-                    ApiHttpsBaseUrl = "http://192.168.0.105:5000";
-                    ApiWebSocketUrl = "ws://192.168.0.105:5000/websocket";
-                    mAssetBundle = "http://192.168.0.105:5000/assetbundle/android";
+                    ApiHttpsBaseUrl = "http://192.168.0.114:5000";
+                    ApiWebSocketUrl = "ws://192.168.0.114:5000/websocket";
+                    mAssetBundle = "http://192.168.0.114:5000/assetbundle/android";
                     break;
                 case HostType.Online:
                     break;

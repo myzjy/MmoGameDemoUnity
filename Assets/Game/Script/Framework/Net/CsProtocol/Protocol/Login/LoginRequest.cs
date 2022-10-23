@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
@@ -42,14 +43,15 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             var loginRequest = (LoginRequest)packet;
             var message = new ServerMessageWrite(loginRequest.ProtocolId(), loginRequest);
             var json = JsonConvert.SerializeObject(message);
+            Debug.Log(json);
             buffer.WriteString(json);
         }
 
         public IPacket Read(ByteBuffer buffer)
         {
             var json = StringUtils.BytesToString(buffer.ToBytes());
-            var message = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
-            var packet = (LoginRequest)message.packet;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = JsonConvert.DeserializeObject<LoginRequest>(dict["packet"].ToString());
             return packet;
         }
     }

@@ -411,11 +411,11 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
             if (strBytes == null || strBytes.Length <= 0)
             {
-                WriteInt(0);
+                // WriteInt(0);
                 return;
             }
 
-            WriteInt(strBytes.Length);
+            // WriteInt(strBytes.Length);
             WriteBytes(strBytes);
         }
 

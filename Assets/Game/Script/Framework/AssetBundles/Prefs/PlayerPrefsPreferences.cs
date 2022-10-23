@@ -394,7 +394,9 @@ namespace ZJYFrameWork.Prefs
         /// <returns></returns>
         public override bool ContainsKey(string key)
         {
-            return PlayerPrefs.HasKey(Key(key));
+            Debug.Log(Key(key));
+            var keys = Key(key);
+            return PlayerPrefs.HasKey(keys);
         }
 
         /// <summary>

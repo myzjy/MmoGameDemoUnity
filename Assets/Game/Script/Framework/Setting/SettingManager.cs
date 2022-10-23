@@ -24,7 +24,7 @@ namespace ZJYFrameWork.Setting
         /// <summary>
         /// 初始化
         /// </summary>
-        [BeforePostConstruct]
+        [AfterPostConstruct]
         private void Init()
         {
             if (Settings == null)

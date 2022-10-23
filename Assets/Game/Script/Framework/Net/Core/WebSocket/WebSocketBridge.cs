@@ -131,8 +131,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
             _webSocket.Open();
         }
 
-
-        [MonoPInvokeCallback(typeof(OnWebSocketOpenDelegate))]
         public void DelegateOnOpenEvent(WebSocket webSocket)
         {
             websocketClient.HandleOnOpen(webSocket);

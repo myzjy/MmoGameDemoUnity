@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
@@ -79,18 +80,23 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         {
             ;
             var json = StringUtils.BytesToString(byteBuffer.ToBytes());
-            var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            Debug.Log(json);
 
-
-            jsonDict.TryGetValue("protocolId", out var protocolStr);
-
-            if (protocolStr != null)
+            try
             {
-                var protocolId = short.Parse(protocolStr);
-                return GetProtocol(protocolId).Read(byteBuffer);
+                var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+                // var jsonDict = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
+                dict.TryGetValue("protocolId", out var protocolIdStr);
+                if (protocolIdStr != null)
+                {
+                    var protocolId =short.Parse(protocolIdStr.ToString());
+                    return GetProtocol(protocolId).Read(byteBuffer);
+                }
             }
-
-            Debug.Log("接受消息协议出错");
+            catch (Exception e)
+            {
+                Debug.Log($"接受消息协议出错{e}");
+            }
 
             return null;
         }
