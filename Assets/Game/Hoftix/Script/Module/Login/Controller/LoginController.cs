@@ -11,6 +11,7 @@ using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Script.Module.Login.Controller
@@ -56,7 +57,9 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             else
             {
                 Debug.Log("连接成功事件，通过账号密码登录服务器");
-                loginService.LoginByAccount();
+                // loginService.LoginByAccount();
+                //没有登录过，没有记录
+                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
             }
         }
 

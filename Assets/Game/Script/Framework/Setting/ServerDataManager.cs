@@ -7,13 +7,14 @@ namespace ZJYFrameWork.Setting
     public sealed class ServerDataManager
     {
         [Autowired] private LoginClientCacheData LoginCacheData;
-
+        [Autowired] private RegisterPartClientCacheData RegisterPartClientCacheData;
 
         [AfterPostConstruct]
         public void Init()
         {
-          
         }
+
+        public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
 
         /// <summary>
         /// 保存缓存账号密码
@@ -25,7 +26,18 @@ namespace ZJYFrameWork.Setting
             LoginCacheData.account = account;
             LoginCacheData.password = password;
         }
-        
-        public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
+
+        /// <summary>
+        /// 保存缓存账号密码
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="password"></param>
+        /// <param name="affirmPassword"></param>
+        public void SetCacheRegisterAccountAndPassword(string account, string password, string affirmPassword)
+        {
+            RegisterPartClientCacheData.Account = account;
+            RegisterPartClientCacheData.Password = password;
+            RegisterPartClientCacheData.AffirmPassword = affirmPassword;
+        }
     }
 }

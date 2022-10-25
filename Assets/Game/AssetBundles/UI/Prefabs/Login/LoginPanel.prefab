@@ -286,6 +286,7 @@ GameObject:
   - component: {fileID: 3744193947950576376}
   - component: {fileID: 8646455588828045449}
   - component: {fileID: 1249903044511398355}
+  - component: {fileID: 8578358550628591861}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -417,6 +418,23 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &8578358550628591861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671065536117568042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: registerPasswordInputField
+    UI_Serializable_Obj: {fileID: 1249903044511398355}
+    Path: RegisterPart/password/InputField
+  maskIndex: 8
 --- !u!1 &717352572031472487
 GameObject:
   m_ObjectHideFlags: 0
@@ -2276,6 +2294,7 @@ GameObject:
   - component: {fileID: 5275707896784106835}
   - component: {fileID: 3661797515619221674}
   - component: {fileID: 901220665169173253}
+  - component: {fileID: 430668615927816904}
   m_Layer: 5
   m_Name: Btn_agree
   m_TagString: Untagged
@@ -2385,6 +2404,23 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &430668615927816904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378456576776632990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: Btn_agree_Button
+    UI_Serializable_Obj: {fileID: 901220665169173253}
+    Path: RegisterPart/Btn_agree
+  maskIndex: 8
 --- !u!1 &2412872001973801267
 GameObject:
   m_ObjectHideFlags: 0
@@ -2397,6 +2433,7 @@ GameObject:
   - component: {fileID: 8262974063284357006}
   - component: {fileID: 1849844684327665462}
   - component: {fileID: 3396046975467762726}
+  - component: {fileID: 1586715832105115593}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -2528,6 +2565,23 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &1586715832105115593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2412872001973801267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: registerAffirmPasswordInputField
+    UI_Serializable_Obj: {fileID: 3396046975467762726}
+    Path: RegisterPart/password (re)/InputField
+  maskIndex: 8
 --- !u!1 &2655838788094637417
 GameObject:
   m_ObjectHideFlags: 0
@@ -2894,6 +2948,7 @@ GameObject:
   - component: {fileID: 2943188461497388770}
   - component: {fileID: 6249667424839511811}
   - component: {fileID: 5738491676042089294}
+  - component: {fileID: 8738612608067733551}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -3025,6 +3080,23 @@ MonoBehaviour:
   m_CaretWidth: 1
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
+--- !u!114 &8738612608067733551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2921175680955313141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: registerAccountInputField
+    UI_Serializable_Obj: {fileID: 5738491676042089294}
+    Path: RegisterPart/UserName/InputField
+  maskIndex: 8
 --- !u!1 &2925524840754867505
 GameObject:
   m_ObjectHideFlags: 0
@@ -3309,6 +3381,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4378535149520221427}
+  - component: {fileID: 8569379068832259980}
   m_Layer: 5
   m_Name: RegisterPart
   m_TagString: Untagged
@@ -3341,6 +3414,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8569379068832259980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146546060513168608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 106f277311b041108c3afc1af986d330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataViewList:
+  - {fileID: 8738612608067733551}
+  - {fileID: 8578358550628591861}
+  registerAccountInputField: {fileID: 0}
+  registerPasswordInputField: {fileID: 0}
+  registerAffirmPasswordInputField: {fileID: 0}
+  okButton: {fileID: 0}
+  cancelButton: {fileID: 0}
 --- !u!1 &3191773757919231790
 GameObject:
   m_ObjectHideFlags: 0
@@ -4879,7 +4972,7 @@ GameObject:
   m_Component:
   - component: {fileID: 169208941886144579}
   m_Layer: 5
-  m_Name: Namepart (1)
+  m_Name: Namepart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7100,7 +7193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &226294053470361185
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7338,6 +7431,7 @@ GameObject:
   - component: {fileID: 2105227820040255933}
   - component: {fileID: 2711109868785829208}
   - component: {fileID: 7184687745103247274}
+  - component: {fileID: 5758009091781868334}
   m_Layer: 5
   m_Name: Btn_disagree
   m_TagString: Untagged
@@ -7447,6 +7541,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5758009091781868334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7590802209969996198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs: []
+  maskIndex: 0
 --- !u!1 &7774053438199254648
 GameObject:
   m_ObjectHideFlags: 0

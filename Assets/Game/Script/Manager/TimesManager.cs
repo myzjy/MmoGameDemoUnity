@@ -104,6 +104,7 @@ namespace ZJYFrameWork.UISerializable.Manager
         {
             timestamp = time;
         }
+        public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
 
         /**
          * 获取精确的时间戳

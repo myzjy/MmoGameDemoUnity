@@ -15,14 +15,15 @@ namespace ZJYFrameWork.Procedure.Scene
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
-            if (settingManager.HasSetting(GameConstant.SETTING_LOGIN_TOKEN))
-            {
+            // if (settingManager.HasSetting(GameConstant.SETTING_LOGIN_TOKEN))
+            // {
+            //先链接服务器
                 loginService.ConnectToGateway();
-            }
-            else
-            {
-                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
-            }
+            // }
+            // else
+            // {
+                // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
+            // }
         }
     }
 }

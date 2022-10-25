@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
@@ -50,10 +51,7 @@ namespace ZJYFrameWork.UISerializable
             //密码输入框
             password = GetObjType<InputField>("password");
             LoginBtn.onClick.RemoveAllListeners();
-            LoginBtn.onClick.AddListener(() =>
-            {
-                ClickLogin();
-            });
+            LoginBtn.onClick.AddListener(() => { ClickLogin(); });
         }
 
         private long clickLoginTime;
@@ -73,17 +71,21 @@ namespace ZJYFrameWork.UISerializable
             var accountString = account.text;
             var passwordString = password.text;
             SpringContext.GetBean<ServerDataManager>().SetCacheAccountAndPassword(accountString, passwordString);
-            SpringContext.GetBean<ILoginService>().ConnectToGateway();
-
+            SpringContext.GetBean<ILoginService>().LoginByAccount();
         }
 
         public void Show()
         {
             LoginPart.SetActive(true);
+            LoginPart.transform.DOKill();
+            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.2f * 0);
+            // LoginPart
         }
 
         public void Hide()
         {
+            LoginPart.transform.DOKill();
+            LoginPart.transform.DOScale(0f, 0f);
             LoginPart.SetActive(false);
         }
     }

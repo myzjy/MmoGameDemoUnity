@@ -22,7 +22,7 @@
     }
 }
 
-namespace ZJYFrameWork.UISerializable.PanelView
+namespace ZJYFrameWork.UISerializable
 {
     public partial class UINotifEnum
     {
