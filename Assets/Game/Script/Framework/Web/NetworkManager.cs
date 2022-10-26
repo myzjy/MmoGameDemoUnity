@@ -3,6 +3,7 @@ using Net.Https;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Constant;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
@@ -16,10 +17,11 @@ namespace ZJYFrameWork.WebRequest
     {
         public UserAuth UserAuth;
         private ApiHandler _handler;
+        [Autowired] private ISettingManager settingManager;
+
         protected override void OnAwake()
         {
             base.OnAwake();
-            
         }
 
         public void Init()
@@ -27,7 +29,8 @@ namespace ZJYFrameWork.WebRequest
             Debug.Log("初始化NetworkManager");
             this.UserAuth = new UserAuth();
             this._handler = gameObject.AddComponent<ApiHandler>();
-            this._handler.Setup(SpringContext.GetBean<ISettingManager>().GetHttpsBase(), UserAuth.AuthToken);
+            this._handler.Setup(SpringContext.GetBean<ISettingManager>().GetHttpsBase(),
+                settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN));
             this._handler.onResponseGlobal += SetAuthTokenOnce;
             this._handler.onCompleteGlobal += RequestCompleteGlobal;
             this._handler.onErrorGlobal += ErrorGlobal;

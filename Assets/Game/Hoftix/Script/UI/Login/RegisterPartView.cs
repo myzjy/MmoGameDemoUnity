@@ -1,4 +1,6 @@
-﻿using UnityEngine.UI;
+﻿using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -7,6 +9,21 @@ namespace ZJYFrameWork.UISerializable
 {
     public class RegisterPartView : UISerializableKeyObject
     {
+        /// <summary>
+        /// root节点CanvasGroup
+        /// </summary>
+        public CanvasGroup rootCanvasGroup;
+
+        /// <summary>
+        /// rootTransform
+        /// </summary>
+        public Transform root;
+
+        /// <summary>
+        /// root节点
+        /// </summary>
+        public GameObject rootObj;
+
         /// <summary>
         /// 输入账号
         /// </summary>
@@ -33,17 +50,21 @@ namespace ZJYFrameWork.UISerializable
 
         public void Build()
         {
+            rootCanvasGroup = GetObjType<CanvasGroup>("rootCanvasGroup");
+            rootObj = GetObjType<GameObject>("root");
+            root = rootObj.transform;
             registerAccountInputField = GetObjType<InputField>("registerAccountInputField");
             registerPasswordInputField = GetObjType<InputField>("registerPasswordInputField");
             registerAffirmPasswordInputField = GetObjType<InputField>("registerAffirmPasswordInputField");
             okButton = GetObjType<Button>("okButton");
             cancelButton = GetObjType<Button>("cancelButton");
             okButton.onClick.RemoveAllListeners();
-            okButton.onClick.AddListener(() => { });
+            okButton.onClick.AddListener(() => { OnClickRegister(); });
             cancelButton.onClick.RemoveAllListeners();
             cancelButton.onClick.AddListener(() =>
             {
                 //隐藏按钮
+                OnClose();
             });
         }
 
@@ -61,6 +82,35 @@ namespace ZJYFrameWork.UISerializable
             var affirmPasswordString = registerPasswordInputField.text;
             SpringContext.GetBean<ServerDataManager>()
                 .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
+        }
+
+        public void OnShow()
+        {
+            rootObj.SetActive(true);
+            rootCanvasGroup.DOKill();
+            rootCanvasGroup.DOFade(0f, 0f);
+            rootCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
+                .OnComplete(() =>
+                {
+                    rootCanvasGroup.interactable = true;
+                    rootCanvasGroup.blocksRaycasts = true;
+                    // PlayManager.Instance.LoadScene(Data.scene_home);
+                    // rootObj.SetActive(fal);
+                });
+        }
+
+        public void OnClose()
+        {
+            rootCanvasGroup.DOKill();
+            rootCanvasGroup.DOFade(1f, 0f);
+            rootCanvasGroup.DOFade(0f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
+                .OnComplete(() =>
+                {
+                    rootCanvasGroup.interactable = false;
+                    rootCanvasGroup.blocksRaycasts = false;
+                    // PlayManager.Instance.LoadScene(Data.scene_home);
+                    // rootObj.SetActive(fal);
+                });
         }
     }
 }

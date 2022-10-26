@@ -4,7 +4,7 @@
     {
         public override void OnInit()
         {
-            viewPanel.LoginPartView.Bind();
+            viewPanel.LoginPartView.Build();
         }
 
         public override void OnShow()

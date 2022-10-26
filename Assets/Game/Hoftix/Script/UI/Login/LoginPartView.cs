@@ -38,7 +38,7 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public InputField password;
 
-        public void Bind()
+        public void Build()
         {
             //登录面板
             LoginPart = GetObjType<GameObject>("LoginPart");

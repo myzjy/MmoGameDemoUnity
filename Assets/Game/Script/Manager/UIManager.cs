@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using ZJYFrameWork.Framwork;
 using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
-using ZJYFrameWork.UISerializable.PanelView;
 using ZJYFrameWork.UISerializable.UIModel;
 using UnityEngine;
 
