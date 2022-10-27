@@ -48,17 +48,7 @@ namespace ZJYFrameWork.WebRequest
 
         public void Load()
         {
-#if UNITY_EDITOR
-            HostType type =
-                (HostType)UnityEditor.EditorPrefs.GetInt("MmoGame/Tools/Skip Server Select/", (int)HostType.Develop);
-            if (type == HostType.None)
-            {
-                type = HostType.Develop;
-            }
-#else
-			HostType type = GetHostBySysmol();
-#endif
-            SetHost(type);
+
         }
 
         private HostType GetHostBySysmol()

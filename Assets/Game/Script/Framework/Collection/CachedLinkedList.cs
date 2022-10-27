@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 
 namespace ZJYFrameWork.Collection
 {
-      /// <summary>
+    /// <summary>
     /// 游戏框架链表类。
     /// </summary>
     /// <typeparam name="T">指定链表的元素类型。</typeparam>
-    public sealed class CachedLinkedList<T> : ICollection<T>,  ICollection
+    public sealed class CachedLinkedList<T> : ICollection<T>, ICollection
     {
         private readonly LinkedList<T> linkedList;
         private readonly Queue<LinkedListNode<T>> cachedNodes;
@@ -53,7 +53,7 @@ namespace ZJYFrameWork.Collection
         /// </summary>
         public bool IsReadOnly
         {
-            get { return ((ICollection<T>) linkedList).IsReadOnly; }
+            get { return ((ICollection<T>)linkedList).IsReadOnly; }
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace ZJYFrameWork.Collection
         /// </summary>
         public object SyncRoot
         {
-            get { return ((ICollection) linkedList).SyncRoot; }
+            get { return ((ICollection)linkedList).SyncRoot; }
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace ZJYFrameWork.Collection
         /// </summary>
         public bool IsSynchronized
         {
-            get { return ((ICollection) linkedList).IsSynchronized; }
+            get { return ((ICollection)linkedList).IsSynchronized; }
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace ZJYFrameWork.Collection
         /// <param name="index">array 中从零开始的索引，从此处开始复制。</param>
         public void CopyTo(Array array, int index)
         {
-            ((ICollection) linkedList).CopyTo(array, index);
+            ((ICollection)linkedList).CopyTo(array, index);
         }
 
 
@@ -331,7 +331,7 @@ namespace ZJYFrameWork.Collection
             /// </summary>
             void IEnumerator.Reset()
             {
-                ((IEnumerator<T>) enumerator).Reset();
+                ((IEnumerator<T>)enumerator).Reset();
             }
         }
     }
