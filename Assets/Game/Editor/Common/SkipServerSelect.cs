@@ -9,11 +9,11 @@ namespace ZJYFrameWork.Editors.Common
 
     public class SkipServerSelect
     {
-        public const string MENU_BASE_PATH = "MmoGame/Tools/Skip Server Select/";
+        public const string MENU_BASE_PATH = "Tools/Skip Server Select/";
 
         private static List<HostType> selectableTypes;
 
-        public SkipServerSelect()
+        static SkipServerSelect()
         {
             HostType[] types =
                 (HostType[])Enum.GetValues(typeof(HostType));

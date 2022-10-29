@@ -1,7 +1,9 @@
 ﻿using System;
+using Newtonsoft.Json;
 using UnityEngine;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-	public abstract class Model
+public abstract class Model
 	{
 		/// <summary>
 		/// JSONにシリアライズ
@@ -29,6 +31,11 @@ using UnityEngine;
 		/// </summary>
 		public virtual byte[] Pack()
 		{
+			var str = JsonConvert.SerializeObject(this);
+			Debug.Log(str);
+			var byteBuff = ByteBuffer.ValueOf();
+			byteBuff.WriteString(str);
+			return byteBuff.ToBytes();
 			throw new NotImplementedException("Pack is not Implemented for class " + GetType().FullName);
 		}
 

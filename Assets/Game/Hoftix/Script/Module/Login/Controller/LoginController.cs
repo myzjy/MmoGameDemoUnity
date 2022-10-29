@@ -13,6 +13,7 @@ using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Manager;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Script.Module.Login.Controller
 {
@@ -57,9 +58,38 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             else
             {
                 Debug.Log("连接成功事件，通过账号密码登录服务器");
+                RegisterApi registerApi = new RegisterApi
+                {
+                    Param =
+                    {
+                        // registerApi.Param. = getUniqueDeviceType();
+                        version = "1.00.001",
+                        channelCode = SpringContext.GetBean<NetworkManager>().aUserFromAttr.channelCode,
+                        platformId = SpringContext.GetBean<NetworkManager>().aUserFromAttr.platformId,
+                        platfromToken = SpringContext.GetBean<NetworkManager>().aUserFromAttr.sdkToken
+                    },
+                    onBeforeSend = () =>
+                    {
+                        // CommonUIManager.Instance.UINetLoading.OnShow();
+                    },
+                    onSuccess = res =>
+                    {
+                
+                    },
+                    onComplete = () =>
+                    {
+                        // CommonUIManager.Instance.UINetLoading.OnClose();
+                    },
+                    onError = res =>
+                    {
+                
+                    }
+                };
+
+                SpringContext.GetBean<NetworkManager>().Request(registerApi);
                 // loginService.LoginByAccount();
                 //没有登录过，没有记录
-                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
+                // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
             }
         }
 

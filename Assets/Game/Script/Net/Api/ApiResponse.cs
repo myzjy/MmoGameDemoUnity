@@ -50,7 +50,8 @@ namespace ZJYFrameWork.Net
                 this.StatusMessage = bhResponse.Message;
                 this.Headers = bhResponse.Headers;
 
-
+                Debug.Log(bhResponse.Message);
+                Debug.Log(bhResponse.DataAsText);
                 this.RawData = bhResponse.Data;
             }
         }
@@ -60,10 +61,10 @@ namespace ZJYFrameWork.Net
             if (bhResponse != null)
             {
                 string contentType = bhResponse.GetFirstHeaderValue("content-type");
-                if (contentType != "application/msgpack")
-                {
-                    throw new Exception("Invalid Content Type: " + contentType);
-                }
+                // if (contentType != "application/msgpack")
+                // {
+                //     throw new Exception("Invalid Content Type: " + contentType);
+                // }
             }
         }
     }

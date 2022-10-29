@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using AOT;
-using BestHTTP.JSON.LitJson;
-using BestHTTP.SignalR;
-using BestHTTP.SignalR.Messages;
-using BestHTTP.SignalR.Transports;
 using BestHTTP.WebSocket;
-using BestHTTP.WebSocket.Frames;
-using Newtonsoft.Json;
-using UnityEngine;
-using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.Core.Websocket
 {
-    public class
-        WebSocketBridge
+    public class WebSocketBridge
     {
         /// <summary>
         /// webSocket
@@ -89,20 +79,20 @@ namespace ZJYFrameWork.Net.Core.Websocket
             _webSocket.OnClosed = callback;
         }
 
-        /// <summary>
-        /// The current state of the transport.
-        /// </summary>
-        public TransportStates State
-        {
-            get { return _state; }
-            protected set
-            {
-                TransportStates old = _state;
-                _state = value;
-            }
-        }
-
-        public TransportStates _state;
+        // /// <summary>
+        // /// The current state of the transport.
+        // /// </summary>
+        // public TransportStates State
+        // {
+        //     get { return _state; }
+        //     protected set
+        //     {
+        //         TransportStates old = _state;
+        //         _state = value;
+        //     }
+        // }
+        //
+        // public TransportStates _state;
 
         public void Initialize()
         {

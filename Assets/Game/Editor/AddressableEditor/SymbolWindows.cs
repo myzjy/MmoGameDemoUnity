@@ -26,7 +26,7 @@ public class SymbolWindows : EditorWindow
         }
     }
 
-    private readonly List<SymbolData> _mSymbolDataList = new List<SymbolData>()
+    private static  List<SymbolData> _mSymbolDataList = new List<SymbolData>()
     {
         new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
         new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
@@ -37,6 +37,7 @@ public class SymbolWindows : EditorWindow
         new SymbolData("BESTHTTP_DISABLE_SIGNALR", ""),
         new SymbolData("BESTHTTP_DISABLE_SOCKETIO", ""),
         new SymbolData("BESTHTTP_DISABLE_UNITY_FORM", ""),
+        new SymbolData("BESTHTTP_DISABLE_SIGNALR_CORE", ""),
         new SymbolData("ENABLE_DEBUG_LOG", ""),
         new SymbolData("ENABLE_LOG", ""),
         new SymbolData("ENABLE_DEBUG_AND_ABOVE_LOG", ""),
@@ -81,40 +82,48 @@ public class SymbolWindows : EditorWindow
 
         if (GUILayout.Button("Save"))
         {
-            var strs = _mSymbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToArray();
-
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                BuildTargetGroup.Android,
-                string.Join(";", strs)
-            );
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                BuildTargetGroup.iOS,
-                string.Join(";", strs)
-            );
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                BuildTargetGroup.Standalone,
-                string.Join(";", strs)
-            );
-            Close();
+            OnSave();
+            // Close();
         }
 
         EditorGUILayout.EndScrollView();
         EditorGUILayout.EndVertical();
     }
 
-    private static List<SymbolData> symbolDataList = new List<SymbolData>();
-
+    // private static List<SymbolData> symbolDataList = new List<SymbolData>();
+    public static void OnSave()
+    {
+        var list = _mSymbolDataList.Where(a => a.IsEnable).ToList();
+        var lists = list.Select(a => a.name).ToList();
+        var str = _mSymbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToList();
+        HostType type =
+            (HostType)EditorPrefs.GetInt("Tools/Skip Server Select/",
+                (int)HostType.None);
+        str.Add($"API_{type.ToString().ToUpper()}");
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.Android,
+            string.Join(";", str)
+        );
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.Standalone,
+            string.Join(";", str)
+        );
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(
+            BuildTargetGroup.iOS,
+            string.Join(";", str)
+        );
+    }
     public static void OnSaveData()
     {
         var defineSymbols = PlayerSettings
             .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup).Split(';');
 
-        foreach (var itemString in symbolDataList)
+        foreach (var itemString in _mSymbolDataList)
         {
             itemString.IsEnable = defineSymbols.Any(c => c == itemString.name);
         }
 
-        var str = symbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToList();
+        var str = _mSymbolDataList.Where(a => a.IsEnable).Select(it => it.name).ToList();
         HostType type =
             (HostType)EditorPrefs.GetInt("Tools/Skip Server Select/",
                 (int)HostType.None);

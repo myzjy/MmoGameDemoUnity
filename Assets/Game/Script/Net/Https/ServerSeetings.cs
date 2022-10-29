@@ -37,7 +37,7 @@ namespace ZJYFrameWork.WebRequest
                 case HostType.Develop:
                     break;
                 case HostType.Test:
-                    ApiHttpsBaseUrl = "http://192.168.0.114:5000";
+                    ApiHttpsBaseUrl = "http://127.0.0.1:443";
                     ApiWebSocketUrl = "ws://192.168.0.114:5000/websocket";
                     mAssetBundle = "http://192.168.0.114:5000/assetbundle/android";
                     break;
@@ -48,7 +48,16 @@ namespace ZJYFrameWork.WebRequest
 
         public void Load()
         {
-
+#if UNITY_EDITOR
+            HostType type = (HostType)UnityEditor.EditorPrefs.GetInt("Tools/Skip Server Select/", (int)HostType.Test);
+            if (type == HostType.None)
+            {
+                type = HostType.Test;
+            }
+#else
+			HostType type = GetHostBySysmol();
+#endif
+            SetHost(type);
         }
 
         private HostType GetHostBySysmol()

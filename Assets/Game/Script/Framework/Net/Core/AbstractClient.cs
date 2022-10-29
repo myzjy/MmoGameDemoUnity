@@ -22,7 +22,7 @@ namespace ZJYFrameWork.Net.Core
         // (不是HashSet，因为一个连接可以有多个新消息)
         protected ConcurrentQueue<Message> receiveQueue = new ConcurrentQueue<Message>();
 
-        // send queue
+        // send queuec
         // => SafeQueue的速度是ConcurrentQueue的两倍，参见SafeQueue.cs!
         protected SafeQueue<byte[]> sendQueue = new SafeQueue<byte[]>();
 

@@ -5,6 +5,7 @@ using UnityEngine;
 using ZJYFrameWork.Base;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Net;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.WebRequest;
@@ -35,7 +36,15 @@ namespace ZJYFrameWork.WebRequest
             this._handler.onCompleteGlobal += RequestCompleteGlobal;
             this._handler.onErrorGlobal += ErrorGlobal;
         }
+        public UserFromAttributeData aUserFromAttr = new UserFromAttributeData();
 
+        public void SetUserFromAttributeData(int channelCode, string platformId, string sdkToken)
+        {
+            aUserFromAttr.channelCode = channelCode;
+            aUserFromAttr.platformId = platformId;
+            aUserFromAttr.sdkToken = sdkToken;
+            //Debug.Log("Set:" + channelCode + "\n" + platformId);
+        }
         public void Reset()
         {
             if (this._handler != null)

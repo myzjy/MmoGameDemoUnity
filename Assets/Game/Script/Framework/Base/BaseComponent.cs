@@ -181,5 +181,22 @@ namespace ZJYFrameWork.Base
             // SpringContext.GetBean<IObjectPoolManager>().ReleaseAllUnused();
             // SpringContext.GetBean<ResourceComponent>().ForceUnloadUnusedAssets(true);
         }
+        /// <summary>
+        /// 关闭游戏框架。
+        /// </summary>
+        /// <param name="shutdownType">关闭游戏框架类型。</param>
+        public void Shutdown(ShutdownType shutdownType)
+        {
+            Debug.Log("Shutdown Game Framework ({})...", shutdownType.ToString());
+
+            // Destroy(gameObject);
+
+            Application.Quit();
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+            return;
+        }
     }
 }

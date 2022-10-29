@@ -1,5 +1,4 @@
-﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -56,4 +55,3 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
     }
 }
-#endif

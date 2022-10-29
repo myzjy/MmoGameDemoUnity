@@ -4,14 +4,15 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Debugger.Windows
 {
-      public sealed class TimeInformationWindow : ScrollableDebuggerWindowBase
+    public sealed class TimeInformationWindow : ScrollableDebuggerWindowBase
     {
         protected override void OnDrawScrollableWindow()
         {
             GUILayout.Label("<b>Time Information</b>");
             GUILayout.BeginVertical("box");
             {
-                DrawItem("Time Scale", StringUtils.Format("{} [{}]", Time.timeScale.ToString(), GetTimeScaleDescription(Time.timeScale)));
+                DrawItem("Time Scale",
+                    StringUtils.Format("{} [{}]", Time.timeScale.ToString(), GetTimeScaleDescription(Time.timeScale)));
                 DrawItem("Realtime Since Startup", Time.realtimeSinceStartup.ToString());
                 DrawItem("Time Since Level Load", Time.timeSinceLevelLoad.ToString());
                 DrawItem("Time", Time.time.ToString());
