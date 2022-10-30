@@ -47,7 +47,6 @@ namespace ZJYFrameWork.Net
 
             _bhRequest.RawData = data;
 
-
             _bhRequest.Callback = HandleResponse;
 
             this._onBeforeSend = onBeforeSend;

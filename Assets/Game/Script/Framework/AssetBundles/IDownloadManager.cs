@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Download;
+using ZJYFrameWork.Asynchronous;
 
 namespace ZJYFrameWork.AssetBundles
 {
@@ -44,6 +46,7 @@ namespace ZJYFrameWork.AssetBundles
         /// 获取当前下载速度。
         /// </summary>
         float CurrentSpeed { get; }
+
         /// <summary>
         /// 下载开始事件。
         /// </summary>
@@ -63,6 +66,7 @@ namespace ZJYFrameWork.AssetBundles
         /// 下载失败事件。
         /// </summary>
         event EventHandler<DownloadFailureEventArgs> DownloadFailure;
+
         /// <summary>
         /// 增加下载任务。
         /// </summary>
@@ -89,25 +93,32 @@ namespace ZJYFrameWork.AssetBundles
         /// 移除所有下载任务。
         /// </summary>
         void RemoveAllDownloads();
+
         IEnumerable StartIDownAssetBundle();
+
         /// <summary>
         /// 下载开始事件。
         /// </summary>
-         EventHandler<DownloadStartEventArgs> GetDownloadStart { get; }
+        EventHandler<DownloadStartEventArgs> GetDownloadStart { get; }
 
         /// <summary>
         /// 下载更新事件。
         /// </summary>
-         EventHandler<DownloadUpdateEventArgs> GetDownloadUpdate{ get; }
+        EventHandler<DownloadUpdateEventArgs> GetDownloadUpdate { get; }
 
         /// <summary>
         /// 下载成功事件。
         /// </summary>
-         EventHandler<DownloadSuccessEventArgs> GetDownloadSuccess{ get; }
+        EventHandler<DownloadSuccessEventArgs> GetDownloadSuccess { get; }
 
         /// <summary>
         /// 下载失败事件。
         /// </summary>
-         EventHandler<DownloadFailureEventArgs> GetDownloadFailure{ get; }
+        EventHandler<DownloadFailureEventArgs> GetDownloadFailure { get; }
+
+        /// <summary>
+        /// 当下在进度任务
+        /// </summary>
+        IProgressResult<Progress, bool> nowProgressResult { get; }
     }
 }

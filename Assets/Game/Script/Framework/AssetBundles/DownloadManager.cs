@@ -140,6 +140,13 @@ namespace ZJYFrameWork.AssetBundles
         public override void Update(float elapseSeconds, float realElapseSeconds)
         {
             taskPool.Update(elapseSeconds, realElapseSeconds);
+            if (_nowProgressResult != null)
+            {
+                if (_nowProgressResult.IsDone)
+                {
+                    _nowProgressResult = null;
+                }
+            }
         }
 
         public override void Shutdown()
@@ -192,29 +199,34 @@ namespace ZJYFrameWork.AssetBundles
         {
             get => _mDownloadStartEventHandler;
         }
+
         public EventHandler<DownloadUpdateEventArgs> GetDownloadUpdate
         {
             get => _mDownloadUpdateEventHandler;
         }
+
         public EventHandler<DownloadSuccessEventArgs> GetDownloadSuccess
         {
             get => _mDownloadSuccessEventHandler;
         }
+
         public EventHandler<DownloadFailureEventArgs> GetDownloadFailure
         {
             get => _mDownloadFailureEventHandler;
         }
 
+        public IProgressResult<Progress, bool> nowProgressResult
+        {
+            get => _nowProgressResult;
+        }
+
+        private IProgressResult<Progress, bool> _nowProgressResult { get; set; }
+
         [PostConstruct]
         public void Init()
         {
-            // if (AssetBundleConfig.IsEditorMode)
-            // {
-            //     Debug.Log("编辑器模式");
-// #if UNITY_EDITOR
             Uri baseUri = new Uri(BundleUtil.GetReadOnlyDirectory());
             Debug.Log($"{baseUri.AbsoluteUri}");
-// #endif
             Downloader.BaseUri = baseUri;
             Downloader.MaxTaskCount = SystemInfo.processorCount * 2;
             // }
@@ -239,7 +251,9 @@ namespace ZJYFrameWork.AssetBundles
             {
                 if (p.Result == null)
                 {
+#if DEVELOP_BUILD
                     Debug.Log("下载manifest出错");
+#endif
                     return;
                 }
 
@@ -248,6 +262,9 @@ namespace ZJYFrameWork.AssetBundles
             yield return manifestResult.WaitForDone();
             if (_assetBundleManager.BundleManifest == null)
             {
+#if DEVELOP_BUILD
+                Debug.Log($"BundleManifest文件：[{_assetBundleManager.BundleManifest}],下载错误，没有从资源服务器下载到文件，请检查");
+#endif
             }
 
             yield return GetDownBundleLists(_assetBundleManager.BundleManifest);
@@ -293,16 +310,11 @@ namespace ZJYFrameWork.AssetBundles
         private void DownloadAssetBundles(List<BundleInfo> bundleInfos)
         {
             Downloader.SetDownManager(this);
-            var down = Downloader.DownloadBundles(bundleInfos);
-           
-            down.Callbackable().OnProgressCallback(res =>
-            {
-                
-            });
-            down.Callbackable().OnCallback(res =>
-            {
-                
-            });
+            _nowProgressResult = Downloader.DownloadBundles(bundleInfos);
+
+            _nowProgressResult.Callbackable().OnProgressCallback(res => { });
+            _nowProgressResult.Callbackable().OnCallback(res => { });
+            _nowProgressResult.WaitForDone();
         }
     }
 }

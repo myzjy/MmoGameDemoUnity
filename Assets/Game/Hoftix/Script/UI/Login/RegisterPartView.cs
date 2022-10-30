@@ -1,6 +1,7 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Event;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -82,6 +83,7 @@ namespace ZJYFrameWork.UISerializable
             var affirmPasswordString = registerPasswordInputField.text;
             SpringContext.GetBean<ServerDataManager>()
                 .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
+          
         }
 
         public void OnShow()

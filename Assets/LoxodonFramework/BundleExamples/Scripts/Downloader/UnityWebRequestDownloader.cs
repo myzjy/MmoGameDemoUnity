@@ -77,7 +77,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 DownloadStartEventArgs downloadStartEventArgs = DownloadStartEventArgs.Create(bundleInfo,
                     downloadPath: fullname, GetAbsoluteUri(bundleInfo.Filename), bundleInfo.FileSize, bundleInfo);
 
-                DownloadManager.GetDownloadStart(null, downloadStartEventArgs);
+                DownloadManager.GetDownloadStart(bundleInfo, downloadStartEventArgs);
                 ReferenceCache.Release(downloadStartEventArgs);
 
                 www.downloadHandler = new DownloadFileHandler(fullname);
@@ -102,11 +102,12 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         {
                             tmpSize += (long)Math.Max(0,
                                 _www.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
-                            DownloadUpdateEventArgs eventArgs=DownloadUpdateEventArgs.Create(serialId:_bundleInfo,downloadPath:downFilenamePath,downloadUri:_www.url
-                                    ,currentLength:tmpSize,_bundleInfo);
-                            DownloadManager.GetDownloadUpdate(this,eventArgs);
+                            DownloadUpdateEventArgs eventArgs = DownloadUpdateEventArgs.Create(serialId: _bundleInfo,
+                                downloadPath: downFilenamePath, downloadUri: _www.url
+                                , currentLength: tmpSize, _bundleInfo);
+                            DownloadManager.GetDownloadUpdate(_bundleInfo, eventArgs);
                             ReferenceCache.Release(eventArgs);
-                            
+
                             continue;
                         }
 
@@ -120,10 +121,13 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #endif
                         {
                             promise.SetException(new Exception(_www.error));
-                            ZJYFrameWork.Debug.Log("从地址'[{}]'下载AssetBundle '[{}]'失败。原因:[{}]", _bundleInfo.FullName,
-                                GetAbsoluteUri(_bundleInfo.Filename), _www.error);
+                            string errorMessage =
+                                $"从地址'[{GetAbsoluteUri(_bundleInfo.Filename)}]'下载AssetBundle '[{_bundleInfo.FullName}]'失败。原因:[{_www.error}]";
+                            ZJYFrameWork.Debug.Log(errorMessage);
                             _www.Dispose();
-
+                            DownloadFailureEventArgs failureEventArgs = DownloadFailureEventArgs.Create(_bundleInfo,
+                                downFilenamePath, _www.url, errorMessage, _bundleInfo);
+                            DownloadManager.GetDownloadFailure(_bundleInfo, failureEventArgs);
                             try
                             {
                                 foreach (var kv in tasks)

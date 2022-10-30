@@ -32,5 +32,8 @@ namespace ZJYFrameWork.AssetBundles
         {
             
         }
+#if UNITY_EDITOR
+        
+#endif
     }
 }

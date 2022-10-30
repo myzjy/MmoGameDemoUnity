@@ -12,5 +12,10 @@ namespace ZJYFrameWork.UISerializable
         /// 当前打开UI事件
         /// </summary>
         private string OpenEventString=string.Empty;
+
+        public void OnOpenUIEvent()
+        {
+            
+        }
     }
 }

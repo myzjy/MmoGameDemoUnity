@@ -8,6 +8,8 @@ using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Module.Login.Service
 {
@@ -23,6 +25,7 @@ namespace ZJYFrameWork.Module.Login.Service
         {
             try
             {
+                CommonController.Instance.loadingRotate.OnShow();
                 var webSocketGatewayUrl = SpringContext.GetBean<ISettingManager>().GetWebSocketBase();
                 netManager.Connect(webSocketGatewayUrl);
             }
