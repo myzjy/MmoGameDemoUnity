@@ -43,7 +43,7 @@ namespace ZJYFrameWork.Net
             _bhRequest.SetHeader("Accept-Encoding", "gzip");
             _bhRequest.SetHeader("App-Version", Application.version);
             _bhRequest.SetHeader("User-Agent", UserAgent.Value);
-
+            _bhRequest.SetHeader("Content-Type", "application/json");
 
             _bhRequest.RawData = data;
 

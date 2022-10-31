@@ -5,6 +5,7 @@
         public override void OnInit()
         {
             viewPanel.LoginPartView.Build();
+            viewPanel.RegisterPart_RegisterPartView.Build();
         }
 
         public override void OnShow()

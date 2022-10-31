@@ -8,6 +8,7 @@ namespace ZJYFrameWork.UISerializable
     {
         public UnityEngine.GameObject LoginPart=null;
 		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
+		public ZJYFrameWork.UISerializable.RegisterPartView RegisterPart_RegisterPartView=null;
 		
 
 
@@ -15,6 +16,7 @@ namespace ZJYFrameWork.UISerializable
         {
             LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
 			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
+			RegisterPart_RegisterPartView=_view.GetObjType<ZJYFrameWork.UISerializable.RegisterPartView>("RegisterPart_RegisterPartView");
 			
         }
     }

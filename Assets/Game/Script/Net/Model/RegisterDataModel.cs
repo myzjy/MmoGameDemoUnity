@@ -4,7 +4,7 @@
     {
         public string platformId { get; set; }
         public string platfromToken { get; set; }
-        public int channelCode { get; set; }
+        public string channelCode { get; set; }
         public string version { get; set; }
 
 
