@@ -91,7 +91,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         internal void HandleOnError(string reason)
         {
             Debug.LogError(reason);
-            // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
+            EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
         }
 
         internal void HandleOnClose(ushort code, string message)

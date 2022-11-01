@@ -133,7 +133,7 @@ namespace ZJYFrameWork.UISerializable
 
         GameObject InstantiateGameObject(GameObject prefab, Action<GameObject> action)
         {
-            UIRoot ROOT = UIManager.Instance.GetRoot();
+            UIRoot ROOT =SpringContext.GetBean<UIComponent>().GetRoot;
             var parent = GetPanelUIRoot(GetCanvasType());
             GameObject go = Object.Instantiate(prefab, parent.transform, true);
             var rectTransform = go.GetComponent<RectTransform>();
@@ -153,7 +153,7 @@ namespace ZJYFrameWork.UISerializable
 
         private Transform GetPanelUIRoot(UICanvasType _canvas)
         {
-            UIRoot ROOT = UIManager.Instance.GetRoot();
+            UIRoot ROOT = SpringContext.GetBean<UIComponent>().GetRoot;
             switch (_canvas)
             {
                 case UICanvasType.BG:

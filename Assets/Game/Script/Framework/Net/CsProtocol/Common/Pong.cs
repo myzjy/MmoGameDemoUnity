@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
@@ -47,9 +48,13 @@ namespace ZJYFrameWork.Net.CsProtocol
         public IPacket Read(ByteBuffer buffer)
         {
             var json = StringUtils.BytesToString(buffer.ToBytes());
-            var message = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
 
-            var packet = (Pong)message.packet;
+            dict.TryGetValue("packet", out var packetJson);
+
+
+            var packet = JsonConvert.DeserializeObject<Pong>(packetJson.ToString());
+
 
             return packet;
         }

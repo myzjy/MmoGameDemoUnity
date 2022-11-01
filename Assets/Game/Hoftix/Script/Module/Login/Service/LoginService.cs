@@ -74,6 +74,7 @@ namespace ZJYFrameWork.Module.Login.Service
                 {
                     return;
                 }
+
                 if (LoginCacheData.loginError)
                 {
                     return;

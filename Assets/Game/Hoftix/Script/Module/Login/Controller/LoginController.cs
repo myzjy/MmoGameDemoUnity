@@ -72,6 +72,8 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             sequence.OnComplete(() =>
             {
                 Debug.LogError($"无法链接网络，正在重试");
+                CommonController.Instance.snackbar.SeverError("网络连接错误");
+
                 // var errorMessage = StringUtils.Format(i18nManager.GetString(I18nEnum.connection_error_and_reconnect.ToString(), reconnectCount));
                 // CommonController.GetInstance().snackbar.Error(errorMessage);
             });

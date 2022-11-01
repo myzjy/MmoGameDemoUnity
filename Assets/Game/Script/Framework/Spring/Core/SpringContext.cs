@@ -76,6 +76,7 @@ namespace ZJYFrameWork.Spring.Core
         {
             //包含用于在本地或远程创建对象类型或获取对现有远程对象的引用的方法
             var bean = Activator.CreateInstance(type);
+            Debug.Log(bean);
             if (bean == null)
             {
                 throw new Exception($"无法通过类型[{type}]创建实例");

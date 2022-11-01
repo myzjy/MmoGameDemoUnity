@@ -38,6 +38,10 @@ namespace ZJYFrameWork.UISerializable
                 Debug.LogError($"请检查{name}物体配置下面是否有[LoginStartMaxButton]组件");
 #endif
             }
+            else
+            {
+                LoginStartMaxButton.SetListener(() => { SpringContext.GetBean<LoginController>().OnHide(); });
+            }
         }
 
         public void Hide()
@@ -46,15 +50,16 @@ namespace ZJYFrameWork.UISerializable
             {
                 return;
             }
+
             gameObject.SetActive(false);
         }
 
         public void Show()
         {
             var sequence = DOTween.Sequence();
-            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnShow(); });
+            sequence.AppendCallback(() => {  CommonController.Instance.loadingRotate.OnShow(); });
             sequence.AppendInterval(1.5f);
-            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnClose(); });
+            sequence.AppendCallback(() => {  CommonController.Instance.loadingRotate.OnClose(); });
             sequence.AppendInterval(0.5f);
 
             sequence.AppendCallback(() =>
@@ -84,6 +89,8 @@ namespace ZJYFrameWork.UISerializable
                         Show();
                         return;
                     }
+
+                    SpringContext.GetBean<LoginController>().OnHide();
 
                     // PlayManager.Instance.LoadScene(Data.scene_home);
                     // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.Menu);

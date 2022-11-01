@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.IO;
+using Newtonsoft.Json;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 
 namespace ZJYFrameWork.Net

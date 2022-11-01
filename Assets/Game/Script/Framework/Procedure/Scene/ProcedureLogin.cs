@@ -25,32 +25,32 @@ namespace ZJYFrameWork.Procedure.Scene
             // if (settingManager.HasSetting(GameConstant.SETTING_LOGIN_TOKEN))
             // {
             //先链接服务器
-            RegisterApi registerApi = new RegisterApi();
-                
-            // registerApi.Param. = getUniqueDeviceType();
-            registerApi.Param.version = "1.00.001";
-            registerApi.Param.channelCode = SpringContext.GetBean<NetworkManager>().aUserFromAttr.channelCode.ToString();
-            registerApi.Param.platformId = SpringContext.GetBean<NetworkManager>().aUserFromAttr.platformId;
-            registerApi.Param.platfromToken = SpringContext.GetBean<NetworkManager>().aUserFromAttr.sdkToken;
-            registerApi.onBeforeSend = () =>
-            {
-                // CommonUIManager.Instance.UINetLoading.OnShow();
-            };
-            registerApi.onSuccess = res =>
-            {
-                //注册成功
-                // EventBus.AsyncSubmit(NetLoginHttpApiEvent.ValueOf());
-            };
-            registerApi.onComplete = () =>
-            {
-                // CommonUIManager.Instance.UINetLoading.OnClose();
-            };
-            registerApi.onError = res =>
-            {
-                
-            };
-            SpringContext.GetBean<NetworkManager>().Request(registerApi);    
-            // loginService.ConnectToGateway();
+            // RegisterApi registerApi = new RegisterApi();
+            //     
+            // // registerApi.Param. = getUniqueDeviceType();
+            // registerApi.Param.version = "1.00.001";
+            // registerApi.Param.channelCode = SpringContext.GetBean<NetworkManager>().aUserFromAttr.channelCode.ToString();
+            // registerApi.Param.platformId = SpringContext.GetBean<NetworkManager>().aUserFromAttr.platformId;
+            // registerApi.Param.platfromToken = SpringContext.GetBean<NetworkManager>().aUserFromAttr.sdkToken;
+            // registerApi.onBeforeSend = () =>
+            // {
+            //     // CommonUIManager.Instance.UINetLoading.OnShow();
+            // };
+            // registerApi.onSuccess = res =>
+            // {
+            //     //注册成功
+            //     // EventBus.AsyncSubmit(NetLoginHttpApiEvent.ValueOf());
+            // };
+            // registerApi.onComplete = () =>
+            // {
+            //     // CommonUIManager.Instance.UINetLoading.OnClose();
+            // };
+            // registerApi.onError = res =>
+            // {
+            //     
+            // };
+            // SpringContext.GetBean<NetworkManager>().Request(registerApi);    
+            loginService.ConnectToGateway();
             // }
             // else
             // {

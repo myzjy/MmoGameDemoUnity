@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -12,7 +13,8 @@ namespace ZJYFrameWork.UISerializable
         /// 当前打开UI事件
         /// </summary>
         private string OpenEventString=string.Empty;
-
+        [SerializeField] private UIRoot Root = null;
+        public UIRoot GetRoot => Root;
         public void OnOpenUIEvent()
         {
             

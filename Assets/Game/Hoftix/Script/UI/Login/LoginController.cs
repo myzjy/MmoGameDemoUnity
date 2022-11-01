@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -13,18 +14,23 @@ namespace ZJYFrameWork.UISerializable
 
         [FormerlySerializedAs("LoginTapToStartView")]
         public LoginTapToStartView loginTapToStartView = null;
-        
+
+        public LoginView LoginView = null;
+
         public void Build(LoginPartView loginPartView, RegisterPartView registerPartView,
-            LoginTapToStartView loginTapToStartView)
+            LoginTapToStartView loginTapToStartView, LoginView loginView)
         {
+            SpringContext.RegisterBean<LoginController>();
             this.loginPartView = loginPartView;
             this.registerPartRegisterPartView = registerPartView;
             this.loginTapToStartView = loginTapToStartView;
+            this.LoginView = loginView;
         }
 
         public void OnInit()
         {
             OnHide();
+            LoginView.OnShow();
             loginPartView.Show();
         }
 

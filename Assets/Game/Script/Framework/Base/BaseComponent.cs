@@ -77,7 +77,6 @@ namespace ZJYFrameWork.Base
             {
                 ConverterUtils.ScreenDpi = DefaultDpi;
             }
-
             //保证
             SpringContext.RegisterBean<BundleManifestLoader>();
 #if UNITY_EDITOR

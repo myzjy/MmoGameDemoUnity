@@ -1,4 +1,6 @@
-﻿using ZJYFrameWork.Net.CsProtocol.Buffer;
+﻿using Newtonsoft.Json;
+using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
 namespace ZJYFrameWork.Net.CsProtocol
 {
@@ -30,7 +32,11 @@ namespace ZJYFrameWork.Net.CsProtocol
                 return;
             }
 
-            Ping message = (Ping)packet;
+            Ping oPing = (Ping)packet;
+            var message = new ServerMessageWrite(oPing.ProtocolId(), oPing);
+            var json = JsonConvert.SerializeObject(message);
+            Debug.Log(json);
+            buffer.WriteString(json);
         }
 
         public IPacket Read(ByteBuffer buffer)
