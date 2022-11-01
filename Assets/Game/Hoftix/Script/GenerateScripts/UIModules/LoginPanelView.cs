@@ -10,6 +10,7 @@ namespace ZJYFrameWork.UISerializable
 		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
 		public ZJYFrameWork.UISerializable.RegisterPartView RegisterPartView=null;
 		public ZJYFrameWork.UISerializable.LoginTapToStartView LoginTapToStartView=null;
+		public ZJYFrameWork.UISerializable.LoginController LoginController=null;
 		
 
 
@@ -19,6 +20,7 @@ namespace ZJYFrameWork.UISerializable
 			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
 			RegisterPartView=_view.GetObjType<ZJYFrameWork.UISerializable.RegisterPartView>("RegisterPartView");
 			LoginTapToStartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginTapToStartView>("LoginTapToStartView");
+			LoginController=_view.GetObjType<ZJYFrameWork.UISerializable.LoginController>("LoginController");
 			
         }
     }

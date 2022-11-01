@@ -1895,6 +1895,7 @@ MonoBehaviour:
   - {fileID: 4548462337066523778}
   - {fileID: 7622137904974989906}
   - {fileID: 4266571107642333592}
+  - {fileID: 7421680849228347599}
   mSelfObj: {fileID: 1899562274783211712}
   MTransform: {fileID: 7960560374260678589}
   MObjCanvasGroup: {fileID: 5635103283465375700}
@@ -8669,8 +8670,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kodComs: []
-  maskIndex: 0
+  kodComs:
+  - UI_Serializable_Key: LoginController
+    UI_Serializable_Obj: {fileID: 8316700760961535777}
+    Path: LoginPanel/LoginControll
+  maskIndex: 2
 --- !u!1 &8613637727540871330
 GameObject:
   m_ObjectHideFlags: 0
