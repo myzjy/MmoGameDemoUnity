@@ -103,6 +103,10 @@ namespace ZJYFrameWork.UISerializable
 
         public void OnClose()
         {
+            if (!rootObj.activeSelf)
+            {
+                return;
+            }
             rootCanvasGroup.DOKill();
             rootCanvasGroup.DOFade(1f, 0f);
             rootCanvasGroup.DOFade(0f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
@@ -111,7 +115,7 @@ namespace ZJYFrameWork.UISerializable
                     rootCanvasGroup.interactable = false;
                     rootCanvasGroup.blocksRaycasts = false;
                     // PlayManager.Instance.LoadScene(Data.scene_home);
-                    // rootObj.SetActive(fal);
+                    rootObj.SetActive(false);
                 });
         }
     }

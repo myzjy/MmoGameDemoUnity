@@ -42,6 +42,10 @@ namespace ZJYFrameWork.UISerializable
 
         public void Hide()
         {
+            if (!gameObject.activeSelf)
+            {
+                return;
+            }
             gameObject.SetActive(false);
         }
 
