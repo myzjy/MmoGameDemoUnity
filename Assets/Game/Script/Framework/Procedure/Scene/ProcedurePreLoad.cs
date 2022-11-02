@@ -1,10 +1,13 @@
-﻿using ZJYFrameWork.Spring.Core;
+﻿using ZJYFrameWork.I18n;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Procedure.Scene
 {
     [Bean]
     public class ProcedurePreLoad : FsmState<IProcedureFsmManager>
     {
+        [Autowired]
+        private I18nManager i18NManager;
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);

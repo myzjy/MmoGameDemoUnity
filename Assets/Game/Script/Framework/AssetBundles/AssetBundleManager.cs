@@ -122,7 +122,8 @@ namespace ZJYFrameWork.AssetBundles
             {
             }
         }
-
+        
+        
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
             var abName = $"{assetBundle}{AssetBundleConfig.AssetBundleSuffix}";
