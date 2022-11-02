@@ -86,7 +86,7 @@ namespace ZJYFrameWork.Module.Login.Service
 
         public void Logout()
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
     }
 }

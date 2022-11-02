@@ -17,7 +17,7 @@
         /// </summary>
         public string AffirmPassword;
 
-        public RegisterRequest ValueOf(string account, string password, string affirmPassword)
+        public static RegisterRequest ValueOf(string account, string password, string affirmPassword)
         {
             var packet = new RegisterRequest()
             {
