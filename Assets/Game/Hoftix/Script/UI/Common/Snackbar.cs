@@ -50,8 +50,6 @@ namespace ZJYFrameWork.UISerializable
 
             switch (Screen.orientation)
             {
-                case ScreenOrientation.Unknown:
-                    break;
                 case ScreenOrientation.Portrait:
                 case ScreenOrientation.PortraitUpsideDown:
                 {
