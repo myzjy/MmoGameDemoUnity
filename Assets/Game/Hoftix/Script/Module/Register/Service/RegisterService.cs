@@ -1,7 +1,7 @@
 ﻿using DG.Tweening;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Net;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Module.Register.Service
