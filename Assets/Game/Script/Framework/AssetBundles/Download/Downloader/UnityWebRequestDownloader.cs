@@ -2,6 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using BestHTTP;
+using Framework.AssetBundles.Config;
+using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Net.Http;
@@ -39,6 +44,162 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
 
             return result;
+        }
+
+        private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
+        private List<BundleInfo> errrorList = new List<BundleInfo>();
+
+        protected IEnumerator DownloadHttpBundles(IProgressPromise<Progress, bool> promise,
+            List<BundleInfo> bundles)
+        {
+            long totalSize = 0;
+            long downloadedSize = 0;
+            Progress eventProgressBar = new Progress();
+            List<BundleInfo> list = new List<BundleInfo>();
+            for (int i = 0; i < bundles.Count; i++)
+            {
+                var info = bundles[i];
+                totalSize += info.FileSize;
+                if (BundleUtil.Exists(info))
+                {
+                    downloadedSize += info.FileSize;
+                    continue;
+                }
+
+                list.Add(info);
+            }
+
+            eventProgressBar.TotalCount = bundles.Count;
+            eventProgressBar.CompletedCount = bundles.Count - list.Count;
+            eventProgressBar.TotalSize = totalSize;
+            eventProgressBar.CompletedSize = downloadedSize;
+            yield return null;
+            List<KeyValuePair<BundleInfo, HTTPRequest>> tasks = new List<KeyValuePair<BundleInfo, HTTPRequest>>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                BundleInfo bundleInfo = list[i];
+
+                string fullname = $"{BundleUtil.GetStorableDirectory()}{bundleInfo.Filename}";
+#if UNITY_EDITOR || DEVELOP_BUILD
+                Debug.Log($"需要下载文件路径{fullname}");
+#endif
+                HTTPRequest request = new HTTPRequest(new Uri(GetAbsoluteUri(bundleInfo.Filename)));
+
+                // 超时设定
+                request.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
+                request.Timeout = TimeSpan.FromSeconds(TimeoutSec);
+                request.Callback += (HTTPRequest originalBhRequest, HTTPResponse bhResponse) =>
+                {
+                    LogResponse(bhResponse, originalBhRequest);
+
+                    switch (originalBhRequest.State)
+                    {
+                        case HTTPRequestStates.Initial:
+                            break;
+                        case HTTPRequestStates.Queued:
+                            break;
+                        case HTTPRequestStates.Processing:
+                            break;
+
+                        case HTTPRequestStates.Finished:
+                        {
+                            downloadedSize += bundleInfo.FileSize;
+                            // 请求完成后没有任何问题。
+                            eventProgressBar.CompletedCount += 1;
+                        }
+                            break;
+                        case HTTPRequestStates.Error:
+                        {
+                            // errrorList.Add(bundleInfo);
+                            Debug.LogError($"下载错误：{bundleInfo.Filename},{bundleInfo.FullName}");
+                        }
+                            break;
+                        case HTTPRequestStates.Aborted:
+                            break;
+                        case HTTPRequestStates.ConnectionTimedOut:
+                            break;
+                        case HTTPRequestStates.TimedOut:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                };
+                long tmpSize = 0;
+
+                request.OnDownloadProgress += (res, downloaded, length) =>
+                {
+                    float progressPercent = (downloaded / (float)length) * 100.0f;
+                    Debug.Log("Downloaded: " + progressPercent.ToString("F2") + "%");
+                };
+
+                //第一个参数 请求：原始对象HTTPRequest
+                //第二个参数 响应：数据所属的对象。通过此对象可以访问所有已接收的信息（状态代码、标头等）HTTPResponse
+                //第三个参数 数据片段：实际下载的字节数。因为插件重用字节数组，它的长度可以大于下载的数据，所以必须使用参数代替！dataFragment.Length dataFragmentLength
+                //第四个参数 dataFragmentLength：dataFragment 参数的实际下载字节数。使用此参数代替 ！dataFragment.Length
+                request.OnStreamingData += (req, resp, dataFragment, dataFragmentLength) =>
+                {
+                    //下载读取留
+                    if (resp.IsSuccess)
+                    {
+                        //请求成功
+                        var fs = req.Tag as FileStream;
+                        if (fs == null)
+                        {
+                            req.Tag = fs = new System.IO.FileStream(fullname, System.IO.FileMode.Create);
+                        }
+
+                        tmpSize += Math.Max(0,
+                            dataFragment.Length);
+
+                        fs.Write(dataFragment, 0, dataFragmentLength);
+                        eventProgressBar.CompletedSize = downloadedSize + tmpSize;
+                        promise.UpdateProgress(eventProgressBar);
+                    }
+
+                    //如果dataFragment被处理，插件可以回收它，则返回true
+                    return true;
+                };
+                request.Send();
+                while (request.State < HTTPRequestStates.Finished)
+                {
+                    yield return new WaitForSeconds(0.1f);
+
+                    // tmpSize+=request.Response.CacheFileInfo.
+                }
+            }
+
+            promise.SetResult(true);
+
+            yield break;
+        }
+
+        private void LogResponse(HTTPResponse response, HTTPRequest request)
+        {
+#if DEVELOP_BUILD || UNITY_EDITOR
+            StringBuilder sb = new StringBuilder();
+            sb.Append(
+                $"[ApiResponse] [Download] {request.Uri.AbsoluteUri}\n");
+            sb.Append($"{response.StatusCode} {response.Message}  ");
+            foreach (var item in response.Headers)
+            {
+                sb.Append(item.Key).Append(": ");
+                var count = item.Value.Count;
+                for (var i = 0; i < count; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(",");
+                    }
+
+                    sb.Append(item.Value[i]);
+                }
+
+                sb.Append("\n");
+            }
+
+            Debug.Log($"{request.Uri.AbsoluteUri}");
+            Debug.Log($"{sb.ToString()}");
+#endif
         }
 
         protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,

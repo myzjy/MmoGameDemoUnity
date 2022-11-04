@@ -4,7 +4,7 @@ using ZJYFrameWork.Collection.Reference;
 
 namespace ZJYFrameWork.AssetBundles.Download
 {
-    public   sealed class DownloadUpdateEventArgs : GameFrameworkEventArgs
+    public sealed class DownloadUpdateEventArgs : GameFrameworkEventArgs
     {
         /// <summary>
         /// 初始化下载更新事件的新实例。
