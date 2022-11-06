@@ -7,11 +7,12 @@ namespace ZJYFrameWork.Procedure.Scene
     public class ProcedurePreLoad : FsmState<IProcedureFsmManager>
     {
         [Autowired]
-        private I18nManager i18NManager;
+        private II18nManager i18NManager;
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
             Debug.LogError("ProcedurePreLoad");
+            i18NManager.ParseData("messagedata_cn");
         }
 
         public override void OnUpdate(IFsm<IProcedureFsmManager> fsm, float elapseSeconds, float realElapseSeconds)

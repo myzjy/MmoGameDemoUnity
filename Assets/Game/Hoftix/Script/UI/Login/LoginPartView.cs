@@ -49,8 +49,10 @@ namespace ZJYFrameWork.UISerializable
             RegisterBtn = GetObjType<Button>("RegisterBtn_Button");
             //账号输入框
             account = GetObjType<InputField>("account");
+            account.text = "";
             //密码输入框
             password = GetObjType<InputField>("password");
+            password.text = "";
             RegisterBtn.SetListener(() =>
             {
                 Hide();
@@ -82,10 +84,11 @@ namespace ZJYFrameWork.UISerializable
 
         public void Show()
         {
-          
             LoginPart.transform.DOKill();
             LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.2f * 0).OnComplete(() =>
             {
+                account.text = "";
+                password.text = "";
                 LoginPart.SetActive(true);
             });
             // LoginPart

@@ -38,10 +38,10 @@ namespace ZJYFrameWork.Procedure.Scene
                 Debug.Log("Editor resource mode detected.");
                 fsm.ChangeState<ProcedurePreLoad>();
             // }
-            // else if (SpringContext.GetBean<IResourceManager>().ResourceMode == ResourceMode.Package)
+            // else 
             // {
             //     // 单机模式
-            //     Log.Info("Package resource mode detected.");
+            //     Debug.Log("Package resource mode detected.");
             //     fsm.ChangeState<ProcedureInitResources>();
             // }
         }

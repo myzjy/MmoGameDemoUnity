@@ -5,6 +5,7 @@ using UnityEngine;
 using ZJYFrameWork.AssetBundles;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
+using ZJYFrameWork.Common;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 
@@ -220,10 +221,16 @@ namespace ZJYFrameWork.I18n
         {
             isLoadAsset = true;
             MessageData messageData = asset as MessageData;
-            var listString = messageData.messages;
-            foreach (var item in listString)
+            if (messageData != null)
             {
-                // AddString(item.key, item.value);
+                var listString = messageData.messages;
+                string[]   arrNames = Enum.GetNames(typeof(Message));
+                for (int i = 0; i < listString.Length; i++)
+                {
+                    var key = arrNames[i];
+                    var value = listString[i];
+                    AddString(key, value);
+                }
             }
         }
 
