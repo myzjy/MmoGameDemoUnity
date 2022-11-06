@@ -70,6 +70,7 @@ namespace ZJYFrameWork.Base
 
         protected override void OnAwake()
         {
+            DontDestroyOnLoad(this);
             Debug.Initialize();
             InitLogHelper();
             ConverterUtils.ScreenDpi = Screen.dpi;
@@ -96,6 +97,10 @@ namespace ZJYFrameWork.Base
 #endif
             {
                 Debug.Log("Use playResource");
+                SpringContext.RegisterBean<BundleManager>();
+                SpringContext.RegisterBean<BundleResources>();
+                SpringContext.RegisterBean<AutoMappingPathInfoParser>();
+                SpringContext.RegisterBean<UnityWebRequestBundleLoaderBuilder>();
             }
 
             Application.targetFrameRate = frameRate;

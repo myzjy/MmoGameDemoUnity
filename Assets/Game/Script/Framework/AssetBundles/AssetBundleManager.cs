@@ -129,7 +129,7 @@ namespace ZJYFrameWork.AssetBundles
             var abName = $"{assetBundle}{AssetBundleConfig.AssetBundleSuffix}";
             var obj = Resources.LoadAssetAsync(abName);
             obj.WaitForDone();
-            obj.Callbackable().OnProgressCallback(res => { Debug.Log("{[]}加载进度：{[]%}", abName, res * 100.0f); });
+            obj.Callbackable().OnProgressCallback(res => { Debug.Log("[{}]加载进度：[{}]%", abName, res * 100.0f); });
             obj.Callbackable().OnCallback(res =>
             {
                 if (res.Exception == null)

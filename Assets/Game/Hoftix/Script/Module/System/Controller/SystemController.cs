@@ -1,6 +1,7 @@
 ﻿using System;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
+using ZJYFrameWork.I18n;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
@@ -13,6 +14,9 @@ namespace ZJYFrameWork.Module.System.Controller
     [Bean]
     public class SystemController
     {
+        [Autowired]
+        private II18nManager i18nManager;
+
         [Autowired] private ISettingManager settingManager;
 
         [Autowired] private LoginClientCacheData _clientCacheData;
@@ -34,8 +38,15 @@ namespace ZJYFrameWork.Module.System.Controller
             {
                 return;
             }
+
+            if (i18nEnum == I18nEnum.error_account_not_exit)
+            {
+                _clientCacheData.loginError = true;
+                return ;
+            }
             
-            _clientCacheData.loginError = true;
+            
+       
         }
     }
 }

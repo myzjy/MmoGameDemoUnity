@@ -43,20 +43,6 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public void OnAfterDeserialize()
         {
-//             ObjectsDict.Clear();
-//             foreach (var item in dataList)
-//             {
-//                 if (!ObjectsDict.ContainsKey(item.UI_Serializable_Key))
-//                 {
-//                     ObjectsDict.Add(item.UI_Serializable_Key, item.UI_Serializable_Obj);
-//                 }
-//                 else
-//                 {
-// #if UNITY_EDITOR
-//                     Debug.LogError($"{item.UI_Serializable_Obj} 组件有重复的，{item.UI_Serializable_Key} 组件path：{item.Path}");
-// #endif
-//                 }
-//             }
         }
 
         /// <summary>
@@ -64,12 +50,6 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public void OnBeforeSerialize()
         {
-            // //循环赋值
-            // foreach (var item in dataList.Where(item =>
-            //     item.UI_Serializable_Obj != null && string.IsNullOrEmpty(item.UI_Serializable_Key)))
-            // {
-            //     item.UI_Serializable_Key = item.UI_Serializable_Obj.name;
-            // }
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Module.Register.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -51,7 +52,7 @@ namespace ZJYFrameWork.UISerializable
 
         public void Build()
         {
-            rootCanvasGroup = GetObjType<CanvasGroup>("rootCanvasGroup");
+            rootCanvasGroup = GetObjType<CanvasGroup>("root_CanvasGroup");
             rootObj = GetObjType<GameObject>("root");
             root = rootObj.transform;
             registerAccountInputField = GetObjType<InputField>("registerAccountInputField");
@@ -83,12 +84,13 @@ namespace ZJYFrameWork.UISerializable
             var affirmPasswordString = registerPasswordInputField.text;
             SpringContext.GetBean<ServerDataManager>()
                 .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
+            SpringContext.GetBean<IRegisterService>().RegisterAccount();
           
         }
 
         public void OnShow()
         {
-            rootObj.SetActive(true);
+           
             rootCanvasGroup.DOKill();
             rootCanvasGroup.DOFade(0f, 0f);
             rootCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
@@ -97,7 +99,7 @@ namespace ZJYFrameWork.UISerializable
                     rootCanvasGroup.interactable = true;
                     rootCanvasGroup.blocksRaycasts = true;
                     // PlayManager.Instance.LoadScene(Data.scene_home);
-                    // rootObj.SetActive(fal);
+                    rootObj.SetActive(true);
                 });
         }
 
@@ -107,8 +109,9 @@ namespace ZJYFrameWork.UISerializable
             {
                 return;
             }
+            
             rootCanvasGroup.DOKill();
-            rootCanvasGroup.DOFade(1f, 0f);
+            rootCanvasGroup.DOFade(0f, 0f);
             rootCanvasGroup.DOFade(0f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
                 .OnComplete(() =>
                 {
@@ -116,6 +119,8 @@ namespace ZJYFrameWork.UISerializable
                     rootCanvasGroup.blocksRaycasts = false;
                     // PlayManager.Instance.LoadScene(Data.scene_home);
                     rootObj.SetActive(false);
+                    //打开登录界面
+                    SpringContext.GetBean<LoginController>().loginPartView.Show();
                 });
         }
     }

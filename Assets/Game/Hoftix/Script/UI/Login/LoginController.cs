@@ -20,16 +20,19 @@ namespace ZJYFrameWork.UISerializable
         public void Build(LoginPartView loginPartView, RegisterPartView registerPartView,
             LoginTapToStartView loginTapToStartView, LoginView loginView)
         {
-            SpringContext.RegisterBean(this);
             this.loginPartView = loginPartView;
             this.registerPartRegisterPartView = registerPartView;
             this.loginTapToStartView = loginTapToStartView;
             this.LoginView = loginView;
+            SpringContext.RegisterBean(this);
+
         }
 
         public void OnInit()
         {
             OnHide();
+            registerPartRegisterPartView.OnClose();
+            loginTapToStartView.Hide();
             LoginView.OnShow();
             loginPartView.Show();
         }

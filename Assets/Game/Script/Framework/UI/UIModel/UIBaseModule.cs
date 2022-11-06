@@ -133,7 +133,7 @@ namespace ZJYFrameWork.UISerializable
 
         GameObject InstantiateGameObject(GameObject prefab, Action<GameObject> action)
         {
-            UIRoot ROOT =SpringContext.GetBean<UIComponent>().GetRoot;
+            UIRoot ROOT = SpringContext.GetBean<UIComponent>().GetRoot;
             var parent = GetPanelUIRoot(GetCanvasType());
             GameObject go = Object.Instantiate(prefab, parent.transform, true);
             var rectTransform = go.GetComponent<RectTransform>();
@@ -148,6 +148,8 @@ namespace ZJYFrameWork.UISerializable
 
         private void InstancePrefab()
         {
+            CommonController.Instance.loadingRotate.OnShow();
+
             SpringContext.GetBean<AssetBundleManager>().LoadAsset(PrefabName(), _loadAssetCallbacks);
         }
 
@@ -191,16 +193,17 @@ namespace ZJYFrameWork.UISerializable
             return null;
         }
 
-// GameObject
         private void LoadAssetSuccessCallback(string assetName, UnityEngine.Object asset, float duration,
             object userData)
         {
+            CommonController.Instance.loadingRotate.OnClose();
             // ObjectBase objectBase =(ObjectBase) userData;
             var obj = asset as GameObject;
+            
             InstantiateGameObject(obj, res =>
             {
                 var rtf = res.GetComponent<RectTransform>();
-                var UIView = res.GetComponent<UIView>();
+                var uiView = res.GetComponent<UIView>();
                 if (rtf)
                 {
                     rtf.offsetMin = Vector2.zero;
@@ -224,9 +227,9 @@ namespace ZJYFrameWork.UISerializable
                 }
 
                 InstanceID = res.GetInstanceID();
-                UIView.GetTransform.localScale = Vector3.one;
-                UIView.GetTransform.localPosition = Vector3.zero;
-                selfView.SetUIView(UIView);
+                uiView.GetTransform.localScale = Vector3.one;
+                uiView.GetTransform.localPosition = Vector3.zero;
+                selfView.SetUIView(uiView);
                 // 默认调用
                 selfView.OnInit();
             });

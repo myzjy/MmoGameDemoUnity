@@ -10,6 +10,6 @@ namespace ZJYFrameWork.I18n
     }
     public class MessageData : ScriptableObject
     {
-        [SerializeField] public MessageI18[] messages;
+        [SerializeField] public string[] messages;
     }
 }

@@ -4889,6 +4889,7 @@ GameObject:
   - component: {fileID: 8196550353723591520}
   - component: {fileID: 5184738048341684684}
   - component: {fileID: 917775613464192907}
+  - component: {fileID: 580246527017392537}
   m_Layer: 5
   m_Name: LoginStartMaxButton
   m_TagString: Untagged
@@ -4944,7 +4945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -4992,6 +4993,14 @@ MonoBehaviour:
     UI_Serializable_Obj: {fileID: 5184738048341684684}
     Path: SteamLogin/LoginStartMaxButton
   maskIndex: 4
+--- !u!222 &580246527017392537
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5366066824270796118}
+  m_CullTransparentMesh: 0
 --- !u!1 &5421737712138496447
 GameObject:
   m_ObjectHideFlags: 0
@@ -5331,9 +5340,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5593194841706032213}
   m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!114 &7517360314702790454
 MonoBehaviour:
@@ -8394,7 +8403,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4619708398681316931
 RectTransform:
   m_ObjectHideFlags: 0

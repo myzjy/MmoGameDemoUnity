@@ -30,6 +30,7 @@ namespace ZJYFrameWork.I18n
             return supportedLanguages;
         }
 
+        [PostConstruct]
         public void Init()
         {
             _loadAssetCallbacks =
@@ -38,7 +39,7 @@ namespace ZJYFrameWork.I18n
 
         private LoadAssetCallbacks _loadAssetCallbacks;
 
-      /// <summary>
+        /// <summary>
         /// 根据字典主键获取字典内容字符串。
         /// </summary>
         /// <param name="key">字典主键。</param>
@@ -222,7 +223,7 @@ namespace ZJYFrameWork.I18n
             var listString = messageData.messages;
             foreach (var item in listString)
             {
-                AddString(item.key, item.value);
+                // AddString(item.key, item.value);
             }
         }
 

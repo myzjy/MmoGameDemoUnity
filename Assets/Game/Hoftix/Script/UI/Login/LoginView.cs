@@ -10,6 +10,7 @@
             //build
             viewPanel.LoginController.Build(viewPanel.LoginPartView, viewPanel.RegisterPartView,
                 loginTapToStartView: viewPanel.LoginTapToStartView,this);
+            viewPanel.LoginController.OnInit();
         }
 
         public override void OnShow()

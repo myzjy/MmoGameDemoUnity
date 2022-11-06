@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using Tools.Util;
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Module.Login.Service;
@@ -50,7 +51,12 @@ namespace ZJYFrameWork.UISerializable
             account = GetObjType<InputField>("account");
             //密码输入框
             password = GetObjType<InputField>("password");
-            LoginBtn.onClick.RemoveAllListeners();
+            RegisterBtn.SetListener(() =>
+            {
+                Hide();
+                SpringContext.GetBean<LoginController>().registerPartRegisterPartView.OnShow();
+            });
+            // LoginBtn.onClick.RemoveAllListeners();
             LoginBtn.onClick.AddListener(() => { ClickLogin(); });
         }
 
@@ -76,9 +82,12 @@ namespace ZJYFrameWork.UISerializable
 
         public void Show()
         {
-            LoginPart.SetActive(true);
+          
             LoginPart.transform.DOKill();
-            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.2f * 0);
+            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.2f * 0).OnComplete(() =>
+            {
+                LoginPart.SetActive(true);
+            });
             // LoginPart
         }
 
