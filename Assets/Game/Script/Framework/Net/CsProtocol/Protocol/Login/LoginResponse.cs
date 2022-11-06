@@ -9,12 +9,15 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
     {
         public string token;
         public long uid;
+        public string userName;
 
-        public static LoginResponse ValueOf(string token)
+        public static LoginResponse ValueOf(string token,long uid,string userName)
         {
             var packet = new LoginResponse
             {
-                token = token
+                token = token,
+                uid=uid,
+                userName = userName
             };
             return packet;
         }

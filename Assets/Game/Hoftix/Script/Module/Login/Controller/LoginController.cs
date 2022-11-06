@@ -34,8 +34,10 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
         public void AtLoginResponse(LoginResponse response)
         {
             var token = response.token;
+            var uid = response.uid;
+            var userName = response.userName;
             LoginCacheData.loginFlag = true;
-            Debug.Log("登录返回[token:{}]", token);
+            Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName,token,uid);
         }
 
         [PacketReceiver]
