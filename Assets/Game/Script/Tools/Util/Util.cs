@@ -23,5 +23,24 @@ namespace Tools.Util
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(action);
         }
+        public const string NewLineCRLF = "\r\n";
+        public const string NewLineCR = "\r";
+        public const string NewLineLF = "\n";
+
+        /// <summary>
+        /// 直の改行文字をNewLineにReplaceする
+        /// </summary>
+        public static string ReplaceNewLine(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return "";
+            }
+
+            return source
+                .Replace(NewLineCRLF, System.Environment.NewLine)
+                .Replace(NewLineCR, System.Environment.NewLine)
+                .Replace(NewLineLF, System.Environment.NewLine);
+        }
     }
 }

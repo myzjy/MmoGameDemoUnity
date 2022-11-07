@@ -189,11 +189,7 @@ namespace ZJYFrameWork.AssetBundles
         {
             taskPool.RemoveAllTasks();
         }
-
-        public IEnumerable StartIDownAssetBundle()
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public EventHandler<DownloadStartEventArgs> GetDownloadStart
         {

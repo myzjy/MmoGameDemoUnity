@@ -3,6 +3,7 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.UI.UIModel;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -38,6 +39,43 @@ namespace ZJYFrameWork.UISerializable
 
         public CanvasGroup serverInfoLandscapeLeftCanvasGroup;
         public Text serverInfoLandscapeLeft;
+        public UIDataLoading UIDataLoading;
+        public Dialog OverlayDialog;
+
+        #endregion
+
+        #region 进度条显示
+
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="downText"></param>
+        /// <param name="nowDownNums"></param>
+        /// <param name="maxDownNums"></param>
+        public void OpenUIDataLoadingPanel(string downText, float nowDownNums, float maxDownNums)
+        {
+            if (UIDataLoading.GetSelfObjCanvasGroup.alpha < 1)
+            {
+                UIDataLoading.OnOpen();
+            }
+
+            UIDataLoading.SetShowCount(nowDownNums, maxDownNums, downText);
+        }
+
+        /// <summary>
+        /// 转换场景的时候调用显示面板
+        /// </summary>
+        /// <param name="nowDownNums">当前进度</param>
+        /// <param name="maxDownNums">最大进度</param>
+        public void OpenUIDataScenePanel(float nowDownNums, float maxDownNums)
+        {
+            if (UIDataLoading.GetSelfObjCanvasGroup.alpha < 1)
+            {
+                UIDataLoading.OnOpen();
+            }
+
+            UIDataLoading.SetSceneProgress(nowDownNums, maxDownNums);
+        }
 
         #endregion
 
@@ -48,69 +86,18 @@ namespace ZJYFrameWork.UISerializable
                 return;
             }
 
-            // switch (Screen.orientation)
-            // {
-            // case ScreenOrientation.Portrait:
-            // case ScreenOrientation.PortraitUpsideDown:
-            // {
-            //     Root.SetActive(true);
-            //     RootLandscapeLeft.SetActive(false);
-            //     serverError.text = message;
-            //     serverErrorCanvasGroup.gameObject.SetActive(true);
-            //     serverErrorCanvasGroup.alpha = 0;
-            //     serverErrorCanvasGroup.DOFade(1f, 0.8f).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo);
-            //     
-            // }
-            //     break;
-            // case ScreenOrientation.LandscapeLeft:
-            // case ScreenOrientation.LandscapeRight:
-            // {
-            // Root?.SetActive(false);
             RootLandscapeLeft.SetActive(true);
             serverLandscapeLeftError.text = message;
             serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(true);
             serverErrorLandscapeLeftCanvasGroup.alpha = 0;
             serverErrorLandscapeLeftCanvasGroup.DOFade(1f, 0.8f).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo);
-            // }
-            //     break;
-            // case ScreenOrientation.AutoRotation:
-            //     break;
-            // default:
-            //     throw new ArgumentOutOfRangeException();
-            // }
             StartCoroutine(HideServerError(message));
         }
 
         private IEnumerator HideServerError(string message)
         {
             yield return new WaitForSeconds(3f);
-            // switch (Screen.orientation)
-            // {
-            // case ScreenOrientation.Unknown:
-            //     break;
-            // case ScreenOrientation.Portrait:
-            // case ScreenOrientation.PortraitUpsideDown:
-            // {
-            //     if (message.Equals(serverError.text))
-            //     {
-            //         serverErrorCanvasGroup.DOFade(0f, 1.2f)
-            //             .SetEase(Ease.Linear)
-            //             .SetLoops(1, LoopType.Yoyo)
-            //             .OnComplete(() =>
-            //             {
-            //                 if (message.Equals(serverError.text))
-            //                 {
-            //                     serverError.text = null;
-            //                     serverErrorCanvasGroup.gameObject.SetActive(false);
-            //                 }
-            //             });
-            //     }
-            //     
-            // }
-            //     break;
-            // case ScreenOrientation.LandscapeLeft:
-            // case ScreenOrientation.LandscapeRight:
-            // {
+
             if (message.Equals(serverLandscapeLeftError.text))
             {
                 serverErrorLandscapeLeftCanvasGroup.DOFade(0f, 1.2f)
@@ -125,13 +112,21 @@ namespace ZJYFrameWork.UISerializable
                         }
                     });
             }
-            //     }
-            //         break;
-            //     case ScreenOrientation.AutoRotation:
-            //         break;
-            //     default:
-            //         throw new ArgumentOutOfRangeException();
-            // }
         }
+
+        #region 提示框
+
+        ///<summary>
+        ///通知窗打开
+        ///</summary>
+        public void OpenCommonUIPanel(Dialog.ButtonType buttonType, string titleText, string message,
+            Action<Dialog.Result> onClick, string YesButtonText, string NoButtonText, System.Action onOpen = null,
+            System.Action onClose = null)
+        {
+            OverlayDialog.Open(buttonType, titleText, message, YesButtonText, NoButtonText, onClick, onOpen,
+                onClose);
+        }
+
+        #endregion
     }
 }

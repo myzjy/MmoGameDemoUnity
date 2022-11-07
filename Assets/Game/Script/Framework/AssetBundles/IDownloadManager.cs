@@ -94,7 +94,7 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         void RemoveAllDownloads();
 
-        IEnumerable StartIDownAssetBundle();
+        IEnumerator StartFirstDownload();
 
         /// <summary>
         /// 下载开始事件。

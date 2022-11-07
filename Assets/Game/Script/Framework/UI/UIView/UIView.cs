@@ -21,7 +21,7 @@ namespace ZJYFrameWork.UISerializable
         // [SerializeField] private GraphicRaycaster MGraphicRaycaster;
         // public GraphicRaycaster GetSelfGraphicRaycaster => MGraphicRaycaster;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             instanceID = gameObject.GetInstanceID();
         }
