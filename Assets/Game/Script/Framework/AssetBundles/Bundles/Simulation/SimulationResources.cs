@@ -30,6 +30,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
         }
 
+        protected override IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
+        {
+            yield return DoLoadSceneAsync(promise,path,mode);
+        }
+
         protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
         {
             AssetPathInfo pathInfo = pathInfoParser.Parse(path);

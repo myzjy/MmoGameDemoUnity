@@ -86,6 +86,28 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         #region IBundleManager Support
 
+        public virtual ISceneLoadingResult<Scene> LoadLocalSceneAsync(string path,
+            LoadSceneMode mode = LoadSceneMode.Single)
+        {
+            SceneLoadingResult<Scene> result = new SceneLoadingResult<Scene>();
+            InterceptableEnumerator enumerator = new InterceptableEnumerator(DoLoadLocalSceneAsync(result, path, mode));
+            enumerator.RegisterCatchBlock(e =>
+            {
+                result.SetException(e);
+                Debug.LogError(e);
+            });
+            enumerator.RegisterFinallyBlock(() =>
+            {
+                if (!result.IsDone)
+                    result.SetException(new System.Exception("没有给出结果的值"));
+            });
+            Executors.RunOnCoroutineNoReturn(enumerator);
+
+            return result;
+        }
+        protected abstract IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
+            LoadSceneMode mode = LoadSceneMode.Single);
+
         public virtual IBundle GetBundle(string bundleName)
         {
             return this.bundleManager.GetBundle(bundleName);

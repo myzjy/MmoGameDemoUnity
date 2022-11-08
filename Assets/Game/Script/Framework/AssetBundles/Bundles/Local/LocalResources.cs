@@ -6,12 +6,19 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 {
     public class LocalResources : AbstractResources
     {
-        public LocalResources() : base(new LocalPathInfoParser(), new LocalBundleManager(),false)
+        public LocalResources() : base(new LocalPathInfoParser(), new LocalBundleManager(), false)
         {
         }
 
-        protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
-        {           
+        protected override IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
+            LoadSceneMode mode = LoadSceneMode.Single)
+        {
+            yield return DoLoadSceneAsync(promise, path, mode);
+        }
+
+        protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
+            LoadSceneMode mode = LoadSceneMode.Single)
+        {
             AssetPathInfo pathInfo = pathInfoParser.Parse(path);
             if (pathInfo == null)
             {
@@ -20,7 +27,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 yield break;
             }
 
-            AsyncOperation operation = SceneManager.LoadSceneAsync(Path.GetFileNameWithoutExtension(pathInfo.AssetName), mode);
+            AsyncOperation operation =
+                SceneManager.LoadSceneAsync(Path.GetFileNameWithoutExtension(pathInfo.AssetName), mode);
             if (operation == null)
             {
                 promise.SetException(string.Format("Not found the scene '{0}'.", path));
@@ -36,6 +44,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 promise.Progress = operation.progress;
                 yield return WaitForSeconds();
             }
+
             promise.Progress = operation.progress;
             promise.State = LoadState.SceneActivationReady;
 

@@ -20,17 +20,19 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public BundleManager()
         {
-            
         }
+
         public BundleManager(BundleManifest manifest, ILoaderBuilder builder) : this(manifest, builder, null, 100)
         {
         }
 
-        public BundleManager(BundleManifest manifest, ILoaderBuilder builder, ITaskExecutor executor) : this(manifest, builder, executor, 100)
+        public BundleManager(BundleManifest manifest, ILoaderBuilder builder, ITaskExecutor executor) : this(manifest,
+            builder, executor, 100)
         {
         }
 
-        public BundleManager(BundleManifest manifest, ILoaderBuilder builder, ITaskExecutor executor, int lruCacheCapacity)
+        public BundleManager(BundleManifest manifest, ILoaderBuilder builder, ITaskExecutor executor,
+            int lruCacheCapacity)
         {
             this.BundleManifest = manifest;
             this.loaderBuilder = builder;
@@ -65,7 +67,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 if (lruCache != null)
                     lruCache.Clear();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
         }
 
         public virtual ILoaderBuilder LoaderBuilder
@@ -273,6 +277,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             this.BundleManifest = manifest;
             this.loaderBuilder = builder;
+            this.executor = executor ?? new PriorityTaskExecutor();
+            this.loaders = new Dictionary<string, BundleLoader>();
+            this.bundles = new Dictionary<string, DefaultBundle>();
         }
 
         public virtual IProgressResult<float, IBundle[]> LoadBundle(BundleInfo[] bundleInfos, int priority)
@@ -280,9 +287,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (bundleInfos == null || bundleInfos.Length <= 0)
-                    throw new ArgumentNullException("bundleInfos", "The bundleInfos is null or empty!");
+                    throw new ArgumentNullException(nameof(bundleInfos), "The bundleInfos is null or empty!");
 
-                return Executors.RunOnCoroutine<float, IBundle[]>(promise => DoLoadBundle(promise, bundleInfos, priority));
+                return Executors.RunOnCoroutine<float, IBundle[]>(promise =>
+                    DoLoadBundle(promise, bundleInfos, priority));
             }
             catch (Exception e)
             {
@@ -290,17 +298,18 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual IEnumerator DoLoadBundle(IProgressPromise<float, IBundle[]> promise, BundleInfo[] bundleInfos, int priority)
+        protected virtual IEnumerator DoLoadBundle(IProgressPromise<float, IBundle[]> promise, BundleInfo[] bundleInfos,
+            int priority)
         {
-            List<IBundle> bundles = new List<IBundle>();
-            Exception exception = new Exception("unkown");
+            List<IBundle> list = new List<IBundle>();
+            Exception exception = new Exception("unknown");
             List<IProgressResult<float, IBundle>> bundleResults = new List<IProgressResult<float, IBundle>>();
-            for (int i = 0; i < bundleInfos.Length; i++)
+            foreach (var t in bundleInfos)
             {
                 try
                 {
-                    DefaultBundle bundle = this.GetOrCreateBundle(bundleInfos[i], priority);
-                    IProgressResult<float, IBundle> bundleResult = bundle.Load();
+                    var bundle = this.GetOrCreateBundle(t, priority);
+                    var bundleResult = bundle.Load();
                     bundleResult.Callbackable().OnCallback(r =>
                     {
                         if (r.Exception != null)
@@ -310,7 +319,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                         }
                         else
                         {
-                            bundles.Add(new InternalBundleWrapper((DefaultBundle)r.Result));
+                            list.Add(new InternalBundleWrapper(r.Result as DefaultBundle));
                         }
                     });
 
@@ -320,18 +329,17 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 catch (Exception e)
                 {
                     exception = e;
-                    Debug.LogError("Loads Bundle '{0}' failure! Error:{1}", bundleInfos[i], e);
+                    Debug.LogError("Loads Bundle '{0}' failure! Error:{1}", t, e);
                 }
             }
 
             bool finished = false;
-            float progress = 0f;
             int count = bundleResults.Count;
             while (!finished && count > 0)
             {
                 yield return null;
 
-                progress = 0f;
+                var progress = 0f;
                 finished = true;
                 for (int i = 0; i < count; i++)
                 {
@@ -341,18 +349,21 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
                     progress += result.Progress;
                 }
+
                 promise.UpdateProgress(progress / count);
             }
 
             promise.UpdateProgress(1f);
-            if (bundles.Count > 0)
-                promise.SetResult(bundles.ToArray());
+            if (list.Count > 0)
+                promise.SetResult(list.ToArray());
             else
                 promise.SetException(exception);
         }
+
         #endregion
 
         #region IDisposable Support
+
         private bool disposed = false;
 
         protected virtual void Dispose(bool disposing)
@@ -375,6 +386,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                                 var loader = kv.Value;
                                 loader.Dispose();
                             }
+
                             this.loaders = null;
                         }
                     }
@@ -393,6 +405,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             Dispose(true);
         }
+
         #endregion
     }
 }

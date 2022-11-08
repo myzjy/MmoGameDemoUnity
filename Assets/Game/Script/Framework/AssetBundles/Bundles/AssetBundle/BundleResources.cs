@@ -59,6 +59,47 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
+        protected override IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
+        {
+            AsyncOperation operation = SceneManager.LoadSceneAsync(path, mode);
+            if (operation == null)
+            {
+                promise.SetException($"Not found the scene '{path}'.");
+                yield break;
+            }
+
+            float weight = 0;
+
+            operation.priority = promise.Priority;
+            operation.allowSceneActivation = false;
+            while (operation.progress < 0.9f)
+            {
+                promise.Progress = weight + (1f - weight) * operation.progress;
+                yield return WaitForSeconds();
+            }
+
+            promise.Progress = weight + (1f - weight) * operation.progress;
+            promise.State = LoadState.SceneActivationReady;
+            while (!operation.isDone)
+            {
+                if (promise.AllowSceneActivation && !operation.allowSceneActivation)
+                    operation.allowSceneActivation = promise.AllowSceneActivation;
+
+                promise.Progress = weight + (1f - weight) * operation.progress;
+                yield return WaitForSeconds();
+            }
+
+            var scene = SceneManager.GetSceneByName(path);
+            if (!scene.IsValid())
+            {
+                promise.SetException($"Not found the scene '{path}'.");
+                yield break;
+            }
+
+            promise.Progress = 1f;
+            promise.SetResult(scene);
+        }
+
         protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
         {
             AssetPathInfo pathInfo = pathInfoParser.Parse(path);
