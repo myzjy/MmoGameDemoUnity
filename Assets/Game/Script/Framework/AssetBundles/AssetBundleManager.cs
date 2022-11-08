@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.ObjectPool;
 using ZJYFrameWork.Spring.Core;
 
@@ -122,8 +124,8 @@ namespace ZJYFrameWork.AssetBundles
             {
             }
         }
-        
-        
+
+
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
             var abName = $"{assetBundle}{AssetBundleConfig.AssetBundleSuffix}";
@@ -146,9 +148,9 @@ namespace ZJYFrameWork.AssetBundles
                         {
                             if (res.Result != null)
                             {
-                                loadAssetCallbacks.LoadAssetSuccessCallback(abName, res.Result,1,null);
+                                loadAssetCallbacks.LoadAssetSuccessCallback(abName, res.Result, 1, null);
                             }
-                            
+
                             else
                             {
                                 loadAssetCallbacks.LoadAssetFailureCallback(abName, LoadResourceStatus.AssetError,
@@ -176,6 +178,153 @@ namespace ZJYFrameWork.AssetBundles
         }
 
         public IEnumerable StartIDownAssetBundle()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 部分本地场景加载
+        /// </summary>
+        private List<string> SceneLoacelList = new List<string>()
+        {
+            "Main",
+            "Character_Selection",
+            "Empty",
+            "stylizedenvironement",
+            "dreamscape",
+            "Bar"
+        };
+
+        public void LoadScene(string sceneAssetName, int priority, LoadSceneCallbacks loadSceneCallbacks,
+            object userData)
+        {
+            if (string.IsNullOrEmpty(sceneAssetName))
+            {
+                throw new Exception("Scene asset name is invalid.");
+            }
+
+            if (loadSceneCallbacks == null)
+            {
+                throw new Exception("Load scene callbacks is invalid.");
+            }
+
+            var abName = $"{sceneAssetName}{AssetBundleConfig.AssetBundleSuffix}";
+
+            //代表我是加载本地场景，有部分是直接加载的本地场景
+            if (SceneLoacelList.Contains(sceneAssetName))
+            {
+                var sceneLocalLoading = Resources.LoadLocalSceneAsync(sceneAssetName);
+                sceneLocalLoading.OnStateChangedCallback(res =>
+                {
+                    switch (res)
+                    {
+                        case LoadState.None:
+                            break;
+                        case LoadState.AssetBundleLoaded:
+                        {
+                            //
+                            loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, 0, null);
+                        }
+                            break;
+                        case LoadState.SceneActivationReady:
+                        {
+                            Debug.Log("Ready to activate the scene.");
+                            sceneLocalLoading.AllowSceneActivation = true;
+                            // CommonUIManager.Instance.Snackbar.CloseUINetLoading();
+                        }
+                            break;
+                        case LoadState.Failed:
+                            Debug.Log($"Loads scene '{abName}' failure.Error:{sceneLocalLoading.Exception}");
+                            loadSceneCallbacks.LoadSceneFailureCallback(abName, LoadResourceStatus.AssetError,
+                                sceneLocalLoading.Exception.ToString(), null);
+                            break;
+                        case LoadState.Completed:
+                            loadSceneCallbacks.LoadSceneSuccessCallback(sceneAssetName, 1, null);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(res), res, null);
+                    }
+                });
+                sceneLocalLoading.OnProgressCallback(res =>
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD
+                    Debug.Log($"加载场景进度：{res * 100}");
+                    loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
+#else
+                loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
+#endif
+                });
+                return;
+            }
+
+
+            var sceneLoading = Resources.LoadSceneAsync(abName);
+            sceneLoading.OnStateChangedCallback(res =>
+            {
+                switch (res)
+                {
+                    case LoadState.None:
+                        break;
+                    case LoadState.AssetBundleLoaded:
+                    {
+                        //
+                        loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, 0, null);
+                    }
+                        break;
+                    case LoadState.SceneActivationReady:
+                    {
+                        Debug.Log("Ready to activate the scene.");
+                        sceneLoading.AllowSceneActivation = true;
+                        // CommonUIManager.Instance.Snackbar.CloseUINetLoading();
+                    }
+                        break;
+                    case LoadState.Failed:
+                        Debug.Log($"Loads scene '{abName}' failure.Error:{sceneLoading.Exception}");
+                        loadSceneCallbacks.LoadSceneFailureCallback(abName, LoadResourceStatus.AssetError,
+                            sceneLoading.Exception.ToString(), null);
+                        break;
+                    case LoadState.Completed:
+                        loadSceneCallbacks.LoadSceneSuccessCallback(sceneAssetName, 1, null);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(res), res, null);
+                }
+            });
+            sceneLoading.OnProgressCallback(res =>
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD
+                Debug.Log($"加载场景进度：{res * 100}");
+                loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
+#else
+                loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
+#endif
+            });
+            sceneLoading.WaitForDone();
+            if (sceneLoading.Exception != null)
+            {
+                //先关闭场景加载动画
+                // CommonUIManager.Instance.Snackbar.OpenUIDataScenePanel(1, 1);
+                var buildInfo = BundleManifest.GetBundleInfo(sceneAssetName);
+                //没有真确读取到
+                //可能需要去下载
+//                 DownloadManager.OpenUIDataLoading(() =>
+//                 {
+//                     //重新设置
+//                     SetBundleManifest(BundleManifest);
+// #if UNITY_EDITOR || DEVELOP_BUILD
+//                     Debug.Log("重新加载场景，场景已经下载完成");
+// #endif
+//                     LoadScene(sceneAssetName, priority, loadSceneCallbacks, userData);
+//                 }, buildInfo);
+            }
+        }
+
+        public void UnloadScene(string sceneAssetName, UnloadSceneCallbacks unloadSceneCallbacks)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnloadScene(string sceneAssetName, UnloadSceneCallbacks unloadSceneCallbacks, object userData)
         {
             throw new NotImplementedException();
         }
