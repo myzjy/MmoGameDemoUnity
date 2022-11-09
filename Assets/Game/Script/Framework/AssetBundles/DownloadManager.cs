@@ -8,6 +8,8 @@ using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Download;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Event;
+using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles
@@ -189,7 +191,7 @@ namespace ZJYFrameWork.AssetBundles
         {
             taskPool.RemoveAllTasks();
         }
-        
+
 
         public EventHandler<DownloadStartEventArgs> GetDownloadStart
         {
@@ -300,6 +302,15 @@ namespace ZJYFrameWork.AssetBundles
                 // _assetBundleManager.SetBundleManifest(p.Result);
             });
             yield return bundlesResult.WaitForDone();
+            if (newDownBundleInfoList.Count < 1)
+            {
+                // EventBus.SyncSubmit(NetGameVersionEvent.ValueOf());
+
+                EventBus.AsyncSubmit(ResourceInitCompleteEvent.ValueOf());
+
+
+                yield break;
+            }
             DownloadAssetBundles(newDownBundleInfoList);
         }
 
@@ -309,7 +320,12 @@ namespace ZJYFrameWork.AssetBundles
             _nowProgressResult = Downloader.DownloadBundles(bundleInfos);
 
             _nowProgressResult.Callbackable().OnProgressCallback(res => { });
-            _nowProgressResult.Callbackable().OnCallback(res => { });
+            _nowProgressResult.Callbackable().OnCallback(res =>
+            {
+                // EventBus.SyncSubmit(NetGameVersionEvent.ValueOf());
+
+                EventBus.AsyncSubmit(ResourceInitCompleteEvent.ValueOf());
+            });
             _nowProgressResult.WaitForDone();
         }
     }
