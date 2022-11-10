@@ -33,11 +33,11 @@ namespace ZJYFrameWork.Net
                 Indent(builder, indent, isPretty);
             }
         }
-
-        protected static string ToTime(long time)
-        {
-            var timeData = GlobalDataManager.Instance.time.GetCurrEntTimeMilliseconds(time);
-            return $"{timeData:u}";
-        }
+        //
+        // protected static string ToTime(long time)
+        // {
+        //     var timeData = GlobalDataManager.Instance.time.GetCurrEntTimeMilliseconds(time);
+        //     return $"{timeData:u}";
+        // }
     }
 }

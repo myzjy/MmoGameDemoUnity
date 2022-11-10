@@ -106,10 +106,10 @@ namespace ZJYFrameWork.AssetBundles
             //设置bundle 当有更新的时候就需要从新设置
             Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
 
-            resourceUpdater.ResourceUpdateStart += OnUpdaterResourceUpdateStart;
-            resourceUpdater.ResourceUpdateChanged += OnUpdaterResourceUpdateChanged;
-            resourceUpdater.ResourceUpdateSuccess += OnUpdaterResourceUpdateSuccess;
-            resourceUpdater.ResourceUpdateFailure += OnUpdaterResourceUpdateFailure;
+            resourceUpdater.ResourceUpdateStart = OnUpdaterResourceUpdateStart;
+            resourceUpdater.ResourceUpdateChanged = OnUpdaterResourceUpdateChanged;
+            resourceUpdater.ResourceUpdateSuccess = OnUpdaterResourceUpdateSuccess;
+            resourceUpdater.ResourceUpdateFailure = OnUpdaterResourceUpdateFailure;
             // resourceUpdater.ResourceUpdateComplete += OnUpdaterResourceUpdateComplete;
         }
 

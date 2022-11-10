@@ -293,7 +293,7 @@ namespace ZJYFrameWork.AssetBundles
                 var list = p.Result;
                 if (list.Count <= 0)
                 {
-                    UnityEngine.Debug.Log("没有需要下载资源");
+                    Debug.Log("没有需要下载资源");
                     return;
                 }
 
@@ -305,12 +305,15 @@ namespace ZJYFrameWork.AssetBundles
             if (newDownBundleInfoList.Count < 1)
             {
                 // EventBus.SyncSubmit(NetGameVersionEvent.ValueOf());
+                //因为没有需要下载资源，所以这里就是设置manifest
+                _assetBundleManager.SetBundleManifest(_assetBundleManager.BundleManifest);
 
                 EventBus.AsyncSubmit(ResourceInitCompleteEvent.ValueOf());
 
 
                 yield break;
             }
+
             DownloadAssetBundles(newDownBundleInfoList);
         }
 
@@ -323,7 +326,8 @@ namespace ZJYFrameWork.AssetBundles
             _nowProgressResult.Callbackable().OnCallback(res =>
             {
                 // EventBus.SyncSubmit(NetGameVersionEvent.ValueOf());
-
+                //重新设置
+                _assetBundleManager.SetAssetBundle();
                 EventBus.AsyncSubmit(ResourceInitCompleteEvent.ValueOf());
             });
             _nowProgressResult.WaitForDone();
