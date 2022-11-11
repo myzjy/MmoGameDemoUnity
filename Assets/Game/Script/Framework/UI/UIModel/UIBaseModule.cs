@@ -39,10 +39,7 @@ namespace ZJYFrameWork.UISerializable
 
         public int InstanceID { get; protected set; }
 
-        public virtual UICanvasType GetCanvasType()
-        {
-            return UICanvasType.None;
-        }
+        public abstract UICanvasType GetCanvasType();
 
         public virtual UISortType GetSortType()
         {
@@ -199,7 +196,7 @@ namespace ZJYFrameWork.UISerializable
             CommonController.Instance.loadingRotate.OnClose();
             // ObjectBase objectBase =(ObjectBase) userData;
             var obj = asset as GameObject;
-            
+
             InstantiateGameObject(obj, res =>
             {
                 var rtf = res.GetComponent<RectTransform>();
