@@ -19,7 +19,7 @@ namespace ZJYFrameWork.Procedure.Scene
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
-            CommonController.Instance.snackbar.OpenUIDataLoadingPanel("", 0, 1);
+            // CommonController.Instance.snackbar.OpenUIDataLoadingPanel("", 0, 1);
 
             loginService.ConnectToGateway();
         }
