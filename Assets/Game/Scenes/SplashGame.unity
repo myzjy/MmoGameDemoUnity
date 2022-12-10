@@ -301,6 +301,41 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1388894421567245769, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388894421567245769, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3134709945022443133, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3134709945022443133, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4343535663148162082, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4343535663148162082, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4343535663148162082, guid: 2ae5a521ead509a4385f149760b69be9,
+        type: 3}
+      propertyPath: m_BlocksRaycasts
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5259086977193307473, guid: 2ae5a521ead509a4385f149760b69be9,
         type: 3}
       propertyPath: snackbar

@@ -43,45 +43,45 @@ namespace ZJYFrameWork.Module.Login.Service
         /// </summary>
         public void LoginByToken()
         {
-            var sequence = DOTween.Sequence();
-            sequence.AppendCallback(() =>
-            {
+            // var sequence = DOTween.Sequence();
+            // sequence.AppendCallback(() =>
+            // {
                 netManager.Send(
                     GetPlayerInfoRequest.ValueOf(settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
-            });
-            sequence.AppendInterval(8f);
-            sequence.AppendCallback(() =>
-            {
-                if (!LoginCacheData.loginFlag)
-                {
-                    LoginByToken();
-                }
-            });
+            // });
+            // sequence.AppendInterval(8f);
+            // sequence.AppendCallback(() =>
+            // {
+            //     if (!LoginCacheData.loginFlag)
+            //     {
+            //         LoginByToken();
+            //     }
+            // });
         }
 
         public void LoginByAccount()
         {
-            var sequence = DOTween.Sequence();
-            sequence.AppendCallback(() =>
-            {
+            // var sequence = DOTween.Sequence();
+            // sequence.AppendCallback(() =>
+            // {
                 LoginCacheData.loginError = false;
                 netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
-            });
-            sequence.AppendInterval(3f);
-            sequence.AppendCallback(() =>
-            {
-                if (LoginCacheData.loginFlag)
-                {
-                    return;
-                }
-
-                if (LoginCacheData.loginError)
-                {
-                    return;
-                }
-
-                LoginByAccount();
-            });
+            // });
+            // sequence.AppendInterval(3f);
+            // sequence.AppendCallback(() =>
+            // {
+            //     if (LoginCacheData.loginFlag)
+            //     {
+            //         return;
+            //     }
+            //
+            //     if (LoginCacheData.loginError)
+            //     {
+            //         return;
+            //     }
+            //
+            //     LoginByAccount();
+            // });
         }
 
         public void Logout()
