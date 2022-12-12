@@ -1,4 +1,4 @@
-﻿namespace Game.Hoftix.Script.Module.Bag.Controller
+﻿namespace ZJYFrameWork.Hoftix.Script.Bag.Controller
 {
     public class BagItemController
     {

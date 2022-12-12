@@ -1,4 +1,4 @@
-﻿namespace Game.Hoftix.Script.Module.Item.Service
+﻿namespace ZJYFrameWork.Hoftix.Script.Module.Item.Service
 {
     public interface IItemService
     {
