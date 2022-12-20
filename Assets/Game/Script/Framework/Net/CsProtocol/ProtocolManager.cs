@@ -14,14 +14,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
     public class ProtocolManager
     {
         /**
-         * 协议号类的最大个数
-         */
-        public static readonly short MAX_PROTOCOL_NUM = short.MaxValue;
-
-        /**
         * 当前项目中所有继承IProtocolRegistration的类
         */
-        private static readonly IProtocolRegistration[] protocolList = new IProtocolRegistration[MAX_PROTOCOL_NUM];
+        private static readonly Dictionary<short, IProtocolRegistration> protocolList =
+            new Dictionary<short, IProtocolRegistration>();
 
 
         /**
@@ -57,7 +53,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public static IProtocolRegistration GetProtocol(short protocolId)
         {
-            var protocol = protocolList[protocolId];
+            protocolList.TryGetValue(protocolId, out var protocol);
             if (protocol == null)
             {
                 throw new Exception("[protocolId:" + protocolId + "]协议不存在");
@@ -89,7 +85,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 dict.TryGetValue("protocolId", out var protocolIdStr);
                 if (protocolIdStr != null)
                 {
-                    var protocolId =short.Parse(protocolIdStr.ToString());
+                    var protocolId = short.Parse(protocolIdStr.ToString());
                     return GetProtocol(protocolId).Read(byteBuffer);
                 }
             }

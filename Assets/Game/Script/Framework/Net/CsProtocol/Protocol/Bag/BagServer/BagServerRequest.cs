@@ -23,7 +23,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
     {
         public short ProtocolId()
         {
-            return 1000;
+            return 1007;
         }
 
         public void Write(ByteBuffer buffer, IPacket packet)
