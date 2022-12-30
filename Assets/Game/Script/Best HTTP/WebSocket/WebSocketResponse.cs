@@ -205,9 +205,9 @@ namespace BestHTTP.WebSocket
                 WebSocketFrame[] additionalFrames = frame.Fragment(this.MaxFragmentSize);
 
                 Send(frame);
-                if (additionalFrames != null)
-                    for (int i = 0; i < additionalFrames.Length; ++i)
-                        Send(additionalFrames[i]);
+                if (additionalFrames == null) return;
+                foreach (var t in additionalFrames)
+                    Send(t);
             }
             else
                 Send(frame);

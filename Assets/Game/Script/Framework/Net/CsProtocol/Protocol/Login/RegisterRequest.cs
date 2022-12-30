@@ -49,10 +49,10 @@ namespace ZJYFrameWork.Net.CsProtocol
 
         }
 
-        public IPacket Read(ByteBuffer buffer)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
         {
-            var json = StringUtils.BytesToString(buffer.ToBytes());
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            // var json = StringUtils.BytesToString(buffer.ToBytes());
+            // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             dict.TryGetValue("packet", out var packetJson);
             var packet = JsonConvert.DeserializeObject<RegisterRequest>(packetJson.ToString());
 

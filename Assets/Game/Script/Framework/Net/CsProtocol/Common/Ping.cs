@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 
@@ -39,7 +40,7 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object,object> dict)
         {
             Ping packet = new Ping();
             return packet;

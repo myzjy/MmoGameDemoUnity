@@ -1,4 +1,6 @@
-﻿namespace ZJYFrameWork.Net.CsProtocol.Buffer
+﻿using System.Collections.Generic;
+
+namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
     /**
      * 协议包类注册
@@ -23,7 +25,8 @@
         /// 将传递的数据读取出来 通过字节器读取
         /// </summary>
         /// <param name="buffer"></param>
+        /// <param name="dict">解析的json 字典</param>
         /// <returns></returns>
-        IPacket Read(ByteBuffer buffer);
+        IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict = null);
     }
 }

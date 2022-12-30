@@ -6,8 +6,8 @@ namespace ZJYFrameWork.Net.Core
     [StructLayout(LayoutKind.Auto)]
     public struct Message
     {
-        public MessageType messageType;
-        public IPacket packet;
+        public readonly MessageType messageType;
+        public readonly IPacket packet;
 
         public Message(MessageType messageType, IPacket packet)
         {

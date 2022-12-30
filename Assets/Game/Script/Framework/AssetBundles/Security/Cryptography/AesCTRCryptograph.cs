@@ -124,6 +124,11 @@ namespace ZJYFrameWork.Security.Cryptography
             get { return this.algorithmName; }
         }
 
+        /// <summary>
+        /// 字节解密
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public virtual byte[] Decrypt(byte[] buffer)
         {
             using (ICryptoTransform decryptor = this.algorithm.CreateDecryptor())
@@ -132,12 +137,22 @@ namespace ZJYFrameWork.Security.Cryptography
             }
         }
 
+        /// <summary>
+        /// Stream 解密
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public virtual Stream Decrypt(Stream input)
         {
             return new AesCTRCryptoStream(input, (AesCTRCryptoTransform)this.algorithm.CreateDecryptor(),
                 CryptoStreamMode.Read);
         }
 
+        /// <summary>
+        /// 字节 加密
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
         public virtual byte[] Encrypt(byte[] buffer)
         {
             using (ICryptoTransform encryptor = this.algorithm.CreateEncryptor())
@@ -146,6 +161,11 @@ namespace ZJYFrameWork.Security.Cryptography
             }
         }
 
+        /// <summary>
+        /// steam 加密
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public virtual Stream Encrypt(Stream input)
         {
             return new AesCTRCryptoStream(input, (AesCTRCryptoTransform)this.algorithm.CreateEncryptor(),

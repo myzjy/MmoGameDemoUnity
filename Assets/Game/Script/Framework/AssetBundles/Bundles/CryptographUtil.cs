@@ -5,23 +5,26 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 {
     public enum Algorithm
     {
-        [Remark("AES128 CBC PKCS7")]
-        AES128_CBC_PKCS7 = 0,
+        [Remark("AES128 CBC PKCS7")] AES128_CBC_PKCS7 = 0,
 
-        [Remark("AES192 CBC PKCS7")]
-        AES192_CBC_PKCS7,
+        [Remark("AES192 CBC PKCS7")] AES192_CBC_PKCS7,
 
-        [Remark("AES256 CBC PKCS7")]
-        AES256_CBC_PKCS7,
+        [Remark("AES256 CBC PKCS7")] AES256_CBC_PKCS7,
 
 #if UNITY_2018_1_OR_NEWER && !NETFX_CORE && !UNITY_WSA && !UNITY_WSA_10_0
-        [Remark("AES128 CTR NONE")]
-        AES128_CTR_NONE
+        [Remark("AES128 CTR NONE")] AES128_CTR_NONE
 #endif
     }
 
     public class CryptographUtil
     {
+        /// <summary>
+        /// 加密
+        /// </summary>
+        /// <param name="algorithm"></param>
+        /// <param name="key"></param>
+        /// <param name="iv"></param>
+        /// <returns></returns>
         public static IStreamEncryptor GetEncryptor(Algorithm algorithm, byte[] key, byte[] iv)
         {
             int keySize = 128;
@@ -41,9 +44,17 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     keySize = 256;
                     break;
             }
+
             return new Security.Cryptography.RijndaelCryptograph(keySize, key, iv);
         }
 
+        /// <summary>
+        /// 解密
+        /// </summary>
+        /// <param name="algorithm"></param>
+        /// <param name="key"></param>
+        /// <param name="iv"></param>
+        /// <returns></returns>
         public static IStreamDecryptor GetDecryptor(Algorithm algorithm, byte[] key, byte[] iv)
         {
             int keySize = 128;
@@ -63,6 +74,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     keySize = 256;
                     break;
             }
+
             return new Security.Cryptography.RijndaelCryptograph(keySize, key, iv);
         }
     }

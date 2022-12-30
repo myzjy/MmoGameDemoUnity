@@ -1,6 +1,9 @@
 ﻿using System;
 using AOT;
 using BestHTTP.WebSocket;
+using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Security.Cryptography;
 
 namespace ZJYFrameWork.Net.Core.Websocket
 {
@@ -101,8 +104,19 @@ namespace ZJYFrameWork.Net.Core.Websocket
             WebSocketSetOnBinary(DelegateOnBinaryEvent);
             WebSocketSetOnError(DelegateOnErrorEvent);
             WebSocketSetOnClose(DelegateOnCloseEvent);
+            var bytes = ByteBuffer.ValueOf();
+            decryptor = CryptographUtil.GetDecryptor(Algorithm.AES128_CTR_NONE, bytes.GetBytes("uslmcG1ep1gSsBcu"),
+                bytes.GetBytes("AN9K3kQfITXr7P2Q"));
+            _encryptor = CryptographUtil.GetEncryptor(Algorithm.AES128_CTR_NONE, bytes.GetBytes("uslmcG1ep1gSsBcu"),
+                bytes.GetBytes("AN9K3kQfITXr7P2Q"));
             initialized = true;
         }
+
+        //解密
+        private IStreamDecryptor decryptor;
+
+        //加密
+        private IStreamEncryptor _encryptor;
 
         /// <summary>
         /// 开始链接

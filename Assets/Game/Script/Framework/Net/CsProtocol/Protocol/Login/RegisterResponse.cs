@@ -42,13 +42,18 @@ namespace  ZJYFrameWork.Net.CsProtocol
 
         }
 
-        public IPacket Read(ByteBuffer buffer)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>( StringUtils.BytesToString(buffer.ToBytes()));
+            // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>( StringUtils.BytesToString(buffer.ToBytes()));
             dict.TryGetValue("packet", out var packetJson);
-            var packet = JsonConvert.DeserializeObject<RegisterResponse>(packetJson.ToString());
+            if (packetJson != null)
+            {
+                var packet = JsonConvert.DeserializeObject<RegisterResponse>(packetJson.ToString());
 
-            return packet;
+                return packet;
+            }
+
+            return null;
         }
     }
 }

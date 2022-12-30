@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.UI.UIModel;
+using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -86,11 +89,15 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 if (protocolIdStr != null)
                 {
                     var protocolId = short.Parse(protocolIdStr.ToString());
-                    return GetProtocol(protocolId).Read(byteBuffer);
+                    return GetProtocol(protocolId).Read(byteBuffer,dict);
                 }
             }
             catch (Exception e)
             {
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo,"","网络连接错误", res =>
+                {
+                    //解析报错
+                },"确定","取消");
                 Debug.Log($"接受消息协议出错{e}");
             }
 

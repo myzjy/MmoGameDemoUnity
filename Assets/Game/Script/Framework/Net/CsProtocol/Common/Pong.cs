@@ -7,7 +7,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol
 {
-    public class Pong : IPacket
+    public class Pong :Model, IPacket
     {
         public long time;
 
@@ -23,6 +23,11 @@ namespace ZJYFrameWork.Net.CsProtocol
         public short ProtocolId()
         {
             return 104;
+        }
+
+        public override string ToJson(bool isPretty = false)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -46,10 +51,10 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteLong(message.time);
         }
 
-        public IPacket Read(ByteBuffer buffer)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object,object> dict)
         {
-            var json = StringUtils.BytesToString(buffer.ToBytes());
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            // var json = StringUtils.BytesToString(buffer.ToBytes());
+            // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
 
             dict.TryGetValue("packet", out var packetJson);
             if (packetJson != null)
