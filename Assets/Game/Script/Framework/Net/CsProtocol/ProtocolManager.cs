@@ -89,15 +89,17 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 if (protocolIdStr != null)
                 {
                     var protocolId = short.Parse(protocolIdStr.ToString());
-                    return GetProtocol(protocolId).Read(byteBuffer,dict);
+                    dict.TryGetValue("packet", out var packetJson);
+                  
+                    return GetProtocol(protocolId).Read(byteBuffer, dict);
                 }
             }
             catch (Exception e)
             {
-                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo,"","网络连接错误", res =>
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo, "", "网络连接错误", res =>
                 {
                     //解析报错
-                },"确定","取消");
+                }, "确定", "取消");
                 Debug.Log($"接受消息协议出错{e}");
             }
 

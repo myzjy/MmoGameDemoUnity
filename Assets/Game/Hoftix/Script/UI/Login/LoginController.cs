@@ -36,6 +36,8 @@ namespace ZJYFrameWork.UISerializable
             LoginView.OnShow();
             loginPartView.Show();
         }
+        public void OnRegisterStartLogin(){}
+        
 
         public void OnHide()
         {

@@ -10,7 +10,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
     /// <summary>
     /// 登录时返回用户相关数据
     /// </summary>
-    public class GetPlayerInfoResponse : IPacket
+    public class GetPlayerInfoResponse : Model, IPacket
     {
         public short ProtocolId()
         {
@@ -33,16 +33,14 @@ namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dic)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
         {
-            var json = StringUtils.BytesToString(buffer.ToBytes());
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             dict.TryGetValue("packet", out var packetJson);
             try
             {
                 if (packetJson != null)
                 {
-                    var packetJsonDict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+                    var packetJsonDict = JsonConvert.DeserializeObject<Dictionary<object, object>>(packetJson.ToString());
                     if (packetJsonDict != null)
                     {
                         GetPlayerInfoResponse response = new GetPlayerInfoResponse();

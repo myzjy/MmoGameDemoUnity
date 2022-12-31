@@ -15,6 +15,7 @@ namespace ZJYFrameWork.Setting
         }
 
         public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
+        public RegisterPartClientCacheData GetRegisterPartClientCacheData => RegisterPartClientCacheData;
 
         /// <summary>
         /// 保存缓存账号密码

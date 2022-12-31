@@ -11,10 +11,6 @@ namespace ZJYFrameWork.Net
         /// 具体错误信息
         /// </summary>
         public string message { get; set; }
-        public override string ToJson(bool isPretty)
-        {
-            return ErrorSerializer.ToJson(this);
-        }
     }
     public class ErrorSerializer:Serializer
     {

@@ -5,6 +5,7 @@ using System.Text;
 using BestHTTP;
 using Newtonsoft.Json;
 using UnityEngine;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
 namespace ZJYFrameWork.Net
 {

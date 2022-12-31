@@ -6,11 +6,5 @@
         public string platfromToken { get; set; }
         public string channelCode { get; set; }
         public string version { get; set; }
-
-
-        public override string ToJson(bool isPretty = false)
-        {
-            return "";
-        }
     }
 }

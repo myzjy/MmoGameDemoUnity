@@ -7,7 +7,7 @@ using ZJYFrameWork.Spring.Utils;
 namespace ZJYFrameWork.Net.CsProtocol
 {
     
-    public class RegisterRequest : IPacket
+    public class RegisterRequest : Model, IPacket
     {
         public string account;
         public string password;
@@ -54,9 +54,14 @@ namespace ZJYFrameWork.Net.CsProtocol
             // var json = StringUtils.BytesToString(buffer.ToBytes());
             // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             dict.TryGetValue("packet", out var packetJson);
-            var packet = JsonConvert.DeserializeObject<RegisterRequest>(packetJson.ToString());
+            if (packetJson != null)
+            {
+                var packet = JsonConvert.DeserializeObject<RegisterRequest>(packetJson.ToString());
 
-            return packet;
+                return packet;
+            }
+
+            return null;
         }
     }
 }

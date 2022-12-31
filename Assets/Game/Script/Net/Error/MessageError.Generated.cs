@@ -21,12 +21,7 @@ namespace ZJYFrameWork.Net
         /// 错误的信息具体内容
         /// </summary>
         public Error date { get; set; }
-        public override string ToJson(bool isPretty = false)
-        {
-            return MessageErrorSerializer.ToJson(this);
-        }
-
-
+   
         public override void Unpack(byte[] bytes)
         {
             MessageErrorSerializer.Unpack(this,bytes);

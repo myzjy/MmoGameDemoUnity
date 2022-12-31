@@ -2,6 +2,7 @@
 using Tools.Util;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Common;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
@@ -92,6 +93,13 @@ namespace ZJYFrameWork.UISerializable
                 LoginPart.SetActive(true);
             });
             // LoginPart
+        }
+
+        //在我注册了，把登录的相关数据都赋值给输入框 只有注册成功之后才会调用
+        public void OnRegisterStartLogin()
+        {
+            account.text = SpringContext.GetBean<RegisterPartClientCacheData>().Account;
+            password.text = SpringContext.GetBean<RegisterPartClientCacheData>().Password;
         }
 
         public void Hide()

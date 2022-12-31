@@ -24,11 +24,7 @@ namespace ZJYFrameWork.Net.CsProtocol
         {
             return 104;
         }
-
-        public override string ToJson(bool isPretty = false)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 
     public class PongRegistration : IProtocolRegistration

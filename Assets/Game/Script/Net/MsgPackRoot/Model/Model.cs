@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
@@ -7,10 +8,37 @@ namespace ZJYFrameWork.Net
 {
     public abstract class Model
     {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
         /// <summary>
         /// JSONにシリアライズ
         /// </summary>
-        public abstract string ToJson(bool isPretty = false);
+        public virtual string ToJson()
+        {
+            var str = JsonConvert.SerializeObject(this);
+            JsonSerializer serializer = new JsonSerializer();
+            TextReader tr = new StringReader(str);
+            JsonTextReader jtr = new JsonTextReader(tr);
+            var obj = serializer.Deserialize(jtr);
+            if (obj != null)
+            {
+                StringWriter sw = new StringWriter();
+                JsonTextWriter jsonTextWriter = new JsonTextWriter(sw)
+                {
+                    Formatting = Formatting.Indented,
+                    Indentation = 4,
+                    IndentChar = ' '
+                };
+                serializer.Serialize(jsonTextWriter, obj);
+                return sw.ToString();
+            }
+            else
+            {
+                throw new NotImplementedException("ToJson() is not Implemented for class " +
+                                                  GetType().FullName);
+            }
+
+            return string.Empty;
+        }
 
         /// <summary>
         /// 文字列に変換
@@ -19,6 +47,7 @@ namespace ZJYFrameWork.Net
         {
             return ToJson();
         }
+#endif
 
         /// <summary>
         /// MsgPackのバイナリを変数に流し込む

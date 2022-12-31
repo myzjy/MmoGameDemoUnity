@@ -5,7 +5,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
-    public class LoginResponse : IPacket
+    public class LoginResponse : Model, IPacket
     {
         public string token;
         public long uid;
@@ -48,10 +48,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dic)
+        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
         {
-            var json = StringUtils.BytesToString(buffer.ToBytes());
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             var packet = JsonConvert.DeserializeObject<LoginResponse>(dict["packet"].ToString());
 
             return packet;

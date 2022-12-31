@@ -6,7 +6,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace  ZJYFrameWork.Net.CsProtocol
 {
-    public class RegisterResponse: IPacket
+    public class RegisterResponse: Model, IPacket
     {
         public bool mRegister;
 
