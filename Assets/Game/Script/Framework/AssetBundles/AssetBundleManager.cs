@@ -187,12 +187,7 @@ namespace ZJYFrameWork.AssetBundles
         /// </summary>
         private List<string> SceneLoacelList = new List<string>()
         {
-            "Main",
-            "Character_Selection",
-            "Empty",
-            "stylizedenvironement",
-            "dreamscape",
-            "Bar"
+            "LoginBase",
         };
 
         public void LoadScene(string sceneAssetName, int priority, LoadSceneCallbacks loadSceneCallbacks,
