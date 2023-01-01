@@ -64,6 +64,11 @@ namespace ZJYFrameWork.UISerializable.Manager
         }
         public static void SetNow(long time)
         {
+            if (time - timestamp < 5)
+            {
+                //有加速器
+                return;
+            }
             timestamp = time;
         }
         public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
