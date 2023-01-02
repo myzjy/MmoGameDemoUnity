@@ -11,10 +11,10 @@ namespace ZJYFrameWork.Constant
         public static readonly Dictionary<SceneEnum, Type> SCENE_MAP = new Dictionary<SceneEnum, Type>()
         {
             { SceneEnum.Login, typeof(ProcedureLogin) },
-       
-            // { SceneEnum.ActivityScene, typeof(ProcedureActivityScene) }
+            { SceneEnum.GameMain, typeof(ProcedureGameMain) }
         };
     }
+
     public enum SceneEnum
     {
         /// <summary>
@@ -23,22 +23,13 @@ namespace ZJYFrameWork.Constant
         Login = 1,
 
         /// <summary>
-        /// 角色场景
+        /// 主界面
         /// </summary>
-        CharacterSelection = 2,
+        GameMain = 2,
 
-        /// <summary>
-        /// 首页
-        /// </summary>
-        HomeView = 3,
-
-        /// <summary>
-        /// 活动场景
-        /// </summary>
-        ActivityScene = 4,
         /// <summary>
         /// 重复登录
         /// </summary>
-        RepeatLogin=5
+        RepeatLogin = 3
     }
 }

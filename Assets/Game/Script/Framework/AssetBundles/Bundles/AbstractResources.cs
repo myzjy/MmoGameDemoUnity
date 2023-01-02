@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.Utilities;
-using IDisposable = System.IDisposable;
+using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
@@ -105,6 +106,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
             return result;
         }
+
         protected abstract IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
             LoadSceneMode mode = LoadSceneMode.Single);
 
@@ -1137,7 +1139,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 enumerator.RegisterCatchBlock(e =>
                 {
                     result.SetException(e);
-                    ZJYFrameWork.Debug.LogError(e);
+                    Debug.LogError(e);
                 });
                 enumerator.RegisterFinallyBlock(() =>
                 {

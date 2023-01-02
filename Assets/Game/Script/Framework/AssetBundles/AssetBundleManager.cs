@@ -2,11 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Framework.AssetBundles.Config;
-using Framework.AssetBundles.Utilty;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Execution;
 using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.ObjectPool;
 using ZJYFrameWork.Spring.Core;
@@ -17,11 +19,55 @@ namespace ZJYFrameWork.AssetBundles
     public class AssetBundleManager : AbstractManager, IAssetBundleManager
     {
         /// <summary>
+        /// 下载接口
+        /// </summary>
+        // [Autowired] private IDownloader Downloader;
+        [Autowired] private IBundleManager _bundleManager;
+
+        //这个接口被多个类继承，所以不能在这里定义
+        // /// <summary>
+        // /// manifest升级器
+        // /// </summary>
+        // [Autowired] private IManifestUpdatable ManifestUpdatable;
+
+        /// <summary>
+        /// 构建管理器
+        /// </summary>
+        [Autowired] private ILoaderBuilder _loaderBuilder;
+
+        /// <summary>
+        /// 路径保存器
+        /// </summary>
+        [Autowired] private IPathInfoParser _pathInfoParser;
+
+        /// <summary>
+        /// BundleManifest 读取器
+        /// </summary>
+        [Autowired] private IBundleManifestLoader BundleManifestLoader;
+
+        [Autowired] private IDownloadManager DownloadManager;
+
+        [Autowired] private IObjectPoolManager objectPoolManager;
+
+        /// <summary>
         /// 资源读取接口 需要在下载接口走完之后，查看有没有需要下载
         /// </summary>
         [Autowired] private IResources Resources;
 
-        [Autowired] private IObjectPoolManager objectPoolManager;
+
+        [Autowired] public AssetBundleUpdater resourceUpdater;
+
+        /// <summary>
+        /// 部分本地场景加载
+        /// </summary>
+        private List<string> SceneLoacelList = new List<string>()
+        {
+            "LoginBase",
+            "LoginBase".ToLower(),
+            "GameMain",
+            "GameMain".ToLower(),
+        };
+
         public string BundleRoot => AssetBundleConfig.BundleRoot;
 
         public string StorableDirectory
@@ -39,8 +85,6 @@ namespace ZJYFrameWork.AssetBundles
             get => BundleUtil.GetTemporaryCacheDirectory();
         }
 
-
-        [Autowired] public AssetBundleUpdater resourceUpdater;
         public string UpdatePrefixUri { get; set; }
         public string ApplicableGameVersion { get; }
         public float AssetAutoReleaseInterval { get; set; }
@@ -52,38 +96,9 @@ namespace ZJYFrameWork.AssetBundles
         public int ResourcePriority { get; set; }
 
         /// <summary>
-        /// BundleManifest 读取器
-        /// </summary>
-        [Autowired] private IBundleManifestLoader BundleManifestLoader;
-
-        /// <summary>
-        /// 路径保存器
-        /// </summary>
-        [Autowired] private IPathInfoParser _pathInfoParser;
-
-        //这个接口被多个类继承，所以不能在这里定义
-        // /// <summary>
-        // /// manifest升级器
-        // /// </summary>
-        // [Autowired] private IManifestUpdatable ManifestUpdatable;
-
-        /// <summary>
-        /// 构建管理器
-        /// </summary>
-        [Autowired] private ILoaderBuilder _loaderBuilder;
-
-        /// <summary>
         /// 管理manifest
         /// </summary>
         public BundleManifest BundleManifest { get; set; }
-
-        /// <summary>
-        /// 下载接口
-        /// </summary>
-        // [Autowired] private IDownloader Downloader;
-        [Autowired] private IBundleManager _bundleManager;
-
-        [Autowired] private IDownloadManager DownloadManager;
 
         public void SetAssetBundle()
         {
@@ -182,14 +197,6 @@ namespace ZJYFrameWork.AssetBundles
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 部分本地场景加载
-        /// </summary>
-        private List<string> SceneLoacelList = new List<string>()
-        {
-            "LoginBase",
-        };
-
         public void LoadScene(string sceneAssetName, int priority, LoadSceneCallbacks loadSceneCallbacks,
             object userData)
         {
@@ -208,47 +215,8 @@ namespace ZJYFrameWork.AssetBundles
             //代表我是加载本地场景，有部分是直接加载的本地场景
             if (SceneLoacelList.Contains(sceneAssetName))
             {
-                var sceneLocalLoading = Resources.LoadLocalSceneAsync(sceneAssetName);
-                sceneLocalLoading.OnStateChangedCallback(res =>
-                {
-                    switch (res)
-                    {
-                        case LoadState.None:
-                            break;
-                        case LoadState.AssetBundleLoaded:
-                        {
-                            //
-                            loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, 0, null);
-                        }
-                            break;
-                        case LoadState.SceneActivationReady:
-                        {
-                            Debug.Log("Ready to activate the scene.");
-                            sceneLocalLoading.AllowSceneActivation = true;
-                            // CommonUIManager.Instance.Snackbar.CloseUINetLoading();
-                        }
-                            break;
-                        case LoadState.Failed:
-                            Debug.Log($"Loads scene '{abName}' failure.Error:{sceneLocalLoading.Exception}");
-                            loadSceneCallbacks.LoadSceneFailureCallback(abName, LoadResourceStatus.AssetError,
-                                sceneLocalLoading.Exception.ToString(), null);
-                            break;
-                        case LoadState.Completed:
-                            loadSceneCallbacks.LoadSceneSuccessCallback(sceneAssetName, 1, null);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(res), res, null);
-                    }
-                });
-                sceneLocalLoading.OnProgressCallback(res =>
-                {
-#if UNITY_EDITOR || DEVELOP_BUILD
-                    Debug.Log($"加载场景进度：{res * 100}");
-                    loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
-#else
-                loadSceneCallbacks.LoadSceneUpdateCallback(sceneAssetName, res, null);
-#endif
-                });
+                loadSceneCallbacks.LoadSceneDependencyAssetCallback(sceneAssetName, "", 0, 0, null);
+                Executors.RunOnCoroutine(LoadSceneAsyncIe(sceneAssetName, loadSceneCallbacks));
                 return;
             }
 
@@ -322,6 +290,40 @@ namespace ZJYFrameWork.AssetBundles
         public void UnloadScene(string sceneAssetName, UnloadSceneCallbacks unloadSceneCallbacks, object userData)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerator LoadSceneAsyncIe(string sceneName, LoadSceneCallbacks loadSceneCallbacks)
+        {
+            //关闭
+            // UIManager.Instance.GetSystem<IUISystemModule>().CloseUIEvent();
+            // LandscapeLeftOrPortrait(false);
+
+            //场景加载进度条
+            var loadSceneAsync = SceneManager.LoadSceneAsync(sceneName);
+            //如果为true，那么加载结束后直接就会跳转，我们根本看不见加载的过程
+            loadSceneAsync.allowSceneActivation = false;
+            while (!loadSceneAsync.isDone)
+            {
+                Debug.Log($"场景进度:{loadSceneAsync.progress * 100}%");
+#if UNITY_EDITOR || DEVELOP_BUILD
+                Debug.Log($"加载场景进度：{loadSceneAsync.progress * 100}");
+                loadSceneCallbacks.LoadSceneUpdateCallback(sceneName, loadSceneAsync.progress, null);
+#else
+                loadSceneCallbacks.LoadSceneUpdateCallback(sceneName,  loadSceneAsync.progress, null);
+#endif
+                if (loadSceneAsync.progress >= 0.9f)
+                {
+                    // LandscapeLeftOrPortrait(true);
+                    //直接转换场景
+                    loadSceneAsync.allowSceneActivation = true;
+                }
+
+                yield return new WaitForEndOfFrame();
+
+                yield return null;
+            }
+
+            loadSceneCallbacks.LoadSceneSuccessCallback(sceneName, 1, null);
         }
 
         public override void Update(float elapseSeconds, float realElapseSeconds)

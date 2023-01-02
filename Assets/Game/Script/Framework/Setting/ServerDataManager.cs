@@ -1,21 +1,30 @@
-﻿using ZJYFrameWork.Common;
+﻿using System.Collections.Generic;
+using ZJYFrameWork.Common;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Setting
 {
     [Bean]
-    public sealed class ServerDataManager
+    public class ServerDataManager
     {
+        private List<ItemBaseData> _itemBaseDataList = new List<ItemBaseData>();
         [Autowired] private LoginClientCacheData LoginCacheData;
         [Autowired] private RegisterPartClientCacheData RegisterPartClientCacheData;
+
+        /// <summary>
+        /// 服务器上面道具相关基础配置表
+        /// </summary>
+        public List<ItemBaseData> ItemBaseDataList => _itemBaseDataList;
+
+        public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
+        public RegisterPartClientCacheData GetRegisterPartClientCacheData => RegisterPartClientCacheData;
+
 
         [AfterPostConstruct]
         public void Init()
         {
         }
-
-        public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
-        public RegisterPartClientCacheData GetRegisterPartClientCacheData => RegisterPartClientCacheData;
 
         /// <summary>
         /// 保存缓存账号密码
@@ -39,6 +48,12 @@ namespace ZJYFrameWork.Setting
             RegisterPartClientCacheData.Account = account;
             RegisterPartClientCacheData.Password = password;
             RegisterPartClientCacheData.AffirmPassword = affirmPassword;
+        }
+
+        public void SetItemBaseDataList(List<ItemBaseData> itemBaseList)
+        {
+            _itemBaseDataList = new List<ItemBaseData>();
+            _itemBaseDataList.AddRange(itemBaseList);
         }
     }
 }

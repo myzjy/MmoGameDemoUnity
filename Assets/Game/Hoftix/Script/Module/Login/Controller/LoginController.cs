@@ -8,12 +8,12 @@ using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Net.Dispatcher;
+using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Manager;
-using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Script.Module.Login.Controller
 {
@@ -23,12 +23,12 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
     [Bean]
     public class LoginController
     {
-        [Autowired] private ISettingManager settingManager;
+        [Autowired] private LoginClientCacheData LoginCacheData;
+        [Autowired] private ILoginService loginService;
 
         [Autowired] private INetManager netManager;
-        [Autowired] private ILoginService loginService;
-        [Autowired] private LoginClientCacheData LoginCacheData;
         private int reconnectCount = 0;
+        [Autowired] private ISettingManager settingManager;
 
         [PacketReceiver]
         public void AtLoginResponse(LoginResponse response)
@@ -45,8 +45,9 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().Uid = uid;
             SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
             UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOGIN_UI);
+            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
             //跳转场景
-            
+            SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
         }
 
         [PacketReceiver]
@@ -67,7 +68,8 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log("连接成功事件，通过Token登录服务器");
 #endif
-                loginService.LoginByToken();
+                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
+                //loginService.LoginByToken();
             }
             else
             {

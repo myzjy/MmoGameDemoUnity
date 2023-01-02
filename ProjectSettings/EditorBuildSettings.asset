@@ -6,15 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/TBTK/DemoNScenes/Demo_JRPG.unity
-    guid: c36ff64fc850f4740ad36c830b5ffebe
+    path: Assets/Game/Scenes/LoginBase.unity
+    guid: bde9e93f6680c5d47984ae4ad50ae726
   - enabled: 1
-    path: Assets/TBTK/DemoNScenes/Demo_Persistent_Game.unity
-    guid: 12a4490865cd65e429e8602e99085373
-  - enabled: 1
-    path: Assets/TBTK/DemoNScenes/Demo_Persistent_PreGame.unity
-    guid: 89d7af80d17cf4841a91fd2f2ea6508d
-  - enabled: 1
-    path: Assets/TBTK/DemoNScenes/Demo_XCom.unity
-    guid: 323a124a495cc5a4f8e64700cb1adae0
+    path: Assets/Game/Scenes/GameMain.unity
+    guid: 051e5dc6b553a8b419cd7a85e6476fa6
   m_configObjects: {}
