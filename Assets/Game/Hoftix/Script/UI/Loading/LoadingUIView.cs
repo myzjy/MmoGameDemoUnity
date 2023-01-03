@@ -22,6 +22,13 @@ namespace ZJYFrameWork.UISerializable
             viewPanel.rightSlider_Slider.value = 0f;
         }
 
+        public void ResetProgressBar()
+        {
+            viewPanel.leftSlider_Slider.value = 0f;
+            viewPanel.rightSlider_Slider.value = 0f;
+        }
+
+
         public void SetNowProgressNum(float nums)
         {
             NowProgressNum = nums;

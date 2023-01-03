@@ -22,12 +22,18 @@ namespace ZJYFrameWork.UISerializable
         {
             if (!OnErrorTips())
                 return;
+            if (!UIView.IsActive)
+            {
+                //物体隐藏了
+            }
+
             UIView.OnShow();
         }
 
         private bool OnErrorTips()
         {
-            //这个判断应该不会进入，除非代码放错地方调用出错
+            //这个判断应该不会进入，除非代码放错地方调用出错 
+            //一般只会有调用顺序出现问题才会出现UIView为空
             if (UIView != null) return true;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"当前的{typeof(LoadingUIView)}所需的UI界面并未生成，调用顺序有问题");

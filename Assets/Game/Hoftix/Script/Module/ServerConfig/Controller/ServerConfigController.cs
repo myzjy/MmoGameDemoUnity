@@ -14,7 +14,7 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
         {
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
             //设置为1
-            SpringContext.GetBean<LoadUIController>().UIView.SetNowProgressNum(1);
+            SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);
         }
     }
 }

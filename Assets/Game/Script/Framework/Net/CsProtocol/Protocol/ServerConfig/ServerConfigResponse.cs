@@ -19,9 +19,16 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 
         public static ServerConfigResponse ValueOf(List<ItemBaseData> bagItemEntityList)
         {
-            var packet = new ServerConfigResponse();
-            packet.bagItemEntityList = bagItemEntityList;
+            var packet = new ServerConfigResponse
+            {
+                bagItemEntityList = bagItemEntityList
+            };
             return packet;
+        }
+
+        public override void Unpack(byte[] bytes)
+        {
+            base.Unpack(bytes);
         }
     }
 
