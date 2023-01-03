@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using GameEditor.ApiHttpsEditor;
-using Newtonsoft.Json;
 using Serialization;
 using UnityEngine;
 
@@ -40,28 +37,24 @@ namespace ZJYFrameWork
                 "Game/Editor/ZJYFrameWork/ApiHttpsEditor/Json/" + baseName);
 
             //通用后缀名
-            var modelVScript = ".Generated.cs";
             //Request
-            var Request = "Request.Generated.cs";
-            var RequestVScript = "Request.cs";
+            const string request = "Request.Generated.cs";
             //Response
-            var Respone = "Response.Generated.cs";
-            var responseVScript = "Response.cs";
+            const string response = "Response.Generated.cs";
 
             //命名空间
-            var namespaceName = "ZJYFrameWork.Net";
-            var managerString = "using System.Text;\nusing Newtonsoft.Json;\n\n";
+            const string namespaceName = "ZJYFrameWork.Net";
+            const string managerString = "using System.Text;\nusing Newtonsoft.Json;\n\n";
 
-            InstructionType nowInstructionType = InstructionType.None;
-            List<IntInstruction> list = pack.InstructionsList.Select(i => i as IntInstruction).ToList();
+            var list = pack.InstructionsList.Select(i => i as IntInstruction).ToList();
 
-            List<IntInstruction> ApiBoolList = list.Where(a => a.ApiBool).ToList();
+            var apiBoolList = list.Where(a => a.ApiBool).ToList();
             List<IntInstruction> responseBoolList = list.Where(a => a.ResponseBool).ToList();
             List<IntInstruction> RequestBoolList = list.Where(a => a.RequestBool).ToList();
             List<IntInstruction> modelBoolList = list.Where(a => a.modelBool).ToList();
 
 
-            foreach (var nameBea in ApiBoolList.Select(item =>
+            foreach (var nameBea in apiBoolList.Select(item =>
                          Path.Combine(Application.dataPath, $"Game/Script/Net/Api/Data")))
             {
                 if (!Directory.Exists(nameBea))
@@ -88,7 +81,7 @@ namespace ZJYFrameWork
             #region Response
 
             var ResponsePah = Path.Combine(Application.dataPath, $"Game/Script/Net/Api/Response");
-            var pathsResponse = $"{ResponsePah}/{baseName}{Respone}";
+            var pathsResponse = $"{ResponsePah}/{baseName}{response}";
             if (!Directory.Exists(ResponsePah))
             {
                 Directory.CreateDirectory(ResponsePah);
@@ -118,7 +111,7 @@ namespace ZJYFrameWork
             #region Request
 
             var requestPah = Path.Combine(Application.dataPath, $"Game/Script/Net/Api/Request");
-            var pathsRequest = $"{requestPah}/{baseName}{Request}";
+            var pathsRequest = $"{requestPah}/{baseName}{request}";
             if (!Directory.Exists(requestPah))
             {
                 Directory.CreateDirectory(requestPah);
