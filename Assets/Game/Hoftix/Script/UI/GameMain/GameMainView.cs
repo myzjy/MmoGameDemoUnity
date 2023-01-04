@@ -15,10 +15,12 @@ namespace ZJYFrameWork.UI.GameMain
                 //pve
                 //打开地图界面
             });
+            OnShow();
         }
 
         public override void OnShow()
         {
+            GetSelfUIView.OnShow();
         }
     }
 }

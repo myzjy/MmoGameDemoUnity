@@ -1,6 +1,5 @@
 ﻿using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.UI.GameMain;
-using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -56,11 +55,11 @@ namespace ZJYFrameWork.UISerializable
             {
                 case UINotifEnum.OPEN_GAMEMAIN_PANEL:
                 {
-                    
-                } break;
+                    InstanceOrReuse();
+                }
+                    break;
                 case UINotifEnum.CLOSE_GAMEMAIN_PANEL:
                 {
-                    
                 }
                     break;
             }
