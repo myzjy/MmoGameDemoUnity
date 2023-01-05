@@ -1,93 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using BestHTTP.Extensions;
+using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.Authentication
 {
-    using BestHTTP.Extensions;
-    using BestHTTP.PlatformSupport.Memory;
-    using System.Text;
-
     /// <summary>
-    /// Internal class that stores all information that received from a server in a WWW-Authenticate and need to construct a valid Authorization header. Based on rfc 2617 (http://tools.ietf.org/html/rfc2617).
-    /// Used only internally by the plugin.
+    /// 内部类，它将从服务器接收到的所有信息存储在WWW-Authenticate中，并且需要构造一个有效的Authorization标头。基于rfc 2617 (http://tools.ietf.org/html/rfc2617).
+    /// 仅在插件内部使用。
     /// </summary>
     public sealed class Digest
     {
-        #region Public Properties
-
-        /// <summary>
-        /// The Uri that this Digest is bound to.
-        /// </summary>
-        public Uri Uri { get; private set; }
-
-        public AuthenticationTypes Type { get; private set; }
-
-        /// <summary>
-        /// A string to be displayed to users so they know which username and password to use.
-        /// This string should contain at least the name of the host performing the authentication and might additionally indicate the collection of users who might have access.
-        /// </summary>
-        public string Realm { get; private set; }
-
-        /// <summary>
-        /// A flag, indicating that the previous request from the client was rejected because the nonce value was stale.
-        /// If stale is TRUE (case-insensitive), the client may wish to simply retry the request with a new encrypted response, without  the user for a new username and password.
-        /// The server should only set stale to TRUE if it receives a request for which the nonce is invalid but with a valid digest for that nonce
-        /// (indicating that the client knows the correct username/password).
-        /// If stale is FALSE, or anything other than TRUE, or the stale directive is not present, the username and/or password are invalid, and new values must be obtained.
-        /// </summary>
-        public bool Stale { get; private set; }
-
-        #endregion
-
-        #region Private Properties
-
-        /// <summary>
-        /// A server-specified data string which should be uniquely generated each time a 401 response is made.
-        /// Specifically, since the string is passed in the header lines as a quoted string, the double-quote character is not allowed.
-        /// </summary>
-        private string Nonce { get; set; }
-
-        /// <summary>
-        /// A string of data, specified by the server, which should be returned by the client unchanged in the Authorization header of subsequent requests with URIs in the same protection space.
-        /// It is recommended that this string be base64 or data.
-        /// </summary>
-        private string Opaque { get; set; }
-
-        /// <summary>
-        /// A string indicating a pair of algorithms used to produce the digest and a checksum. If this is not present it is assumed to be "MD5".
-        /// If the algorithm is not understood, the challenge should be ignored (and a different one used, if there is more than one).
-        /// </summary>
-        private string Algorithm { get; set; }
-
-        /// <summary>
-        /// List of URIs, as specified in RFC XURI, that define the protection space.
-        /// If a URI is an abs_path, it is relative to the canonical root URL (see section 1.2 above) of the server being accessed.
-        /// An absoluteURI in this list may refer to a different server than the one being accessed.
-        /// The client can use this list to determine the set of URIs for which the same authentication information may be sent:
-        /// any URI that has a URI in this list as a prefix (after both have been made absolute) may be assumed to be in the same protection space.
-        /// If this directive is omitted or its value is empty, the client should assume that the protection space consists of all URIs on the responding server.
-        /// </summary>
-        public List<string> ProtectedUris { get; private set; }
-
-        /// <summary>
-        /// If present, it is a quoted string of one or more tokens indicating the "quality of protection" values supported by the server.
-        /// The value "auth" indicates authentication. The value "auth-int" indicates authentication with integrity protection.
-        /// </summary>
-        private string QualityOfProtections { get; set; }
-
-        /// <summary>
-        /// his MUST be specified if a qop directive is sent (see above), and MUST NOT be specified if the server did not send a qop directive in the WWW-Authenticate header field.
-        /// The nc-value is the hexadecimal count of the number of requests (including the current request) that the client has sent with the nonce value in this request.
-        /// </summary>
-        private int NonceCount { get; set; }
-
-        /// <summary>
-        /// Used to store the last HA1 that can be used in the next header generation when Algorithm is set to "md5-sess".
-        /// </summary>
-        private string HA1Sess { get; set; }
-
-        #endregion
-
         internal Digest(Uri uri)
         {
             this.Uri = uri;
@@ -95,7 +20,7 @@ namespace BestHTTP.Authentication
         }
 
         /// <summary>
-        /// Parses a WWW-Authenticate header's value to retrive all information.
+        /// 解析WWW-Authenticate报头的值以检索所有信息。
         /// </summary>
         public void ParseChallange(string header)
         {
@@ -115,11 +40,18 @@ namespace BestHTTP.Authentication
 
             // Then process
             foreach (var qp in qpl.Values)
+            {
                 switch (qp.Key)
                 {
-                    case "basic": this.Type = AuthenticationTypes.Basic; break;
-                    case "digest": this.Type = AuthenticationTypes.Digest; break;
-                    case "realm": this.Realm = qp.Value; break;
+                    case "basic":
+                        this.Type = AuthenticationTypes.Basic;
+                        break;
+                    case "digest":
+                        this.Type = AuthenticationTypes.Digest;
+                        break;
+                    case "realm":
+                        this.Realm = qp.Value;
+                        break;
                     case "domain":
                     {
                         if (string.IsNullOrEmpty(qp.Value) || qp.Value.Length == 0)
@@ -138,16 +70,27 @@ namespace BestHTTP.Authentication
 
                         break;
                     }
-                    case "nonce": this.Nonce = qp.Value; break;
-                    case "qop": this.QualityOfProtections = qp.Value; break;
-                    case "stale": this.Stale = bool.Parse(qp.Value); break;
-                    case "opaque": this.Opaque = qp.Value; break;
-                    case "algorithm": this.Algorithm = qp.Value; break;
+                    case "nonce":
+                        this.Nonce = qp.Value;
+                        break;
+                    case "qop":
+                        this.QualityOfProtections = qp.Value;
+                        break;
+                    case "stale":
+                        this.Stale = bool.Parse(qp.Value);
+                        break;
+                    case "opaque":
+                        this.Opaque = qp.Value;
+                        break;
+                    case "algorithm":
+                        this.Algorithm = qp.Value;
+                        break;
                 }
+            }
         }
 
         /// <summary>
-        /// Generates a string that can be set to an Authorization header.
+        /// 生成可设置为授权标头的字符串。
         /// </summary>
         public string GenerateResponseHeader(HTTPRequest request, Credentials credentials, bool isProxy = false)
         {
@@ -156,7 +99,9 @@ namespace BestHTTP.Authentication
                 switch (Type)
                 {
                     case AuthenticationTypes.Basic:
-                        return string.Concat("Basic ", Convert.ToBase64String(Encoding.UTF8.GetBytes(string.Format("{0}:{1}", credentials.UserName, credentials.Password))));
+                        return string.Concat("Basic ",
+                            Convert.ToBase64String(
+                                Encoding.UTF8.GetBytes($"{credentials.UserName}:{credentials.Password}")));
 
                     case AuthenticationTypes.Digest:
                     {
@@ -164,47 +109,53 @@ namespace BestHTTP.Authentication
 
                         string HA1 = string.Empty;
 
-                        // The cnonce-value is an opaque quoted string value provided by the client and used by both client and server to avoid chosen plaintext attacks, to provide mutual
-                        //  authentication, and to provide some message integrity protection.
-                        string cnonce = new System.Random(request.GetHashCode()).Next(int.MinValue, int.MaxValue).ToString("X8");
+                        // cnnonce -value是一个不透明的带引号的字符串值，由客户端提供，客户端和服务器都使用它来避免选择明文攻击，
+                        // 提供相互身份验证，并提供一些消息完整性保护
+                        string cnonce = new System.Random(request.GetHashCode()).Next(int.MinValue, int.MaxValue)
+                            .ToString("X8");
 
                         string ncvalue = NonceCount.ToString("X8");
                         switch (Algorithm.TrimAndLower())
                         {
                             case "md5":
-                                HA1 = string.Format("{0}:{1}:{2}", credentials.UserName, Realm, credentials.Password).CalculateMD5Hash();
+                                HA1 = $"{credentials.UserName}:{Realm}:{credentials.Password}"
+                                    .CalculateMD5Hash();
                                 break;
 
                             case "md5-sess":
                                 if (string.IsNullOrEmpty(this.HA1Sess))
-                                    this.HA1Sess = string.Format("{0}:{1}:{2}:{3}:{4}", credentials.UserName, Realm, credentials.Password, Nonce, ncvalue).CalculateMD5Hash();
+                                    this.HA1Sess =
+                                        $"{credentials.UserName}:{Realm}:{credentials.Password}:{Nonce}:{ncvalue}"
+                                            .CalculateMD5Hash();
                                 HA1 = this.HA1Sess;
                                 break;
 
-                            default: //throw new NotSupportedException("Not supported hash algorithm found in Web Authentication: " + Algorithm);
+                            default:
+                                //抛出新的NotSupportedException("在Web认证中发现的不支持的哈希算法:" +算法)
                                 return string.Empty;
                         }
 
-                        // A string of 32 hex digits, which proves that the user knows a password. Set according to the qop value.
+                        // 32个十六进制数字的字符串，证明用户知道密码。根据qop值进行设置。
                         string response = string.Empty;
 
-                        // The server sent QoP-value can be a list of supported methodes(if sent at all - in this case it's null).
-                        // The rfc is not specify that this is a space or comma separeted list. So it can be "auth, auth-int" or "auth auth-int".
-                        // We will first check the longer value("auth-int") then the short one ("auth"). If one matches we will reset the qop to the exact value.
-                        string qop = this.QualityOfProtections != null ? this.QualityOfProtections.TrimAndLower() : null;
+                        // 服务器发送的QoP-value可以是一个支持的方法列表(如果发送了，在本例中它是null)。
+                        // rfc没有指定这是一个空格或逗号分隔的列表。所以它可以是auth auth-int或者auth auth-int。
+                        // 我们将首先检查较长的值("auth-int")，然后检查较短的值("auth")。如果一个匹配，我们将qop重置为准确的值。
+                        string qop = this.QualityOfProtections?.TrimAndLower();
 
-                        // When we authenticate with a proxy and we want to tunnel the request, we have to use the CONNECT method instead of the 
-                        //  request's, as the proxy will not know about the request itself.
+                        //当我们使用代理进行身份验证并且想要隧道请求时，我们必须使用CONNECT方法而不是请求的方法，因为代理不会知道请求本身。
                         string method = isProxy ? "CONNECT" : request.MethodType.ToString().ToUpper();
 
-                        // When we authenticate with a proxy and we want to tunnel the request, the uri must match what we are sending in the CONNECT request's
-                        //  Host header.
-                        string uri = isProxy ? request.CurrentUri.Host + ":" + request.CurrentUri.Port : request.CurrentUri.GetRequestPathAndQueryURL();
+                        //当我们使用代理进行身份验证并希望隧道请求时，uri必须与我们在CONNECT请求的Host头中发送的内容相匹配。
+                        var uri = isProxy
+                            ? request.CurrentUri.Host + ":" + request.CurrentUri.Port
+                            : request.CurrentUri.GetRequestPathAndQueryURL();
 
                         if (qop == null)
                         {
-                            string HA2 = string.Concat(request.MethodType.ToString().ToUpper(), ":", request.CurrentUri.GetRequestPathAndQueryURL()).CalculateMD5Hash();
-                            response = string.Format("{0}:{1}:{2}", HA1, Nonce, HA2).CalculateMD5Hash();
+                            string HA2 = string.Concat(request.MethodType.ToString().ToUpper(), ":",
+                                request.CurrentUri.GetRequestPathAndQueryURL()).CalculateMD5Hash();
+                            response = $"{HA1}:{Nonce}:{HA2}".CalculateMD5Hash();
                         }
                         else if (qop.Contains("auth-int"))
                         {
@@ -215,31 +166,34 @@ namespace BestHTTP.Authentication
                             if (entityBody == null)
                                 entityBody = BufferPool.NoData; //string.Empty.GetASCIIBytes();
 
-                            string HA2 = string.Format("{0}:{1}:{2}", method, uri, entityBody.CalculateMD5Hash()).CalculateMD5Hash();
+                            string HA2 = $"{method}:{uri}:{entityBody.CalculateMD5Hash()}".CalculateMD5Hash();
 
-                            response = string.Format("{0}:{1}:{2}:{3}:{4}:{5}", HA1, Nonce, ncvalue, cnonce, qop, HA2).CalculateMD5Hash();
+                            response = $"{HA1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{HA2}".CalculateMD5Hash();
                         }
                         else if (qop.Contains("auth"))
                         {
                             qop = "auth";
                             string HA2 = string.Concat(method, ":", uri).CalculateMD5Hash();
 
-                            response = string.Format("{0}:{1}:{2}:{3}:{4}:{5}", HA1, Nonce, ncvalue, cnonce, qop, HA2).CalculateMD5Hash();
+                            response = $"{HA1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{HA2}".CalculateMD5Hash();
                         }
-                        else //throw new NotSupportedException("Unrecognized Quality of Protection value found: " + this.QualityOfProtections);
+                        else
+                        {
+                            //抛出新的NotSupportedException("Unrecognized Quality of Protection value found: " + this.QualityOfProtections);
                             return string.Empty;
+                        }
 
-                        string result = string.Format("Digest username=\"{0}\", realm=\"{1}\", nonce=\"{2}\", uri=\"{3}\", cnonce=\"{4}\", response=\"{5}\"",
-                                                                credentials.UserName, Realm, Nonce, uri, cnonce, response);
+                        string result =
+                            $"Digest username=\"{credentials.UserName}\", realm=\"{Realm}\", nonce=\"{Nonce}\", uri=\"{uri}\", cnonce=\"{cnonce}\", response=\"{response}\"";
 
                         if (qop != null)
-                            result += String.Concat(", qop=\"", qop, "\", nc=", ncvalue);
+                            result += string.Concat(", qop=\"", qop, "\", nc=", ncvalue);
 
                         if (!string.IsNullOrEmpty(Opaque))
-                            result = String.Concat(result, ", opaque=\"", Opaque, "\"");
+                            result = string.Concat(result, ", opaque=\"", Opaque, "\"");
 
                         return result;
-                    }// end of case "digest":
+                    } // case "digest"的结尾
 
                     default:
                         break;
@@ -255,14 +209,13 @@ namespace BestHTTP.Authentication
         public bool IsUriProtected(Uri uri)
         {
             // http://tools.ietf.org/html/rfc2617#section-3.2.1
-            // An absoluteURI in this list may refer to
-            // a different server than the one being accessed. The client can use
-            // this list to determine the set of URIs for which the same
-            // authentication information may be sent: any URI that has a URI in
-            // this list as a prefix (after both have been made absolute) may be
-            // assumed to be in the same protection space. If this directive is
-            // omitted or its value is empty, the client should assume that the
-            // protection space consists of all URIs on the responding server.
+            // 这个列表中的absoluteURI可以引用
+            // 与被访问的服务器不同的服务器。客户端可以使用
+            // 这个列表来确定相同uri的集合
+            // 可以发送身份验证信息:包含URI的任何URI
+            // 这个列表作为一个前缀(在两者都被设置为绝对之后)可能是
+            // 假设在相同的保护空间。如果这个指令是省略或其值为空时，客户端应假设
+            // 保护空间由响应服务器上的所有uri组成。
 
             if (string.CompareOrdinal(uri.Host, this.Uri.Host) != 0)
                 return false;
@@ -270,12 +223,88 @@ namespace BestHTTP.Authentication
             string uriStr = uri.ToString();
 
             if (ProtectedUris != null && ProtectedUris.Count > 0)
-                for (int i = 0; i < ProtectedUris.Count; ++i)
-                    if (uriStr.Contains(ProtectedUris[i]))
-                        return true;
+            {
+                if (ProtectedUris.Any(t => uriStr.Contains(t)))
+                {
+                    return true;
+                }
+            }
 
 
             return true;
         }
+
+        #region Public Properties
+
+        /// <summary>
+        /// 这个摘要所绑定的Uri。
+        /// </summary>
+        public Uri Uri { get; private set; }
+
+        public AuthenticationTypes Type { get; private set; }
+
+        /// <summary>
+        /// 要显示给用户的字符串，以便他们知道要使用哪个用户名和密码.
+        /// 该字符串应该至少包含执行身份验证的主机的名称，还可以额外指示可能具有访问权限的用户集合.
+        /// </summary>
+        public string Realm { get; private set; }
+
+        /// <summary>
+        /// 一个标志，表明来自客户端的上一个请求因为nonce值过期而被拒绝。
+        /// 如果stale为TRUE(不区分大小写)，客户端可能希望使用新的加密响应重试请求，而不需要用户输入新的用户名和密码。
+        /// 只有当服务器接收到一个请求，该请求的nonce无效，但该nonce具有有效的摘要时，服务器才应该将stale设置为TRUE(表示客户端知道正确的用户名/密码)。
+        /// 如果stale为FALSE，或者不是TRUE，或者stale指令不存在，则用户名和/或密码无效，必须获取新的值。
+        /// </summary>
+        public bool Stale { get; private set; }
+
+        #endregion
+
+        #region Private Properties
+
+        /// <summary>
+        ///一个服务器指定的数据字符串，应该在每次401响应时惟一地生成。
+        /// 具体来说，由于字符串是作为带引号的字符串在标题行中传递的，因此不允许使用双引号字符。
+        /// </summary>
+        private string Nonce { get; set; }
+
+        /// <summary>
+        /// 由服务器指定的一串数据，客户端应该在具有相同保护空间的uri的后续请求的授权报头中原封不动地返回该数据。
+        /// 建议该字符串为base64或data。
+        /// </summary>
+        private string Opaque { get; set; }
+
+        /// <summary>
+        ///一个字符串，指示用于生成摘要和校验和的一对算法。如果没有显示，则认为是“MD5”.
+        /// 如果不理解算法，则应忽略该挑战(如果存在多个挑战，则使用不同的挑战)。
+        /// </summary>
+        private string Algorithm { get; set; }
+
+        /// <summary>
+        /// RFC XURI 中定义保护空间的uri列表。如果一个URI是一个abs_path，它相对于被访问服务器的规范根URL(参见上面的1.2节)。
+        ///这个列表中的absoluteURI可以指向与正在访问的服务器不同的服务器。
+        ///客户端可以使用这个列表来确定可以发送相同身份验证信息的uri集:
+        ///任何在这个列表中有一个URI作为前缀的URI(在两者都是绝对的之后)都可以被假定在相同的保护空间中。
+        ///如果省略此指令或其值为空，客户端应假设保护空间由响应服务器上的所有uri组成。
+        /// </summary>
+        public List<string> ProtectedUris { get; private set; }
+
+        /// <summary>
+        /// 如果存在，它是一个带引号的字符串，由一个或多个令牌组成，表示服务器支持的“保护质量”值。
+        /// auth表示认证。auth-int表示完整性保护认证。
+        /// </summary>
+        private string QualityOfProtections { get; set; }
+
+        /// <summary>
+        /// 如果发送了qop指令(见上文)，必须指定，如果服务器没有在WWW-Authenticate报头字段中发送qop指令，则必须不指定。
+        /// nc值是客户端在此请求中使用nonce值发送的请求数量(包括当前请求)的十六进制计数。
+        /// </summary>
+        private int NonceCount { get; set; }
+
+        /// <summary>
+        /// 当Algorithm设置为“md5-sess”时，用于存储下一次生成报头时可以使用的最后一个HA1。
+        /// </summary>
+        private string HA1Sess { get; set; }
+
+        #endregion
     }
 }

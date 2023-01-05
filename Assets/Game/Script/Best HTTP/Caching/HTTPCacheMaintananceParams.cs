@@ -4,23 +4,23 @@ using System;
 
 namespace BestHTTP.Caching
 {
-    public sealed class HTTPCacheMaintananceParams
+    public sealed class HttpCacheMaintananceParams
     {
-        /// <summary>
-        /// Delete cache entries that accessed older then this value. If TimeSpan.FromSeconds(0) is used then all cache entries will be deleted. With TimeSpan.FromDays(2) entries that older then two days will be deleted.
-        /// </summary>
-        public TimeSpan DeleteOlder { get; private set; }
-
-        /// <summary>
-        /// If the cache is larger then the MaxCacheSize after the first maintanance step, then the maintanance job will forcedelete cache entries starting with the oldest last accessed one.
-        /// </summary>
-        public ulong MaxCacheSize { get; private set; }
-
-        public HTTPCacheMaintananceParams(TimeSpan deleteOlder, ulong maxCacheSize)
+        public HttpCacheMaintananceParams(TimeSpan deleteOlder, ulong maxCacheSize)
         {
             this.DeleteOlder = deleteOlder;
             this.MaxCacheSize = maxCacheSize;
         }
+
+        /// <summary>
+        /// 删除访问时间早于此值的缓存项。如果TimeSpan.FromSeconds(0)被使用，那么所有的缓存条目都将被删除。使用TimeSpan.FromDays(2)，超过两天的条目将被删除。
+        /// </summary>
+        public TimeSpan DeleteOlder { get; private set; }
+
+        /// <summary>
+        /// 如果缓存大于第一个维护步骤之后的MaxCacheSize，那么维护作业将强制删除最后一次访问的最老的缓存项。
+        /// </summary>
+        public ulong MaxCacheSize { get; private set; }
     }
 }
 

@@ -3,86 +3,94 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BestHTTP.Extensions;
+using BestHTTP.PlatformSupport.FileSystem;
 
 namespace BestHTTP.Caching
 {
-    using BestHTTP.Extensions;
-    using BestHTTP.PlatformSupport.FileSystem;
-
     /// <summary>
-    /// Holds all metadata that need for efficient caching, so we don't need to touch the disk to load headers.
+    /// 保存所有需要高效缓存的元数据，因此我们不需要触摸磁盘来加载头文件。
     /// </summary>
-    public class HTTPCacheFileInfo : IComparable<HTTPCacheFileInfo>
+    public class HttpCacheFileInfo : IComparable<HttpCacheFileInfo>
     {
-        #region Properties
+        #region IComparable<HTTPCacheFileInfo>
+
+        public int CompareTo(HttpCacheFileInfo other)
+        {
+            return this.LastAccess.CompareTo(other.LastAccess);
+        }
+
+        #endregion
+
+        #region HttpCacheFileInfo 定义 属性
 
         /// <summary>
-        /// The uri that this HTTPCacheFileInfo belongs to.
+        /// 这个 HttpCacheFileInfo 所属的uri。
         /// </summary>
         public Uri Uri { get; private set; }
 
         /// <summary>
-        /// The last access time to this cache entity. The date is in UTC.
+        /// 最后一次访问此缓存实体的时间。日期以UTC为单位。
         /// </summary>
         public DateTime LastAccess { get; private set; }
 
         /// <summary>
-        /// The length of the cache entity's body.
+        /// 缓存实体主体的长度。
         /// </summary>
         public int BodyLength { get; internal set; }
 
         /// <summary>
-        /// ETag of the entity.
+        /// 实体的ETag。
         /// </summary>
         public string ETag { get; private set; }
 
         /// <summary>
-        /// LastModified date of the entity.
+        /// 实体的LastModified日期。
         /// </summary>
         public string LastModified { get; private set; }
 
         /// <summary>
-        /// When the cache will expire.
+        /// 缓存何时过期。
         /// </summary>
         public DateTime Expires { get; private set; }
 
         /// <summary>
-        /// The age that came with the response
+        /// 这个age带来了回应
         /// </summary>
         public long Age { get; private set; }
 
         /// <summary>
-        /// Maximum how long the entry should served from the cache without revalidation.
+        ///在不重新验证的情况下，该条目应从缓存中使用的最长时间。
         /// </summary>
         public long MaxAge { get; private set; }
 
         /// <summary>
-        /// The Date that came with the response.
+        /// 回复的日期。
         /// </summary>
         public DateTime Date { get; private set; }
 
         /// <summary>
-        /// Indicates whether the entity must be revalidated with the server or can be serverd directly from the cache without touching the server when the content is considered stale.
+        /// 指示是否必须使用服务器重新验证实体，或者当内容被认为过时时，是否可以直接从缓存发送实体而不接触服务器。
         /// </summary>
         public bool MustRevalidate { get; private set; }
 
         /// <summary>
-        /// If it's true, the client always have to revalidate the cached content when it's stale.
+        /// 如果是真的，客户端总是必须在缓存内容过期时重新验证它。
         /// </summary>
         public bool NoCache { get; private set; }
 
         /// <summary>
-        /// It's a grace period to serve staled content without revalidation.
+        /// 这是一个宽限期，不需要重新验证就可以提供过时的内容。
         /// </summary>
         public long StaleWhileRevalidate { get; private set; }
 
         /// <summary>
-        /// Allows the client to serve stale content if the server responds with an 5xx error.
+        /// 如果服务器响应5xx错误，则允许客户端提供过时的内容。
         /// </summary>
         public long StaleIfError { get; private set; }
 
         /// <summary>
-        /// The date and time when the HTTPResponse received.
+        ///接收HTTPResponse的日期和时间。
         /// </summary>
         public DateTime Received { get; private set; }
 
@@ -92,36 +100,36 @@ namespace BestHTTP.Caching
         public string ConstructedPath { get; private set; }
 
         /// <summary>
-        /// This is the index of the entity. Filenames are generated from this value.
+        /// 这是实体的索引。文件名由该值生成。
         /// </summary>
         internal UInt64 MappedNameIDX { get; private set; }
 
         #endregion
 
-        #region Constructors
+        #region HttpCacheFileInfo定义的  构造函数
 
-        internal HTTPCacheFileInfo(Uri uri)
-            :this(uri, DateTime.UtcNow, -1)
+        internal HttpCacheFileInfo(Uri uri)
+            : this(uri, DateTime.UtcNow, -1)
         {
         }
 
-        internal HTTPCacheFileInfo(Uri uri, DateTime lastAcces, int bodyLength)
+        internal HttpCacheFileInfo(Uri uri, DateTime lastAccess, int bodyLength)
         {
             this.Uri = uri;
-            this.LastAccess = lastAcces;
+            this.LastAccess = lastAccess;
             this.BodyLength = bodyLength;
             this.MaxAge = -1;
 
             this.MappedNameIDX = HTTPCacheService.GetNameIdx();
         }
 
-        internal HTTPCacheFileInfo(Uri uri, System.IO.BinaryReader reader, int version)
+        internal HttpCacheFileInfo(Uri uri, System.IO.BinaryReader reader, int version)
         {
             this.Uri = uri;
             this.LastAccess = DateTime.FromBinary(reader.ReadInt64());
             this.BodyLength = reader.ReadInt32();
 
-            switch(version)
+            switch (version)
             {
                 case 3:
                     this.NoCache = reader.ReadBoolean();
@@ -150,7 +158,7 @@ namespace BestHTTP.Caching
 
         #endregion
 
-        #region Helper Functions
+        #region HttpCacheFileInfo 定义的 辅助函数
 
         internal void SaveTo(System.IO.BinaryWriter writer)
         {
@@ -204,7 +212,8 @@ namespace BestHTTP.Caching
                 HTTPManager.IOService.FileDelete(path);
             }
             catch
-            { }
+            {
+            }
             finally
             {
                 Reset();
@@ -231,7 +240,7 @@ namespace BestHTTP.Caching
         #endregion
 
         #region Caching
-        
+
         internal void SetUpCachingValues(HTTPResponse response)
         {
             response.CacheFileInfo = this;
@@ -262,7 +271,7 @@ namespace BestHTTP.Caching
                         {
                             var kvp = parser.Values[i];
 
-                            switch(kvp.Key.ToLowerInvariant())
+                            switch (kvp.Key.ToLowerInvariant())
                             {
                                 case "max-age":
                                     if (kvp.HasValue)
@@ -276,6 +285,7 @@ namespace BestHTTP.Caching
                                     }
                                     else
                                         this.MaxAge = 0;
+
                                     break;
 
                                 case "stale-while-revalidate":
@@ -329,7 +339,7 @@ namespace BestHTTP.Caching
         }
 
         /// <summary>
-        /// isInError should be true if downloading the content fails, and in that case, it might extend the content's freshness
+        /// 如果下载内容失败，isInError应该为真，在这种情况下，它可能会扩展内容的新鲜度
         /// </summary>
         public bool WillExpireInTheFuture(bool isInError)
         {
@@ -337,13 +347,13 @@ namespace BestHTTP.Caching
                 return false;
 
             // https://csswizardry.com/2019/03/cache-control-for-civilians/#no-cache
-            // no-cache will always hit the network as it has to revalidate with the server before it can release the browser’s cached copy (unless the server responds with a fresher response),
-            // but if the server responds favourably, the network transfer is only a file’s headers: the body can be grabbed from cache rather than redownloaded.
+            // No-cache总是会进入网络，因为在它释放浏览器的缓存副本之前，它必须与服务器重新验证(除非服务器响应一个新的响应)。
+            // 但如果服务器响应良好，网络传输的只是文件的头文件:可以从缓存中抓取文件主体，而不是重新下载。
             if (this.NoCache)
                 return false;
 
             // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.2.4 :
-            //  The max-age directive takes priority over Expires
+            //  max-age指令优先于Expires指令
             if (MaxAge > 0)
             {
                 // Age calculation:
@@ -354,7 +364,8 @@ namespace BestHTTP.Caching
                 long resident_time = (long)(DateTime.UtcNow - this.Date).TotalSeconds;
                 long current_age = corrected_received_age + resident_time;
 
-                long maxAge = this.MaxAge + (this.NoCache ? 0 : this.StaleWhileRevalidate) + (isInError ? this.StaleIfError : 0);
+                long maxAge = this.MaxAge + (this.NoCache ? 0 : this.StaleWhileRevalidate) +
+                              (isInError ? this.StaleIfError : 0);
 
                 return current_age < maxAge || this.Expires > DateTime.UtcNow;
             }
@@ -367,9 +378,9 @@ namespace BestHTTP.Caching
             if (!IsExists())
                 return;
 
-            // -If an entity tag has been provided by the origin server, MUST use that entity tag in any cache-conditional request (using If-Match or If-None-Match).
-            // -If only a Last-Modified value has been provided by the origin server, SHOULD use that value in non-subrange cache-conditional requests (using If-Modified-Since).
-            // -If both an entity tag and a Last-Modified value have been provided by the origin server, SHOULD use both validators in cache-conditional requests. This allows both HTTP/1.0 and HTTP/1.1 caches to respond appropriately.
+            // 如果源服务器已经提供了一个实体标签，必须在任何缓存条件请求中使用该实体标签(使用If-Match或If-None-Match)。
+            // -如果源服务器只提供了一个Last-Modified值，应该在非子域缓存条件请求中使用该值(使用If-Modified-Since)。
+            // -如果源服务器同时提供了实体标签和Last-Modified值，则应该在缓存条件请求中使用这两个验证器。这允许HTTP/1.0和HTTP/1.1缓存进行适当的响应。
 
             if (!string.IsNullOrEmpty(ETag))
                 request.SetHeader("If-None-Match", ETag);
@@ -378,7 +389,7 @@ namespace BestHTTP.Caching
                 request.SetHeader("If-Modified-Since", LastModified);
         }
 
-        public System.IO.Stream GetBodyStream(out int length)
+        public Stream GetBodyStream(out int length)
         {
             if (!IsExists())
             {
@@ -390,7 +401,7 @@ namespace BestHTTP.Caching
 
             LastAccess = DateTime.UtcNow;
 
-            Stream stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
+            var stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
             stream.Seek(-length, System.IO.SeekOrigin.End);
 
             return stream;
@@ -403,14 +414,16 @@ namespace BestHTTP.Caching
 
             LastAccess = DateTime.UtcNow;
 
-            using (Stream stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead))
+            using var stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
             {
                 var response = new HTTPResponse(request, stream, request.UseStreaming, true);
                 response.CacheFileInfo = this;
                 response.Receive(BodyLength);
+
                 return response;
             }
         }
+
 
         internal void Store(HTTPResponse response)
         {
@@ -419,20 +432,23 @@ namespace BestHTTP.Caching
 
             string path = GetPath();
 
-            // Path name too long, we don't want to get exceptions
+            // 路径名太长，我们不想得到异常
             if (path.Length > HTTPManager.MaxPathLength)
                 return;
 
             if (HTTPManager.IOService.FileExists(path))
                 Delete();
 
-            using (Stream writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
+            using (var writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
-                writer.WriteLine("HTTP/{0}.{1} {2} {3}", response.VersionMajor, response.VersionMinor, response.StatusCode, response.Message);
+                writer.WriteLine("HTTP/{0}.{1} {2} {3}", response.VersionMajor, response.VersionMinor,
+                    response.StatusCode, response.Message);
                 foreach (var kvp in response.Headers)
                 {
-                    for (int i = 0; i < kvp.Value.Count; ++i)
-                        writer.WriteLine("{0}: {1}", kvp.Key, kvp.Value[i]);
+                    foreach (var t in kvp.Value)
+                    {
+                        writer.WriteLine("{0}: {1}", kvp.Key, t);
+                    }
                 }
 
                 writer.WriteLine();
@@ -447,24 +463,26 @@ namespace BestHTTP.Caching
             SetUpCachingValues(response);
         }
 
-        internal System.IO.Stream GetSaveStream(HTTPResponse response)
+        internal Stream GetSaveStream(HTTPResponse response)
         {
             if (!HTTPCacheService.IsSupported)
                 return null;
 
             LastAccess = DateTime.UtcNow;
 
-            string path = GetPath();
+            var path = GetPath();
 
             if (HTTPManager.IOService.FileExists(path))
+            {
                 Delete();
+            }
 
-            // Path name too long, we don't want to get exceptions
+            // 路径名太长，我们不想得到异常
             if (path.Length > HTTPManager.MaxPathLength)
                 return null;
 
-            // First write out the headers
-            using (Stream writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
+            // 首先写出报头
+            using (var writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
                 writer.WriteLine("HTTP/1.1 {0} {1}", response.StatusCode, response.Message);
                 foreach (var kvp in response.Headers)
@@ -476,23 +494,14 @@ namespace BestHTTP.Caching
                 writer.WriteLine();
             }
 
-            // If caching is enabled and the response is from cache, and no content-length header set, then we set one to the response.
+            // 如果启用了缓存，并且响应来自缓存，并且没有设置内容长度报头，那么我们将设置一个为响应。
             if (response.IsFromCache && !response.HasHeader("content-length"))
                 response.AddHeader("content-length", BodyLength.ToString());
 
             SetUpCachingValues(response);
 
-            // then create the stream with Append FileMode
+            // 然后使用Append FileMode创建流
             return HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Append);
-        }
-
-        #endregion
-
-        #region IComparable<HTTPCacheFileInfo>
-
-        public int CompareTo(HTTPCacheFileInfo other)
-        {
-            return this.LastAccess.CompareTo(other.LastAccess);
         }
 
         #endregion

@@ -1,55 +1,52 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using BestHTTP.PlatformSupport.Threading;
 
 namespace BestHTTP.Authentication
 {
     /// <summary>
-    /// Stores and manages already received digest infos.
+    /// 存储和管理已经收到的摘要信息。
     /// </summary>
     public static class DigestStore
     {
-        private static Dictionary<string, Digest> Digests = new Dictionary<string, Digest>();
+        private static readonly Dictionary<string, Digest> Digests = new Dictionary<string, Digest>();
 
-        private static System.Threading.ReaderWriterLockSlim rwLock = new System.Threading.ReaderWriterLockSlim(System.Threading.LockRecursionPolicy.NoRecursion);
+        private static readonly System.Threading.ReaderWriterLockSlim RwLock =
+            new System.Threading.ReaderWriterLockSlim(System.Threading.LockRecursionPolicy.NoRecursion);
 
         /// <summary>
-        /// Array of algorithms that the plugin supports. It's in the order of priority(first has the highest priority).
+        /// 插件支持的算法数组。按优先级排序(第一个优先级最高)。
         /// </summary>
-        private static string[] SupportedAlgorithms = new string[] { "digest", "basic" };
+        private static readonly string[] SupportedAlgorithms = new string[] { "digest", "basic" };
 
         public static Digest Get(Uri uri)
         {
-            using (new ReadLock(rwLock))
+            using (new ReadLock(RwLock))
             {
-                Digest digest = null;
-                if (Digests.TryGetValue(uri.Host, out digest))
-                    if (!digest.IsUriProtected(uri))
-                        return null;
-                return digest;
+                if (!Digests.TryGetValue(uri.Host, out var digest)) return null;
+                return !digest.IsUriProtected(uri) ? null : digest;
             }
         }
 
         /// <summary>
-        /// It will retrieve or create a new Digest for the given Uri.
+        /// 它将为给定的Uri检索或创建一个新的Digest。
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
         public static Digest GetOrCreate(Uri uri)
         {
-            using (new WriteLock(rwLock))
+            using (new WriteLock(RwLock))
             {
-                Digest digest = null;
-                if (!Digests.TryGetValue(uri.Host, out digest))
-                    Digests.Add(uri.Host, digest = new Digest(uri));                    
+                if (!Digests.TryGetValue(uri.Host, out var digest))
+                    Digests.Add(uri.Host, digest = new Digest(uri));
                 return digest;
             }
         }
 
         public static void Remove(Uri uri)
         {
-            using (new WriteLock(rwLock))
+            using (new WriteLock(RwLock))
                 Digests.Remove(uri.Host);
         }
 
@@ -58,13 +55,12 @@ namespace BestHTTP.Authentication
             if (authHeaders == null || authHeaders.Count == 0)
                 return string.Empty;
 
-            List<string> headers = new List<string>(authHeaders.Count);
-            for (int i = 0; i < authHeaders.Count; ++i)
-                headers.Add(authHeaders[i].ToLower());
+            var headers = new List<string>(authHeaders.Count);
+            headers.AddRange(authHeaders.Select(t => t.ToLower()));
 
-            for (int i = 0; i < SupportedAlgorithms.Length; ++i)
+            foreach (var t in SupportedAlgorithms)
             {
-                int idx = headers.FindIndex((header) => header.StartsWith(SupportedAlgorithms[i]));
+                var idx = headers.FindIndex((header) => header.StartsWith(t));
                 if (idx != -1)
                     return authHeaders[idx];
             }
