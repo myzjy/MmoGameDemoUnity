@@ -1,11 +1,13 @@
 #if !BESTHTTP_DISABLE_COOKIES
 
-using BestHTTP.Core;
-using BestHTTP.PlatformSupport.FileSystem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using BestHTTP.Core;
+using BestHTTP.PlatformSupport.FileSystem;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Cookies
 {
     /// <summary>
@@ -13,18 +15,23 @@ namespace BestHTTP.Cookies
     /// </summary>
     public static class CookieJar
     {
-        // Version of the cookie store. It may be used in a future version for maintaining compatibility.
+        // cookie商店的版本。为了保持兼容性，可以在未来的版本中使用它。
         private const int Version = 1;
 
         /// <summary>
-        /// Returns true if File apis are supported.
+        /// 插件会删除之前访问过这个阈值的cookie。默认值为7天.
         /// </summary>
-        public static bool IsSavingSupported
+        private static readonly TimeSpan AccessThreshold = TimeSpan.FromDays(7);
+
+        /// <summary>
+        /// 如果支持File api则返回true。
+        /// </summary>
+        private static bool IsSavingSupported
         {
             get
             {
 #if !BESTHTTP_DISABLE_COOKIE_SAVE
-                if (IsSupportCheckDone)
+                if (_isSupportCheckDone)
                     return _isSavingSupported;
 
                 try
@@ -44,7 +51,7 @@ namespace BestHTTP.Cookies
                 }
                 finally
                 {
-                    IsSupportCheckDone = true;
+                    _isSupportCheckDone = true;
                 }
 
                 return _isSavingSupported;
@@ -54,34 +61,53 @@ namespace BestHTTP.Cookies
             }
         }
 
-        /// <summary>
-        /// The plugin will delete cookies that are accessed this threshold ago. Its default value is 7 days.
-        /// </summary>
-        public static TimeSpan AccessThreshold = TimeSpan.FromDays(7);
+        #region Private Helper Functions
 
-#region Privates
+        /// <summary>
+        /// 找到并返回一个Cookie及其在列表中的索引。
+        /// </summary>
+        private static Cookie Find(Cookie cookie, out int idx)
+        {
+            for (var i = 0; i < Cookies.Count; ++i)
+            {
+                var c = Cookies[i];
+
+                if (!c.Equals(cookie)) continue;
+                idx = i;
+                return c;
+            }
+
+            idx = -1;
+            return null;
+        }
+
+        #endregion
+
+        #region Privates
 
         /// <summary>
         /// List of the Cookies
         /// </summary>
-        private static List<Cookie> Cookies = new List<Cookie>();
+        private static readonly List<Cookie> Cookies = new List<Cookie>();
+
         private static string CookieFolder { get; set; }
         private static string LibraryPath { get; set; }
 
         /// <summary>
         /// Synchronization object for thread safety.
         /// </summary>
-        private static ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        private static readonly ReaderWriterLockSlim RwLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
 #if !BESTHTTP_DISABLE_COOKIE_SAVE
         private static bool _isSavingSupported;
-        private static bool IsSupportCheckDone;
+        private static bool _isSupportCheckDone;
 #endif
 
-        private static bool Loaded;
-#endregion
+        private static bool _loaded;
 
-#region Internal Functions
+        #endregion
+
+        #region Internal Functions
 
         internal static void SetupFolder()
         {
@@ -91,75 +117,75 @@ namespace BestHTTP.Cookies
 
             try
             {
-                if (string.IsNullOrEmpty(CookieFolder) || string.IsNullOrEmpty(LibraryPath))
-                {
-                    CookieFolder = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "Cookies");
-                    LibraryPath = System.IO.Path.Combine(CookieFolder, "Library");
-                }
+                if (!string.IsNullOrEmpty(CookieFolder) && !string.IsNullOrEmpty(LibraryPath)) return;
+                CookieFolder = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "Cookies");
+                LibraryPath = System.IO.Path.Combine(CookieFolder, "Library");
             }
             catch
-            { }
+            {
+                // ignored
+            }
 #endif
         }
 
         /// <summary>
-        /// Will set or update all cookies from the response object.
+        /// 将设置或更新来自响应对象的所有cookie。
         /// </summary>
         internal static bool Set(HTTPResponse response)
         {
             if (response == null)
                 return false;
 
-            List<Cookie> newCookies = new List<Cookie>();
+            var newCookies = new List<Cookie>();
             var setCookieHeaders = response.GetHeaderValues("set-cookie");
 
             // No cookies. :'(
             if (setCookieHeaders == null)
                 return false;
 
-            foreach (var cookieHeader in setCookieHeaders)
+            foreach (var cookie in setCookieHeaders
+                         .Select(cookieHeader => Cookie.Parse(cookieHeader, response.baseRequest.CurrentUri,
+                             response.baseRequest.Context)).Where(cookie => cookie != null))
             {
-                Cookie cookie = Cookie.Parse(cookieHeader, response.baseRequest.CurrentUri, response.baseRequest.Context);
-                if (cookie != null)
+                RwLock.EnterWriteLock();
+                try
                 {
-                    rwLock.EnterWriteLock();
-                    try
+                    var old = Find(cookie, out var idx);
+
+                    //如果cookie没有值或已经过期，服务器会要求我们删除该cookie
+                    var expired = string.IsNullOrEmpty(cookie.Value) || !cookie.WillExpireInTheFuture();
+
+                    if (!expired)
                     {
-                        int idx;
-                        var old = Find(cookie, out idx);
-
-                        // if no value for the cookie or already expired then the server asked us to delete the cookie
-                        bool expired = string.IsNullOrEmpty(cookie.Value) || !cookie.WillExpireInTheFuture();
-
-                        if (!expired)
+                        // 没有旧Cookie，直接添加到列表中
+                        if (old == null)
                         {
-                            // no old cookie, add it straight to the list
-                            if (old == null)
-                            {
-                                Cookies.Add(cookie);
+                            Cookies.Add(cookie);
 
-                                newCookies.Add(cookie);
-                            }
-                            else
-                            {
-                                // Update the creation-time of the newly created cookie to match the creation-time of the old-cookie.
-                                cookie.Date = old.Date;
-                                Cookies[idx] = cookie;
-
-                                newCookies.Add(cookie);
-                            }
+                            newCookies.Add(cookie);
                         }
-                        else if (idx != -1) // delete the cookie
-                            Cookies.RemoveAt(idx);
+                        else
+                        {
+                            // 更新新创建的cookie的创建时间，以匹配旧cookie的创建时间.
+                            cookie.Date = old.Date;
+                            Cookies[idx] = cookie;
+
+                            newCookies.Add(cookie);
+                        }
                     }
-                    catch
+                    else if (idx != -1)
                     {
-                        // Ignore cookie on error
+                        // 删除cookie
+                        Cookies.RemoveAt(idx);
                     }
-                    finally
-                    {
-                        rwLock.ExitWriteLock();
-                    }
+                }
+                catch
+                {
+                    // Ignore cookie on error
+                }
+                finally
+                {
+                    RwLock.ExitWriteLock();
                 }
             }
 
@@ -171,23 +197,23 @@ namespace BestHTTP.Cookies
         }
 
         /// <summary>
-        /// Deletes all expired or 'old' cookies, and will keep the sum size of cookies under the given size.
+        /// 删除所有过期或“旧”的cookie，并将cookie的总和大小保持在给定的大小以下。
         /// </summary>
-        internal static void Maintain(bool sendEvent)
+        private static void Maintain(bool sendEvent)
         {
-            // It's not the same as in the rfc:
+            // 这和rfc中的不一样:
             //  http://tools.ietf.org/html/rfc6265#section-5.3
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
                 uint size = 0;
 
-                for (int i = 0; i < Cookies.Count; )
+                for (var i = 0; i < Cookies.Count;)
                 {
                     var cookie = Cookies[i];
 
-                    // Remove expired or not used cookies
+                    // 删除过期或不使用的cookies
                     if (!cookie.WillExpireInTheFuture() || (cookie.LastAccess + AccessThreshold) < DateTime.UtcNow)
                     {
                         Cookies.RemoveAt(i);
@@ -195,7 +221,10 @@ namespace BestHTTP.Cookies
                     else
                     {
                         if (!cookie.IsSession)
+                        {
                             size += cookie.GuessSize();
+                        }
+
                         i++;
                     }
                 }
@@ -214,10 +243,12 @@ namespace BestHTTP.Cookies
                 }
             }
             catch
-            { }
+            {
+                // ignored
+            }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             if (sendEvent)
@@ -225,57 +256,55 @@ namespace BestHTTP.Cookies
         }
 
         /// <summary>
-        /// Saves the Cookie Jar to a file.
+        /// 将Cookie Jar保存到一个文件。
         /// </summary>
-        /// <remarks>Not implemented under Unity WebPlayer</remarks>
+        /// <remarks>未在Unity WebPlayer下实现</remarks>
         internal static void Persist()
         {
 #if !BESTHTTP_DISABLE_COOKIE_SAVE
             if (!IsSavingSupported)
                 return;
 
-            if (!Loaded)
+            if (!_loaded)
                 return;
 
             // Delete any expired cookie
             Maintain(false);
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
                 if (!HTTPManager.IOService.DirectoryExists(CookieFolder))
                     HTTPManager.IOService.DirectoryCreate(CookieFolder);
 
-                using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create))
-                using (var bw = new System.IO.BinaryWriter(fs))
+                using var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create);
+                using var bw = new System.IO.BinaryWriter(fs);
+                bw.Write(Version);
+
+                // 数一下我们有多少个非会话cookie
+                var count = Cookies.Count(cookie => !cookie.IsSession);
+
+                bw.Write(count);
+
+                // 只保存可持久化的cookie
+                foreach (var cookie in Cookies.Where(cookie => !cookie.IsSession))
                 {
-                    bw.Write(Version);
-
-                    // Count how many non-session cookies we have
-                    int count = 0;
-                    foreach (var cookie in Cookies)
-                        if (!cookie.IsSession)
-                            count++;
-
-                    bw.Write(count);
-
-                    // Save only the persistable cookies
-                    foreach (var cookie in Cookies)
-                        if (!cookie.IsSession)
-                            cookie.SaveTo(bw);
+                    cookie.SaveTo(bw);
                 }
             }
             catch
-            { }
+            {
+                // ignored
+            }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 #endif
         }
 
         /// <summary>
-        /// Load previously persisted cookie library from the file.
+        /// 从文件中加载以前持久化的cookie库。
         /// </summary>
         internal static void Load()
         {
@@ -283,12 +312,12 @@ namespace BestHTTP.Cookies
             if (!IsSavingSupported)
                 return;
 
-            if (Loaded)
+            if (_loaded)
                 return;
 
             SetupFolder();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
                 Cookies.Clear();
@@ -299,20 +328,19 @@ namespace BestHTTP.Cookies
                 if (!HTTPManager.IOService.FileExists(LibraryPath))
                     return;
 
-                using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
-                using (var br = new System.IO.BinaryReader(fs))
+                using var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead);
+                using var br = new System.IO.BinaryReader(fs);
+                /*int version = */
+                br.ReadInt32();
+                var cookieCount = br.ReadInt32();
+
+                for (var i = 0; i < cookieCount; ++i)
                 {
-                    /*int version = */br.ReadInt32();
-                    int cookieCount = br.ReadInt32();
+                    var cookie = new Cookie();
+                    cookie.LoadFrom(br);
 
-                    for (int i = 0; i < cookieCount; ++i)
-                    {
-                        Cookie cookie = new Cookie();
-                        cookie.LoadFrom(br);
-
-                        if (cookie.WillExpireInTheFuture())
-                            Cookies.Add(cookie);
-                    }
+                    if (cookie.WillExpireInTheFuture())
+                        Cookies.Add(cookie);
                 }
             }
             catch
@@ -321,50 +349,50 @@ namespace BestHTTP.Cookies
             }
             finally
             {
-                Loaded = true;
-                rwLock.ExitWriteLock();
+                _loaded = true;
+                RwLock.ExitWriteLock();
             }
 #endif
         }
 
-#endregion
+        #endregion
 
-#region Public Functions
+        #region Public Functions
 
         /// <summary>
-        /// Returns all Cookies that corresponds to the given Uri.
+        /// 返回与给定Uri对应的所有cookie。
         /// </summary>
         public static List<Cookie> Get(Uri uri)
         {
             Load();
 
-            rwLock.EnterReadLock();
+            RwLock.EnterReadLock();
             try
             {
                 List<Cookie> result = null;
 
-                for (int i = 0; i < Cookies.Count; ++i)
+                foreach (var cookie in
+                         Cookies.Where(cookie =>
+                             cookie.WillExpireInTheFuture()
+                             && (uri.Host.IndexOf(cookie.Domain, StringComparison.Ordinal) != -1 ||
+                                 $"{uri.Host}:{uri.Port}".IndexOf(cookie.Domain, StringComparison.Ordinal) != -1) &&
+                             uri.AbsolutePath.StartsWith(cookie.Path)))
                 {
-                    Cookie cookie = Cookies[i];
-                    if (cookie.WillExpireInTheFuture() && (uri.Host.IndexOf(cookie.Domain) != -1 || string.Format("{0}:{1}", uri.Host, uri.Port).IndexOf(cookie.Domain) != -1) && uri.AbsolutePath.StartsWith(cookie.Path))
-                    {
-                        if (result == null)
-                            result = new List<Cookie>();
+                    result ??= new List<Cookie>();
 
-                        result.Add(cookie);
-                    }
+                    result.Add(cookie);
                 }
 
                 return result;
             }
             finally
             {
-                rwLock.ExitReadLock();
+                RwLock.ExitReadLock();
             }
         }
 
         /// <summary>
-        /// Will add a new, or overwrite an old cookie if already exists.
+        /// 将添加一个新的cookie，或覆盖已经存在的旧cookie。
         /// </summary>
         public static void Set(Uri uri, Cookie cookie)
         {
@@ -372,17 +400,16 @@ namespace BestHTTP.Cookies
         }
 
         /// <summary>
-        /// Will add a new, or overwrite an old cookie if already exists.
+        /// 将添加一个新的cookie，或覆盖已经存在的旧cookie。
         /// </summary>
-        public static void Set(Cookie cookie)
+        private static void Set(Cookie cookie)
         {
             Load();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
-                int idx;
-                Find(cookie, out idx);
+                Find(cookie, out var idx);
 
                 if (idx >= 0)
                     Cookies[idx] = cookie;
@@ -391,7 +418,7 @@ namespace BestHTTP.Cookies
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.SaveCookieLibrary));
@@ -405,78 +432,87 @@ namespace BestHTTP.Cookies
         }
 
         /// <summary>
-        /// Deletes all cookies from the Jar.
+        /// 删除Jar中的所有cookie。
         /// </summary>
         public static void Clear()
         {
             Load();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
                 Cookies.Clear();
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             Persist();
         }
 
         /// <summary>
-        /// Removes cookies that older than the given parameter.
+        /// 删除比给定参数更老的cookie。
         /// </summary>
         public static void Clear(TimeSpan olderThan)
         {
             Load();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
-                for (int i = 0; i < Cookies.Count; )
+                for (var i = 0; i < Cookies.Count;)
                 {
                     var cookie = Cookies[i];
 
-                    // Remove expired or not used cookies
+                    // 删除过期或不使用的cookie
                     if (!cookie.WillExpireInTheFuture() || (cookie.Date + olderThan) < DateTime.UtcNow)
+                    {
                         Cookies.RemoveAt(i);
+                    }
                     else
+                    {
                         i++;
+                    }
                 }
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             Persist();
         }
 
         /// <summary>
-        /// Removes cookies that matches to the given domain.
+        /// 删除与给定域匹配的cookie。
         /// </summary>
         public static void Clear(string domain)
         {
             Load();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
-                for (int i = 0; i < Cookies.Count; )
+                for (var i = 0; i < Cookies.Count;)
                 {
                     var cookie = Cookies[i];
 
-                    // Remove expired or not used cookies
-                    if (!cookie.WillExpireInTheFuture() || cookie.Domain.IndexOf(domain) != -1)
+                    // 删除过期或不使用的cookie
+                    if (!cookie.WillExpireInTheFuture() ||
+                        cookie.Domain.IndexOf(domain, StringComparison.Ordinal) != -1)
+                    {
                         Cookies.RemoveAt(i);
+                    }
                     else
+                    {
                         i++;
+                    }
                 }
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             Persist();
@@ -486,52 +522,33 @@ namespace BestHTTP.Cookies
         {
             Load();
 
-            rwLock.EnterWriteLock();
+            RwLock.EnterWriteLock();
             try
             {
-                for (int i = 0; i < Cookies.Count; )
+                for (var i = 0; i < Cookies.Count;)
                 {
                     var cookie = Cookies[i];
 
-                    if (cookie.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && uri.Host.IndexOf(cookie.Domain) != -1)
+                    if (cookie.Name.Equals(name, StringComparison.OrdinalIgnoreCase) &&
+                        uri.Host.IndexOf(cookie.Domain, StringComparison.Ordinal) != -1)
+                    {
                         Cookies.RemoveAt(i);
+                    }
                     else
+                    {
                         i++;
+                    }
                 }
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                RwLock.ExitWriteLock();
             }
 
             PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.SaveCookieLibrary));
         }
 
-#endregion
-
-#region Private Helper Functions
-
-        /// <summary>
-        /// Find and return a Cookie and his index in the list.
-        /// </summary>
-        private static Cookie Find(Cookie cookie, out int idx)
-        {
-            for (int i = 0; i < Cookies.Count; ++i)
-            {
-                Cookie c = Cookies[i];
-
-                if (c.Equals(cookie))
-                {
-                    idx = i;
-                    return c;
-                }
-            }
-
-            idx = -1;
-            return null;
-        }
-
-#endregion
+        #endregion
     }
 }
 
