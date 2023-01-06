@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Agreement.Srp;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Digests;
@@ -33,14 +32,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
             this.m_entropySource = entropySource;
         }
 
-        internal virtual BcTlsSecret AdoptLocalSecret(byte[] data)
-        {
-            return new BcTlsSecret(this, data);
-        }
-
         public override SecureRandom SecureRandom
         {
             get { return m_entropySource; }
+        }
+
+        internal virtual BcTlsSecret AdoptLocalSecret(byte[] data)
+        {
+            return new BcTlsSecret(this, data);
         }
 
         public override TlsCertificate CreateCertificate(byte[] encoding)
@@ -53,71 +52,71 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (encryptionAlgorithm)
             {
-            case EncryptionAlgorithm.AES_128_CBC:
-            case EncryptionAlgorithm.ARIA_128_CBC:
-            case EncryptionAlgorithm.CAMELLIA_128_CBC:
-            case EncryptionAlgorithm.SEED_CBC:
-            case EncryptionAlgorithm.SM4_CBC:
-                return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 16, macAlgorithm);
+                case EncryptionAlgorithm.AES_128_CBC:
+                case EncryptionAlgorithm.ARIA_128_CBC:
+                case EncryptionAlgorithm.CAMELLIA_128_CBC:
+                case EncryptionAlgorithm.SEED_CBC:
+                case EncryptionAlgorithm.SM4_CBC:
+                    return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 16, macAlgorithm);
 
-            case EncryptionAlgorithm.cls_3DES_EDE_CBC:
-                return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 24, macAlgorithm);
+                case EncryptionAlgorithm.cls_3DES_EDE_CBC:
+                    return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 24, macAlgorithm);
 
-            case EncryptionAlgorithm.AES_256_CBC:
-            case EncryptionAlgorithm.ARIA_256_CBC:
-            case EncryptionAlgorithm.CAMELLIA_256_CBC:
-                return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 32, macAlgorithm);
+                case EncryptionAlgorithm.AES_256_CBC:
+                case EncryptionAlgorithm.ARIA_256_CBC:
+                case EncryptionAlgorithm.CAMELLIA_256_CBC:
+                    return CreateCipher_Cbc(cryptoParams, encryptionAlgorithm, 32, macAlgorithm);
 
-            case EncryptionAlgorithm.AES_128_CCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Ccm(cryptoParams, 16, 16);
-            case EncryptionAlgorithm.AES_128_CCM_8:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Ccm(cryptoParams, 16, 8);
-            case EncryptionAlgorithm.AES_128_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Gcm(cryptoParams, 16, 16);
-            case EncryptionAlgorithm.AES_256_CCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Ccm(cryptoParams, 32, 16);
-            case EncryptionAlgorithm.AES_256_CCM_8:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Ccm(cryptoParams, 32, 8);
-            case EncryptionAlgorithm.AES_256_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aes_Gcm(cryptoParams, 32, 16);
-            case EncryptionAlgorithm.ARIA_128_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aria_Gcm(cryptoParams, 16, 16);
-            case EncryptionAlgorithm.ARIA_256_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Aria_Gcm(cryptoParams, 32, 16);
-            case EncryptionAlgorithm.CAMELLIA_128_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Camellia_Gcm(cryptoParams, 16, 16);
-            case EncryptionAlgorithm.CAMELLIA_256_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_Camellia_Gcm(cryptoParams, 32, 16);
-            case EncryptionAlgorithm.CHACHA20_POLY1305:
-                // NOTE: Ignores macAlgorithm
-                return CreateChaCha20Poly1305(cryptoParams);
-            case EncryptionAlgorithm.NULL:
-                return CreateNullCipher(cryptoParams, macAlgorithm);
-            case EncryptionAlgorithm.SM4_CCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_SM4_Ccm(cryptoParams);
-            case EncryptionAlgorithm.SM4_GCM:
-                // NOTE: Ignores macAlgorithm
-                return CreateCipher_SM4_Gcm(cryptoParams);
+                case EncryptionAlgorithm.AES_128_CCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Ccm(cryptoParams, 16, 16);
+                case EncryptionAlgorithm.AES_128_CCM_8:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Ccm(cryptoParams, 16, 8);
+                case EncryptionAlgorithm.AES_128_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Gcm(cryptoParams, 16, 16);
+                case EncryptionAlgorithm.AES_256_CCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Ccm(cryptoParams, 32, 16);
+                case EncryptionAlgorithm.AES_256_CCM_8:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Ccm(cryptoParams, 32, 8);
+                case EncryptionAlgorithm.AES_256_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aes_Gcm(cryptoParams, 32, 16);
+                case EncryptionAlgorithm.ARIA_128_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aria_Gcm(cryptoParams, 16, 16);
+                case EncryptionAlgorithm.ARIA_256_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Aria_Gcm(cryptoParams, 32, 16);
+                case EncryptionAlgorithm.CAMELLIA_128_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Camellia_Gcm(cryptoParams, 16, 16);
+                case EncryptionAlgorithm.CAMELLIA_256_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_Camellia_Gcm(cryptoParams, 32, 16);
+                case EncryptionAlgorithm.CHACHA20_POLY1305:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateChaCha20Poly1305(cryptoParams);
+                case EncryptionAlgorithm.NULL:
+                    return CreateNullCipher(cryptoParams, macAlgorithm);
+                case EncryptionAlgorithm.SM4_CCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_SM4_Ccm(cryptoParams);
+                case EncryptionAlgorithm.SM4_GCM:
+                    // NOTE: Ignores macAlgorithm
+                    return CreateCipher_SM4_Gcm(cryptoParams);
 
-            case EncryptionAlgorithm.DES40_CBC:
-            case EncryptionAlgorithm.DES_CBC:
-            case EncryptionAlgorithm.IDEA_CBC:
-            case EncryptionAlgorithm.RC2_CBC_40:
-            case EncryptionAlgorithm.RC4_128:
-            case EncryptionAlgorithm.RC4_40:
-            default:
-                throw new TlsFatalAlert(AlertDescription.internal_error);
+                case EncryptionAlgorithm.DES40_CBC:
+                case EncryptionAlgorithm.DES_CBC:
+                case EncryptionAlgorithm.IDEA_CBC:
+                case EncryptionAlgorithm.RC2_CBC_40:
+                case EncryptionAlgorithm.RC4_128:
+                case EncryptionAlgorithm.RC4_40:
+                default:
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
             }
         }
 
@@ -130,12 +129,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (ecConfig.NamedGroup)
             {
-            case NamedGroup.x25519:
-                return new BcX25519Domain(this);
-            case NamedGroup.x448:
-                return new BcX448Domain(this);
-            default:
-                return new BcTlsECDomain(this, ecConfig);
+                case NamedGroup.x25519:
+                    return new BcX25519Domain(this);
+                case NamedGroup.x448:
+                    return new BcX448Domain(this);
+                default:
+                    return new BcTlsECDomain(this, ecConfig);
             }
         }
 
@@ -157,7 +156,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             // TODO[RFC 8422] Revisit the need to buffer the handshake for "Intrinsic" hash signatures
             return !HasSignatureAlgorithm(SignatureAlgorithm.ed25519)
-                && !HasSignatureAlgorithm(SignatureAlgorithm.ed448);
+                   && !HasSignatureAlgorithm(SignatureAlgorithm.ed448);
         }
 
         public override bool HasDHAgreement()
@@ -174,16 +173,16 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (encryptionAlgorithm)
             {
-            case EncryptionAlgorithm.DES40_CBC:
-            case EncryptionAlgorithm.DES_CBC:
-            case EncryptionAlgorithm.IDEA_CBC:
-            case EncryptionAlgorithm.RC2_CBC_40:
-            case EncryptionAlgorithm.RC4_128:
-            case EncryptionAlgorithm.RC4_40:
-                return false;
+                case EncryptionAlgorithm.DES40_CBC:
+                case EncryptionAlgorithm.DES_CBC:
+                case EncryptionAlgorithm.IDEA_CBC:
+                case EncryptionAlgorithm.RC2_CBC_40:
+                case EncryptionAlgorithm.RC4_128:
+                case EncryptionAlgorithm.RC4_40:
+                    return false;
 
-            default:
-                return true;
+                default:
+                    return true;
             }
         }
 
@@ -196,28 +195,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (cryptoSignatureAlgorithm)
             {
-            case CryptoSignatureAlgorithm.rsa:
-            case CryptoSignatureAlgorithm.dsa:
-            case CryptoSignatureAlgorithm.ecdsa:
-            case CryptoSignatureAlgorithm.rsa_pss_rsae_sha256:
-            case CryptoSignatureAlgorithm.rsa_pss_rsae_sha384:
-            case CryptoSignatureAlgorithm.rsa_pss_rsae_sha512:
-            case CryptoSignatureAlgorithm.ed25519:
-            case CryptoSignatureAlgorithm.ed448:
-            case CryptoSignatureAlgorithm.rsa_pss_pss_sha256:
-            case CryptoSignatureAlgorithm.rsa_pss_pss_sha384:
-            case CryptoSignatureAlgorithm.rsa_pss_pss_sha512:
-                return true;
+                case CryptoSignatureAlgorithm.rsa:
+                case CryptoSignatureAlgorithm.dsa:
+                case CryptoSignatureAlgorithm.ecdsa:
+                case CryptoSignatureAlgorithm.rsa_pss_rsae_sha256:
+                case CryptoSignatureAlgorithm.rsa_pss_rsae_sha384:
+                case CryptoSignatureAlgorithm.rsa_pss_rsae_sha512:
+                case CryptoSignatureAlgorithm.ed25519:
+                case CryptoSignatureAlgorithm.ed448:
+                case CryptoSignatureAlgorithm.rsa_pss_pss_sha256:
+                case CryptoSignatureAlgorithm.rsa_pss_pss_sha384:
+                case CryptoSignatureAlgorithm.rsa_pss_pss_sha512:
+                    return true;
 
-            // TODO[draft-smyshlyaev-tls12-gost-suites-10]
-            case CryptoSignatureAlgorithm.gostr34102012_256:
-            case CryptoSignatureAlgorithm.gostr34102012_512:
+                // TODO[draft-smyshlyaev-tls12-gost-suites-10]
+                case CryptoSignatureAlgorithm.gostr34102012_256:
+                case CryptoSignatureAlgorithm.gostr34102012_512:
 
-            // TODO[RFC 8998]
-            case CryptoSignatureAlgorithm.sm2:
+                // TODO[RFC 8998]
+                case CryptoSignatureAlgorithm.sm2:
 
-            default:
-                return false;
+                default:
+                    return false;
             }
         }
 
@@ -240,29 +239,29 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (signatureAlgorithm)
             {
-            case SignatureAlgorithm.rsa:
-            case SignatureAlgorithm.dsa:
-            case SignatureAlgorithm.ecdsa:
-            case SignatureAlgorithm.ed25519:
-            case SignatureAlgorithm.ed448:
-            case SignatureAlgorithm.rsa_pss_rsae_sha256:
-            case SignatureAlgorithm.rsa_pss_rsae_sha384:
-            case SignatureAlgorithm.rsa_pss_rsae_sha512:
-            case SignatureAlgorithm.rsa_pss_pss_sha256:
-            case SignatureAlgorithm.rsa_pss_pss_sha384:
-            case SignatureAlgorithm.rsa_pss_pss_sha512:
-            case SignatureAlgorithm.ecdsa_brainpoolP256r1tls13_sha256:
-            case SignatureAlgorithm.ecdsa_brainpoolP384r1tls13_sha384:
-            case SignatureAlgorithm.ecdsa_brainpoolP512r1tls13_sha512:
-                return true;
+                case SignatureAlgorithm.rsa:
+                case SignatureAlgorithm.dsa:
+                case SignatureAlgorithm.ecdsa:
+                case SignatureAlgorithm.ed25519:
+                case SignatureAlgorithm.ed448:
+                case SignatureAlgorithm.rsa_pss_rsae_sha256:
+                case SignatureAlgorithm.rsa_pss_rsae_sha384:
+                case SignatureAlgorithm.rsa_pss_rsae_sha512:
+                case SignatureAlgorithm.rsa_pss_pss_sha256:
+                case SignatureAlgorithm.rsa_pss_pss_sha384:
+                case SignatureAlgorithm.rsa_pss_pss_sha512:
+                case SignatureAlgorithm.ecdsa_brainpoolP256r1tls13_sha256:
+                case SignatureAlgorithm.ecdsa_brainpoolP384r1tls13_sha384:
+                case SignatureAlgorithm.ecdsa_brainpoolP512r1tls13_sha512:
+                    return true;
 
-            // TODO[draft-smyshlyaev-tls12-gost-suites-10]
-            case SignatureAlgorithm.gostr34102012_256:
-            case SignatureAlgorithm.gostr34102012_512:
-            // TODO[RFC 8998]
-            //case SignatureAlgorithm.sm2:
-            default:
-                return false;
+                // TODO[draft-smyshlyaev-tls12-gost-suites-10]
+                case SignatureAlgorithm.gostr34102012_256:
+                case SignatureAlgorithm.gostr34102012_512:
+                // TODO[RFC 8998]
+                //case SignatureAlgorithm.sm2:
+                default:
+                    return false;
             }
         }
 
@@ -283,20 +282,20 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (signatureScheme)
             {
-            case SignatureScheme.sm2sig_sm3:
-                return false;
-            default:
-            {
-                short signature = SignatureScheme.GetSignatureAlgorithm(signatureScheme);
-
-                switch(SignatureScheme.GetCryptoHashAlgorithm(signatureScheme))
-                {
-                case CryptoHashAlgorithm.md5:
-                    return SignatureAlgorithm.rsa == signature && HasSignatureAlgorithm(signature);
+                case SignatureScheme.sm2sig_sm3:
+                    return false;
                 default:
-                    return HasSignatureAlgorithm(signature);
+                {
+                    short signature = SignatureScheme.GetSignatureAlgorithm(signatureScheme);
+
+                    switch (SignatureScheme.GetCryptoHashAlgorithm(signatureScheme))
+                    {
+                        case CryptoHashAlgorithm.md5:
+                            return SignatureAlgorithm.rsa == signature && HasSignatureAlgorithm(signature);
+                        default:
+                            return HasSignatureAlgorithm(signature);
+                    }
                 }
-            }
             }
         }
 
@@ -333,22 +332,22 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (cryptoHashAlgorithm)
             {
-            case CryptoHashAlgorithm.md5:
-                return new MD5Digest((MD5Digest)digest);
-            case CryptoHashAlgorithm.sha1:
-                return new Sha1Digest((Sha1Digest)digest);
-            case CryptoHashAlgorithm.sha224:
-                return new Sha224Digest((Sha224Digest)digest);
-            case CryptoHashAlgorithm.sha256:
-                return new Sha256Digest((Sha256Digest)digest);
-            case CryptoHashAlgorithm.sha384:
-                return new Sha384Digest((Sha384Digest)digest);
-            case CryptoHashAlgorithm.sha512:
-                return new Sha512Digest((Sha512Digest)digest);
-            case CryptoHashAlgorithm.sm3:
-                return new SM3Digest((SM3Digest)digest);
-            default:
-                throw new ArgumentException("invalid CryptoHashAlgorithm: " + cryptoHashAlgorithm);
+                case CryptoHashAlgorithm.md5:
+                    return new MD5Digest((MD5Digest)digest);
+                case CryptoHashAlgorithm.sha1:
+                    return new Sha1Digest((Sha1Digest)digest);
+                case CryptoHashAlgorithm.sha224:
+                    return new Sha224Digest((Sha224Digest)digest);
+                case CryptoHashAlgorithm.sha256:
+                    return new Sha256Digest((Sha256Digest)digest);
+                case CryptoHashAlgorithm.sha384:
+                    return new Sha384Digest((Sha384Digest)digest);
+                case CryptoHashAlgorithm.sha512:
+                    return new Sha512Digest((Sha512Digest)digest);
+                case CryptoHashAlgorithm.sm3:
+                    return new SM3Digest((SM3Digest)digest);
+                default:
+                    throw new ArgumentException("invalid CryptoHashAlgorithm: " + cryptoHashAlgorithm);
             }
         }
 
@@ -356,22 +355,22 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (cryptoHashAlgorithm)
             {
-            case CryptoHashAlgorithm.md5:
-                return new MD5Digest();
-            case CryptoHashAlgorithm.sha1:
-                return new Sha1Digest();
-            case CryptoHashAlgorithm.sha224:
-                return new Sha224Digest();
-            case CryptoHashAlgorithm.sha256:
-                return new Sha256Digest();
-            case CryptoHashAlgorithm.sha384:
-                return new Sha384Digest();
-            case CryptoHashAlgorithm.sha512:
-                return new Sha512Digest();
-            case CryptoHashAlgorithm.sm3:
-                return new SM3Digest();
-            default:
-                throw new ArgumentException("invalid CryptoHashAlgorithm: " + cryptoHashAlgorithm);
+                case CryptoHashAlgorithm.md5:
+                    return new MD5Digest();
+                case CryptoHashAlgorithm.sha1:
+                    return new Sha1Digest();
+                case CryptoHashAlgorithm.sha224:
+                    return new Sha224Digest();
+                case CryptoHashAlgorithm.sha256:
+                    return new Sha256Digest();
+                case CryptoHashAlgorithm.sha384:
+                    return new Sha384Digest();
+                case CryptoHashAlgorithm.sha512:
+                    return new Sha512Digest();
+                case CryptoHashAlgorithm.sm3:
+                    return new SM3Digest();
+                default:
+                    throw new ArgumentException("invalid CryptoHashAlgorithm: " + cryptoHashAlgorithm);
             }
         }
 
@@ -384,23 +383,23 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (encryptionAlgorithm)
             {
-            case EncryptionAlgorithm.cls_3DES_EDE_CBC:
-                return CreateDesEdeEngine();
-            case EncryptionAlgorithm.AES_128_CBC:
-            case EncryptionAlgorithm.AES_256_CBC:
-                return CreateAesEngine();
-            case EncryptionAlgorithm.ARIA_128_CBC:
-            case EncryptionAlgorithm.ARIA_256_CBC:
-                return CreateAriaEngine();
-            case EncryptionAlgorithm.CAMELLIA_128_CBC:
-            case EncryptionAlgorithm.CAMELLIA_256_CBC:
-                return CreateCamelliaEngine();
-            case EncryptionAlgorithm.SEED_CBC:
-                return CreateSeedEngine();
-            case EncryptionAlgorithm.SM4_CBC:
-                return CreateSM4Engine();
-            default:
-                throw new TlsFatalAlert(AlertDescription.internal_error);
+                case EncryptionAlgorithm.cls_3DES_EDE_CBC:
+                    return CreateDesEdeEngine();
+                case EncryptionAlgorithm.AES_128_CBC:
+                case EncryptionAlgorithm.AES_256_CBC:
+                    return CreateAesEngine();
+                case EncryptionAlgorithm.ARIA_128_CBC:
+                case EncryptionAlgorithm.ARIA_256_CBC:
+                    return CreateAriaEngine();
+                case EncryptionAlgorithm.CAMELLIA_128_CBC:
+                case EncryptionAlgorithm.CAMELLIA_256_CBC:
+                    return CreateCamelliaEngine();
+                case EncryptionAlgorithm.SEED_CBC:
+                    return CreateSeedEngine();
+                case EncryptionAlgorithm.SM4_CBC:
+                    return CreateSM4Engine();
+                default:
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
             }
         }
 
@@ -520,7 +519,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
 
         protected virtual IBlockCipher CreateSM4Engine()
         {
-            return new SM4Engine();
+            return new Sm4Engine();
         }
 
         protected virtual IAeadBlockCipher CreateCcmMode(IBlockCipher engine)
@@ -578,18 +577,18 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC
         {
             switch (macAlgorithm)
             {
-            case MacAlgorithm.hmac_md5:
-                return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.md5));
-            case MacAlgorithm.hmac_sha1:
-                return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha1));
-            case MacAlgorithm.hmac_sha256:
-                return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha256));
-            case MacAlgorithm.hmac_sha384:
-                return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha384));
-            case MacAlgorithm.hmac_sha512:
-                return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha512));
-            default:
-                throw new TlsFatalAlert(AlertDescription.internal_error);
+                case MacAlgorithm.hmac_md5:
+                    return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.md5));
+                case MacAlgorithm.hmac_sha1:
+                    return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha1));
+                case MacAlgorithm.hmac_sha256:
+                    return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha256));
+                case MacAlgorithm.hmac_sha384:
+                    return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha384));
+                case MacAlgorithm.hmac_sha512:
+                    return new BcSsl3Hmac(CreateDigest(CryptoHashAlgorithm.sha512));
+                default:
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
             }
         }
 

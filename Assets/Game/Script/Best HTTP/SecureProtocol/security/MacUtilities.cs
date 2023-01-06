@@ -1,10 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
 using System.Collections;
-using System.Globalization;
-using System.Security.Cryptography;
-
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Iana;
@@ -16,7 +12,6 @@ using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
 {
@@ -25,11 +20,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
     /// </remarks>
     public sealed class MacUtilities
     {
-        private MacUtilities()
-        {
-        }
-
-        private static readonly IDictionary algorithms = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
+        private static readonly IDictionary algorithms =
+            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
         //private static readonly IDictionary oids = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
 
         static MacUtilities()
@@ -89,6 +81,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             algorithms["1.3.14.3.2.26"] = "PBEWITHHMACSHA1";
         }
 
+        private MacUtilities()
+        {
+        }
+
 //		/// <summary>
 //		/// Returns a ObjectIdentifier for a given digest mechanism.
 //		/// </summary>
@@ -123,7 +119,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
         {
             string upper = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.ToUpperInvariant(algorithm);
 
-            string mechanism = (string) algorithms[upper];
+            string mechanism = (string)algorithms[upper];
 
             if (mechanism == null)
             {
@@ -138,7 +134,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(mechanism, "HMAC"))
             {
                 string digestName;
-                if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(mechanism, "HMAC-") || BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(mechanism, "HMAC/"))
+                if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(mechanism, "HMAC-") ||
+                    BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(mechanism, "HMAC/"))
                 {
                     digestName = mechanism.Substring(5);
                 }
@@ -154,98 +151,120 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             {
                 return new CMac(new AesEngine());
             }
+
             if (mechanism == "DESMAC")
             {
                 return new CbcBlockCipherMac(new DesEngine());
             }
+
             if (mechanism == "DESMAC/CFB8")
             {
                 return new CfbBlockCipherMac(new DesEngine());
             }
+
             if (mechanism == "DESMAC64")
             {
                 return new CbcBlockCipherMac(new DesEngine(), 64);
             }
+
             if (mechanism == "DESEDECMAC")
             {
                 return new CMac(new DesEdeEngine());
             }
+
             if (mechanism == "DESEDEMAC")
             {
                 return new CbcBlockCipherMac(new DesEdeEngine());
             }
+
             if (mechanism == "DESEDEMAC/CFB8")
             {
                 return new CfbBlockCipherMac(new DesEdeEngine());
             }
+
             if (mechanism == "DESEDEMAC64")
             {
                 return new CbcBlockCipherMac(new DesEdeEngine(), 64);
             }
+
             if (mechanism == "DESEDEMAC64WITHISO7816-4PADDING")
             {
                 return new CbcBlockCipherMac(new DesEdeEngine(), 64, new ISO7816d4Padding());
             }
+
             if (mechanism == "DESWITHISO9797"
                 || mechanism == "ISO9797ALG3MAC")
             {
                 return new ISO9797Alg3Mac(new DesEngine());
             }
+
             if (mechanism == "ISO9797ALG3WITHISO7816-4PADDING")
             {
                 return new ISO9797Alg3Mac(new DesEngine(), new ISO7816d4Padding());
             }
+
             if (mechanism == "SKIPJACKMAC")
             {
                 return new CbcBlockCipherMac(new SkipjackEngine());
             }
+
             if (mechanism == "SKIPJACKMAC/CFB8")
             {
                 return new CfbBlockCipherMac(new SkipjackEngine());
             }
+
             if (mechanism == "IDEAMAC")
             {
                 return new CbcBlockCipherMac(new IdeaEngine());
             }
+
             if (mechanism == "IDEAMAC/CFB8")
             {
                 return new CfbBlockCipherMac(new IdeaEngine());
             }
+
             if (mechanism == "RC2MAC")
             {
-                return new CbcBlockCipherMac(new RC2Engine());
+                return new CbcBlockCipherMac(new Rc2Engine());
             }
+
             if (mechanism == "RC2MAC/CFB8")
             {
-                return new CfbBlockCipherMac(new RC2Engine());
+                return new CfbBlockCipherMac(new Rc2Engine());
             }
+
             if (mechanism == "RC5MAC")
             {
-                return new CbcBlockCipherMac(new RC532Engine());
+                return new CbcBlockCipherMac(new Rc532Engine());
             }
+
             if (mechanism == "RC5MAC/CFB8")
             {
-                return new CfbBlockCipherMac(new RC532Engine());
+                return new CfbBlockCipherMac(new Rc532Engine());
             }
+
             if (mechanism == "GOST28147MAC")
             {
                 return new Gost28147Mac();
             }
+
             if (mechanism == "VMPCMAC")
             {
                 return new VmpcMac();
             }
+
             if (mechanism == "SIPHASH-2-4")
             {
                 return new SipHash();
             }
+
             throw new SecurityUtilityException("Mac " + mechanism + " not recognised.");
         }
 
         public static string GetAlgorithmName(
             DerObjectIdentifier oid)
         {
-            return (string) algorithms[oid.Id];
+            return (string)algorithms[oid.Id];
         }
 
         public static byte[] CalculateMac(string algorithm, ICipherParameters cp, byte[] input)

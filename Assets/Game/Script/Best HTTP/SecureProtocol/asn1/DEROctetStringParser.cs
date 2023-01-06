@@ -3,38 +3,36 @@
 using System;
 using System.IO;
 
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.IO;
-
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 {
-	public class DerOctetStringParser
-		: Asn1OctetStringParser
-	{
-		private readonly DefiniteLengthInputStream stream;
+    public class DerOctetStringParser
+        : Asn1OctetStringParser
+    {
+        private readonly DefiniteLengthInputStream _stream;
 
-		internal DerOctetStringParser(
-			DefiniteLengthInputStream stream)
-		{
-			this.stream = stream;
-		}
+        internal DerOctetStringParser(
+            DefiniteLengthInputStream stream)
+        {
+            this._stream = stream;
+        }
 
-		public Stream GetOctetStream()
-		{
-			return stream;
-		}
+        public Stream GetOctetStream()
+        {
+            return _stream;
+        }
 
-		public Asn1Object ToAsn1Object()
-		{
-			try
-			{
-				return new DerOctetString(stream.ToArray());
-			}
-			catch (IOException e)
-			{
-				throw new InvalidOperationException("IOException converting stream to byte array: " + e.Message, e);
-			}
-		}
-	}
+        public Asn1Object ToAsn1Object()
+        {
+            try
+            {
+                return new DerOctetString(_stream.ToArray());
+            }
+            catch (IOException e)
+            {
+                throw new InvalidOperationException("IOException converting stream to byte array: " + e.Message, e);
+            }
+        }
+    }
 }
 #pragma warning restore
 #endif

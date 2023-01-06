@@ -2,76 +2,78 @@
 #pragma warning disable
 using System;
 
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
-
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
-	public class CertRepMessage
-		: Asn1Encodable
-	{
-		private readonly Asn1Sequence caPubs;
-		private readonly Asn1Sequence response;
-		
-		private CertRepMessage(Asn1Sequence seq)
-		{
-			int index = 0;
+    public class CertRepMessage
+        : Asn1Encodable
+    {
+        private readonly Asn1Sequence _caPubs;
+        private readonly Asn1Sequence _response;
 
-			if (seq.Count > 1)
-			{
-				caPubs = Asn1Sequence.GetInstance((Asn1TaggedObject)seq[index++], true);
-			}
+        private CertRepMessage(Asn1Sequence seq)
+        {
+            int index = 0;
 
-			response = Asn1Sequence.GetInstance(seq[index]);
-		}
+            if (seq.Count > 1)
+            {
+                _caPubs = Asn1Sequence.GetInstance((Asn1TaggedObject)seq[index++], true);
+            }
 
-		public static CertRepMessage GetInstance(object obj)
-		{
-			if (obj is CertRepMessage)
-				return (CertRepMessage)obj;
+            _response = Asn1Sequence.GetInstance(seq[index]);
+        }
 
-			if (obj is Asn1Sequence)
-				return new CertRepMessage((Asn1Sequence)obj);
+        public CertRepMessage(CmpCertificate[] caPubs, CertResponse[] response)
+        {
+            if (response == null)
+                throw new ArgumentNullException("response");
 
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-		}
+            if (caPubs != null)
+            {
+                this._caPubs = new DerSequence(caPubs);
+            }
 
-		public CertRepMessage(CmpCertificate[] caPubs, CertResponse[] response)
-		{
-			if (response == null)
-				throw new ArgumentNullException("response");
+            this._response = new DerSequence(response);
+        }
 
-			if (caPubs != null)
-			{
-				this.caPubs = new DerSequence(caPubs);
-			}
+        public static CertRepMessage GetInstance(object obj)
+        {
+            if (obj is CertRepMessage)
+                return (CertRepMessage)obj;
 
-			this.response = new DerSequence(response);
-		}
+            if (obj is Asn1Sequence)
+                return new CertRepMessage((Asn1Sequence)obj);
 
-		public virtual CmpCertificate[] GetCAPubs()
-		{
-			if (caPubs == null)
-				return null;
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
+        }
 
-			CmpCertificate[] results = new CmpCertificate[caPubs.Count];
-			for (int i = 0; i != results.Length; ++i)
-			{
-				results[i] = CmpCertificate.GetInstance(caPubs[i]);
-			}
-			return results;
-		}
+        public virtual CmpCertificate[] GetCaPubs()
+        {
+            if (_caPubs == null)
+                return null;
 
-		public virtual CertResponse[] GetResponse()
-		{
-			CertResponse[] results = new CertResponse[response.Count];
-			for (int i = 0; i != results.Length; ++i)
-			{
-				results[i] = CertResponse.GetInstance(response[i]);
-			}
-			return results;
-		}
+            CmpCertificate[] results = new CmpCertificate[_caPubs.Count];
+            for (int i = 0; i != results.Length; ++i)
+            {
+                results[i] = CmpCertificate.GetInstance(_caPubs[i]);
+            }
 
-		/**
+            return results;
+        }
+
+        public virtual CertResponse[] GetResponse()
+        {
+            CertResponse[] results = new CertResponse[_response.Count];
+            for (int i = 0; i != results.Length; ++i)
+            {
+                results[i] = CertResponse.GetInstance(_response[i]);
+            }
+
+            return results;
+        }
+
+        /**
 		 * <pre>
 		 * CertRepMessage ::= SEQUENCE {
 		 *                          caPubs       [1] SEQUENCE SIZE (1..MAX) OF CMPCertificate
@@ -81,14 +83,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 		 * </pre>
 		 * @return a basic ASN.1 object representation.
 		 */
-		public override Asn1Object ToAsn1Object()
-		{
-			Asn1EncodableVector v = new Asn1EncodableVector();
-            v.AddOptionalTagged(true, 1, caPubs);
-			v.Add(response);
-			return new DerSequence(v);
-		}
-	}
+        public override Asn1Object ToAsn1Object()
+        {
+            Asn1EncodableVector v = new Asn1EncodableVector();
+            v.AddOptionalTagged(true, 1, _caPubs);
+            v.Add(_response);
+            return new DerSequence(v);
+        }
+    }
 }
 #pragma warning restore
 #endif

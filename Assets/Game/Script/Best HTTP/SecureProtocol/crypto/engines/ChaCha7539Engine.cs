@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
@@ -36,13 +35,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         protected override void AdvanceCounter()
         {
-            if (++engineState[12] == 0)
+            if (++EngineState[12] == 0)
                 throw new InvalidOperationException("attempt to increase counter past 2^32.");
         }
 
         protected override void ResetCounter()
         {
-            engineState[12] = 0;
+            EngineState[12] = 0;
         }
 
         protected override void SetKey(byte[] keyBytes, byte[] ivBytes)
@@ -52,20 +51,20 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
                 if (keyBytes.Length != 32)
                     throw new ArgumentException(AlgorithmName + " requires 256 bit key");
 
-                PackTauOrSigma(keyBytes.Length, engineState, 0);
+                PackTauOrSigma(keyBytes.Length, EngineState, 0);
 
                 // Key
-                Pack.LE_To_UInt32(keyBytes, 0, engineState, 4, 8);
+                Pack.LE_To_UInt32(keyBytes, 0, EngineState, 4, 8);
             }
 
             // IV
-            Pack.LE_To_UInt32(ivBytes, 0, engineState, 13, 3);
+            Pack.LE_To_UInt32(ivBytes, 0, EngineState, 13, 3);
         }
 
         protected override void GenerateKeyStream(byte[] output)
         {
-            ChaChaEngine.ChachaCore(rounds, engineState, x);
-            Pack.UInt32_To_LE(x, output, 0);
+            ChaChaEngine.ChachaCore(Rounds, EngineState, X);
+            Pack.UInt32_To_LE(X, output, 0);
         }
     }
 }

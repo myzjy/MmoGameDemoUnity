@@ -2,7 +2,6 @@
 #pragma warning disable
 using System;
 using System.Collections;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.CryptoPro;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Kisa;
@@ -29,92 +28,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
     /// </remarks>
     public sealed class CipherUtilities
     {
-        private enum CipherAlgorithm {
-            AES,
-            ARC4,
-            ARIA,
-            BLOWFISH,
-            CAMELLIA,
-            CAST5,
-            CAST6,
-            CHACHA,
-            CHACHA20_POLY1305,
-            CHACHA7539,
-            DES,
-            DESEDE,
-            ELGAMAL,
-            GOST28147,
-            HC128,
-            HC256,
-            IDEA,
-            NOEKEON,
-            PBEWITHSHAAND128BITRC4,
-            PBEWITHSHAAND40BITRC4,
-            RC2,
-            RC5,
-            RC5_64,
-            RC6,
-            RIJNDAEL,
-            RSA,
-            SALSA20,
-            SEED,
-            SERPENT,
-            SKIPJACK,
-            SM4,
-            TEA,
-            THREEFISH_256,
-            THREEFISH_512,
-            THREEFISH_1024,
-            TNEPRES,
-            TWOFISH,
-            VMPC,
-            VMPC_KSA3,
-            XTEA,
-        };
+        private static readonly IDictionary algorithms =
+            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
 
-        private enum CipherMode { ECB, NONE, CBC, CCM, CFB, CTR, CTS, EAX, GCM, GOFB, OCB, OFB, OPENPGPCFB, SIC };
-        private enum CipherPadding
-        {
-            NOPADDING,
-            RAW,
-            ISO10126PADDING,
-            ISO10126D2PADDING,
-            ISO10126_2PADDING,
-            ISO7816_4PADDING,
-            ISO9797_1PADDING,
-            ISO9796_1,
-            ISO9796_1PADDING,
-            OAEP,
-            OAEPPADDING,
-            OAEPWITHMD5ANDMGF1PADDING,
-            OAEPWITHSHA1ANDMGF1PADDING,
-            OAEPWITHSHA_1ANDMGF1PADDING,
-            OAEPWITHSHA224ANDMGF1PADDING,
-            OAEPWITHSHA_224ANDMGF1PADDING,
-            OAEPWITHSHA256ANDMGF1PADDING,
-            OAEPWITHSHA_256ANDMGF1PADDING,
-            OAEPWITHSHA256ANDMGF1WITHSHA256PADDING,
-            OAEPWITHSHA_256ANDMGF1WITHSHA_256PADDING,
-            OAEPWITHSHA256ANDMGF1WITHSHA1PADDING,
-            OAEPWITHSHA_256ANDMGF1WITHSHA_1PADDING,
-            OAEPWITHSHA384ANDMGF1PADDING,
-            OAEPWITHSHA_384ANDMGF1PADDING,
-            OAEPWITHSHA512ANDMGF1PADDING,
-            OAEPWITHSHA_512ANDMGF1PADDING,
-            PKCS1,
-            PKCS1PADDING,
-            PKCS5,
-            PKCS5PADDING,
-            PKCS7,
-            PKCS7PADDING,
-            TBCPADDING,
-            WITHCTS,
-            X923PADDING,
-            ZEROBYTEPADDING,
-        };
-
-        private static readonly IDictionary algorithms = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
-        private static readonly IDictionary oids = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
+        private static readonly IDictionary oids =
+            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
 
         static CipherUtilities()
         {
@@ -206,7 +124,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             algorithms["1.2.840.113549.3.4"] = "ARC4";
 
 
-
             algorithms["PBEWITHSHA1AND128BITRC4"] = "PBEWITHSHAAND128BITRC4";
             algorithms[PkcsObjectIdentifiers.PbeWithShaAnd128BitRC4.Id] = "PBEWITHSHAAND128BITRC4";
             algorithms["PBEWITHSHA1AND40BITRC4"] = "PBEWITHSHAAND40BITRC4";
@@ -267,6 +184,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
         {
         }
 
+        public static ICollection Algorithms
+        {
+            get { return oids.Keys; }
+        }
+
         /// <summary>
         /// Returns a ObjectIdentifier for a give encoding.
         /// </summary>
@@ -280,17 +202,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                 throw new ArgumentNullException("mechanism");
 
             mechanism = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.ToUpperInvariant(mechanism);
-            string aliased = (string) algorithms[mechanism];
+            string aliased = (string)algorithms[mechanism];
 
             if (aliased != null)
                 mechanism = aliased;
 
-            return (DerObjectIdentifier) oids[mechanism];
-        }
-
-        public static ICollection Algorithms
-        {
-            get { return oids.Keys; }
+            return (DerObjectIdentifier)oids[mechanism];
         }
 
         public static IBufferedCipher GetCipher(
@@ -308,7 +225,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             algorithm = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.ToUpperInvariant(algorithm);
 
             {
-                string aliased = (string) algorithms[algorithm];
+                string aliased = (string)algorithms[algorithm];
 
                 if (aliased != null)
                     algorithm = aliased;
@@ -328,13 +245,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             {
                 return new BufferedIesCipher(
                     new IesEngine(
-                    iesAgreement,
-                    new Kdf2BytesGenerator(
-                    new Sha1Digest()),
-                    new HMac(
-                    new Sha1Digest())));
+                        iesAgreement,
+                        new Kdf2BytesGenerator(
+                            new Sha1Digest()),
+                        new HMac(
+                            new Sha1Digest())));
             }
-
 
 
             if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.StartsWith(algorithm, "PBE"))
@@ -349,40 +265,40 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                     else if (algorithm == "PBEWITHSHA1ANDRC2-CBC")
                     {
                         return new PaddedBufferedBlockCipher(
-                            new CbcBlockCipher(new RC2Engine()));
+                            new CbcBlockCipher(new Rc2Engine()));
                     }
                     else if (Strings.IsOneOf(algorithm,
-                        "PBEWITHSHAAND2-KEYTRIPLEDES-CBC", "PBEWITHSHAAND3-KEYTRIPLEDES-CBC"))
+                                 "PBEWITHSHAAND2-KEYTRIPLEDES-CBC", "PBEWITHSHAAND3-KEYTRIPLEDES-CBC"))
                     {
                         return new PaddedBufferedBlockCipher(
                             new CbcBlockCipher(new DesEdeEngine()));
                     }
                     else if (Strings.IsOneOf(algorithm,
-                        "PBEWITHSHAAND128BITRC2-CBC", "PBEWITHSHAAND40BITRC2-CBC"))
+                                 "PBEWITHSHAAND128BITRC2-CBC", "PBEWITHSHAAND40BITRC2-CBC"))
                     {
                         return new PaddedBufferedBlockCipher(
-                            new CbcBlockCipher(new RC2Engine()));
+                            new CbcBlockCipher(new Rc2Engine()));
                     }
                 }
-                else if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(algorithm, "-BC") || BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(algorithm, "-OPENSSL"))
+                else if (BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(algorithm, "-BC") ||
+                         BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.EndsWith(algorithm, "-OPENSSL"))
                 {
                     if (Strings.IsOneOf(algorithm,
-                        "PBEWITHSHAAND128BITAES-CBC-BC",
-                        "PBEWITHSHAAND192BITAES-CBC-BC",
-                        "PBEWITHSHAAND256BITAES-CBC-BC",
-                        "PBEWITHSHA256AND128BITAES-CBC-BC",
-                        "PBEWITHSHA256AND192BITAES-CBC-BC",
-                        "PBEWITHSHA256AND256BITAES-CBC-BC",
-                        "PBEWITHMD5AND128BITAES-CBC-OPENSSL",
-                        "PBEWITHMD5AND192BITAES-CBC-OPENSSL",
-                        "PBEWITHMD5AND256BITAES-CBC-OPENSSL"))
+                            "PBEWITHSHAAND128BITAES-CBC-BC",
+                            "PBEWITHSHAAND192BITAES-CBC-BC",
+                            "PBEWITHSHAAND256BITAES-CBC-BC",
+                            "PBEWITHSHA256AND128BITAES-CBC-BC",
+                            "PBEWITHSHA256AND192BITAES-CBC-BC",
+                            "PBEWITHSHA256AND256BITAES-CBC-BC",
+                            "PBEWITHMD5AND128BITAES-CBC-OPENSSL",
+                            "PBEWITHMD5AND192BITAES-CBC-OPENSSL",
+                            "PBEWITHMD5AND256BITAES-CBC-OPENSSL"))
                     {
                         return new PaddedBufferedBlockCipher(
                             new CbcBlockCipher(new AesEngine()));
                     }
                 }
             }
-
 
 
             string[] parts = algorithm.Split('/');
@@ -417,7 +333,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                     blockCipher = new AesEngine();
                     break;
                 case CipherAlgorithm.ARC4:
-                    streamCipher = new RC4Engine();
+                    streamCipher = new Rc4Engine();
                     break;
                 case CipherAlgorithm.ARIA:
                     blockCipher = new AriaEngine();
@@ -456,10 +372,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                     blockCipher = new Gost28147Engine();
                     break;
                 case CipherAlgorithm.HC128:
-                    streamCipher = new HC128Engine();
+                    streamCipher = new Hc128Engine();
                     break;
                 case CipherAlgorithm.HC256:
-                    streamCipher = new HC256Engine();
+                    streamCipher = new Hc256Engine();
                     break;
                 case CipherAlgorithm.IDEA:
                     blockCipher = new IdeaEngine();
@@ -469,19 +385,19 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                     break;
                 case CipherAlgorithm.PBEWITHSHAAND128BITRC4:
                 case CipherAlgorithm.PBEWITHSHAAND40BITRC4:
-                    streamCipher = new RC4Engine();
+                    streamCipher = new Rc4Engine();
                     break;
                 case CipherAlgorithm.RC2:
-                    blockCipher = new RC2Engine();
+                    blockCipher = new Rc2Engine();
                     break;
                 case CipherAlgorithm.RC5:
-                    blockCipher = new RC532Engine();
+                    blockCipher = new Rc532Engine();
                     break;
                 case CipherAlgorithm.RC5_64:
-                    blockCipher = new RC564Engine();
+                    blockCipher = new Rc564Engine();
                     break;
                 case CipherAlgorithm.RC6:
-                    blockCipher = new RC6Engine();
+                    blockCipher = new Rc6Engine();
                     break;
                 case CipherAlgorithm.RIJNDAEL:
                     blockCipher = new RijndaelEngine();
@@ -502,19 +418,19 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                     blockCipher = new SkipjackEngine();
                     break;
                 case CipherAlgorithm.SM4:
-                    blockCipher = new SM4Engine();
+                    blockCipher = new Sm4Engine();
                     break;
                 case CipherAlgorithm.TEA:
                     blockCipher = new TeaEngine();
                     break;
                 case CipherAlgorithm.THREEFISH_256:
-                    blockCipher = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_256);
+                    blockCipher = new ThreefishEngine(ThreefishEngine.Blocksize256);
                     break;
                 case CipherAlgorithm.THREEFISH_512:
-                    blockCipher = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_512);
+                    blockCipher = new ThreefishEngine(ThreefishEngine.Blocksize512);
                     break;
                 case CipherAlgorithm.THREEFISH_1024:
-                    blockCipher = new ThreefishEngine(ThreefishEngine.BLOCKSIZE_1024);
+                    blockCipher = new ThreefishEngine(ThreefishEngine.Blocksize1024);
                     break;
                 case CipherAlgorithm.TNEPRES:
                     blockCipher = new TnepresEngine();
@@ -693,9 +609,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                         case CipherMode.CFB:
                         {
                             int bits = (di < 0)
-                                ?	8 * blockCipher.GetBlockSize()
-                                :	int.Parse(mode.Substring(di));
-    
+                                ? 8 * blockCipher.GetBlockSize()
+                                : int.Parse(mode.Substring(di));
+
                             blockCipher = new CfbBlockCipher(blockCipher, bits);
                             break;
                         }
@@ -721,9 +637,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                         case CipherMode.OFB:
                         {
                             int bits = (di < 0)
-                                ?	8 * blockCipher.GetBlockSize()
-                                :	int.Parse(mode.Substring(di));
-    
+                                ? 8 * blockCipher.GetBlockSize()
+                                : int.Parse(mode.Substring(di));
+
                             blockCipher = new OfbBlockCipher(blockCipher, bits);
                             break;
                         }
@@ -733,8 +649,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                         case CipherMode.SIC:
                             if (blockCipher.GetBlockSize() < 16)
                             {
-                                throw new ArgumentException("Warning: SIC-Mode can become a twotime-pad if the blocksize of the cipher is too small. Use a cipher with a block size of at least 128 bits (e.g. AES)");
+                                throw new ArgumentException(
+                                    "Warning: SIC-Mode can become a twotime-pad if the blocksize of the cipher is too small. Use a cipher with a block size of at least 128 bits (e.g. AES)");
                             }
+
                             blockCipher = new SicBlockCipher(blockCipher);
                             break;
                         default:
@@ -788,7 +706,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
         public static string GetAlgorithmName(
             DerObjectIdentifier oid)
         {
-            return (string) algorithms[oid.Id];
+            return (string)algorithms[oid.Id];
         }
 
         private static int GetDigitIndex(
@@ -818,26 +736,129 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
                 case CipherAlgorithm.GOST28147: return new Gost28147Engine();
                 case CipherAlgorithm.IDEA: return new IdeaEngine();
                 case CipherAlgorithm.NOEKEON: return new NoekeonEngine();
-                case CipherAlgorithm.RC2: return new RC2Engine();
-                case CipherAlgorithm.RC5: return new RC532Engine();
-                case CipherAlgorithm.RC5_64: return new RC564Engine();
-                case CipherAlgorithm.RC6: return new RC6Engine();
+                case CipherAlgorithm.RC2: return new Rc2Engine();
+                case CipherAlgorithm.RC5: return new Rc532Engine();
+                case CipherAlgorithm.RC5_64: return new Rc564Engine();
+                case CipherAlgorithm.RC6: return new Rc6Engine();
                 case CipherAlgorithm.RIJNDAEL: return new RijndaelEngine();
                 case CipherAlgorithm.SEED: return new SeedEngine();
                 case CipherAlgorithm.SERPENT: return new SerpentEngine();
                 case CipherAlgorithm.SKIPJACK: return new SkipjackEngine();
-                case CipherAlgorithm.SM4: return new SM4Engine();
+                case CipherAlgorithm.SM4: return new Sm4Engine();
                 case CipherAlgorithm.TEA: return new TeaEngine();
-                case CipherAlgorithm.THREEFISH_256: return new ThreefishEngine(ThreefishEngine.BLOCKSIZE_256);
-                case CipherAlgorithm.THREEFISH_512: return new ThreefishEngine(ThreefishEngine.BLOCKSIZE_512);
-                case CipherAlgorithm.THREEFISH_1024: return new ThreefishEngine(ThreefishEngine.BLOCKSIZE_1024);
+                case CipherAlgorithm.THREEFISH_256: return new ThreefishEngine(ThreefishEngine.Blocksize256);
+                case CipherAlgorithm.THREEFISH_512: return new ThreefishEngine(ThreefishEngine.Blocksize512);
+                case CipherAlgorithm.THREEFISH_1024: return new ThreefishEngine(ThreefishEngine.Blocksize1024);
                 case CipherAlgorithm.TNEPRES: return new TnepresEngine();
                 case CipherAlgorithm.TWOFISH: return new TwofishEngine();
                 case CipherAlgorithm.XTEA: return new XteaEngine();
                 default:
-                    throw new SecurityUtilityException("Cipher " + cipherAlgorithm + " not recognised or not a block cipher");
+                    throw new SecurityUtilityException("Cipher " + cipherAlgorithm +
+                                                       " not recognised or not a block cipher");
             }
         }
+
+        private enum CipherAlgorithm
+        {
+            AES,
+            ARC4,
+            ARIA,
+            BLOWFISH,
+            CAMELLIA,
+            CAST5,
+            CAST6,
+            CHACHA,
+            CHACHA20_POLY1305,
+            CHACHA7539,
+            DES,
+            DESEDE,
+            ELGAMAL,
+            GOST28147,
+            HC128,
+            HC256,
+            IDEA,
+            NOEKEON,
+            PBEWITHSHAAND128BITRC4,
+            PBEWITHSHAAND40BITRC4,
+            RC2,
+            RC5,
+            RC5_64,
+            RC6,
+            RIJNDAEL,
+            RSA,
+            SALSA20,
+            SEED,
+            SERPENT,
+            SKIPJACK,
+            SM4,
+            TEA,
+            THREEFISH_256,
+            THREEFISH_512,
+            THREEFISH_1024,
+            TNEPRES,
+            TWOFISH,
+            VMPC,
+            VMPC_KSA3,
+            XTEA,
+        };
+
+        private enum CipherMode
+        {
+            ECB,
+            NONE,
+            CBC,
+            CCM,
+            CFB,
+            CTR,
+            CTS,
+            EAX,
+            GCM,
+            GOFB,
+            OCB,
+            OFB,
+            OPENPGPCFB,
+            SIC
+        };
+
+        private enum CipherPadding
+        {
+            NOPADDING,
+            RAW,
+            ISO10126PADDING,
+            ISO10126D2PADDING,
+            ISO10126_2PADDING,
+            ISO7816_4PADDING,
+            ISO9797_1PADDING,
+            ISO9796_1,
+            ISO9796_1PADDING,
+            OAEP,
+            OAEPPADDING,
+            OAEPWITHMD5ANDMGF1PADDING,
+            OAEPWITHSHA1ANDMGF1PADDING,
+            OAEPWITHSHA_1ANDMGF1PADDING,
+            OAEPWITHSHA224ANDMGF1PADDING,
+            OAEPWITHSHA_224ANDMGF1PADDING,
+            OAEPWITHSHA256ANDMGF1PADDING,
+            OAEPWITHSHA_256ANDMGF1PADDING,
+            OAEPWITHSHA256ANDMGF1WITHSHA256PADDING,
+            OAEPWITHSHA_256ANDMGF1WITHSHA_256PADDING,
+            OAEPWITHSHA256ANDMGF1WITHSHA1PADDING,
+            OAEPWITHSHA_256ANDMGF1WITHSHA_1PADDING,
+            OAEPWITHSHA384ANDMGF1PADDING,
+            OAEPWITHSHA_384ANDMGF1PADDING,
+            OAEPWITHSHA512ANDMGF1PADDING,
+            OAEPWITHSHA_512ANDMGF1PADDING,
+            PKCS1,
+            PKCS1PADDING,
+            PKCS5,
+            PKCS5PADDING,
+            PKCS7,
+            PKCS7PADDING,
+            TBCPADDING,
+            WITHCTS,
+            X923PADDING,
+            ZEROBYTEPADDING,
+        };
     }
 }
 #pragma warning restore

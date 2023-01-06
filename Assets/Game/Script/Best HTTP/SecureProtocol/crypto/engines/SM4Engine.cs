@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
@@ -13,7 +12,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     /// The implementation here is based on the document <a href="http://eprint.iacr.org/2008/329.pdf">http://eprint.iacr.org/2008/329.pdf</a>
     /// by Whitfield Diffie and George Ledin, which is a translation of Prof. LU Shu-wang's original standard.
     /// </remarks>
-    public class SM4Engine
+    public class Sm4Engine
         : IBlockCipher
     {
         private const int BlockSize = 16;
@@ -38,7 +37,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             0x18, 0xf0, 0x7d, 0xec, 0x3a, 0xdc, 0x4d, 0x20, 0x79, 0xee, 0x5f, 0x3e, 0xd7, 0xcb, 0x39, 0x48
         };
 
-        private static readonly uint[] CK =
+        private static readonly uint[] Ck =
         {
             0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269,
             0x70777e85, 0x8c939aa1, 0xa8afb6bd, 0xc4cbd2d9,
@@ -50,91 +49,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             0x10171e25, 0x2c333a41, 0x484f565d, 0x646b7279
         };
 
-        private static readonly uint[] FK =
+        private static readonly uint[] Fk =
         {
             0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc
         };
 
-        private uint[] rk;
-
-        // non-linear substitution tau.
-        private static uint tau(uint A)
-        {
-            uint b0 = Sbox[A >> 24];
-            uint b1 = Sbox[(A >> 16) & 0xFF];
-            uint b2 = Sbox[(A >> 8) & 0xFF];
-            uint b3 = Sbox[A & 0xFF];
-
-            return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
-        }
-
-        private static uint L_ap(uint B)
-        {
-            return B ^ Integers.RotateLeft(B, 13) ^ Integers.RotateLeft(B, 23);
-        }
-
-        private uint T_ap(uint Z)
-        {
-            return L_ap(tau(Z));
-        }
-
-        // Key expansion
-        private void ExpandKey(bool forEncryption, byte[] key)
-        {
-            uint K0 = Pack.BE_To_UInt32(key,  0) ^ FK[0];
-            uint K1 = Pack.BE_To_UInt32(key,  4) ^ FK[1];
-            uint K2 = Pack.BE_To_UInt32(key,  8) ^ FK[2];
-            uint K3 = Pack.BE_To_UInt32(key, 12) ^ FK[3];
-
-            if (forEncryption)
-            {
-                rk[0] = K0 ^ T_ap(K1    ^ K2    ^ K3    ^ CK[0]);
-                rk[1] = K1 ^ T_ap(K2    ^ K3    ^ rk[0] ^ CK[1]);
-                rk[2] = K2 ^ T_ap(K3    ^ rk[0] ^ rk[1] ^ CK[2]);
-                rk[3] = K3 ^ T_ap(rk[0] ^ rk[1] ^ rk[2] ^ CK[3]);
-                for (int i = 4; i < 32; ++i)
-                {
-                    rk[i] = rk[i - 4] ^ T_ap(rk[i - 3] ^ rk[i - 2] ^ rk[i - 1] ^ CK[i]);
-                }
-            }
-            else
-            {
-                rk[31] = K0 ^ T_ap(K1     ^ K2     ^ K3     ^ CK[0]);
-                rk[30] = K1 ^ T_ap(K2     ^ K3     ^ rk[31] ^ CK[1]);
-                rk[29] = K2 ^ T_ap(K3     ^ rk[31] ^ rk[30] ^ CK[2]);
-                rk[28] = K3 ^ T_ap(rk[31] ^ rk[30] ^ rk[29] ^ CK[3]);
-                for (int i = 27; i >= 0; --i)
-                {
-                    rk[i] = rk[i + 4] ^ T_ap(rk[i + 3] ^ rk[i + 2] ^ rk[i + 1] ^ CK[31 - i]);
-                }
-            }
-        }
-
-        // Linear substitution L
-        private static uint L(uint B)
-        {
-            return B ^ Integers.RotateLeft(B, 2) ^ Integers.RotateLeft(B, 10) ^ Integers.RotateLeft(B, 18) ^ Integers.RotateLeft(B, 24);
-        }
-
-        // Mixer-substitution T
-        private static uint T(uint Z)
-        {
-            return L(tau(Z));
-        }
+        private uint[] _rk;
 
         public virtual void Init(bool forEncryption, ICipherParameters parameters)
         {
             KeyParameter keyParameter = parameters as KeyParameter;
             if (null == keyParameter)
-                throw new ArgumentException("invalid parameter passed to SM4 init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters), "parameters");
+                throw new ArgumentException(
+                    "invalid parameter passed to SM4 init - " +
+                    BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters), "parameters");
 
             byte[] key = keyParameter.GetKey();
             if (key.Length != 16)
                 throw new ArgumentException("SM4 requires a 128 bit key", "parameters");
 
-            if (null == rk)
+            if (null == _rk)
             {
-                rk = new uint[32];
+                _rk = new uint[32];
             }
 
             ExpandKey(forEncryption, key);
@@ -157,35 +93,101 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         public virtual int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
         {
-            if (null == rk)
+            if (null == _rk)
                 throw new InvalidOperationException("SM4 not initialised");
 
             Check.DataLength(input, inOff, BlockSize, "input buffer too short");
             Check.OutputLength(output, outOff, BlockSize, "output buffer too short");
 
-            uint X0 = Pack.BE_To_UInt32(input, inOff);
-            uint X1 = Pack.BE_To_UInt32(input, inOff + 4);
-            uint X2 = Pack.BE_To_UInt32(input, inOff + 8);
-            uint X3 = Pack.BE_To_UInt32(input, inOff + 12);
+            uint x0 = Pack.BE_To_UInt32(input, inOff);
+            uint x1 = Pack.BE_To_UInt32(input, inOff + 4);
+            uint x2 = Pack.BE_To_UInt32(input, inOff + 8);
+            uint x3 = Pack.BE_To_UInt32(input, inOff + 12);
 
             for (int i = 0; i < 32; i += 4)
             {
-                X0 ^= T(X1 ^ X2 ^ X3 ^ rk[i    ]);  // F0
-                X1 ^= T(X2 ^ X3 ^ X0 ^ rk[i + 1]);  // F1
-                X2 ^= T(X3 ^ X0 ^ X1 ^ rk[i + 2]);  // F2
-                X3 ^= T(X0 ^ X1 ^ X2 ^ rk[i + 3]);  // F3
+                x0 ^= T(x1 ^ x2 ^ x3 ^ _rk[i]); // F0
+                x1 ^= T(x2 ^ x3 ^ x0 ^ _rk[i + 1]); // F1
+                x2 ^= T(x3 ^ x0 ^ x1 ^ _rk[i + 2]); // F2
+                x3 ^= T(x0 ^ x1 ^ x2 ^ _rk[i + 3]); // F3
             }
 
-            Pack.UInt32_To_BE(X3, output, outOff);
-            Pack.UInt32_To_BE(X2, output, outOff + 4);
-            Pack.UInt32_To_BE(X1, output, outOff + 8);
-            Pack.UInt32_To_BE(X0, output, outOff + 12);
+            Pack.UInt32_To_BE(x3, output, outOff);
+            Pack.UInt32_To_BE(x2, output, outOff + 4);
+            Pack.UInt32_To_BE(x1, output, outOff + 8);
+            Pack.UInt32_To_BE(x0, output, outOff + 12);
 
             return BlockSize;
         }
 
         public virtual void Reset()
         {
+        }
+
+        // non-linear substitution tau.
+        private static uint Tau(uint a)
+        {
+            uint b0 = Sbox[a >> 24];
+            uint b1 = Sbox[(a >> 16) & 0xFF];
+            uint b2 = Sbox[(a >> 8) & 0xFF];
+            uint b3 = Sbox[a & 0xFF];
+
+            return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
+        }
+
+        private static uint L_ap(uint b)
+        {
+            return b ^ Integers.RotateLeft(b, 13) ^ Integers.RotateLeft(b, 23);
+        }
+
+        private uint T_ap(uint z)
+        {
+            return L_ap(Tau(z));
+        }
+
+        // Key expansion
+        private void ExpandKey(bool forEncryption, byte[] key)
+        {
+            uint k0 = Pack.BE_To_UInt32(key, 0) ^ Fk[0];
+            uint k1 = Pack.BE_To_UInt32(key, 4) ^ Fk[1];
+            uint k2 = Pack.BE_To_UInt32(key, 8) ^ Fk[2];
+            uint k3 = Pack.BE_To_UInt32(key, 12) ^ Fk[3];
+
+            if (forEncryption)
+            {
+                _rk[0] = k0 ^ T_ap(k1 ^ k2 ^ k3 ^ Ck[0]);
+                _rk[1] = k1 ^ T_ap(k2 ^ k3 ^ _rk[0] ^ Ck[1]);
+                _rk[2] = k2 ^ T_ap(k3 ^ _rk[0] ^ _rk[1] ^ Ck[2]);
+                _rk[3] = k3 ^ T_ap(_rk[0] ^ _rk[1] ^ _rk[2] ^ Ck[3]);
+                for (int i = 4; i < 32; ++i)
+                {
+                    _rk[i] = _rk[i - 4] ^ T_ap(_rk[i - 3] ^ _rk[i - 2] ^ _rk[i - 1] ^ Ck[i]);
+                }
+            }
+            else
+            {
+                _rk[31] = k0 ^ T_ap(k1 ^ k2 ^ k3 ^ Ck[0]);
+                _rk[30] = k1 ^ T_ap(k2 ^ k3 ^ _rk[31] ^ Ck[1]);
+                _rk[29] = k2 ^ T_ap(k3 ^ _rk[31] ^ _rk[30] ^ Ck[2]);
+                _rk[28] = k3 ^ T_ap(_rk[31] ^ _rk[30] ^ _rk[29] ^ Ck[3]);
+                for (int i = 27; i >= 0; --i)
+                {
+                    _rk[i] = _rk[i + 4] ^ T_ap(_rk[i + 3] ^ _rk[i + 2] ^ _rk[i + 1] ^ Ck[31 - i]);
+                }
+            }
+        }
+
+        // Linear substitution L
+        private static uint L(uint b)
+        {
+            return b ^ Integers.RotateLeft(b, 2) ^ Integers.RotateLeft(b, 10) ^ Integers.RotateLeft(b, 18) ^
+                   Integers.RotateLeft(b, 24);
+        }
+
+        // Mixer-substitution T
+        private static uint T(uint z)
+        {
+            return L(Tau(z));
         }
     }
 }

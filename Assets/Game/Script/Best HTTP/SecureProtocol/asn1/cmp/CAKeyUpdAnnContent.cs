@@ -2,51 +2,51 @@
 #pragma warning disable
 using System;
 
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
-
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
-	public class CAKeyUpdAnnContent
-		: Asn1Encodable
-	{
-		private readonly CmpCertificate oldWithNew;
-		private readonly CmpCertificate newWithOld;
-		private readonly CmpCertificate newWithNew;
+    public class CaKeyUpdAnnContent
+        : Asn1Encodable
+    {
+        private readonly CmpCertificate _newWithNew;
+        private readonly CmpCertificate _newWithOld;
+        private readonly CmpCertificate _oldWithNew;
 
-		private CAKeyUpdAnnContent(Asn1Sequence seq)
-		{
-			oldWithNew = CmpCertificate.GetInstance(seq[0]);
-			newWithOld = CmpCertificate.GetInstance(seq[1]);
-			newWithNew = CmpCertificate.GetInstance(seq[2]);
-		}
+        private CaKeyUpdAnnContent(Asn1Sequence seq)
+        {
+            _oldWithNew = CmpCertificate.GetInstance(seq[0]);
+            _newWithOld = CmpCertificate.GetInstance(seq[1]);
+            _newWithNew = CmpCertificate.GetInstance(seq[2]);
+        }
 
-		public static CAKeyUpdAnnContent GetInstance(object obj)
-		{
-			if (obj is CAKeyUpdAnnContent)
-				return (CAKeyUpdAnnContent)obj;
+        public virtual CmpCertificate OldWithNew
+        {
+            get { return _oldWithNew; }
+        }
 
-			if (obj is Asn1Sequence)
-				return new CAKeyUpdAnnContent((Asn1Sequence)obj);
+        public virtual CmpCertificate NewWithOld
+        {
+            get { return _newWithOld; }
+        }
 
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-		}
+        public virtual CmpCertificate NewWithNew
+        {
+            get { return _newWithNew; }
+        }
 
-		public virtual CmpCertificate OldWithNew
-		{
-			get { return oldWithNew; }
-		}
-		
-		public virtual CmpCertificate NewWithOld
-		{
-			get { return newWithOld; }
-		}
+        public static CaKeyUpdAnnContent GetInstance(object obj)
+        {
+            if (obj is CaKeyUpdAnnContent)
+                return (CaKeyUpdAnnContent)obj;
 
-		public virtual CmpCertificate NewWithNew
-		{
-			get { return newWithNew; }
-		}
+            if (obj is Asn1Sequence)
+                return new CaKeyUpdAnnContent((Asn1Sequence)obj);
 
-		/**
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
+        }
+
+        /**
 		 * <pre>
 		 * CAKeyUpdAnnContent ::= SEQUENCE {
 		 *                             oldWithNew   CmpCertificate, -- old pub signed with new priv
@@ -56,11 +56,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 		 * </pre>
 		 * @return a basic ASN.1 object representation.
 		 */
-		public override Asn1Object ToAsn1Object()
-		{
-			return new DerSequence(oldWithNew, newWithOld, newWithNew);
-		}
-	}
+        public override Asn1Object ToAsn1Object()
+        {
+            return new DerSequence(_oldWithNew, _newWithOld, _newWithNew);
+        }
+    }
 }
 #pragma warning restore
 #endif

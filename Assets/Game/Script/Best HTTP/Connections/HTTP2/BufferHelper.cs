@@ -2,6 +2,7 @@
 
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
     public static class BufferHelper
@@ -102,7 +103,7 @@ namespace BestHTTP.Connections.HTTP2
             return (UInt32)(buffer[offset + 2] |
                             buffer[offset + 1] << 8 |
                             buffer[offset + 0] << 16
-                            );
+                );
         }
 
         public static UInt32 ReadUInt31(byte[] buffer, int offset)
@@ -111,7 +112,7 @@ namespace BestHTTP.Connections.HTTP2
                             buffer[offset + 2] << 8 |
                             buffer[offset + 1] << 16 |
                             (buffer[offset] & 0x7F) << 24
-                           );
+                );
         }
 
         public static UInt32 ReadUInt32(byte[] buffer, int offset)
@@ -120,12 +121,12 @@ namespace BestHTTP.Connections.HTTP2
                             buffer[offset + 2] << 8 |
                             buffer[offset + 1] << 16 |
                             buffer[offset + 0] << 24
-                            );
+                );
         }
 
         public static long ReadLong(byte[] buffer, int offset)
         {
-            return (long)buffer[offset + 7] |
+            return buffer[offset + 7] |
                    (long)buffer[offset + 6] << 8 |
                    (long)buffer[offset + 5] << 16 |
                    (long)buffer[offset + 4] << 24 |

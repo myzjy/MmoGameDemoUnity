@@ -1,30 +1,23 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
     /**
     * An RC6 engine.
     */
-    public class RC6Engine
-		: IBlockCipher
+    public class Rc6Engine
+        : IBlockCipher
     {
-        private static readonly int wordSize = 32;
-        private static readonly int bytesPerWord = wordSize / 8;
+        private static readonly int WordSize = 32;
+        private static readonly int BytesPerWord = WordSize / 8;
 
         /*
         * the number of rounds to perform
         */
-        private static readonly int _noRounds = 20;
-
-        /*
-        * the expanded key array of size 2*(rounds + 1)
-        */
-        private int [] _S;
+        private static readonly int NoRounds = 20;
 
         /*
         * our "magic constants" for wordSize 32
@@ -35,18 +28,23 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * where e is the base of natural logarithms (2.718281828...)
         * and o is the golden ratio (1.61803398...)
         */
-        private static readonly int    P32 = unchecked((int) 0xb7e15163);
-        private static readonly int    Q32 = unchecked((int) 0x9e3779b9);
+        private static readonly int P32 = unchecked((int)0xb7e15163);
+        private static readonly int Q32 = unchecked((int)0x9e3779b9);
 
-        private static readonly int    LGW = 5;        // log2(32)
+        private static readonly int Lgw = 5; // log2(32)
 
-        private bool forEncryption;
+        private bool _forEncryption;
+
+        /*
+        * the expanded key array of size 2*(rounds + 1)
+        */
+        private int[] _s;
 
         /**
         * Create an instance of the RC6 encryption algorithm
         * and set some defaults
         */
-        public RC6Engine()
+        public Rc6Engine()
         {
 //            _S            = null;
         }
@@ -57,13 +55,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         public virtual bool IsPartialBlockOkay
-		{
-			get { return false; }
-		}
+        {
+            get { return false; }
+        }
 
         public virtual int GetBlockSize()
         {
-            return 4 * bytesPerWord;
+            return 4 * BytesPerWord;
         }
 
         /**
@@ -75,34 +73,36 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * inappropriate.
         */
         public virtual void Init(
-            bool				forEncryption,
-            ICipherParameters	parameters)
+            bool forEncryption,
+            ICipherParameters parameters)
         {
             if (!(parameters is KeyParameter))
-                throw new ArgumentException("invalid parameter passed to RC6 init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
+                throw new ArgumentException("invalid parameter passed to RC6 init - " +
+                                            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(
+                                                parameters));
 
-            this.forEncryption = forEncryption;
+            this._forEncryption = forEncryption;
 
-			KeyParameter p = (KeyParameter)parameters;
-			SetKey(p.GetKey());
+            KeyParameter p = (KeyParameter)parameters;
+            SetKey(p.GetKey());
         }
 
         public virtual int ProcessBlock(
-            byte[]	input,
-            int		inOff,
-            byte[]	output,
-            int		outOff)
+            byte[] input,
+            int inOff,
+            byte[] output,
+            int outOff)
         {
-			int blockSize = GetBlockSize();
-			if (_S == null)
-				throw new InvalidOperationException("RC6 engine not initialised");
+            int blockSize = GetBlockSize();
+            if (_s == null)
+                throw new InvalidOperationException("RC6 engine not initialised");
 
             Check.DataLength(input, inOff, blockSize, "input buffer too short");
             Check.OutputLength(output, outOff, blockSize, "output buffer too short");
 
-            return (forEncryption)
-				?	EncryptBlock(input, inOff, output, outOff)
-				:	DecryptBlock(input, inOff, output, outOff);
+            return (_forEncryption)
+                ? EncryptBlock(input, inOff, output, outOff)
+                : DecryptBlock(input, inOff, output, outOff);
         }
 
         public virtual void Reset()
@@ -130,17 +130,18 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //   case that b = c = 0, set c = 1 and L[0] = 0.
             //
             // compute number of dwords
-            int c = (key.Length + (bytesPerWord - 1)) / bytesPerWord;
+            int c = (key.Length + (BytesPerWord - 1)) / BytesPerWord;
             if (c == 0)
             {
                 c = 1;
             }
-            int[]   L = new int[(key.Length + bytesPerWord - 1) / bytesPerWord];
+
+            int[] l = new int[(key.Length + BytesPerWord - 1) / BytesPerWord];
 
             // load all key bytes into array of key dwords
             for (int i = key.Length - 1; i >= 0; i--)
             {
-                L[i / bytesPerWord] = (L[i / bytesPerWord] << 8) + (key[i] & 0xff);
+                l[i / BytesPerWord] = (l[i / BytesPerWord] << 8) + (key[i] & 0xff);
             }
 
             //
@@ -150,12 +151,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //   using an arithmetic progression modulo 2^wordsize determined
             //   by the magic numbers, Pw & Qw.
             //
-            _S            = new int[2+2*_noRounds+2];
+            _s = new int[2 + 2 * NoRounds + 2];
 
-            _S[0] = P32;
-            for (int i=1; i < _S.Length; i++)
+            _s[0] = P32;
+            for (int i = 1; i < _s.Length; i++)
             {
-                _S[i] = (_S[i-1] + Q32);
+                _s[i] = (_s[i - 1] + Q32);
             }
 
             //
@@ -165,134 +166,135 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //
             int iter;
 
-            if (L.Length > _S.Length)
+            if (l.Length > _s.Length)
             {
-                iter = 3 * L.Length;
+                iter = 3 * l.Length;
             }
             else
             {
-                iter = 3 * _S.Length;
+                iter = 3 * _s.Length;
             }
 
-            int A = 0;
-            int B = 0;
+            int a = 0;
+            int b = 0;
             int ii = 0, jj = 0;
 
             for (int k = 0; k < iter; k++)
             {
-                A = _S[ii] = RotateLeft(_S[ii] + A + B, 3);
-                B =  L[jj] = RotateLeft( L[jj] + A + B, A+B);
-                ii = (ii+1) % _S.Length;
-                jj = (jj+1) %  L.Length;
+                a = _s[ii] = RotateLeft(_s[ii] + a + b, 3);
+                b = l[jj] = RotateLeft(l[jj] + a + b, a + b);
+                ii = (ii + 1) % _s.Length;
+                jj = (jj + 1) % l.Length;
             }
         }
 
         private int EncryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
             // load A,B,C and D registers from in.
-            int A = BytesToWord(input, inOff);
-            int B = BytesToWord(input, inOff + bytesPerWord);
-            int C = BytesToWord(input, inOff + bytesPerWord*2);
-            int D = BytesToWord(input, inOff + bytesPerWord*3);
+            int a = BytesToWord(input, inOff);
+            int b = BytesToWord(input, inOff + BytesPerWord);
+            int c = BytesToWord(input, inOff + BytesPerWord * 2);
+            int d = BytesToWord(input, inOff + BytesPerWord * 3);
 
             // Do pseudo-round #0: pre-whitening of B and D
-            B += _S[0];
-            D += _S[1];
+            b += _s[0];
+            d += _s[1];
 
             // perform round #1,#2 ... #ROUNDS of encryption
-            for (int i = 1; i <= _noRounds; i++)
+            for (int i = 1; i <= NoRounds; i++)
             {
-                int t = 0,u = 0;
+                int t = 0, u = 0;
 
-                t = B*(2*B+1);
-                t = RotateLeft(t,5);
+                t = b * (2 * b + 1);
+                t = RotateLeft(t, 5);
 
-                u = D*(2*D+1);
-                u = RotateLeft(u,5);
+                u = d * (2 * d + 1);
+                u = RotateLeft(u, 5);
 
-                A ^= t;
-                A = RotateLeft(A,u);
-                A += _S[2*i];
+                a ^= t;
+                a = RotateLeft(a, u);
+                a += _s[2 * i];
 
-                C ^= u;
-                C = RotateLeft(C,t);
-                C += _S[2*i+1];
+                c ^= u;
+                c = RotateLeft(c, t);
+                c += _s[2 * i + 1];
 
-                int temp = A;
-                A = B;
-                B = C;
-                C = D;
-                D = temp;
+                int temp = a;
+                a = b;
+                b = c;
+                c = d;
+                d = temp;
             }
+
             // do pseudo-round #(ROUNDS+1) : post-whitening of A and C
-            A += _S[2*_noRounds+2];
-            C += _S[2*_noRounds+3];
+            a += _s[2 * NoRounds + 2];
+            c += _s[2 * NoRounds + 3];
 
             // store A, B, C and D registers to out
-            WordToBytes(A, outBytes, outOff);
-            WordToBytes(B, outBytes, outOff + bytesPerWord);
-            WordToBytes(C, outBytes, outOff + bytesPerWord*2);
-            WordToBytes(D, outBytes, outOff + bytesPerWord*3);
+            WordToBytes(a, outBytes, outOff);
+            WordToBytes(b, outBytes, outOff + BytesPerWord);
+            WordToBytes(c, outBytes, outOff + BytesPerWord * 2);
+            WordToBytes(d, outBytes, outOff + BytesPerWord * 3);
 
-            return 4 * bytesPerWord;
+            return 4 * BytesPerWord;
         }
 
         private int DecryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
             // load A,B,C and D registers from out.
-            int A = BytesToWord(input, inOff);
-            int B = BytesToWord(input, inOff + bytesPerWord);
-            int C = BytesToWord(input, inOff + bytesPerWord*2);
-            int D = BytesToWord(input, inOff + bytesPerWord*3);
+            int a = BytesToWord(input, inOff);
+            int b = BytesToWord(input, inOff + BytesPerWord);
+            int c = BytesToWord(input, inOff + BytesPerWord * 2);
+            int d = BytesToWord(input, inOff + BytesPerWord * 3);
 
             // Undo pseudo-round #(ROUNDS+1) : post whitening of A and C
-            C -= _S[2*_noRounds+3];
-            A -= _S[2*_noRounds+2];
+            c -= _s[2 * NoRounds + 3];
+            a -= _s[2 * NoRounds + 2];
 
             // Undo round #ROUNDS, .., #2,#1 of encryption
-            for (int i = _noRounds; i >= 1; i--)
+            for (int i = NoRounds; i >= 1; i--)
             {
-                int t=0,u = 0;
+                int t = 0, u = 0;
 
-                int temp = D;
-                D = C;
-                C = B;
-                B = A;
-                A = temp;
+                int temp = d;
+                d = c;
+                c = b;
+                b = a;
+                a = temp;
 
-                t = B*(2*B+1);
-                t = RotateLeft(t, LGW);
+                t = b * (2 * b + 1);
+                t = RotateLeft(t, Lgw);
 
-                u = D*(2*D+1);
-                u = RotateLeft(u, LGW);
+                u = d * (2 * d + 1);
+                u = RotateLeft(u, Lgw);
 
-                C -= _S[2*i+1];
-                C = RotateRight(C,t);
-                C ^= u;
+                c -= _s[2 * i + 1];
+                c = RotateRight(c, t);
+                c ^= u;
 
-                A -= _S[2*i];
-                A = RotateRight(A,u);
-                A ^= t;
-
+                a -= _s[2 * i];
+                a = RotateRight(a, u);
+                a ^= t;
             }
+
             // Undo pseudo-round #0: pre-whitening of B and D
-            D -= _S[1];
-            B -= _S[0];
+            d -= _s[1];
+            b -= _s[0];
 
-            WordToBytes(A, outBytes, outOff);
-            WordToBytes(B, outBytes, outOff + bytesPerWord);
-            WordToBytes(C, outBytes, outOff + bytesPerWord*2);
-            WordToBytes(D, outBytes, outOff + bytesPerWord*3);
+            WordToBytes(a, outBytes, outOff);
+            WordToBytes(b, outBytes, outOff + BytesPerWord);
+            WordToBytes(c, outBytes, outOff + BytesPerWord * 2);
+            WordToBytes(d, outBytes, outOff + BytesPerWord * 3);
 
-            return 4 * bytesPerWord;
+            return 4 * BytesPerWord;
         }
 
 
@@ -314,8 +316,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         */
         private int RotateLeft(int x, int y)
         {
-            return ((int)((uint)(x << (y & (wordSize-1)))
-				| ((uint) x >> (wordSize - (y & (wordSize-1))))));
+            return ((int)((uint)(x << (y & (WordSize - 1)))
+                          | ((uint)x >> (WordSize - (y & (WordSize - 1))))));
         }
 
         /**
@@ -328,19 +330,19 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param x word to rotate
         * @param y number of bits to rotate % wordSize
         */
-        private int RotateRight(int x, int y) 
-		{
-            return ((int)(((uint) x >> (y & (wordSize-1)))
-				| (uint)(x << (wordSize - (y & (wordSize-1))))));
+        private int RotateRight(int x, int y)
+        {
+            return ((int)(((uint)x >> (y & (WordSize - 1)))
+                          | (uint)(x << (WordSize - (y & (WordSize - 1))))));
         }
 
         private int BytesToWord(
-            byte[]	src,
-            int		srcOff)
+            byte[] src,
+            int srcOff)
         {
             int word = 0;
 
-            for (int i = bytesPerWord - 1; i >= 0; i--)
+            for (int i = BytesPerWord - 1; i >= 0; i--)
             {
                 word = (word << 8) + (src[i + srcOff] & 0xff);
             }
@@ -349,14 +351,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         private void WordToBytes(
-            int		word,
-            byte[]	dst,
-            int		dstOff)
+            int word,
+            byte[] dst,
+            int dstOff)
         {
-            for (int i = 0; i < bytesPerWord; i++)
+            for (int i = 0; i < BytesPerWord; i++)
             {
                 dst[i + dstOff] = (byte)word;
-                word = (int) ((uint) word >> 8);
+                word = (int)((uint)word >> 8);
             }
         }
     }

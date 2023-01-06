@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Digests;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
@@ -25,82 +24,91 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 	* </p>
     */
     public class DesEdeWrapEngine
-		: IWrapper
+        : IWrapper
     {
-        /** Field engine */
-        private CbcBlockCipher engine;
-        /** Field param */
-        private KeyParameter param;
-        /** Field paramPlusIV */
-        private ParametersWithIV paramPlusIV;
-        /** Field iv */
-        private byte[] iv;
-        /** Field forWrapping */
-        private bool forWrapping;
         /** Field IV2           */
-        private static readonly byte[] IV2 = { (byte) 0x4a, (byte) 0xdd, (byte) 0xa2,
-                                            (byte) 0x2c, (byte) 0x79, (byte) 0xe8,
-                                            (byte) 0x21, (byte) 0x05 };
+        private static readonly byte[] Iv2 =
+        {
+            (byte)0x4a, (byte)0xdd, (byte)0xa2,
+            (byte)0x2c, (byte)0x79, (byte)0xe8,
+            (byte)0x21, (byte)0x05
+        };
 
-		//
+        private readonly byte[] _digest = new byte[20];
+
+        //
         // checksum digest
         //
-        private readonly IDigest sha1 = new Sha1Digest();
-        private readonly byte[] digest = new byte[20];
+        private readonly IDigest _sha1 = new Sha1Digest();
 
-		/**
+        /** Field engine */
+        private CbcBlockCipher _engine;
+
+        /** Field forWrapping */
+        private bool _forWrapping;
+
+        /** Field iv */
+        private byte[] _iv;
+
+        /** Field param */
+        private KeyParameter _param;
+
+        /** Field paramPlusIV */
+        private ParametersWithIV _paramPlusIv;
+
+        /**
         * Method init
         *
         * @param forWrapping
         * @param param
         */
         public virtual void Init(
-			bool				forWrapping,
-			ICipherParameters	parameters)
+            bool forWrapping,
+            ICipherParameters parameters)
         {
-            this.forWrapping = forWrapping;
-            this.engine = new CbcBlockCipher(new DesEdeEngine());
+            this._forWrapping = forWrapping;
+            this._engine = new CbcBlockCipher(new DesEdeEngine());
 
-			SecureRandom sr;
-			if (parameters is ParametersWithRandom)
-			{
-				ParametersWithRandom pr = (ParametersWithRandom) parameters;
-				parameters = pr.Parameters;
-				sr = pr.Random;
-			}
-			else
-			{
-				sr = new SecureRandom();
-			}
-
-			if (parameters is KeyParameter)
+            SecureRandom sr;
+            if (parameters is ParametersWithRandom)
             {
-                this.param = (KeyParameter) parameters;
-                if (this.forWrapping)
-				{
+                ParametersWithRandom pr = (ParametersWithRandom)parameters;
+                parameters = pr.Parameters;
+                sr = pr.Random;
+            }
+            else
+            {
+                sr = new SecureRandom();
+            }
+
+            if (parameters is KeyParameter)
+            {
+                this._param = (KeyParameter)parameters;
+                if (this._forWrapping)
+                {
                     // Hm, we have no IV but we want to wrap ?!?
                     // well, then we have to create our own IV.
-                    this.iv = new byte[8];
-					sr.NextBytes(iv);
+                    this._iv = new byte[8];
+                    sr.NextBytes(_iv);
 
-					this.paramPlusIV = new ParametersWithIV(this.param, this.iv);
+                    this._paramPlusIv = new ParametersWithIV(this._param, this._iv);
                 }
             }
             else if (parameters is ParametersWithIV)
             {
-				if (!forWrapping)
-					throw new ArgumentException("You should not supply an IV for unwrapping");
+                if (!forWrapping)
+                    throw new ArgumentException("You should not supply an IV for unwrapping");
 
-				this.paramPlusIV = (ParametersWithIV) parameters;
-                this.iv = this.paramPlusIV.GetIV();
-                this.param = (KeyParameter) this.paramPlusIV.Parameters;
+                this._paramPlusIv = (ParametersWithIV)parameters;
+                this._iv = this._paramPlusIv.GetIV();
+                this._param = (KeyParameter)this._paramPlusIv.Parameters;
 
-				if (this.iv.Length != 8)
-					throw new ArgumentException("IV is not 8 octets", "parameters");
+                if (this._iv.Length != 8)
+                    throw new ArgumentException("IV is not 8 octets", "parameters");
             }
         }
 
-		/**
+        /**
         * Method GetAlgorithmName
         *
         * @return
@@ -110,7 +118,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             get { return "DESede"; }
         }
 
-		/**
+        /**
         * Method wrap
         *
         * @param in
@@ -119,66 +127,66 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @return
         */
         public virtual byte[] Wrap(
-			byte[]	input,
-			int		inOff,
-			int		length)
+            byte[] input,
+            int inOff,
+            int length)
         {
-            if (!forWrapping)
+            if (!_forWrapping)
             {
                 throw new InvalidOperationException("Not initialized for wrapping");
             }
 
-			byte[] keyToBeWrapped = new byte[length];
+            byte[] keyToBeWrapped = new byte[length];
             Array.Copy(input, inOff, keyToBeWrapped, 0, length);
 
             // Compute the CMS Key Checksum, (section 5.6.1), call this CKS.
-            byte[] CKS = CalculateCmsKeyChecksum(keyToBeWrapped);
+            byte[] cks = CalculateCmsKeyChecksum(keyToBeWrapped);
 
             // Let WKCKS = WK || CKS where || is concatenation.
-            byte[] WKCKS = new byte[keyToBeWrapped.Length + CKS.Length];
-            Array.Copy(keyToBeWrapped, 0, WKCKS, 0, keyToBeWrapped.Length);
-            Array.Copy(CKS, 0, WKCKS, keyToBeWrapped.Length, CKS.Length);
+            byte[] wkcks = new byte[keyToBeWrapped.Length + cks.Length];
+            Array.Copy(keyToBeWrapped, 0, wkcks, 0, keyToBeWrapped.Length);
+            Array.Copy(cks, 0, wkcks, keyToBeWrapped.Length, cks.Length);
 
             // Encrypt WKCKS in CBC mode using KEK as the key and IV as the
             // initialization vector. Call the results TEMP1.
 
-			int blockSize = engine.GetBlockSize();
+            int blockSize = _engine.GetBlockSize();
 
-			if (WKCKS.Length % blockSize != 0)
+            if (wkcks.Length % blockSize != 0)
                 throw new InvalidOperationException("Not multiple of block length");
 
-			engine.Init(true, paramPlusIV);
+            _engine.Init(true, _paramPlusIv);
 
-            byte [] TEMP1 = new byte[WKCKS.Length];
+            byte[] temp1 = new byte[wkcks.Length];
 
-			for (int currentBytePos = 0; currentBytePos != WKCKS.Length; currentBytePos += blockSize)
-			{
-                engine.ProcessBlock(WKCKS, currentBytePos, TEMP1, currentBytePos);
+            for (int currentBytePos = 0; currentBytePos != wkcks.Length; currentBytePos += blockSize)
+            {
+                _engine.ProcessBlock(wkcks, currentBytePos, temp1, currentBytePos);
             }
 
             // Let TEMP2 = IV || TEMP1.
-            byte[] TEMP2 = new byte[this.iv.Length + TEMP1.Length];
-            Array.Copy(this.iv, 0, TEMP2, 0, this.iv.Length);
-            Array.Copy(TEMP1, 0, TEMP2, this.iv.Length, TEMP1.Length);
+            byte[] temp2 = new byte[this._iv.Length + temp1.Length];
+            Array.Copy(this._iv, 0, temp2, 0, this._iv.Length);
+            Array.Copy(temp1, 0, temp2, this._iv.Length, temp1.Length);
 
             // Reverse the order of the octets in TEMP2 and call the result TEMP3.
-            byte[] TEMP3 = reverse(TEMP2);
+            byte[] temp3 = Reverse(temp2);
 
-			// Encrypt TEMP3 in CBC mode using the KEK and an initialization vector
+            // Encrypt TEMP3 in CBC mode using the KEK and an initialization vector
             // of 0x 4a dd a2 2c 79 e8 21 05. The resulting cipher text is the desired
             // result. It is 40 octets long if a 168 bit key is being wrapped.
-            ParametersWithIV param2 = new ParametersWithIV(this.param, IV2);
-            this.engine.Init(true, param2);
+            ParametersWithIV param2 = new ParametersWithIV(this._param, Iv2);
+            this._engine.Init(true, param2);
 
-            for (int currentBytePos = 0; currentBytePos != TEMP3.Length; currentBytePos += blockSize)
-			{
-                engine.ProcessBlock(TEMP3, currentBytePos, TEMP3, currentBytePos);
+            for (int currentBytePos = 0; currentBytePos != temp3.Length; currentBytePos += blockSize)
+            {
+                _engine.ProcessBlock(temp3, currentBytePos, temp3, currentBytePos);
             }
 
-            return TEMP3;
+            return temp3;
         }
 
-		/**
+        /**
         * Method unwrap
         *
         * @param in
@@ -188,27 +196,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @throws InvalidCipherTextException
         */
         public virtual byte[] Unwrap(
-			byte[]	input,
-			int		inOff,
-			int		length)
+            byte[] input,
+            int inOff,
+            int length)
         {
-            if (forWrapping)
+            if (_forWrapping)
             {
                 throw new InvalidOperationException("Not set for unwrapping");
             }
+
             if (input == null)
             {
                 throw new InvalidCipherTextException("Null pointer as ciphertext");
             }
 
-			int blockSize = engine.GetBlockSize();
-			
+            int blockSize = _engine.GetBlockSize();
+
             if (length % blockSize != 0)
             {
                 throw new InvalidCipherTextException("Ciphertext not multiple of " + blockSize);
             }
 
-			/*
+            /*
             // Check if the length of the cipher text is reasonable given the key
             // type. It must be 40 bytes for a 168 bit key and either 32, 40, or
             // 48 bytes for a 128, 192, or 256 bit key. If the length is not supported
@@ -225,47 +234,48 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             // Decrypt the cipher text with TRIPLedeS in CBC mode using the KEK
             // and an initialization vector (IV) of 0x4adda22c79e82105. Call the output TEMP3.
-            ParametersWithIV param2 = new ParametersWithIV(this.param, IV2);
-            this.engine.Init(false, param2);
+            ParametersWithIV param2 = new ParametersWithIV(this._param, Iv2);
+            this._engine.Init(false, param2);
 
-            byte [] TEMP3 = new byte[length];
+            byte[] temp3 = new byte[length];
 
-			for (int currentBytePos = 0; currentBytePos != TEMP3.Length; currentBytePos += blockSize)
-			{
-				engine.ProcessBlock(input, inOff + currentBytePos, TEMP3, currentBytePos);
+            for (int currentBytePos = 0; currentBytePos != temp3.Length; currentBytePos += blockSize)
+            {
+                _engine.ProcessBlock(input, inOff + currentBytePos, temp3, currentBytePos);
             }
 
             // Reverse the order of the octets in TEMP3 and call the result TEMP2.
-            byte[] TEMP2 = reverse(TEMP3);
+            byte[] temp2 = Reverse(temp3);
 
-			// Decompose TEMP2 into IV, the first 8 octets, and TEMP1, the remaining octets.
-            this.iv = new byte[8];
-            byte[] TEMP1 = new byte[TEMP2.Length - 8];
-            Array.Copy(TEMP2, 0, this.iv, 0, 8);
-            Array.Copy(TEMP2, 8, TEMP1, 0, TEMP2.Length - 8);
+            // Decompose TEMP2 into IV, the first 8 octets, and TEMP1, the remaining octets.
+            this._iv = new byte[8];
+            byte[] temp1 = new byte[temp2.Length - 8];
+            Array.Copy(temp2, 0, this._iv, 0, 8);
+            Array.Copy(temp2, 8, temp1, 0, temp2.Length - 8);
 
             // Decrypt TEMP1 using TRIPLedeS in CBC mode using the KEK and the IV
             // found in the previous step. Call the result WKCKS.
-            this.paramPlusIV = new ParametersWithIV(this.param, this.iv);
-            this.engine.Init(false, this.paramPlusIV);
+            this._paramPlusIv = new ParametersWithIV(this._param, this._iv);
+            this._engine.Init(false, this._paramPlusIv);
 
-            byte[] WKCKS = new byte[TEMP1.Length];
+            byte[] wkcks = new byte[temp1.Length];
 
-            for (int currentBytePos = 0; currentBytePos != WKCKS.Length; currentBytePos += blockSize)
-			{
-                engine.ProcessBlock(TEMP1, currentBytePos, WKCKS, currentBytePos);
+            for (int currentBytePos = 0; currentBytePos != wkcks.Length; currentBytePos += blockSize)
+            {
+                _engine.ProcessBlock(temp1, currentBytePos, wkcks, currentBytePos);
             }
 
             // Decompose WKCKS. CKS is the last 8 octets and WK, the wrapped key, are
             // those octets before the CKS.
-            byte[] result = new byte[WKCKS.Length - 8];
-            byte[] CKStoBeVerified = new byte[8];
-            Array.Copy(WKCKS, 0, result, 0, WKCKS.Length - 8);
-            Array.Copy(WKCKS, WKCKS.Length - 8, CKStoBeVerified, 0, 8);
+            byte[] result = new byte[wkcks.Length - 8];
+            byte[] ckStoBeVerified = new byte[8];
+            Array.Copy(wkcks, 0, result, 0, wkcks.Length - 8);
+            Array.Copy(wkcks, wkcks.Length - 8, ckStoBeVerified, 0, 8);
 
             // Calculate a CMS Key Checksum, (section 5.6.1), over the WK and compare
             // with the CKS extracted in the above step. If they are not equal, return error.
-            if (!CheckCmsKeyChecksum(result, CKStoBeVerified)) {
+            if (!CheckCmsKeyChecksum(result, ckStoBeVerified))
+            {
                 throw new InvalidCipherTextException(
                     "Checksum inside ciphertext is corrupted");
             }
@@ -274,7 +284,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             return result;
         }
 
-		/**
+        /**
         * Some key wrap algorithms make use of the Key Checksum defined
         * in CMS [CMS-Algorithms]. This is used to provide an integrity
         * check value for the key being wrapped. The algorithm is
@@ -290,36 +300,37 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         private byte[] CalculateCmsKeyChecksum(
             byte[] key)
         {
-			sha1.BlockUpdate(key, 0, key.Length);
-            sha1.DoFinal(digest, 0);
+            _sha1.BlockUpdate(key, 0, key.Length);
+            _sha1.DoFinal(_digest, 0);
 
             byte[] result = new byte[8];
-			Array.Copy(digest, 0, result, 0, 8);
-			return result;
+            Array.Copy(_digest, 0, result, 0, 8);
+            return result;
         }
 
-		/**
+        /**
         * @param key
         * @param checksum
         * @return
         * @see http://www.w3.org/TR/xmlenc-core/#sec-CMSKeyChecksum
         */
         private bool CheckCmsKeyChecksum(
-            byte[]	key,
-            byte[]	checksum)
+            byte[] key,
+            byte[] checksum)
         {
-			return Arrays.ConstantTimeAreEqual(CalculateCmsKeyChecksum(key), checksum);
+            return Arrays.ConstantTimeAreEqual(CalculateCmsKeyChecksum(key), checksum);
         }
 
-		private static byte[] reverse(byte[] bs)
-		{
-			byte[] result = new byte[bs.Length];
-			for (int i = 0; i < bs.Length; i++) 
-			{
-				result[i] = bs[bs.Length - (i + 1)];
-			}
-			return result;
-		}
+        private static byte[] Reverse(byte[] bs)
+        {
+            byte[] result = new byte[bs.Length];
+            for (int i = 0; i < bs.Length; i++)
+            {
+                result[i] = bs[bs.Length - (i + 1)];
+            }
+
+            return result;
+        }
     }
 }
 #pragma warning restore

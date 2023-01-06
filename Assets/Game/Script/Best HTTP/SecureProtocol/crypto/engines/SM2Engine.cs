@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Digests;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
@@ -16,55 +15,55 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     /// <summary>
     /// SM2 public key encryption engine - based on https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02.
     /// </summary>
-    public class SM2Engine
+    public class Sm2Engine
     {
-        private readonly IDigest mDigest;
+        private readonly IDigest _mDigest;
+        private int _mCurveLength;
+        private ECKeyParameters _mEcKey;
+        private ECDomainParameters _mEcParams;
 
-        private bool mForEncryption;
-        private ECKeyParameters mECKey;
-        private ECDomainParameters mECParams;
-        private int mCurveLength;
-        private SecureRandom mRandom;
+        private bool _mForEncryption;
+        private SecureRandom _mRandom;
 
-        public SM2Engine()
+        public Sm2Engine()
             : this(new SM3Digest())
         {
         }
 
-        public SM2Engine(IDigest digest)
+        public Sm2Engine(IDigest digest)
         {
-            this.mDigest = digest;
+            this._mDigest = digest;
         }
 
         public virtual void Init(bool forEncryption, ICipherParameters param)
         {
-            this.mForEncryption = forEncryption;
+            this._mForEncryption = forEncryption;
 
             if (forEncryption)
             {
                 ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-                mECKey = (ECKeyParameters)rParam.Parameters;
-                mECParams = mECKey.Parameters;
+                _mEcKey = (ECKeyParameters)rParam.Parameters;
+                _mEcParams = _mEcKey.Parameters;
 
-                ECPoint s = ((ECPublicKeyParameters)mECKey).Q.Multiply(mECParams.H);
+                ECPoint s = ((ECPublicKeyParameters)_mEcKey).Q.Multiply(_mEcParams.H);
                 if (s.IsInfinity)
                     throw new ArgumentException("invalid key: [h]Q at infinity");
 
-                mRandom = rParam.Random;
+                _mRandom = rParam.Random;
             }
             else
             {
-                mECKey = (ECKeyParameters)param;
-                mECParams = mECKey.Parameters;
+                _mEcKey = (ECKeyParameters)param;
+                _mEcParams = _mEcKey.Parameters;
             }
 
-            mCurveLength = (mECParams.Curve.FieldSize + 7) / 8;
+            _mCurveLength = (_mEcParams.Curve.FieldSize + 7) / 8;
         }
 
         public virtual byte[] ProcessBlock(byte[] input, int inOff, int inLen)
         {
-            if (mForEncryption)
+            if (_mForEncryption)
             {
                 return Encrypt(input, inOff, inLen);
             }
@@ -88,55 +87,54 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             ECMultiplier multiplier = CreateBasePointMultiplier();
 
             byte[] c1;
-            ECPoint kPB;
+            ECPoint kPb;
             do
             {
                 BigInteger k = NextK();
 
-                ECPoint c1P = multiplier.Multiply(mECParams.G, k).Normalize();
+                ECPoint c1P = multiplier.Multiply(_mEcParams.G, k).Normalize();
 
                 c1 = c1P.GetEncoded(false);
 
-                kPB = ((ECPublicKeyParameters)mECKey).Q.Multiply(k).Normalize();
+                kPb = ((ECPublicKeyParameters)_mEcKey).Q.Multiply(k).Normalize();
 
-                Kdf(mDigest, kPB, c2);
-            }
-            while (NotEncrypted(c2, input, inOff));
+                Kdf(_mDigest, kPb, c2);
+            } while (NotEncrypted(c2, input, inOff));
 
-            AddFieldElement(mDigest, kPB.AffineXCoord);
-            mDigest.BlockUpdate(input, inOff, inLen);
-            AddFieldElement(mDigest, kPB.AffineYCoord);
+            AddFieldElement(_mDigest, kPb.AffineXCoord);
+            _mDigest.BlockUpdate(input, inOff, inLen);
+            AddFieldElement(_mDigest, kPb.AffineYCoord);
 
-            byte[] c3 = DigestUtilities.DoFinal(mDigest);
+            byte[] c3 = DigestUtilities.DoFinal(_mDigest);
 
             return Arrays.ConcatenateAll(c1, c2, c3);
         }
 
         private byte[] Decrypt(byte[] input, int inOff, int inLen)
         {
-            byte[] c1 = new byte[mCurveLength * 2 + 1];
+            byte[] c1 = new byte[_mCurveLength * 2 + 1];
 
             Array.Copy(input, inOff, c1, 0, c1.Length);
 
-            ECPoint c1P = mECParams.Curve.DecodePoint(c1);
+            ECPoint c1P = _mEcParams.Curve.DecodePoint(c1);
 
-            ECPoint s = c1P.Multiply(mECParams.H);
+            ECPoint s = c1P.Multiply(_mEcParams.H);
             if (s.IsInfinity)
                 throw new InvalidCipherTextException("[h]C1 at infinity");
 
-            c1P = c1P.Multiply(((ECPrivateKeyParameters)mECKey).D).Normalize();
+            c1P = c1P.Multiply(((ECPrivateKeyParameters)_mEcKey).D).Normalize();
 
-            byte[] c2 = new byte[inLen - c1.Length - mDigest.GetDigestSize()];
+            byte[] c2 = new byte[inLen - c1.Length - _mDigest.GetDigestSize()];
 
             Array.Copy(input, inOff + c1.Length, c2, 0, c2.Length);
 
-            Kdf(mDigest, c1P, c2);
+            Kdf(_mDigest, c1P, c2);
 
-            AddFieldElement(mDigest, c1P.AffineXCoord);
-            mDigest.BlockUpdate(c2, 0, c2.Length);
-            AddFieldElement(mDigest, c1P.AffineYCoord);
+            AddFieldElement(_mDigest, c1P.AffineXCoord);
+            _mDigest.BlockUpdate(c2, 0, c2.Length);
+            AddFieldElement(_mDigest, c1P.AffineYCoord);
 
-            byte[] c3 = DigestUtilities.DoFinal(mDigest);
+            byte[] c3 = DigestUtilities.DoFinal(_mDigest);
 
             int check = 0;
             for (int i = 0; i != c3.Length; i++)
@@ -149,8 +147,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             if (check != 0)
             {
-               Arrays.Fill(c2, 0);
-               throw new InvalidCipherTextException("invalid cipher text");
+                Arrays.Fill(c2, 0);
+                throw new InvalidCipherTextException("invalid cipher text");
             }
 
             return c2;
@@ -219,14 +217,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         private BigInteger NextK()
         {
-            int qBitLength = mECParams.N.BitLength;
+            int qBitLength = _mEcParams.N.BitLength;
 
             BigInteger k;
             do
             {
-                k = new BigInteger(qBitLength, mRandom);
-            }
-            while (k.SignValue == 0 || k.CompareTo(mECParams.N) >= 0);
+                k = new BigInteger(qBitLength, _mRandom);
+            } while (k.SignValue == 0 || k.CompareTo(_mEcParams.N) >= 0);
 
             return k;
         }

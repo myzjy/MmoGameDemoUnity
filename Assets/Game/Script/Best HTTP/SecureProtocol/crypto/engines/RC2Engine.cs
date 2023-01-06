@@ -1,9 +1,7 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
@@ -11,13 +9,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     * an implementation of RC2 as described in RFC 2268
     *      "A Description of the RC2(r) Encryption Algorithm" R. Rivest.
     */
-    public class RC2Engine
-		: IBlockCipher
+    public class Rc2Engine
+        : IBlockCipher
     {
+        private const int BlockSize = 8;
+
         //
         // the values we use for key expansion (based on the digits of PI)
         //
-        private static readonly byte[] piTable =
+        private static readonly byte[] PITable =
         {
             (byte)0xd9, (byte)0x78, (byte)0xf9, (byte)0xc4, (byte)0x19, (byte)0xdd, (byte)0xb5, (byte)0xed,
             (byte)0x28, (byte)0xe9, (byte)0xfd, (byte)0x79, (byte)0x4a, (byte)0xa0, (byte)0xd8, (byte)0x9d,
@@ -53,17 +53,94 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             (byte)0xa, (byte)0xa6, (byte)0x20, (byte)0x68, (byte)0xfe, (byte)0x7f, (byte)0xc1, (byte)0xad
         };
 
-        private const int BLOCK_SIZE = 8;
+        private bool _encrypting;
 
-        private int[]   workingKey;
-        private bool encrypting;
+        private int[] _workingKey;
+
+        /**
+        * initialise a RC2 cipher.
+        *
+        * @param forEncryption whether or not we are for encryption.
+        * @param parameters the parameters required to set up the cipher.
+        * @exception ArgumentException if the parameters argument is
+        * inappropriate.
+        */
+        public virtual void Init(
+            bool forEncryption,
+            ICipherParameters parameters)
+        {
+            this._encrypting = forEncryption;
+
+            if (parameters is RC2Parameters)
+            {
+                RC2Parameters param = (RC2Parameters)parameters;
+
+                _workingKey = GenerateWorkingKey(param.GetKey(), param.EffectiveKeyBits);
+            }
+            else if (parameters is KeyParameter)
+            {
+                KeyParameter param = (KeyParameter)parameters;
+                byte[] key = param.GetKey();
+
+                _workingKey = GenerateWorkingKey(key, key.Length * 8);
+            }
+            else
+            {
+                throw new ArgumentException("invalid parameter passed to RC2 init - " +
+                                            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(
+                                                parameters));
+            }
+        }
+
+        public virtual void Reset()
+        {
+        }
+
+        public virtual string AlgorithmName
+        {
+            get { return "RC2"; }
+        }
+
+        public virtual bool IsPartialBlockOkay
+        {
+            get { return false; }
+        }
+
+        public virtual int GetBlockSize()
+        {
+            return BlockSize;
+        }
+
+        public virtual int ProcessBlock(
+            byte[] input,
+            int inOff,
+            byte[] output,
+            int outOff)
+        {
+            if (_workingKey == null)
+                throw new InvalidOperationException("RC2 engine not initialised");
+
+            Check.DataLength(input, inOff, BlockSize, "input buffer too short");
+            Check.OutputLength(output, outOff, BlockSize, "output buffer too short");
+
+            if (_encrypting)
+            {
+                EncryptBlock(input, inOff, output, outOff);
+            }
+            else
+            {
+                DecryptBlock(input, inOff, output, outOff);
+            }
+
+            return BlockSize;
+        }
 
         private int[] GenerateWorkingKey(
-            byte[]      key,
-            int         bits)
+            byte[] key,
+            int bits)
         {
-            int     x;
-            int[]   xKey = new int[128];
+            int x;
+            int[] xKey = new int[128];
 
             for (int i = 0; i != key.Length; i++)
             {
@@ -75,27 +152,26 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             if (len < 128)
             {
-                int     index = 0;
+                int index = 0;
 
                 x = xKey[len - 1];
 
                 do
                 {
-                    x = piTable[(x + xKey[index++]) & 255] & 0xff;
+                    x = PITable[(x + xKey[index++]) & 255] & 0xff;
                     xKey[len++] = x;
-                }
-                while (len < 128);
+                } while (len < 128);
             }
 
             // Phase 2 - reduce effective key size to "bits"
             len = (bits + 7) >> 3;
-            x = piTable[xKey[128 - len] & (255 >> (7 & -bits))] & 0xff;
+            x = PITable[xKey[128 - len] & (255 >> (7 & -bits))] & 0xff;
             xKey[128 - len] = x;
 
             for (int i = 128 - len - 1; i >= 0; i--)
             {
-                    x = piTable[x ^ xKey[i + len]] & 0xff;
-                    xKey[i] = x;
+                x = PITable[x ^ xKey[i + len]] & 0xff;
+                xKey[i] = x;
             }
 
             // Phase 3 - copy to newKey in little-endian order
@@ -110,82 +186,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         /**
-        * initialise a RC2 cipher.
-        *
-        * @param forEncryption whether or not we are for encryption.
-        * @param parameters the parameters required to set up the cipher.
-        * @exception ArgumentException if the parameters argument is
-        * inappropriate.
-        */
-        public virtual void Init(
-            bool				forEncryption,
-            ICipherParameters	parameters)
-        {
-            this.encrypting = forEncryption;
-
-			if (parameters is RC2Parameters)
-            {
-                RC2Parameters param = (RC2Parameters) parameters;
-
-				workingKey = GenerateWorkingKey(param.GetKey(), param.EffectiveKeyBits);
-            }
-            else if (parameters is KeyParameter)
-            {
-				KeyParameter param = (KeyParameter) parameters;
-				byte[] key = param.GetKey();
-
-				workingKey = GenerateWorkingKey(key, key.Length * 8);
-            }
-            else
-            {
-                throw new ArgumentException("invalid parameter passed to RC2 init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
-            }
-        }
-
-        public virtual void Reset()
-        {
-        }
-
-        public virtual string AlgorithmName
-        {
-            get { return "RC2"; }
-        }
-
-        public virtual bool IsPartialBlockOkay
-		{
-			get { return false; }
-		}
-
-        public virtual int GetBlockSize()
-        {
-            return BLOCK_SIZE;
-        }
-
-        public virtual int ProcessBlock(
-            byte[]	input,
-            int		inOff,
-            byte[]	output,
-            int		outOff)
-        {
-            if (workingKey == null)
-                throw new InvalidOperationException("RC2 engine not initialised");
-
-            Check.DataLength(input, inOff, BLOCK_SIZE, "input buffer too short");
-            Check.OutputLength(output, outOff, BLOCK_SIZE, "output buffer too short");
-
-            if (encrypting)
-            {
-                EncryptBlock(input, inOff, output, outOff);
-            }
-            else
-            {
-                DecryptBlock(input, inOff, output, outOff);
-            }
-
-            return BLOCK_SIZE;
-        }
-
-        /**
         * return the result rotating the 16 bit number in x left by y
         */
         private int RotateWordLeft(
@@ -197,10 +197,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         private void EncryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
             int x76, x54, x32, x10;
 
@@ -211,36 +211,36 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             for (int i = 0; i <= 16; i += 4)
             {
-                    x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + workingKey[i  ], 1);
-                    x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + workingKey[i+1], 2);
-                    x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + workingKey[i+2], 3);
-                    x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + workingKey[i+3], 5);
+                x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + _workingKey[i], 1);
+                x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + _workingKey[i + 1], 2);
+                x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + _workingKey[i + 2], 3);
+                x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + _workingKey[i + 3], 5);
             }
 
-            x10 += workingKey[x76 & 63];
-            x32 += workingKey[x10 & 63];
-            x54 += workingKey[x32 & 63];
-            x76 += workingKey[x54 & 63];
+            x10 += _workingKey[x76 & 63];
+            x32 += _workingKey[x10 & 63];
+            x54 += _workingKey[x32 & 63];
+            x76 += _workingKey[x54 & 63];
 
             for (int i = 20; i <= 40; i += 4)
             {
-                    x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + workingKey[i  ], 1);
-                    x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + workingKey[i+1], 2);
-                    x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + workingKey[i+2], 3);
-                    x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + workingKey[i+3], 5);
+                x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + _workingKey[i], 1);
+                x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + _workingKey[i + 1], 2);
+                x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + _workingKey[i + 2], 3);
+                x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + _workingKey[i + 3], 5);
             }
 
-            x10 += workingKey[x76 & 63];
-            x32 += workingKey[x10 & 63];
-            x54 += workingKey[x32 & 63];
-            x76 += workingKey[x54 & 63];
+            x10 += _workingKey[x76 & 63];
+            x32 += _workingKey[x10 & 63];
+            x54 += _workingKey[x32 & 63];
+            x76 += _workingKey[x54 & 63];
 
             for (int i = 44; i < 64; i += 4)
             {
-                    x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + workingKey[i  ], 1);
-                    x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + workingKey[i+1], 2);
-                    x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + workingKey[i+2], 3);
-                    x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + workingKey[i+3], 5);
+                x10 = RotateWordLeft(x10 + (x32 & ~x76) + (x54 & x76) + _workingKey[i], 1);
+                x32 = RotateWordLeft(x32 + (x54 & ~x10) + (x76 & x10) + _workingKey[i + 1], 2);
+                x54 = RotateWordLeft(x54 + (x76 & ~x32) + (x10 & x32) + _workingKey[i + 2], 3);
+                x76 = RotateWordLeft(x76 + (x10 & ~x54) + (x32 & x54) + _workingKey[i + 3], 5);
             }
 
             outBytes[outOff + 0] = (byte)x10;
@@ -254,10 +254,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         private void DecryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
             int x76, x54, x32, x10;
 
@@ -268,36 +268,36 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             for (int i = 60; i >= 44; i -= 4)
             {
-                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + workingKey[i+3]);
-                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + workingKey[i+2]);
-                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + workingKey[i+1]);
-                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + workingKey[i  ]);
+                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + _workingKey[i + 3]);
+                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + _workingKey[i + 2]);
+                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + _workingKey[i + 1]);
+                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + _workingKey[i]);
             }
 
-            x76 -= workingKey[x54 & 63];
-            x54 -= workingKey[x32 & 63];
-            x32 -= workingKey[x10 & 63];
-            x10 -= workingKey[x76 & 63];
+            x76 -= _workingKey[x54 & 63];
+            x54 -= _workingKey[x32 & 63];
+            x32 -= _workingKey[x10 & 63];
+            x10 -= _workingKey[x76 & 63];
 
             for (int i = 40; i >= 20; i -= 4)
             {
-                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + workingKey[i+3]);
-                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + workingKey[i+2]);
-                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + workingKey[i+1]);
-                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + workingKey[i  ]);
+                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + _workingKey[i + 3]);
+                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + _workingKey[i + 2]);
+                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + _workingKey[i + 1]);
+                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + _workingKey[i]);
             }
 
-            x76 -= workingKey[x54 & 63];
-            x54 -= workingKey[x32 & 63];
-            x32 -= workingKey[x10 & 63];
-            x10 -= workingKey[x76 & 63];
+            x76 -= _workingKey[x54 & 63];
+            x54 -= _workingKey[x32 & 63];
+            x32 -= _workingKey[x10 & 63];
+            x10 -= _workingKey[x76 & 63];
 
             for (int i = 16; i >= 0; i -= 4)
             {
-                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + workingKey[i+3]);
-                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + workingKey[i+2]);
-                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + workingKey[i+1]);
-                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + workingKey[i  ]);
+                x76 = RotateWordLeft(x76, 11) - ((x10 & ~x54) + (x32 & x54) + _workingKey[i + 3]);
+                x54 = RotateWordLeft(x54, 13) - ((x76 & ~x32) + (x10 & x32) + _workingKey[i + 2]);
+                x32 = RotateWordLeft(x32, 14) - ((x54 & ~x10) + (x76 & x10) + _workingKey[i + 1]);
+                x10 = RotateWordLeft(x10, 15) - ((x32 & ~x76) + (x54 & x76) + _workingKey[i]);
             }
 
             outBytes[outOff + 0] = (byte)x10;

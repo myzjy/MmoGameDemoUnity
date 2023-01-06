@@ -1,156 +1,156 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
-	public class PkiHeaderBuilder
-	{
-		private DerInteger pvno;
-		private GeneralName sender;
-		private GeneralName recipient;
-		private DerGeneralizedTime messageTime;
-		private AlgorithmIdentifier protectionAlg;
-		private Asn1OctetString senderKID;       // KeyIdentifier
-		private Asn1OctetString recipKID;        // KeyIdentifier
-		private Asn1OctetString transactionID;
-		private Asn1OctetString senderNonce;
-		private Asn1OctetString recipNonce;
-		private PkiFreeText     freeText;
-		private Asn1Sequence    generalInfo;
+    public class PkiHeaderBuilder
+    {
+        private PkiFreeText _freeText;
+        private Asn1Sequence _generalInfo;
+        private DerGeneralizedTime _messageTime;
+        private AlgorithmIdentifier _protectionAlg;
+        private DerInteger _pvno;
+        private GeneralName _recipient;
+        private Asn1OctetString _recipKid; // KeyIdentifier
+        private Asn1OctetString _recipNonce;
+        private GeneralName _sender;
+        private Asn1OctetString _senderKid; // KeyIdentifier
+        private Asn1OctetString _senderNonce;
+        private Asn1OctetString _transactionID;
 
-		public PkiHeaderBuilder(
-			int			pvno,
-			GeneralName	sender,
-			GeneralName	recipient)
-			: this(new DerInteger(pvno), sender, recipient)
-		{
-		}
+        public PkiHeaderBuilder(
+            int pvno,
+            GeneralName sender,
+            GeneralName recipient)
+            : this(new DerInteger(pvno), sender, recipient)
+        {
+        }
 
-		private PkiHeaderBuilder(
-			DerInteger	pvno,
-			GeneralName	sender,
-			GeneralName	recipient)
-		{
-			this.pvno = pvno;
-			this.sender = sender;
-			this.recipient = recipient;
-		}
+        private PkiHeaderBuilder(
+            DerInteger pvno,
+            GeneralName sender,
+            GeneralName recipient)
+        {
+            this._pvno = pvno;
+            this._sender = sender;
+            this._recipient = recipient;
+        }
 
-		public virtual PkiHeaderBuilder SetMessageTime(DerGeneralizedTime time)
-		{
-			messageTime = time;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetMessageTime(DerGeneralizedTime time)
+        {
+            _messageTime = time;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetProtectionAlg(AlgorithmIdentifier aid)
-		{
-			protectionAlg = aid;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetProtectionAlg(AlgorithmIdentifier aid)
+        {
+            _protectionAlg = aid;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetSenderKID(byte[] kid)
-		{
-            return SetSenderKID(kid == null ? null : new DerOctetString(kid));
-		}
+        public virtual PkiHeaderBuilder SetSenderKid(byte[] kid)
+        {
+            return SetSenderKid(kid == null ? null : new DerOctetString(kid));
+        }
 
-		public virtual PkiHeaderBuilder SetSenderKID(Asn1OctetString kid)
-		{
-			senderKID = kid;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetSenderKid(Asn1OctetString kid)
+        {
+            _senderKid = kid;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetRecipKID(byte[] kid)
-		{
-            return SetRecipKID(kid == null ? null : new DerOctetString(kid));
-		}
+        public virtual PkiHeaderBuilder SetRecipKid(byte[] kid)
+        {
+            return SetRecipKid(kid == null ? null : new DerOctetString(kid));
+        }
 
-		public virtual PkiHeaderBuilder SetRecipKID(Asn1OctetString kid)
-		{
-			recipKID = kid;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetRecipKid(Asn1OctetString kid)
+        {
+            _recipKid = kid;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetTransactionID(byte[] tid)
-		{
-			return SetTransactionID(tid == null ? null : new DerOctetString(tid));
-		}
+        public virtual PkiHeaderBuilder SetTransactionID(byte[] tid)
+        {
+            return SetTransactionID(tid == null ? null : new DerOctetString(tid));
+        }
 
-		public virtual PkiHeaderBuilder SetTransactionID(Asn1OctetString tid)
-		{
-			transactionID = tid;
-			return this;
-		}
-		
-		public virtual PkiHeaderBuilder SetSenderNonce(byte[] nonce)
-		{
+        public virtual PkiHeaderBuilder SetTransactionID(Asn1OctetString tid)
+        {
+            _transactionID = tid;
+            return this;
+        }
+
+        public virtual PkiHeaderBuilder SetSenderNonce(byte[] nonce)
+        {
             return SetSenderNonce(nonce == null ? null : new DerOctetString(nonce));
-		}
+        }
 
-		public virtual PkiHeaderBuilder SetSenderNonce(Asn1OctetString nonce)
-		{
-			senderNonce = nonce;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetSenderNonce(Asn1OctetString nonce)
+        {
+            _senderNonce = nonce;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetRecipNonce(byte[] nonce)
-		{
+        public virtual PkiHeaderBuilder SetRecipNonce(byte[] nonce)
+        {
             return SetRecipNonce(nonce == null ? null : new DerOctetString(nonce));
-		}
+        }
 
-		public virtual PkiHeaderBuilder SetRecipNonce(Asn1OctetString nonce)
-		{
-			recipNonce = nonce;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetRecipNonce(Asn1OctetString nonce)
+        {
+            _recipNonce = nonce;
+            return this;
+        }
 
-		public virtual PkiHeaderBuilder SetFreeText(PkiFreeText text)
-		{
-			freeText = text;
-			return this;
-		}
-		
-		public virtual PkiHeaderBuilder SetGeneralInfo(InfoTypeAndValue genInfo)
-		{
-			return SetGeneralInfo(MakeGeneralInfoSeq(genInfo));
-		}
-		
-		public virtual PkiHeaderBuilder SetGeneralInfo(InfoTypeAndValue[] genInfos)
-		{
-			return SetGeneralInfo(MakeGeneralInfoSeq(genInfos));
-		}
-		
-		public virtual PkiHeaderBuilder SetGeneralInfo(Asn1Sequence seqOfInfoTypeAndValue)
-		{
-			generalInfo = seqOfInfoTypeAndValue;
-			return this;
-		}
+        public virtual PkiHeaderBuilder SetFreeText(PkiFreeText text)
+        {
+            _freeText = text;
+            return this;
+        }
 
-		private static Asn1Sequence MakeGeneralInfoSeq(
-			InfoTypeAndValue generalInfo)
-		{
-			return new DerSequence(generalInfo);
-		}
-		
-		private static Asn1Sequence MakeGeneralInfoSeq(
-			InfoTypeAndValue[] generalInfos)
-		{
-			Asn1Sequence genInfoSeq = null;
-			if (generalInfos != null)
-			{
-				Asn1EncodableVector v = new Asn1EncodableVector();
-				for (int i = 0; i < generalInfos.Length; ++i)
-				{
-					v.Add(generalInfos[i]);
-				}
-				genInfoSeq = new DerSequence(v);
-			}
-			return genInfoSeq;
-		}
+        public virtual PkiHeaderBuilder SetGeneralInfo(InfoTypeAndValue genInfo)
+        {
+            return SetGeneralInfo(MakeGeneralInfoSeq(genInfo));
+        }
 
-		/**
+        public virtual PkiHeaderBuilder SetGeneralInfo(InfoTypeAndValue[] genInfos)
+        {
+            return SetGeneralInfo(MakeGeneralInfoSeq(genInfos));
+        }
+
+        public virtual PkiHeaderBuilder SetGeneralInfo(Asn1Sequence seqOfInfoTypeAndValue)
+        {
+            _generalInfo = seqOfInfoTypeAndValue;
+            return this;
+        }
+
+        private static Asn1Sequence MakeGeneralInfoSeq(
+            InfoTypeAndValue generalInfo)
+        {
+            return new DerSequence(generalInfo);
+        }
+
+        private static Asn1Sequence MakeGeneralInfoSeq(
+            InfoTypeAndValue[] generalInfos)
+        {
+            Asn1Sequence genInfoSeq = null;
+            if (generalInfos != null)
+            {
+                Asn1EncodableVector v = new Asn1EncodableVector();
+                for (int i = 0; i < generalInfos.Length; ++i)
+                {
+                    v.Add(generalInfos[i]);
+                }
+
+                genInfoSeq = new DerSequence(v);
+            }
+
+            return genInfoSeq;
+        }
+
+        /**
 		 * <pre>
 		 *  PKIHeader ::= SEQUENCE {
 		 *            pvno                INTEGER     { cmp1999(1), cmp2000(2) },
@@ -188,40 +188,40 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 		 * </pre>
 		 * @return a basic ASN.1 object representation.
 		 */
-		public virtual PkiHeader Build()
-		{
-			Asn1EncodableVector v = new Asn1EncodableVector(pvno, sender, recipient);
-			AddOptional(v, 0, messageTime);
-			AddOptional(v, 1, protectionAlg);
-			AddOptional(v, 2, senderKID);
-			AddOptional(v, 3, recipKID);
-			AddOptional(v, 4, transactionID);
-			AddOptional(v, 5, senderNonce);
-			AddOptional(v, 6, recipNonce);
-			AddOptional(v, 7, freeText);
-			AddOptional(v, 8, generalInfo);
+        public virtual PkiHeader Build()
+        {
+            Asn1EncodableVector v = new Asn1EncodableVector(_pvno, _sender, _recipient);
+            AddOptional(v, 0, _messageTime);
+            AddOptional(v, 1, _protectionAlg);
+            AddOptional(v, 2, _senderKid);
+            AddOptional(v, 3, _recipKid);
+            AddOptional(v, 4, _transactionID);
+            AddOptional(v, 5, _senderNonce);
+            AddOptional(v, 6, _recipNonce);
+            AddOptional(v, 7, _freeText);
+            AddOptional(v, 8, _generalInfo);
 
-			messageTime = null;
-			protectionAlg = null;
-			senderKID = null;
-			recipKID = null;
-			transactionID = null;
-			senderNonce = null;
-			recipNonce = null;
-			freeText = null;
-			generalInfo = null;
+            _messageTime = null;
+            _protectionAlg = null;
+            _senderKid = null;
+            _recipKid = null;
+            _transactionID = null;
+            _senderNonce = null;
+            _recipNonce = null;
+            _freeText = null;
+            _generalInfo = null;
 
-			return PkiHeader.GetInstance(new DerSequence(v));
-		}
+            return PkiHeader.GetInstance(new DerSequence(v));
+        }
 
-		private void AddOptional(Asn1EncodableVector v, int tagNo, Asn1Encodable obj)
-		{
-			if (obj != null)
-			{
-				v.Add(new DerTaggedObject(true, tagNo, obj));
-			}
-		}
-	}
+        private void AddOptional(Asn1EncodableVector v, int tagNo, Asn1Encodable obj)
+        {
+            if (obj != null)
+            {
+                v.Add(new DerTaggedObject(true, tagNo, obj));
+            }
+        }
+    }
 }
 #pragma warning restore
 #endif

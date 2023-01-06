@@ -164,14 +164,14 @@ namespace BestHTTP.Connections
 
                 switch (this.connector.NegotiatedProtocol)
                 {
-                    case HttpProtocolFactory.W3C_HTTP1:
+                    case HttpProtocolFactory.W3CHttp1:
                         this.requestHandler = new Connections.HTTP1Handler(this);
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
                             HostProtocolSupport.Http1));
                         break;
 
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-                    case HttpProtocolFactory.W3C_HTTP2:
+                    case HttpProtocolFactory.W3CHttp2:
                         this.requestHandler = new Connections.HTTP2.HTTP2Handler(this);
                         this.CurrentRequest = null;
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,

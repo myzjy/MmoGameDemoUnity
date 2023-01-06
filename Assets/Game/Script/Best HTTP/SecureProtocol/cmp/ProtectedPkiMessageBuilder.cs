@@ -2,23 +2,21 @@
 #pragma warning disable
 using System;
 using System.Collections;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Operators;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.X509;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Cmp
 {
     public class ProtectedPkiMessageBuilder
     {
-        private PkiHeaderBuilder hdrBuilBuilder;
         private PkiBody body;
-        private IList generalInfos = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList();
         private IList extraCerts = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList();
+        private IList generalInfos = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList();
+        private PkiHeaderBuilder hdrBuilBuilder;
 
         public ProtectedPkiMessageBuilder(GeneralName sender, GeneralName recipient)
             : this(PkiHeader.CMP_2000, sender, recipient)
@@ -56,7 +54,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Cmp
 
         public ProtectedPkiMessageBuilder SetRecipKID(byte[] id)
         {
-            hdrBuilBuilder.SetRecipKID(id);
+            hdrBuilBuilder.SetRecipKid(id);
             return this;
         }
 
@@ -68,7 +66,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Cmp
 
         public ProtectedPkiMessageBuilder SetSenderKID(byte[] id)
         {
-            hdrBuilBuilder.SetSenderKID(id);
+            hdrBuilBuilder.SetSenderKid(id);
             return this;
         }
 

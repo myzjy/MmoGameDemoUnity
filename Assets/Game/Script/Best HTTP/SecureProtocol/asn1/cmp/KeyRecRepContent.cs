@@ -2,91 +2,93 @@
 #pragma warning disable
 using System;
 
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
-
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
-	public class KeyRecRepContent
-		: Asn1Encodable
-	{
-		private readonly PkiStatusInfo status;
-		private readonly CmpCertificate newSigCert;
-		private readonly Asn1Sequence caCerts;
-		private readonly Asn1Sequence keyPairHist;
+    public class KeyRecRepContent
+        : Asn1Encodable
+    {
+        private readonly Asn1Sequence _caCerts;
+        private readonly Asn1Sequence _keyPairHist;
+        private readonly CmpCertificate _newSigCert;
+        private readonly PkiStatusInfo _status;
 
-		private KeyRecRepContent(Asn1Sequence seq)
-		{
-			status = PkiStatusInfo.GetInstance(seq[0]);
+        private KeyRecRepContent(Asn1Sequence seq)
+        {
+            _status = PkiStatusInfo.GetInstance(seq[0]);
 
-			for (int pos = 1; pos < seq.Count; ++pos)
-			{
-				Asn1TaggedObject tObj = Asn1TaggedObject.GetInstance(seq[pos]);
+            for (int pos = 1; pos < seq.Count; ++pos)
+            {
+                Asn1TaggedObject tObj = Asn1TaggedObject.GetInstance(seq[pos]);
 
-				switch (tObj.TagNo)
-				{
-					case 0:
-						newSigCert = CmpCertificate.GetInstance(tObj.GetObject());
-						break;
-					case 1:
-						caCerts = Asn1Sequence.GetInstance(tObj.GetObject());
-						break;
-					case 2:
-						keyPairHist = Asn1Sequence.GetInstance(tObj.GetObject());
-						break;
-					default:
-						throw new ArgumentException("unknown tag number: " + tObj.TagNo, "seq");
-				}
-			}
-		}
+                switch (tObj.TagNo)
+                {
+                    case 0:
+                        _newSigCert = CmpCertificate.GetInstance(tObj.GetObject());
+                        break;
+                    case 1:
+                        _caCerts = Asn1Sequence.GetInstance(tObj.GetObject());
+                        break;
+                    case 2:
+                        _keyPairHist = Asn1Sequence.GetInstance(tObj.GetObject());
+                        break;
+                    default:
+                        throw new ArgumentException("unknown tag number: " + tObj.TagNo, "seq");
+                }
+            }
+        }
 
-		public static KeyRecRepContent GetInstance(object obj)
-		{
-			if (obj is KeyRecRepContent)
-				return (KeyRecRepContent)obj;
+        public virtual PkiStatusInfo Status
+        {
+            get { return _status; }
+        }
 
-			if (obj is Asn1Sequence)
-				return new KeyRecRepContent((Asn1Sequence)obj);
+        public virtual CmpCertificate NewSigCert
+        {
+            get { return _newSigCert; }
+        }
 
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-		}
+        public static KeyRecRepContent GetInstance(object obj)
+        {
+            if (obj is KeyRecRepContent)
+                return (KeyRecRepContent)obj;
 
-		public virtual PkiStatusInfo Status
-		{
-			get { return status; }
-		}
+            if (obj is Asn1Sequence)
+                return new KeyRecRepContent((Asn1Sequence)obj);
 
-		public virtual CmpCertificate NewSigCert
-		{
-			get { return newSigCert; }
-		}
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
+        }
 
-		public virtual CmpCertificate[] GetCACerts()
-		{
-			if (caCerts == null)
-				return null;
+        public virtual CmpCertificate[] GetCaCerts()
+        {
+            if (_caCerts == null)
+                return null;
 
-			CmpCertificate[] results = new CmpCertificate[caCerts.Count];
-			for (int i = 0; i != results.Length; ++i)
-			{
-				results[i] = CmpCertificate.GetInstance(caCerts[i]);
-			}
-			return results;
-		}
+            CmpCertificate[] results = new CmpCertificate[_caCerts.Count];
+            for (int i = 0; i != results.Length; ++i)
+            {
+                results[i] = CmpCertificate.GetInstance(_caCerts[i]);
+            }
 
-		public virtual CertifiedKeyPair[] GetKeyPairHist()
-		{
-			if (keyPairHist == null)
-				return null;
+            return results;
+        }
 
-			CertifiedKeyPair[] results = new CertifiedKeyPair[keyPairHist.Count];
-			for (int i = 0; i != results.Length; ++i)
-			{
-				results[i] = CertifiedKeyPair.GetInstance(keyPairHist[i]);
-			}
-			return results;
-		}
+        public virtual CertifiedKeyPair[] GetKeyPairHist()
+        {
+            if (_keyPairHist == null)
+                return null;
 
-		/**
+            CertifiedKeyPair[] results = new CertifiedKeyPair[_keyPairHist.Count];
+            for (int i = 0; i != results.Length; ++i)
+            {
+                results[i] = CertifiedKeyPair.GetInstance(_keyPairHist[i]);
+            }
+
+            return results;
+        }
+
+        /**
 		 * <pre>
 		 * KeyRecRepContent ::= SEQUENCE {
 		 *                         status                  PKIStatusInfo,
@@ -99,15 +101,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 		 * </pre> 
 		 * @return a basic ASN.1 object representation.
 		 */
-		public override Asn1Object ToAsn1Object()
-		{
-			Asn1EncodableVector v = new Asn1EncodableVector(status);
-            v.AddOptionalTagged(true, 0, newSigCert);
-            v.AddOptionalTagged(true, 1, caCerts);
-            v.AddOptionalTagged(true, 2, keyPairHist);
-			return new DerSequence(v);
-		}
-	}
+        public override Asn1Object ToAsn1Object()
+        {
+            Asn1EncodableVector v = new Asn1EncodableVector(_status);
+            v.AddOptionalTagged(true, 0, _newSigCert);
+            v.AddOptionalTagged(true, 1, _caCerts);
+            v.AddOptionalTagged(true, 2, _keyPairHist);
+            return new DerSequence(v);
+        }
+    }
 }
 #pragma warning restore
 #endif

@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Kisa;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Nist;
@@ -73,7 +72,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
                 keyGen.Init(new KeyGenerationParameters(random, 64));
                 return keyGen;
             }
-            else if (PkcsObjectIdentifiers.rc4.Equals(algorithm))
+            else if (PkcsObjectIdentifiers.Rc4.Equals(algorithm))
             {
                 return CreateCipherKeyGenerator(random, 128);
             }

@@ -1,12 +1,13 @@
 using System;
 using System.IO;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections
 {
     public enum SupportedProtocols
     {
         Unknown,
-        HTTP,
+        Http,
 
 #if !BESTHTTP_DISABLE_WEBSOCKET
         WebSocket,
@@ -19,9 +20,9 @@ namespace BestHTTP.Connections
 
     public static class HttpProtocolFactory
     {
-        public const string W3C_HTTP1 = "http/1.1";
+        public const string W3CHttp1 = "http/1.1";
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-        public const string W3C_HTTP2 = "h2";
+        public const string W3CHttp2 = "h2";
 #endif
 
         public static HttpResponse Get(SupportedProtocols protocol, HTTPRequest request, Stream stream, bool isStreamed,
@@ -52,7 +53,7 @@ namespace BestHTTP.Connections
 #endif
 
                 default:
-                    return SupportedProtocols.HTTP;
+                    return SupportedProtocols.Http;
             }
         }
 

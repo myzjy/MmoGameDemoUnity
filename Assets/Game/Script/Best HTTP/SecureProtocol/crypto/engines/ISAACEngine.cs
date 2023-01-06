@@ -1,10 +1,8 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
@@ -16,19 +14,21 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         : IStreamCipher
     {
         // Constants
-        private static readonly int sizeL          = 8,
-                                    stateArraySize = sizeL<<5; // 256
+        private static readonly int SizeL = 8,
+            StateArraySize = SizeL << 5; // 256
+
+        private uint _a = 0, _b = 0, _c = 0;
 
         // Cipher's internal state
-        private uint[]   engineState   = null, // mm                
-                        results       = null; // randrsl
-        private uint     a = 0, b = 0, c = 0;
+        private uint[] _engineState = null, // mm                
+            _results = null; // randrsl
 
         // Engine state
-        private int     index         = 0;
-        private byte[]  keyStream     = new byte[stateArraySize<<2], // results expanded into bytes
-                        workingKey    = null;
-        private bool	initialised   = false;
+        private int _index = 0;
+        private bool _initialised = false;
+
+        private byte[] _keyStream = new byte[StateArraySize << 2], // results expanded into bytes
+            _workingKey = null;
 
         /**
         * initialise an ISAAC cipher.
@@ -39,12 +39,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * inappropriate.
         */
         public virtual void Init(
-            bool				forEncryption, 
-            ICipherParameters	parameters)
+            bool forEncryption,
+            ICipherParameters parameters)
         {
             if (!(parameters is KeyParameter))
                 throw new ArgumentException(
-                    "invalid parameter passed to ISAAC Init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters),
+                    "invalid parameter passed to ISAAC Init - " +
+                    BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters),
                     "parameters");
 
             /* 
@@ -52,33 +53,33 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             * symmetrical, so the 'forEncryption' is 
             * irrelevant.
             */
-            KeyParameter p = (KeyParameter) parameters;
-            setKey(p.GetKey());
+            KeyParameter p = (KeyParameter)parameters;
+            SetKey(p.GetKey());
         }
 
         public virtual byte ReturnByte(
             byte input)
         {
-            if (index == 0) 
+            if (_index == 0)
             {
-                isaac();
-                keyStream = Pack.UInt32_To_BE(results);
+                Isaac();
+                _keyStream = Pack.UInt32_To_BE(_results);
             }
 
-            byte output = (byte)(keyStream[index]^input);
-            index = (index + 1) & 1023;
+            byte output = (byte)(_keyStream[_index] ^ input);
+            _index = (_index + 1) & 1023;
 
             return output;
         }
 
         public virtual void ProcessBytes(
-            byte[]	input, 
-            int		inOff, 
-            int		len, 
-            byte[]	output, 
-            int		outOff)
+            byte[] input,
+            int inOff,
+            int len,
+            byte[] output,
+            int outOff)
         {
-            if (!initialised)
+            if (!_initialised)
                 throw new InvalidOperationException(AlgorithmName + " not initialised");
 
             Check.DataLength(input, inOff, len, "input buffer too short");
@@ -86,13 +87,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
             for (int i = 0; i < len; i++)
             {
-                if (index == 0) 
+                if (_index == 0)
                 {
-                    isaac();
-                    keyStream = Pack.UInt32_To_BE(results);
+                    Isaac();
+                    _keyStream = Pack.UInt32_To_BE(_results);
                 }
-                output[i+outOff] = (byte)(keyStream[index]^input[i+inOff]);
-                index = (index + 1) & 1023;
+
+                output[i + outOff] = (byte)(_keyStream[_index] ^ input[i + inOff]);
+                _index = (_index + 1) & 1023;
             }
         }
 
@@ -103,112 +105,138 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         public virtual void Reset()
         {
-            setKey(workingKey);
+            SetKey(_workingKey);
         }
 
         // Private implementation
-        private void setKey(
+        private void SetKey(
             byte[] keyBytes)
         {
-            workingKey = keyBytes;
+            _workingKey = keyBytes;
 
-            if (engineState == null)
+            if (_engineState == null)
             {
-                engineState = new uint[stateArraySize];
+                _engineState = new uint[StateArraySize];
             }
 
-            if (results == null)
+            if (_results == null)
             {
-                results = new uint[stateArraySize];
+                _results = new uint[StateArraySize];
             }
 
             int i, j, k;
 
             // Reset state
-            for (i = 0; i < stateArraySize; i++)
+            for (i = 0; i < StateArraySize; i++)
             {
-                engineState[i] = results[i] = 0;
+                _engineState[i] = _results[i] = 0;
             }
-            a = b = c = 0;
+
+            _a = _b = _c = 0;
 
             // Reset index counter for output
-            index = 0;
+            _index = 0;
 
             // Convert the key bytes to ints and put them into results[] for initialization
             byte[] t = new byte[keyBytes.Length + (keyBytes.Length & 3)];
             Array.Copy(keyBytes, 0, t, 0, keyBytes.Length);
-            for (i = 0; i < t.Length; i+=4)
+            for (i = 0; i < t.Length; i += 4)
             {
-                results[i >> 2] = Pack.LE_To_UInt32(t, i);
+                _results[i >> 2] = Pack.LE_To_UInt32(t, i);
             }
 
             // It has begun?
-            uint[] abcdefgh = new uint[sizeL];
+            uint[] abcdefgh = new uint[SizeL];
 
-            for (i = 0; i < sizeL; i++)
+            for (i = 0; i < SizeL; i++)
             {
                 abcdefgh[i] = 0x9e3779b9; // Phi (golden ratio)
             }
 
             for (i = 0; i < 4; i++)
             {
-                mix(abcdefgh);
+                Mix(abcdefgh);
             }
 
             for (i = 0; i < 2; i++)
             {
-                for (j = 0; j < stateArraySize; j+=sizeL)
+                for (j = 0; j < StateArraySize; j += SizeL)
                 {
-                    for (k = 0; k < sizeL; k++)
+                    for (k = 0; k < SizeL; k++)
                     {
-                        abcdefgh[k] += (i<1) ? results[j+k] : engineState[j+k];
+                        abcdefgh[k] += (i < 1) ? _results[j + k] : _engineState[j + k];
                     }
 
-                    mix(abcdefgh);
+                    Mix(abcdefgh);
 
-                    for (k = 0; k < sizeL; k++)
+                    for (k = 0; k < SizeL; k++)
                     {
-                        engineState[j+k] = abcdefgh[k];
+                        _engineState[j + k] = abcdefgh[k];
                     }
                 }
             }
 
-            isaac();
+            Isaac();
 
-            initialised = true;
-        }    
+            _initialised = true;
+        }
 
-        private void isaac()
+        private void Isaac()
         {
             uint x, y;
 
-            b += ++c;
-            for (int i = 0; i < stateArraySize; i++)
+            _b += ++_c;
+            for (int i = 0; i < StateArraySize; i++)
             {
-                x = engineState[i];
+                x = _engineState[i];
                 switch (i & 3)
                 {
-                    case 0: a ^= (a << 13); break;
-                    case 1: a ^= (a >>  6); break;
-                    case 2: a ^= (a <<  2); break;
-                    case 3: a ^= (a >> 16); break;
+                    case 0:
+                        _a ^= (_a << 13);
+                        break;
+                    case 1:
+                        _a ^= (_a >> 6);
+                        break;
+                    case 2:
+                        _a ^= (_a << 2);
+                        break;
+                    case 3:
+                        _a ^= (_a >> 16);
+                        break;
                 }
-                a += engineState[(i+128) & 0xFF];
-                engineState[i] = y = engineState[(int)((uint)x >> 2) & 0xFF] + a + b;
-                results[i] = b = engineState[(int)((uint)y >> 10) & 0xFF] + x;
+
+                _a += _engineState[(i + 128) & 0xFF];
+                _engineState[i] = y = _engineState[(int)((uint)x >> 2) & 0xFF] + _a + _b;
+                _results[i] = _b = _engineState[(int)((uint)y >> 10) & 0xFF] + x;
             }
         }
 
-        private void mix(uint[] x)
+        private void Mix(uint[] x)
         {
-            x[0]^=x[1]<< 11; x[3]+=x[0]; x[1]+=x[2];
-            x[1]^=x[2]>>  2; x[4]+=x[1]; x[2]+=x[3];
-            x[2]^=x[3]<<  8; x[5]+=x[2]; x[3]+=x[4];
-            x[3]^=x[4]>> 16; x[6]+=x[3]; x[4]+=x[5];
-            x[4]^=x[5]<< 10; x[7]+=x[4]; x[5]+=x[6];
-            x[5]^=x[6]>>  4; x[0]+=x[5]; x[6]+=x[7];
-            x[6]^=x[7]<<  8; x[1]+=x[6]; x[7]+=x[0];
-            x[7]^=x[0]>>  9; x[2]+=x[7]; x[0]+=x[1];
+            x[0] ^= x[1] << 11;
+            x[3] += x[0];
+            x[1] += x[2];
+            x[1] ^= x[2] >> 2;
+            x[4] += x[1];
+            x[2] += x[3];
+            x[2] ^= x[3] << 8;
+            x[5] += x[2];
+            x[3] += x[4];
+            x[3] ^= x[4] >> 16;
+            x[6] += x[3];
+            x[4] += x[5];
+            x[4] ^= x[5] << 10;
+            x[7] += x[4];
+            x[5] += x[6];
+            x[5] ^= x[6] >> 4;
+            x[0] += x[5];
+            x[6] += x[7];
+            x[6] ^= x[7] << 8;
+            x[1] += x[6];
+            x[7] += x[0];
+            x[7] ^= x[0] >> 9;
+            x[2] += x[7];
+            x[0] += x[1];
         }
     }
 }

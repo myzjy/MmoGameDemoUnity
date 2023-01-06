@@ -1,26 +1,24 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
-    public class RC4Engine
-		: IStreamCipher
+    public class Rc4Engine
+        : IStreamCipher
     {
-        private readonly static int STATE_LENGTH = 256;
+        private readonly static int StateLength = 256;
 
         /*
         * variables to hold the state of the RC4 engine
         * during encryption and decryption
         */
 
-        private byte[]	engineState;
-        private int		x;
-        private int		y;
-        private byte[]	workingKey;
+        private byte[] _engineState;
+        private byte[] _workingKey;
+        private int _x;
+        private int _y;
 
         /**
         * initialise a RC4 cipher.
@@ -31,8 +29,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * inappropriate.
         */
         public virtual void Init(
-            bool				forEncryption,
-            ICipherParameters	parameters)
+            bool forEncryption,
+            ICipherParameters parameters)
         {
             if (parameters is KeyParameter)
             {
@@ -41,13 +39,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
                 * symmetrical, so the 'forEncryption' is
                 * irrelevant.
                 */
-                workingKey = ((KeyParameter)parameters).GetKey();
-                SetKey(workingKey);
+                _workingKey = ((KeyParameter)parameters).GetKey();
+                SetKey(_workingKey);
 
                 return;
             }
 
-            throw new ArgumentException("invalid parameter passed to RC4 init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
+            throw new ArgumentException("invalid parameter passed to RC4 init - " +
+                                        BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(
+                                            parameters));
         }
 
         public virtual string AlgorithmName
@@ -56,85 +56,85 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         public virtual byte ReturnByte(
-			byte input)
+            byte input)
         {
-            x = (x + 1) & 0xff;
-            y = (engineState[x] + y) & 0xff;
+            _x = (_x + 1) & 0xff;
+            _y = (_engineState[_x] + _y) & 0xff;
 
             // swap
-            byte tmp = engineState[x];
-            engineState[x] = engineState[y];
-            engineState[y] = tmp;
+            byte tmp = _engineState[_x];
+            _engineState[_x] = _engineState[_y];
+            _engineState[_y] = tmp;
 
             // xor
-            return (byte)(input ^ engineState[(engineState[x] + engineState[y]) & 0xff]);
+            return (byte)(input ^ _engineState[(_engineState[_x] + _engineState[_y]) & 0xff]);
         }
 
         public virtual void ProcessBytes(
-            byte[]	input,
-            int		inOff,
-            int		length,
-            byte[]	output,
-            int		outOff)
+            byte[] input,
+            int inOff,
+            int length,
+            byte[] output,
+            int outOff)
         {
             Check.DataLength(input, inOff, length, "input buffer too short");
             Check.OutputLength(output, outOff, length, "output buffer too short");
 
-            for (int i = 0; i < length ; i++)
+            for (int i = 0; i < length; i++)
             {
-                x = (x + 1) & 0xff;
-                y = (engineState[x] + y) & 0xff;
+                _x = (_x + 1) & 0xff;
+                _y = (_engineState[_x] + _y) & 0xff;
 
                 // swap
-                byte tmp = engineState[x];
-                engineState[x] = engineState[y];
-                engineState[y] = tmp;
+                byte tmp = _engineState[_x];
+                _engineState[_x] = _engineState[_y];
+                _engineState[_y] = tmp;
 
                 // xor
-                output[i+outOff] = (byte)(input[i + inOff]
-                        ^ engineState[(engineState[x] + engineState[y]) & 0xff]);
+                output[i + outOff] = (byte)(input[i + inOff]
+                                            ^ _engineState[(_engineState[_x] + _engineState[_y]) & 0xff]);
             }
         }
 
         public virtual void Reset()
         {
-            SetKey(workingKey);
+            SetKey(_workingKey);
         }
 
         // Private implementation
 
         private void SetKey(
-			byte[] keyBytes)
+            byte[] keyBytes)
         {
-            workingKey = keyBytes;
+            _workingKey = keyBytes;
 
             // System.out.println("the key length is ; "+ workingKey.Length);
 
-            x = 0;
-            y = 0;
+            _x = 0;
+            _y = 0;
 
-            if (engineState == null)
+            if (_engineState == null)
             {
-                engineState = new byte[STATE_LENGTH];
+                _engineState = new byte[StateLength];
             }
 
             // reset the state of the engine
-            for (int i=0; i < STATE_LENGTH; i++)
+            for (int i = 0; i < StateLength; i++)
             {
-                engineState[i] = (byte)i;
+                _engineState[i] = (byte)i;
             }
 
             int i1 = 0;
             int i2 = 0;
 
-            for (int i=0; i < STATE_LENGTH; i++)
+            for (int i = 0; i < StateLength; i++)
             {
-                i2 = ((keyBytes[i1] & 0xff) + engineState[i] + i2) & 0xff;
+                i2 = ((keyBytes[i1] & 0xff) + _engineState[i] + i2) & 0xff;
                 // do the byte-swap inline
-                byte tmp = engineState[i];
-                engineState[i] = engineState[i2];
-                engineState[i2] = tmp;
-                i1 = (i1+1) % keyBytes.Length;
+                byte tmp = _engineState[i];
+                _engineState[i] = _engineState[i2];
+                _engineState[i2] = tmp;
+                i1 = (i1 + 1) % keyBytes.Length;
             }
         }
     }

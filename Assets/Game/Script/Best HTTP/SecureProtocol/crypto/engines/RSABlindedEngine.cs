@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Math;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Security;
@@ -15,10 +14,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     public class RsaBlindedEngine
         : IAsymmetricBlockCipher
     {
-        private readonly IRsa core;
+        private readonly IRsa _core;
 
-        private RsaKeyParameters key;
-        private SecureRandom random;
+        private RsaKeyParameters _key;
+        private SecureRandom _random;
 
         public RsaBlindedEngine()
             : this(new RsaCoreEngine())
@@ -27,7 +26,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         public RsaBlindedEngine(IRsa rsa)
         {
-            this.core = rsa;
+            this._core = rsa;
         }
 
         public virtual string AlgorithmName
@@ -45,34 +44,34 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             bool forEncryption,
             ICipherParameters param)
         {
-            core.Init(forEncryption, param);
+            _core.Init(forEncryption, param);
 
             if (param is ParametersWithRandom)
             {
                 ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-                this.key = (RsaKeyParameters)rParam.Parameters;
+                this._key = (RsaKeyParameters)rParam.Parameters;
 
-                if (key is RsaPrivateCrtKeyParameters)
+                if (_key is RsaPrivateCrtKeyParameters)
                 {
-                    this.random = rParam.Random;
+                    this._random = rParam.Random;
                 }
                 else
                 {
-                    this.random = null;
+                    this._random = null;
                 }
             }
             else
             {
-                this.key = (RsaKeyParameters)param;
+                this._key = (RsaKeyParameters)param;
 
-                if (key is RsaPrivateCrtKeyParameters)
+                if (_key is RsaPrivateCrtKeyParameters)
                 {
-                    this.random = new SecureRandom();
+                    this._random = new SecureRandom();
                 }
                 else
                 {
-                    this.random = null;
+                    this._random = null;
                 }
             }
         }
@@ -86,7 +85,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
          */
         public virtual int GetInputBlockSize()
         {
-            return core.GetInputBlockSize();
+            return _core.GetInputBlockSize();
         }
 
         /**
@@ -98,7 +97,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
          */
         public virtual int GetOutputBlockSize()
         {
-            return core.GetOutputBlockSize();
+            return _core.GetOutputBlockSize();
         }
 
         /**
@@ -115,24 +114,24 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             int inOff,
             int inLen)
         {
-            if (key == null)
+            if (_key == null)
                 throw new InvalidOperationException("RSA engine not initialised");
 
-            BigInteger input = core.ConvertInput(inBuf, inOff, inLen);
+            BigInteger input = _core.ConvertInput(inBuf, inOff, inLen);
 
             BigInteger result;
-            if (key is RsaPrivateCrtKeyParameters)
+            if (_key is RsaPrivateCrtKeyParameters)
             {
-                RsaPrivateCrtKeyParameters k = (RsaPrivateCrtKeyParameters)key;
+                RsaPrivateCrtKeyParameters k = (RsaPrivateCrtKeyParameters)_key;
                 BigInteger e = k.PublicExponent;
-                if (e != null)   // can't do blinding without a public exponent
+                if (e != null) // can't do blinding without a public exponent
                 {
                     BigInteger m = k.Modulus;
                     BigInteger r = BigIntegers.CreateRandomInRange(
-                        BigInteger.One, m.Subtract(BigInteger.One), random);
+                        BigInteger.One, m.Subtract(BigInteger.One), _random);
 
                     BigInteger blindedInput = r.ModPow(e, m).Multiply(input).Mod(m);
-                    BigInteger blindedResult = core.ProcessBlock(blindedInput);
+                    BigInteger blindedResult = _core.ProcessBlock(blindedInput);
 
                     BigInteger rInv = BigIntegers.ModOddInverse(m, r);
                     result = blindedResult.Multiply(rInv).Mod(m);
@@ -143,15 +142,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
                 }
                 else
                 {
-                    result = core.ProcessBlock(input);
+                    result = _core.ProcessBlock(input);
                 }
             }
             else
             {
-                result = core.ProcessBlock(input);
+                result = _core.ProcessBlock(input);
             }
 
-            return core.ConvertOutput(result);
+            return _core.ConvertOutput(result);
         }
     }
 }

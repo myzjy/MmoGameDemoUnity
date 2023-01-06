@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Math;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
@@ -14,15 +13,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     */
     public class IesEngine
     {
-        private readonly IBasicAgreement     agree;
-        private readonly IDerivationFunction kdf;
-        private readonly IMac                mac;
-        private readonly BufferedBlockCipher cipher;
-        private readonly byte[]              macBuf;
+        private readonly IBasicAgreement _agree;
+        private readonly BufferedBlockCipher _cipher;
+        private readonly IDerivationFunction _kdf;
+        private readonly IMac _mac;
+        private readonly byte[] _macBuf;
 
-        private bool				forEncryption;
-        private ICipherParameters	privParam, pubParam;
-        private IesParameters		param;
+        private bool _forEncryption;
+        private IesParameters _param;
+        private ICipherParameters _privParam, _pubParam;
 
         /**
         * set up for use with stream mode, where the key derivation function
@@ -33,14 +32,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param mac the message authentication code generator for the message
         */
         public IesEngine(
-            IBasicAgreement     agree,
+            IBasicAgreement agree,
             IDerivationFunction kdf,
-            IMac                mac)
+            IMac mac)
         {
-            this.agree = agree;
-            this.kdf = kdf;
-            this.mac = mac;
-            this.macBuf = new byte[mac.GetMacSize()];
+            this._agree = agree;
+            this._kdf = kdf;
+            this._mac = mac;
+            this._macBuf = new byte[mac.GetMacSize()];
 //            this.cipher = null;
         }
 
@@ -54,16 +53,16 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param cipher the cipher to used for encrypting the message
         */
         public IesEngine(
-            IBasicAgreement     agree,
+            IBasicAgreement agree,
             IDerivationFunction kdf,
-            IMac                mac,
+            IMac mac,
             BufferedBlockCipher cipher)
         {
-            this.agree = agree;
-            this.kdf = kdf;
-            this.mac = mac;
-            this.macBuf = new byte[mac.GetMacSize()];
-            this.cipher = cipher;
+            this._agree = agree;
+            this._kdf = kdf;
+            this._mac = mac;
+            this._macBuf = new byte[mac.GetMacSize()];
+            this._cipher = cipher;
         }
 
         /**
@@ -75,166 +74,166 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param param encoding and derivation parameters.
         */
         public virtual void Init(
-            bool                     forEncryption,
-            ICipherParameters            privParameters,
-            ICipherParameters            pubParameters,
-            ICipherParameters            iesParameters)
+            bool forEncryption,
+            ICipherParameters privParameters,
+            ICipherParameters pubParameters,
+            ICipherParameters iesParameters)
         {
-            this.forEncryption = forEncryption;
-            this.privParam = privParameters;
-            this.pubParam = pubParameters;
-            this.param = (IesParameters)iesParameters;
+            this._forEncryption = forEncryption;
+            this._privParam = privParameters;
+            this._pubParam = pubParameters;
+            this._param = (IesParameters)iesParameters;
         }
 
         private byte[] DecryptBlock(
-            byte[]  in_enc,
-            int     inOff,
-            int     inLen,
-            byte[]  z)
+            byte[] inEnc,
+            int inOff,
+            int inLen,
+            byte[] z)
         {
-            byte[]          M = null;
-            KeyParameter    macKey = null;
-            KdfParameters   kParam = new KdfParameters(z, param.GetDerivationV());
-            int             macKeySize = param.MacKeySize;
+            byte[] m = null;
+            KeyParameter macKey = null;
+            KdfParameters kParam = new KdfParameters(z, _param.GetDerivationV());
+            int macKeySize = _param.MacKeySize;
 
-            kdf.Init(kParam);
+            _kdf.Init(kParam);
 
             // Ensure that the length of the input is greater than the MAC in bytes
-            if (inLen < mac.GetMacSize())
+            if (inLen < _mac.GetMacSize())
                 throw new InvalidCipherTextException("Length of input must be greater than the MAC");
 
-            inLen -= mac.GetMacSize();
+            inLen -= _mac.GetMacSize();
 
-            if (cipher == null)     // stream mode
+            if (_cipher == null) // stream mode
             {
-                byte[] Buffer = GenerateKdfBytes(kParam, inLen + (macKeySize / 8));
+                byte[] buffer = GenerateKdfBytes(kParam, inLen + (macKeySize / 8));
 
-                M = new byte[inLen];
+                m = new byte[inLen];
 
                 for (int i = 0; i != inLen; i++)
                 {
-                    M[i] = (byte)(in_enc[inOff + i] ^ Buffer[i]);
+                    m[i] = (byte)(inEnc[inOff + i] ^ buffer[i]);
                 }
 
-                macKey = new KeyParameter(Buffer, inLen, (macKeySize / 8));
+                macKey = new KeyParameter(buffer, inLen, (macKeySize / 8));
             }
             else
             {
-                int cipherKeySize = ((IesWithCipherParameters)param).CipherKeySize;
-                byte[] Buffer = GenerateKdfBytes(kParam, (cipherKeySize / 8) + (macKeySize / 8));
+                int cipherKeySize = ((IesWithCipherParameters)_param).CipherKeySize;
+                byte[] buffer = GenerateKdfBytes(kParam, (cipherKeySize / 8) + (macKeySize / 8));
 
-                cipher.Init(false, new KeyParameter(Buffer, 0, (cipherKeySize / 8)));
+                _cipher.Init(false, new KeyParameter(buffer, 0, (cipherKeySize / 8)));
 
-                M = cipher.DoFinal(in_enc, inOff, inLen);
+                m = _cipher.DoFinal(inEnc, inOff, inLen);
 
-                macKey = new KeyParameter(Buffer, (cipherKeySize / 8), (macKeySize / 8));
+                macKey = new KeyParameter(buffer, (cipherKeySize / 8), (macKeySize / 8));
             }
 
-            byte[] macIV = param.GetEncodingV();
+            byte[] macIv = _param.GetEncodingV();
 
-            mac.Init(macKey);
-            mac.BlockUpdate(in_enc, inOff, inLen);
-            mac.BlockUpdate(macIV, 0, macIV.Length);
-            mac.DoFinal(macBuf, 0);
+            _mac.Init(macKey);
+            _mac.BlockUpdate(inEnc, inOff, inLen);
+            _mac.BlockUpdate(macIv, 0, macIv.Length);
+            _mac.DoFinal(_macBuf, 0);
 
             inOff += inLen;
 
-            byte[] T1 = Arrays.CopyOfRange(in_enc, inOff, inOff + macBuf.Length);
+            byte[] t1 = Arrays.CopyOfRange(inEnc, inOff, inOff + _macBuf.Length);
 
-            if (!Arrays.ConstantTimeAreEqual(T1, macBuf))
+            if (!Arrays.ConstantTimeAreEqual(t1, _macBuf))
                 throw (new InvalidCipherTextException("Invalid MAC."));
 
-            return M;
+            return m;
         }
 
         private byte[] EncryptBlock(
-            byte[]  input,
-            int     inOff,
-            int     inLen,
-            byte[]  z)
+            byte[] input,
+            int inOff,
+            int inLen,
+            byte[] z)
         {
-            byte[]          C = null;
-            KeyParameter    macKey = null;
-            KdfParameters   kParam = new KdfParameters(z, param.GetDerivationV());
-            int             c_text_length = 0;
-            int             macKeySize = param.MacKeySize;
+            byte[] c = null;
+            KeyParameter macKey = null;
+            KdfParameters kParam = new KdfParameters(z, _param.GetDerivationV());
+            int cTextLength = 0;
+            int macKeySize = _param.MacKeySize;
 
-            if (cipher == null)     // stream mode
+            if (_cipher == null) // stream mode
             {
-                byte[] Buffer = GenerateKdfBytes(kParam, inLen + (macKeySize / 8));
+                byte[] buffer = GenerateKdfBytes(kParam, inLen + (macKeySize / 8));
 
-                C = new byte[inLen + mac.GetMacSize()];
-                c_text_length = inLen;
+                c = new byte[inLen + _mac.GetMacSize()];
+                cTextLength = inLen;
 
                 for (int i = 0; i != inLen; i++)
                 {
-                    C[i] = (byte)(input[inOff + i] ^ Buffer[i]);
+                    c[i] = (byte)(input[inOff + i] ^ buffer[i]);
                 }
 
-                macKey = new KeyParameter(Buffer, inLen, (macKeySize / 8));
+                macKey = new KeyParameter(buffer, inLen, (macKeySize / 8));
             }
             else
             {
-                int cipherKeySize = ((IesWithCipherParameters)param).CipherKeySize;
-                byte[] Buffer = GenerateKdfBytes(kParam, (cipherKeySize / 8) + (macKeySize / 8));
+                int cipherKeySize = ((IesWithCipherParameters)_param).CipherKeySize;
+                byte[] buffer = GenerateKdfBytes(kParam, (cipherKeySize / 8) + (macKeySize / 8));
 
-                cipher.Init(true, new KeyParameter(Buffer, 0, (cipherKeySize / 8)));
+                _cipher.Init(true, new KeyParameter(buffer, 0, (cipherKeySize / 8)));
 
-                c_text_length = cipher.GetOutputSize(inLen);
-                byte[] tmp = new byte[c_text_length];
+                cTextLength = _cipher.GetOutputSize(inLen);
+                byte[] tmp = new byte[cTextLength];
 
-                int len = cipher.ProcessBytes(input, inOff, inLen, tmp, 0);
-                len += cipher.DoFinal(tmp, len);
+                int len = _cipher.ProcessBytes(input, inOff, inLen, tmp, 0);
+                len += _cipher.DoFinal(tmp, len);
 
-                C = new byte[len + mac.GetMacSize()];
-                c_text_length = len;
+                c = new byte[len + _mac.GetMacSize()];
+                cTextLength = len;
 
-                Array.Copy(tmp, 0, C, 0, len);
+                Array.Copy(tmp, 0, c, 0, len);
 
-                macKey = new KeyParameter(Buffer, (cipherKeySize / 8), (macKeySize / 8));
+                macKey = new KeyParameter(buffer, (cipherKeySize / 8), (macKeySize / 8));
             }
 
-            byte[] macIV = param.GetEncodingV();
+            byte[] macIv = _param.GetEncodingV();
 
-            mac.Init(macKey);
-            mac.BlockUpdate(C, 0, c_text_length);
-            mac.BlockUpdate(macIV, 0, macIV.Length);
+            _mac.Init(macKey);
+            _mac.BlockUpdate(c, 0, cTextLength);
+            _mac.BlockUpdate(macIv, 0, macIv.Length);
             //
             // return the message and it's MAC
             //
-            mac.DoFinal(C, c_text_length);
-            return C;
+            _mac.DoFinal(c, cTextLength);
+            return c;
         }
 
         private byte[] GenerateKdfBytes(
-            KdfParameters	kParam,
-            int				length)
+            KdfParameters kParam,
+            int length)
         {
             byte[] buf = new byte[length];
 
-            kdf.Init(kParam);
+            _kdf.Init(kParam);
 
-            kdf.GenerateBytes(buf, 0, buf.Length);
+            _kdf.GenerateBytes(buf, 0, buf.Length);
 
             return buf;
         }
 
         public virtual byte[] ProcessBlock(
-            byte[]  input,
-            int     inOff,
-            int     inLen)
+            byte[] input,
+            int inOff,
+            int inLen)
         {
-            agree.Init(privParam);
+            _agree.Init(_privParam);
 
-            BigInteger z = agree.CalculateAgreement(pubParam);
+            BigInteger z = _agree.CalculateAgreement(_pubParam);
 
-            byte[] zBytes = BigIntegers.AsUnsignedByteArray(agree.GetFieldSize(), z);
+            byte[] zBytes = BigIntegers.AsUnsignedByteArray(_agree.GetFieldSize(), z);
 
             try
             {
-                return forEncryption
-                    ?	EncryptBlock(input, inOff, inLen, zBytes)
-                    :	DecryptBlock(input, inOff, inLen, zBytes);
+                return _forEncryption
+                    ? EncryptBlock(input, inOff, inLen, zBytes)
+                    : DecryptBlock(input, inOff, inLen, zBytes);
             }
             finally
             {

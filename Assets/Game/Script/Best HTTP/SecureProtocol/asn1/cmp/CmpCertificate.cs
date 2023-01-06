@@ -1,32 +1,45 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
     public class CmpCertificate
         : Asn1Encodable, IAsn1Choice
     {
-        private readonly X509CertificateStructure x509v3PKCert;
-        private readonly AttributeCertificate x509v2AttrCert;
+        private readonly AttributeCertificate _x509V2AttrCert;
+        private readonly X509CertificateStructure _x509V3PkCert;
 
         /**
          * Note: the addition of attribute certificates is a BC extension.
          */
-        public CmpCertificate(AttributeCertificate x509v2AttrCert)
+        public CmpCertificate(AttributeCertificate x509V2AttrCert)
         {
-            this.x509v2AttrCert = x509v2AttrCert;
+            this._x509V2AttrCert = x509V2AttrCert;
         }
 
-        public CmpCertificate(X509CertificateStructure x509v3PKCert)
+        public CmpCertificate(X509CertificateStructure x509V3PkCert)
         {
-            if (x509v3PKCert.Version != 3)
-                throw new ArgumentException("only version 3 certificates allowed", "x509v3PKCert");
+            if (x509V3PkCert.Version != 3)
+                throw new ArgumentException("only version 3 certificates allowed", "x509V3PkCert");
 
-            this.x509v3PKCert = x509v3PKCert;
+            this._x509V3PkCert = x509V3PkCert;
+        }
+
+        public virtual bool IsX509V3PkCert
+        {
+            get { return _x509V3PkCert != null; }
+        }
+
+        public virtual X509CertificateStructure X509V3PkCert
+        {
+            get { return _x509V3PkCert; }
+        }
+
+        public virtual AttributeCertificate X509V2AttrCert
+        {
+            get { return _x509V2AttrCert; }
         }
 
         public static CmpCertificate GetInstance(object obj)
@@ -40,22 +53,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
             if (obj is Asn1TaggedObject)
                 return new CmpCertificate(AttributeCertificate.GetInstance(((Asn1TaggedObject)obj).GetObject()));
 
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-        }
-
-        public virtual bool IsX509v3PKCert
-        {
-            get { return x509v3PKCert != null; }
-        }
-
-        public virtual X509CertificateStructure X509v3PKCert
-        {
-            get { return x509v3PKCert; }
-        }
-
-        public virtual AttributeCertificate X509v2AttrCert
-        {
-            get { return x509v2AttrCert; }
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
         }
 
         /**
@@ -71,13 +71,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
          */
         public override Asn1Object ToAsn1Object()
         {
-            if (x509v2AttrCert != null)
+            if (_x509V2AttrCert != null)
             {
                 // explicit following CMP conventions
-                return new DerTaggedObject(true, 1, x509v2AttrCert);
+                return new DerTaggedObject(true, 1, _x509V2AttrCert);
             }
 
-            return x509v3PKCert.ToAsn1Object();
+            return _x509V3PkCert.ToAsn1Object();
         }
     }
 }

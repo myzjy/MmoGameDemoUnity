@@ -2,7 +2,6 @@
 #pragma warning disable
 using System;
 using System.Collections;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Kisa;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Nist;
@@ -19,14 +18,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
     /// </remarks>
     public sealed class WrapperUtilities
     {
-        private enum WrapAlgorithm { AESWRAP, CAMELLIAWRAP, DESEDEWRAP, RC2WRAP, SEEDWRAP,
-            DESEDERFC3211WRAP, AESRFC3211WRAP, CAMELLIARFC3211WRAP };
-
-        private WrapperUtilities()
-        {
-        }
-
-        private static readonly IDictionary algorithms = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
+        private static readonly IDictionary algorithms =
+            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
         //private static readonly IDictionary oids = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable();
 
         static WrapperUtilities()
@@ -48,6 +41,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             algorithms[PkcsObjectIdentifiers.IdAlgCmsRC2Wrap.Id] = "RC2WRAP";
 
             algorithms[KisaObjectIdentifiers.IdNpkiAppCmsSeedWrap.Id] = "SEEDWRAP";
+        }
+
+        private WrapperUtilities()
+        {
         }
 
         public static IWrapper GetWrapper(
@@ -74,14 +71,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
 
                 switch (wrapAlgorithm)
                 {
-                    case WrapAlgorithm.AESWRAP:				return new AesWrapEngine();
-                    case WrapAlgorithm.CAMELLIAWRAP:		return new CamelliaWrapEngine();
-                    case WrapAlgorithm.DESEDEWRAP:			return new DesEdeWrapEngine();
-                    case WrapAlgorithm.RC2WRAP:				return new RC2WrapEngine();
-                    case WrapAlgorithm.SEEDWRAP:			return new SeedWrapEngine();
-                    case WrapAlgorithm.DESEDERFC3211WRAP:	return new Rfc3211WrapEngine(new DesEdeEngine());
-                    case WrapAlgorithm.AESRFC3211WRAP:		return new Rfc3211WrapEngine(new AesEngine());
-                    case WrapAlgorithm.CAMELLIARFC3211WRAP:	return new Rfc3211WrapEngine(new CamelliaEngine());
+                    case WrapAlgorithm.AESWRAP: return new AesWrapEngine();
+                    case WrapAlgorithm.CAMELLIAWRAP: return new CamelliaWrapEngine();
+                    case WrapAlgorithm.DESEDEWRAP: return new DesEdeWrapEngine();
+                    case WrapAlgorithm.RC2WRAP: return new Rc2WrapEngine();
+                    case WrapAlgorithm.SEEDWRAP: return new SeedWrapEngine();
+                    case WrapAlgorithm.DESEDERFC3211WRAP: return new Rfc3211WrapEngine(new DesEdeEngine());
+                    case WrapAlgorithm.AESRFC3211WRAP: return new Rfc3211WrapEngine(new AesEngine());
+                    case WrapAlgorithm.CAMELLIARFC3211WRAP: return new Rfc3211WrapEngine(new CamelliaEngine());
                 }
             }
             catch (ArgumentException)
@@ -100,8 +97,20 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
         public static string GetAlgorithmName(
             DerObjectIdentifier oid)
         {
-            return (string) algorithms[oid.Id];
+            return (string)algorithms[oid.Id];
         }
+
+        private enum WrapAlgorithm
+        {
+            AESWRAP,
+            CAMELLIAWRAP,
+            DESEDEWRAP,
+            RC2WRAP,
+            SEEDWRAP,
+            DESEDERFC3211WRAP,
+            AESRFC3211WRAP,
+            CAMELLIARFC3211WRAP
+        };
 
         private class BufferedCipherWrapper
             : IWrapper
@@ -121,8 +130,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             }
 
             public void Init(
-                bool				forWrapping,
-                ICipherParameters	parameters)
+                bool forWrapping,
+                ICipherParameters parameters)
             {
                 this.forWrapping = forWrapping;
 
@@ -130,9 +139,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             }
 
             public byte[] Wrap(
-                byte[]	input,
-                int		inOff,
-                int		length)
+                byte[] input,
+                int inOff,
+                int length)
             {
                 if (!forWrapping)
                     throw new InvalidOperationException("Not initialised for wrapping");
@@ -141,9 +150,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
             }
 
             public byte[] Unwrap(
-                byte[]	input,
-                int		inOff,
-                int		length)
+                byte[] input,
+                int inOff,
+                int length)
             {
                 if (forWrapping)
                     throw new InvalidOperationException("Not initialised for unwrapping");

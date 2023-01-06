@@ -37,7 +37,7 @@ namespace BestHTTP.SignalRCore.Authentication
 
             // Add Authorization header to http requests, add access_token param to the uri otherwise
             if (BestHTTP.Connections.HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri) ==
-                BestHTTP.Connections.SupportedProtocols.HTTP)
+                BestHTTP.Connections.SupportedProtocols.Http)
                 request.SetHeader("Authorization", "Bearer " + this._connection.NegotiationResult.AccessToken);
             else
 #if !BESTHTTP_DISABLE_WEBSOCKET

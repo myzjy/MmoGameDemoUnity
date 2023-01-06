@@ -1,37 +1,24 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X509;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
     public class PbmParameter
         : Asn1Encodable
     {
-        private Asn1OctetString salt;
-        private AlgorithmIdentifier owf;
-        private DerInteger iterationCount;
-        private AlgorithmIdentifier mac;
+        private DerInteger _iterationCount;
+        private AlgorithmIdentifier _mac;
+        private AlgorithmIdentifier _owf;
+        private Asn1OctetString _salt;
 
         private PbmParameter(Asn1Sequence seq)
         {
-            salt = Asn1OctetString.GetInstance(seq[0]);
-            owf = AlgorithmIdentifier.GetInstance(seq[1]);
-            iterationCount = DerInteger.GetInstance(seq[2]);
-            mac = AlgorithmIdentifier.GetInstance(seq[3]);
-        }
-
-        public static PbmParameter GetInstance(object obj)
-        {
-            if (obj is PbmParameter)
-                return (PbmParameter)obj;
-
-            if (obj is Asn1Sequence)
-                return new PbmParameter((Asn1Sequence)obj);
-
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
+            _salt = Asn1OctetString.GetInstance(seq[0]);
+            _owf = AlgorithmIdentifier.GetInstance(seq[1]);
+            _iterationCount = DerInteger.GetInstance(seq[2]);
+            _mac = AlgorithmIdentifier.GetInstance(seq[3]);
         }
 
         public PbmParameter(
@@ -49,30 +36,43 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
             DerInteger iterationCount,
             AlgorithmIdentifier mac)
         {
-            this.salt = salt;
-            this.owf = owf;
-            this.iterationCount = iterationCount;
-            this.mac = mac;
+            this._salt = salt;
+            this._owf = owf;
+            this._iterationCount = iterationCount;
+            this._mac = mac;
         }
 
         public virtual Asn1OctetString Salt
         {
-            get { return salt; }
+            get { return _salt; }
         }
 
         public virtual AlgorithmIdentifier Owf
         {
-            get { return owf; }
+            get { return _owf; }
         }
 
         public virtual DerInteger IterationCount
         {
-            get { return iterationCount; }
+            get { return _iterationCount; }
         }
 
         public virtual AlgorithmIdentifier Mac
         {
-            get { return mac; }
+            get { return _mac; }
+        }
+
+        public static PbmParameter GetInstance(object obj)
+        {
+            if (obj is PbmParameter)
+                return (PbmParameter)obj;
+
+            if (obj is Asn1Sequence)
+                return new PbmParameter((Asn1Sequence)obj);
+
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
         }
 
         /**
@@ -97,7 +97,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
          */
         public override Asn1Object ToAsn1Object()
         {
-            return new DerSequence(salt, owf, iterationCount, mac);
+            return new DerSequence(_salt, _owf, _iterationCount, _mac);
         }
     }
 }

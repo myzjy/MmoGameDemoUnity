@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Kisa;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Misc;
@@ -19,7 +18,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
         public static readonly DerObjectIdentifier IDEA_CBC = new DerObjectIdentifier("1.3.6.1.4.1.188.7.1.1.2");
         public static readonly DerObjectIdentifier CAST5_CBC = new DerObjectIdentifier("1.2.840.113533.7.66.10");
 
-        private static readonly short[] rc2Table = {
+        private static readonly short[] rc2Table =
+        {
             0xbd, 0x56, 0xea, 0xf2, 0xa2, 0xf1, 0xac, 0x2a, 0xb0, 0x93, 0xd1, 0x9c, 0x1b, 0x33, 0xfd, 0xd0,
             0x30, 0x04, 0xb6, 0xdc, 0x7d, 0xdf, 0x32, 0x4b, 0xf7, 0xcb, 0x45, 0x9b, 0x31, 0xbb, 0x21, 0x5a,
             0x41, 0x9f, 0xe1, 0xd9, 0x4a, 0x4d, 0x9e, 0xda, 0xa0, 0x68, 0x2c, 0xc3, 0x27, 0x5f, 0x80, 0x36,
@@ -48,16 +48,17 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
     * @return a full AlgorithmIdentifier including parameters
     * @throws IllegalArgumentException if encryptionOID cannot be matched
     */
-        public static AlgorithmIdentifier GenerateEncryptionAlgID(DerObjectIdentifier encryptionOID, int keySize, SecureRandom random)
+        public static AlgorithmIdentifier GenerateEncryptionAlgID(DerObjectIdentifier encryptionOID, int keySize,
+            SecureRandom random)
 
         {
             if (encryptionOID.Equals(NistObjectIdentifiers.IdAes128Cbc)
-                    || encryptionOID.Equals(NistObjectIdentifiers.IdAes192Cbc)
-                    || encryptionOID.Equals(NistObjectIdentifiers.IdAes256Cbc)
-                    || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia128Cbc)
-                    || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia192Cbc)
-                    || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia256Cbc)
-                    || encryptionOID.Equals(KisaObjectIdentifiers.IdSeedCbc))
+                || encryptionOID.Equals(NistObjectIdentifiers.IdAes192Cbc)
+                || encryptionOID.Equals(NistObjectIdentifiers.IdAes256Cbc)
+                || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia128Cbc)
+                || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia192Cbc)
+                || encryptionOID.Equals(NttObjectIdentifiers.IdCamellia256Cbc)
+                || encryptionOID.Equals(KisaObjectIdentifiers.IdSeedCbc))
             {
                 byte[] iv = new byte[16];
 
@@ -66,8 +67,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
                 return new AlgorithmIdentifier(encryptionOID, new DerOctetString(iv));
             }
             else if (encryptionOID.Equals(PkcsObjectIdentifiers.DesEde3Cbc)
-                    || encryptionOID.Equals(IDEA_CBC)
-                    || encryptionOID.Equals(OiwObjectIdentifiers.DesCbc))
+                     || encryptionOID.Equals(IDEA_CBC)
+                     || encryptionOID.Equals(OiwObjectIdentifiers.DesCbc))
             {
                 byte[] iv = new byte[8];
 
@@ -85,7 +86,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
 
                 return new AlgorithmIdentifier(encryptionOID, cbcParams);
             }
-            else if (encryptionOID.Equals(PkcsObjectIdentifiers.rc4))
+            else if (encryptionOID.Equals(PkcsObjectIdentifiers.Rc4))
             {
                 return new AlgorithmIdentifier(encryptionOID, DerNull.Instance);
             }

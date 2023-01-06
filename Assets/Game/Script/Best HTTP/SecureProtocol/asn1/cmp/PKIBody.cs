@@ -1,62 +1,49 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Crmf;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Pkcs;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
 {
     public class PkiBody
         : Asn1Encodable, IAsn1Choice
     {
-        public const int TYPE_INIT_REQ = 0;
-        public const int TYPE_INIT_REP = 1;
-        public const int TYPE_CERT_REQ = 2;
-        public const int TYPE_CERT_REP = 3;
-        public const int TYPE_P10_CERT_REQ = 4;
-        public const int TYPE_POPO_CHALL = 5;
-        public const int TYPE_POPO_REP = 6;
-        public const int TYPE_KEY_UPDATE_REQ = 7;
-        public const int TYPE_KEY_UPDATE_REP = 8;
-        public const int TYPE_KEY_RECOVERY_REQ = 9;
-        public const int TYPE_KEY_RECOVERY_REP = 10;
-        public const int TYPE_REVOCATION_REQ = 11;
-        public const int TYPE_REVOCATION_REP = 12;
-        public const int TYPE_CROSS_CERT_REQ = 13;
-        public const int TYPE_CROSS_CERT_REP = 14;
-        public const int TYPE_CA_KEY_UPDATE_ANN = 15;
-        public const int TYPE_CERT_ANN = 16;
-        public const int TYPE_REVOCATION_ANN = 17;
-        public const int TYPE_CRL_ANN = 18;
-        public const int TYPE_CONFIRM = 19;
-        public const int TYPE_NESTED = 20;
-        public const int TYPE_GEN_MSG = 21;
-        public const int TYPE_GEN_REP = 22;
-        public const int TYPE_ERROR = 23;
-        public const int TYPE_CERT_CONFIRM = 24;
-        public const int TYPE_POLL_REQ = 25;
-        public const int TYPE_POLL_REP = 26;
+        public const int TypeInitReq = 0;
+        public const int TypeInitRep = 1;
+        public const int TypeCertReq = 2;
+        public const int TypeCertRep = 3;
+        public const int TypeP10CertReq = 4;
+        public const int TypePopoChall = 5;
+        public const int TypePopoRep = 6;
+        public const int TypeKeyUpdateReq = 7;
+        public const int TypeKeyUpdateRep = 8;
+        public const int TypeKeyRecoveryReq = 9;
+        public const int TypeKeyRecoveryRep = 10;
+        public const int TypeRevocationReq = 11;
+        public const int TypeRevocationRep = 12;
+        public const int TypeCrossCertReq = 13;
+        public const int TypeCrossCertRep = 14;
+        public const int TypeCaKeyUpdateAnn = 15;
+        public const int TypeCertAnn = 16;
+        public const int TypeRevocationAnn = 17;
+        public const int TypeCrlAnn = 18;
+        public const int TypeConfirm = 19;
+        public const int TypeNested = 20;
+        public const int TypeGenMsg = 21;
+        public const int TypeGenRep = 22;
+        public const int TypeError = 23;
+        public const int TypeCertConfirm = 24;
+        public const int TypePollReq = 25;
+        public const int TypePollRep = 26;
+        private Asn1Encodable _body;
 
-        private int tagNo;
-        private Asn1Encodable body;
-
-        public static PkiBody GetInstance(object obj)
-        {
-            if (obj is PkiBody)
-                return (PkiBody)obj;
-
-            if (obj is Asn1TaggedObject)
-                return new PkiBody((Asn1TaggedObject)obj);
-
-            throw new ArgumentException("Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-        }
+        private int _tagNo;
 
         private PkiBody(Asn1TaggedObject tagged)
         {
-            tagNo = tagged.TagNo;
-            body = GetBodyForType(tagNo, tagged.GetObject());
+            _tagNo = tagged.TagNo;
+            _body = GetBodyForType(_tagNo, tagged.GetObject());
         }
 
         /**
@@ -68,8 +55,31 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
             int type,
             Asn1Encodable content)
         {
-            tagNo = type;
-            body = GetBodyForType(type, content);
+            _tagNo = type;
+            _body = GetBodyForType(type, content);
+        }
+
+        public virtual int Type
+        {
+            get { return _tagNo; }
+        }
+
+        public virtual Asn1Encodable Content
+        {
+            get { return _body; }
+        }
+
+        public static PkiBody GetInstance(object obj)
+        {
+            if (obj is PkiBody)
+                return (PkiBody)obj;
+
+            if (obj is Asn1TaggedObject)
+                return new PkiBody((Asn1TaggedObject)obj);
+
+            throw new ArgumentException(
+                "Invalid object: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj),
+                "obj");
         }
 
         private static Asn1Encodable GetBodyForType(
@@ -78,73 +88,63 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
         {
             switch (type)
             {
-                case TYPE_INIT_REQ:
+                case TypeInitReq:
                     return CertReqMessages.GetInstance(o);
-	            case TYPE_INIT_REP:
-	                return CertRepMessage.GetInstance(o);
-                case TYPE_CERT_REQ:
+                case TypeInitRep:
+                    return CertRepMessage.GetInstance(o);
+                case TypeCertReq:
                     return CertReqMessages.GetInstance(o);
-	            case TYPE_CERT_REP:
-	                return CertRepMessage.GetInstance(o);
-	            case TYPE_P10_CERT_REQ:
-	                return CertificationRequest.GetInstance(o);
-	            case TYPE_POPO_CHALL:
-	                return PopoDecKeyChallContent.GetInstance(o);
-	            case TYPE_POPO_REP:
-	                return PopoDecKeyRespContent.GetInstance(o);
-                case TYPE_KEY_UPDATE_REQ:
+                case TypeCertRep:
+                    return CertRepMessage.GetInstance(o);
+                case TypeP10CertReq:
+                    return CertificationRequest.GetInstance(o);
+                case TypePopoChall:
+                    return PopoDecKeyChallContent.GetInstance(o);
+                case TypePopoRep:
+                    return PopoDecKeyRespContent.GetInstance(o);
+                case TypeKeyUpdateReq:
                     return CertReqMessages.GetInstance(o);
-	            case TYPE_KEY_UPDATE_REP:
-	                return CertRepMessage.GetInstance(o);
-                case TYPE_KEY_RECOVERY_REQ:
+                case TypeKeyUpdateRep:
+                    return CertRepMessage.GetInstance(o);
+                case TypeKeyRecoveryReq:
                     return CertReqMessages.GetInstance(o);
-	            case TYPE_KEY_RECOVERY_REP:
-	                return KeyRecRepContent.GetInstance(o);
-	            case TYPE_REVOCATION_REQ:
-	                return RevReqContent.GetInstance(o);
-	            case TYPE_REVOCATION_REP:
-	                return RevRepContent.GetInstance(o);
-                case TYPE_CROSS_CERT_REQ:
+                case TypeKeyRecoveryRep:
+                    return KeyRecRepContent.GetInstance(o);
+                case TypeRevocationReq:
+                    return RevReqContent.GetInstance(o);
+                case TypeRevocationRep:
+                    return RevRepContent.GetInstance(o);
+                case TypeCrossCertReq:
                     return CertReqMessages.GetInstance(o);
-	            case TYPE_CROSS_CERT_REP:
-	                return CertRepMessage.GetInstance(o);
-	            case TYPE_CA_KEY_UPDATE_ANN:
-	                return CAKeyUpdAnnContent.GetInstance(o);
-	            case TYPE_CERT_ANN:
-	                return CmpCertificate.GetInstance(o);
-	            case TYPE_REVOCATION_ANN:
-	                return RevAnnContent.GetInstance(o);
-	            case TYPE_CRL_ANN:
-	                return CrlAnnContent.GetInstance(o);
-	            case TYPE_CONFIRM:
-	                return PkiConfirmContent.GetInstance(o);
-                case TYPE_NESTED:
+                case TypeCrossCertRep:
+                    return CertRepMessage.GetInstance(o);
+                case TypeCaKeyUpdateAnn:
+                    return CaKeyUpdAnnContent.GetInstance(o);
+                case TypeCertAnn:
+                    return CmpCertificate.GetInstance(o);
+                case TypeRevocationAnn:
+                    return RevAnnContent.GetInstance(o);
+                case TypeCrlAnn:
+                    return CrlAnnContent.GetInstance(o);
+                case TypeConfirm:
+                    return PkiConfirmContent.GetInstance(o);
+                case TypeNested:
                     return PkiMessages.GetInstance(o);
-	            case TYPE_GEN_MSG:
-	                return GenMsgContent.GetInstance(o);
-	            case TYPE_GEN_REP:
-	                return GenRepContent.GetInstance(o);
-	            case TYPE_ERROR:
-	                return ErrorMsgContent.GetInstance(o);
-	            case TYPE_CERT_CONFIRM:
-	                return CertConfirmContent.GetInstance(o);
-	            case TYPE_POLL_REQ:
-	                return PollReqContent.GetInstance(o);
-	            case TYPE_POLL_REP:
-	                return PollRepContent.GetInstance(o);
-	            default:
-	                throw new ArgumentException("unknown tag number: " + type, "type");
+                case TypeGenMsg:
+                    return GenMsgContent.GetInstance(o);
+                case TypeGenRep:
+                    return GenRepContent.GetInstance(o);
+                case TypeError:
+                    return ErrorMsgContent.GetInstance(o);
+                case TypeCertConfirm:
+                    return CertConfirmContent.GetInstance(o);
+                case TypePollReq:
+                    return PollReqContent.GetInstance(o);
+                case TypePollRep:
+                    return PollRepContent.GetInstance(o);
+                default:
+                    throw new ArgumentException("unknown tag number: " + type, "type");
             }
-        }
-
-        public virtual int Type
-        {
-            get { return tagNo; }
-        }
-
-        public virtual Asn1Encodable Content
-        {
-            get { return body; }
         }
 
         /**
@@ -183,7 +183,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Cmp
          */
         public override Asn1Object ToAsn1Object()
         {
-            return new DerTaggedObject(true, tagNo, body);
+            return new DerTaggedObject(true, _tagNo, _body);
         }
     }
 }

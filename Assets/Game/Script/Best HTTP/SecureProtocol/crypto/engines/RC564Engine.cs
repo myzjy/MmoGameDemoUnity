@@ -1,12 +1,11 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
 
+using System;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 #if UNITY_WSA && !UNITY_EDITOR && !ENABLE_IL2CPP
 using System.TypeFix;
 #endif
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
@@ -17,21 +16,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
     * <p>
     * This implementation is set to work with a 64 bit word size.</p>
     */
-    public class RC564Engine
-		: IBlockCipher
+    public class Rc564Engine
+        : IBlockCipher
     {
-        private static readonly int wordSize = 64;
-        private static readonly int bytesPerWord = wordSize / 8;
-
-        /*
-        * the number of rounds to perform
-        */
-        private int _noRounds;
-
-        /*
-        * the expanded key array of size 2*(rounds + 1)
-        */
-        private long [] _S;
+        private static readonly int WordSize = 64;
+        private static readonly int BytesPerWord = WordSize / 8;
 
         /*
         * our "magic constants" for wordSize 62
@@ -42,18 +31,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * where e is the base of natural logarithms (2.718281828...)
         * and o is the golden ratio (1.61803398...)
         */
-        private static readonly long P64 = unchecked( (long) 0xb7e151628aed2a6bL);
-        private static readonly long Q64 = unchecked( (long) 0x9e3779b97f4a7c15L);
+        private static readonly long P64 = unchecked((long)0xb7e151628aed2a6bL);
+        private static readonly long Q64 = unchecked((long)0x9e3779b97f4a7c15L);
 
-        private bool forEncryption;
+        private bool _forEncryption;
+
+        /*
+        * the number of rounds to perform
+        */
+        private int _noRounds;
+
+        /*
+        * the expanded key array of size 2*(rounds + 1)
+        */
+        private long[] _s;
 
         /**
         * Create an instance of the RC5 encryption algorithm
         * and set some defaults
         */
-        public RC564Engine()
+        public Rc564Engine()
         {
-            _noRounds     = 12;
+            _noRounds = 12;
 //            _S            = null;
         }
 
@@ -63,13 +62,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         public virtual bool IsPartialBlockOkay
-		{
-			get { return false; }
-		}
+        {
+            get { return false; }
+        }
 
         public virtual int GetBlockSize()
         {
-            return 2 * bytesPerWord;
+            return 2 * BytesPerWord;
         }
 
         /**
@@ -81,31 +80,34 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * inappropriate.
         */
         public virtual void Init(
-            bool             forEncryption,
-            ICipherParameters    parameters)
+            bool forEncryption,
+            ICipherParameters parameters)
         {
             if (!(typeof(RC5Parameters).IsInstanceOfType(parameters)))
             {
-                throw new ArgumentException("invalid parameter passed to RC564 init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
+                throw new ArgumentException("invalid parameter passed to RC564 init - " +
+                                            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(
+                                                parameters));
             }
 
-            RC5Parameters       p = (RC5Parameters)parameters;
+            RC5Parameters p = (RC5Parameters)parameters;
 
-            this.forEncryption = forEncryption;
+            this._forEncryption = forEncryption;
 
-            _noRounds     = p.Rounds;
+            _noRounds = p.Rounds;
 
             SetKey(p.GetKey());
         }
 
         public virtual int ProcessBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  output,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] output,
+            int outOff)
         {
-            return (forEncryption) ? EncryptBlock(input, inOff, output, outOff)
-                                        : DecryptBlock(input, inOff, output, outOff);
+            return (_forEncryption)
+                ? EncryptBlock(input, inOff, output, outOff)
+                : DecryptBlock(input, inOff, output, outOff);
         }
 
         public virtual void Reset()
@@ -118,7 +120,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param  key  the key to be used
         */
         private void SetKey(
-            byte[]      key)
+            byte[] key)
         {
             //
             // KEY EXPANSION:
@@ -132,11 +134,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //   of K. Any unfilled byte positions in L are zeroed. In the
             //   case that b = c = 0, set c = 1 and L[0] = 0.
             //
-            long[]   L = new long[(key.Length + (bytesPerWord - 1)) / bytesPerWord];
+            long[] l = new long[(key.Length + (BytesPerWord - 1)) / BytesPerWord];
 
             for (int i = 0; i != key.Length; i++)
             {
-                L[i / bytesPerWord] += (long)(key[i] & 0xff) << (8 * (i % bytesPerWord));
+                l[i / BytesPerWord] += (long)(key[i] & 0xff) << (8 * (i % BytesPerWord));
             }
 
             //
@@ -145,12 +147,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //   using an arithmetic progression modulo 2^wordsize determined
             //   by the magic numbers, Pw & Qw.
             //
-            _S            = new long[2*(_noRounds + 1)];
+            _s = new long[2 * (_noRounds + 1)];
 
-            _S[0] = P64;
-            for (int i=1; i < _S.Length; i++)
+            _s[0] = P64;
+            for (int i = 1; i < _s.Length; i++)
             {
-                _S[i] = (_S[i-1] + Q64);
+                _s[i] = (_s[i - 1] + Q64);
             }
 
             //
@@ -160,24 +162,24 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             //
             int iter;
 
-            if (L.Length > _S.Length)
+            if (l.Length > _s.Length)
             {
-                iter = 3 * L.Length;
+                iter = 3 * l.Length;
             }
             else
             {
-                iter = 3 * _S.Length;
+                iter = 3 * _s.Length;
             }
 
-            long A = 0, B = 0;
+            long a = 0, b = 0;
             int ii = 0, jj = 0;
 
             for (int k = 0; k < iter; k++)
             {
-                A = _S[ii] = RotateLeft(_S[ii] + A + B, 3);
-                B =  L[jj] = RotateLeft( L[jj] + A + B, A+B);
-                ii = (ii+1) % _S.Length;
-                jj = (jj+1) %  L.Length;
+                a = _s[ii] = RotateLeft(_s[ii] + a + b, 3);
+                b = l[jj] = RotateLeft(l[jj] + a + b, a + b);
+                ii = (ii + 1) % _s.Length;
+                jj = (jj + 1) % l.Length;
             }
         }
 
@@ -191,45 +193,45 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param  outOff  offset into out buffer
         */
         private int EncryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
-            long A = BytesToWord(input, inOff) + _S[0];
-            long B = BytesToWord(input, inOff + bytesPerWord) + _S[1];
+            long a = BytesToWord(input, inOff) + _s[0];
+            long b = BytesToWord(input, inOff + BytesPerWord) + _s[1];
 
             for (int i = 1; i <= _noRounds; i++)
             {
-                A = RotateLeft(A ^ B, B) + _S[2*i];
-                B = RotateLeft(B ^ A, A) + _S[2*i+1];
+                a = RotateLeft(a ^ b, b) + _s[2 * i];
+                b = RotateLeft(b ^ a, a) + _s[2 * i + 1];
             }
 
-            WordToBytes(A, outBytes, outOff);
-            WordToBytes(B, outBytes, outOff + bytesPerWord);
+            WordToBytes(a, outBytes, outOff);
+            WordToBytes(b, outBytes, outOff + BytesPerWord);
 
-            return 2 * bytesPerWord;
+            return 2 * BytesPerWord;
         }
 
         private int DecryptBlock(
-            byte[]  input,
-            int     inOff,
-            byte[]  outBytes,
-            int     outOff)
+            byte[] input,
+            int inOff,
+            byte[] outBytes,
+            int outOff)
         {
-            long A = BytesToWord(input, inOff);
-            long B = BytesToWord(input, inOff + bytesPerWord);
+            long a = BytesToWord(input, inOff);
+            long b = BytesToWord(input, inOff + BytesPerWord);
 
             for (int i = _noRounds; i >= 1; i--)
             {
-                B = RotateRight(B - _S[2*i+1], A) ^ A;
-                A = RotateRight(A - _S[2*i],   B) ^ B;
+                b = RotateRight(b - _s[2 * i + 1], a) ^ a;
+                a = RotateRight(a - _s[2 * i], b) ^ b;
             }
 
-            WordToBytes(A - _S[0], outBytes, outOff);
-            WordToBytes(B - _S[1], outBytes, outOff + bytesPerWord);
+            WordToBytes(a - _s[0], outBytes, outOff);
+            WordToBytes(b - _s[1], outBytes, outOff + BytesPerWord);
 
-            return 2 * bytesPerWord;
+            return 2 * BytesPerWord;
         }
 
 
@@ -249,10 +251,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param  x  word to rotate
         * @param  y    number of bits to rotate % wordSize
         */
-        private long RotateLeft(long x, long y) {
-            return ((long) (    (ulong) (x << (int) (y & (wordSize-1))) |
-                                ((ulong) x >> (int) (wordSize - (y & (wordSize-1)))))
-                   );
+        private long RotateLeft(long x, long y)
+        {
+            return ((long)((ulong)(x << (int)(y & (WordSize - 1))) |
+                           ((ulong)x >> (int)(WordSize - (y & (WordSize - 1)))))
+                );
         }
 
         /**
@@ -265,19 +268,20 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param x word to rotate
         * @param y number of bits to rotate % wordSize
         */
-        private long RotateRight(long x, long y) {
-            return ((long) (    ((ulong) x >> (int) (y & (wordSize-1))) |
-                                (ulong) (x << (int) (wordSize - (y & (wordSize-1)))))
-                   );
+        private long RotateRight(long x, long y)
+        {
+            return ((long)(((ulong)x >> (int)(y & (WordSize - 1))) |
+                           (ulong)(x << (int)(WordSize - (y & (WordSize - 1)))))
+                );
         }
 
         private long BytesToWord(
-            byte[]  src,
-            int     srcOff)
+            byte[] src,
+            int srcOff)
         {
-            long    word = 0;
+            long word = 0;
 
-            for (int i = bytesPerWord - 1; i >= 0; i--)
+            for (int i = BytesPerWord - 1; i >= 0; i--)
             {
                 word = (word << 8) + (src[i + srcOff] & 0xff);
             }
@@ -286,14 +290,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         }
 
         private void WordToBytes(
-            long    word,
-            byte[]  dst,
-            int     dstOff)
+            long word,
+            byte[] dst,
+            int dstOff)
         {
-            for (int i = 0; i < bytesPerWord; i++)
+            for (int i = 0; i < BytesPerWord; i++)
             {
                 dst[i + dstOff] = (byte)word;
-                word = (long) ((ulong) word >> 8);
+                word = (long)((ulong)word >> 8);
             }
         }
     }

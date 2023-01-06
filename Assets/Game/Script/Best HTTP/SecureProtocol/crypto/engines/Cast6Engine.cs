@@ -1,7 +1,5 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
@@ -17,47 +15,47 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
      * and implement a simplified cryptography interface.
      */
     public sealed class Cast6Engine
-		: Cast5Engine
+        : Cast5Engine
     {
         //====================================
         // Useful constants
         //====================================
-        private const int ROUNDS = 12;
-        private const int BLOCK_SIZE = 16;  // bytes = 128 bits
+        private const int Rounds = 12;
+        private const int BlockSize = 16; // bytes = 128 bits
+        private uint[] _km = new uint[Rounds * 4]; // the masking round key(s)
 
-		/*
+        /*
         * Put the round and mask keys into an array.
         * Kr0[i] => _Kr[i*4 + 0]
         */
-        private int []_Kr = new int[ROUNDS*4]; // the rotating round key(s)
-        private uint []_Km = new uint[ROUNDS*4]; // the masking round key(s)
+        private int[] _kr = new int[Rounds * 4]; // the rotating round key(s)
+        private uint[] _tm = new uint[24 * 8];
 
-		/*
+        /*
         * Key setup
         */
-        private int []_Tr = new int[24 * 8];
-        private uint []_Tm = new uint[24 * 8];
+        private int[] _tr = new int[24 * 8];
         private uint[] _workingKey = new uint[8];
 
-		public Cast6Engine()
+        public Cast6Engine()
         {
         }
 
-		public override string AlgorithmName
+        public override string AlgorithmName
         {
             get { return "CAST6"; }
         }
 
-		public override void Reset()
+        public override void Reset()
         {
         }
 
-		public override int GetBlockSize()
+        public override int GetBlockSize()
         {
-            return BLOCK_SIZE;
+            return BlockSize;
         }
 
-		//==================================
+        //==================================
         // Private Implementation
         //==================================
         /*
@@ -67,12 +65,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * See section 2.4
         */
         internal override void SetKey(
-			byte[] key)
+            byte[] key)
         {
-            uint Cm = 0x5a827999;
-            uint Mm = 0x6ed9eba1;
-            int Cr = 19;
-            int Mr = 17;
+            uint cm = 0x5a827999;
+            uint mm = 0x6ed9eba1;
+            int cr = 19;
+            int mr = 17;
             /*
             * Determine the key size here, if required
             *
@@ -80,63 +78,63 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
             *
             * Typical key sizes => 128, 160, 192, 224, 256
             */
-            for (int i=0; i< 24; i++)
+            for (int i = 0; i < 24; i++)
             {
-                for (int j=0; j< 8; j++)
+                for (int j = 0; j < 8; j++)
                 {
-                    _Tm[i*8 + j] = Cm;
-                    Cm += Mm; //mod 2^32;
-                    _Tr[i*8 + j] = Cr;
-                    Cr = (Cr + Mr) & 0x1f;            // mod 32
+                    _tm[i * 8 + j] = cm;
+                    cm += mm; //mod 2^32;
+                    _tr[i * 8 + j] = cr;
+                    cr = (cr + mr) & 0x1f; // mod 32
                 }
             }
 
-			byte[] tmpKey = new byte[64];
-			key.CopyTo(tmpKey, 0);
+            byte[] tmpKey = new byte[64];
+            key.CopyTo(tmpKey, 0);
 
-			// now create ABCDEFGH
+            // now create ABCDEFGH
             for (int i = 0; i < 8; i++)
             {
-                _workingKey[i] = Pack.BE_To_UInt32(tmpKey, i*4);
+                _workingKey[i] = Pack.BE_To_UInt32(tmpKey, i * 4);
             }
 
-			// Generate the key schedule
+            // Generate the key schedule
             for (int i = 0; i < 12; i++)
             {
                 // KAPPA <- W2i(KAPPA)
-                int i2 = i*2 *8;
-                _workingKey[6] ^= F1(_workingKey[7], _Tm[i2], _Tr[i2]);
-                _workingKey[5] ^= F2(_workingKey[6], _Tm[i2+1], _Tr[i2+1]);
-                _workingKey[4] ^= F3(_workingKey[5], _Tm[i2+2], _Tr[i2+2]);
-                _workingKey[3] ^= F1(_workingKey[4], _Tm[i2+3], _Tr[i2+3]);
-                _workingKey[2] ^= F2(_workingKey[3], _Tm[i2+4], _Tr[i2+4]);
-                _workingKey[1] ^= F3(_workingKey[2], _Tm[i2+5], _Tr[i2+5]);
-                _workingKey[0] ^= F1(_workingKey[1], _Tm[i2+6], _Tr[i2+6]);
-                _workingKey[7] ^= F2(_workingKey[0], _Tm[i2+7], _Tr[i2+7]);
+                int i2 = i * 2 * 8;
+                _workingKey[6] ^= F1(_workingKey[7], _tm[i2], _tr[i2]);
+                _workingKey[5] ^= F2(_workingKey[6], _tm[i2 + 1], _tr[i2 + 1]);
+                _workingKey[4] ^= F3(_workingKey[5], _tm[i2 + 2], _tr[i2 + 2]);
+                _workingKey[3] ^= F1(_workingKey[4], _tm[i2 + 3], _tr[i2 + 3]);
+                _workingKey[2] ^= F2(_workingKey[3], _tm[i2 + 4], _tr[i2 + 4]);
+                _workingKey[1] ^= F3(_workingKey[2], _tm[i2 + 5], _tr[i2 + 5]);
+                _workingKey[0] ^= F1(_workingKey[1], _tm[i2 + 6], _tr[i2 + 6]);
+                _workingKey[7] ^= F2(_workingKey[0], _tm[i2 + 7], _tr[i2 + 7]);
                 // KAPPA <- W2i+1(KAPPA)
-                i2 = (i*2 + 1)*8;
-                _workingKey[6] ^= F1(_workingKey[7], _Tm[i2], _Tr[i2]);
-                _workingKey[5] ^= F2(_workingKey[6], _Tm[i2+1], _Tr[i2+1]);
-                _workingKey[4] ^= F3(_workingKey[5], _Tm[i2+2], _Tr[i2+2]);
-                _workingKey[3] ^= F1(_workingKey[4], _Tm[i2+3], _Tr[i2+3]);
-                _workingKey[2] ^= F2(_workingKey[3], _Tm[i2+4], _Tr[i2+4]);
-                _workingKey[1] ^= F3(_workingKey[2], _Tm[i2+5], _Tr[i2+5]);
-                _workingKey[0] ^= F1(_workingKey[1], _Tm[i2+6], _Tr[i2+6]);
-                _workingKey[7] ^= F2(_workingKey[0], _Tm[i2+7], _Tr[i2+7]);
+                i2 = (i * 2 + 1) * 8;
+                _workingKey[6] ^= F1(_workingKey[7], _tm[i2], _tr[i2]);
+                _workingKey[5] ^= F2(_workingKey[6], _tm[i2 + 1], _tr[i2 + 1]);
+                _workingKey[4] ^= F3(_workingKey[5], _tm[i2 + 2], _tr[i2 + 2]);
+                _workingKey[3] ^= F1(_workingKey[4], _tm[i2 + 3], _tr[i2 + 3]);
+                _workingKey[2] ^= F2(_workingKey[3], _tm[i2 + 4], _tr[i2 + 4]);
+                _workingKey[1] ^= F3(_workingKey[2], _tm[i2 + 5], _tr[i2 + 5]);
+                _workingKey[0] ^= F1(_workingKey[1], _tm[i2 + 6], _tr[i2 + 6]);
+                _workingKey[7] ^= F2(_workingKey[0], _tm[i2 + 7], _tr[i2 + 7]);
                 // Kr_(i) <- KAPPA
-                _Kr[i*4] = (int)(_workingKey[0] & 0x1f);
-                _Kr[i*4 + 1] = (int)(_workingKey[2] & 0x1f);
-                _Kr[i*4 + 2] = (int)(_workingKey[4] & 0x1f);
-                _Kr[i*4 + 3] = (int)(_workingKey[6] & 0x1f);
+                _kr[i * 4] = (int)(_workingKey[0] & 0x1f);
+                _kr[i * 4 + 1] = (int)(_workingKey[2] & 0x1f);
+                _kr[i * 4 + 2] = (int)(_workingKey[4] & 0x1f);
+                _kr[i * 4 + 3] = (int)(_workingKey[6] & 0x1f);
                 // Km_(i) <- KAPPA
-                _Km[i*4] = _workingKey[7];
-                _Km[i*4 + 1] = _workingKey[5];
-                _Km[i*4 + 2] = _workingKey[3];
-                _Km[i*4 + 3] = _workingKey[1];
+                _km[i * 4] = _workingKey[7];
+                _km[i * 4 + 1] = _workingKey[5];
+                _km[i * 4 + 2] = _workingKey[3];
+                _km[i * 4 + 3] = _workingKey[1];
             }
         }
 
-		/**
+        /**
         * Encrypt the given input starting at the given offset and place
         * the result in the provided buffer starting at the given offset.
         *
@@ -146,28 +144,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param dstIndex    An offset into dst
         */
         internal override int EncryptBlock(
-            byte[]	src,
-            int		srcIndex,
-            byte[]	dst,
-            int		dstIndex)
+            byte[] src,
+            int srcIndex,
+            byte[] dst,
+            int dstIndex)
         {
             // process the input block
             // batch the units up into 4x32 bit chunks and go for it
-            uint A = Pack.BE_To_UInt32(src, srcIndex);
-            uint B = Pack.BE_To_UInt32(src, srcIndex + 4);
-            uint C = Pack.BE_To_UInt32(src, srcIndex + 8);
-            uint D = Pack.BE_To_UInt32(src, srcIndex + 12);
+            uint a = Pack.BE_To_UInt32(src, srcIndex);
+            uint b = Pack.BE_To_UInt32(src, srcIndex + 4);
+            uint c = Pack.BE_To_UInt32(src, srcIndex + 8);
+            uint d = Pack.BE_To_UInt32(src, srcIndex + 12);
             uint[] result = new uint[4];
-            CAST_Encipher(A, B, C, D, result);
+            CAST_Encipher(a, b, c, d, result);
             // now stuff them into the destination block
             Pack.UInt32_To_BE(result[0], dst, dstIndex);
             Pack.UInt32_To_BE(result[1], dst, dstIndex + 4);
             Pack.UInt32_To_BE(result[2], dst, dstIndex + 8);
             Pack.UInt32_To_BE(result[3], dst, dstIndex + 12);
-            return BLOCK_SIZE;
+            return BlockSize;
         }
 
-		/**
+        /**
         * Decrypt the given input starting at the given offset and place
         * the result in the provided buffer starting at the given offset.
         *
@@ -177,28 +175,28 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param dstIndex    An offset into dst
         */
         internal override int DecryptBlock(
-            byte[]	src,
-            int		srcIndex,
-            byte[]	dst,
-            int		dstIndex)
+            byte[] src,
+            int srcIndex,
+            byte[] dst,
+            int dstIndex)
         {
             // process the input block
             // batch the units up into 4x32 bit chunks and go for it
-            uint A = Pack.BE_To_UInt32(src, srcIndex);
-            uint B = Pack.BE_To_UInt32(src, srcIndex + 4);
-            uint C = Pack.BE_To_UInt32(src, srcIndex + 8);
-            uint D = Pack.BE_To_UInt32(src, srcIndex + 12);
+            uint a = Pack.BE_To_UInt32(src, srcIndex);
+            uint b = Pack.BE_To_UInt32(src, srcIndex + 4);
+            uint c = Pack.BE_To_UInt32(src, srcIndex + 8);
+            uint d = Pack.BE_To_UInt32(src, srcIndex + 12);
             uint[] result = new uint[4];
-            CAST_Decipher(A, B, C, D, result);
+            CAST_Decipher(a, b, c, d, result);
             // now stuff them into the destination block
             Pack.UInt32_To_BE(result[0], dst, dstIndex);
             Pack.UInt32_To_BE(result[1], dst, dstIndex + 4);
             Pack.UInt32_To_BE(result[2], dst, dstIndex + 8);
             Pack.UInt32_To_BE(result[3], dst, dstIndex + 12);
-            return BLOCK_SIZE;
+            return BlockSize;
         }
 
-		/**
+        /**
         * Does the 12 quad rounds rounds to encrypt the block.
         *
         * @param A    the 00-31  bits of the plaintext block
@@ -208,37 +206,39 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param result the resulting ciphertext
         */
         private void CAST_Encipher(
-			uint	A,
-			uint	B,
-			uint	C,
-			uint	D,
-			uint[]	result)
+            uint a,
+            uint b,
+            uint c,
+            uint d,
+            uint[] result)
         {
             for (int i = 0; i < 6; i++)
             {
-                int x = i*4;
+                int x = i * 4;
                 // BETA <- Qi(BETA)
-                C ^= F1(D, _Km[x], _Kr[x]);
-                B ^= F2(C, _Km[x + 1], _Kr[x + 1]);
-                A ^= F3(B, _Km[x + 2], _Kr[x + 2]);
-                D ^= F1(A, _Km[x + 3], _Kr[x + 3]);
+                c ^= F1(d, _km[x], _kr[x]);
+                b ^= F2(c, _km[x + 1], _kr[x + 1]);
+                a ^= F3(b, _km[x + 2], _kr[x + 2]);
+                d ^= F1(a, _km[x + 3], _kr[x + 3]);
             }
+
             for (int i = 6; i < 12; i++)
             {
-                int x = i*4;
+                int x = i * 4;
                 // BETA <- QBARi(BETA)
-                D ^= F1(A, _Km[x + 3], _Kr[x + 3]);
-                A ^= F3(B, _Km[x + 2], _Kr[x + 2]);
-                B ^= F2(C, _Km[x + 1], _Kr[x + 1]);
-                C ^= F1(D, _Km[x], _Kr[x]);
+                d ^= F1(a, _km[x + 3], _kr[x + 3]);
+                a ^= F3(b, _km[x + 2], _kr[x + 2]);
+                b ^= F2(c, _km[x + 1], _kr[x + 1]);
+                c ^= F1(d, _km[x], _kr[x]);
             }
-            result[0] = A;
-            result[1] = B;
-            result[2] = C;
-            result[3] = D;
+
+            result[0] = a;
+            result[1] = b;
+            result[2] = c;
+            result[3] = d;
         }
 
-		/**
+        /**
         * Does the 12 quad rounds rounds to decrypt the block.
         *
         * @param A    the 00-31  bits of the ciphertext block
@@ -248,34 +248,36 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         * @param result the resulting plaintext
         */
         private void CAST_Decipher(
-			uint	A,
-			uint	B,
-			uint	C,
-			uint	D,
-			uint[]	result)
+            uint a,
+            uint b,
+            uint c,
+            uint d,
+            uint[] result)
         {
             for (int i = 0; i < 6; i++)
             {
-                int x = (11-i)*4;
+                int x = (11 - i) * 4;
                 // BETA <- Qi(BETA)
-                C ^= F1(D, _Km[x], _Kr[x]);
-                B ^= F2(C, _Km[x + 1], _Kr[x + 1]);
-                A ^= F3(B, _Km[x + 2], _Kr[x + 2]);
-                D ^= F1(A, _Km[x + 3], _Kr[x + 3]);
+                c ^= F1(d, _km[x], _kr[x]);
+                b ^= F2(c, _km[x + 1], _kr[x + 1]);
+                a ^= F3(b, _km[x + 2], _kr[x + 2]);
+                d ^= F1(a, _km[x + 3], _kr[x + 3]);
             }
-            for (int i=6; i<12; i++)
+
+            for (int i = 6; i < 12; i++)
             {
-                int x = (11-i)*4;
+                int x = (11 - i) * 4;
                 // BETA <- QBARi(BETA)
-                D ^= F1(A, _Km[x + 3], _Kr[x + 3]);
-                A ^= F3(B, _Km[x + 2], _Kr[x + 2]);
-                B ^= F2(C, _Km[x + 1], _Kr[x + 1]);
-                C ^= F1(D, _Km[x], _Kr[x]);
+                d ^= F1(a, _km[x + 3], _kr[x + 3]);
+                a ^= F3(b, _km[x + 2], _kr[x + 2]);
+                b ^= F2(c, _km[x + 1], _kr[x + 1]);
+                c ^= F1(d, _km[x], _kr[x]);
             }
-            result[0] = A;
-            result[1] = B;
-            result[2] = C;
-            result[3] = D;
+
+            result[0] = a;
+            result[1] = b;
+            result[2] = c;
+            result[3] = d;
         }
     }
 }

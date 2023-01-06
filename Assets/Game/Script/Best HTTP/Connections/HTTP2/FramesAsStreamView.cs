@@ -1,13 +1,14 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
 
-using BestHTTP.PlatformSupport.Memory;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BestHTTP.PlatformSupport.Memory;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
-    interface IFrameDataView : IDisposable
+    internal interface IFrameDataView : IDisposable
     {
         long Length { get; }
         long Position { get; }
@@ -17,19 +18,17 @@ namespace BestHTTP.Connections.HTTP2
         int Read(byte[] buffer, int offset, int count);
     }
 
-    abstract class CommonFrameView : IFrameDataView
+    internal abstract class CommonFrameView : IFrameDataView
     {
+        protected readonly List<HTTP2FrameHeaderAndPayload> Frames = new List<HTTP2FrameHeaderAndPayload>();
+        protected int CurrentFrameIdx = -1;
+        protected byte[] Data;
+        protected UInt32 dataOffset;
+        protected UInt32 maxOffset;
         public long Length { get; protected set; }
         public long Position { get; protected set; }
 
-        protected List<HTTP2FrameHeaderAndPayload> frames = new List<HTTP2FrameHeaderAndPayload>();
-        protected int currentFrameIdx = -1;
-        protected byte[] data;
-        protected UInt32 dataOffset;
-        protected UInt32 maxOffset;
-
         public abstract void AddFrame(HTTP2FrameHeaderAndPayload frame);
-        protected abstract long CalculateDataLengthForFrame(HTTP2FrameHeaderAndPayload frame);
 
         public virtual int Read(byte[] buffer, int offset, int count)
         {
@@ -42,7 +41,7 @@ namespace BestHTTP.Connections.HTTP2
             {
                 long copyCount = Math.Min(count, this.maxOffset - this.dataOffset);
 
-                Array.Copy(this.data, this.dataOffset, buffer, offset + readCount, copyCount);
+                Array.Copy(this.Data, this.dataOffset, buffer, offset + readCount, copyCount);
 
                 count -= (int)copyCount;
                 readCount += (int)copyCount;
@@ -62,29 +61,32 @@ namespace BestHTTP.Connections.HTTP2
             if (this.dataOffset >= this.maxOffset && !AdvanceFrame())
                 return -1;
 
-            byte data = this.data[this.dataOffset];
+            byte data = this.Data[this.dataOffset];
             this.dataOffset++;
             this.Position++;
 
             return data;
         }
 
-        protected abstract bool AdvanceFrame();
-
         public virtual void Dispose()
         {
-            for (int i = 0; i < this.frames.Count; ++i)
-                if (this.frames[i].Payload != null && !this.frames[i].DontUseMemPool)
-                    BufferPool.Release(this.frames[i].Payload);
-            this.frames.Clear();
+            for (int i = 0; i < this.Frames.Count; ++i)
+                if (this.Frames[i].Payload != null && !this.Frames[i].DontUseMemPool)
+                    BufferPool.Release(this.Frames[i].Payload);
+            this.Frames.Clear();
         }
+
+        protected abstract long CalculateDataLengthForFrame(HTTP2FrameHeaderAndPayload frame);
+
+        protected abstract bool AdvanceFrame();
 
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder("[CommonFrameView ");
 
-            for (int i = 0; i < this.frames.Count; ++i) {
-                sb.AppendFormat("{0} Payload: {1}\n", this.frames[i], this.frames[i].PayloadAsHex());
+            for (int i = 0; i < this.Frames.Count; ++i)
+            {
+                sb.AppendFormat("{0} Payload: {1}\n", this.Frames[i], this.Frames[i].PayloadAsHex());
             }
 
             sb.Append("]");
@@ -100,10 +102,10 @@ namespace BestHTTP.Connections.HTTP2
             if (frame.Type != HTTP2FrameTypes.HEADERS && frame.Type != HTTP2FrameTypes.CONTINUATION)
                 throw new ArgumentException("HeaderFrameView - Unexpected frame type: " + frame.Type);
 
-            this.frames.Add(frame);
+            this.Frames.Add(frame);
             this.Length += CalculateDataLengthForFrame(frame);
 
-            if (this.currentFrameIdx == -1)
+            if (this.CurrentFrameIdx == -1)
                 AdvanceFrame();
         }
 
@@ -123,13 +125,13 @@ namespace BestHTTP.Connections.HTTP2
 
         protected override bool AdvanceFrame()
         {
-            if (this.currentFrameIdx >= this.frames.Count - 1)
+            if (this.CurrentFrameIdx >= this.Frames.Count - 1)
                 return false;
 
-            this.currentFrameIdx++;
-            HTTP2FrameHeaderAndPayload frame = this.frames[this.currentFrameIdx];
+            this.CurrentFrameIdx++;
+            HTTP2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
 
-            this.data = frame.Payload;
+            this.Data = frame.Payload;
 
             switch (frame.Type)
             {
@@ -156,7 +158,7 @@ namespace BestHTTP.Connections.HTTP2
             if (frame.Type != HTTP2FrameTypes.DATA)
                 throw new ArgumentException("HeaderFrameView - Unexpected frame type: " + frame.Type);
 
-            this.frames.Add(frame);
+            this.Frames.Add(frame);
             this.Length += CalculateDataLengthForFrame(frame);
         }
 
@@ -167,14 +169,14 @@ namespace BestHTTP.Connections.HTTP2
 
         protected override bool AdvanceFrame()
         {
-            if (this.currentFrameIdx >= this.frames.Count - 1)
+            if (this.CurrentFrameIdx >= this.Frames.Count - 1)
                 return false;
 
-            this.currentFrameIdx++;
-            HTTP2FrameHeaderAndPayload frame = this.frames[this.currentFrameIdx];
+            this.CurrentFrameIdx++;
+            HTTP2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
             HTTP2DataFrame dataFrame = HTTP2FrameHelper.ReadDataFrame(frame);
 
-            this.data = frame.Payload;
+            this.Data = frame.Payload;
             this.dataOffset = dataFrame.DataIdx;
             this.maxOffset = dataFrame.DataIdx + dataFrame.DataLength;
 
@@ -184,48 +186,67 @@ namespace BestHTTP.Connections.HTTP2
 
     sealed class FramesAsStreamView : Stream
     {
-        public override bool CanRead { get { return true; } }
-        public override bool CanSeek { get { return false; } }
-        public override bool CanWrite { get { return false; } }
-        public override long Length { get { return this.view.Length; } }
-        public override long Position { get { return this.view.Position; } set { throw new NotSupportedException(); } }
-
-        private IFrameDataView view;
+        private readonly IFrameDataView _view;
 
         public FramesAsStreamView(IFrameDataView view)
         {
-            this.view = view;
+            this._view = view;
+        }
+
+        public override bool CanRead => true;
+        public override bool CanSeek => false;
+        public override bool CanWrite => false;
+        public override long Length => this._view.Length;
+
+        public override long Position
+        {
+            get => this._view.Position;
+            set => throw new NotSupportedException();
         }
 
         public void AddFrame(HTTP2FrameHeaderAndPayload frame)
         {
-            this.view.AddFrame(frame);
+            this._view.AddFrame(frame);
         }
 
         public override int ReadByte()
         {
-            return this.view.ReadByte();
+            return this._view.ReadByte();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return this.view.Read(buffer, offset, count);
+            return this._view.Read(buffer, offset, count);
         }
 
         public override void Close()
         {
             base.Close();
-            this.view.Dispose();
+            this._view.Dispose();
         }
 
-        public override void Flush() {}
-        public override long Seek(long offset, SeekOrigin origin) { throw new NotImplementedException(); }
-        public override void SetLength(long value) { throw new NotImplementedException(); }
-        public override void Write(byte[] buffer, int offset, int count) { throw new NotImplementedException(); }
+        public override void Flush()
+        {
+        }
+
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetLength(long value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            throw new NotImplementedException();
+        }
 
         public override string ToString()
         {
-            return this.view.ToString();
+            return this._view.ToString();
         }
     }
 }

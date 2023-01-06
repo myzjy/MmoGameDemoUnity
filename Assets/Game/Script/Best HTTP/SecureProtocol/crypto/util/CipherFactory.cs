@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Kisa;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Misc;
@@ -19,10 +18,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
 {
     public class CipherFactory
     {
-        private CipherFactory()
-        {
-        }
-
         private static readonly short[] rc2Ekb =
         {
             0x5d, 0xbe, 0x9b, 0x8b, 0x11, 0x99, 0x6e, 0x4d, 0x59, 0xf3, 0x85, 0xa6, 0x3f, 0xb7, 0x83, 0xc5,
@@ -43,14 +38,18 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
             0x3b, 0x05, 0x03, 0x54, 0x60, 0x48, 0x65, 0x18, 0xd2, 0xcd, 0x5f, 0x32, 0x88, 0x0e, 0x35, 0xfd
         };
 
+        private CipherFactory()
+        {
+        }
+
         public static object CreateContentCipher(bool forEncryption, ICipherParameters encKey,
             AlgorithmIdentifier encryptionAlgID)
         {
             DerObjectIdentifier encAlg = encryptionAlgID.Algorithm;
 
-            if (encAlg.Equals(PkcsObjectIdentifiers.rc4))
+            if (encAlg.Equals(PkcsObjectIdentifiers.Rc4))
             {
-                IStreamCipher cipher = new RC4Engine();
+                IStreamCipher cipher = new Rc4Engine();
                 cipher.Init(forEncryption, encKey);
                 return cipher;
             }
@@ -85,7 +84,10 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
                     {
                         RC2CbcParameter cbcParams = RC2CbcParameter.GetInstance(sParams);
 
-                        cipher.Init(forEncryption, new ParametersWithIV(new RC2Parameters(((KeyParameter)encKey).GetKey(), rc2Ekb[cbcParams.RC2ParameterVersion.IntValue]), cbcParams.GetIV()));
+                        cipher.Init(forEncryption,
+                            new ParametersWithIV(
+                                new RC2Parameters(((KeyParameter)encKey).GetKey(),
+                                    rc2Ekb[cbcParams.RC2ParameterVersion.IntValue]), cbcParams.GetIV()));
                     }
                     else
                     {
@@ -130,7 +132,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities
             }
             else if (PkcsObjectIdentifiers.RC2Cbc.Equals(algorithm))
             {
-                cipher = new CbcBlockCipher(new RC2Engine());
+                cipher = new CbcBlockCipher(new Rc2Engine());
             }
             else if (MiscObjectIdentifiers.cast5CBC.Equals(algorithm))
             {

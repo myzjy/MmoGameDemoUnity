@@ -1,24 +1,21 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 {
     public abstract class SerpentEngineBase
-        :   IBlockCipher
+        : IBlockCipher
     {
+        internal const int Rounds = 32;
+        internal const int Phi = unchecked((int)0x9E3779B9); // (sqrt(5) - 1) * 2**31
         protected static readonly int BlockSize = 16;
 
-        internal const int ROUNDS = 32;
-        internal const int PHI = unchecked((int)0x9E3779B9);       // (sqrt(5) - 1) * 2**31
+        protected bool Encrypting;
+        protected int[] WKey;
 
-        protected bool encrypting;
-        protected int[] wKey;
-
-        protected int X0, X1, X2, X3;    // registers
+        protected int X0, X1, X2, X3; // registers
 
         protected SerpentEngineBase()
         {
@@ -35,10 +32,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
         public virtual void Init(bool encrypting, ICipherParameters parameters)
         {
             if (!(parameters is KeyParameter))
-				throw new ArgumentException("invalid parameter passed to " + AlgorithmName + " init - " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
+                throw new ArgumentException("invalid parameter passed to " + AlgorithmName + " init - " +
+                                            BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(
+                                                parameters));
 
-            this.encrypting = encrypting;
-            this.wKey = MakeWorkingKey(((KeyParameter)parameters).GetKey());
+            this.Encrypting = encrypting;
+            this.WKey = MakeWorkingKey(((KeyParameter)parameters).GetKey());
         }
 
         public virtual string AlgorithmName
@@ -71,13 +70,13 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
          */
         public int ProcessBlock(byte[] input, int inOff, byte[] output, int outOff)
         {
-            if (wKey == null)
+            if (WKey == null)
                 throw new InvalidOperationException(AlgorithmName + " not initialised");
 
             Check.DataLength(input, inOff, BlockSize, "input buffer too short");
             Check.OutputLength(output, outOff, BlockSize, "output buffer too short");
 
-            if (encrypting)
+            if (Encrypting)
             {
                 EncryptBlock(input, inOff, output, outOff);
             }
@@ -95,12 +94,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Engines
 
         protected static int RotateLeft(int x, int bits)
         {
-            return ((x << bits) | (int) ((uint)x >> (32 - bits)));
+            return ((x << bits) | (int)((uint)x >> (32 - bits)));
         }
 
         private static int RotateRight(int x, int bits)
         {
-            return ( (int)((uint)x >> bits) | (x << (32 - bits)));
+            return ((int)((uint)x >> bits) | (x << (32 - bits)));
         }
 
         /*

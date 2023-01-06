@@ -52,7 +52,7 @@ namespace BestHTTP.Connections
 
         public void Connect(HTTPRequest request)
         {
-            string negotiatedProtocol = HttpProtocolFactory.W3C_HTTP1;
+            string negotiatedProtocol = HttpProtocolFactory.W3CHttp1;
 
             Uri uri =
 #if !BESTHTTP_DISABLE_PROXY
@@ -248,14 +248,14 @@ namespace BestHTTP.Connections
                         List<ProtocolName> protocols = new List<ProtocolName>();
 #if !BESTHTTP_DISABLE_HTTP2
                         SupportedProtocols protocol = HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri);
-                        if (protocol == SupportedProtocols.HTTP && request.IsKeepAlive)
+                        if (protocol == SupportedProtocols.Http && request.IsKeepAlive)
                         {
                             // http/2 over tls (https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids)
-                            protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3C_HTTP2));
+                            protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3CHttp2));
                         }
 #endif
 
-                        protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3C_HTTP1));
+                        protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3CHttp1));
 
                         AbstractTls13Client tlsClient = null;
                         if (HttpManager.TlsClientFactory == null)
