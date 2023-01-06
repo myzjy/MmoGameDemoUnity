@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Concurrent;
-
-using BestHTTP.Logger;
-
-// Required for ConcurrentQueue.Clear extension.
 using BestHTTP.Extensions;
+using BestHTTP.Logger;
+// Required for ConcurrentQueue.Clear extension.
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Core
 {
     public enum PluginEvents
@@ -18,7 +17,7 @@ namespace BestHTTP.Core
 
         AltSvcHeader,
 
-        HTTP2ConnectProtocol
+        Http2ConnectProtocol
     }
 
     public
@@ -44,83 +43,90 @@ namespace BestHTTP.Core
 
         public override string ToString()
         {
-            return string.Format("[PluginEventInfo Event: {0}]", this.Event);
+            return $"[PluginEventInfo Event: {this.Event}]";
         }
     }
 
     public static class PluginEventHelper
     {
-        private static ConcurrentQueue<PluginEventInfo> pluginEvents = new ConcurrentQueue<PluginEventInfo>();
+        private static readonly ConcurrentQueue<PluginEventInfo> PluginEvents = new ConcurrentQueue<PluginEventInfo>();
 
 #pragma warning disable 0649
-        public static Action<PluginEventInfo> OnEvent;
+        private static Action<PluginEventInfo> _onEvent;
 #pragma warning restore
 
         public static void EnqueuePluginEvent(PluginEventInfo @event)
         {
-            if (HTTPManager.Logger.Level == Loglevels.All)
-                HTTPManager.Logger.Information("PluginEventHelper", "Enqueue plugin event: " + @event.ToString());
+            if (HttpManager.Logger.Level == Loglevels.All)
+                HttpManager.Logger.Information("PluginEventHelper", "Enqueue plugin event: " + @event.ToString());
 
-            pluginEvents.Enqueue(@event);
+            PluginEvents.Enqueue(@event);
         }
 
         internal static void Clear()
         {
-            pluginEvents.Clear();
+            PluginEvents.Clear();
         }
 
         internal static void ProcessQueue()
         {
 #if !BESTHTTP_DISABLE_COOKIES
-            bool saveCookieLibrary = false;
+            var saveCookieLibrary = false;
 #endif
 
 #if !BESTHTTP_DISABLE_CACHING
-            bool saveCacheLibrary = false;
+            var saveCacheLibrary = false;
 #endif
 
-            PluginEventInfo pluginEvent;
-            while (pluginEvents.TryDequeue(out pluginEvent))
+            while (PluginEvents.TryDequeue(out var pluginEvent))
             {
-                if (HTTPManager.Logger.Level == Loglevels.All)
-                    HTTPManager.Logger.Information("PluginEventHelper", "Processing plugin event: " + pluginEvent.ToString());
+                if (HttpManager.Logger.Level == Loglevels.All)
+                    HttpManager.Logger.Information("PluginEventHelper", $"Processing plugin event: {pluginEvent}");
 
-                if (OnEvent != null)
+                if (_onEvent != null)
                 {
                     try
                     {
-                        OnEvent(pluginEvent);
+                        _onEvent(pluginEvent);
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("PluginEventHelper", "ProcessQueue", ex);
+                        HttpManager.Logger.Exception("PluginEventHelper", "ProcessQueue", ex);
                     }
                 }
 
                 switch (pluginEvent.Event)
                 {
 #if !BESTHTTP_DISABLE_COOKIES
-                    case PluginEvents.SaveCookieLibrary:
+                    case Core.PluginEvents.SaveCookieLibrary:
                         saveCookieLibrary = true;
                         break;
 #endif
 
 #if !BESTHTTP_DISABLE_CACHING
-                    case PluginEvents.SaveCacheLibrary:
+                    case Core.PluginEvents.SaveCacheLibrary:
                         saveCacheLibrary = true;
                         break;
 #endif
 
-                    case PluginEvents.AltSvcHeader:
-                        AltSvcEventInfo altSvcEventInfo = pluginEvent.Payload as AltSvcEventInfo;
-                        HostManager.GetHost(altSvcEventInfo.Host)
-                                    .HandleAltSvcHeader(altSvcEventInfo.Response);
+                    case Core.PluginEvents.AltSvcHeader:
+                    {
+                        if (pluginEvent.Payload is AltSvcEventInfo altSvcEventInfo)
+                        {
+                            HostManager.GetHost(altSvcEventInfo.Host)
+                                .HandleAltSvcHeader(altSvcEventInfo.Response);
+                        }
+                    }
                         break;
 
-                    case PluginEvents.HTTP2ConnectProtocol:
-                        HTTP2ConnectProtocolInfo info = pluginEvent.Payload as HTTP2ConnectProtocolInfo;
-                        HostManager.GetHost(info.Host)
-                                    .HandleConnectProtocol(info);
+                    case Core.PluginEvents.Http2ConnectProtocol:
+                    {
+                        if (pluginEvent.Payload is Http2ConnectProtocolInfo info)
+                        {
+                            HostManager.GetHost(info.Host)
+                                .HandleConnectProtocol(info);
+                        }
+                    }
                         break;
                 }
             }
@@ -140,21 +146,21 @@ namespace BestHTTP.Core
     public sealed class AltSvcEventInfo
     {
         public readonly string Host;
-        public readonly HTTPResponse Response;
+        public readonly HttpResponse Response;
 
-        public AltSvcEventInfo(string host, HTTPResponse resp)
+        public AltSvcEventInfo(string host, HttpResponse resp)
         {
             this.Host = host;
             this.Response = resp;
         }
     }
 
-    public sealed class HTTP2ConnectProtocolInfo
+    public sealed class Http2ConnectProtocolInfo
     {
-        public readonly string Host;
         public readonly bool Enabled;
+        public readonly string Host;
 
-        public HTTP2ConnectProtocolInfo(string host, bool enabled)
+        public Http2ConnectProtocolInfo(string host, bool enabled)
         {
             this.Host = host;
             this.Enabled = enabled;

@@ -1,10 +1,9 @@
 using System;
-
 using BestHTTP.Logger;
 
 namespace BestHTTP.Core
 {
-    public struct HostConnectionKey
+    public readonly struct HostConnectionKey
     {
         public readonly string Host;
         public readonly string Connection;
@@ -17,7 +16,7 @@ namespace BestHTTP.Core
 
         public override string ToString()
         {
-            return string.Format("[HostConnectionKey Host: '{0}', Connection: '{1}']", this.Host, this.Connection);
+            return $"[HostConnectionKey Host: '{this.Host}', Connection: '{this.Connection}']";
         }
     }
 

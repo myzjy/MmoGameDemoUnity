@@ -198,7 +198,7 @@ namespace BestHTTP.Caching
             if (!HTTPCacheService.IsSupported)
                 return false;
 
-            return HTTPManager.IOService.FileExists(GetPath());
+            return HttpManager.IOService.FileExists(GetPath());
         }
 
         internal void Delete()
@@ -209,7 +209,7 @@ namespace BestHTTP.Caching
             string path = GetPath();
             try
             {
-                HTTPManager.IOService.FileDelete(path);
+                HttpManager.IOService.FileDelete(path);
             }
             catch
             {
@@ -241,7 +241,7 @@ namespace BestHTTP.Caching
 
         #region Caching
 
-        internal void SetUpCachingValues(HTTPResponse response)
+        internal void SetUpCachingValues(HttpResponse response)
         {
             response.CacheFileInfo = this;
 
@@ -401,22 +401,22 @@ namespace BestHTTP.Caching
 
             LastAccess = DateTime.UtcNow;
 
-            var stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
+            var stream = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
             stream.Seek(-length, System.IO.SeekOrigin.End);
 
             return stream;
         }
 
-        internal HTTPResponse ReadResponseTo(HTTPRequest request)
+        internal HttpResponse ReadResponseTo(HTTPRequest request)
         {
             if (!IsExists())
                 return null;
 
             LastAccess = DateTime.UtcNow;
 
-            using var stream = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
+            using var stream = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
             {
-                var response = new HTTPResponse(request, stream, request.UseStreaming, true);
+                var response = new HttpResponse(request, stream, request.UseStreaming, true);
                 response.CacheFileInfo = this;
                 response.Receive(BodyLength);
 
@@ -425,7 +425,7 @@ namespace BestHTTP.Caching
         }
 
 
-        internal void Store(HTTPResponse response)
+        internal void Store(HttpResponse response)
         {
             if (!HTTPCacheService.IsSupported)
                 return;
@@ -433,13 +433,13 @@ namespace BestHTTP.Caching
             string path = GetPath();
 
             // 路径名太长，我们不想得到异常
-            if (path.Length > HTTPManager.MaxPathLength)
+            if (path.Length > HttpManager.MaxPathLength)
                 return;
 
-            if (HTTPManager.IOService.FileExists(path))
+            if (HttpManager.IOService.FileExists(path))
                 Delete();
 
-            using (var writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
+            using (var writer = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
                 writer.WriteLine("HTTP/{0}.{1} {2} {3}", response.VersionMajor, response.VersionMinor,
                     response.StatusCode, response.Message);
@@ -463,7 +463,7 @@ namespace BestHTTP.Caching
             SetUpCachingValues(response);
         }
 
-        internal Stream GetSaveStream(HTTPResponse response)
+        internal Stream GetSaveStream(HttpResponse response)
         {
             if (!HTTPCacheService.IsSupported)
                 return null;
@@ -472,17 +472,17 @@ namespace BestHTTP.Caching
 
             var path = GetPath();
 
-            if (HTTPManager.IOService.FileExists(path))
+            if (HttpManager.IOService.FileExists(path))
             {
                 Delete();
             }
 
             // 路径名太长，我们不想得到异常
-            if (path.Length > HTTPManager.MaxPathLength)
+            if (path.Length > HttpManager.MaxPathLength)
                 return null;
 
             // 首先写出报头
-            using (var writer = HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
+            using (var writer = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
                 writer.WriteLine("HTTP/1.1 {0} {1}", response.StatusCode, response.Message);
                 foreach (var kvp in response.Headers)
@@ -501,7 +501,7 @@ namespace BestHTTP.Caching
             SetUpCachingValues(response);
 
             // 然后使用Append FileMode创建流
-            return HTTPManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Append);
+            return HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Append);
         }
 
         #endregion

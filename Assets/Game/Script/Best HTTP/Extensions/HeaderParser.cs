@@ -29,9 +29,9 @@ namespace BestHTTP.Extensions
                     result.Add(current);
                 }
             }
-            catch(System.Exception ex)
+            catch (System.Exception ex)
             {
-                HTTPManager.Logger.Exception("HeaderParser - Parse", headerStr, ex);
+                HttpManager.Logger.Exception("HeaderParser - Parse", headerStr, ex);
             }
 
             return result;

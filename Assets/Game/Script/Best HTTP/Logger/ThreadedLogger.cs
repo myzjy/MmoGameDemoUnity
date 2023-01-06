@@ -9,8 +9,44 @@ namespace BestHTTP.Logger
     [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
     public sealed class ThreadedLogger : BestHTTP.Logger.ILogger, IDisposable
     {
+        private ILogOutput _output;
+
+        public int InitialStringBufferCapacity = 256;
+
+        private StringBuilder sb = new StringBuilder(0);
+
+        public ThreadedLogger()
+        {
+            this.Level = UnityEngine.Debug.isDebugBuild ? Loglevels.Warning : Loglevels.Error;
+            this.Output = new UnityOutput();
+        }
+
+        public void Dispose()
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            this.isDisposed = true;
+
+            if (this.newJobEvent != null)
+            {
+                this.newJobEvent.Close();
+                this.newJobEvent = null;
+            }
+#endif
+
+            if (this.Output != null)
+            {
+                this.Output.Dispose();
+                this.Output = new UnityOutput();
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
         public Loglevels Level { get; set; }
-        public ILogOutput Output { get { return this._output; }
+
+        public ILogOutput Output
+        {
+            get { return this._output; }
             set
             {
                 if (this._output != value)
@@ -21,50 +57,39 @@ namespace BestHTTP.Logger
                 }
             }
         }
-        private ILogOutput _output;
 
-        public int InitialStringBufferCapacity = 256;
-
-#if !UNITY_WEBGL || UNITY_EDITOR
-        public TimeSpan ExitThreadAfterInactivity = TimeSpan.FromMinutes(1);
-
-        private ConcurrentQueue<LogJob> jobs = new ConcurrentQueue<LogJob>();
-        private System.Threading.AutoResetEvent newJobEvent = new System.Threading.AutoResetEvent(false);
-
-        private volatile int threadCreated;
-
-        private volatile bool isDisposed;
-#endif
-
-        private StringBuilder sb = new StringBuilder(0);
-
-        public ThreadedLogger()
+        public void Verbose(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null,
+            LoggingContext context3 = null)
         {
-            this.Level = UnityEngine.Debug.isDebugBuild ? Loglevels.Warning : Loglevels.Error;
-            this.Output = new UnityOutput();
-        }
-
-        public void Verbose(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null, LoggingContext context3 = null) {
             AddJob(Loglevels.All, division, msg, null, context1, context2, context3);
         }
 
-        public void Information(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null, LoggingContext context3 = null) {
+        public void Information(string division, string msg, LoggingContext context1 = null,
+            LoggingContext context2 = null, LoggingContext context3 = null)
+        {
             AddJob(Loglevels.Information, division, msg, null, context1, context2, context3);
         }
 
-        public void Warning(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null, LoggingContext context3 = null) {
+        public void Warning(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null,
+            LoggingContext context3 = null)
+        {
             AddJob(Loglevels.Warning, division, msg, null, context1, context2, context3);
         }
 
-        public void Error(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null, LoggingContext context3 = null) {
+        public void Error(string division, string msg, LoggingContext context1 = null, LoggingContext context2 = null,
+            LoggingContext context3 = null)
+        {
             AddJob(Loglevels.Error, division, msg, null, context1, context2, context3);
         }
 
-        public void Exception(string division, string msg, Exception ex, LoggingContext context1 = null, LoggingContext context2 = null, LoggingContext context3 = null) {
+        public void Exception(string division, string msg, Exception ex, LoggingContext context1 = null,
+            LoggingContext context2 = null, LoggingContext context3 = null)
+        {
             AddJob(Loglevels.Exception, division, msg, ex, context1, context2, context3);
         }
 
-        private void AddJob(Loglevels level, string div, string msg, Exception ex, LoggingContext context1, LoggingContext context2, LoggingContext context3)
+        private void AddJob(Loglevels level, string div, string msg, Exception ex, LoggingContext context1,
+            LoggingContext context2, LoggingContext context3)
         {
             if (this.Level > level)
                 return;
@@ -107,7 +132,9 @@ namespace BestHTTP.Logger
                     this.Output.Write(job.level, job.ToJson(sb));
                 }
                 catch
-                { }
+                {
+                }
+
                 return;
             }
 
@@ -146,10 +173,11 @@ namespace BestHTTP.Logger
                             this.Output.Write(job.level, job.ToJson(sb));
                         }
                         catch
-                        { }
+                        {
+                        }
                     }
+                } while (!HttpManager.IsQuitting);
 
-                } while (!HTTPManager.IsQuitting);
                 System.Threading.Interlocked.Exchange(ref this.threadCreated, 0);
 
                 // When HTTPManager.IsQuitting is true, there is still logging that will create a new thread after the last one quit
@@ -175,32 +203,24 @@ namespace BestHTTP.Logger
 
 #endif
 
-        public void Dispose()
-        {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            this.isDisposed = true;
+        public TimeSpan ExitThreadAfterInactivity = TimeSpan.FromMinutes(1);
 
-            if (this.newJobEvent != null)
-            {
-                this.newJobEvent.Close();
-                this.newJobEvent = null;
-            }
+        private ConcurrentQueue<LogJob> jobs = new ConcurrentQueue<LogJob>();
+        private System.Threading.AutoResetEvent newJobEvent = new System.Threading.AutoResetEvent(false);
+
+        private volatile int threadCreated;
+
+        private volatile bool isDisposed;
 #endif
-
-            if (this.Output != null)
-            {
-                this.Output.Dispose();
-                this.Output = new UnityOutput();
-            }
-
-            GC.SuppressFinalize(this);
-        }
     }
 
     [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     struct LogJob
     {
-        private static string[] LevelStrings = new string[] { "Verbose", "Information", "Warning", "Error", "Exception" };
+        private static string[] LevelStrings = new string[]
+            { "Verbose", "Information", "Warning", "Error", "Exception" };
+
         public Loglevels level;
         public string division;
         public string msg;

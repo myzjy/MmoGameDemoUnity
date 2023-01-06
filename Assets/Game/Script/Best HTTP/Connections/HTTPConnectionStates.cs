@@ -4,7 +4,7 @@ namespace BestHTTP.Connections
     /// Possible states of a Http Connection.
     /// The ideal lifecycle of a connection that has KeepAlive is the following: Initial => [Processing => WaitForRecycle => Free] => Closed.
     /// </summary>
-    public enum HTTPConnectionStates
+    public enum HttpConnectionStates
     {
         /// <summary>
         /// This Connection instance is just created.

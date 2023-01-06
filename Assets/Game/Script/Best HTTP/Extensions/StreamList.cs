@@ -1,5 +1,5 @@
-using BestHTTP.PlatformSupport.Memory;
 using System;
+using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.Extensions
 {
@@ -8,8 +8,8 @@ namespace BestHTTP.Extensions
     /// </summary>
     public sealed class StreamList : System.IO.Stream
     {
-        private System.IO.Stream[] Streams;
         private int CurrentIdx;
+        private System.IO.Stream[] Streams;
 
         public StreamList(params System.IO.Stream[] streams)
         {
@@ -27,7 +27,10 @@ namespace BestHTTP.Extensions
             }
         }
 
-        public override bool CanSeek { get { return false; } }
+        public override bool CanSeek
+        {
+            get { return false; }
+        }
 
         public override bool CanWrite
         {
@@ -37,16 +40,6 @@ namespace BestHTTP.Extensions
                     return false;
                 return Streams[CurrentIdx].CanWrite;
             }
-        }
-
-        public override void Flush()
-        {
-            if (CurrentIdx >= Streams.Length)
-                return;
-
-            // We have to call the flush to all previous streams, as we may advanced the CurrentIdx
-            for (int i = 0; i <= CurrentIdx; ++i)
-                Streams[i].Flush();
         }
 
         public override long Length
@@ -62,6 +55,22 @@ namespace BestHTTP.Extensions
 
                 return length;
             }
+        }
+
+        public override long Position
+        {
+            get { throw new NotImplementedException("Position get"); }
+            set { throw new NotImplementedException("Position set"); }
+        }
+
+        public override void Flush()
+        {
+            if (CurrentIdx >= Streams.Length)
+                return;
+
+            // We have to call the flush to all previous streams, as we may advanced the CurrentIdx
+            for (int i = 0; i <= CurrentIdx; ++i)
+                Streams[i].Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -81,7 +90,7 @@ namespace BestHTTP.Extensions
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("StreamList", "Dispose", ex);
+                    HttpManager.Logger.Exception("StreamList", "Dispose", ex);
                 }
 
                 readCount += Streams[CurrentIdx].Read(buffer, offset + readCount, count - readCount);
@@ -119,21 +128,9 @@ namespace BestHTTP.Extensions
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("StreamList", "Dispose", ex);
+                            HttpManager.Logger.Exception("StreamList", "Dispose", ex);
                         }
                     }
-            }
-        }
-
-        public override long Position
-        {
-            get
-            {
-                throw new NotImplementedException("Position get");
-            }
-            set
-            {
-                throw new NotImplementedException("Position set");
             }
         }
 

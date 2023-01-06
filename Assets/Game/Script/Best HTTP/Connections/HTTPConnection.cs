@@ -1,13 +1,11 @@
 #if !UNITY_WEBGL || UNITY_EDITOR
 
-using System;
-
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
-#endif
-
+using System;
 using BestHTTP.Core;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.Timings;
+#endif
 
 namespace BestHTTP.Connections
 {
@@ -17,10 +15,17 @@ namespace BestHTTP.Connections
     public sealed class HTTPConnection : ConnectionBase
     {
         public TCPConnector connector;
-        public IHTTPRequestHandler requestHandler;
+        public IHttpRequestHandler requestHandler;
 
-        public override TimeSpan KeepAliveTime {
-            get {
+        internal HTTPConnection(string serverAddress)
+            : base(serverAddress)
+        {
+        }
+
+        public override TimeSpan KeepAliveTime
+        {
+            get
+            {
                 if (this.requestHandler != null && this.requestHandler.KeepAlive != null)
                 {
                     if (this.requestHandler.KeepAlive.MaxRequests > 0)
@@ -33,14 +38,11 @@ namespace BestHTTP.Connections
                     else
                         return TimeSpan.Zero;
                 }
-        
+
                 return base.KeepAliveTime;
             }
-        
-            protected set
-            {
-                base.KeepAliveTime = value;
-            }
+
+            protected set { base.KeepAliveTime = value; }
         }
 
         public override bool CanProcessMultiple
@@ -52,10 +54,6 @@ namespace BestHTTP.Connections
                 return base.CanProcessMultiple;
             }
         }
-
-        internal HTTPConnection(string serverAddress)
-            :base(serverAddress)
-        {}
 
         public override bool TestConnection()
         {
@@ -73,7 +71,8 @@ namespace BestHTTP.Connections
                             var available = stream.Protocol.TestApplicationData();
                             return !stream.Protocol.IsClosed;
                         }
-                        catch {
+                        catch
+                        {
                             return false;
                         }
                     }
@@ -117,7 +116,8 @@ namespace BestHTTP.Connections
             {
                 // this will send the request back to the queue
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(CurrentRequest, RequestEvents.Resend));
-                ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this, HTTPConnectionStates.Closed));
+                ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
+                    HttpConnectionStates.Closed));
                 return;
             }
 
@@ -129,21 +129,25 @@ namespace BestHTTP.Connections
                 {
                     this.connector.Connect(this.CurrentRequest);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                        HTTPManager.Logger.Exception("HTTPConnection", "Connector.Connect", ex, this.Context, this.CurrentRequest.Context);
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                        HttpManager.Logger.Exception("HTTPConnection", "Connector.Connect", ex, this.Context,
+                            this.CurrentRequest.Context);
 
-                    
+
                     if (ex is TimeoutException)
                         this.CurrentRequest.State = HTTPRequestStates.ConnectionTimedOut;
-                    else if (!this.CurrentRequest.IsTimedOut) // Do nothing here if Abort() got called on the request, its State is already set.
+                    else if
+                        (!this.CurrentRequest
+                            .IsTimedOut) // Do nothing here if Abort() got called on the request, its State is already set.
                     {
                         this.CurrentRequest.Exception = ex;
                         this.CurrentRequest.State = HTTPRequestStates.Error;
                     }
 
-                    ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this, HTTPConnectionStates.Closed));
+                    ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
+                        HttpConnectionStates.Closed));
 
                     return;
                 }
@@ -154,28 +158,36 @@ namespace BestHTTP.Connections
 #endif
                 StartTime = DateTime.UtcNow;
 
-                HTTPManager.Logger.Information("HTTPConnection", "Negotiated protocol through ALPN: '" + this.connector.NegotiatedProtocol + "'", this.Context, this.CurrentRequest.Context);
+                HttpManager.Logger.Information("HTTPConnection",
+                    "Negotiated protocol through ALPN: '" + this.connector.NegotiatedProtocol + "'", this.Context,
+                    this.CurrentRequest.Context);
 
                 switch (this.connector.NegotiatedProtocol)
                 {
-                    case HTTPProtocolFactory.W3C_HTTP1:
+                    case HttpProtocolFactory.W3C_HTTP1:
                         this.requestHandler = new Connections.HTTP1Handler(this);
-                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this, HostProtocolSupport.HTTP1));
+                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
+                            HostProtocolSupport.Http1));
                         break;
 
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-                    case HTTPProtocolFactory.W3C_HTTP2:
+                    case HttpProtocolFactory.W3C_HTTP2:
                         this.requestHandler = new Connections.HTTP2.HTTP2Handler(this);
                         this.CurrentRequest = null;
-                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this, HostProtocolSupport.HTTP2));
+                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
+                            HostProtocolSupport.Http2));
                         break;
 #endif
 
                     default:
-                        HTTPManager.Logger.Error("HTTPConnection", "Unknown negotiated protocol: " + this.connector.NegotiatedProtocol, this.Context, this.CurrentRequest.Context);
+                        HttpManager.Logger.Error("HTTPConnection",
+                            "Unknown negotiated protocol: " + this.connector.NegotiatedProtocol, this.Context,
+                            this.CurrentRequest.Context);
 
-                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(CurrentRequest, RequestEvents.Resend));
-                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this, HTTPConnectionStates.Closed));
+                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(CurrentRequest,
+                            RequestEvents.Resend));
+                        ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
+                            HttpConnectionStates.Closed));
                         return;
                 }
             }
@@ -194,7 +206,7 @@ namespace BestHTTP.Connections
             if (this.requestHandler != null)
                 this.requestHandler.Shutdown(type);
 
-            switch(this.ShutdownType)
+            switch (this.ShutdownType)
             {
                 case ShutdownTypes.Immediate:
                     this.connector.Dispose();
@@ -207,7 +219,7 @@ namespace BestHTTP.Connections
             if (disposing)
             {
                 LastProcessedUri = null;
-                if (this.State != HTTPConnectionStates.WaitForProtocolShutdown)
+                if (this.State != HttpConnectionStates.WaitForProtocolShutdown)
                 {
                     if (this.connector != null)
                     {
@@ -216,7 +228,9 @@ namespace BestHTTP.Connections
                             this.connector.Close();
                         }
                         catch
-                        { }
+                        {
+                        }
+
                         this.connector = null;
                     }
 
@@ -227,7 +241,9 @@ namespace BestHTTP.Connections
                             this.requestHandler.Dispose();
                         }
                         catch
-                        { }
+                        {
+                        }
+
                         this.requestHandler = null;
                     }
                 }

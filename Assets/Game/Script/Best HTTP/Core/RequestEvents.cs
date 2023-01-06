@@ -1,11 +1,10 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.Timings;
-
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace BestHTTP.Core
 {
@@ -187,24 +186,37 @@ namespace BestHTTP.Core
             switch (this.Event)
             {
                 case RequestEvents.Upgraded:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Upgraded]", this.SourceRequest.CurrentUri);
+                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Upgraded]",
+                        this.SourceRequest.CurrentUri);
                 case RequestEvents.DownloadProgress:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: DownloadProgress, Progress: {1}, ProgressLength: {2}]", this.SourceRequest.CurrentUri, this.Progress, this.ProgressLength);
+                    return string.Format(
+                        "[RequestEventInfo SourceRequest: {0}, Event: DownloadProgress, Progress: {1}, ProgressLength: {2}]",
+                        this.SourceRequest.CurrentUri, this.Progress, this.ProgressLength);
                 case RequestEvents.UploadProgress:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: UploadProgress, Progress: {1}, ProgressLength: {2}]", this.SourceRequest.CurrentUri, this.Progress, this.ProgressLength);
+                    return string.Format(
+                        "[RequestEventInfo SourceRequest: {0}, Event: UploadProgress, Progress: {1}, ProgressLength: {2}]",
+                        this.SourceRequest.CurrentUri, this.Progress, this.ProgressLength);
                 case RequestEvents.StreamingData:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: StreamingData, DataLength: {1}]", this.SourceRequest.CurrentUri, this.DataLength);
+                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: StreamingData, DataLength: {1}]",
+                        this.SourceRequest.CurrentUri, this.DataLength);
                 case RequestEvents.StateChange:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: StateChange, State: {1}]", this.SourceRequest.CurrentUri, this.State);
+                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: StateChange, State: {1}]",
+                        this.SourceRequest.CurrentUri, this.State);
                 case RequestEvents.Resend:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Resend]", this.SourceRequest.CurrentUri);
+                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Resend]",
+                        this.SourceRequest.CurrentUri);
                 case RequestEvents.Headers:
-                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Headers]", this.SourceRequest.CurrentUri);
+                    return string.Format("[RequestEventInfo SourceRequest: {0}, Event: Headers]",
+                        this.SourceRequest.CurrentUri);
                 case RequestEvents.TimingData:
                     if (this.Duration == TimeSpan.Zero)
-                        return string.Format("[RequestEventInfo SourceRequest: {0}, Event: TimingData, Name: {1}, Time: {2}]", this.SourceRequest.CurrentUri, this.Name, this.Time);
+                        return string.Format(
+                            "[RequestEventInfo SourceRequest: {0}, Event: TimingData, Name: {1}, Time: {2}]",
+                            this.SourceRequest.CurrentUri, this.Name, this.Time);
                     else
-                        return string.Format("[RequestEventInfo SourceRequest: {0}, Event: TimingData, Name: {1}, Time: {2}, Duration: {3}]", this.SourceRequest.CurrentUri, this.Name, this.Time, this.Duration);
+                        return string.Format(
+                            "[RequestEventInfo SourceRequest: {0}, Event: TimingData, Name: {1}, Time: {2}, Duration: {3}]",
+                            this.SourceRequest.CurrentUri, this.Name, this.Time, this.Duration);
                 default:
                     throw new NotImplementedException(this.Event.ToString());
             }
@@ -221,8 +233,9 @@ namespace BestHTTP.Core
 
         public static void EnqueueRequestEvent(RequestEventInfo @event)
         {
-            if (HTTPManager.Logger.Level == Loglevels.All)
-                HTTPManager.Logger.Information("RequestEventHelper", "Enqueue request event: " + @event.ToString(), @event.SourceRequest.Context);
+            if (HttpManager.Logger.Level == Loglevels.All)
+                HttpManager.Logger.Information("RequestEventHelper", "Enqueue request event: " + @event.ToString(),
+                    @event.SourceRequest.Context);
 
             requestEventQueue.Enqueue(@event);
         }
@@ -239,8 +252,9 @@ namespace BestHTTP.Core
             {
                 HTTPRequest source = requestEvent.SourceRequest;
 
-                if (HTTPManager.Logger.Level == Loglevels.All)
-                    HTTPManager.Logger.Information("RequestEventHelper", "Processing request event: " + requestEvent.ToString(), source.Context);
+                if (HttpManager.Logger.Level == Loglevels.All)
+                    HttpManager.Logger.Information("RequestEventHelper",
+                        "Processing request event: " + requestEvent.ToString(), source.Context);
 
                 if (OnEvent != null)
                 {
@@ -250,33 +264,35 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("RequestEventHelper", "ProcessQueue", ex, source.Context);
+                        HttpManager.Logger.Exception("RequestEventHelper", "ProcessQueue", ex, source.Context);
                     }
                 }
-                
+
                 switch (requestEvent.Event)
                 {
                     case RequestEvents.StreamingData:
+                    {
+                        var response = source.Response;
+                        if (response != null)
+                            System.Threading.Interlocked.Decrement(ref response.UnprocessedFragments);
+
+                        bool reuseBuffer = true;
+                        try
                         {
-                            var response = source.Response;
-                            if (response != null)
-                                System.Threading.Interlocked.Decrement(ref response.UnprocessedFragments);
-
-                            bool reuseBuffer = true;
-                            try
-                            {
-                                if (source.UseStreaming)
-                                    reuseBuffer = source.OnStreamingData(source, response, requestEvent.Data, requestEvent.DataLength);
-                            }
-                            catch (Exception ex)
-                            {
-                                HTTPManager.Logger.Exception("RequestEventHelper", "Process RequestEventQueue - RequestEvents.StreamingData", ex, source.Context);
-                            }
-
-                            if (reuseBuffer)
-                                BufferPool.Release(requestEvent.Data);
-                            break;
+                            if (source.UseStreaming)
+                                reuseBuffer = source.OnStreamingData(source, response, requestEvent.Data,
+                                    requestEvent.DataLength);
                         }
+                        catch (Exception ex)
+                        {
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "Process RequestEventQueue - RequestEvents.StreamingData", ex, source.Context);
+                        }
+
+                        if (reuseBuffer)
+                            BufferPool.Release(requestEvent.Data);
+                        break;
+                    }
 
                     case RequestEvents.DownloadProgress:
                         try
@@ -286,8 +302,10 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("RequestEventHelper", "Process RequestEventQueue - RequestEvents.DownloadProgress", ex, source.Context);
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "Process RequestEventQueue - RequestEvents.DownloadProgress", ex, source.Context);
                         }
+
                         break;
 
                     case RequestEvents.UploadProgress:
@@ -298,8 +316,10 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("RequestEventHelper", "Process RequestEventQueue - RequestEvents.UploadProgress", ex, source.Context);
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "Process RequestEventQueue - RequestEvents.UploadProgress", ex, source.Context);
                         }
+
                         break;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -311,7 +331,8 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("RequestEventHelper", "Process RequestEventQueue - RequestEvents.Upgraded", ex, source.Context);
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "Process RequestEventQueue - RequestEvents.Upgraded", ex, source.Context);
                         }
 
                         IProtocol protocol = source.Response as IProtocol;
@@ -322,7 +343,7 @@ namespace BestHTTP.Core
 
                     case RequestEvents.Resend:
                         source.State = HTTPRequestStates.Initial;
-                        
+
                         var host = HostManager.GetHost(source.CurrentUri.Host);
 
                         host.Send(source);
@@ -330,29 +351,33 @@ namespace BestHTTP.Core
                         break;
 
                     case RequestEvents.Headers:
+                    {
+                        try
                         {
-                            try
-                            {
-                                var response = source.Response;
-                                if (source.OnHeadersReceived != null && response != null)
-                                    source.OnHeadersReceived(source, response, requestEvent.Headers);
-                            }
-                            catch (Exception ex)
-                            {
-                                HTTPManager.Logger.Exception("RequestEventHelper", "Process RequestEventQueue - RequestEvents.Headers", ex, source.Context);
-                            }
-                            break;
+                            var response = source.Response;
+                            if (source.OnHeadersReceived != null && response != null)
+                                source.OnHeadersReceived(source, response, requestEvent.Headers);
                         }
+                        catch (Exception ex)
+                        {
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "Process RequestEventQueue - RequestEvents.Headers", ex, source.Context);
+                        }
+
+                        break;
+                    }
 
                     case RequestEvents.StateChange:
                         try
                         {
                             RequestEventHelper.HandleRequestStateChange(requestEvent);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("RequestEventHelper", "HandleRequestStateChange", ex, source.Context);
+                            HttpManager.Logger.Exception("RequestEventHelper", "HandleRequestStateChange", ex,
+                                source.Context);
                         }
+
                         break;
 
                     case RequestEvents.TimingData:
@@ -375,13 +400,15 @@ namespace BestHTTP.Core
 
             if (request.IsTimedOut)
             {
-                HTTPManager.Logger.Information("RequestEventHelper", "AbortRequestWhenTimedOut - Request timed out. CurrentUri: " + request.CurrentUri.ToString(), request.Context);
+                HttpManager.Logger.Information("RequestEventHelper",
+                    "AbortRequestWhenTimedOut - Request timed out. CurrentUri: " + request.CurrentUri.ToString(),
+                    request.Context);
                 request.Abort();
 
                 return false; // don't repeat
             }
 
-            return true;  // repeat
+            return true; // repeat
         }
 
         internal static void HandleRequestStateChange(RequestEventInfo @event)
@@ -410,7 +437,8 @@ namespace BestHTTP.Core
                 case HTTPRequestStates.Queued:
                     source.QueuedAt = DateTime.UtcNow;
                     if ((!source.UseStreaming && source.UploadStream == null) || source.EnableTimoutForStreaming)
-                        BestHTTP.Extensions.Timer.Add(new TimerData(TimeSpan.FromSeconds(1), @event.SourceRequest, AbortRequestWhenTimedOut));
+                        BestHTTP.Extensions.Timer.Add(new TimerData(TimeSpan.FromSeconds(1), @event.SourceRequest,
+                            AbortRequestWhenTimedOut));
                     break;
 
                 case HTTPRequestStates.ConnectionTimedOut:
@@ -430,10 +458,14 @@ namespace BestHTTP.Core
 
                     try
                     {
-                        bool tryLoad = !source.DisableCache && source.State != HTTPRequestStates.Aborted && (source.State != HTTPRequestStates.Finished || source.Response == null || source.Response.StatusCode >= 500);
+                        bool tryLoad = !source.DisableCache && source.State != HTTPRequestStates.Aborted &&
+                                       (source.State != HTTPRequestStates.Finished || source.Response == null ||
+                                        source.Response.StatusCode >= 500);
                         if (tryLoad && Caching.HTTPCacheService.IsCachedEntityExpiresInTheFuture(source))
                         {
-                            HTTPManager.Logger.Information("RequestEventHelper", "IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: " + source.CurrentUri.ToString(), source.Context);
+                            HttpManager.Logger.Information("RequestEventHelper",
+                                "IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: " +
+                                source.CurrentUri.ToString(), source.Context);
 
                             PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HTTPRequest>((req) =>
                             {
@@ -441,16 +473,20 @@ namespace BestHTTP.Core
                                 req.DisableCache = true;
 
                                 var originalState = req.State;
-                                if (Connections.ConnectionHelper.TryLoadAllFromCache("RequestEventHelper", req, req.Context))
+                                if (Connections.ConnectionHelper.TryLoadAllFromCache("RequestEventHelper", req,
+                                        req.Context))
                                 {
                                     if (req.State != HTTPRequestStates.Finished)
                                         req.State = HTTPRequestStates.Finished;
                                     else
-                                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(req, HTTPRequestStates.Finished));
+                                        RequestEventHelper.EnqueueRequestEvent(
+                                            new RequestEventInfo(req, HTTPRequestStates.Finished));
                                 }
                                 else
                                 {
-                                    HTTPManager.Logger.Information("RequestEventHelper", "TryLoadAllFromCache failed to load! CurrentUri: " + req.CurrentUri.ToString(), source.Context);
+                                    HttpManager.Logger.Information("RequestEventHelper",
+                                        "TryLoadAllFromCache failed to load! CurrentUri: " + req.CurrentUri.ToString(),
+                                        source.Context);
 
                                     // If for some reason it couldn't load we place back the request to the queue.
                                     RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(req, originalState));
@@ -461,7 +497,11 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("RequestEventHelper", string.Format("HandleRequestStateChange - Cache probe - CurrentUri: \"{0}\" State: {1} StatusCode: {2}", source.CurrentUri, source.State, source.Response != null ? source.Response.StatusCode : 0), ex, source.Context);
+                        HttpManager.Logger.Exception("RequestEventHelper",
+                            string.Format(
+                                "HandleRequestStateChange - Cache probe - CurrentUri: \"{0}\" State: {1} StatusCode: {2}",
+                                source.CurrentUri, source.State,
+                                source.Response != null ? source.Response.StatusCode : 0), ex, source.Context);
                     }
 #endif
 
@@ -476,21 +516,22 @@ namespace BestHTTP.Core
 
                             source.Timing.AddEvent(TimingEventNames.Callback, DateTime.Now, TimeSpan.Zero);
 
-                            if (HTTPManager.Logger.Level <= Loglevels.Information)
-                                HTTPManager.Logger.Information("RequestEventHelper", "Finishing request. Timings: " + source.Timing.ToString(), source.Context);
-
+                            if (HttpManager.Logger.Level <= Loglevels.Information)
+                                HttpManager.Logger.Information("RequestEventHelper",
+                                    "Finishing request. Timings: " + source.Timing.ToString(), source.Context);
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("RequestEventHelper", "HandleRequestStateChange " + @event.State, ex, source.Context);
+                            HttpManager.Logger.Exception("RequestEventHelper",
+                                "HandleRequestStateChange " + @event.State, ex, source.Context);
                         }
                     }
 
                     source.Dispose();
 
                     HostManager.GetHost(source.CurrentUri.Host)
-                                .GetHostDefinition(HostDefinition.GetKeyForRequest(source))
-                                .TryToSendQueuedRequests();
+                        .GetHostDefinition(HostDefinition.GetKeyForRequest(source))
+                        .TryToSendQueuedRequests();
                     break;
             }
         }

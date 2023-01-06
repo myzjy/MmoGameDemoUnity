@@ -5,15 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BestHTTP;
-using Framework.AssetBundles.Config;
-using Framework.AssetBundles.Utilty;
-using ZJYFrameWork.Asynchronous;
-using ZJYFrameWork.AssetBundles.Bundles;
-using ZJYFrameWork.Net.Http;
 using UnityEngine;
 using UnityEngine.Networking;
+using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Download;
+using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Net.Http;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundle
@@ -23,6 +21,9 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #endif
     public class UnityWebRequestDownloader : AbstractDownloader
     {
+        private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
+        private List<BundleInfo> errrorList = new List<BundleInfo>();
+
         public UnityWebRequestDownloader()
         {
         }
@@ -45,9 +46,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
             return result;
         }
-
-        private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
-        private List<BundleInfo> errrorList = new List<BundleInfo>();
 
         protected IEnumerator DownloadHttpBundles(IProgressPromise<Progress, bool> promise,
             List<BundleInfo> bundles)
@@ -88,7 +86,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 // 超时设定
                 request.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
                 request.Timeout = TimeSpan.FromSeconds(TimeoutSec);
-                request.Callback += (HTTPRequest originalBhRequest, HTTPResponse bhResponse) =>
+                request.Callback += (HTTPRequest originalBhRequest, HttpResponse bhResponse) =>
                 {
                     LogResponse(bhResponse, originalBhRequest);
 
@@ -173,7 +171,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             yield break;
         }
 
-        private void LogResponse(HTTPResponse response, HTTPRequest request)
+        private void LogResponse(HttpResponse response, HTTPRequest request)
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             StringBuilder sb = new StringBuilder();

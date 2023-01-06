@@ -1,12 +1,10 @@
 #if !BESTHTTP_DISABLE_SIGNALR_CORE
 
-using BestHTTP.PlatformSupport.Memory;
-using BestHTTP.SignalRCore.Messages;
 using System;
 using System.Collections.Generic;
-
+using BestHTTP.PlatformSupport.Memory;
+using BestHTTP.SignalRCore.Messages;
 #if NETFX_CORE || NET_4_6
-using System.Reflection;
 #endif
 
 namespace BestHTTP.SignalRCore
@@ -46,14 +44,6 @@ namespace BestHTTP.SignalRCore
     {
         public const char Separator = (char)0x1E;
 
-        public string Name { get { return "json"; } }
-
-        public TransferModes Type { get { return TransferModes.Binary; } }
-
-        public IEncoder Encoder { get; private set; }
-
-        public HubConnection Connection { get; set; }
-
         public JsonProtocol(IEncoder encoder)
         {
             if (encoder == null)
@@ -62,7 +52,22 @@ namespace BestHTTP.SignalRCore
             this.Encoder = encoder;
         }
 
-        public void ParseMessages(BufferSegment segment, ref List<Message> messages) {
+        public string Name
+        {
+            get { return "json"; }
+        }
+
+        public TransferModes Type
+        {
+            get { return TransferModes.Binary; }
+        }
+
+        public IEncoder Encoder { get; private set; }
+
+        public HubConnection Connection { get; set; }
+
+        public void ParseMessages(BufferSegment segment, ref List<Message> messages)
+        {
             if (segment.Data == null || segment.Count == 0)
                 return;
 
@@ -73,9 +78,12 @@ namespace BestHTTP.SignalRCore
 
             while (separatorIdx != -1)
             {
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("JsonProtocol", "ParseMessages - " + System.Text.Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from));
-                var message = this.Encoder.DecodeAs<Message>(new BufferSegment(segment.Data, from, separatorIdx - from));
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("JsonProtocol",
+                        "ParseMessages - " +
+                        System.Text.Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from));
+                var message =
+                    this.Encoder.DecodeAs<Message>(new BufferSegment(segment.Data, from, separatorIdx - from));
 
                 messages.Add(message);
 
@@ -83,7 +91,7 @@ namespace BestHTTP.SignalRCore
                 separatorIdx = Array.IndexOf<byte>(segment.Data, (byte)JsonProtocol.Separator, from);
             }
         }
-        
+
         public BufferSegment EncodeMessage(Message message)
         {
             BufferSegment result = BufferSegment.Empty;
@@ -126,6 +134,7 @@ namespace BestHTTP.SignalRCore
                             type = MessageTypes.Completion,
                             invocationId = message.invocationId
                         });
+
                     break;
 
                 case MessageTypes.Invocation:
@@ -153,6 +162,7 @@ namespace BestHTTP.SignalRCore
                             arguments = message.arguments
                         });
                     }
+
                     break;
 
                 case MessageTypes.CancelInvocation:
@@ -168,14 +178,16 @@ namespace BestHTTP.SignalRCore
 
                 case MessageTypes.Close:
                     if (!string.IsNullOrEmpty(message.error))
-                        result = this.Encoder.Encode<CloseWithErrorMessage>(new CloseWithErrorMessage() { error = message.error });
+                        result = this.Encoder.Encode<CloseWithErrorMessage>(new CloseWithErrorMessage()
+                            { error = message.error });
                     else
                         result = this.Encoder.Encode<CloseMessage>(new CloseMessage());
                     break;
             }
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("JsonProtocol", "EncodeMessage - json: " + System.Text.Encoding.UTF8.GetString(result.Data, 0, result.Count - 1));
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("JsonProtocol",
+                    "EncodeMessage - json: " + System.Text.Encoding.UTF8.GetString(result.Data, 0, result.Count - 1));
 
             return result;
         }
@@ -186,7 +198,8 @@ namespace BestHTTP.SignalRCore
                 return null;
 
             if (argTypes.Length > arguments.Length)
-                throw new Exception(string.Format("argType.Length({0}) < arguments.length({1})", argTypes.Length, arguments.Length));
+                throw new Exception(string.Format("argType.Length({0}) < arguments.length({1})", argTypes.Length,
+                    arguments.Length));
 
             object[] realArgs = new object[arguments.Length];
 

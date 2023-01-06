@@ -124,7 +124,7 @@ namespace BestHTTP.Cookies
 
                 // 一些用户代理为用户提供了防止跨会话持久存储cookie的选项。
                 // 当这样配置时，用户代理必须处理所有接收到的cookie，就好像persistent-flag设置为false一样。
-                if (HTTPManager.EnablePrivateBrowsing)
+                if (HttpManager.EnablePrivateBrowsing)
                     cookie.IsSession = true;
 
                 // http://tools.ietf.org/html/rfc6265#section-4.1.2.3
@@ -144,7 +144,7 @@ namespace BestHTTP.Cookies
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Warning("Cookie",
+                HttpManager.Logger.Warning("Cookie",
                     $"Parse - Couldn't parse header:{header}  exception:{ex}  {ex.StackTrace}",
                     context);
             }

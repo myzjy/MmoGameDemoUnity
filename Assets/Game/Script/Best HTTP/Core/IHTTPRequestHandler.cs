@@ -5,7 +5,7 @@ using BestHTTP.Logger;
 
 namespace BestHTTP.Core
 {
-    public interface IHTTPRequestHandler : IDisposable
+    public interface IHttpRequestHandler : IDisposable
     {
         bool HasCustomRequestProcessor { get; }
 

@@ -58,7 +58,7 @@ namespace BestHTTP.Caching
                     isSupported = false;
 #else
                     // If DirectoryExists throws an exception we will set IsSupprted to false
-                    HTTPManager.IOService.DirectoryExists(HTTPManager.GetRootCacheFolder());
+                    HttpManager.IOService.DirectoryExists(HttpManager.GetRootCacheFolder());
                     isSupported = true;
 #endif
                 }
@@ -66,7 +66,7 @@ namespace BestHTTP.Caching
                 {
                     isSupported = false;
 
-                    HTTPManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
+                    HttpManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
                 }
                 finally
                 {
@@ -133,18 +133,18 @@ namespace BestHTTP.Caching
             {
                 if (string.IsNullOrEmpty(CacheFolder) || string.IsNullOrEmpty(LibraryPath))
                 {
-                    CacheFolder = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "HTTPCache");
-                    if (!HTTPManager.IOService.DirectoryExists(CacheFolder))
-                        HTTPManager.IOService.DirectoryCreate(CacheFolder);
+                    CacheFolder = System.IO.Path.Combine(HttpManager.GetRootCacheFolder(), "HTTPCache");
+                    if (!HttpManager.IOService.DirectoryExists(CacheFolder))
+                        HttpManager.IOService.DirectoryCreate(CacheFolder);
 
-                    LibraryPath = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "Library");
+                    LibraryPath = System.IO.Path.Combine(HttpManager.GetRootCacheFolder(), "Library");
                 }
             }
             catch
             {
                 isSupported = false;
 
-                HTTPManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
+                HttpManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
             }
         }
 
@@ -280,7 +280,7 @@ namespace BestHTTP.Caching
             return info;
         }
 
-        internal static HTTPResponse GetFullResponse(HTTPRequest request)
+        internal static HttpResponse GetFullResponse(HTTPRequest request)
         {
             if (!IsSupported)
                 return null;
@@ -306,7 +306,7 @@ namespace BestHTTP.Caching
         /// Checks if the given response can be cached. http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.4
         /// </summary>
         /// <returns>Returns true if cacheable, false otherwise.</returns>
-        internal static bool IsCacheble(Uri uri, HTTPMethods method, HTTPResponse response)
+        internal static bool IsCacheble(Uri uri, HTTPMethods method, HttpResponse response)
         {
             if (!IsSupported)
                 return false;
@@ -398,7 +398,7 @@ namespace BestHTTP.Caching
             return hasValidMaxAge;
         }
 
-        internal static HttpCacheFileInfo Store(Uri uri, HTTPMethods method, HTTPResponse response)
+        internal static HttpCacheFileInfo Store(Uri uri, HTTPMethods method, HttpResponse response)
         {
             if (response == null || response.Data == null || response.Data.Length == 0)
                 return null;
@@ -421,8 +421,8 @@ namespace BestHTTP.Caching
                 try
                 {
                     info.Store(response);
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                        HTTPManager.Logger.Verbose("HTTPCacheService",
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                        HttpManager.Logger.Verbose("HTTPCacheService",
                             string.Format("{0} - Saved to cache", uri.ToString()), response.baseRequest.Context);
                 }
                 catch
@@ -437,7 +437,7 @@ namespace BestHTTP.Caching
             return info;
         }
 
-        internal static void SetUpCachingValues(Uri uri, HTTPResponse response)
+        internal static void SetUpCachingValues(Uri uri, HttpResponse response)
         {
             if (!IsSupported)
                 return;
@@ -456,8 +456,8 @@ namespace BestHTTP.Caching
                 try
                 {
                     info.SetUpCachingValues(response);
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                        HTTPManager.Logger.Verbose("HTTPCacheService",
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                        HttpManager.Logger.Verbose("HTTPCacheService",
                             string.Format("{0} - SetUpCachingValues done!", uri.ToString()),
                             response.baseRequest.Context);
                 }
@@ -471,7 +471,7 @@ namespace BestHTTP.Caching
             }
         }
 
-        internal static System.IO.Stream PrepareStreamed(Uri uri, HTTPResponse response)
+        internal static System.IO.Stream PrepareStreamed(Uri uri, HttpResponse response)
         {
             if (!IsSupported)
                 return null;
@@ -536,7 +536,7 @@ namespace BestHTTP.Caching
                 try
                 {
                     // GetFiles will return a string array that contains the files in the folder with the full path
-                    string[] cacheEntries = HTTPManager.IOService.GetFiles(CacheFolder);
+                    string[] cacheEntries = HttpManager.IOService.GetFiles(CacheFolder);
 
                     if (cacheEntries != null)
                         for (int i = 0; i < cacheEntries.Length; ++i)
@@ -545,7 +545,7 @@ namespace BestHTTP.Caching
                             // So while there might be some problem with any file, we don't want to abort the whole for loop
                             try
                             {
-                                HTTPManager.IOService.FileDelete(cacheEntries[i]);
+                                HttpManager.IOService.FileDelete(cacheEntries[i]);
                             }
                             catch
                             {
@@ -713,7 +713,7 @@ namespace BestHTTP.Caching
                 library = new Dictionary<Uri, HttpCacheFileInfo>(new UriComparer());
                 try
                 {
-                    using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
+                    using (var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
                     using (var br = new System.IO.BinaryReader(fs))
                     {
                         version = br.ReadInt32();
@@ -740,8 +740,8 @@ namespace BestHTTP.Caching
                 }
                 catch (Exception ex)
                 {
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                        HTTPManager.Logger.Exception("HTTPCacheService", "LoadLibrary", ex);
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                        HttpManager.Logger.Exception("HTTPCacheService", "LoadLibrary", ex);
                 }
             }
 
@@ -763,7 +763,7 @@ namespace BestHTTP.Caching
             {
                 try
                 {
-                    using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create))
+                    using (var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create))
                     using (var bw = new System.IO.BinaryWriter(fs))
                     {
                         bw.Write(LibraryVersion);
@@ -780,8 +780,8 @@ namespace BestHTTP.Caching
                 }
                 catch (Exception ex)
                 {
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                        HTTPManager.Logger.Exception("HTTPCacheService", "SaveLibrary", ex);
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                        HttpManager.Logger.Exception("HTTPCacheService", "SaveLibrary", ex);
                 }
             }
         }
@@ -817,7 +817,7 @@ namespace BestHTTP.Caching
             CheckSetup();
 
             // GetFiles will return a string array that contains the files in the folder with the full path
-            string[] cacheEntries = HTTPManager.IOService.GetFiles(CacheFolder);
+            string[] cacheEntries = HttpManager.IOService.GetFiles(CacheFolder);
 
             for (int i = 0; i < cacheEntries.Length; ++i)
             {
@@ -837,7 +837,7 @@ namespace BestHTTP.Caching
                         deleteFile = true;
 
                     if (deleteFile)
-                        HTTPManager.IOService.FileDelete(cacheEntries[i]);
+                        HttpManager.IOService.FileDelete(cacheEntries[i]);
                 }
                 catch
                 {

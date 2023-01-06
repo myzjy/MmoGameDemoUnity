@@ -1,18 +1,13 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Text;
 
+using System.Collections;
+using System.IO;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.IO;
 #if PORTABLE || NETFX_CORE
 using System.Linq;
 #endif
-
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.IO;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
 {
@@ -40,13 +35,55 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
             (byte)'+', (byte)'/'
         };
 
+        private static readonly string nl = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.NewLine;
+        private static readonly string headerStart = "-----BEGIN PGP ";
+        private static readonly string headerTail = "-----";
+        private static readonly string footerStart = "-----END PGP ";
+        private static readonly string footerTail = "-----";
+
+        private static readonly string Version = "BCPG C# v" + HttpManager.UserAgent;
+
+        private readonly IDictionary headers;
+
+        private readonly Stream outStream;
+        private int[] buf = new int[3];
+        private int bufPtr = 0;
+        private int chunkCount = 0;
+        private bool clearText = false;
+        private Crc24 crc = new Crc24();
+        private int lastb;
+        private bool newLine = false;
+
+        private bool start = true;
+
+        private string type;
+
+        public ArmoredOutputStream(Stream outStream)
+        {
+            this.outStream = outStream;
+            this.headers = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable(1);
+            SetHeader(HeaderVersion, Version);
+        }
+
+        public ArmoredOutputStream(Stream outStream, IDictionary headers)
+            : this(outStream)
+        {
+            foreach (string header in headers.Keys)
+            {
+                IList headerList = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList(1);
+                headerList.Add(headers[header]);
+
+                this.headers[header] = headerList;
+            }
+        }
+
         /**
          * encode the input data producing a base 64 encoded byte array.
          */
         private static void Encode(
-            Stream    outStream,
-            int[]    data,
-            int        len)
+            Stream outStream,
+            int[] data,
+            int len)
         {
             System.Diagnostics.Debug.Assert(len > 0);
             System.Diagnostics.Debug.Assert(len < 4);
@@ -86,48 +123,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
             outStream.Write(bs, 0, bs.Length);
         }
 
-        private readonly Stream outStream;
-        private int[]           buf = new int[3];
-        private int             bufPtr = 0;
-        private Crc24           crc = new Crc24();
-        private int             chunkCount = 0;
-        private int             lastb;
-
-        private bool            start = true;
-        private bool            clearText = false;
-        private bool            newLine = false;
-
-        private string          type;
-
-        private static readonly string    nl = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.NewLine;
-        private static readonly string    headerStart = "-----BEGIN PGP ";
-        private static readonly string    headerTail = "-----";
-        private static readonly string    footerStart = "-----END PGP ";
-        private static readonly string    footerTail = "-----";
-
-        private static readonly string Version = "BCPG C# v" + HTTPManager.UserAgent;
-
-        private readonly IDictionary headers;
-
-        public ArmoredOutputStream(Stream outStream)
-        {
-            this.outStream = outStream;
-            this.headers = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateHashtable(1);
-            SetHeader(HeaderVersion, Version);
-        }
-
-        public ArmoredOutputStream(Stream outStream, IDictionary headers)
-            : this(outStream)
-        {
-            foreach (string header in headers.Keys)
-            {
-                IList headerList = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList(1);
-                headerList.Add(headers[header]);
-
-                this.headers[header] = headerList;
-            }
-        }
-
         /**
          * Set an additional header entry. Any current value(s) under the same name will be
          * replaced by the new one. A null value will clear the entry for name.         *
@@ -152,6 +147,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
                 {
                     valueList.Clear();
                 }
+
                 valueList.Add(val);
             }
         }
@@ -174,6 +170,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
                 valueList = BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateArrayList(1);
                 this.headers[name] = valueList;
             }
+
             valueList.Add(val);
         }
 
@@ -197,35 +194,35 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
          * @param hashAlgorithm
          */
         public void BeginClearText(
-            HashAlgorithmTag    hashAlgorithm)
+            HashAlgorithmTag hashAlgorithm)
         {
-            string    hash;
+            string hash;
 
             switch (hashAlgorithm)
             {
-            case HashAlgorithmTag.Sha1:
-                hash = "SHA1";
-                break;
-            case HashAlgorithmTag.Sha256:
-                hash = "SHA256";
-                break;
-            case HashAlgorithmTag.Sha384:
-                hash = "SHA384";
-                break;
-            case HashAlgorithmTag.Sha512:
-                hash = "SHA512";
-                break;
-            case HashAlgorithmTag.MD2:
-                hash = "MD2";
-                break;
-            case HashAlgorithmTag.MD5:
-                hash = "MD5";
-                break;
-            case HashAlgorithmTag.RipeMD160:
-                hash = "RIPEMD160";
-                break;
-            default:
-                throw new IOException("unknown hash algorithm tag in beginClearText: " + hashAlgorithm);
+                case HashAlgorithmTag.Sha1:
+                    hash = "SHA1";
+                    break;
+                case HashAlgorithmTag.Sha256:
+                    hash = "SHA256";
+                    break;
+                case HashAlgorithmTag.Sha384:
+                    hash = "SHA384";
+                    break;
+                case HashAlgorithmTag.Sha512:
+                    hash = "SHA512";
+                    break;
+                case HashAlgorithmTag.MD2:
+                    hash = "MD2";
+                    break;
+                case HashAlgorithmTag.MD5:
+                    hash = "MD5";
+                    break;
+                case HashAlgorithmTag.RipeMD160:
+                    hash = "RIPEMD160";
+                    break;
+                default:
+                    throw new IOException("unknown hash algorithm tag in beginClearText: " + hashAlgorithm);
             }
 
             DoWrite("-----BEGIN PGP SIGNED MESSAGE-----" + nl);
@@ -254,16 +251,19 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
                     {
                         newLine = false;
                     }
+
                     if (b == '-')
                     {
                         outStream.WriteByte((byte)' ');
-                        outStream.WriteByte((byte)'-');      // dash escape
+                        outStream.WriteByte((byte)'-'); // dash escape
                     }
                 }
+
                 if (b == '\r' || (b == '\n' && lastb != '\r'))
                 {
                     newLine = true;
                 }
+
                 lastb = b;
                 return;
             }
@@ -284,18 +284,18 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Bcpg
 
                 switch ((PacketTag)tag)
                 {
-                case PacketTag.PublicKey:
-                    type = "PUBLIC KEY BLOCK";
-                    break;
-                case PacketTag.SecretKey:
-                    type = "PRIVATE KEY BLOCK";
-                    break;
-                case PacketTag.Signature:
-                    type = "SIGNATURE";
-                    break;
-                default:
-                    type = "MESSAGE";
-                    break;
+                    case PacketTag.PublicKey:
+                        type = "PUBLIC KEY BLOCK";
+                        break;
+                    case PacketTag.SecretKey:
+                        type = "PRIVATE KEY BLOCK";
+                        break;
+                    case PacketTag.Signature:
+                        type = "SIGNATURE";
+                        break;
+                    default:
+                        type = "MESSAGE";
+                        break;
                 }
 
                 DoWrite(headerStart + type + headerTail + nl);

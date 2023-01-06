@@ -1,6 +1,5 @@
-using BestHTTP.PlatformSupport.FileSystem;
-using System;
 using System.Collections.Generic;
+using BestHTTP.PlatformSupport.FileSystem;
 
 namespace BestHTTP.Core
 {
@@ -24,10 +23,10 @@ namespace BestHTTP.Core
 
         public static void RemoveAllIdleConnections()
         {
-            HTTPManager.Logger.Information("HostManager", "RemoveAllIdleConnections");
+            HttpManager.Logger.Information("HostManager", "RemoveAllIdleConnections");
             foreach (var host_kvp in hosts)
-                foreach (var variant_kvp in host_kvp.Value.hostConnectionVariant)
-                    variant_kvp.Value.RemoveAllIdleConnections();
+            foreach (var variant_kvp in host_kvp.Value.HostConnectionVariant)
+                variant_kvp.Value.RemoveAllIdleConnections();
         }
 
         public static void TryToSendQueuedRequests()
@@ -38,14 +37,14 @@ namespace BestHTTP.Core
 
         public static void Shutdown()
         {
-            HTTPManager.Logger.Information("HostManager", "Shutdown initiated!");
+            HttpManager.Logger.Information("HostManager", "Shutdown initiated!");
             foreach (var kvp in hosts)
                 kvp.Value.Shutdown();
         }
 
         public static void Clear()
         {
-            HTTPManager.Logger.Information("HostManager", "Clearing hosts!");
+            HttpManager.Logger.Information("HostManager", "Clearing hosts!");
             hosts.Clear();
         }
 
@@ -55,14 +54,14 @@ namespace BestHTTP.Core
             {
                 try
                 {
-                    LibraryPath = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "Hosts");
-                    HTTPManager.IOService.FileExists(LibraryPath);
+                    LibraryPath = System.IO.Path.Combine(HttpManager.GetRootCacheFolder(), "Hosts");
+                    HttpManager.IOService.FileExists(LibraryPath);
                     IsSaveAndLoadSupported = true;
                 }
                 catch
                 {
                     IsSaveAndLoadSupported = false;
-                    HTTPManager.Logger.Warning("HostManager", "Save and load Disabled!");
+                    HttpManager.Logger.Warning("HostManager", "Save and load Disabled!");
                 }
             }
         }
@@ -74,7 +73,7 @@ namespace BestHTTP.Core
 
             try
             {
-                using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create))
+                using (var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create))
                 using (var bw = new System.IO.BinaryWriter(fs))
                 {
                     bw.Write(Version);
@@ -87,10 +86,12 @@ namespace BestHTTP.Core
                         kvp.Value.SaveTo(bw);
                     }
                 }
-                HTTPManager.Logger.Information("HostManager", hosts.Count + " hosts saved!");
+
+                HttpManager.Logger.Information("HostManager", hosts.Count + " hosts saved!");
             }
             catch
-            { }
+            {
+            }
         }
 
         public static void Load()
@@ -101,12 +102,13 @@ namespace BestHTTP.Core
 
             SetupFolder();
 
-            if (!IsSaveAndLoadSupported || string.IsNullOrEmpty(LibraryPath) || !HTTPManager.IOService.FileExists(LibraryPath))
+            if (!IsSaveAndLoadSupported || string.IsNullOrEmpty(LibraryPath) ||
+                !HttpManager.IOService.FileExists(LibraryPath))
                 return;
 
             try
             {
-                using (var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
+                using (var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
                 using (var br = new System.IO.BinaryReader(fs))
                 {
                     int version = br.ReadInt32();
@@ -119,17 +121,18 @@ namespace BestHTTP.Core
                             .LoadFrom(version, br);
                     }
 
-                    HTTPManager.Logger.Information("HostManager", hostCount.ToString() + " HostDefinitions loaded!");
+                    HttpManager.Logger.Information("HostManager", hostCount.ToString() + " HostDefinitions loaded!");
                 }
             }
             catch
             {
                 try
                 {
-                    HTTPManager.IOService.FileDelete(LibraryPath);
+                    HttpManager.IOService.FileDelete(LibraryPath);
                 }
                 catch
-                { }
+                {
+                }
             }
         }
     }

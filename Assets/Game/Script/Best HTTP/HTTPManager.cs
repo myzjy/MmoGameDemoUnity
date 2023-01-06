@@ -1,21 +1,21 @@
 using System;
 using System.Collections.Generic;
-
-#if !BESTHTTP_DISABLE_CACHING
-using BestHTTP.Caching;
-#endif
-
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using BestHTTP.Connections;
 using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
+#if !BESTHTTP_DISABLE_CACHING
+using BestHTTP.Caching;
+#endif
 
 #if !BESTHTTP_DISABLE_COOKIES
 using BestHTTP.Cookies;
 #endif
 
-using BestHTTP.Connections;
-
+// ReSharper disable once CheckNamespace
 namespace BestHTTP
 {
     public enum ShutdownTypes
@@ -26,19 +26,38 @@ namespace BestHTTP
     }
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
-    public delegate Connections.TLS.AbstractTls13Client TlsClientFactoryDelegate(HTTPRequest request, List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols);
+    public delegate Connections.TLS.AbstractTls13Client TlsClientFactoryDelegate(HTTPRequest request,
+        List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols);
 #endif
 
-    public delegate System.Security.Cryptography.X509Certificates.X509Certificate ClientCertificateSelector(HTTPRequest request, string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection localCertificates, System.Security.Cryptography.X509Certificates.X509Certificate remoteCertificate, string[] acceptableIssuers);
+    public delegate System.Security.Cryptography.X509Certificates.X509Certificate ClientCertificateSelector(
+        HTTPRequest request, string targetHost,
+        System.Security.Cryptography.X509Certificates.X509CertificateCollection localCertificates,
+        System.Security.Cryptography.X509Certificates.X509Certificate remoteCertificate, string[] acceptableIssuers);
 
     /// <summary>
     ///
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
-    public static partial class HTTPManager
+    [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    public static class HttpManager
     {
+#if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
+        /// <summary>
+        /// HTTP/2 settings
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        public static readonly Connections.HTTP2.HTTP2PluginSettings Http2Settings =
+            new Connections.HTTP2.HTTP2PluginSettings();
+#endif
+
+        #region Manager variables
+
+        private static bool _isSetupCalled;
+
+        #endregion
+
         // Static constructor. Setup default values
-        static HTTPManager()
+        static HttpManager()
         {
             MaxConnectionPerServer = 6;
             KeepAliveDefaultValue = true;
@@ -62,7 +81,7 @@ namespace BestHTTP
             RequestTimeout = TimeSpan.FromSeconds(60);
 
             // Set the default logger mechanism
-            logger = new BestHTTP.Logger.ThreadedLogger();
+            _logger = new ThreadedLogger();
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
             UseAlternateSSLDefaultValue = true;
@@ -77,35 +96,29 @@ namespace BestHTTP
 #endif
         }
 
-#if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-        /// <summary>
-        /// HTTP/2 settings
-        /// </summary>
-        public static Connections.HTTP2.HTTP2PluginSettings HTTP2Settings = new Connections.HTTP2.HTTP2PluginSettings();
-#endif
-
-#region Global Options
+        #region Global Options
 
         /// <summary>
         /// The maximum active TCP connections that the client will maintain to a server. Default value is 6. Minimum value is 1.
         /// </summary>
         public static byte MaxConnectionPerServer
         {
-            get{ return maxConnectionPerServer; }
-            set
+            get => _maxConnectionPerServer;
+            private set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException("MaxConnectionPerServer must be greater than 0!");
+                    throw new ArgumentOutOfRangeException($"MaxConnectionPerServer must be greater than 0!");
 
-                bool isGrowing = value > maxConnectionPerServer;
-                maxConnectionPerServer = value;
+                var isGrowing = value > _maxConnectionPerServer;
+                _maxConnectionPerServer = value;
 
                 // If the allowed connections per server is growing, go through all hosts and try to send out queueud requests.
                 if (isGrowing)
                     HostManager.TryToSendQueuedRequests();
             }
         }
-        private static byte maxConnectionPerServer;
+
+        private static byte _maxConnectionPerServer;
 
         /// <summary>
         /// Default value of a HTTP request's IsKeepAlive value. Default value is true. If you make rare request to the server it should be changed to false.
@@ -116,7 +129,7 @@ namespace BestHTTP
         /// <summary>
         /// Set to true, if caching is prohibited.
         /// </summary>
-        public static bool IsCachingDisabled { get; set; }
+        public static bool IsCachingDisabled => false;
 #endif
 
         /// <summary>
@@ -156,13 +169,13 @@ namespace BestHTTP
         /// You can assign a function to this delegate to return a custom root path to define a new path.
         /// <remarks>This delegate will be called on a non Unity thread!</remarks>
         /// </summary>
-        public static System.Func<string> RootCacheFolderProvider { get; set; }
+        private static Func<string> RootCacheFolderProvider => null;
 
 #if !BESTHTTP_DISABLE_PROXY
         /// <summary>
         /// The global, default proxy for all HTTPRequests. The HTTPRequest's Proxy still can be changed per-request. Default value is null.
         /// </summary>
-        public static Proxy Proxy { get; set; }
+        public static Proxy Proxy => null;
 #endif
 
         /// <summary>
@@ -170,41 +183,41 @@ namespace BestHTTP
         /// </summary>
         public static HeartbeatManager Heartbeats
         {
-            get
-            {
-                if (heartbeats == null)
-                    heartbeats = new HeartbeatManager();
-                return heartbeats;
-            }
+            get { return _heartbeats ??= new HeartbeatManager(); }
         }
-        private static HeartbeatManager heartbeats;
+
+        private static HeartbeatManager _heartbeats;
 
         /// <summary>
         /// A basic BestHTTP.Logger.ILogger implementation to be able to log intelligently additional informations about the plugin's internal mechanism.
         /// </summary>
-        public static BestHTTP.Logger.ILogger Logger
+        public static ILogger Logger
         {
             get
             {
                 // Make sure that it has a valid logger instance.
-                if (logger == null)
+                if (_logger == null)
                 {
-                    logger = new ThreadedLogger();
-                    logger.Level = Loglevels.None;
+                    _logger = new ThreadedLogger();
+                    _logger.Level = Loglevels.None;
                 }
 
-                return logger;
+                return _logger;
             }
 
-            set { logger = value; }
+            set => _logger = value;
         }
-        private static BestHTTP.Logger.ILogger logger;
+
+        private static ILogger _logger;
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 
-        public static TlsClientFactoryDelegate TlsClientFactory;
+#pragma warning disable CS0169
+        public static TlsClientFactoryDelegate TlsClientFactory { get; set; }
+#pragma warning restore CS0169
 
-        public static Connections.TLS.AbstractTls13Client DefaultTlsClientFactory(HTTPRequest request, List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols)
+        public static Connections.TLS.AbstractTls13Client DefaultTlsClientFactory(HTTPRequest request,
+            List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols)
         {
             // http://tools.ietf.org/html/rfc3546#section-3.1
             // -It is RECOMMENDED that clients include an extension of type "server_name" in the client hello whenever they locate a server by a supported name type.
@@ -216,8 +229,11 @@ namespace BestHTTP
             // If there's no user defined one and the host isn't an IP address, add the default one
             if (!request.CurrentUri.IsHostIsAnIPAddress())
             {
-                hostNames = new List<SecureProtocol.Org.BouncyCastle.Tls.ServerName>(1);
-                hostNames.Add(new SecureProtocol.Org.BouncyCastle.Tls.ServerName(0, System.Text.Encoding.UTF8.GetBytes(request.CurrentUri.Host)));
+                hostNames = new List<SecureProtocol.Org.BouncyCastle.Tls.ServerName>(1)
+                {
+                    new SecureProtocol.Org.BouncyCastle.Tls.ServerName(0,
+                        System.Text.Encoding.UTF8.GetBytes(request.CurrentUri.Host))
+                };
             }
 
             return new Connections.TLS.DefaultTls13Client(request, hostNames, protocols);
@@ -230,24 +246,36 @@ namespace BestHTTP
 #endif
 
 #if !NETFX_CORE
-        public static Func<HTTPRequest, System.Security.Cryptography.X509Certificates.X509Certificate, System.Security.Cryptography.X509Certificates.X509Chain, System.Net.Security.SslPolicyErrors, bool> DefaultCertificationValidator;
-        public static ClientCertificateSelector ClientCertificationProvider;
+#pragma warning disable CS0169
+
+        public static Func<HTTPRequest, X509Certificate, X509Chain, SslPolicyErrors, bool>
+            DefaultCertificationValidator => null;
+#pragma warning restore CS0169
+#pragma warning disable CS0169
+        public static ClientCertificateSelector ClientCertificationProvider { get; set; }
+#pragma warning restore CS0169
 #endif
 
         /// <summary>
         /// TCP Client's send buffer size.
         /// </summary>
+#pragma warning disable CS0169
+        // ReSharper disable once InconsistentNaming
         public static int? SendBufferSize;
+#pragma warning restore CS0169
 
         /// <summary>
         /// TCP Client's receive buffer size.
         /// </summary>
+#pragma warning disable CS0169
+        // ReSharper disable once UnassignedField.Global
         public static int? ReceiveBufferSize;
+#pragma warning restore CS0169
 
         /// <summary>
         /// An IIOService implementation to handle filesystem operations.
         /// </summary>
-        public static PlatformSupport.FileSystem.IIOService IOService;
+        public static readonly PlatformSupport.FileSystem.IIOService IOService;
 
         /// <summary>
         /// On most systems the maximum length of a path is around 255 character. If a cache entity's path is longer than this value it doesn't get cached. There no platform independent API to query the exact value on the current system, but it's
@@ -258,31 +286,31 @@ namespace BestHTTP
         /// <summary>
         /// User-agent string that will be sent with each requests.
         /// </summary>
-        public static string UserAgent = "BestHTTP/2 v2.6.3";
+        public const string UserAgent = "BestHTTP/2 v2.6.3";
 
         /// <summary>
         /// It's true if the application is quitting and the plugin is shutting down itself.
         /// </summary>
-        public static bool IsQuitting { get { return _isQuitting; } private set { _isQuitting = value; } }
+        public static bool IsQuitting
+        {
+            get => _isQuitting;
+            private set => _isQuitting = value;
+        }
+
         private static volatile bool _isQuitting;
-#endregion
 
-#region Manager variables
+        #endregion
 
-        private static bool IsSetupCalled;
-
-#endregion
-
-#region Public Interface
+        #region Public Interface
 
         public static void Setup()
         {
-            if (IsSetupCalled)
+            if (_isSetupCalled)
                 return;
-            IsSetupCalled = true;
+            _isSetupCalled = true;
             IsQuitting = false;
 
-            HTTPManager.Logger.Information("HTTPManager", "Setup called! UserAgent: " + UserAgent);
+            HttpManager.Logger.Information("HTTPManager", "Setup called! UserAgent: " + UserAgent);
 
             HTTPUpdateDelegator.CheckInstance();
 
@@ -291,8 +319,8 @@ namespace BestHTTP
 #endif
 
 #if !BESTHTTP_DISABLE_COOKIES
-            Cookies.CookieJar.SetupFolder();
-            Cookies.CookieJar.Load();
+            CookieJar.SetupFolder();
+            CookieJar.Load();
 #endif
 
             HostManager.Load();
@@ -308,19 +336,21 @@ namespace BestHTTP
             return SendRequest(new HTTPRequest(new Uri(url), methodType, callback));
         }
 
-        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive, OnRequestFinishedDelegate callback)
+        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive,
+            OnRequestFinishedDelegate callback)
         {
             return SendRequest(new HTTPRequest(new Uri(url), methodType, isKeepAlive, callback));
         }
 
-        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive, bool disableCache, OnRequestFinishedDelegate callback)
+        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive, bool disableCache,
+            OnRequestFinishedDelegate callback)
         {
             return SendRequest(new HTTPRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
         }
 
         public static HTTPRequest SendRequest(HTTPRequest request)
         {
-            if (!IsSetupCalled)
+            if (!_isSetupCalled)
                 Setup();
 
             if (request.IsCancellationRequested || IsQuitting)
@@ -328,12 +358,12 @@ namespace BestHTTP
 
 #if !BESTHTTP_DISABLE_CACHING
             // If possible load the full response from cache.
-            if (Caching.HTTPCacheService.IsCachedEntityExpiresInTheFuture(request))
+            if (HTTPCacheService.IsCachedEntityExpiresInTheFuture(request))
             {
-                DateTime started = DateTime.Now;
-                PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HTTPRequest>((req) =>
+                var started = DateTime.Now;
+                PlatformSupport.Threading.ThreadedRunner.RunShortLiving((req) =>
                 {
-                    if (Connections.ConnectionHelper.TryLoadAllFromCache("HTTPManager", req, req.Context))
+                    if (ConnectionHelper.TryLoadAllFromCache("HTTPManager", req, req.Context))
                     {
                         req.Timing.Add("Full Cache Load", DateTime.Now - started);
                         req.State = HTTPRequestStates.Finished;
@@ -357,9 +387,9 @@ namespace BestHTTP
             return request;
         }
 
-#endregion
+        #endregion
 
-#region Internal Helper Functions
+        #region Internal Helper Functions
 
         /// <summary>
         /// Will return where the various caches should be saved.
@@ -371,9 +401,9 @@ namespace BestHTTP
                 if (RootCacheFolderProvider != null)
                     return RootCacheFolderProvider();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("HTTPManager", "GetRootCacheFolder", ex);
+                HttpManager.Logger.Exception("HTTPManager", "GetRootCacheFolder", ex);
             }
 
 #if NETFX_CORE
@@ -389,15 +419,15 @@ namespace BestHTTP
 #endif
         public static void ResetSetup()
         {
-            IsSetupCalled = false;
+            _isSetupCalled = false;
             BufferedReadNetworkStream.ResetNetworkStats();
-            HTTPManager.Logger.Information("HTTPManager", "Reset called!");
+            HttpManager.Logger.Information("HTTPManager", "Reset called!");
         }
 #endif
 
-#endregion
+        #endregion
 
-#region MonoBehaviour Events (Called from HTTPUpdateDelegator)
+        #region MonoBehaviour Events (Called from HTTPUpdateDelegator)
 
         /// <summary>
         /// Update function that should be called regularly from a Unity event(Update, LateUpdate). Callbacks are dispatched from this function.
@@ -409,17 +439,16 @@ namespace BestHTTP
             ProtocolEventHelper.ProcessQueue();
             PluginEventHelper.ProcessQueue();
 
-            BestHTTP.Extensions.Timer.Process();
+            Timer.Process();
 
-            if (heartbeats != null)
-                heartbeats.Update();
+            _heartbeats?.Update();
 
             BufferPool.Maintain();
         }
 
         public static void OnQuit()
         {
-            HTTPManager.Logger.Information("HTTPManager", "OnQuit called!");
+            HttpManager.Logger.Information("HTTPManager", "OnQuit called!");
 
             IsQuitting = true;
 
@@ -440,9 +469,9 @@ namespace BestHTTP
             Heartbeats.Clear();
         }
 
-        public static void AbortAll()
+        private static void AbortAll()
         {
-            HTTPManager.Logger.Information("HTTPManager", "AbortAll called!");
+            HttpManager.Logger.Information("HTTPManager", "AbortAll called!");
 
             // This is an immediate shutdown request!
 
@@ -456,6 +485,6 @@ namespace BestHTTP
             ProtocolEventHelper.CancelActiveProtocols();
         }
 
-#endregion
+        #endregion
     }
 }

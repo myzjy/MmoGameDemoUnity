@@ -1,12 +1,23 @@
 using System;
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Core
 {
     public sealed class HostDefinition
     {
-        public string Host { get; private set; }
-        
+        private static readonly System.Text.StringBuilder KeyBuilder = new System.Text.StringBuilder(11);
+
+        // While a ReaderWriterLockSlim would be best with read and write locking and we use only WriteLock, it's still a lightweight locking mechanism instead of the lock statement.
+        private static readonly System.Threading.ReaderWriterLockSlim KeyBuilderLock =
+            new System.Threading.ReaderWriterLockSlim(System.Threading.LockRecursionPolicy.NoRecursion);
+
+        /// <summary>
+        /// Requests to the same host can require different connections: http, https, http + proxy, https + proxy, http2, http2 + proxy
+        /// </summary>
+        public readonly Dictionary<string, HostConnection> HostConnectionVariant =
+            new Dictionary<string, HostConnection>();
+
         // alt-svc support:
         //  1. When a request receives an alt-svc header send a plugin msg to the manager with all the details to route to the proper hostDefinition.
         //  2. HostDefinition parses the header value
@@ -14,34 +25,29 @@ namespace BestHTTP.Core
         //  4. If the new connection is open, route new requests to that connection
         public List<HostConnection> Alternates;
 
-        /// <summary>
-        /// Requests to the same host can require different connections: http, https, http + proxy, https + proxy, http2, http2 + proxy
-        /// </summary>
-        public Dictionary<string, HostConnection> hostConnectionVariant = new Dictionary<string, HostConnection>();
-
         public HostDefinition(string host)
         {
             this.Host = host;
         }
+
+        public string Host { get; private set; }
 
         public HostConnection HasBetterAlternate(HTTPRequest request)
         {
             return null;
         }
 
-        public HostConnection GetHostDefinition(HTTPRequest request)
+        private HostConnection GetHostDefinition(HTTPRequest request)
         {
-            string key = GetKeyForRequest(request);
+            var key = GetKeyForRequest(request);
 
             return GetHostDefinition(key);
         }
 
         public HostConnection GetHostDefinition(string key)
         {
-            HostConnection host = null;
-
-            if (!this.hostConnectionVariant.TryGetValue(key, out host))
-                this.hostConnectionVariant.Add(key, host = new HostConnection(this, key));
+            if (!this.HostConnectionVariant.TryGetValue(key, out var host))
+                this.HostConnectionVariant.Add(key, host = new HostConnection(this, key));
 
             return host;
         }
@@ -54,25 +60,27 @@ namespace BestHTTP.Core
 
         public void TryToSendQueuedRequests()
         {
-            foreach (var kvp in hostConnectionVariant)
+            foreach (var kvp in HostConnectionVariant)
                 kvp.Value.TryToSendQueuedRequests();
         }
 
-        public void HandleAltSvcHeader(HTTPResponse response)
+        public void HandleAltSvcHeader(HttpResponse response)
         {
             var headerValues = response.GetHeaderValues("alt-svc");
             if (headerValues == null)
-                HTTPManager.Logger.Warning(typeof(HostDefinition).Name, "Received HandleAltSvcHeader message, but no Alt-Svc header found!", response.Context);
+                HttpManager.Logger.Warning(nameof(HostDefinition),
+                    "Received HandleAltSvcHeader message, but no Alt-Svc header found!", response.Context);
         }
 
-        public void HandleConnectProtocol(HTTP2ConnectProtocolInfo info)
+        public void HandleConnectProtocol(Http2ConnectProtocolInfo info)
         {
-            HTTPManager.Logger.Information(typeof(HostDefinition).Name, string.Format("Received HandleConnectProtocol message. Connect protocol for host {0}. Enabled: {1}", info.Host, info.Enabled));
+            HttpManager.Logger.Information(nameof(HostDefinition),
+                $"Received HandleConnectProtocol message. Connect protocol for host {info.Host}. Enabled: {info.Enabled}");
         }
 
         internal void Shutdown()
         {
-            foreach (var kvp in this.hostConnectionVariant)
+            foreach (var kvp in this.HostConnectionVariant)
             {
                 kvp.Value.Shutdown();
             }
@@ -80,11 +88,11 @@ namespace BestHTTP.Core
 
         internal void SaveTo(System.IO.BinaryWriter bw)
         {
-            bw.Write(this.hostConnectionVariant.Count);
+            bw.Write(this.HostConnectionVariant.Count);
 
-            foreach (var kvp in this.hostConnectionVariant)
+            foreach (var kvp in this.HostConnectionVariant)
             {
-                bw.Write(kvp.Key.ToString());
+                bw.Write(kvp.Key);
 
                 kvp.Value.SaveTo(bw);
             }
@@ -100,58 +108,53 @@ namespace BestHTTP.Core
             }
         }
 
-        private static System.Text.StringBuilder keyBuilder = new System.Text.StringBuilder(11);
-
-        // While a ReaderWriterLockSlim would be best with read and write locking and we use only WriteLock, it's still a lightweight locking mechanism instead of the lock statement.
-        private static System.Threading.ReaderWriterLockSlim keyBuilderLock = new System.Threading.ReaderWriterLockSlim(System.Threading.LockRecursionPolicy.NoRecursion);
-
         public static string GetKeyForRequest(HTTPRequest request)
         {
             return GetKeyFor(request.CurrentUri
 #if !BESTHTTP_DISABLE_PROXY
                 , request.Proxy
 #endif
-                );
+            );
         }
 
         public static string GetKeyFor(Uri uri
 #if !BESTHTTP_DISABLE_PROXY
             , Proxy proxy
 #endif
-            )
+        )
         {
             if (uri.IsFile)
                 return uri.ToString();
 
-            keyBuilderLock.EnterWriteLock();
+            KeyBuilderLock.EnterWriteLock();
 
             try
             {
-                keyBuilder.Length = 0;
+                KeyBuilder.Length = 0;
 
 #if !BESTHTTP_DISABLE_PROXY
                 if (proxy != null && proxy.UseProxyForAddress(uri))
                 {
-                    keyBuilder.Append(proxy.Address.Scheme);
-                    keyBuilder.Append("://");
-                    keyBuilder.Append(proxy.Address.Host);
-                    keyBuilder.Append(":");
-                    keyBuilder.Append(proxy.Address.Port);
-                    keyBuilder.Append(" @ ");
+                    KeyBuilder.Append(proxy.Address.Scheme);
+                    KeyBuilder.Append("://");
+                    KeyBuilder.Append(proxy.Address.Host);
+                    KeyBuilder.Append(":");
+                    KeyBuilder.Append(proxy.Address.Port);
+                    KeyBuilder.Append(" @ ");
                 }
 #endif
 
-                keyBuilder.Append(uri.Scheme);
-                keyBuilder.Append("://");
-                keyBuilder.Append(uri.Host);
-                keyBuilder.Append(":");
-                keyBuilder.Append(uri.Port);
+                KeyBuilder.Append(uri.Scheme);
+                KeyBuilder.Append("://");
+                KeyBuilder.Append(uri.Host);
+                KeyBuilder.Append(":");
+                KeyBuilder.Append(uri.Port);
 
-                return keyBuilder.ToString();
+                return KeyBuilder.ToString();
             }
             finally
             {
-                keyBuilderLock.ExitWriteLock();
+                KeyBuilderLock.ExitWriteLock();
             }
         }
     }

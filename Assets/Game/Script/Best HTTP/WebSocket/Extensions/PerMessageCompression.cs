@@ -1,10 +1,10 @@
 #if !BESTHTTP_DISABLE_WEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using System;
-using BestHTTP.Extensions;
-using BestHTTP.WebSocket.Frames;
 using BestHTTP.Decompression.Zlib;
+using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
+using BestHTTP.WebSocket.Frames;
 
 namespace BestHTTP.WebSocket.Extensions
 {
@@ -17,6 +17,27 @@ namespace BestHTTP.WebSocket.Extensions
         public const int MinDataLengthToCompressDefault = 256;
 
         private static readonly byte[] Trailer = new byte[] { 0x00, 0x00, 0xFF, 0xFF };
+
+        public PerMessageCompression()
+            : this(CompressionLevel.Default, false, false, ZlibConstants.WindowBitsMax, ZlibConstants.WindowBitsMax,
+                MinDataLengthToCompressDefault)
+        {
+        }
+
+        public PerMessageCompression(CompressionLevel level,
+            bool clientNoContextTakeover,
+            bool serverNoContextTakeover,
+            int desiredClientMaxWindowBits,
+            int desiredServerMaxWindowBits,
+            int minDatalengthToCompress)
+        {
+            this.Level = level;
+            this.ClientNoContextTakeover = clientNoContextTakeover;
+            this.ServerNoContextTakeover = serverNoContextTakeover;
+            this.ClientMaxWindowBits = desiredClientMaxWindowBits;
+            this.ServerMaxWindowBits = desiredServerMaxWindowBits;
+            this.MinimumDataLegthToCompress = minDatalengthToCompress;
+        }
 
         #region Public Properties
 
@@ -60,35 +81,18 @@ namespace BestHTTP.WebSocket.Extensions
         /// Cached object to support context takeover.
         /// </summary>
         private BufferPoolMemoryStream compressorOutputStream;
+
         private DeflateStream compressorDeflateStream;
 
         /// <summary>
         /// Cached object to support context takeover.
         /// </summary>
         private BufferPoolMemoryStream decompressorInputStream;
+
         private BufferPoolMemoryStream decompressorOutputStream;
         private DeflateStream decompressorDeflateStream;
 
         #endregion
-
-        public PerMessageCompression()
-            :this(CompressionLevel.Default, false, false, ZlibConstants.WindowBitsMax, ZlibConstants.WindowBitsMax, MinDataLengthToCompressDefault)
-        { }
-
-        public PerMessageCompression(CompressionLevel level,
-                                     bool clientNoContextTakeover,
-                                     bool serverNoContextTakeover,
-                                     int desiredClientMaxWindowBits,
-                                     int desiredServerMaxWindowBits,
-                                     int minDatalengthToCompress)
-        {
-            this.Level = level;
-            this.ClientNoContextTakeover = clientNoContextTakeover;
-            this.ServerNoContextTakeover = serverNoContextTakeover;
-            this.ClientMaxWindowBits = desiredClientMaxWindowBits;
-            this.ServerMaxWindowBits = desiredServerMaxWindowBits;
-            this.MinimumDataLegthToCompress = minDatalengthToCompress;
-        }
 
         #region IExtension Implementation
 
@@ -164,9 +168,11 @@ namespace BestHTTP.WebSocket.Extensions
                 {
                     HeaderValue value = parser.Values[i];
 
-                    if (!string.IsNullOrEmpty(value.Key) && value.Key.StartsWith("permessage-deflate", StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(value.Key) &&
+                        value.Key.StartsWith("permessage-deflate", StringComparison.OrdinalIgnoreCase))
                     {
-                        HTTPManager.Logger.Information("PerMessageCompression", "Enabled with header: " + headerValues[i]);
+                        HttpManager.Logger.Information("PerMessageCompression",
+                            "Enabled with header: " + headerValues[i]);
 
                         HeaderValue option;
                         if (value.TryGetOption("client_no_context_takeover", out option))
@@ -256,7 +262,8 @@ namespace BestHTTP.WebSocket.Extensions
 
             if (compressorDeflateStream == null)
             {
-                compressorDeflateStream = new DeflateStream(compressorOutputStream, CompressionMode.Compress, this.Level, true, this.ClientMaxWindowBits);
+                compressorDeflateStream = new DeflateStream(compressorOutputStream, CompressionMode.Compress,
+                    this.Level, true, this.ClientMaxWindowBits);
                 compressorDeflateStream.FlushMode = FlushType.Sync;
             }
 
@@ -304,7 +311,8 @@ namespace BestHTTP.WebSocket.Extensions
 
             if (decompressorDeflateStream == null)
             {
-                decompressorDeflateStream = new DeflateStream(decompressorInputStream, CompressionMode.Decompress, CompressionLevel.Default, true, this.ServerMaxWindowBits);
+                decompressorDeflateStream = new DeflateStream(decompressorInputStream, CompressionMode.Decompress,
+                    CompressionLevel.Default, true, this.ServerMaxWindowBits);
                 decompressorDeflateStream.FlushMode = FlushType.Sync;
             }
 

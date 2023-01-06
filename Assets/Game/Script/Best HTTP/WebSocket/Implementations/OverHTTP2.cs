@@ -1,8 +1,6 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2 && !BESTHTTP_DISABLE_WEBSOCKET
 using System;
 using System.Collections.Generic;
-using System.IO;
-
 using BestHTTP.Connections.HTTP2;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
@@ -16,34 +14,33 @@ namespace BestHTTP.WebSocket
     /// </summary>
     public sealed class OverHTTP2 : WebSocketBaseImplementation, IHeartbeat
     {
-        public override int BufferedAmount { get => (int)this.upStream.Length; }
-        public override bool IsOpen => this.State == WebSocketStates.Open;
-        public override int Latency { get { return this.Parent.StartPingThread ? base.Latency : (int)this.http2Handler.Latency; } }
-
-        private List<WebSocketFrameReader> IncompleteFrames = new List<WebSocketFrameReader>();
-        private HTTP2Handler http2Handler;
-        private LockedBufferSegmenStream upStream;
-
         /// <summary>
         /// True if we sent out a Close message to the server
         /// </summary>
         private volatile bool closeSent;
+
+        private HTTP2Handler http2Handler;
+
+        private PeekableIncomingSegmentStream incomingSegmentStream = new PeekableIncomingSegmentStream();
+
+        private List<WebSocketFrameReader> IncompleteFrames = new List<WebSocketFrameReader>();
 
         /// <summary>
         /// When we sent out the last ping.
         /// </summary>
         private DateTime lastPing = DateTime.MinValue;
 
-        private bool waitingForPong = false;
-
         /// <summary>
         /// A circular buffer to store the last N rtt times calculated by the pong messages.
         /// </summary>
         private CircularBuffer<int> rtts = new CircularBuffer<int>(WebSocketResponse.RTTBufferCapacity);
 
-        private PeekableIncomingSegmentStream incomingSegmentStream = new PeekableIncomingSegmentStream();
+        private LockedBufferSegmenStream upStream;
 
-        public OverHTTP2(WebSocket parent, HTTP2Handler handler, Uri uri, string origin, string protocol) : base(parent, uri, origin, protocol)
+        private bool waitingForPong = false;
+
+        public OverHTTP2(WebSocket parent, HTTP2Handler handler, Uri uri, string origin, string protocol) : base(parent,
+            uri, origin, protocol)
         {
             this.http2Handler = handler;
 
@@ -51,6 +48,70 @@ namespace BestHTTP.WebSocket
             int port = uri.Port != -1 ? uri.Port : 443;
 
             base.Uri = new Uri(scheme + "://" + uri.Host + ":" + port + uri.GetRequestPathAndQueryURL());
+        }
+
+        public override int BufferedAmount
+        {
+            get => (int)this.upStream.Length;
+        }
+
+        public override bool IsOpen => this.State == WebSocketStates.Open;
+
+        public override int Latency
+        {
+            get { return this.Parent.StartPingThread ? base.Latency : (int)this.http2Handler.Latency; }
+        }
+
+        public void OnHeartbeatUpdate(TimeSpan dif)
+        {
+            DateTime now = DateTime.Now;
+
+            switch (this.State)
+            {
+                case WebSocketStates.Connecting:
+                    if (now - this.InternalRequest.Timing.Start >= this.Parent.CloseAfterNoMessage)
+                    {
+                        if (HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
+                        {
+                            this.State = WebSocketStates.Closed;
+                            this.InternalRequest.OnHeadersReceived = null;
+                            this.InternalRequest.Callback = null;
+                            this.Parent.FallbackToHTTP1();
+                        }
+                        else
+                        {
+                            CloseWithError("WebSocket Over HTTP/2 Implementation failed to connect in the given time!");
+                        }
+                    }
+
+                    break;
+
+                case WebSocketStates.Open:
+                    if (this.Parent.StartPingThread)
+                    {
+                        if (!waitingForPong && now - LastMessageReceived >=
+                            TimeSpan.FromMilliseconds(this.Parent.PingFrequency))
+                            SendPing();
+
+                        if (waitingForPong && now - lastPing > this.Parent.CloseAfterNoMessage)
+                        {
+                            HttpManager.Logger.Warning("OverHTTP2",
+                                string.Format(
+                                    "No message received in the given time! Closing WebSocket. LastPing: {0}, PingFrequency: {1}, Close After: {2}, Now: {3}",
+                                    this.lastPing, TimeSpan.FromMilliseconds(this.Parent.PingFrequency),
+                                    this.Parent.CloseAfterNoMessage, now), this.Parent.Context);
+
+                            CloseWithError("No message received in the given time!");
+                        }
+                    }
+
+                    break;
+
+                case WebSocketStates.Closed:
+                    HttpManager.Heartbeats.Unsubscribe(this);
+                    HTTPUpdateDelegator.OnApplicationForegroundStateChanged -= OnApplicationForegroundStateChanged;
+                    break;
+            }
         }
 
         protected override void CreateInternalRequest()
@@ -62,7 +123,8 @@ namespace BestHTTP.WebSocket
 
             // The request MUST include a header field with the name |Sec-WebSocket-Key|.  The value of this header field MUST be a nonce consisting of a
             // randomly selected 16-byte value that has been base64-encoded (see Section 4 of [RFC4648]).  The nonce MUST be selected randomly for each connection.
-            base._internalRequest.SetHeader("sec-webSocket-key", WebSocket.GetSecKey(new object[] { this, InternalRequest, base.Uri, new object() }));
+            base._internalRequest.SetHeader("sec-webSocket-key",
+                WebSocket.GetSecKey(new object[] { this, InternalRequest, base.Uri, new object() }));
 
             // The request MUST include a header field with the name |Origin| [RFC6454] if the request is coming from a browser client.
             // If the connection is from a non-browser client, the request MAY include this header field if the semantics of that client match the use-case described here for browser clients.
@@ -100,12 +162,12 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP2", "CreateInternalRequest", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP2", "CreateInternalRequest", ex, this.Parent.Context);
                 }
             }
         }
 
-        private void OnHeadersReceived(HTTPRequest req, HTTPResponse resp, Dictionary<string, List<string>> newHeaders)
+        private void OnHeadersReceived(HTTPRequest req, HttpResponse resp, Dictionary<string, List<string>> newHeaders)
         {
             if (resp != null && resp.StatusCode == 200)
             {
@@ -119,7 +181,7 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("OverHTTP2", "OnOpen", ex, this.Parent.Context);
+                        HttpManager.Logger.Exception("OverHTTP2", "OnOpen", ex, this.Parent.Context);
                     }
                 }
 
@@ -208,7 +270,7 @@ namespace BestHTTP.WebSocket
             return stream.Length >= (long)Length;
         }
 
-        private bool OnFrame(HTTPRequest request, HTTPResponse response, byte[] dataFragment, int dataFragmentLength)
+        private bool OnFrame(HTTPRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
         {
             base.LastMessageReceived = DateTime.Now;
 
@@ -219,8 +281,8 @@ namespace BestHTTP.WebSocket
                 WebSocketFrameReader frame = new WebSocketFrameReader();
                 frame.Read(this.incomingSegmentStream);
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("OverHTTP2", "Frame received: " + frame.Type, this.Parent.Context);
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("OverHTTP2", "Frame received: " + frame.Type, this.Parent.Context);
 
                 if (!frame.IsFinal)
                 {
@@ -234,9 +296,10 @@ namespace BestHTTP.WebSocket
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex, this.Parent.Context);
+                            HttpManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex, this.Parent.Context);
                         }
                     }
+
                     return false;
                 }
 
@@ -270,10 +333,12 @@ namespace BestHTTP.WebSocket
                                 }
                                 catch (Exception ex)
                                 {
-                                    HTTPManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex, this.Parent.Context);
+                                    HttpManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex,
+                                        this.Parent.Context);
                                 }
                             }
                         }
+
                         break;
 
                     case WebSocketFrameTypes.Text:
@@ -286,9 +351,10 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HTTPManager.Logger.Exception("OverHTTP2", "OnMessage", ex, this.Parent.Context);
+                                HttpManager.Logger.Exception("OverHTTP2", "OnMessage", ex, this.Parent.Context);
                             }
                         }
+
                         break;
 
                     case WebSocketFrameTypes.Binary:
@@ -301,9 +367,10 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HTTPManager.Logger.Exception("OverHTTP2", "OnBinary", ex, this.Parent.Context);
+                                HttpManager.Logger.Exception("OverHTTP2", "OnBinary", ex, this.Parent.Context);
                             }
                         }
+
                         break;
 
                     // Upon receipt of a Ping frame, an endpoint MUST send a Pong frame in response, unless it already received a Close frame.
@@ -341,7 +408,8 @@ namespace BestHTTP.WebSocket
 
                     // If an endpoint receives a Close frame and did not previously send a Close frame, the endpoint MUST send a Close frame in response.
                     case WebSocketFrameTypes.ConnectionClose:
-                        HTTPManager.Logger.Information("OverHTTP2", "ConnectionClose packet received!", this.Parent.Context);
+                        HttpManager.Logger.Information("OverHTTP2", "ConnectionClose packet received!",
+                            this.Parent.Context);
 
                         //CloseFrame = frame;
                         if (!closeSent)
@@ -367,7 +435,8 @@ namespace BestHTTP.WebSocket
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("OverHTTP2", "OnFrame - parsing ConnectionClose data", ex, this.Parent.Context);
+                            HttpManager.Logger.Exception("OverHTTP2", "OnFrame - parsing ConnectionClose data", ex,
+                                this.Parent.Context);
                         }
 
                         if (this.Parent.OnClosed != null)
@@ -378,8 +447,9 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HTTPManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
+                                HttpManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
                             }
+
                             this.Parent.OnClosed = null;
                         }
 
@@ -392,13 +462,14 @@ namespace BestHTTP.WebSocket
             return false;
         }
 
-        private void OnInternalRequestCallback(HTTPRequest req, HTTPResponse resp)
+        private void OnInternalRequestCallback(HTTPRequest req, HttpResponse resp)
         {
             // If it's already closed, all events are called too.
             if (this.State == WebSocketStates.Closed)
                 return;
 
-            if (this.State == WebSocketStates.Connecting && HTTPManager.HTTP2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
+            if (this.State == WebSocketStates.Connecting &&
+                HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
             {
                 this.Parent.FallbackToHTTP1();
                 return;
@@ -409,7 +480,9 @@ namespace BestHTTP.WebSocket
             switch (req.State)
             {
                 case HTTPRequestStates.Finished:
-                    HTTPManager.Logger.Information("OverHTTP2", string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(), resp.Message), this.Parent.Context);
+                    HttpManager.Logger.Information("OverHTTP2",
+                        string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
+                            resp.Message), this.Parent.Context);
 
                     if (resp.StatusCode == 101)
                     {
@@ -417,15 +490,19 @@ namespace BestHTTP.WebSocket
                         return;
                     }
                     else
-                        reason = string.Format("Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                                        resp.StatusCode,
-                                                        resp.Message,
-                                                        resp.DataAsText);
+                        reason = string.Format(
+                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
+                            resp.StatusCode,
+                            resp.Message,
+                            resp.DataAsText);
+
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
                 case HTTPRequestStates.Error:
-                    reason = "Request Finished with Error! " + (req.Exception != null ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace) : string.Empty);
+                    reason = "Request Finished with Error! " + (req.Exception != null
+                        ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace)
+                        : string.Empty);
                     break;
 
                 // The request aborted, initiated by the user.
@@ -457,21 +534,22 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
+                        HttpManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
                     }
                 }
-                else if (!HTTPManager.IsQuitting)
-                    HTTPManager.Logger.Error("OverHTTP2", reason, this.Parent.Context);
+                else if (!HttpManager.IsQuitting)
+                    HttpManager.Logger.Error("OverHTTP2", reason, this.Parent.Context);
             }
             else if (this.Parent.OnClosed != null)
             {
                 try
                 {
-                    this.Parent.OnClosed(this.Parent, (ushort)WebSocketStausCodes.NormalClosure, "Closed while opening");
+                    this.Parent.OnClosed(this.Parent, (ushort)WebSocketStausCodes.NormalClosure,
+                        "Closed while opening");
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
                 }
             }
 
@@ -493,12 +571,12 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP2", "Open", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP2", "Open", ex, this.Parent.Context);
                 }
             }
 
             base.InternalRequest.Send();
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
             HTTPUpdateDelegator.OnApplicationForegroundStateChanged += OnApplicationForegroundStateChanged;
 
             this.State = WebSocketStates.Connecting;
@@ -517,7 +595,8 @@ namespace BestHTTP.WebSocket
             }
             else
             {
-                Send(new WebSocketFrame(this.Parent, WebSocketFrameTypes.ConnectionClose, WebSocket.EncodeCloseData(code, message)));
+                Send(new WebSocketFrame(this.Parent, WebSocketFrameTypes.ConnectionClose,
+                    WebSocket.EncodeCloseData(code, message)));
                 this.State = WebSocketStates.Closing;
             }
         }
@@ -577,7 +656,8 @@ namespace BestHTTP.WebSocket
             if (offset + count > (ulong)data.Length)
                 throw new ArgumentOutOfRangeException("offset + count >= data.Length");
 
-            WebSocketFrame frame = new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, data, offset, count, true, true);
+            WebSocketFrame frame =
+                new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, data, offset, count, true, true);
 
             var maxFrameSize = this.http2Handler.settings.RemoteSettings[HTTP2Settings.MAX_FRAME_SIZE];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
@@ -624,53 +704,6 @@ namespace BestHTTP.WebSocket
             return sumLatency / this.rtts.Count;
         }
 
-        public void OnHeartbeatUpdate(TimeSpan dif)
-        {
-            DateTime now = DateTime.Now;
-
-            switch (this.State)
-            {
-                case WebSocketStates.Connecting:
-                    if (now - this.InternalRequest.Timing.Start >= this.Parent.CloseAfterNoMessage)
-                    {
-                        if (HTTPManager.HTTP2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
-                        {
-                            this.State = WebSocketStates.Closed;
-                            this.InternalRequest.OnHeadersReceived = null;
-                            this.InternalRequest.Callback = null;
-                            this.Parent.FallbackToHTTP1();
-                        }
-                        else
-                        {
-                            CloseWithError("WebSocket Over HTTP/2 Implementation failed to connect in the given time!");
-                        }
-                    }
-                    break;
-
-                case WebSocketStates.Open:
-                    if (this.Parent.StartPingThread)
-                    {
-                        if (!waitingForPong && now - LastMessageReceived >= TimeSpan.FromMilliseconds(this.Parent.PingFrequency))
-                            SendPing();
-
-                        if (waitingForPong && now - lastPing > this.Parent.CloseAfterNoMessage)
-                        {
-                            HTTPManager.Logger.Warning("OverHTTP2",
-                                string.Format("No message received in the given time! Closing WebSocket. LastPing: {0}, PingFrequency: {1}, Close After: {2}, Now: {3}",
-                                this.lastPing, TimeSpan.FromMilliseconds(this.Parent.PingFrequency), this.Parent.CloseAfterNoMessage, now), this.Parent.Context);
-
-                            CloseWithError("No message received in the given time!");
-                        }
-                    }
-                    break;
-
-                case WebSocketStates.Closed:
-                    HTTPManager.Heartbeats.Unsubscribe(this);
-                    HTTPUpdateDelegator.OnApplicationForegroundStateChanged -= OnApplicationForegroundStateChanged;
-                    break;
-            }
-        }
-
         private void OnApplicationForegroundStateChanged(bool isPaused)
         {
             if (!isPaused)
@@ -679,7 +712,8 @@ namespace BestHTTP.WebSocket
 
         private void SendPing()
         {
-            HTTPManager.Logger.Information("OverHTTP2", "Sending Ping frame, waiting for a pong...", this.Parent.Context);
+            HttpManager.Logger.Information("OverHTTP2", "Sending Ping frame, waiting for a pong...",
+                this.Parent.Context);
 
             lastPing = DateTime.Now;
             waitingForPong = true;
@@ -705,7 +739,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
                 }
             }
 

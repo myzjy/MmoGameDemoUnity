@@ -1,6 +1,5 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_WEBSOCKET
 using System;
-
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.WebSocket.Frames;
@@ -9,13 +8,6 @@ namespace BestHTTP.WebSocket
 {
     internal sealed class OverHTTP1 : WebSocketBaseImplementation
     {
-        public override bool IsOpen => webSocket != null && !webSocket.IsClosed;
-
-        public override int BufferedAmount => webSocket.BufferedAmount;
-
-        public override int Latency => this.webSocket.Latency;
-        public override DateTime LastMessageReceived => this.webSocket.lastMessage;
-
         /// <summary>
         /// Indicates whether we sent out the connection request to the server.
         /// </summary>
@@ -26,15 +18,25 @@ namespace BestHTTP.WebSocket
         /// </summary>
         private WebSocketResponse webSocket;
 
-        public OverHTTP1(WebSocket parent, Uri uri, string origin, string protocol) : base(parent, uri, origin, protocol)
+        public OverHTTP1(WebSocket parent, Uri uri, string origin, string protocol) : base(parent, uri, origin,
+            protocol)
         {
-            string scheme = HTTPProtocolFactory.IsSecureProtocol(uri) ? "wss" : "ws";
-            int port = uri.Port != -1 ? uri.Port : (scheme.Equals("wss", StringComparison.OrdinalIgnoreCase) ? 443 : 80);
+            string scheme = HttpProtocolFactory.IsSecureProtocol(uri) ? "wss" : "ws";
+            int port = uri.Port != -1
+                ? uri.Port
+                : (scheme.Equals("wss", StringComparison.OrdinalIgnoreCase) ? 443 : 80);
 
             // Somehow if i use the UriBuilder it's not the same as if the uri is constructed from a string...
             //uri = new UriBuilder(uri.Scheme, uri.Host, uri.Scheme.Equals("wss", StringComparison.OrdinalIgnoreCase) ? 443 : 80, uri.PathAndQuery).Uri;
             base.Uri = new Uri(scheme + "://" + uri.Host + ":" + port + uri.GetRequestPathAndQueryURL());
         }
+
+        public override bool IsOpen => webSocket != null && !webSocket.IsClosed;
+
+        public override int BufferedAmount => webSocket.BufferedAmount;
+
+        public override int Latency => this.webSocket.Latency;
+        public override DateTime LastMessageReceived => this.webSocket.lastMessage;
 
         protected override void CreateInternalRequest()
         {
@@ -58,7 +60,8 @@ namespace BestHTTP.WebSocket
 
             // The request MUST include a header field with the name |Sec-WebSocket-Key|.  The value of this header field MUST be a nonce consisting of a
             // randomly selected 16-byte value that has been base64-encoded (see Section 4 of [RFC4648]).  The nonce MUST be selected randomly for each connection.
-            this._internalRequest.SetHeader("Sec-WebSocket-Key", WebSocket.GetSecKey(new object[] { this, InternalRequest, base.Uri, new object() }));
+            this._internalRequest.SetHeader("Sec-WebSocket-Key",
+                WebSocket.GetSecKey(new object[] { this, InternalRequest, base.Uri, new object() }));
 
             // The request MUST include a header field with the name |Origin| [RFC6454] if the request is coming from a browser client.
             // If the connection is from a non-browser client, the request MAY include this header field if the semantics of that client match the use-case described here for browser clients.
@@ -92,7 +95,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP1", "CreateInternalRequest", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP1", "CreateInternalRequest", ex, this.Parent.Context);
                 }
             }
         }
@@ -133,7 +136,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP1", "Open", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP1", "Open", ex, this.Parent.Context);
                 }
             }
 
@@ -142,14 +145,16 @@ namespace BestHTTP.WebSocket
             this.State = WebSocketStates.Connecting;
         }
 
-        private void OnInternalRequestCallback(HTTPRequest req, HTTPResponse resp)
+        private void OnInternalRequestCallback(HTTPRequest req, HttpResponse resp)
         {
             string reason = string.Empty;
 
             switch (req.State)
             {
                 case HTTPRequestStates.Finished:
-                    HTTPManager.Logger.Information("OverHTTP1", string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(), resp.Message), this.Parent.Context);
+                    HttpManager.Logger.Information("OverHTTP1",
+                        string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
+                            resp.Message), this.Parent.Context);
 
                     if (resp.StatusCode == 101)
                     {
@@ -157,15 +162,19 @@ namespace BestHTTP.WebSocket
                         return;
                     }
                     else
-                        reason = string.Format("Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                                        resp.StatusCode,
-                                                        resp.Message,
-                                                        resp.DataAsText);
+                        reason = string.Format(
+                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
+                            resp.StatusCode,
+                            resp.Message,
+                            resp.DataAsText);
+
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
                 case HTTPRequestStates.Error:
-                    reason = "Request Finished with Error! " + (req.Exception != null ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace) : string.Empty);
+                    reason = "Request Finished with Error! " + (req.Exception != null
+                        ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace)
+                        : string.Empty);
                     break;
 
                 // The request aborted, initiated by the user.
@@ -191,8 +200,8 @@ namespace BestHTTP.WebSocket
             {
                 if (this.Parent.OnError != null)
                     this.Parent.OnError(this.Parent, reason);
-                else if (!HTTPManager.IsQuitting)
-                    HTTPManager.Logger.Error("OverHTTP1", reason, this.Parent.Context);
+                else if (!HttpManager.IsQuitting)
+                    HttpManager.Logger.Error("OverHTTP1", reason, this.Parent.Context);
             }
             else if (this.Parent.OnClosed != null)
                 this.Parent.OnClosed(this.Parent, (ushort)WebSocketStausCodes.NormalClosure, "Closed while opening");
@@ -203,9 +212,9 @@ namespace BestHTTP.WebSocket
                 (resp as WebSocketResponse).CloseStream();
         }
 
-        private void OnInternalRequestUpgraded(HTTPRequest req, HTTPResponse resp)
+        private void OnInternalRequestUpgraded(HTTPRequest req, HttpResponse resp)
         {
-            HTTPManager.Logger.Information("OverHTTP1", "Internal request upgraded!", this.Parent.Context);
+            HttpManager.Logger.Information("OverHTTP1", "Internal request upgraded!", this.Parent.Context);
 
             webSocket = resp as WebSocketResponse;
 
@@ -256,7 +265,7 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("OverHTTP1", "ParseNegotiation", ex, this.Parent.Context);
+                        HttpManager.Logger.Exception("OverHTTP1", "ParseNegotiation", ex, this.Parent.Context);
 
                         // Do not try to use a defective extension in the future
                         this.Parent.Extensions[i] = null;
@@ -273,7 +282,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("OverHTTP1", "OnOpen", ex, this.Parent.Context);
+                    HttpManager.Logger.Exception("OverHTTP1", "OnOpen", ex, this.Parent.Context);
                 }
             }
 

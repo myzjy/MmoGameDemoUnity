@@ -1,15 +1,14 @@
 #if !BESTHTTP_DISABLE_WEBSOCKET
 
+#if !UNITY_WEBGL || UNITY_EDITOR
 using System;
 using System.Text;
-using BestHTTP.Extensions;
 using BestHTTP.Connections;
+using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
-
-#if !UNITY_WEBGL || UNITY_EDITOR
-    using BestHTTP.WebSocket.Frames;
-    using BestHTTP.WebSocket.Extensions;
+using BestHTTP.WebSocket.Frames;
+using BestHTTP.WebSocket.Extensions;
 #endif
 
 namespace BestHTTP.WebSocket
@@ -21,72 +20,10 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public static uint MaxFragmentSize = UInt16.MaxValue / 2;
 
-        public WebSocketStates State { get { return this.implementation.State; } }
-
         /// <summary>
-        /// The connection to the WebSocket server is open.
+        /// The underlying, real implementation.
         /// </summary>
-        public bool IsOpen { get { return this.implementation.IsOpen; } }
-
-        /// <summary>
-        /// Data waiting to be written to the wire.
-        /// </summary>
-        public int BufferedAmount { get { return this.implementation.BufferedAmount; } }
-
-#if !UNITY_WEBGL || UNITY_EDITOR
-
-        /// <summary>
-        /// Set to true to start a new thread to send Pings to the WebSocket server
-        /// </summary>
-        public bool StartPingThread { get; set; }
-
-        /// <summary>
-        /// The delay between two Pings in milliseconds. Minimum value is 100, default is 1000.
-        /// </summary>
-        public int PingFrequency { get; set; }
-
-        /// <summary>
-        /// If StartPingThread set to true, the plugin will close the connection and emit an OnError event if no
-        /// message is received from the server in the given time. Its default value is 2 sec.
-        /// </summary>
-        public TimeSpan CloseAfterNoMessage { get; set; }
-
-        /// <summary>
-        /// The internal HTTPRequest object.
-        /// </summary>
-        public HTTPRequest InternalRequest { get { return this.implementation.InternalRequest; } }
-
-        /// <summary>
-        /// IExtension implementations the plugin will negotiate with the server to use.
-        /// </summary>
-        public IExtension[] Extensions { get; private set; }
-
-        /// <summary>
-        /// Latency calculated from the ping-pong message round-trip times.
-        /// </summary>
-        public int Latency { get { return this.implementation.Latency; } }
-
-        /// <summary>
-        /// When we received the last message from the server.
-        /// </summary>
-        public DateTime LastMessageReceived { get { return this.implementation.LastMessageReceived; } }
-
-        /// <summary>
-        /// When the Websocket Over HTTP/2 implementation fails to connect and EnableImplementationFallback is true, the plugin tries to fall back to the HTTP/1 implementation.
-        /// When this happens a new InternalRequest is created and all previous custom modifications (like added headers) are lost. With OnInternalRequestCreated these modifications can be reapplied.
-        /// </summary>
-        public Action<WebSocket, HTTPRequest> OnInternalRequestCreated;
-#endif
-
-        /// <summary>
-        /// Called when the connection to the WebSocket server is established.
-        /// </summary>
-        public OnWebSocketOpenDelegate OnOpen;
-
-        /// <summary>
-        /// Called when a new textual message is received from the server.
-        /// </summary>
-        public OnWebSocketMessageDelegate OnMessage;
+        private WebSocketBaseImplementation implementation;
 
         /// <summary>
         /// Called when a new binary message is received from the server.
@@ -111,43 +48,49 @@ namespace BestHTTP.WebSocket
 #endif
 
         /// <summary>
-        /// Logging context of this websocket instance.
+        /// Called when a new textual message is received from the server.
         /// </summary>
-        public LoggingContext Context { get; private set; }
+        public OnWebSocketMessageDelegate OnMessage;
 
         /// <summary>
-        /// The underlying, real implementation.
+        /// Called when the connection to the WebSocket server is established.
         /// </summary>
-        private WebSocketBaseImplementation implementation;
+        public OnWebSocketOpenDelegate OnOpen;
 
         /// <summary>
         /// Creates a WebSocket instance from the given uri.
         /// </summary>
         /// <param name="uri">The uri of the WebSocket server</param>
         public WebSocket(Uri uri)
-            :this(uri, string.Empty, string.Empty)
+            : this(uri, string.Empty, string.Empty)
         {
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_GZIP
-            this.Extensions = new IExtension[] { new PerMessageCompression(/*compression level: */           Decompression.Zlib.CompressionLevel.Default,
-                                                                           /*clientNoContextTakeover: */     false,
-                                                                           /*serverNoContextTakeover: */     false,
-                                                                           /*clientMaxWindowBits: */         Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                                                                           /*desiredServerMaxWindowBits: */  Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                                                                           /*minDatalengthToCompress: */     PerMessageCompression.MinDataLengthToCompressDefault) };
+            this.Extensions = new IExtension[]
+            {
+                new PerMessageCompression( /*compression level: */ Decompression.Zlib.CompressionLevel.Default,
+                    /*clientNoContextTakeover: */ false,
+                    /*serverNoContextTakeover: */ false,
+                    /*clientMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                    /*desiredServerMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                    /*minDatalengthToCompress: */ PerMessageCompression.MinDataLengthToCompressDefault)
+            };
 #endif
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         public WebSocket(Uri uri, string origin, string protocol)
-            :this(uri, origin, protocol, null)
+            : this(uri, origin, protocol, null)
         {
 #if !BESTHTTP_DISABLE_GZIP
-            this.Extensions = new IExtension[] { new PerMessageCompression(/*compression level: */           Decompression.Zlib.CompressionLevel.Default,
-                                                                           /*clientNoContextTakeover: */     false,
-                                                                           /*serverNoContextTakeover: */     false,
-                                                                           /*clientMaxWindowBits: */         Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                                                                           /*desiredServerMaxWindowBits: */  Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                                                                           /*minDatalengthToCompress: */     PerMessageCompression.MinDataLengthToCompressDefault) };
+            this.Extensions = new IExtension[]
+            {
+                new PerMessageCompression( /*compression level: */ Decompression.Zlib.CompressionLevel.Default,
+                    /*clientNoContextTakeover: */ false,
+                    /*serverNoContextTakeover: */ false,
+                    /*clientMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                    /*desiredServerMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                    /*minDatalengthToCompress: */ PerMessageCompression.MinDataLengthToCompressDefault)
+            };
 #endif
         }
 #endif
@@ -164,7 +107,7 @@ namespace BestHTTP.WebSocket
 #if !UNITY_WEBGL || UNITY_EDITOR
             , params IExtension[] extensions
 #endif
-            )
+        )
 
         {
             this.Context = new LoggingContext(this);
@@ -173,23 +116,29 @@ namespace BestHTTP.WebSocket
             this.Extensions = extensions;
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-            if (HTTPManager.HTTP2Settings.WebSocketOverHTTP2Settings.EnableWebSocketOverHTTP2 && HTTPProtocolFactory.IsSecureProtocol(uri))
+            if (HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableWebSocketOverHTTP2 &&
+                HttpProtocolFactory.IsSecureProtocol(uri))
             {
                 // Try to find a HTTP/2 connection that supports the connect protocol.
-                var con = BestHTTP.Core.HostManager.GetHost(uri.Host).GetHostDefinition(Core.HostDefinition.GetKeyFor(new UriBuilder("https", uri.Host, uri.Port).Uri
+                var con = BestHTTP.Core.HostManager.GetHost(uri.Host).GetHostDefinition(Core.HostDefinition.GetKeyFor(
+                    new UriBuilder("https", uri.Host, uri.Port).Uri
 #if !BESTHTTP_DISABLE_PROXY
-                , GetProxy(uri)
+                    , GetProxy(uri)
 #endif
-                )).Find(c => {
+                )).Find(c =>
+                {
                     var httpConnection = c as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.HTTP2Handler;
 
-                    return http2Handler != null && http2Handler.settings.RemoteSettings[Connections.HTTP2.HTTP2Settings.ENABLE_CONNECT_PROTOCOL] != 0;
+                    return http2Handler != null &&
+                           http2Handler.settings.RemoteSettings
+                               [Connections.HTTP2.HTTP2Settings.ENABLE_CONNECT_PROTOCOL] != 0;
                 });
 
                 if (con != null)
                 {
-                    HTTPManager.Logger.Information("WebSocket", "Connection with enabled Connect Protocol found!", this.Context);
+                    HttpManager.Logger.Information("WebSocket", "Connection with enabled Connect Protocol found!",
+                        this.Context);
 
                     var httpConnection = con as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.HTTP2Handler;
@@ -206,8 +155,34 @@ namespace BestHTTP.WebSocket
 #endif
 
             // Under WebGL when only the WebSocket protocol is used Setup() isn't called, so we have to call it here.
-            HTTPManager.Setup();
+            HttpManager.Setup();
         }
+
+        public WebSocketStates State
+        {
+            get { return this.implementation.State; }
+        }
+
+        /// <summary>
+        /// The connection to the WebSocket server is open.
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return this.implementation.IsOpen; }
+        }
+
+        /// <summary>
+        /// Data waiting to be written to the wire.
+        /// </summary>
+        public int BufferedAmount
+        {
+            get { return this.implementation.BufferedAmount; }
+        }
+
+        /// <summary>
+        /// Logging context of this websocket instance.
+        /// </summary>
+        public LoggingContext Context { get; private set; }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         internal void FallbackToHTTP1()
@@ -215,7 +190,8 @@ namespace BestHTTP.WebSocket
             if (this.implementation == null)
                 return;
 
-            this.implementation = new OverHTTP1(this, this.implementation.Uri, this.implementation.Origin, this.implementation.Protocol);
+            this.implementation = new OverHTTP1(this, this.implementation.Uri, this.implementation.Origin,
+                this.implementation.Protocol);
             this.implementation.StartOpen();
         }
 #endif
@@ -300,16 +276,70 @@ namespace BestHTTP.WebSocket
         internal Proxy GetProxy(Uri uri)
         {
             // WebSocket is not a request-response based protocol, so we need a 'tunnel' through the proxy
-            HTTPProxy proxy = HTTPManager.Proxy as HTTPProxy;
+            HTTPProxy proxy = HttpManager.Proxy as HTTPProxy;
             if (proxy != null && proxy.UseProxyForAddress(uri))
                 proxy = new HTTPProxy(proxy.Address,
-                                      proxy.Credentials,
-                                      false, /*turn on 'tunneling'*/
-                                      false, /*sendWholeUri*/
-                                      proxy.NonTransparentForHTTPS);
+                    proxy.Credentials,
+                    false, /*turn on 'tunneling'*/
+                    false, /*sendWholeUri*/
+                    proxy.NonTransparentForHTTPS);
 
             return proxy;
         }
+#endif
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+
+        /// <summary>
+        /// Set to true to start a new thread to send Pings to the WebSocket server
+        /// </summary>
+        public bool StartPingThread { get; set; }
+
+        /// <summary>
+        /// The delay between two Pings in milliseconds. Minimum value is 100, default is 1000.
+        /// </summary>
+        public int PingFrequency { get; set; }
+
+        /// <summary>
+        /// If StartPingThread set to true, the plugin will close the connection and emit an OnError event if no
+        /// message is received from the server in the given time. Its default value is 2 sec.
+        /// </summary>
+        public TimeSpan CloseAfterNoMessage { get; set; }
+
+        /// <summary>
+        /// The internal HTTPRequest object.
+        /// </summary>
+        public HTTPRequest InternalRequest
+        {
+            get { return this.implementation.InternalRequest; }
+        }
+
+        /// <summary>
+        /// IExtension implementations the plugin will negotiate with the server to use.
+        /// </summary>
+        public IExtension[] Extensions { get; private set; }
+
+        /// <summary>
+        /// Latency calculated from the ping-pong message round-trip times.
+        /// </summary>
+        public int Latency
+        {
+            get { return this.implementation.Latency; }
+        }
+
+        /// <summary>
+        /// When we received the last message from the server.
+        /// </summary>
+        public DateTime LastMessageReceived
+        {
+            get { return this.implementation.LastMessageReceived; }
+        }
+
+        /// <summary>
+        /// When the Websocket Over HTTP/2 implementation fails to connect and EnableImplementationFallback is true, the plugin tries to fall back to the HTTP/1 implementation.
+        /// When this happens a new InternalRequest is created and all previous custom modifications (like added headers) are lost. With OnInternalRequestCreated these modifications can be reapplied.
+        /// </summary>
+        public Action<WebSocket, HTTPRequest> OnInternalRequestCreated;
 #endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR

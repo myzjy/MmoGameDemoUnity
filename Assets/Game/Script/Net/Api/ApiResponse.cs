@@ -6,30 +6,9 @@ namespace ZJYFrameWork.Net
 {
     public class ApiResponse
     {
-        public ApiRequest Request { get; private set; }
+        internal HttpResponse bhResponse;
 
-        internal HTTPResponse bhResponse;
-        public int StatusCode { get; private set; }
-
-        public string StatusMessage { get; private set; }
-
-        public byte[] RawData { get; private set; }
-
-        public bool IsSuccess
-        {
-            get { return (StatusCode >= 200 && StatusCode < 300) || StatusCode == 304; }
-        }
-
-        public bool IsTimeout
-        {
-            get { return StatusCode == 0; }
-        }
-
-        public long ElapsedMilliseconds { get; private set; }
-
-        public Dictionary<string, List<string>> Headers { get; private set; }
-
-        public ApiResponse(ApiRequest request, HTTPResponse bhResponse, long elapsedMilliseconds)
+        public ApiResponse(ApiRequest request, HttpResponse bhResponse, long elapsedMilliseconds)
         {
             this.Request = request;
             this.bhResponse = bhResponse;
@@ -56,7 +35,28 @@ namespace ZJYFrameWork.Net
             }
         }
 
-        private void ValidateResponse(HTTPRequest bhRequest, HTTPResponse bhResponse)
+        public ApiRequest Request { get; private set; }
+        public int StatusCode { get; private set; }
+
+        public string StatusMessage { get; private set; }
+
+        public byte[] RawData { get; private set; }
+
+        public bool IsSuccess
+        {
+            get { return (StatusCode >= 200 && StatusCode < 300) || StatusCode == 304; }
+        }
+
+        public bool IsTimeout
+        {
+            get { return StatusCode == 0; }
+        }
+
+        public long ElapsedMilliseconds { get; private set; }
+
+        public Dictionary<string, List<string>> Headers { get; private set; }
+
+        private void ValidateResponse(HTTPRequest bhRequest, HttpResponse bhResponse)
         {
             if (bhResponse != null)
             {

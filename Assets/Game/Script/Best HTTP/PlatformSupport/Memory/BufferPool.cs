@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-
 using BestHTTP.PlatformSupport.Threading;
-
 #if NET_STANDARD_2_0 || NETFX_CORE
 using System.Runtime.CompilerServices;
 #endif
@@ -30,8 +28,10 @@ namespace BestHTTP.PlatformSupport.Memory
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is BufferSegment))
@@ -41,8 +41,10 @@ namespace BestHTTP.PlatformSupport.Memory
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public bool Equals(BufferSegment other)
         {
             return this.Data == other.Data &&
@@ -51,32 +53,40 @@ namespace BestHTTP.PlatformSupport.Memory
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public override int GetHashCode()
         {
             return (this.Data != null ? this.Data.GetHashCode() : 0) * 21 + this.Offset + this.Count;
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public static bool operator ==(BufferSegment left, BufferSegment right)
         {
             return left.Equals(right);
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public static bool operator !=(BufferSegment left, BufferSegment right)
         {
             return !left.Equals(right);
         }
 
         [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks,
+            false)]
+        [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks,
+            false)]
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder("[BufferSegment ");
@@ -204,9 +214,11 @@ namespace BestHTTP.PlatformSupport.Memory
         {
 #if UNITY_EDITOR
             if (BufferPool.EnableDebugStackTraceCollection)
-                return string.Format("[BufferDesc Size: {0}, Released: {1}, Released StackTrace: {2}]", this.buffer.Length, DateTime.UtcNow - this.released, this.stackTrace);
+                return string.Format("[BufferDesc Size: {0}, Released: {1}, Released StackTrace: {2}]",
+                    this.buffer.Length, DateTime.UtcNow - this.released, this.stackTrace);
             else
-                return string.Format("[BufferDesc Size: {0}, Released: {1}]", this.buffer.Length, DateTime.UtcNow - this.released);
+                return string.Format("[BufferDesc Size: {0}, Released: {1}]", this.buffer.Length,
+                    DateTime.UtcNow - this.released);
 #else
             return string.Format("[BufferDesc Size: {0}, Released: {1}]", this.buffer.Length, DateTime.UtcNow - this.released);
 #endif
@@ -224,7 +236,8 @@ namespace BestHTTP.PlatformSupport.Memory
         /// <summary>
         /// Setting this property to false the pooling mechanism can be disabled.
         /// </summary>
-        public static bool IsEnabled {
+        public static bool IsEnabled
+        {
             get { return _isEnabled; }
             set
             {
@@ -235,6 +248,7 @@ namespace BestHTTP.PlatformSupport.Memory
                     Clear();
             }
         }
+
         private static volatile bool _isEnabled = true;
 
         /// <summary>
@@ -547,7 +561,7 @@ namespace BestHTTP.PlatformSupport.Memory
             //    HTTPManager.Logger.Information("BufferPool", "After Maintain: " + GetStatistics());
         }
 
-#region Private helper functions
+        #region Private helper functions
 
 #if NET_STANDARD_2_0 || NETFX_CORE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -599,7 +613,7 @@ namespace BestHTTP.PlatformSupport.Memory
 
                         BufferDesc lastFree = store.buffers[store.buffers.Count - 1];
                         store.buffers.RemoveAt(store.buffers.Count - 1);
-                        
+
                         return lastFree;
                     }
                 }
@@ -631,7 +645,8 @@ namespace BestHTTP.PlatformSupport.Memory
                             var entry = store.buffers[cv];
                             if (System.Object.ReferenceEquals(entry.buffer, buffer))
                             {
-                                HTTPManager.Logger.Error("BufferPool", string.Format("Buffer ({0}) already added to the pool!", entry.ToString()));
+                                HttpManager.Logger.Error("BufferPool",
+                                    string.Format("Buffer ({0}) already added to the pool!", entry.ToString()));
                                 return;
                             }
                         }
@@ -669,6 +684,6 @@ namespace BestHTTP.PlatformSupport.Memory
         }
 #endif
 
-#endregion
+        #endregion
     }
 }

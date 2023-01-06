@@ -1,19 +1,19 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
 
-using BestHTTP.Core;
-using BestHTTP.Extensions;
-using BestHTTP.PlatformSupport.Memory;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using BestHTTP.Core;
+using BestHTTP.Extensions;
+using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.Connections.HTTP2
 {
-    public sealed class HTTP2Response : HTTPResponse
+    public sealed class HTTP2Response : HttpResponse
     {
-        // For progress report
-        public long ExpectedContentLength { get; private set; }
-        public bool IsCompressed { get; private set; }
+        private Decompression.GZipDecompressor decompressor;
+
+        bool isPrepared;
 
         public HTTP2Response(HTTPRequest request, bool isFromCache)
             : base(request, isFromCache)
@@ -22,10 +22,16 @@ namespace BestHTTP.Connections.HTTP2
             this.VersionMinor = 0;
         }
 
+        // For progress report
+        public long ExpectedContentLength { get; private set; }
+        public bool IsCompressed { get; private set; }
+
         internal void AddHeaders(List<KeyValuePair<string, string>> headers)
         {
             this.ExpectedContentLength = -1;
-            Dictionary<string, List<string>> newHeaders = this.baseRequest.OnHeadersReceived != null ? new Dictionary<string, List<string>>() : null;
+            Dictionary<string, List<string>> newHeaders = this.baseRequest.OnHeadersReceived != null
+                ? new Dictionary<string, List<string>>()
+                : null;
 
             for (int i = 0; i < headers.Count; ++i)
             {
@@ -42,13 +48,16 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         this.IsCompressed = true;
                     }
-                    else if (base.baseRequest.OnDownloadProgress != null && header.Key.Equals("content-length", StringComparison.OrdinalIgnoreCase))
+                    else if (base.baseRequest.OnDownloadProgress != null &&
+                             header.Key.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                     {
                         long contentLength;
                         if (long.TryParse(header.Value, out contentLength))
                             this.ExpectedContentLength = contentLength;
                         else
-                            HTTPManager.Logger.Information("HTTP2Response", string.Format("AddHeaders - Can't parse Content-Length as an int: '{0}'", header.Value), this.baseRequest.Context, this.Context);
+                            HttpManager.Logger.Information("HTTP2Response",
+                                string.Format("AddHeaders - Can't parse Content-Length as an int: '{0}'", header.Value),
+                                this.baseRequest.Context, this.Context);
                     }
 
                     base.AddHeader(header.Key, header.Value);
@@ -65,7 +74,8 @@ namespace BestHTTP.Connections.HTTP2
             }
 
             if (this.ExpectedContentLength == -1 && base.baseRequest.OnDownloadProgress != null)
-                HTTPManager.Logger.Information("HTTP2Response", "AddHeaders - No Content-Length header found!", this.baseRequest.Context, this.Context);
+                HttpManager.Logger.Information("HTTP2Response", "AddHeaders - No Content-Length header found!",
+                    this.baseRequest.Context, this.Context);
 
             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.baseRequest, newHeaders));
         }
@@ -74,7 +84,8 @@ namespace BestHTTP.Connections.HTTP2
         {
             if (this.IsCompressed)
             {
-                using (var decoderStream = new Decompression.Zlib.GZipStream(stream, Decompression.Zlib.CompressionMode.Decompress))
+                using (var decoderStream =
+                       new Decompression.Zlib.GZipStream(stream, Decompression.Zlib.CompressionMode.Decompress))
                 {
                     using (var ms = new BufferPoolMemoryStream((int)stream.Length))
                     {
@@ -97,9 +108,6 @@ namespace BestHTTP.Connections.HTTP2
             }
         }
 
-        bool isPrepared;
-        private Decompression.GZipDecompressor decompressor;
-        
         internal void ProcessData(byte[] payload, int payloadLength)
         {
             if (!this.isPrepared)

@@ -39,7 +39,7 @@ namespace BestHTTP.Cookies
 #if UNITY_WEBGL && !UNITY_EDITOR
                     _isSavingSupported = false;
 #else
-                    HTTPManager.IOService.DirectoryExists(HTTPManager.GetRootCacheFolder());
+                    HttpManager.IOService.DirectoryExists(HttpManager.GetRootCacheFolder());
                     _isSavingSupported = true;
 #endif
                 }
@@ -47,7 +47,7 @@ namespace BestHTTP.Cookies
                 {
                     _isSavingSupported = false;
 
-                    HTTPManager.Logger.Warning("CookieJar", "Cookie saving and loading disabled!");
+                    HttpManager.Logger.Warning("CookieJar", "Cookie saving and loading disabled!");
                 }
                 finally
                 {
@@ -118,7 +118,7 @@ namespace BestHTTP.Cookies
             try
             {
                 if (!string.IsNullOrEmpty(CookieFolder) && !string.IsNullOrEmpty(LibraryPath)) return;
-                CookieFolder = System.IO.Path.Combine(HTTPManager.GetRootCacheFolder(), "Cookies");
+                CookieFolder = System.IO.Path.Combine(HttpManager.GetRootCacheFolder(), "Cookies");
                 LibraryPath = System.IO.Path.Combine(CookieFolder, "Library");
             }
             catch
@@ -131,7 +131,7 @@ namespace BestHTTP.Cookies
         /// <summary>
         /// 将设置或更新来自响应对象的所有cookie。
         /// </summary>
-        internal static bool Set(HTTPResponse response)
+        internal static bool Set(HttpResponse response)
         {
             if (response == null)
                 return false;
@@ -229,11 +229,11 @@ namespace BestHTTP.Cookies
                     }
                 }
 
-                if (size > HTTPManager.CookieJarSize)
+                if (size > HttpManager.CookieJarSize)
                 {
                     Cookies.Sort();
 
-                    while (size > HTTPManager.CookieJarSize && Cookies.Count > 0)
+                    while (size > HttpManager.CookieJarSize && Cookies.Count > 0)
                     {
                         var cookie = Cookies[0];
                         Cookies.RemoveAt(0);
@@ -274,10 +274,10 @@ namespace BestHTTP.Cookies
             RwLock.EnterWriteLock();
             try
             {
-                if (!HTTPManager.IOService.DirectoryExists(CookieFolder))
-                    HTTPManager.IOService.DirectoryCreate(CookieFolder);
+                if (!HttpManager.IOService.DirectoryExists(CookieFolder))
+                    HttpManager.IOService.DirectoryCreate(CookieFolder);
 
-                using var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create);
+                using var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.Create);
                 using var bw = new System.IO.BinaryWriter(fs);
                 bw.Write(Version);
 
@@ -322,13 +322,13 @@ namespace BestHTTP.Cookies
             {
                 Cookies.Clear();
 
-                if (!HTTPManager.IOService.DirectoryExists(CookieFolder))
-                    HTTPManager.IOService.DirectoryCreate(CookieFolder);
+                if (!HttpManager.IOService.DirectoryExists(CookieFolder))
+                    HttpManager.IOService.DirectoryCreate(CookieFolder);
 
-                if (!HTTPManager.IOService.FileExists(LibraryPath))
+                if (!HttpManager.IOService.FileExists(LibraryPath))
                     return;
 
-                using var fs = HTTPManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead);
+                using var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead);
                 using var br = new System.IO.BinaryReader(fs);
                 /*int version = */
                 br.ReadInt32();

@@ -1,8 +1,5 @@
-using System;
 using System.Threading;
-
 using UnityEngine;
-
 #if NETFX_CORE
     using System.Threading.Tasks;
 #endif
@@ -66,7 +63,7 @@ namespace BestHTTP
         static void ResetSetup()
         {
             IsSetupCalled = false;
-            HTTPManager.Logger.Information("HTTPUpdateDelegator", "Reset called!");
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "Reset called!");
         }
 #endif
 
@@ -93,9 +90,10 @@ namespace BestHTTP
                     {
                         go = new GameObject("HTTP Update Delegator");
                         go.hideFlags = HideFlags.HideAndDontSave;
-                        
+
                         Instance = go.AddComponent<HTTPUpdateDelegator>();
                     }
+
                     IsCreated = true;
 
 #if UNITY_EDITOR
@@ -118,12 +116,13 @@ namespace BestHTTP
                     Application.wantsToQuit -= UnityApplication_WantsToQuit;
                     Application.wantsToQuit += UnityApplication_WantsToQuit;
 
-                    HTTPManager.Logger.Information("HTTPUpdateDelegator", "Instance Created!");
+                    HttpManager.Logger.Information("HTTPUpdateDelegator", "Instance Created!");
                 }
             }
             catch
             {
-                HTTPManager.Logger.Error("HTTPUpdateDelegator", "Please call the BestHTTP.HTTPManager.Setup() from one of Unity's event(eg. awake, start) before you send any request!");
+                HttpManager.Logger.Error("HTTPUpdateDelegator",
+                    "Please call the BestHTTP.HTTPManager.Setup() from one of Unity's event(eg. awake, start) before you send any request!");
             }
         }
 
@@ -149,7 +148,7 @@ namespace BestHTTP
                 return;
             IsSetupCalled = true;
 
-            HTTPManager.Setup();
+            HttpManager.Setup();
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             // Threads are not implemented in WEBGL builds, disable it for now.
@@ -163,12 +162,12 @@ namespace BestHTTP
             if (!Application.isEditor || Application.isPlaying)
                 GameObject.DontDestroyOnLoad(this.gameObject);
 
-            HTTPManager.Logger.Information("HTTPUpdateDelegator", "Setup done!");
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "Setup done!");
         }
 
         void ThreadFunc()
         {
-            HTTPManager.Logger.Information ("HTTPUpdateDelegator", "Update Thread Started");
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Started");
 
             try
             {
@@ -186,7 +185,7 @@ namespace BestHTTP
             }
             finally
             {
-                HTTPManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Ended");
+                HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Ended");
             }
         }
 
@@ -206,7 +205,7 @@ namespace BestHTTP
             {
                 try
                 {
-                    HTTPManager.OnUpdate();
+                    HttpManager.OnUpdate();
                 }
                 finally
                 {
@@ -229,7 +228,7 @@ namespace BestHTTP
                 UnityEditor.EditorApplication.update += Update;
 
                 HTTPUpdateDelegator.ResetSetup();
-                HTTPManager.ResetSetup();
+                HttpManager.ResetSetup();
             }
         }
 #else
@@ -246,7 +245,7 @@ namespace BestHTTP
 
         void OnDisable()
         {
-            HTTPManager.Logger.Information("HTTPUpdateDelegator", "OnDisable Called!");
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "OnDisable Called!");
 
 #if UNITY_EDITOR
             if (UnityEditor.EditorApplication.isPlaying)
@@ -256,7 +255,7 @@ namespace BestHTTP
 
         void OnApplicationPause(bool isPaused)
         {
-            HTTPManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
 
             if (HTTPUpdateDelegator.OnApplicationForegroundStateChanged != null)
                 HTTPUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
@@ -264,7 +263,7 @@ namespace BestHTTP
 
         private static bool UnityApplication_WantsToQuit()
         {
-            HTTPManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
+            HttpManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
 
             if (OnBeforeApplicationQuit != null)
             {
@@ -272,13 +271,14 @@ namespace BestHTTP
                 {
                     if (!OnBeforeApplicationQuit())
                     {
-                        HTTPManager.Logger.Information("HTTPUpdateDelegator", "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
+                        HttpManager.Logger.Information("HTTPUpdateDelegator",
+                            "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
                         return false;
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    HTTPManager.Logger.Exception("HTTPUpdateDelegator", string.Empty, ex);
+                    HttpManager.Logger.Exception("HTTPUpdateDelegator", string.Empty, ex);
                 }
             }
 
@@ -289,7 +289,7 @@ namespace BestHTTP
 
             IsCreated = false;
 
-            HTTPManager.OnQuit();
+            HttpManager.OnQuit();
 
             return true;
         }

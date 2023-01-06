@@ -10,14 +10,11 @@ namespace ZJYFrameWork.Net
 
         internal HTTPRequest _bhRequest;
 
-        public Uri Uri { get; private set; }
-        public HTTPMethods Method { get; private set; }
-
         private Action<ApiRequest> _onBeforeSend;
-        private Action<long, long> _onProgress;
         private Action<ApiResponse> _onComplete;
-        private Action<ApiResponse> _onSuccess;
         private Action<ApiResponse> _onError;
+        private Action<long, long> _onProgress;
+        private Action<ApiResponse> _onSuccess;
 
         private System.Diagnostics.Stopwatch _watch;
 
@@ -54,6 +51,9 @@ namespace ZJYFrameWork.Net
             this._onError = onError;
             this._onComplete = onComplete;
         }
+
+        public Uri Uri { get; private set; }
+        public HTTPMethods Method { get; private set; }
 
         public void Send(Action<long, long> onProgress = null)
         {
@@ -97,7 +97,7 @@ namespace ZJYFrameWork.Net
             return _bhRequest.DumpHeaders();
         }
 
-        private void HandleResponse(HTTPRequest originalBhRequest, HTTPResponse bhResponse)
+        private void HandleResponse(HTTPRequest originalBhRequest, HttpResponse bhResponse)
         {
             _watch.Stop();
             long elapsedMsec = _watch.ElapsedMilliseconds;

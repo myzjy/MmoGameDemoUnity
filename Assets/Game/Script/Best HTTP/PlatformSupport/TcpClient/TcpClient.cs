@@ -44,39 +44,17 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
     // This is a little modified TcpClient class from the Mono src tree.
     public class TcpClient : IDisposable
     {
-        enum Properties : uint
-        {
-            LingerState = 1,
-            NoDelay = 2,
-            ReceiveBufferSize = 4,
-            ReceiveTimeout = 8,
-            SendBufferSize = 16,
-            SendTimeout = 32
-        }
-
-        // private data
-        NetworkStream stream;
         bool active;
         Socket client;
         bool disposed;
-        Properties values;
-        int recv_timeout, send_timeout;
-        int recv_buffer_size, send_buffer_size;
         LingerOption linger_state;
         bool no_delay;
+        int recv_buffer_size, send_buffer_size;
+        int recv_timeout, send_timeout;
 
-        private void Init(AddressFamily family)
-        {
-            active = false;
-
-            if (client != null)
-            {
-                client.Close();
-                client = null;
-            }
-
-            client = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
-        }
+        // private data
+        NetworkStream stream;
+        Properties values;
 
         public TcpClient()
         {
@@ -144,31 +122,10 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
             get { return client.Connected; }
         }
 
-
-        public bool IsConnected()
-        {
-            try
-            {
-                return !(Client.Poll(1, SelectMode.SelectRead) && Client.Available == 0);
-            }
-            catch (Exception) { return false; }
-        }
-
         public bool ExclusiveAddressUse
         {
-            get
-            {
-                return (client.ExclusiveAddressUse);
-            }
-            set
-            {
-                client.ExclusiveAddressUse = value;
-            }
-        }
-
-        internal void SetTcpClient(Socket s)
-        {
-            Client = s;
+            get { return (client.ExclusiveAddressUse); }
+            set { client.ExclusiveAddressUse = value; }
         }
 
         public LingerOption LingerState
@@ -179,7 +136,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     return linger_state;
 
                 return (LingerOption)client.GetSocketOption(SocketOptionLevel.Socket,
-                                    SocketOptionName.Linger);
+                    SocketOptionName.Linger);
             }
             set
             {
@@ -189,6 +146,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.LingerState;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.Linger, value);
@@ -214,6 +172,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.NoDelay;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Tcp,
                     SocketOptionName.NoDelay, value ? 1 : 0);
@@ -239,6 +198,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.ReceiveBufferSize;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.ReceiveBuffer, value);
@@ -264,6 +224,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.ReceiveTimeout;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.ReceiveTimeout, value);
@@ -289,6 +250,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.SendBufferSize;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.SendBuffer, value);
@@ -314,6 +276,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     values |= Properties.SendTimeout;
                     return;
                 }
+
                 client.SetSocketOption(
                     SocketOptionLevel.Socket,
                     SocketOptionName.SendTimeout, value);
@@ -321,6 +284,43 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
         }
 
         public TimeSpan ConnectTimeout { get; set; }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Init(AddressFamily family)
+        {
+            active = false;
+
+            if (client != null)
+            {
+                client.Close();
+                client = null;
+            }
+
+            client = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
+        }
+
+
+        public bool IsConnected()
+        {
+            try
+            {
+                return !(Client.Poll(1, SelectMode.SelectRead) && Client.Available == 0);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        internal void SetTcpClient(Socket s)
+        {
+            Client = s;
+        }
 
         // methods
 
@@ -348,7 +348,8 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                             client.Disconnect(true);
                         }
                         catch
-                        { }
+                        {
+                        }
 
                         throw new TimeoutException("Connection timed out!");
                     }
@@ -466,13 +467,16 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     }
                     else
                     {
-                        throw new NotSupportedException("This method is only valid for sockets in the InterNetwork and InterNetworkV6 families");
+                        throw new NotSupportedException(
+                            "This method is only valid for sockets in the InterNetwork and InterNetworkV6 families");
                     }
 
                     if (request != null && request.IsCancellationRequested)
                         throw new Exception("IsCancellationRequested");
 
-                    HTTPManager.Logger.Verbose("TcpClient", string.Format("Trying to connect to {0}:{1}", address.ToString(), port.ToString()), request.Context);
+                    HttpManager.Logger.Verbose("TcpClient",
+                        string.Format("Trying to connect to {0}:{1}", address.ToString(), port.ToString()),
+                        request.Context);
 
                     Connect(new IPEndPoint(address, port));
 
@@ -495,7 +499,9 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                         //client.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)4, 30);
                         //client.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)5, 10);
                     }
-                    catch { }
+                    catch
+                    {
+                    }
 
 
 #if UNITY_WINDOWS || UNITY_EDITOR
@@ -507,10 +513,13 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     {
                         //SetKeepAlive(true, 30000, 1000);
                     }
-                    catch{ }
+                    catch
+                    {
+                    }
 #endif
 
-                    HTTPManager.Logger.Information("TcpClient", string.Format("Connected to {0}:{1}", address.ToString(), port.ToString()), request.Context);
+                    HttpManager.Logger.Information("TcpClient",
+                        string.Format("Connected to {0}:{1}", address.ToString(), port.ToString()), request.Context);
 
                     break;
                 }
@@ -554,12 +563,6 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
             return client.BeginConnect(host, port, requestCallback, state);
         }
 
-        void IDisposable.Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -600,13 +603,26 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     stream = new NetworkStream(client, true);
                 return stream;
             }
-            finally { CheckDisposed(); }
+            finally
+            {
+                CheckDisposed();
+            }
         }
 
         private void CheckDisposed()
         {
             if (disposed)
                 throw new ObjectDisposedException(GetType().FullName);
+        }
+
+        enum Properties : uint
+        {
+            LingerState = 1,
+            NoDelay = 2,
+            ReceiveBufferSize = 4,
+            ReceiveTimeout = 8,
+            SendBufferSize = 16,
+            SendTimeout = 32
         }
 
 #if UNITY_WINDOWS || UNITY_EDITOR
@@ -622,16 +638,18 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
 
             //client.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
             int dwBytesRet = 0;
-            WSAIoctl(client.Handle, /*SIO_KEEPALIVE_VALS*/ System.Net.Sockets.IOControlCode.KeepAliveValues, inOptionValues, inOptionValues.Length, /*NULL*/IntPtr.Zero, 0, ref dwBytesRet, /*NULL*/IntPtr.Zero, /*NULL*/IntPtr.Zero);
+            WSAIoctl(client.Handle, /*SIO_KEEPALIVE_VALS*/ System.Net.Sockets.IOControlCode.KeepAliveValues,
+                inOptionValues, inOptionValues.Length, /*NULL*/IntPtr.Zero, 0, ref dwBytesRet, /*NULL*/
+                IntPtr.Zero, /*NULL*/IntPtr.Zero);
         }
 
         [System.Runtime.InteropServices.DllImport("Ws2_32.dll")]
         public static extern int WSAIoctl(
-            /* Socket, Mode */               IntPtr s, System.Net.Sockets.IOControlCode dwIoControlCode,
+            /* Socket, Mode */ IntPtr s, System.Net.Sockets.IOControlCode dwIoControlCode,
             /* Optional Or IntPtr.Zero, 0 */ byte[] lpvInBuffer, int cbInBuffer,
             /* Optional Or IntPtr.Zero, 0 */ IntPtr lpvOutBuffer, int cbOutBuffer,
-            /* reference to receive Size */  ref int lpcbBytesReturned,
-            /* IntPtr.Zero, IntPtr.Zero */   IntPtr lpOverlapped, IntPtr lpCompletionRoutine);
+            /* reference to receive Size */ ref int lpcbBytesReturned,
+            /* IntPtr.Zero, IntPtr.Zero */ IntPtr lpOverlapped, IntPtr lpCompletionRoutine);
 #endif
     }
 }

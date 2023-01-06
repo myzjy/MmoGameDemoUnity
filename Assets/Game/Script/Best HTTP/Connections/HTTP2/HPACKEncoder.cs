@@ -1,25 +1,24 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
 
-using BestHTTP.Extensions;
-using BestHTTP.PlatformSupport.Memory;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BestHTTP.Extensions;
+using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.Connections.HTTP2
 {
     public sealed class HPACKEncoder
     {
-        private HTTP2SettingsManager settingsRegistry;
+        private HTTP2Handler parent;
 
         // https://http2.github.io/http2-spec/compression.html#encoding.context
         // When used for bidirectional communication, such as in HTTP, the encoding and decoding dynamic tables
         //  maintained by an endpoint are completely independent, i.e., the request and response dynamic tables are separate.
         private HeaderTable requestTable;
         private HeaderTable responseTable;
-
-        private HTTP2Handler parent;
+        private HTTP2SettingsManager settingsRegistry;
 
         public HPACKEncoder(HTTP2Handler parentHandler, HTTP2SettingsManager registry)
         {
@@ -31,7 +30,8 @@ namespace BestHTTP.Connections.HTTP2
             this.responseTable = new HeaderTable(this.settingsRegistry.RemoteSettings);
         }
 
-        public void Encode(HTTP2Stream context, HTTPRequest request, Queue<HTTP2FrameHeaderAndPayload> to, UInt32 streamId)
+        public void Encode(HTTP2Stream context, HTTPRequest request, Queue<HTTP2FrameHeaderAndPayload> to,
+            UInt32 streamId)
         {
             // Add usage of SETTINGS_MAX_HEADER_LIST_SIZE to be able to create a header and one or more continuation fragments
             // (https://httpwg.org/specs/rfc7540.html#SettingValues)
@@ -80,17 +80,20 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         WriteHeader(bufferStream, header, values[i]);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] - Encode - Header({1}/{2}): '{3}': '{4}'", context.Id, i + 1, values.Count, header, values[i]), this.parent.Context, context.Context, request.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] - Encode - Header({1}/{2}): '{3}': '{4}'", context.Id, i + 1,
+                                    values.Count, header, values[i]), this.parent.Context, context.Context,
+                                request.Context);
                     }
                 }, true);
 
                 var upStreamInfo = request.GetUpStream();
                 CreateHeaderFrames(to,
-                                   streamId,
-                                   bufferStream.ToArray(true),
-                                   (UInt32)bufferStream.Length,
-                                   upStreamInfo.Stream != null);
+                    streamId,
+                    bufferStream.ToArray(true),
+                    (UInt32)bufferStream.Length,
+                    upStreamInfo.Stream != null);
             }
         }
 
@@ -106,8 +109,10 @@ namespace BestHTTP.Connections.HTTP2
                 {
                     var header = ReadIndexedHeader(firstDataByte, stream);
 
-                    if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                        HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - IndexedHeader: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                        HttpManager.Logger.Information("HPACKEncoder",
+                            string.Format("[{0}] Decode - IndexedHeader: {1}", context.Id, header.ToString()),
+                            this.parent.Context, context.Context, context.AssignedRequest.Context);
 
                     to.Add(header);
                 }
@@ -120,8 +125,11 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field with Incremental Indexing — New Name
                         var header = ReadLiteralHeaderFieldWithIncrementalIndexing_NewName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName: {1}",
+                                    context.Id, header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         this.responseTable.Add(header);
                         to.Add(header);
@@ -131,13 +139,18 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field with Incremental Indexing — Indexed Name
                         var header = ReadLiteralHeaderFieldWithIncrementalIndexing_IndexedName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldWithIncrementalIndexing_IndexedName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format(
+                                    "[{0}] Decode - LiteralHeaderFieldWithIncrementalIndexing_IndexedName: {1}",
+                                    context.Id, header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         this.responseTable.Add(header);
                         to.Add(header);
                     }
-                } else if (BufferHelper.ReadValue(firstDataByte, 0, 3) == 0)
+                }
+                else if (BufferHelper.ReadValue(firstDataByte, 0, 3) == 0)
                 {
                     // https://http2.github.io/http2-spec/compression.html#literal.header.without.indexing
 
@@ -146,8 +159,11 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field without Indexing — New Name
                         var header = ReadLiteralHeaderFieldwithoutIndexing_NewName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldwithoutIndexing_NewName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] Decode - LiteralHeaderFieldwithoutIndexing_NewName: {1}",
+                                    context.Id, header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         to.Add(header);
                     }
@@ -156,8 +172,11 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field without Indexing — Indexed Name
                         var header = ReadLiteralHeaderFieldwithoutIndexing_IndexedName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldwithoutIndexing_IndexedName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] Decode - LiteralHeaderFieldwithoutIndexing_IndexedName: {1}",
+                                    context.Id, header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         to.Add(header);
                     }
@@ -171,8 +190,11 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field Never Indexed — New Name
                         var header = ReadLiteralHeaderFieldNeverIndexed_NewName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldNeverIndexed_NewName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] Decode - LiteralHeaderFieldNeverIndexed_NewName: {1}", context.Id,
+                                    header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         to.Add(header);
                     }
@@ -181,8 +203,11 @@ namespace BestHTTP.Connections.HTTP2
                         // Literal Header Field Never Indexed — Indexed Name
                         var header = ReadLiteralHeaderFieldNeverIndexed_IndexedName(firstDataByte, stream);
 
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                            HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - LiteralHeaderFieldNeverIndexed_IndexedName: {1}", context.Id, header.ToString()), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                            HttpManager.Logger.Information("HPACKEncoder",
+                                string.Format("[{0}] Decode - LiteralHeaderFieldNeverIndexed_IndexedName: {1}",
+                                    context.Id, header.ToString()), this.parent.Context, context.Context,
+                                context.AssignedRequest.Context);
 
                         to.Add(header);
                     }
@@ -193,8 +218,10 @@ namespace BestHTTP.Connections.HTTP2
 
                     UInt32 newMaxSize = DecodeInteger(5, firstDataByte, stream);
 
-                    if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                        HTTPManager.Logger.Information("HPACKEncoder", string.Format("[{0}] Decode - Dynamic Table Size Update: {1}", context.Id, newMaxSize), this.parent.Context, context.Context, context.AssignedRequest.Context);
+                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                        HttpManager.Logger.Information("HPACKEncoder",
+                            string.Format("[{0}] Decode - Dynamic Table Size Update: {1}", context.Id, newMaxSize),
+                            this.parent.Context, context.Context, context.AssignedRequest.Context);
 
                     //this.settingsRegistry[HTTP2Settings.HEADER_TABLE_SIZE] = (UInt16)newMaxSize;
                     this.responseTable.MaxDynamicTableSize = (UInt16)newMaxSize;
@@ -216,7 +243,8 @@ namespace BestHTTP.Connections.HTTP2
             return this.responseTable.GetHeader(index);
         }
 
-        private KeyValuePair<string, string> ReadLiteralHeaderFieldWithIncrementalIndexing_IndexedName(byte firstByte, Stream stream)
+        private KeyValuePair<string, string> ReadLiteralHeaderFieldWithIncrementalIndexing_IndexedName(byte firstByte,
+            Stream stream)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.with.incremental.indexing
 
@@ -228,7 +256,8 @@ namespace BestHTTP.Connections.HTTP2
             return new KeyValuePair<string, string>(header, value);
         }
 
-        private KeyValuePair<string, string> ReadLiteralHeaderFieldWithIncrementalIndexing_NewName(byte firstByte, Stream stream)
+        private KeyValuePair<string, string> ReadLiteralHeaderFieldWithIncrementalIndexing_NewName(byte firstByte,
+            Stream stream)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.with.incremental.indexing
 
@@ -238,7 +267,8 @@ namespace BestHTTP.Connections.HTTP2
             return new KeyValuePair<string, string>(header, value);
         }
 
-        private KeyValuePair<string, string> ReadLiteralHeaderFieldwithoutIndexing_IndexedName(byte firstByte, Stream stream)
+        private KeyValuePair<string, string> ReadLiteralHeaderFieldwithoutIndexing_IndexedName(byte firstByte,
+            Stream stream)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.without.indexing
 
@@ -249,7 +279,8 @@ namespace BestHTTP.Connections.HTTP2
             return new KeyValuePair<string, string>(header, value);
         }
 
-        private KeyValuePair<string, string> ReadLiteralHeaderFieldwithoutIndexing_NewName(byte firstByte, Stream stream)
+        private KeyValuePair<string, string> ReadLiteralHeaderFieldwithoutIndexing_NewName(byte firstByte,
+            Stream stream)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.without.indexing
 
@@ -259,7 +290,8 @@ namespace BestHTTP.Connections.HTTP2
             return new KeyValuePair<string, string>(header, value);
         }
 
-        private KeyValuePair<string, string> ReadLiteralHeaderFieldNeverIndexed_IndexedName(byte firstByte, Stream stream)
+        private KeyValuePair<string, string> ReadLiteralHeaderFieldNeverIndexed_IndexedName(byte firstByte,
+            Stream stream)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.never.indexed
 
@@ -344,7 +376,8 @@ namespace BestHTTP.Connections.HTTP2
             }
         }
 
-        private void CreateHeaderFrames(Queue<HTTP2FrameHeaderAndPayload> to, UInt32 streamId, byte[] dataToSend, UInt32 payloadLength, bool hasBody)
+        private void CreateHeaderFrames(Queue<HTTP2FrameHeaderAndPayload> to, UInt32 streamId, byte[] dataToSend,
+            UInt32 payloadLength, bool hasBody)
         {
             UInt32 maxFrameSize = this.settingsRegistry.RemoteSettings[HTTP2Settings.MAX_FRAME_SIZE];
 
@@ -441,7 +474,8 @@ namespace BestHTTP.Connections.HTTP2
             BufferPool.Release(buffer);
         }
 
-        private static void WriteLiteralHeaderFieldWithIncrementalIndexing_IndexedName(Stream stream, UInt32 index, string value)
+        private static void WriteLiteralHeaderFieldWithIncrementalIndexing_IndexedName(Stream stream, UInt32 index,
+            string value)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.with.incremental.indexing
 
@@ -460,7 +494,8 @@ namespace BestHTTP.Connections.HTTP2
             BufferPool.Release(buffer);
         }
 
-        private static void WriteLiteralHeaderFieldWithIncrementalIndexing_NewName(Stream stream, string header, string value)
+        private static void WriteLiteralHeaderFieldWithIncrementalIndexing_NewName(Stream stream, string header,
+            string value)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.with.incremental.indexing
 
@@ -478,7 +513,8 @@ namespace BestHTTP.Connections.HTTP2
             BufferPool.Release(buffer);
         }
 
-        private static void WriteLiteralHeaderFieldWithoutIndexing_IndexedName(Stream stream, UInt32 index, string value)
+        private static void WriteLiteralHeaderFieldWithoutIndexing_IndexedName(Stream stream, UInt32 index,
+            string value)
         {
             // https://http2.github.io/http2-spec/compression.html#literal.header.without.indexing
 
@@ -583,7 +619,8 @@ namespace BestHTTP.Connections.HTTP2
 
             // if using huffman encoding would produce the same length, we choose raw encoding instead as it requires
             //  less CPU cicles
-            if (requiredBytesForRawStr <= requiredBytesForHuffman + RequiredBytesToEncodeInteger(requiredBytesForHuffman, 7))
+            if (requiredBytesForRawStr <=
+                requiredBytesForHuffman + RequiredBytesToEncodeInteger(requiredBytesForHuffman, 7))
                 EncodeRawStringTo(str, buffer, ref offset);
             else
                 EncodeStringWithHuffman(str, requiredBytesForHuffman, buffer, ref offset);
@@ -624,19 +661,22 @@ namespace BestHTTP.Connections.HTTP2
             byte bufferBitIdx = 0;
 
             for (int i = 0; i < requiredBytesForStr; ++i)
-                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(strBytes[i]), buffer, ref offset, ref bufferBitIdx);
+                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(strBytes[i]), buffer, ref offset,
+                    ref bufferBitIdx);
 
             // https://http2.github.io/http2-spec/compression.html#string.literal.representation
             // As the Huffman-encoded data doesn't always end at an octet boundary, some padding is inserted after it,
             // up to the next octet boundary. To prevent this padding from being misinterpreted as part of the string literal,
             // the most significant bits of the code corresponding to the EOS (end-of-string) symbol are used.
             if (bufferBitIdx != 0)
-                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(256), buffer, ref offset, ref bufferBitIdx, true);
+                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(256), buffer, ref offset, ref bufferBitIdx,
+                    true);
 
             BufferPool.Release(strBytes);
         }
 
-        private static void AddCodePointToBuffer(HuffmanEncoder.TableEntry code, byte[] buffer, ref UInt32 offset, ref byte bufferBitIdx, bool finishOnBoundary = false)
+        private static void AddCodePointToBuffer(HuffmanEncoder.TableEntry code, byte[] buffer, ref UInt32 offset,
+            ref byte bufferBitIdx, bool finishOnBoundary = false)
         {
             for (byte codeBitIdx = 1; codeBitIdx <= code.Bits; ++codeBitIdx)
             {
@@ -679,7 +719,9 @@ namespace BestHTTP.Connections.HTTP2
             buffer[originalOffset] = BufferHelper.SetBit(buffer[originalOffset], 0, false);
 
             if (offset != originalOffset + requiredBytesForLengthPrefix)
-                throw new Exception(string.Format("offset({0}) != originalOffset({1}) + requiredBytesForLengthPrefix({1})", offset, originalOffset, requiredBytesForLengthPrefix));
+                throw new Exception(string.Format(
+                    "offset({0}) != originalOffset({1}) + requiredBytesForLengthPrefix({1})", offset, originalOffset,
+                    requiredBytesForLengthPrefix));
 
             System.Text.Encoding.UTF8.GetBytes(str, 0, str.Length, buffer, (int)offset);
             offset += requiredBytesForStr;

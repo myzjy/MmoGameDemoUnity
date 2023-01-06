@@ -23,7 +23,7 @@ namespace BestHTTP
     using Cookies;
 #endif
 
-    public class HTTPResponse : IDisposable
+    public class HttpResponse : IDisposable
     {
         internal const byte CR = 13;
         internal const byte LF = 10;
@@ -193,7 +193,7 @@ namespace BestHTTP
 
         #endregion
 
-        protected HTTPResponse(HTTPRequest request, bool isFromCache)
+        protected HttpResponse(HTTPRequest request, bool isFromCache)
         {
             this.baseRequest = request;
 #if !BESTHTTP_DISABLE_CACHING
@@ -204,7 +204,7 @@ namespace BestHTTP
             this.Context.Add("IsFromCache", isFromCache);
         }
 
-        public HTTPResponse(HTTPRequest request, Stream stream, bool isStreamed, bool isFromCache,
+        public HttpResponse(HTTPRequest request, Stream stream, bool isStreamed, bool isFromCache,
             bool isProxyResponse = false)
         {
             this.baseRequest = request;
@@ -234,7 +234,7 @@ namespace BestHTTP
 
             string statusLine = string.Empty;
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("Receive. forceReadRawContentLength: '{0:N0}', readPayloadData: '{1:N0}'",
                     forceReadRawContentLength, readPayloadData));
 
@@ -252,19 +252,19 @@ namespace BestHTTP
 
                 if (baseRequest.Retries >= baseRequest.MaxRetries)
                 {
-                    HTTPManager.Logger.Warning("HTTPResponse",
+                    HttpManager.Logger.Warning("HTTPResponse",
                         "Failed to read Status Line! Retry is enabled, returning with false.", this.Context,
                         this.baseRequest.Context);
                     return false;
                 }
 
-                HTTPManager.Logger.Warning("HTTPResponse",
+                HttpManager.Logger.Warning("HTTPResponse",
                     "Failed to read Status Line! Retry is disabled, re-throwing exception.", this.Context,
                     this.baseRequest.Context);
                 throw;
             }
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("Status Line: '{0}'", statusLine));
 
             if (string.IsNullOrEmpty(statusLine))
@@ -282,14 +282,14 @@ namespace BestHTTP
             this.VersionMajor = int.Parse(versions[1]);
             this.VersionMinor = int.Parse(versions[2]);
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("HTTP Version: '{0}.{1}'", this.VersionMajor.ToString(),
                     this.VersionMinor.ToString()));
 
             int statusCode;
             string statusCodeStr = NoTrimReadTo(Stream, (byte)' ', LF);
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("Status Code: '{0}'", statusCodeStr));
 
             if (baseRequest.Retries >= baseRequest.MaxRetries)
@@ -303,12 +303,12 @@ namespace BestHTTP
                 (byte)statusCodeStr[statusCodeStr.Length - 1] != CR)
             {
                 this.Message = ReadTo(Stream, LF);
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging(string.Format("Status Message: '{0}'", this.Message));
             }
             else
             {
-                HTTPManager.Logger.Warning("HTTPResponse", "Skipping Status Message reading!", this.Context,
+                HttpManager.Logger.Warning("HTTPResponse", "Skipping Status Message reading!", this.Context,
                     this.baseRequest.Context);
 
                 this.Message = string.Empty;
@@ -324,7 +324,7 @@ namespace BestHTTP
 
             if (IsUpgraded)
             {
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging("Request Upgraded!");
 
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.baseRequest, RequestEvents.Upgraded));
@@ -346,7 +346,7 @@ namespace BestHTTP
             {
                 ReadRaw(Stream, forceReadRawContentLength);
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging("ReadPayload Finished!");
                 return true;
             }
@@ -384,7 +384,7 @@ namespace BestHTTP
                     ReadUnknownSize(Stream);
             }
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging("ReadPayload Finished!");
 
             return true;
@@ -401,7 +401,7 @@ namespace BestHTTP
             {
                 string value = ReadTo(stream, LF);
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging(string.Format("Header - '{0}': '{1}'", headerName, value));
 
                 AddHeader(headerName, value);
@@ -674,7 +674,7 @@ namespace BestHTTP
             if (hasContentLengthHeader)
                 hasContentLengthHeader = int.TryParse(contentLengthHeader, out realLength);
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format(
                     "ReadChunked - hasContentLengthHeader: {0}, contentLengthHeader: {1} realLength: {2:N0}",
                     hasContentLengthHeader.ToString(), contentLengthHeader, realLength));
@@ -683,7 +683,7 @@ namespace BestHTTP
             {
                 int chunkLength = ReadChunkLength(stream);
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging(string.Format("chunkLength: {0:N0}", chunkLength));
 
                 byte[] buffer = baseRequest.ReadBufferSizeOverride > 0
@@ -763,7 +763,7 @@ namespace BestHTTP
                     if (!hasContentLengthHeader)
                         DownloadLength += chunkLength;
 
-                    if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
                         VerboseLogging(string.Format("chunkLength: {0:N0}", chunkLength));
                 }
 
@@ -820,7 +820,7 @@ namespace BestHTTP
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.baseRequest,
                     RequestEvents.DownloadProgress, downloaded, downloadLength));
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("ReadRaw - contentLength: {0:N0}", contentLength));
 
             string encoding =
@@ -952,7 +952,7 @@ namespace BestHTTP
                     ? BufferPool.Get(baseRequest.ReadBufferSizeOverride, false)
                     : BufferPool.Get(MinReadBufferSize, true);
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                     VerboseLogging(string.Format("ReadUnknownSize - buffer size: {0:N0}", buffer.Length));
 
                 int readBytes = 0;
@@ -1214,7 +1214,7 @@ namespace BestHTTP
                 }
             }
 
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All && buffer != null)
+            if (HttpManager.Logger.Level == Logger.Loglevels.All && buffer != null)
                 VerboseLogging(string.Format("AddStreamedFragment buffer length: {0:N0} UnprocessedFragments: {1:N0}",
                     bufferLength, Interlocked.Read(ref this.UnprocessedFragments)));
 
@@ -1237,7 +1237,7 @@ namespace BestHTTP
 
             bool result = unprocessedFragments >= baseRequest.MaxFragmentQueueLength;
 
-            if (result && HTTPManager.Logger.Level == Logger.Loglevels.All)
+            if (result && HttpManager.Logger.Level == Logger.Loglevels.All)
                 VerboseLogging(string.Format("FragmentQueueIsFull - {0} / {1}", unprocessedFragments,
                     baseRequest.MaxFragmentQueueLength));
 
@@ -1251,8 +1251,8 @@ namespace BestHTTP
 
         void VerboseLogging(string str)
         {
-            if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("HTTPResponse", str, this.Context, this.baseRequest.Context);
+            if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("HTTPResponse", str, this.Context, this.baseRequest.Context);
         }
 
         /// <summary>

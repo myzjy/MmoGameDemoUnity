@@ -1,5 +1,4 @@
 using System;
-
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 
@@ -11,7 +10,8 @@ namespace BestHTTP.Logger
 
         public FileOutput(string fileName)
         {
-            this.fileStream = HTTPManager.IOService.CreateFileStream(fileName, PlatformSupport.FileSystem.FileStreamModes.Create);
+            this.fileStream =
+                HttpManager.IOService.CreateFileStream(fileName, PlatformSupport.FileSystem.FileStreamModes.Create);
         }
 
         public void Write(Loglevels level, string logEntry)

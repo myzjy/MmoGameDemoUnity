@@ -8,7 +8,6 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
-
 #if UNITY_WEBGL && !UNITY_EDITOR
     using System.Runtime.InteropServices;
 #endif
@@ -29,10 +28,15 @@ namespace BestHTTP.ServerSentEvents
     }
 
     public delegate void OnGeneralEventDelegate(EventSource eventSource);
+
     public delegate void OnMessageDelegate(EventSource eventSource, BestHTTP.ServerSentEvents.Message message);
+
     public delegate void OnErrorDelegate(EventSource eventSource, string error);
+
     public delegate bool OnRetryDelegate(EventSource eventSource);
+
     public delegate void OnEventDelegate(EventSource eventSource, BestHTTP.ServerSentEvents.Message message);
+
     public delegate void OnStateChangedDelegate(EventSource eventSource, States oldState, States newState);
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -40,7 +44,6 @@ namespace BestHTTP.ServerSentEvents
 #endif
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-
     delegate void OnWebGLEventSourceOpenDelegate(uint id);
     delegate void OnWebGLEventSourceMessageDelegate(uint id, string eventStr, string data, string eventId, int retry);
     delegate void OnWebGLEventSourceErrorDelegate(uint id, string reason);
@@ -55,7 +58,7 @@ namespace BestHTTP.ServerSentEvents
 #endif
 
     {
-#region Public Properties
+        #region Public Properties
 
         /// <summary>
         /// Uri of the remote endpoint.
@@ -67,10 +70,7 @@ namespace BestHTTP.ServerSentEvents
         /// </summary>
         public States State
         {
-            get
-            {
-                return _state;
-            }
+            get { return _state; }
             private set
             {
                 States oldState = _state;
@@ -82,13 +82,14 @@ namespace BestHTTP.ServerSentEvents
                     {
                         OnStateChanged(this, oldState, _state);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("EventSource", "OnStateChanged", ex);
+                        HttpManager.Logger.Exception("EventSource", "OnStateChanged", ex);
                     }
                 }
             }
         }
+
         private States _state;
 
         /// <summary>
@@ -103,7 +104,11 @@ namespace BestHTTP.ServerSentEvents
 
         public HostConnectionKey ConnectionKey { get; private set; }
 
-        public bool IsClosed { get { return this.State == States.Closed; } }
+        public bool IsClosed
+        {
+            get { return this.State == States.Closed; }
+        }
+
         public LoggingContext LoggingContext { get; private set; }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -116,9 +121,9 @@ namespace BestHTTP.ServerSentEvents
         public bool WithCredentials { get; set; }
 #endif
 
-#endregion
+        #endregion
 
-#region Public Events
+        #region Public Events
 
         /// <summary>
         /// Called when successfully connected to the server.
@@ -157,9 +162,9 @@ namespace BestHTTP.ServerSentEvents
         /// </summary>
         public event OnStateChangedDelegate OnStateChanged;
 
-#endregion
+        #endregion
 
-#region Privates
+        #region Privates
 
         /// <summary>
         /// A dictionary to store eventName => delegate mapping.
@@ -203,7 +208,7 @@ namespace BestHTTP.ServerSentEvents
         private uint Id;
 #endif
 
-#endregion
+        #endregion
 
         public EventSource(Uri uri, int readBufferSizeOverride = 0)
         {
@@ -214,9 +219,9 @@ namespace BestHTTP.ServerSentEvents
 
             this.ConnectionKey = new HostConnectionKey(this.Uri.Host, HostDefinition.GetKeyFor(this.Uri
 #if !BESTHTTP_DISABLE_PROXY
-                , HTTPManager.Proxy
+                , HttpManager.Proxy
 #endif
-                ));
+            ));
 
 #if !UNITY_WEBGL || UNITY_EDITOR
             this.InternalRequest = new HTTPRequest(Uri, HTTPMethods.Get, true, true, OnRequestFinished);
@@ -238,13 +243,14 @@ namespace BestHTTP.ServerSentEvents
             if (!ES_IsSupported())
               throw new NotSupportedException("This browser isn't support the EventSource protocol!");
 
-            this.Id = ES_Create(this.Uri.ToString(), WithCredentials, OnOpenCallback, OnMessageCallback, OnErrorCallback);
+            this.Id =
+ ES_Create(this.Uri.ToString(), WithCredentials, OnOpenCallback, OnMessageCallback, OnErrorCallback);
 
             EventSources.Add(this.Id, this);
 #endif
         }
 
-#region Public Functions
+        #region Public Functions
 
         /// <summary>
         /// Start to connect to the remote server.
@@ -318,9 +324,9 @@ namespace BestHTTP.ServerSentEvents
             EventTable.Remove(eventName);
         }
 
-#endregion
+        #endregion
 
-#region Private Helper Functions
+        #region Private Helper Functions
 
         private void CallOnError(string error, string msg)
         {
@@ -332,7 +338,7 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("EventSource", msg + " - OnError", ex, this.LoggingContext);
+                    HttpManager.Logger.Exception("EventSource", msg + " - OnError", ex, this.LoggingContext);
                 }
             }
         }
@@ -346,9 +352,9 @@ namespace BestHTTP.ServerSentEvents
                 {
                     return OnRetry(this);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("EventSource", "CallOnRetry", ex, this.LoggingContext);
+                    HttpManager.Logger.Exception("EventSource", "CallOnRetry", ex, this.LoggingContext);
                 }
             }
 
@@ -368,7 +374,7 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("EventSource", msg + " - OnClosed", ex, this.LoggingContext);
+                    HttpManager.Logger.Exception("EventSource", msg + " - OnClosed", ex, this.LoggingContext);
                 }
             }
         }
@@ -386,19 +392,22 @@ namespace BestHTTP.ServerSentEvents
             RetryCount++;
             RetryCalled = DateTime.UtcNow;
 
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
 
             this.State = States.Retrying;
         }
 #endif
 
-#endregion
+        #endregion
 
-#region HTTP Request Implementation
+        #region HTTP Request Implementation
+
 #if !UNITY_WEBGL || UNITY_EDITOR
-        private void OnRequestFinished(HTTPRequest req, HTTPResponse resp)
+        private void OnRequestFinished(HTTPRequest req, HttpResponse resp)
         {
-            HTTPManager.Logger.Information("EventSource", string.Format("OnRequestFinished - State: {0}, StatusCode: {1}", this.State, resp != null ? resp.StatusCode : 0), req.Context);
+            HttpManager.Logger.Information("EventSource",
+                string.Format("OnRequestFinished - State: {0}, StatusCode: {1}", this.State,
+                    resp != null ? resp.StatusCode : 0), req.Context);
 
             if (this.State == States.Closed)
                 return;
@@ -437,16 +446,20 @@ namespace BestHTTP.ServerSentEvents
                     {
                         canRetry = false;
 
-                        reason = string.Format("Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                                        resp.StatusCode,
-                                                        resp.Message,
-                                                        resp.DataAsText);
+                        reason = string.Format(
+                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
+                            resp.StatusCode,
+                            resp.Message,
+                            resp.DataAsText);
                     }
+
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
                 case HTTPRequestStates.Error:
-                    reason = "Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
+                    reason = "Request Finished with Error! " + (req.Exception != null
+                        ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
+                        : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
@@ -481,7 +494,7 @@ namespace BestHTTP.ServerSentEvents
                 SetClosed("OnRequestFinished");
         }
 
-        private bool OnData(HTTPRequest request, HTTPResponse response, byte[] dataFragment, int dataFragmentLength)
+        private bool OnData(HTTPRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
         {
             if (this.State == States.Connecting)
             {
@@ -502,10 +515,10 @@ namespace BestHTTP.ServerSentEvents
                         }
                         catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("EventSource", "OnOpen", ex, request.Context);
+                            HttpManager.Logger.Exception("EventSource", "OnOpen", ex, request.Context);
                         }
                     }
-                    
+
                     this.RetryCount = 0;
                     this.State = States.Open;
                 }
@@ -525,7 +538,7 @@ namespace BestHTTP.ServerSentEvents
             return true;
         }
 
-#region Data Parsing
+        #region Data Parsing
 
         public bool FeedData(byte[] buffer, int count)
         {
@@ -544,20 +557,19 @@ namespace BestHTTP.ServerSentEvents
 
             do
             {
-
                 newlineIdx = -1;
                 int skipCount = 1; // to skip CR and/or LF
 
                 for (int i = pos; i < count && newlineIdx == -1; ++i)
                 {
                     // Lines must be separated by either a U+000D CARRIAGE RETURN U+000A LINE FEED (CRLF) character pair, a single U+000A LINE FEED (LF) character, or a single U+000D CARRIAGE RETURN (CR) character.
-                    if (buffer[i] == HTTPResponse.CR)
+                    if (buffer[i] == HttpResponse.CR)
                     {
-                        if (i + 1 < count && buffer[i + 1] == HTTPResponse.LF)
+                        if (i + 1 < count && buffer[i + 1] == HttpResponse.LF)
                             skipCount = 2;
                         newlineIdx = i;
                     }
-                    else if (buffer[i] == HTTPResponse.LF)
+                    else if (buffer[i] == HttpResponse.LF)
                         newlineIdx = i;
                 }
 
@@ -581,7 +593,6 @@ namespace BestHTTP.ServerSentEvents
                 LineBufferPos = 0;
                 //pos += newlineIdx + skipCount;
                 pos = newlineIdx + skipCount;
-
             } while (newlineIdx != -1 && pos < count);
 
             return hasMessageToSend;
@@ -606,7 +617,8 @@ namespace BestHTTP.ServerSentEvents
             // If the line starts with a U+003A COLON character (:) => Ignore the line.
             if (buffer[0] == 0x3A)
             {
-                this.CompletedMessages.Enqueue(new Message() { IsComment = true, Data = Encoding.UTF8.GetString(buffer, 1, count - 1) });
+                this.CompletedMessages.Enqueue(new Message()
+                    { IsComment = true, Data = Encoding.UTF8.GetString(buffer, 1, count - 1) });
                 return true;
             }
 
@@ -685,11 +697,13 @@ namespace BestHTTP.ServerSentEvents
             return false;
         }
 
-#endregion
-#endif
-#endregion
+        #endregion
 
-#region EventStreamResponse Event Handlers
+#endif
+
+        #endregion
+
+        #region EventStreamResponse Event Handlers
 
         private void OnMessageReceived(BestHTTP.ServerSentEvents.Message message)
         {
@@ -720,7 +734,8 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("EventSource", "OnMessageReceived - OnMessage", ex, this.LoggingContext);
+                    HttpManager.Logger.Exception("EventSource", "OnMessageReceived - OnMessage", ex,
+                        this.LoggingContext);
                 }
             }
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -732,7 +747,8 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("EventSource", "OnMessageReceived - OnComment", ex, this.LoggingContext);
+                    HttpManager.Logger.Exception("EventSource", "OnMessageReceived - OnComment", ex,
+                        this.LoggingContext);
                 }
             }
 #endif
@@ -748,9 +764,10 @@ namespace BestHTTP.ServerSentEvents
                         {
                             action(this, message);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            HTTPManager.Logger.Exception("EventSource", "OnMessageReceived - action", ex, this.LoggingContext);
+                            HttpManager.Logger.Exception("EventSource", "OnMessageReceived - action", ex,
+                                this.LoggingContext);
                         }
                     }
                 }
@@ -781,19 +798,19 @@ namespace BestHTTP.ServerSentEvents
 
         public void Dispose()
         {
-            
         }
 
-#endregion
+        #endregion
 
-#region IHeartbeat Implementation
+        #region IHeartbeat Implementation
+
 #if !UNITY_WEBGL || UNITY_EDITOR
 
         void IHeartbeat.OnHeartbeatUpdate(TimeSpan dif)
         {
             if (this.State != States.Retrying)
             {
-                HTTPManager.Heartbeats.Unsubscribe(this);
+                HttpManager.Heartbeats.Unsubscribe(this);
 
                 return;
             }
@@ -805,15 +822,16 @@ namespace BestHTTP.ServerSentEvents
                 if (this.State != States.Connecting)
                     SetClosed("OnHeartbeatUpdate");
 
-                HTTPManager.Heartbeats.Unsubscribe(this);
+                HttpManager.Heartbeats.Unsubscribe(this);
             }
         }
 #endif
+
         #endregion
 
         #region WebGL Static Callbacks
-#if UNITY_WEBGL && !UNITY_EDITOR
 
+#if UNITY_WEBGL && !UNITY_EDITOR
         [AOT.MonoPInvokeCallback(typeof(OnWebGLEventSourceOpenDelegate))]
         static void OnOpenCallback(uint id)
         {
@@ -877,11 +895,12 @@ namespace BestHTTP.ServerSentEvents
         }
 
 #endif
+
         #endregion
 
         #region WebGL Interface
-#if UNITY_WEBGL && !UNITY_EDITOR
 
+#if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
         static extern bool ES_IsSupported();
 
@@ -898,8 +917,8 @@ namespace BestHTTP.ServerSentEvents
         static extern void ES_Release(uint id);
 
 #endif
-        #endregion
 
+        #endregion
     }
 }
 

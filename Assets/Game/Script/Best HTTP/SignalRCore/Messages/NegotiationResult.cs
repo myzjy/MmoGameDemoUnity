@@ -6,6 +6,12 @@ namespace BestHTTP.SignalRCore.Messages
 {
     public sealed class SupportedTransport
     {
+        internal SupportedTransport(string transportName, List<string> transferFormats)
+        {
+            this.Name = transportName;
+            this.SupportedFormats = transferFormats;
+        }
+
         /// <summary>
         /// Name of the transport.
         /// </summary>
@@ -15,12 +21,6 @@ namespace BestHTTP.SignalRCore.Messages
         /// Supported transfer formats of the transport.
         /// </summary>
         public List<string> SupportedFormats { get; private set; }
-
-        internal SupportedTransport(string transportName, List<string> transferFormats)
-        {
-            this.Name = transportName;
-            this.SupportedFormats = transferFormats;
-        }
     }
 
     /// <summary>
@@ -57,13 +57,14 @@ namespace BestHTTP.SignalRCore.Messages
         /// </summary>
         public string AccessToken { get; private set; }
 
-        public HTTPResponse NegotiationResponse { get; internal set; }
+        public HttpResponse NegotiationResponse { get; internal set; }
 
-        internal static NegotiationResult Parse(HTTPResponse resp, out string error, HubConnection hub)
+        internal static NegotiationResult Parse(HttpResponse resp, out string error, HubConnection hub)
         {
             error = null;
 
-            Dictionary<string, object> response = BestHTTP.JSON.Json.Decode(resp.DataAsText) as Dictionary<string, object>;
+            Dictionary<string, object> response =
+                BestHTTP.JSON.Json.Decode(resp.DataAsText) as Dictionary<string, object>;
             if (response == null)
             {
                 error = "Json decoding failed!";
@@ -136,7 +137,9 @@ namespace BestHTTP.SignalRCore.Messages
                     if (!Uri.TryCreate(uriStr, UriKind.RelativeOrAbsolute, out redirectUri))
                         throw new Exception(string.Format("Couldn't parse url: '{0}'", uriStr));
 
-                    HTTPManager.Logger.Verbose("NegotiationResult", string.Format("Parsed url({0}) into uri({1}). uri.IsAbsoluteUri: {2}, IsAbsolute: {3}", uriStr, redirectUri, redirectUri.IsAbsoluteUri, IsAbsolute(uriStr)));
+                    HttpManager.Logger.Verbose("NegotiationResult",
+                        string.Format("Parsed url({0}) into uri({1}). uri.IsAbsoluteUri: {2}, IsAbsolute: {3}", uriStr,
+                            redirectUri, redirectUri.IsAbsoluteUri, IsAbsolute(uriStr)));
 
                     // If received a relative url we will use the hub's current url to append the new path to it.
                     if (!IsAbsolute(uriStr))
@@ -145,7 +148,8 @@ namespace BestHTTP.SignalRCore.Messages
                         var builder = new UriBuilder(oldUri);
 
                         // ?, /
-                        var pathAndQuery = uriStr.Split(new string[] { "?", "%3F", "%3f", "/", "%2F", "%2f" }, StringSplitOptions.RemoveEmptyEntries);
+                        var pathAndQuery = uriStr.Split(new string[] { "?", "%3F", "%3f", "/", "%2F", "%2f" },
+                            StringSplitOptions.RemoveEmptyEntries);
 
                         if (pathAndQuery.Length > 1)
                             builder.Query = pathAndQuery[1];

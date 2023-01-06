@@ -1,9 +1,9 @@
 #if !UNITY_WEBGL || UNITY_EDITOR
+
+#if !NETFX_CORE || UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-#if !NETFX_CORE || UNITY_EDITOR
 using System.Net.Security;
 #endif
 
@@ -21,17 +21,19 @@ using BestHTTP.Connections.TLS;
     //Disable CD4014: Because this call is not awaited, execution of the current method continues before the call is completed. Consider applying the 'await' operator to the result of the call.
 #pragma warning disable 4014
 #else
-    using TcpClient = BestHTTP.PlatformSupport.TcpClient.General.TcpClient;
-    using System.Security.Cryptography.X509Certificates;
-#endif
-
+using TcpClient = BestHTTP.PlatformSupport.TcpClient.General.TcpClient;
+using System.Security.Cryptography.X509Certificates;
 using BestHTTP.Timings;
+#endif
 
 namespace BestHTTP.Connections
 {
     public sealed class TCPConnector : IDisposable
     {
-        public bool IsConnected { get { return this.Client != null && this.Client.Connected; } }
+        public bool IsConnected
+        {
+            get { return this.Client != null && this.Client.Connected; }
+        }
 
         public string NegotiatedProtocol { get; private set; }
 
@@ -43,15 +45,22 @@ namespace BestHTTP.Connections
 
         public bool LeaveOpen { get; set; }
 
+        public void Dispose()
+        {
+            Close();
+        }
+
         public void Connect(HTTPRequest request)
         {
-            string negotiatedProtocol = HTTPProtocolFactory.W3C_HTTP1;
+            string negotiatedProtocol = HttpProtocolFactory.W3C_HTTP1;
 
             Uri uri =
 #if !BESTHTTP_DISABLE_PROXY
-                request.HasProxy ? request.Proxy.Address :
+                request.HasProxy
+                    ? request.Proxy.Address
+                    :
 #endif
-                request.CurrentUri;
+                    request.CurrentUri;
 
             #region TCP Connection
 
@@ -70,31 +79,34 @@ namespace BestHTTP.Connections
                     HTTPProtocolFactory.IsSecureProtocol(uri);
 #endif
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("TCPConnector", string.Format("'{0}' - Connecting to {1}:{2}", request.CurrentUri.ToString(), uri.Host, uri.Port.ToString()), request.Context);
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("TCPConnector",
+                        string.Format("'{0}' - Connecting to {1}:{2}", request.CurrentUri.ToString(), uri.Host,
+                            uri.Port.ToString()), request.Context);
 
 #if !NETFX_CORE && (!UNITY_WEBGL || UNITY_EDITOR)
                 bool changed = false;
                 int? sendBufferSize = null, receiveBufferSize = null;
 
-                if (HTTPManager.SendBufferSize.HasValue)
+                if (HttpManager.SendBufferSize.HasValue)
                 {
                     sendBufferSize = Client.SendBufferSize;
-                    Client.SendBufferSize = HTTPManager.SendBufferSize.Value;
+                    Client.SendBufferSize = HttpManager.SendBufferSize.Value;
                     changed = true;
                 }
 
-                if (HTTPManager.ReceiveBufferSize.HasValue)
+                if (HttpManager.ReceiveBufferSize.HasValue)
                 {
                     receiveBufferSize = Client.ReceiveBufferSize;
-                    Client.ReceiveBufferSize = HTTPManager.ReceiveBufferSize.Value;
+                    Client.ReceiveBufferSize = HttpManager.ReceiveBufferSize.Value;
                     changed = true;
                 }
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 {
                     if (changed)
-                        HTTPManager.Logger.Verbose("TCPConnector", string.Format("'{0}' - Buffer sizes changed - Send from: {1} to: {2}, Receive from: {3} to: {4}, Blocking: {5}",
+                        HttpManager.Logger.Verbose("TCPConnector", string.Format(
+                                "'{0}' - Buffer sizes changed - Send from: {1} to: {2}, Receive from: {3} to: {4}, Blocking: {5}",
                                 request.CurrentUri.ToString(),
                                 sendBufferSize,
                                 Client.SendBufferSize,
@@ -103,7 +115,10 @@ namespace BestHTTP.Connections
                                 Client.Client.Blocking),
                             request.Context);
                     else
-                        HTTPManager.Logger.Verbose("TCPConnector", string.Format("'{0}' - Buffer sizes - Send: {1} Receive: {2} Blocking: {3}", request.CurrentUri.ToString(), Client.SendBufferSize, Client.ReceiveBufferSize, Client.Client.Blocking), request.Context);
+                        HttpManager.Logger.Verbose("TCPConnector",
+                            string.Format("'{0}' - Buffer sizes - Send: {1} Receive: {2} Blocking: {3}",
+                                request.CurrentUri.ToString(), Client.SendBufferSize, Client.ReceiveBufferSize,
+                                Client.Client.Blocking), request.Context);
                 }
 #endif
 
@@ -125,7 +140,16 @@ namespace BestHTTP.Connections
                         // https://forum.unity3d.com/threads/best-http-released.200006/page-37#post-3150972
                         using (System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false))
                         {
-                            IAsyncResult result = System.Net.Dns.BeginGetHostAddresses(uri.Host, (res) => { try { mre.Set(); } catch { } }, null);
+                            IAsyncResult result = System.Net.Dns.BeginGetHostAddresses(uri.Host, (res) =>
+                            {
+                                try
+                                {
+                                    mre.Set();
+                                }
+                                catch
+                                {
+                                }
+                            }, null);
                             bool success = mre.WaitOne(Client.ConnectTimeout);
                             if (success)
                             {
@@ -147,8 +171,10 @@ namespace BestHTTP.Connections
                     request.Timing.Add(TimingEventNames.DNS_Lookup);
                 }
 
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("TCPConnector", string.Format("'{0}' - DNS Query returned with addresses: {1}", request.CurrentUri.ToString(), addresses != null ? addresses.Length : -1), request.Context);
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("TCPConnector",
+                        string.Format("'{0}' - DNS Query returned with addresses: {1}", request.CurrentUri.ToString(),
+                            addresses != null ? addresses.Length : -1), request.Context);
 
                 if (request.IsCancellationRequested)
                     throw new Exception("IsCancellationRequested");
@@ -166,17 +192,19 @@ namespace BestHTTP.Connections
                     throw new Exception("IsCancellationRequested");
 #endif
 
-                if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                    HTTPManager.Logger.Information("TCPConnector", "Connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
+                if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                    HttpManager.Logger.Information("TCPConnector",
+                        "Connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
             }
-            else if (HTTPManager.Logger.Level <= Logger.Loglevels.Information)
-                HTTPManager.Logger.Information("TCPConnector", "Already connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
+            else if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                HttpManager.Logger.Information("TCPConnector",
+                    "Already connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
 
-#endregion
+            #endregion
 
             if (Stream == null)
             {
-                bool isSecure = HTTPProtocolFactory.IsSecureProtocol(request.CurrentUri);
+                bool isSecure = HttpProtocolFactory.IsSecureProtocol(request.CurrentUri);
 
                 // set the stream to Client.GetStream() so the proxy, if there's any can use it directly.
                 this.Stream = this.TopmostStream = Client.GetStream();
@@ -202,49 +230,52 @@ namespace BestHTTP.Connections
 #endif
 
                 // proxy connect is done, we can set the stream to a buffered one. HTTPProxy requires the raw NetworkStream for HTTPResponse's ReadUnknownSize!
-                this.Stream = this.TopmostStream = new BufferedReadNetworkStream(Client.GetStream(), Math.Max(8 * 1024, HTTPManager.ReceiveBufferSize ?? Client.ReceiveBufferSize));
+                this.Stream = this.TopmostStream = new BufferedReadNetworkStream(Client.GetStream(),
+                    Math.Max(8 * 1024, HttpManager.ReceiveBufferSize ?? Client.ReceiveBufferSize));
 
                 // We have to use Request.CurrentUri here, because uri can be a proxy uri with a different protocol
                 if (isSecure)
                 {
                     DateTime tlsNegotiationStartedAt = DateTime.Now;
-#region SSL Upgrade
+
+                    #region SSL Upgrade
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
-                    if (HTTPManager.UseAlternateSSLDefaultValue)
+                    if (HttpManager.UseAlternateSSLDefaultValue)
                     {
                         var handler = new TlsClientProtocol(this.Stream);
 
                         List<ProtocolName> protocols = new List<ProtocolName>();
 #if !BESTHTTP_DISABLE_HTTP2
-                        SupportedProtocols protocol = HTTPProtocolFactory.GetProtocolFromUri(request.CurrentUri);
+                        SupportedProtocols protocol = HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri);
                         if (protocol == SupportedProtocols.HTTP && request.IsKeepAlive)
                         {
                             // http/2 over tls (https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids)
-                            protocols.Add(ProtocolName.AsUtf8Encoding(HTTPProtocolFactory.W3C_HTTP2));
+                            protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3C_HTTP2));
                         }
 #endif
 
-                        protocols.Add(ProtocolName.AsUtf8Encoding(HTTPProtocolFactory.W3C_HTTP1));
+                        protocols.Add(ProtocolName.AsUtf8Encoding(HttpProtocolFactory.W3C_HTTP1));
 
                         AbstractTls13Client tlsClient = null;
-                        if (HTTPManager.TlsClientFactory == null)
+                        if (HttpManager.TlsClientFactory == null)
                         {
-                            tlsClient = HTTPManager.DefaultTlsClientFactory(request, protocols);
+                            tlsClient = HttpManager.DefaultTlsClientFactory(request, protocols);
                         }
                         else
                         {
                             try
                             {
-                                tlsClient = HTTPManager.TlsClientFactory(request, protocols);
+                                tlsClient = HttpManager.TlsClientFactory(request, protocols);
                             }
                             catch (Exception ex)
                             {
-                                HTTPManager.Logger.Exception(nameof(TCPConnector), nameof(HTTPManager.TlsClientFactory), ex, request.Context);
+                                HttpManager.Logger.Exception(nameof(TCPConnector), nameof(HttpManager.TlsClientFactory),
+                                    ex, request.Context);
                             }
-                        
+
                             if (tlsClient == null)
-                                tlsClient = HTTPManager.DefaultTlsClientFactory(request, protocols);
+                                tlsClient = HttpManager.DefaultTlsClientFactory(request, protocols);
                         }
 
                         //tlsClient.LoggingContext = request.Context;
@@ -262,26 +293,28 @@ namespace BestHTTP.Connections
 #if !NETFX_CORE
                         SslStream sslStream = null;
 
-                        if (HTTPManager.ClientCertificationProvider == null)
+                        if (HttpManager.ClientCertificationProvider == null)
                             sslStream = new SslStream(Client.GetStream(), false, (sender, cert, chain, errors) =>
                             {
-                                if (HTTPManager.DefaultCertificationValidator != null)
-                                    return HTTPManager.DefaultCertificationValidator(request, cert, chain, errors);
+                                if (HttpManager.DefaultCertificationValidator != null)
+                                    return HttpManager.DefaultCertificationValidator(request, cert, chain, errors);
                                 else
                                     return true;
                             });
                         else
                             sslStream = new SslStream(Client.GetStream(), false, (sender, cert, chain, errors) =>
-                            {
-                                if (HTTPManager.DefaultCertificationValidator != null)
-                                    return HTTPManager.DefaultCertificationValidator(request, cert, chain, errors);
-                                else
-                                    return true;
-                            },
-                            (object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers) =>
-                            {
-                                return HTTPManager.ClientCertificationProvider(request, targetHost, localCertificates, remoteCertificate, acceptableIssuers);
-                            });
+                                {
+                                    if (HttpManager.DefaultCertificationValidator != null)
+                                        return HttpManager.DefaultCertificationValidator(request, cert, chain, errors);
+                                    else
+                                        return true;
+                                },
+                                (object sender, string targetHost, X509CertificateCollection localCertificates,
+                                    X509Certificate remoteCertificate, string[] acceptableIssuers) =>
+                                {
+                                    return HttpManager.ClientCertificationProvider(request, targetHost,
+                                        localCertificates, remoteCertificate, acceptableIssuers);
+                                });
 
                         if (!sslStream.IsAuthenticated)
                             sslStream.AuthenticateAsClient(request.CurrentUri.Host);
@@ -290,7 +323,8 @@ namespace BestHTTP.Connections
                         Stream = Client.GetStream();
 #endif
                     }
-#endregion
+
+                    #endregion
 
                     request.Timing.Add(TimingEventNames.TLS_Negotiation, DateTime.Now - tlsNegotiationStartedAt);
                 }
@@ -308,7 +342,9 @@ namespace BestHTTP.Connections
                     if (Stream != null)
                         Stream.Close();
                 }
-                catch { }
+                catch
+                {
+                }
                 finally
                 {
                     Stream = null;
@@ -318,17 +354,14 @@ namespace BestHTTP.Connections
                 {
                     Client.Close();
                 }
-                catch { }
+                catch
+                {
+                }
                 finally
-                {                  
+                {
                     Client = null;
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            Close();
         }
     }
 }
