@@ -4,13 +4,14 @@ using UnityEngine;
     using System.Threading.Tasks;
 #endif
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP
 {
     /// <summary>
     /// Will route some U3D calls to the HTTPManager.
     /// </summary>
     [ExecuteInEditMode]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     public sealed class HttpUpdateDelegator : MonoBehaviour
     {
         #region Public Properties
@@ -18,7 +19,7 @@ namespace BestHTTP
         /// <summary>
         /// The singleton instance of the HTTPUpdateDelegator
         /// </summary>
-        public static HttpUpdateDelegator Instance { get; private set; }
+        private static HttpUpdateDelegator Instance { get; set; }
 
         /// <summary>
         /// True, if the Instance property should hold a valid value.
@@ -28,23 +29,25 @@ namespace BestHTTP
         /// <summary>
         /// Set it true before any CheckInstance() call, or before any request sent to dispatch callbacks on another thread.
         /// </summary>
-        public static bool IsThreaded { get; set; }
+        private static bool IsThreaded { get; set; }
 
         /// <summary>
         /// It's true if the dispatch thread running.
         /// </summary>
-        public static bool IsThreadRunning { get; private set; }
+        private static bool IsThreadRunning { get; set; }
 
         /// <summary>
         /// How much time the plugin should wait between two update call. Its default value 100 ms.
         /// </summary>
-        public static int ThreadFrequencyInMS { get; set; }
+        private static int ThreadFrequencyInMS { get; set; }
 
         /// <summary>
         /// Called in the OnApplicationQuit function. If this function returns False, the plugin will not start to
         /// shut down itself.
         /// </summary>
-        public static System.Func<bool> OnBeforeApplicationQuit;
+#pragma warning disable CS0649
+        private static System.Func<bool> _onBeforeApplicationQuit;
+#pragma warning restore CS0649
 
         public static System.Action<bool> OnApplicationForegroundStateChanged;
 
@@ -88,8 +91,10 @@ namespace BestHTTP
 
                     if (Instance == null)
                     {
-                        go = new GameObject("HTTP Update Delegator");
-                        go.hideFlags = HideFlags.HideAndDontSave;
+                        go = new GameObject("HTTP Update Delegator")
+                        {
+                            hideFlags = HideFlags.HideAndDontSave
+                        };
 
                         Instance = go.AddComponent<HttpUpdateDelegator>();
                     }
@@ -179,7 +184,7 @@ namespace BestHTTP
 #if NETFX_CORE
 	                await Task.Delay(ThreadFrequencyInMS);
 #else
-                    System.Threading.Thread.Sleep(ThreadFrequencyInMS);
+                    Thread.Sleep(ThreadFrequencyInMS);
 #endif
                 }
             }
@@ -265,11 +270,11 @@ namespace BestHTTP
         {
             HttpManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
 
-            if (OnBeforeApplicationQuit != null)
+            if (_onBeforeApplicationQuit != null)
             {
                 try
                 {
-                    if (!OnBeforeApplicationQuit())
+                    if (!_onBeforeApplicationQuit())
                     {
                         HttpManager.Logger.Information("HTTPUpdateDelegator",
                             "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
