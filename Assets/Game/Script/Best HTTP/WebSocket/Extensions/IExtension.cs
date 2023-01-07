@@ -10,7 +10,7 @@ namespace BestHTTP.WebSocket.Extensions
         /// This is the first pass: here we can add headers to the request to initiate an extension negotiation.
         /// </summary>
         /// <param name="request"></param>
-        void AddNegotiation(HTTPRequest request);
+        void AddNegotiation(HttpRequest request);
 
         /// <summary>
         /// If the websocket upgrade succeded it will call this function to be able to parse the server's negotiation

@@ -2,41 +2,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using BestHTTP;
 using Newtonsoft.Json;
 using UnityEngine;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
 
 namespace ZJYFrameWork.Net
 {
     public class ApiHandler : MonoBehaviour
     {
-        private Uri beasUrl;
+        public delegate void OnBeforeSendDelegate(ApiRequest request);
+
+        public delegate void OnCompleteDelegate(ApiResponse response);
+
+        public delegate void OnErrorDelegate(ApiResponse response, IError error);
+
+        public delegate void OnResponseDelegate(ApiResponse response);
+
+        // private ICertificateVerifyer certificateVerifyer;
+        private Queue<ApiRequest> apiQueue = new Queue<ApiRequest>(32);
 
         /// <summary>
         /// token
         /// </summary>
         private string authToken;
 
-        // private ICertificateVerifyer certificateVerifyer;
-        private Queue<ApiRequest> apiQueue = new Queue<ApiRequest>(32);
+        private Uri beasUrl;
         protected ILogger logger;
-
-        public delegate void OnBeforeSendDelegate(ApiRequest request);
 
         public OnBeforeSendDelegate onBeforeSendGlobal = null;
 
-        public delegate void OnResponseDelegate(ApiResponse response);
+        public OnCompleteDelegate onCompleteGlobal = null;
+
+        public OnErrorDelegate onErrorGlobal = null;
 
         public OnResponseDelegate onResponseGlobal = null;
 
-        public delegate void OnCompleteDelegate(ApiResponse response);
-
-        public OnCompleteDelegate onCompleteGlobal = null;
-
-        public delegate void OnErrorDelegate(ApiResponse response, IError error);
-
-        public OnErrorDelegate onErrorGlobal = null;
+        public bool IsAuthenticated => !string.IsNullOrEmpty(authToken);
 
         public ApiHandler Setup(string baseUri, string authToken = null)
         {
@@ -53,8 +53,6 @@ namespace ZJYFrameWork.Net
             return this;
         }
 
-        public bool IsAuthenticated => !string.IsNullOrEmpty(authToken);
-
         public void SetLogger(ILogger logger)
         {
             this.logger = logger;
@@ -67,7 +65,7 @@ namespace ZJYFrameWork.Net
         {
             string relativePath = api.Path;
             byte[] data = null;
-            if (api.Method == HTTPMethods.Get || api.Method == HTTPMethods.Head)
+            if (api.Method == BestHTTP.HttpMethods.Get || api.Method == BestHTTP.HttpMethods.Head)
             {
                 relativePath += api.Param.BuildQuery();
             }

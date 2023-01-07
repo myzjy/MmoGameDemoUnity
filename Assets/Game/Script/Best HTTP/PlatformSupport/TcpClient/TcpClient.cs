@@ -431,7 +431,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
             }
         }
 
-        public void Connect(IPAddress[] ipAddresses, int port, HTTPRequest request)
+        public void Connect(IPAddress[] ipAddresses, int port, HttpRequest request)
         {
             CheckDisposed();
 

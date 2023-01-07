@@ -100,7 +100,7 @@ namespace BestHTTP.WebSocket.Extensions
         /// This will start the permessage-deflate negotiation process.
         /// <seealso href="http://tools.ietf.org/html/rfc7692#section-5.1"/>
         /// </summary>
-        public void AddNegotiation(HTTPRequest request)
+        public void AddNegotiation(HttpRequest request)
         {
             // The default header value that we will send out minimum.
             string headerValue = "permessage-deflate";

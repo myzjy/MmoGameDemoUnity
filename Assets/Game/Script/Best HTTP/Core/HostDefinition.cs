@@ -32,12 +32,12 @@ namespace BestHTTP.Core
 
         public string Host { get; private set; }
 
-        public HostConnection HasBetterAlternate(HTTPRequest request)
+        public HostConnection HasBetterAlternate(HttpRequest request)
         {
             return null;
         }
 
-        private HostConnection GetHostDefinition(HTTPRequest request)
+        private HostConnection GetHostDefinition(HttpRequest request)
         {
             var key = GetKeyForRequest(request);
 
@@ -52,7 +52,7 @@ namespace BestHTTP.Core
             return host;
         }
 
-        public void Send(HTTPRequest request)
+        public void Send(HttpRequest request)
         {
             GetHostDefinition(request)
                 .Send(request);
@@ -108,7 +108,7 @@ namespace BestHTTP.Core
             }
         }
 
-        public static string GetKeyForRequest(HTTPRequest request)
+        public static string GetKeyForRequest(HttpRequest request)
         {
             return GetKeyFor(request.CurrentUri
 #if !BESTHTTP_DISABLE_PROXY

@@ -13,43 +13,43 @@ namespace BestHTTP.Connections.HTTP2
         long Length { get; }
         long Position { get; }
 
-        void AddFrame(HTTP2FrameHeaderAndPayload frame);
+        void AddFrame(Http2FrameHeaderAndPayload frame);
         int ReadByte();
         int Read(byte[] buffer, int offset, int count);
     }
 
     internal abstract class CommonFrameView : IFrameDataView
     {
-        protected readonly List<HTTP2FrameHeaderAndPayload> Frames = new List<HTTP2FrameHeaderAndPayload>();
+        protected readonly List<Http2FrameHeaderAndPayload> Frames = new List<Http2FrameHeaderAndPayload>();
         protected int CurrentFrameIdx = -1;
         protected byte[] Data;
-        protected UInt32 dataOffset;
-        protected UInt32 maxOffset;
+        protected UInt32 DataOffset;
+        protected UInt32 MaxOffset;
         public long Length { get; protected set; }
-        public long Position { get; protected set; }
+        public long Position { get; private set; }
 
-        public abstract void AddFrame(HTTP2FrameHeaderAndPayload frame);
+        public abstract void AddFrame(Http2FrameHeaderAndPayload frame);
 
         public virtual int Read(byte[] buffer, int offset, int count)
         {
-            if (this.dataOffset >= this.maxOffset && !AdvanceFrame())
+            if (this.DataOffset >= this.MaxOffset && !AdvanceFrame())
                 return -1;
 
             int readCount = 0;
 
             while (count > 0)
             {
-                long copyCount = Math.Min(count, this.maxOffset - this.dataOffset);
+                long copyCount = Math.Min(count, this.MaxOffset - this.DataOffset);
 
-                Array.Copy(this.Data, this.dataOffset, buffer, offset + readCount, copyCount);
+                Array.Copy(this.Data, this.DataOffset, buffer, offset + readCount, copyCount);
 
                 count -= (int)copyCount;
                 readCount += (int)copyCount;
 
-                this.dataOffset += (UInt32)copyCount;
+                this.DataOffset += (UInt32)copyCount;
                 this.Position += copyCount;
 
-                if (this.dataOffset >= this.maxOffset && !AdvanceFrame())
+                if (this.DataOffset >= this.MaxOffset && !AdvanceFrame())
                     break;
             }
 
@@ -58,11 +58,11 @@ namespace BestHTTP.Connections.HTTP2
 
         public virtual int ReadByte()
         {
-            if (this.dataOffset >= this.maxOffset && !AdvanceFrame())
+            if (this.DataOffset >= this.MaxOffset && !AdvanceFrame())
                 return -1;
 
-            byte data = this.Data[this.dataOffset];
-            this.dataOffset++;
+            byte data = this.Data[this.DataOffset];
+            this.DataOffset++;
             this.Position++;
 
             return data;
@@ -76,7 +76,7 @@ namespace BestHTTP.Connections.HTTP2
             this.Frames.Clear();
         }
 
-        protected abstract long CalculateDataLengthForFrame(HTTP2FrameHeaderAndPayload frame);
+        protected abstract long CalculateDataLengthForFrame(Http2FrameHeaderAndPayload frame);
 
         protected abstract bool AdvanceFrame();
 
@@ -97,9 +97,9 @@ namespace BestHTTP.Connections.HTTP2
 
     sealed class HeaderFrameView : CommonFrameView
     {
-        public override void AddFrame(HTTP2FrameHeaderAndPayload frame)
+        public override void AddFrame(Http2FrameHeaderAndPayload frame)
         {
-            if (frame.Type != HTTP2FrameTypes.HEADERS && frame.Type != HTTP2FrameTypes.CONTINUATION)
+            if (frame.Type != Http2FrameTypes.Headers && frame.Type != Http2FrameTypes.Continuation)
                 throw new ArgumentException("HeaderFrameView - Unexpected frame type: " + frame.Type);
 
             this.Frames.Add(frame);
@@ -109,14 +109,14 @@ namespace BestHTTP.Connections.HTTP2
                 AdvanceFrame();
         }
 
-        protected override long CalculateDataLengthForFrame(HTTP2FrameHeaderAndPayload frame)
+        protected override long CalculateDataLengthForFrame(Http2FrameHeaderAndPayload frame)
         {
             switch (frame.Type)
             {
-                case HTTP2FrameTypes.HEADERS:
-                    return HTTP2FrameHelper.ReadHeadersFrame(frame).HeaderBlockFragmentLength;
+                case Http2FrameTypes.Headers:
+                    return Http2FrameHelper.ReadHeadersFrame(frame).HeaderBlockFragmentLength;
 
-                case HTTP2FrameTypes.CONTINUATION:
+                case Http2FrameTypes.Continuation:
                     return frame.PayloadLength;
             }
 
@@ -129,21 +129,21 @@ namespace BestHTTP.Connections.HTTP2
                 return false;
 
             this.CurrentFrameIdx++;
-            HTTP2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
+            Http2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
 
             this.Data = frame.Payload;
 
             switch (frame.Type)
             {
-                case HTTP2FrameTypes.HEADERS:
-                    var header = HTTP2FrameHelper.ReadHeadersFrame(frame);
-                    this.dataOffset = header.HeaderBlockFragmentIdx;
-                    this.maxOffset = this.dataOffset + header.HeaderBlockFragmentLength;
+                case Http2FrameTypes.Headers:
+                    var header = Http2FrameHelper.ReadHeadersFrame(frame);
+                    this.DataOffset = header.HeaderBlockFragmentIdx;
+                    this.MaxOffset = this.DataOffset + header.HeaderBlockFragmentLength;
                     break;
 
-                case HTTP2FrameTypes.CONTINUATION:
-                    this.dataOffset = 0;
-                    this.maxOffset = frame.PayloadLength;
+                case Http2FrameTypes.Continuation:
+                    this.DataOffset = 0;
+                    this.MaxOffset = frame.PayloadLength;
                     break;
             }
 
@@ -153,18 +153,18 @@ namespace BestHTTP.Connections.HTTP2
 
     sealed class DataFrameView : CommonFrameView
     {
-        public override void AddFrame(HTTP2FrameHeaderAndPayload frame)
+        public override void AddFrame(Http2FrameHeaderAndPayload frame)
         {
-            if (frame.Type != HTTP2FrameTypes.DATA)
+            if (frame.Type != Http2FrameTypes.Data)
                 throw new ArgumentException("HeaderFrameView - Unexpected frame type: " + frame.Type);
 
             this.Frames.Add(frame);
             this.Length += CalculateDataLengthForFrame(frame);
         }
 
-        protected override long CalculateDataLengthForFrame(HTTP2FrameHeaderAndPayload frame)
+        protected override long CalculateDataLengthForFrame(Http2FrameHeaderAndPayload frame)
         {
-            return HTTP2FrameHelper.ReadDataFrame(frame).DataLength;
+            return Http2FrameHelper.ReadDataFrame(frame).DataLength;
         }
 
         protected override bool AdvanceFrame()
@@ -173,12 +173,12 @@ namespace BestHTTP.Connections.HTTP2
                 return false;
 
             this.CurrentFrameIdx++;
-            HTTP2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
-            HTTP2DataFrame dataFrame = HTTP2FrameHelper.ReadDataFrame(frame);
+            Http2FrameHeaderAndPayload frame = this.Frames[this.CurrentFrameIdx];
+            Http2DataFrame dataFrame = Http2FrameHelper.ReadDataFrame(frame);
 
             this.Data = frame.Payload;
-            this.dataOffset = dataFrame.DataIdx;
-            this.maxOffset = dataFrame.DataIdx + dataFrame.DataLength;
+            this.DataOffset = dataFrame.DataIdx;
+            this.MaxOffset = dataFrame.DataIdx + dataFrame.DataLength;
 
             return true;
         }
@@ -204,7 +204,7 @@ namespace BestHTTP.Connections.HTTP2
             set => throw new NotSupportedException();
         }
 
-        public void AddFrame(HTTP2FrameHeaderAndPayload frame)
+        public void AddFrame(Http2FrameHeaderAndPayload frame)
         {
             this._view.AddFrame(frame);
         }

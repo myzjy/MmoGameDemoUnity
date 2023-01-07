@@ -26,10 +26,10 @@ namespace BestHTTP.Core
 #endif
         struct RequestEventInfo
     {
-        public readonly HTTPRequest SourceRequest;
+        public readonly HttpRequest SourceRequest;
         public readonly RequestEvents Event;
 
-        public readonly HTTPRequestStates State;
+        public readonly HttpRequestStates State;
 
         public readonly long Progress;
         public readonly long ProgressLength;
@@ -45,12 +45,12 @@ namespace BestHTTP.Core
         // Headers
         public readonly Dictionary<string, List<string>> Headers;
 
-        public RequestEventInfo(HTTPRequest request, RequestEvents @event)
+        public RequestEventInfo(HttpRequest request, RequestEvents @event)
         {
             this.SourceRequest = request;
             this.Event = @event;
 
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = this.ProgressLength = 0;
 
@@ -66,7 +66,7 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, HTTPRequestStates newState)
+        public RequestEventInfo(HttpRequest request, HttpRequestStates newState)
         {
             this.SourceRequest = request;
             this.Event = RequestEvents.StateChange;
@@ -85,11 +85,11 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, RequestEvents @event, long progress, long progressLength)
+        public RequestEventInfo(HttpRequest request, RequestEvents @event, long progress, long progressLength)
         {
             this.SourceRequest = request;
             this.Event = @event;
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = progress;
             this.ProgressLength = progressLength;
@@ -105,11 +105,11 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, byte[] data, int dataLength)
+        public RequestEventInfo(HttpRequest request, byte[] data, int dataLength)
         {
             this.SourceRequest = request;
             this.Event = RequestEvents.StreamingData;
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = this.ProgressLength = 0;
             this.Data = data;
@@ -124,11 +124,11 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, string name, DateTime time)
+        public RequestEventInfo(HttpRequest request, string name, DateTime time)
         {
             this.SourceRequest = request;
             this.Event = RequestEvents.TimingData;
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = this.ProgressLength = 0;
             this.Data = null;
@@ -143,11 +143,11 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, string name, TimeSpan duration)
+        public RequestEventInfo(HttpRequest request, string name, TimeSpan duration)
         {
             this.SourceRequest = request;
             this.Event = RequestEvents.TimingData;
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = this.ProgressLength = 0;
             this.Data = null;
@@ -162,11 +162,11 @@ namespace BestHTTP.Core
             this.Headers = null;
         }
 
-        public RequestEventInfo(HTTPRequest request, Dictionary<string, List<string>> headers)
+        public RequestEventInfo(HttpRequest request, Dictionary<string, List<string>> headers)
         {
             this.SourceRequest = request;
             this.Event = RequestEvents.Headers;
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.Progress = this.ProgressLength = 0;
             this.Data = null;
@@ -250,7 +250,7 @@ namespace BestHTTP.Core
             RequestEventInfo requestEvent;
             while (requestEventQueue.TryDequeue(out requestEvent))
             {
-                HTTPRequest source = requestEvent.SourceRequest;
+                HttpRequest source = requestEvent.SourceRequest;
 
                 if (HttpManager.Logger.Level == Loglevels.All)
                     HttpManager.Logger.Information("RequestEventHelper",
@@ -342,7 +342,7 @@ namespace BestHTTP.Core
 #endif
 
                     case RequestEvents.Resend:
-                        source.State = HTTPRequestStates.Initial;
+                        source.State = HttpRequestStates.Initial;
 
                         var host = HostManager.GetHost(source.CurrentUri.Host);
 
@@ -389,9 +389,9 @@ namespace BestHTTP.Core
 
         private static bool AbortRequestWhenTimedOut(DateTime now, object context)
         {
-            HTTPRequest request = context as HTTPRequest;
+            HttpRequest request = context as HttpRequest;
 
-            if (request.State >= HTTPRequestStates.Finished)
+            if (request.State >= HttpRequestStates.Finished)
                 return false; // don't repeat
 
             // Protocols will shut down themselves
@@ -413,7 +413,7 @@ namespace BestHTTP.Core
 
         internal static void HandleRequestStateChange(RequestEventInfo @event)
         {
-            HTTPRequest source = @event.SourceRequest;
+            HttpRequest source = @event.SourceRequest;
 
             // Because there's a race condition between setting the request's State in its Abort() function running on Unity's main thread
             //  and the HTTP1/HTTP2 handlers running on an another one.
@@ -434,21 +434,21 @@ namespace BestHTTP.Core
 
             switch (@event.State)
             {
-                case HTTPRequestStates.Queued:
+                case HttpRequestStates.Queued:
                     source.QueuedAt = DateTime.UtcNow;
                     if ((!source.UseStreaming && source.UploadStream == null) || source.EnableTimoutForStreaming)
                         BestHTTP.Extensions.Timer.Add(new TimerData(TimeSpan.FromSeconds(1), @event.SourceRequest,
                             AbortRequestWhenTimedOut));
                     break;
 
-                case HTTPRequestStates.ConnectionTimedOut:
-                case HTTPRequestStates.TimedOut:
-                case HTTPRequestStates.Error:
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.TimedOut:
+                case HttpRequestStates.Error:
+                case HttpRequestStates.Aborted:
                     source.Response = null;
-                    goto case HTTPRequestStates.Finished;
+                    goto case HttpRequestStates.Finished;
 
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
 
 #if !BESTHTTP_DISABLE_CACHING
                     // Here we will try to load content for a failed load. Failed load is a request with ConnectionTimedOut, TimedOut or Error state.
@@ -458,16 +458,16 @@ namespace BestHTTP.Core
 
                     try
                     {
-                        bool tryLoad = !source.DisableCache && source.State != HTTPRequestStates.Aborted &&
-                                       (source.State != HTTPRequestStates.Finished || source.Response == null ||
+                        bool tryLoad = !source.DisableCache && source.State != HttpRequestStates.Aborted &&
+                                       (source.State != HttpRequestStates.Finished || source.Response == null ||
                                         source.Response.StatusCode >= 500);
-                        if (tryLoad && Caching.HTTPCacheService.IsCachedEntityExpiresInTheFuture(source))
+                        if (tryLoad && Caching.HttpCacheService.IsCachedEntityExpiresInTheFuture(source))
                         {
                             HttpManager.Logger.Information("RequestEventHelper",
                                 "IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: " +
                                 source.CurrentUri.ToString(), source.Context);
 
-                            PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HTTPRequest>((req) =>
+                            PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HttpRequest>((req) =>
                             {
                                 // Disable any other cache activity.
                                 req.DisableCache = true;
@@ -476,11 +476,11 @@ namespace BestHTTP.Core
                                 if (Connections.ConnectionHelper.TryLoadAllFromCache("RequestEventHelper", req,
                                         req.Context))
                                 {
-                                    if (req.State != HTTPRequestStates.Finished)
-                                        req.State = HTTPRequestStates.Finished;
+                                    if (req.State != HttpRequestStates.Finished)
+                                        req.State = HttpRequestStates.Finished;
                                     else
                                         RequestEventHelper.EnqueueRequestEvent(
-                                            new RequestEventInfo(req, HTTPRequestStates.Finished));
+                                            new RequestEventInfo(req, HttpRequestStates.Finished));
                                 }
                                 else
                                 {

@@ -6,6 +6,7 @@ using System.IO;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.FileSystem;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Caching
 {
     /// <summary>
@@ -102,7 +103,7 @@ namespace BestHTTP.Caching
         /// <summary>
         /// 这是实体的索引。文件名由该值生成。
         /// </summary>
-        internal UInt64 MappedNameIDX { get; private set; }
+        internal UInt64 MappedNameIdx { get; private set; }
 
         #endregion
 
@@ -120,10 +121,10 @@ namespace BestHTTP.Caching
             this.BodyLength = bodyLength;
             this.MaxAge = -1;
 
-            this.MappedNameIDX = HTTPCacheService.GetNameIdx();
+            this.MappedNameIdx = HttpCacheService.GetNameIdx();
         }
 
-        internal HttpCacheFileInfo(Uri uri, System.IO.BinaryReader reader, int version)
+        internal HttpCacheFileInfo(Uri uri, BinaryReader reader, int version)
         {
             this.Uri = uri;
             this.LastAccess = DateTime.FromBinary(reader.ReadInt64());
@@ -138,7 +139,7 @@ namespace BestHTTP.Caching
                     goto case 2;
 
                 case 2:
-                    this.MappedNameIDX = reader.ReadUInt64();
+                    this.MappedNameIdx = reader.ReadUInt64();
                     goto case 1;
 
                 case 1:
@@ -160,7 +161,7 @@ namespace BestHTTP.Caching
 
         #region HttpCacheFileInfo 定义的 辅助函数
 
-        internal void SaveTo(System.IO.BinaryWriter writer)
+        internal void SaveTo(BinaryWriter writer)
         {
             // base
             writer.Write(this.LastAccess.ToBinary());
@@ -172,7 +173,7 @@ namespace BestHTTP.Caching
             writer.Write(this.StaleIfError);
 
             // version 2
-            writer.Write(this.MappedNameIDX);
+            writer.Write(this.MappedNameIdx);
 
             // version 1
             writer.Write(this.ETag);
@@ -190,12 +191,12 @@ namespace BestHTTP.Caching
             if (ConstructedPath != null)
                 return ConstructedPath;
 
-            return ConstructedPath = System.IO.Path.Combine(HTTPCacheService.CacheFolder, MappedNameIDX.ToString("X"));
+            return ConstructedPath = Path.Combine(HttpCacheService.CacheFolder, MappedNameIdx.ToString("X"));
         }
 
         public bool IsExists()
         {
-            if (!HTTPCacheService.IsSupported)
+            if (!HttpCacheService.IsSupported)
                 return false;
 
             return HttpManager.IOService.FileExists(GetPath());
@@ -203,7 +204,7 @@ namespace BestHTTP.Caching
 
         internal void Delete()
         {
-            if (!HTTPCacheService.IsSupported)
+            if (!HttpCacheService.IsSupported)
                 return;
 
             string path = GetPath();
@@ -213,6 +214,7 @@ namespace BestHTTP.Caching
             }
             catch
             {
+                // ignored
             }
             finally
             {
@@ -289,11 +291,11 @@ namespace BestHTTP.Caching
                                     break;
 
                                 case "stale-while-revalidate":
-                                    this.StaleWhileRevalidate = kvp.HasValue ? kvp.Value.ToInt64(0) : 0;
+                                    this.StaleWhileRevalidate = kvp.HasValue ? kvp.Value.ToInt64() : 0;
                                     break;
 
                                 case "stale-if-error":
-                                    this.StaleIfError = kvp.HasValue ? kvp.Value.ToInt64(0) : 0;
+                                    this.StaleIfError = kvp.HasValue ? kvp.Value.ToInt64() : 0;
                                     break;
 
                                 case "must-revalidate":
@@ -359,21 +361,21 @@ namespace BestHTTP.Caching
                 // Age calculation:
                 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.2.3
 
-                long apparent_age = Math.Max(0, (long)(this.Received - this.Date).TotalSeconds);
-                long corrected_received_age = Math.Max(apparent_age, this.Age);
-                long resident_time = (long)(DateTime.UtcNow - this.Date).TotalSeconds;
-                long current_age = corrected_received_age + resident_time;
+                long apparentAge = Math.Max(0, (long)(this.Received - this.Date).TotalSeconds);
+                long correctedReceivedAge = Math.Max(apparentAge, this.Age);
+                long residentTime = (long)(DateTime.UtcNow - this.Date).TotalSeconds;
+                long currentAge = correctedReceivedAge + residentTime;
 
                 long maxAge = this.MaxAge + (this.NoCache ? 0 : this.StaleWhileRevalidate) +
                               (isInError ? this.StaleIfError : 0);
 
-                return current_age < maxAge || this.Expires > DateTime.UtcNow;
+                return currentAge < maxAge || this.Expires > DateTime.UtcNow;
             }
 
             return this.Expires > DateTime.UtcNow;
         }
 
-        internal void SetUpRevalidationHeaders(HTTPRequest request)
+        internal void SetUpRevalidationHeaders(HttpRequest request)
         {
             if (!IsExists())
                 return;
@@ -402,12 +404,12 @@ namespace BestHTTP.Caching
             LastAccess = DateTime.UtcNow;
 
             var stream = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.OpenRead);
-            stream.Seek(-length, System.IO.SeekOrigin.End);
+            stream.Seek(-length, SeekOrigin.End);
 
             return stream;
         }
 
-        internal HttpResponse ReadResponseTo(HTTPRequest request)
+        internal HttpResponse ReadResponseTo(HttpRequest request)
         {
             if (!IsExists())
                 return null;
@@ -427,7 +429,7 @@ namespace BestHTTP.Caching
 
         internal void Store(HttpResponse response)
         {
-            if (!HTTPCacheService.IsSupported)
+            if (!HttpCacheService.IsSupported)
                 return;
 
             string path = GetPath();
@@ -465,7 +467,7 @@ namespace BestHTTP.Caching
 
         internal Stream GetSaveStream(HttpResponse response)
         {
-            if (!HTTPCacheService.IsSupported)
+            if (!HttpCacheService.IsSupported)
                 return null;
 
             LastAccess = DateTime.UtcNow;

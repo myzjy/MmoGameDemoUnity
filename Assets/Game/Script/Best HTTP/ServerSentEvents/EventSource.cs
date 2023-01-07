@@ -115,7 +115,7 @@ namespace BestHTTP.ServerSentEvents
         /// <summary>
         /// The internal request object of the EventSource.
         /// </summary>
-        public HTTPRequest InternalRequest { get; private set; }
+        public HttpRequest InternalRequest { get; private set; }
 
 #else
         public bool WithCredentials { get; set; }
@@ -224,7 +224,7 @@ namespace BestHTTP.ServerSentEvents
             ));
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-            this.InternalRequest = new HTTPRequest(Uri, HTTPMethods.Get, true, true, OnRequestFinished);
+            this.InternalRequest = new HttpRequest(Uri, HttpMethods.Get, true, true, OnRequestFinished);
 
             // Set headers
             this.InternalRequest.SetHeader("Accept", "text/event-stream");
@@ -403,7 +403,7 @@ namespace BestHTTP.ServerSentEvents
         #region HTTP Request Implementation
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-        private void OnRequestFinished(HTTPRequest req, HttpResponse resp)
+        private void OnRequestFinished(HttpRequest req, HttpResponse resp)
         {
             HttpManager.Logger.Information("EventSource",
                 string.Format("OnRequestFinished - State: {0}, StatusCode: {1}", this.State,
@@ -427,7 +427,7 @@ namespace BestHTTP.ServerSentEvents
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     // HTTP 200 OK responses that have a Content-Type specifying an unsupported type, or that have no Content-Type at all, must cause the user agent to fail the connection.
                     if (resp.StatusCode == 200 && !resp.HasHeaderWithValue("content-type", "text/event-stream"))
                     {
@@ -456,25 +456,25 @@ namespace BestHTTP.ServerSentEvents
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Request Finished with Error! " + (req.Exception != null
                         ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
                         : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     // If the state is Closing, then it's a normal behaviour, and we close the EventSource
                     reason = "OnRequestFinished - Aborted without request. EventSource's State: " + this.State;
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Processing the request Timed Out!";
                     break;
             }
@@ -494,7 +494,7 @@ namespace BestHTTP.ServerSentEvents
                 SetClosed("OnRequestFinished");
         }
 
-        private bool OnData(HTTPRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
+        private bool OnData(HttpRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
         {
             if (this.State == States.Connecting)
             {

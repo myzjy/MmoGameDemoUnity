@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
@@ -40,7 +39,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
                 throw new ArgumentException("Exactly one of the field elements is null");
         }
 
-        internal Curve25519Point(ECCurve curve, ECFieldElement x, ECFieldElement y, ECFieldElement[] zs, bool withCompression)
+        internal Curve25519Point(ECCurve curve, ECFieldElement x, ECFieldElement y, ECFieldElement[] zs,
+            bool withCompression)
             : base(curve, x, y, zs, withCompression)
         {
         }
@@ -71,10 +71,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
             ECCurve curve = this.Curve;
 
-            Curve25519FieldElement X1 = (Curve25519FieldElement)this.RawXCoord, Y1 = (Curve25519FieldElement)this.RawYCoord,
-                Z1 = (Curve25519FieldElement)this.RawZCoords[0];
-            Curve25519FieldElement X2 = (Curve25519FieldElement)b.RawXCoord, Y2 = (Curve25519FieldElement)b.RawYCoord,
-                Z2 = (Curve25519FieldElement)b.RawZCoords[0];
+            Curve25519FieldElement x1 = (Curve25519FieldElement)this.RawXCoord,
+                y1 = (Curve25519FieldElement)this.RawYCoord,
+                z1 = (Curve25519FieldElement)this.RawZCoords[0];
+            Curve25519FieldElement x2 = (Curve25519FieldElement)b.RawXCoord,
+                y2 = (Curve25519FieldElement)b.RawYCoord,
+                z2 = (Curve25519FieldElement)b.RawZCoords[0];
 
             uint c;
             uint[] tt1 = Nat256.CreateExt();
@@ -82,54 +84,54 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             uint[] t3 = Nat256.Create();
             uint[] t4 = Nat256.Create();
 
-            bool Z1IsOne = Z1.IsOne;
-            uint[] U2, S2;
-            if (Z1IsOne)
+            bool z1IsOne = z1.IsOne;
+            uint[] u2, s2;
+            if (z1IsOne)
             {
-                U2 = X2.x;
-                S2 = Y2.x;
+                u2 = x2.X;
+                s2 = y2.X;
             }
             else
             {
-                S2 = t3;
-                Curve25519Field.Square(Z1.x, S2);
+                s2 = t3;
+                Curve25519Field.Square(z1.X, s2);
 
-                U2 = t2;
-                Curve25519Field.Multiply(S2, X2.x, U2);
+                u2 = t2;
+                Curve25519Field.Multiply(s2, x2.X, u2);
 
-                Curve25519Field.Multiply(S2, Z1.x, S2);
-                Curve25519Field.Multiply(S2, Y2.x, S2);
+                Curve25519Field.Multiply(s2, z1.X, s2);
+                Curve25519Field.Multiply(s2, y2.X, s2);
             }
 
-            bool Z2IsOne = Z2.IsOne;
-            uint[] U1, S1;
-            if (Z2IsOne)
+            bool z2IsOne = z2.IsOne;
+            uint[] u1, s1;
+            if (z2IsOne)
             {
-                U1 = X1.x;
-                S1 = Y1.x;
+                u1 = x1.X;
+                s1 = y1.X;
             }
             else
             {
-                S1 = t4;
-                Curve25519Field.Square(Z2.x, S1);
+                s1 = t4;
+                Curve25519Field.Square(z2.X, s1);
 
-                U1 = tt1;
-                Curve25519Field.Multiply(S1, X1.x, U1);
+                u1 = tt1;
+                Curve25519Field.Multiply(s1, x1.X, u1);
 
-                Curve25519Field.Multiply(S1, Z2.x, S1);
-                Curve25519Field.Multiply(S1, Y1.x, S1);
+                Curve25519Field.Multiply(s1, z2.X, s1);
+                Curve25519Field.Multiply(s1, y1.X, s1);
             }
 
-            uint[] H = Nat256.Create();
-            Curve25519Field.Subtract(U1, U2, H);
+            uint[] h = Nat256.Create();
+            Curve25519Field.Subtract(u1, u2, h);
 
-            uint[] R = t2;
-            Curve25519Field.Subtract(S1, S2, R);
+            uint[] r = t2;
+            Curve25519Field.Subtract(s1, s2, r);
 
             // Check if b == this or b == -this
-            if (Nat256.IsZero(H))
+            if (Nat256.IsZero(h))
             {
-                if (Nat256.IsZero(R))
+                if (Nat256.IsZero(r))
                 {
                     // this == b, i.e. this must be doubled
                     return this.Twice();
@@ -139,48 +141,49 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
                 return curve.Infinity;
             }
 
-            uint[] HSquared = Nat256.Create();
-            Curve25519Field.Square(H, HSquared);
+            uint[] hSquared = Nat256.Create();
+            Curve25519Field.Square(h, hSquared);
 
-            uint[] G = Nat256.Create();
-            Curve25519Field.Multiply(HSquared, H, G);
+            uint[] g = Nat256.Create();
+            Curve25519Field.Multiply(hSquared, h, g);
 
-            uint[] V = t3;
-            Curve25519Field.Multiply(HSquared, U1, V);
+            uint[] v = t3;
+            Curve25519Field.Multiply(hSquared, u1, v);
 
-            Curve25519Field.Negate(G, G);
-            Nat256.Mul(S1, G, tt1);
+            Curve25519Field.Negate(g, g);
+            Nat256.Mul(s1, g, tt1);
 
-            c = Nat256.AddBothTo(V, V, G);
-            Curve25519Field.Reduce27(c, G);
+            c = Nat256.AddBothTo(v, v, g);
+            Curve25519Field.Reduce27(c, g);
 
-            Curve25519FieldElement X3 = new Curve25519FieldElement(t4);
-            Curve25519Field.Square(R, X3.x);
-            Curve25519Field.Subtract(X3.x, G, X3.x);
+            Curve25519FieldElement x3 = new Curve25519FieldElement(t4);
+            Curve25519Field.Square(r, x3.X);
+            Curve25519Field.Subtract(x3.X, g, x3.X);
 
-            Curve25519FieldElement Y3 = new Curve25519FieldElement(G);
-            Curve25519Field.Subtract(V, X3.x, Y3.x);
-            Curve25519Field.MultiplyAddToExt(Y3.x, R, tt1);
-            Curve25519Field.Reduce(tt1, Y3.x);
+            Curve25519FieldElement y3 = new Curve25519FieldElement(g);
+            Curve25519Field.Subtract(v, x3.X, y3.X);
+            Curve25519Field.MultiplyAddToExt(y3.X, r, tt1);
+            Curve25519Field.Reduce(tt1, y3.X);
 
-            Curve25519FieldElement Z3 = new Curve25519FieldElement(H);
-            if (!Z1IsOne)
+            Curve25519FieldElement z3 = new Curve25519FieldElement(h);
+            if (!z1IsOne)
             {
-                Curve25519Field.Multiply(Z3.x, Z1.x, Z3.x);
-            }
-            if (!Z2IsOne)
-            {
-                Curve25519Field.Multiply(Z3.x, Z2.x, Z3.x);
+                Curve25519Field.Multiply(z3.X, z1.X, z3.X);
             }
 
-            uint[] Z3Squared = (Z1IsOne && Z2IsOne) ? HSquared : null;
+            if (!z2IsOne)
+            {
+                Curve25519Field.Multiply(z3.X, z2.X, z3.X);
+            }
+
+            uint[] z3Squared = (z1IsOne && z2IsOne) ? hSquared : null;
 
             // TODO If the result will only be used in a subsequent addition, we don't need W3
-            Curve25519FieldElement W3 = CalculateJacobianModifiedW((Curve25519FieldElement)Z3, Z3Squared);
+            Curve25519FieldElement w3 = CalculateJacobianModifiedW((Curve25519FieldElement)z3, z3Squared);
 
-            ECFieldElement[] zs = new ECFieldElement[] { Z3, W3 };
+            ECFieldElement[] zs = new ECFieldElement[] { z3, w3 };
 
-            return new Curve25519Point(curve, X3, Y3, zs, IsCompressed);
+            return new Curve25519Point(curve, x3, y3, zs, IsCompressed);
         }
 
         public override ECPoint Twice()
@@ -190,8 +193,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
             ECCurve curve = this.Curve;
 
-            ECFieldElement Y1 = this.RawYCoord;
-            if (Y1.IsZero)
+            ECFieldElement y1 = this.RawYCoord;
+            if (y1.IsZero)
                 return curve.Infinity;
 
             return TwiceJacobianModified(true);
@@ -206,8 +209,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             if (b.IsInfinity)
                 return Twice();
 
-            ECFieldElement Y1 = this.RawYCoord;
-            if (Y1.IsZero)
+            ECFieldElement y1 = this.RawYCoord;
+            if (y1.IsZero)
                 return b;
 
             return TwiceJacobianModified(false).Add(b);
@@ -229,87 +232,91 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             return new Curve25519Point(Curve, RawXCoord, RawYCoord.Negate(), RawZCoords, IsCompressed);
         }
 
-        protected virtual Curve25519FieldElement CalculateJacobianModifiedW(Curve25519FieldElement Z, uint[] ZSquared)
+        protected virtual Curve25519FieldElement CalculateJacobianModifiedW(Curve25519FieldElement z, uint[] zSquared)
         {
             Curve25519FieldElement a4 = (Curve25519FieldElement)this.Curve.A;
-            if (Z.IsOne)
+            if (z.IsOne)
                 return a4;
 
-            Curve25519FieldElement W = new Curve25519FieldElement();
-            if (ZSquared == null)
+            Curve25519FieldElement w = new Curve25519FieldElement();
+            if (zSquared == null)
             {
-                ZSquared = W.x;
-                Curve25519Field.Square(Z.x, ZSquared);
+                zSquared = w.X;
+                Curve25519Field.Square(z.X, zSquared);
             }
-            Curve25519Field.Square(ZSquared, W.x);
-            Curve25519Field.Multiply(W.x, a4.x, W.x);
-            return W;
+
+            Curve25519Field.Square(zSquared, w.X);
+            Curve25519Field.Multiply(w.X, a4.X, w.X);
+            return w;
         }
 
         protected virtual Curve25519FieldElement GetJacobianModifiedW()
         {
-            ECFieldElement[] ZZ = this.RawZCoords;
-            Curve25519FieldElement W = (Curve25519FieldElement)ZZ[1];
-            if (W == null)
+            ECFieldElement[] zz = this.RawZCoords;
+            Curve25519FieldElement w = (Curve25519FieldElement)zz[1];
+            if (w == null)
             {
                 // NOTE: Rarely, TwicePlus will result in the need for a lazy W1 calculation here
-                ZZ[1] = W = CalculateJacobianModifiedW((Curve25519FieldElement)ZZ[0], null);
+                zz[1] = w = CalculateJacobianModifiedW((Curve25519FieldElement)zz[0], null);
             }
-            return W;
+
+            return w;
         }
 
         protected virtual Curve25519Point TwiceJacobianModified(bool calculateW)
         {
-            Curve25519FieldElement X1 = (Curve25519FieldElement)this.RawXCoord, Y1 = (Curve25519FieldElement)this.RawYCoord,
-                Z1 = (Curve25519FieldElement)this.RawZCoords[0], W1 = GetJacobianModifiedW();
+            Curve25519FieldElement x1 = (Curve25519FieldElement)this.RawXCoord,
+                y1 = (Curve25519FieldElement)this.RawYCoord,
+                z1 = (Curve25519FieldElement)this.RawZCoords[0],
+                w1 = GetJacobianModifiedW();
 
             uint c;
 
-            uint[] M = Nat256.Create();
-            Curve25519Field.Square(X1.x, M);
-            c = Nat256.AddBothTo(M, M, M);
-            c += Nat256.AddTo(W1.x, M);
-            Curve25519Field.Reduce27(c, M);
+            uint[] m = Nat256.Create();
+            Curve25519Field.Square(x1.X, m);
+            c = Nat256.AddBothTo(m, m, m);
+            c += Nat256.AddTo(w1.X, m);
+            Curve25519Field.Reduce27(c, m);
 
             uint[] _2Y1 = Nat256.Create();
-            Curve25519Field.Twice(Y1.x, _2Y1);
+            Curve25519Field.Twice(y1.X, _2Y1);
 
             uint[] _2Y1Squared = Nat256.Create();
-            Curve25519Field.Multiply(_2Y1, Y1.x, _2Y1Squared);
+            Curve25519Field.Multiply(_2Y1, y1.X, _2Y1Squared);
 
-            uint[] S = Nat256.Create();
-            Curve25519Field.Multiply(_2Y1Squared, X1.x, S);
-            Curve25519Field.Twice(S, S);
+            uint[] s = Nat256.Create();
+            Curve25519Field.Multiply(_2Y1Squared, x1.X, s);
+            Curve25519Field.Twice(s, s);
 
             uint[] _8T = Nat256.Create();
             Curve25519Field.Square(_2Y1Squared, _8T);
             Curve25519Field.Twice(_8T, _8T);
 
-            Curve25519FieldElement X3 = new Curve25519FieldElement(_2Y1Squared);
-            Curve25519Field.Square(M, X3.x);
-            Curve25519Field.Subtract(X3.x, S, X3.x);
-            Curve25519Field.Subtract(X3.x, S, X3.x);
+            Curve25519FieldElement x3 = new Curve25519FieldElement(_2Y1Squared);
+            Curve25519Field.Square(m, x3.X);
+            Curve25519Field.Subtract(x3.X, s, x3.X);
+            Curve25519Field.Subtract(x3.X, s, x3.X);
 
-            Curve25519FieldElement Y3 = new Curve25519FieldElement(S);
-            Curve25519Field.Subtract(S, X3.x, Y3.x);
-            Curve25519Field.Multiply(Y3.x, M, Y3.x);
-            Curve25519Field.Subtract(Y3.x, _8T, Y3.x);
+            Curve25519FieldElement y3 = new Curve25519FieldElement(s);
+            Curve25519Field.Subtract(s, x3.X, y3.X);
+            Curve25519Field.Multiply(y3.X, m, y3.X);
+            Curve25519Field.Subtract(y3.X, _8T, y3.X);
 
-            Curve25519FieldElement Z3 = new Curve25519FieldElement(_2Y1);
-            if (!Nat256.IsOne(Z1.x))
+            Curve25519FieldElement z3 = new Curve25519FieldElement(_2Y1);
+            if (!Nat256.IsOne(z1.X))
             {
-                Curve25519Field.Multiply(Z3.x, Z1.x, Z3.x);
+                Curve25519Field.Multiply(z3.X, z1.X, z3.X);
             }
 
-            Curve25519FieldElement W3 = null;
+            Curve25519FieldElement w3 = null;
             if (calculateW)
             {
-                W3 = new Curve25519FieldElement(_8T);
-                Curve25519Field.Multiply(W3.x, W1.x, W3.x);
-                Curve25519Field.Twice(W3.x, W3.x);
+                w3 = new Curve25519FieldElement(_8T);
+                Curve25519Field.Multiply(w3.X, w1.X, w3.X);
+                Curve25519Field.Twice(w3.X, w3.X);
             }
 
-            return new Curve25519Point(this.Curve, X3, Y3, new ECFieldElement[] { Z3, W3 }, IsCompressed);
+            return new Curve25519Point(this.Curve, x3, y3, new ECFieldElement[] { z3, w3 }, IsCompressed);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace BestHTTP.SignalRCore.Authentication
         /// <summary>
         /// Prepares the request by adding two headers to it
         /// </summary>
-        public void PrepareRequest(BestHTTP.HTTPRequest request)
+        public void PrepareRequest(BestHTTP.HttpRequest request)
         {
             if (this._connection.NegotiationResult == null)
                 return;

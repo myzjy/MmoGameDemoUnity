@@ -56,7 +56,7 @@ namespace ZJYFrameWork.Net
 
         public Dictionary<string, List<string>> Headers { get; private set; }
 
-        private void ValidateResponse(HTTPRequest bhRequest, HttpResponse bhResponse)
+        private void ValidateResponse(HttpRequest bhRequest, HttpResponse bhResponse)
         {
             if (bhResponse != null)
             {

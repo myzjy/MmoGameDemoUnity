@@ -92,7 +92,7 @@ namespace BestHTTP.Connections
 #endif
         }
 
-        internal override void Process(HTTPRequest request)
+        internal override void Process(HttpRequest request)
         {
             this.LastProcessedUri = request.CurrentUri;
 
@@ -137,13 +137,13 @@ namespace BestHTTP.Connections
 
 
                     if (ex is TimeoutException)
-                        this.CurrentRequest.State = HTTPRequestStates.ConnectionTimedOut;
+                        this.CurrentRequest.State = HttpRequestStates.ConnectionTimedOut;
                     else if
                         (!this.CurrentRequest
                             .IsTimedOut) // Do nothing here if Abort() got called on the request, its State is already set.
                     {
                         this.CurrentRequest.Exception = ex;
-                        this.CurrentRequest.State = HTTPRequestStates.Error;
+                        this.CurrentRequest.State = HttpRequestStates.Error;
                     }
 
                     ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
@@ -172,7 +172,7 @@ namespace BestHTTP.Connections
 
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
                     case HttpProtocolFactory.W3CHttp2:
-                        this.requestHandler = new Connections.HTTP2.HTTP2Handler(this);
+                        this.requestHandler = new Connections.HTTP2.Http2Handler(this);
                         this.CurrentRequest = null;
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
                             HostProtocolSupport.Http2));

@@ -1,37 +1,56 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Security;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Encoders;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 {
-    internal class Curve25519
-        : AbstractFpCurve
+    internal class Curve25519 : AbstractFpCurve
     {
+        private const int Curve25519DefaultCoords = COORD_JACOBIAN_MODIFIED;
+        private const int Curve25519FeInts = 8;
         public static readonly BigInteger q = Curve25519FieldElement.Q;
 
-        private static readonly BigInteger C_a = new BigInteger(1, Hex.DecodeStrict("2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA984914A144"));
-        private static readonly BigInteger C_b = new BigInteger(1, Hex.DecodeStrict("7B425ED097B425ED097B425ED097B425ED097B425ED097B4260B5E9C7710C864"));
+        private static readonly BigInteger CA = new BigInteger(1,
+            Hex.DecodeStrict("2AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA984914A144"));
 
-        private const int CURVE25519_DEFAULT_COORDS = COORD_JACOBIAN_MODIFIED;
-        private const int CURVE25519_FE_INTS = 8;
-        private static readonly ECFieldElement[] CURVE25519_AFFINE_ZS = new ECFieldElement[] {
-            new Curve25519FieldElement(BigInteger.One), new Curve25519FieldElement(C_a) }; 
-        protected readonly Curve25519Point m_infinity;
+        private static readonly BigInteger CB = new BigInteger(1,
+            Hex.DecodeStrict("7B425ED097B425ED097B425ED097B425ED097B425ED097B4260B5E9C7710C864"));
+
+        private static readonly ECFieldElement[] Curve25519AffineZs = new ECFieldElement[]
+        {
+            new Curve25519FieldElement(BigInteger.One), new Curve25519FieldElement(CA)
+        };
+
+        protected readonly Curve25519Point MInfinity;
 
         public Curve25519()
             : base(q)
         {
-            this.m_infinity = new Curve25519Point(this, null, null);
+            this.MInfinity = new Curve25519Point(this, null, null);
 
-            this.m_a = FromBigInteger(C_a);
-            this.m_b = FromBigInteger(C_b);
-            this.m_order = new BigInteger(1, Hex.DecodeStrict("1000000000000000000000000000000014DEF9DEA2F79CD65812631A5CF5D3ED"));
+            this.m_a = FromBigInteger(CA);
+            this.m_b = FromBigInteger(CB);
+            this.m_order = new BigInteger(1,
+                Hex.DecodeStrict("1000000000000000000000000000000014DEF9DEA2F79CD65812631A5CF5D3ED"));
             this.m_cofactor = BigInteger.ValueOf(8);
-            this.m_coord = CURVE25519_DEFAULT_COORDS;
+            this.m_coord = Curve25519DefaultCoords;
+        }
+
+        public virtual BigInteger Q
+        {
+            get { return q; }
+        }
+
+        public override ECPoint Infinity
+        {
+            get { return MInfinity; }
+        }
+
+        public override int FieldSize
+        {
+            get { return q.BitLength; }
         }
 
         protected override ECCurve CloneCurve()
@@ -43,26 +62,11 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
         {
             switch (coord)
             {
-            case COORD_JACOBIAN_MODIFIED:
-                return true;
-            default:
-                return false;
+                case COORD_JACOBIAN_MODIFIED:
+                    return true;
+                default:
+                    return false;
             }
-        }
-
-        public virtual BigInteger Q
-        {
-            get { return q; }
-        }
-
-        public override ECPoint Infinity
-        {
-            get { return m_infinity; }
-        }
-
-        public override int FieldSize
-        {
-            get { return q.BitLength; }
         }
 
         public override ECFieldElement FromBigInteger(BigInteger x)
@@ -75,21 +79,24 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             return new Curve25519Point(this, x, y, withCompression);
         }
 
-        protected internal override ECPoint CreateRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs, bool withCompression)
+        protected internal override ECPoint CreateRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs,
+            bool withCompression)
         {
             return new Curve25519Point(this, x, y, zs, withCompression);
         }
 
         public override ECLookupTable CreateCacheSafeLookupTable(ECPoint[] points, int off, int len)
         {
-            uint[] table = new uint[len * CURVE25519_FE_INTS * 2];
+            uint[] table = new uint[len * Curve25519FeInts * 2];
             {
                 int pos = 0;
                 for (int i = 0; i < len; ++i)
                 {
                     ECPoint p = points[off + i];
-                    Nat256.Copy(((Curve25519FieldElement)p.RawXCoord).x, 0, table, pos); pos += CURVE25519_FE_INTS;
-                    Nat256.Copy(((Curve25519FieldElement)p.RawYCoord).x, 0, table, pos); pos += CURVE25519_FE_INTS;
+                    Nat256.Copy(((Curve25519FieldElement)p.RawXCoord).X, 0, table, pos);
+                    pos += Curve25519FeInts;
+                    Nat256.Copy(((Curve25519FieldElement)p.RawYCoord).X, 0, table, pos);
+                    pos += Curve25519FeInts;
                 }
             }
 
@@ -113,20 +120,20 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
         private class Curve25519LookupTable
             : AbstractECLookupTable
         {
-            private readonly Curve25519 m_outer;
-            private readonly uint[] m_table;
-            private readonly int m_size;
+            private readonly Curve25519 _mOuter;
+            private readonly int _mSize;
+            private readonly uint[] _mTable;
 
             internal Curve25519LookupTable(Curve25519 outer, uint[] table, int size)
             {
-                this.m_outer = outer;
-                this.m_table = table;
-                this.m_size = size;
+                this._mOuter = outer;
+                this._mTable = table;
+                this._mSize = size;
             }
 
             public override int Size
             {
-                get { return m_size; }
+                get { return _mSize; }
             }
 
             public override ECPoint Lookup(int index)
@@ -134,17 +141,17 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
                 uint[] x = Nat256.Create(), y = Nat256.Create();
                 int pos = 0;
 
-                for (int i = 0; i < m_size; ++i)
+                for (int i = 0; i < _mSize; ++i)
                 {
-                    uint MASK = (uint)(((i ^ index) - 1) >> 31);
+                    uint mask = (uint)(((i ^ index) - 1) >> 31);
 
-                    for (int j = 0; j < CURVE25519_FE_INTS; ++j)
+                    for (int j = 0; j < Curve25519FeInts; ++j)
                     {
-                        x[j] ^= m_table[pos + j] & MASK;
-                        y[j] ^= m_table[pos + CURVE25519_FE_INTS + j] & MASK;
+                        x[j] ^= _mTable[pos + j] & mask;
+                        y[j] ^= _mTable[pos + Curve25519FeInts + j] & mask;
                     }
 
-                    pos += (CURVE25519_FE_INTS * 2);
+                    pos += (Curve25519FeInts * 2);
                 }
 
                 return CreatePoint(x, y);
@@ -153,12 +160,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             public override ECPoint LookupVar(int index)
             {
                 uint[] x = Nat256.Create(), y = Nat256.Create();
-                int pos = index * CURVE25519_FE_INTS * 2;
+                int pos = index * Curve25519FeInts * 2;
 
-                for (int j = 0; j < CURVE25519_FE_INTS; ++j)
+                for (int j = 0; j < Curve25519FeInts; ++j)
                 {
-                    x[j] = m_table[pos + j];
-                    y[j] = m_table[pos + CURVE25519_FE_INTS + j];
+                    x[j] = _mTable[pos + j];
+                    y[j] = _mTable[pos + Curve25519FeInts + j];
                 }
 
                 return CreatePoint(x, y);
@@ -166,7 +173,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
 
             private ECPoint CreatePoint(uint[] x, uint[] y)
             {
-                return m_outer.CreateRawPoint(new Curve25519FieldElement(x), new Curve25519FieldElement(y), CURVE25519_AFFINE_ZS, false);
+                return _mOuter.CreateRawPoint(new Curve25519FieldElement(x), new Curve25519FieldElement(y),
+                    Curve25519AffineZs, false);
             }
         }
     }

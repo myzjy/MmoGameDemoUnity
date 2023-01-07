@@ -372,7 +372,7 @@ namespace BestHTTP.SignalRCore
 
             builder.Query = query;
 
-            var request = new HTTPRequest(builder.Uri, HTTPMethods.Post, OnNegotiationRequestFinished);
+            var request = new HttpRequest(builder.Uri, HttpMethods.Post, OnNegotiationRequestFinished);
             request.Context.Add("Hub", this.Context);
 
             if (this.AuthenticationProvider != null)
@@ -449,7 +449,7 @@ namespace BestHTTP.SignalRCore
             return false;
         }
 
-        private void OnNegotiationRequestFinished(HTTPRequest req, HttpResponse resp)
+        private void OnNegotiationRequestFinished(HttpRequest req, HttpResponse resp)
         {
             if (this.State == ConnectionStates.Closed)
                 return;
@@ -465,7 +465,7 @@ namespace BestHTTP.SignalRCore
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
                         HttpManager.Logger.Information("HubConnection",
@@ -522,24 +522,24 @@ namespace BestHTTP.SignalRCore
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     errorReason = "Negotiation Request Finished with Error! " + (req.Exception != null
                         ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
                         : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     errorReason = "Negotiation Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     errorReason = "Negotiation Request - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     errorReason = "Negotiation Request - Processing the request Timed Out!";
                     break;
             }
@@ -1204,8 +1204,8 @@ namespace BestHTTP.SignalRCore
                     this.reconnectStartTime = DateTime.MinValue;
                     this.reconnectAt = DateTime.MinValue;
 
-                    HTTPUpdateDelegator.OnApplicationForegroundStateChanged -= this.OnApplicationForegroundStateChanged;
-                    HTTPUpdateDelegator.OnApplicationForegroundStateChanged += this.OnApplicationForegroundStateChanged;
+                    HttpUpdateDelegator.OnApplicationForegroundStateChanged -= this.OnApplicationForegroundStateChanged;
+                    HttpUpdateDelegator.OnApplicationForegroundStateChanged += this.OnApplicationForegroundStateChanged;
 
                     break;
 
@@ -1252,7 +1252,7 @@ namespace BestHTTP.SignalRCore
                         this.rwLock?.Dispose();
                         this.rwLock = null;
 
-                        HTTPUpdateDelegator.OnApplicationForegroundStateChanged -=
+                        HttpUpdateDelegator.OnApplicationForegroundStateChanged -=
                             this.OnApplicationForegroundStateChanged;
                     }
                     else

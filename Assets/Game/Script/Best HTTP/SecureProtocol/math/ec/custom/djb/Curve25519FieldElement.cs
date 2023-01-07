@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Math.Raw;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
@@ -13,47 +12,40 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
         public static readonly BigInteger Q = Nat256.ToBigInteger(Curve25519Field.P);
 
         // Calculated as ECConstants.TWO.modPow(Q.shiftRight(2), Q)
-        private static readonly uint[] PRECOMP_POW2 = new uint[]{ 0x4a0ea0b0, 0xc4ee1b27, 0xad2fe478, 0x2f431806,
-            0x3dfbd7a7, 0x2b4d0099, 0x4fc1df0b, 0x2b832480 };
+        private static readonly uint[] PrecompPow2 = new uint[]
+        {
+            0x4a0ea0b0, 0xc4ee1b27, 0xad2fe478, 0x2f431806,
+            0x3dfbd7a7, 0x2b4d0099, 0x4fc1df0b, 0x2b832480
+        };
 
-        protected internal readonly uint[] x;
+        protected internal readonly uint[] X;
 
         public Curve25519FieldElement(BigInteger x)
         {
             if (x == null || x.SignValue < 0 || x.CompareTo(Q) >= 0)
                 throw new ArgumentException("value invalid for Curve25519FieldElement", "x");
 
-            this.x = Curve25519Field.FromBigInteger(x);
+            this.X = Curve25519Field.FromBigInteger(x);
         }
 
         public Curve25519FieldElement()
         {
-            this.x = Nat256.Create();
+            this.X = Nat256.Create();
         }
 
         protected internal Curve25519FieldElement(uint[] x)
         {
-            this.x = x;
+            this.X = x;
         }
 
         public override bool IsZero
         {
-            get { return Nat256.IsZero(x); }
+            get { return Nat256.IsZero(X); }
         }
 
         public override bool IsOne
         {
-            get { return Nat256.IsOne(x); }
-        }
-
-        public override bool TestBitZero()
-        {
-            return Nat256.GetBit(x, 0) == 1;
-        }
-
-        public override BigInteger ToBigInteger()
-        {
-            return Nat256.ToBigInteger(x);
+            get { return Nat256.IsOne(X); }
         }
 
         public override string FieldName
@@ -66,31 +58,41 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
             get { return Q.BitLength; }
         }
 
+        public override bool TestBitZero()
+        {
+            return Nat256.GetBit(X, 0) == 1;
+        }
+
+        public override BigInteger ToBigInteger()
+        {
+            return Nat256.ToBigInteger(X);
+        }
+
         public override ECFieldElement Add(ECFieldElement b)
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.Add(x, ((Curve25519FieldElement)b).x, z);
+            Curve25519Field.Add(X, ((Curve25519FieldElement)b).X, z);
             return new Curve25519FieldElement(z);
         }
 
         public override ECFieldElement AddOne()
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.AddOne(x, z);
+            Curve25519Field.AddOne(X, z);
             return new Curve25519FieldElement(z);
         }
 
         public override ECFieldElement Subtract(ECFieldElement b)
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.Subtract(x, ((Curve25519FieldElement)b).x, z);
+            Curve25519Field.Subtract(X, ((Curve25519FieldElement)b).X, z);
             return new Curve25519FieldElement(z);
         }
 
         public override ECFieldElement Multiply(ECFieldElement b)
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.Multiply(x, ((Curve25519FieldElement)b).x, z);
+            Curve25519Field.Multiply(X, ((Curve25519FieldElement)b).X, z);
             return new Curve25519FieldElement(z);
         }
 
@@ -98,22 +100,22 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
         {
             //return Multiply(b.Invert());
             uint[] z = Nat256.Create();
-            Curve25519Field.Inv(((Curve25519FieldElement)b).x, z);
-            Curve25519Field.Multiply(z, x, z);
+            Curve25519Field.Inv(((Curve25519FieldElement)b).X, z);
+            Curve25519Field.Multiply(z, X, z);
             return new Curve25519FieldElement(z);
         }
 
         public override ECFieldElement Negate()
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.Negate(x, z);
+            Curve25519Field.Negate(X, z);
             return new Curve25519FieldElement(z);
         }
 
         public override ECFieldElement Square()
         {
             uint[] z = Nat256.Create();
-            Curve25519Field.Square(x, z);
+            Curve25519Field.Square(X, z);
             return new Curve25519FieldElement(z);
         }
 
@@ -121,7 +123,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
         {
             //return new Curve25519FieldElement(ToBigInteger().ModInverse(Q));
             uint[] z = Nat256.Create();
-            Curve25519Field.Inv(x, z);
+            Curve25519Field.Inv(X, z);
             return new Curve25519FieldElement(z);
         }
 
@@ -143,7 +145,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
              * We use: 1, 2, 3, 4, 7, 11, 15, 30, 60, 120, 131, [251]
              */
 
-            uint[] x1 = this.x;
+            uint[] x1 = this.X;
             if (Nat256.IsZero(x1) || Nat256.IsOne(x1))
                 return this;
 
@@ -196,7 +198,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
              * If the first guess is incorrect, we multiply by a precomputed power of 2 to get the second guess,
              * which is ((4x)^(m + 1))/2 mod Q
              */
-            Curve25519Field.Multiply(t1, PRECOMP_POW2, t1);
+            Curve25519Field.Multiply(t1, PrecompPow2, t1);
 
             Curve25519Field.Square(t1, t2);
 
@@ -224,12 +226,12 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Math.EC.Custom.Djb
                 return true;
             if (null == other)
                 return false;
-            return Nat256.Eq(x, other.x);
+            return Nat256.Eq(X, other.X);
         }
 
         public override int GetHashCode()
         {
-            return Q.GetHashCode() ^ Arrays.GetHashCode(x, 0, 8);
+            return Q.GetHashCode() ^ Arrays.GetHashCode(X, 0, 8);
         }
     }
 }

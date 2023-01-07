@@ -43,7 +43,7 @@ namespace BestHTTP.WebSocket
             if (this._internalRequest != null)
                 return;
 
-            this._internalRequest = new HTTPRequest(base.Uri, OnInternalRequestCallback);
+            this._internalRequest = new HttpRequest(base.Uri, OnInternalRequestCallback);
 
             this._internalRequest.Context.Add("WebSocket", this.Parent.Context);
 
@@ -145,13 +145,13 @@ namespace BestHTTP.WebSocket
             this.State = WebSocketStates.Connecting;
         }
 
-        private void OnInternalRequestCallback(HTTPRequest req, HttpResponse resp)
+        private void OnInternalRequestCallback(HttpRequest req, HttpResponse resp)
         {
             string reason = string.Empty;
 
             switch (req.State)
             {
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     HttpManager.Logger.Information("OverHTTP1",
                         string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
                             resp.Message), this.Parent.Context);
@@ -171,24 +171,24 @@ namespace BestHTTP.WebSocket
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Request Finished with Error! " + (req.Exception != null
                         ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace)
                         : string.Empty);
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     reason = "Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Processing the request Timed Out!";
                     break;
 
@@ -212,7 +212,7 @@ namespace BestHTTP.WebSocket
                 (resp as WebSocketResponse).CloseStream();
         }
 
-        private void OnInternalRequestUpgraded(HTTPRequest req, HttpResponse resp)
+        private void OnInternalRequestUpgraded(HttpRequest req, HttpResponse resp)
         {
             HttpManager.Logger.Information("OverHTTP1", "Internal request upgraded!", this.Parent.Context);
 

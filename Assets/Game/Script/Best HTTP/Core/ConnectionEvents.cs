@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
+
 // Required for ConcurrentQueue.Clear extension.
 
 // ReSharper disable once CheckNamespace
@@ -28,7 +29,7 @@ namespace BestHTTP.Core
 
         public readonly HostProtocolSupport ProtocolSupport;
 
-        public readonly HTTPRequest Request;
+        public readonly HttpRequest Request;
 
         public ConnectionEventInfo(ConnectionBase sourceConn, ConnectionEvents @event)
         {
@@ -67,7 +68,7 @@ namespace BestHTTP.Core
             this.Request = null;
         }
 
-        public ConnectionEventInfo(ConnectionBase sourceConn, HTTPRequest request)
+        public ConnectionEventInfo(ConnectionBase sourceConn, HttpRequest request)
         {
             this.Source = sourceConn;
 

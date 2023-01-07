@@ -3,17 +3,22 @@
 using System;
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
     sealed class HeaderTable
     {
         // https://http2.github.io/http2-spec/compression.html#static.table.definition
-        // Valid indexes starts with 1, so there's an empty entry.
-        static string[] StaticTableValues = new string[] { string.Empty, string.Empty, "GET", "POST", "/", "/index.html", "http", "https", "200", "204", "206", "304", "400", "404", "500", string.Empty, "gzip, deflate" };
+        // 有效索引从1开始，所以有一个空条目。
+        private static readonly string[] StaticTableValues = new string[]
+        {
+            string.Empty, string.Empty, "GET", "POST", "/", "/index.html", "http", "https", "200", "204", "206", "304",
+            "400", "404", "500", string.Empty, "gzip, deflate"
+        };
 
         // https://http2.github.io/http2-spec/compression.html#static.table.definition
-        // Valid indexes starts with 1, so there's an empty entry.
-        static string[] StaticTable = new string[62]
+        // 有效索引从1开始，所以有一个空条目。
+        private static readonly string[] StaticTable = new string[]
         {
             string.Empty,
             ":authority",
@@ -79,115 +84,128 @@ namespace BestHTTP.Connections.HTTP2
             "www-authenticate",
         };
 
-        public UInt32 DynamicTableSize { get; private set; }
-        public UInt32 MaxDynamicTableSize {
-            get { return this._maxDynamicTableSize; }
+        private readonly List<KeyValuePair<string, string>> _dynamicTable = new List<KeyValuePair<string, string>>();
+
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        private readonly Http2SettingsRegistry _settingsRegistry;
+
+        private uint _maxDynamicTableSize;
+
+        public HeaderTable(Http2SettingsRegistry registry)
+        {
+            this._settingsRegistry = registry;
+            this.MaxDynamicTableSize = this._settingsRegistry[Http2Settings.HeaderTableSize];
+        }
+
+        private uint DynamicTableSize { get; set; }
+
+        public uint MaxDynamicTableSize
+        {
+            get => this._maxDynamicTableSize;
             set
             {
                 this._maxDynamicTableSize = value;
                 EvictEntries(0);
             }
         }
-        private UInt32 _maxDynamicTableSize;
 
-        private List<KeyValuePair<string, string>> DynamicTable = new List<KeyValuePair<string, string>>();
-        private HTTP2SettingsRegistry settingsRegistry;
-
-        public HeaderTable(HTTP2SettingsRegistry registry)
+        public KeyValuePair<uint, uint> GetIndex(string key, string value)
         {
-            this.settingsRegistry = registry;
-            this.MaxDynamicTableSize = this.settingsRegistry[HTTP2Settings.HEADER_TABLE_SIZE];
-        }
-
-        public KeyValuePair<UInt32, UInt32> GetIndex(string key, string value)
-        {
-            for (int i = 0; i < DynamicTable.Count; ++i)
+            for (var i = 0; i < _dynamicTable.Count; ++i)
             {
-                var kvp = DynamicTable[i];
+                var kvp = _dynamicTable[i];
 
-                // Exact match for both key and value
-                if (kvp.Key.Equals(key, StringComparison.OrdinalIgnoreCase) && kvp.Value.Equals(value, StringComparison.OrdinalIgnoreCase))
-                    return new KeyValuePair<UInt32, UInt32>((UInt32)(StaticTable.Length + i), (UInt32)(StaticTable.Length + i));
+                // 键和值的精确匹配
+                if (kvp.Key.Equals(key, StringComparison.OrdinalIgnoreCase) &&
+                    kvp.Value.Equals(value, StringComparison.OrdinalIgnoreCase))
+                {
+                    return new KeyValuePair<uint, uint>((uint)(StaticTable.Length + i),
+                        (uint)(StaticTable.Length + i));
+                }
             }
 
-            KeyValuePair<UInt32, UInt32> bestMatch = new KeyValuePair<UInt32, UInt32>(0, 0);
-            for (int i = 0; i < StaticTable.Length; ++i)
+            var bestMatch = new KeyValuePair<uint, uint>(0, 0);
+            for (var i = 0; i < StaticTable.Length; ++i)
             {
-                if (StaticTable[i].Equals(key, StringComparison.OrdinalIgnoreCase))
+                if (!StaticTable[i].Equals(key, StringComparison.OrdinalIgnoreCase)) continue;
+                if (i < StaticTableValues.Length && !string.IsNullOrEmpty(StaticTableValues[i]) &&
+                    StaticTableValues[i].Equals(value, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (i < StaticTableValues.Length && !string.IsNullOrEmpty(StaticTableValues[i]) && StaticTableValues[i].Equals(value, StringComparison.OrdinalIgnoreCase))
-                        return new KeyValuePair<UInt32, UInt32>((UInt32)i, (UInt32)i);
-                    else
-                        bestMatch = new KeyValuePair<UInt32, UInt32>((UInt32)i, 0);
+                    return new KeyValuePair<uint, uint>((uint)i, (uint)i);
+                }
+                else
+                {
+                    bestMatch = new KeyValuePair<uint, uint>((uint)i, 0);
                 }
             }
 
             return bestMatch;
         }
 
-        public string GetKey(UInt32 index)
+        public string GetKey(uint index)
         {
-            if (index < StaticTable.Length)
-                return StaticTable[index];
-
-            return this.DynamicTable[(int)(index - StaticTable.Length)].Key;
+            return index < StaticTable.Length
+                ? StaticTable[index]
+                : this._dynamicTable[(int)(index - StaticTable.Length)].Key;
         }
 
         public KeyValuePair<string, string> GetHeader(UInt32 index)
         {
             if (index < StaticTable.Length)
+            {
                 return new KeyValuePair<string, string>(StaticTable[index],
-                                                        index < StaticTableValues.Length ? StaticTableValues[index] : null);
+                    index < StaticTableValues.Length ? StaticTableValues[index] : null);
+            }
 
-            return this.DynamicTable[(int)(index - StaticTable.Length)];
+            return this._dynamicTable[(int)(index - StaticTable.Length)];
         }
 
         public void Add(KeyValuePair<string, string> header)
         {
             // https://http2.github.io/http2-spec/compression.html#calculating.table.size
-            // The size of an entry is the sum of its name's length in octets (as defined in Section 5.2),
-            // its value's length in octets, and 32.
-            UInt32 newHeaderSize = CalculateEntrySize(header);
+            // 一个条目的大小是它的名称长度的和，以字节为单位(定义在Section5.2)。,
+            // 它的值的长度(以八字节为单位)和32.
+            var newHeaderSize = CalculateEntrySize(header);
 
             EvictEntries(newHeaderSize);
 
-            // If the size of the new entry is less than or equal to the maximum size, that entry is added to the table.
-            // It is not an error to attempt to add an entry that is larger than the maximum size;
-            //  an attempt to add an entry larger than the maximum size causes the table to be
-            //  emptied of all existing entries and results in an empty table.
-            if (this.DynamicTableSize + newHeaderSize <= this.MaxDynamicTableSize)
-            {
-                this.DynamicTable.Insert(0, header);
-                this.DynamicTableSize += (UInt32)newHeaderSize;
-            }
+            // 如果新条目的大小小于或等于最大大小，则将该条目添加到表中。
+            // 尝试添加大于最大大小的条目不会出错;
+            // 尝试添加大于最大大小的条目会导致清空表中的所有现有条目并导致空表。
+            if (this.DynamicTableSize + newHeaderSize > this.MaxDynamicTableSize) return;
+            this._dynamicTable.Insert(0, header);
+            this.DynamicTableSize += newHeaderSize;
         }
 
-        private UInt32 CalculateEntrySize(KeyValuePair<string, string> entry)
+        // ReSharper disable once MemberCanBeMadeStatic.Local
+        private uint CalculateEntrySize(KeyValuePair<string, string> entry)
         {
-            return 32 + (UInt32)System.Text.Encoding.UTF8.GetByteCount(entry.Key) +
-                        (UInt32)System.Text.Encoding.UTF8.GetByteCount(entry.Value);
+            return 32 + (uint)System.Text.Encoding.UTF8.GetByteCount(entry.Key) +
+                   (uint)System.Text.Encoding.UTF8.GetByteCount(entry.Value);
         }
 
         private void EvictEntries(uint newHeaderSize)
         {
             // https://http2.github.io/http2-spec/compression.html#entry.addition
-            // Before a new entry is added to the dynamic table, entries are evicted from the end of the dynamic
-            //  table until the size of the dynamic table is less than or equal to (maximum size - new entry size) or until the table is empty.
-            while (this.DynamicTableSize + newHeaderSize > this.MaxDynamicTableSize && this.DynamicTable.Count > 0)
+            // 在向动态表添加新条目之前，将从动态表的末尾删除条目，直到动态表的大小小于或等于(最大大小-新条目大小)或直到表为空
+            while (this.DynamicTableSize + newHeaderSize > this.MaxDynamicTableSize && this._dynamicTable.Count > 0)
             {
-                KeyValuePair<string, string> entry = this.DynamicTable[this.DynamicTable.Count - 1];
-                this.DynamicTable.RemoveAt(this.DynamicTable.Count - 1);
+                var entry = this._dynamicTable[this._dynamicTable.Count - 1];
+                this._dynamicTable.RemoveAt(this._dynamicTable.Count - 1);
                 this.DynamicTableSize -= CalculateEntrySize(entry);
             }
         }
 
         public override string ToString()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder("[HeaderTable ");
-            sb.AppendFormat("DynamicTable count: {0}, DynamicTableSize: {1}, MaxDynamicTableSize: {2}, ", this.DynamicTable.Count, this.DynamicTableSize, this.MaxDynamicTableSize);
+            var sb = new System.Text.StringBuilder("[HeaderTable ");
+            sb.AppendFormat("DynamicTable count: {0}, DynamicTableSize: {1}, MaxDynamicTableSize: {2}, ",
+                this._dynamicTable.Count, this.DynamicTableSize, this.MaxDynamicTableSize);
 
-            foreach(var kvp in this.DynamicTable)
+            foreach (var kvp in this._dynamicTable)
+            {
                 sb.AppendFormat("\"{0}\": \"{1}\", ", kvp.Key, kvp.Value);
+            }
 
             sb.Append("]");
             return sb.ToString();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace BestHTTP.Forms
@@ -8,21 +6,21 @@ namespace BestHTTP.Forms
     /// <summary>
     /// A HTTP Form implementation to send textual values.
     /// </summary>
-    public sealed class HTTPUrlEncodedForm : HTTPFormBase
+    public sealed class HttpUrlEncodedForm : HttpFormBase
     {
         private const int EscapeTreshold = 256;
 
-        private byte[] CachedData;
+        private byte[] _cachedData;
 
-        public override void PrepareRequest(HTTPRequest request)
+        public override void PrepareRequest(HttpRequest request)
         {
             request.SetHeader("Content-Type", "application/x-www-form-urlencoded");
         }
 
         public override byte[] GetData()
         {
-            if (CachedData != null && !IsChanged)
-                return CachedData;
+            if (_cachedData != null && !IsChanged)
+                return _cachedData;
 
             StringBuilder sb = new StringBuilder();
 
@@ -45,7 +43,7 @@ namespace BestHTTP.Forms
             }
 
             IsChanged = false;
-            return CachedData = Encoding.UTF8.GetBytes(sb.ToString());
+            return _cachedData = Encoding.UTF8.GetBytes(sb.ToString());
         }
 
         public static string EscapeString(string originalString)
@@ -58,12 +56,11 @@ namespace BestHTTP.Forms
                 StringBuilder sb = new StringBuilder(loops);
 
                 for (int i = 0; i <= loops; i++)
-                   sb.Append(i < loops ?
-                                Uri.EscapeDataString(originalString.Substring(EscapeTreshold * i, EscapeTreshold)) :
-                                Uri.EscapeDataString(originalString.Substring(EscapeTreshold * i)));
+                    sb.Append(i < loops
+                        ? Uri.EscapeDataString(originalString.Substring(EscapeTreshold * i, EscapeTreshold))
+                        : Uri.EscapeDataString(originalString.Substring(EscapeTreshold * i)));
                 return sb.ToString();
             }
         }
-
     }
 }

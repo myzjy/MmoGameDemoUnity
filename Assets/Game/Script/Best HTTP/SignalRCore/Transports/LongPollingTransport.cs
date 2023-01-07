@@ -59,7 +59,7 @@ namespace BestHTTP.SignalRCore.Transports
             // https://github.com/dotnet/aspnetcore/blob/master/src/SignalR/docs/specs/HubProtocol.md#overview
             // When our connection is open, send the 'negotiation' message to the server.
 
-            var request = new HTTPRequest(BuildUri(this.connection.Uri), HTTPMethods.Post, OnHandshakeRequestFinished);
+            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Post, OnHandshakeRequestFinished);
             request.Context.Add("Transport", this.Context);
 
             this.stream.Reset();
@@ -108,7 +108,7 @@ namespace BestHTTP.SignalRCore.Transports
             if (Interlocked.CompareExchange(ref this.sendingInProgress, 1, 0) == 1)
                 return;
 
-            var request = new HTTPRequest(BuildUri(this.connection.Uri), HTTPMethods.Post, OnSendMessagesFinished);
+            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Post, OnSendMessagesFinished);
             request.Context.Add("Transport", this.Context);
 
             this.stream.Reset();
@@ -134,7 +134,7 @@ namespace BestHTTP.SignalRCore.Transports
 
             HttpManager.Logger.Information("LongPollingTransport", "Sending Poll request", this.Context);
 
-            var request = new HTTPRequest(BuildUri(this.connection.Uri), OnPollRequestFinished);
+            var request = new HttpRequest(BuildUri(this.connection.Uri), OnPollRequestFinished);
             request.Context.Add("Transport", this.Context);
 
             request.AddHeader("Accept", " application/octet-stream");
@@ -153,7 +153,7 @@ namespace BestHTTP.SignalRCore.Transports
 
             HttpManager.Logger.Information("LongPollingTransport", "Sending DELETE request", this.Context);
 
-            var request = new HTTPRequest(BuildUri(this.connection.Uri), HTTPMethods.Delete,
+            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Delete,
                 OnConnectionCloseRequestFinished);
             request.Context.Add("Transport", this.Context);
 
@@ -169,12 +169,12 @@ namespace BestHTTP.SignalRCore.Transports
 
         #region Callbacks
 
-        private void OnHandshakeRequestFinished(HTTPRequest req, HttpResponse resp)
+        private void OnHandshakeRequestFinished(HttpRequest req, HttpResponse resp)
         {
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
                         // start listening for a handshake response
@@ -192,24 +192,24 @@ namespace BestHTTP.SignalRCore.Transports
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     this.ErrorReason = "Handshake Request Finished with Error! " + (req.Exception != null
                         ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
                         : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     this.ErrorReason = "Handshake Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     this.ErrorReason = "Handshake - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     this.ErrorReason = "Handshake - Processing the request Timed Out!";
                     break;
             }
@@ -221,7 +221,7 @@ namespace BestHTTP.SignalRCore.Transports
             req.UploadStream = null;
         }
 
-        private void OnSendMessagesFinished(HTTPRequest req, HttpResponse resp)
+        private void OnSendMessagesFinished(HttpRequest req, HttpResponse resp)
         {
             /*
              * The HTTP POST request is made to the URL [endpoint-base]. The mandatory id query string value is used to identify the connection to send to.
@@ -238,7 +238,7 @@ namespace BestHTTP.SignalRCore.Transports
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     switch (resp.StatusCode)
                     {
                         // Upon receipt of the entire payload, the server will process the payload and responds with 200 OK if the payload was successfully processed.
@@ -294,7 +294,7 @@ namespace BestHTTP.SignalRCore.Transports
             req.UploadStream = null;
         }
 
-        private void OnPollRequestFinished(HTTPRequest req, HttpResponse resp)
+        private void OnPollRequestFinished(HttpRequest req, HttpResponse resp)
         {
             /*
              * When data is available, the server responds with a body in one of the two formats below (depending upon the value of the Accept header).
@@ -309,7 +309,7 @@ namespace BestHTTP.SignalRCore.Transports
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     switch (resp.StatusCode)
                     {
                         case 200:
@@ -406,12 +406,12 @@ namespace BestHTTP.SignalRCore.Transports
                 this.State = TransportStates.Failed;
         }
 
-        private void OnConnectionCloseRequestFinished(HTTPRequest req, HttpResponse resp)
+        private void OnConnectionCloseRequestFinished(HttpRequest req, HttpResponse resp)
         {
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
                         return;
@@ -428,7 +428,7 @@ namespace BestHTTP.SignalRCore.Transports
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     HttpManager.Logger.Warning("LongPollingTransport",
                         "Connection Close Request Finished with Error! " + (req.Exception != null
                             ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
@@ -436,19 +436,19 @@ namespace BestHTTP.SignalRCore.Transports
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     HttpManager.Logger.Warning("LongPollingTransport", "Connection Close Request Aborted!",
                         this.Context);
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     HttpManager.Logger.Warning("LongPollingTransport", "Connection Close - Connection Timed Out!",
                         this.Context);
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     HttpManager.Logger.Warning("LongPollingTransport",
                         "Connection Close - Processing the request Timed Out!", this.Context);
                     break;

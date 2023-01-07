@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BestHTTP.Forms
 {
     /// <summary>
     /// Base class of a concrete implementation. Don't use it to create a form, use instead one of the already wrote implementation(HTTPMultiPartForm, HTTPUrlEncodedForm), or create a new one by inheriting from this base class.
     /// </summary>
-    public class HTTPFormBase
+    public class HttpFormBase
     {
         const int LongLength = 256;
 
@@ -17,12 +15,15 @@ namespace BestHTTP.Forms
         /// <summary>
         /// A list that holds the form's fields.
         /// </summary>
-        public List<HTTPFieldData> Fields { get; set; }
+        public List<HttpFieldData> Fields { get; set; }
 
         /// <summary>
         /// Returns true if the Fields has no element.
         /// </summary>
-        public bool IsEmpty { get { return Fields == null || Fields.Count == 0; } }
+        public bool IsEmpty
+        {
+            get { return Fields == null || Fields.Count == 0; }
+        }
 
         /// <summary>
         /// True if new fields has been added to our list.
@@ -56,9 +57,9 @@ namespace BestHTTP.Forms
         public void AddBinaryData(string fieldName, byte[] content, string fileName, string mimeType)
         {
             if (Fields == null)
-                Fields = new List<HTTPFieldData>();
+                Fields = new List<HttpFieldData>();
 
-            HTTPFieldData field = new HTTPFieldData();
+            HttpFieldData field = new HttpFieldData();
             field.Name = fieldName;
 
             if (fileName == null)
@@ -86,9 +87,9 @@ namespace BestHTTP.Forms
         public void AddField(string fieldName, string value, System.Text.Encoding e)
         {
             if (Fields == null)
-                Fields = new List<HTTPFieldData>();
+                Fields = new List<HttpFieldData>();
 
-            HTTPFieldData field = new HTTPFieldData();
+            HttpFieldData field = new HttpFieldData();
             field.Name = fieldName;
             field.FileName = null;
             if (e != null)
@@ -111,9 +112,9 @@ namespace BestHTTP.Forms
         /// It should 'clone' all the data from the given HTTPFormBase object.
         /// Called after the form-implementation created.
         /// </summary>
-        public virtual void CopyFrom(HTTPFormBase fields)
+        public virtual void CopyFrom(HttpFormBase fields)
         {
-            this.Fields = new List<HTTPFieldData>(fields.Fields);
+            this.Fields = new List<HttpFieldData>(fields.Fields);
             this.IsChanged = true;
 
             this.HasBinary = fields.HasBinary;
@@ -123,7 +124,7 @@ namespace BestHTTP.Forms
         /// <summary>
         /// Prepares the request to sending a form. It should set only the headers.
         /// </summary>
-        public virtual void PrepareRequest(HTTPRequest request)
+        public virtual void PrepareRequest(HttpRequest request)
         {
             throw new NotImplementedException();
         }

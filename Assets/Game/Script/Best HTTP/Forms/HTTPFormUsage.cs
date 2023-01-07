@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BestHTTP.Forms
+﻿namespace BestHTTP.Forms
 {
-    public enum HTTPFormUsage
+    public enum HttpFormUsage
     {
         /// <summary>
         /// The plugin will try to choose the best form sending method.

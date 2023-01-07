@@ -1,7 +1,3 @@
-using System.Text;
-using BestHTTP;
-using Newtonsoft.Json;
-
 namespace ZJYFrameWork.Net
 {
     /// <summary>
@@ -11,13 +7,12 @@ namespace ZJYFrameWork.Net
     {
         public ApiLoginServerData()
         {
-            this.Method = HTTPMethods.Post;
+            this.Method = BestHTTP.HttpMethods.Post;
             this.Path = "/api/login";
             this.Param = new ApiLoginServerDataRequest();
             this.authorize = true;
             this.ignoreError = false;
             this.ignoreVerify = false;
-            
         }
     }
 }

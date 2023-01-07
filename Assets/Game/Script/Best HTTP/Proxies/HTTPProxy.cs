@@ -34,10 +34,10 @@ namespace BestHTTP
         /// </summary>
         public List<string> Exceptions { get; set; }
 
-        internal abstract void Connect(Stream stream, HTTPRequest request);
+        internal abstract void Connect(Stream stream, HttpRequest request);
 
         internal abstract string GetRequestPath(Uri uri);
-        internal abstract bool SetupRequest(HTTPRequest request);
+        internal abstract bool SetupRequest(HttpRequest request);
 
         internal bool UseProxyForAddress(Uri address)
         {
@@ -103,7 +103,7 @@ namespace BestHTTP
             return this.SendWholeUri ? uri.OriginalString : uri.GetRequestPathAndQueryURL();
         }
 
-        internal override bool SetupRequest(HTTPRequest request)
+        internal override bool SetupRequest(HttpRequest request)
         {
             if (request == null || request.Response == null || !this.IsTransparent)
                 return false;
@@ -149,13 +149,13 @@ namespace BestHTTP
             return false;
         }
 
-        internal override void Connect(Stream stream, HTTPRequest request)
+        internal override void Connect(Stream stream, HttpRequest request)
         {
             bool isSecure = HttpProtocolFactory.IsSecureProtocol(request.CurrentUri);
 
             if (!this.IsTransparent || (isSecure && this.NonTransparentForHTTPS))
             {
-                using (var bufferedStream = new WriteOnlyBufferedStream(stream, HTTPRequest.UploadChunkSize))
+                using (var bufferedStream = new WriteOnlyBufferedStream(stream, HttpRequest.UploadChunkSize))
                 using (var outStream = new BinaryWriter(bufferedStream, Encoding.UTF8))
                 {
                     bool retry;
@@ -170,17 +170,17 @@ namespace BestHTTP
                         HttpManager.Logger.Information("HTTPProxy", "Sending " + connectStr, request.Context);
 
                         outStream.SendAsASCII(connectStr);
-                        outStream.Write(HTTPRequest.EOL);
+                        outStream.Write(HttpRequest.Eol);
 
                         outStream.SendAsASCII("Proxy-Connection: Keep-Alive");
-                        outStream.Write(HTTPRequest.EOL);
+                        outStream.Write(HttpRequest.Eol);
 
                         outStream.SendAsASCII("Connection: Keep-Alive");
-                        outStream.Write(HTTPRequest.EOL);
+                        outStream.Write(HttpRequest.Eol);
 
                         outStream.SendAsASCII(string.Format("Host: {0}:{1}", request.CurrentUri.Host,
                             request.CurrentUri.Port.ToString()));
-                        outStream.Write(HTTPRequest.EOL);
+                        outStream.Write(HttpRequest.Eol);
 
                         // Proxy Authentication
                         if (this.Credentials != null)
@@ -193,7 +193,7 @@ namespace BestHTTP
                                         string.Concat("Basic ",
                                             Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Credentials.UserName +
                                                 ":" + this.Credentials.Password)))).GetASCIIBytes());
-                                    outStream.Write(HTTPRequest.EOL);
+                                    outStream.Write(HttpRequest.Eol);
                                     break;
 
                                 case AuthenticationTypes.Unknown:
@@ -212,7 +212,7 @@ namespace BestHTTP
 
                                             var bytes = auth.GetASCIIBytes();
                                             outStream.Write(bytes);
-                                            outStream.Write(HTTPRequest.EOL);
+                                            outStream.Write(HttpRequest.Eol);
                                             BufferPool.Release(bytes);
                                         }
                                     }
@@ -221,7 +221,7 @@ namespace BestHTTP
                             }
                         }
 
-                        outStream.Write(HTTPRequest.EOL);
+                        outStream.Write(HttpRequest.Eol);
 
                         // Make sure to send all the wrote data to the wire
                         outStream.Flush();

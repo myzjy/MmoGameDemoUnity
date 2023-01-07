@@ -3,124 +3,135 @@
 using System;
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
     // https://httpwg.org/specs/rfc7540.html#iana-settings
-    public enum HTTP2Settings : ushort
+    public enum Http2Settings : ushort
     {
         /// <summary>
-        /// Allows the sender to inform the remote endpoint of the maximum size of the
-        /// header compression table used to decode header blocks, in octets.
-        /// The encoder can select any size equal to or less than this value
-        /// by using signaling specific to the header compression format inside a header block (see [COMPRESSION]).
-        /// The initial value is 4,096 octets.
+        /// <code>
+        /// 允许发送端通知远程端点用于解码报头块的报头压缩表的最大大小(以字节为单位)。
+        /// 编码器可以通过在报头块中使用特定于报头压缩格式的信号来选择等于或小于此值的任何大小(参见[compression])。
+        /// 初始值是4096个字节.
+        ///  </code>
         /// </summary>
-        HEADER_TABLE_SIZE = 0x01,
+        HeaderTableSize = 0x01,
 
         /// <summary>
-        /// This setting can be used to disable server push (Section 8.2).
-        /// An endpoint MUST NOT send a PUSH_PROMISE frame if it receives this parameter set to a value of 0.
-        /// An endpoint that has both set this parameter to 0 and had it acknowledged MUST treat the receipt of a
-        /// PUSH_PROMISE frame as a connection error (Section 5.4.1) of type PROTOCOL_ERROR.
+        /// <code>
+        /// 此设置可用于禁用服务器推送(Section 8.2)。
+        /// 如果端点接收到PUSH_PROMISE参数设置为0，则绝对不能发送PUSH_PROMISE帧。
+        /// 终端必须将接收到的PUSH_PROMISE帧作为类型为协议错误的连接错误(Section5.4.1)处理。
         /// 
-        /// The initial value is 1, which indicates that server push is permitted.
-        /// Any value other than 0 or 1 MUST be treated as a connection error (Section 5.4.1) of type PROTOCOL_ERROR.
+        /// 初始值为1，表示允许服务器推送。
+        /// 除0和1以外的任何值必须作为类型为协议错误的连接错误(章节5.4.1)处理。
+        ///  </code>
         /// </summary>
-        ENABLE_PUSH = 0x02,
+        EnablePush = 0x02,
 
         /// <summary>
-        /// Indicates the maximum number of concurrent streams that the sender will allow. This limit is directional:
-        /// it applies to the number of streams that the sender permits the receiver to create.
-        /// Initially, there is no limit to this value. It is recommended that this value be no smaller than 100,
-        /// so as to not unnecessarily limit parallelism.
+        /// <code>
+        /// 指示发送方允许的并发流的最大数量。这个极限是定向的:
+        /// 它适用于发送方允许接收方创建的流的数量。
+        /// 最初，这个值没有限制。建议该值不小于100。
+        /// 这样就不会不必要地限制并行性。
         /// 
-        /// A value of 0 for SETTINGS_MAX_CONCURRENT_STREAMS SHOULD NOT be treated as special by endpoints.
-        /// A zero value does prevent the creation of new streams;
-        /// however, this can also happen for any limit that is exhausted with active streams.
-        /// Servers SHOULD only set a zero value for short durations; if a server does not wish to accept requests,
-        /// closing the connection is more appropriate.
+        /// SETTINGS_MAX_CONCURRENT_STREAMS的0值不应该被端点视为特殊值。
+        /// 零值确实会阻止新流的创建;
+        /// 然而，对于活动流耗尽的任何限制也可能发生这种情况。
+        /// 服务器应该只在短时间内设置零值;如果服务器不希望接受请求，
+        /// 关闭连接更合适。
+        ///  </code>
         /// </summary>
-        MAX_CONCURRENT_STREAMS = 0x03,
+        MaxConcurrentStreams = 0x03,
 
         /// <summary>
-        /// Indicates the sender's initial window size (in octets) for stream-level flow control.
-        /// The initial value is 2^16-1 (65,535) octets.
+        /// <code>
+        /// 指示发送端用于流级流控制的初始窗口大小(以字节为单位)。
+        /// 初始值是2^16-1(65,535)个字节。
         ///
-        /// This setting affects the window size of all streams (see Section 6.9.2).
+        /// 这个设置会影响所有流的窗口大小(参见 Section 6.9.2)。
         ///
-        /// Values above the maximum flow-control window size of 2^31-1 MUST be treated as a connection error
-        /// (Section 5.4.1) of type FLOW_CONTROL_ERROR.
+        /// 超过最大流量控制窗口大小2^31-1的值必须作为类型为FLOW_CONTROL_ERROR的连接错误(章节5.4.1)处理。
+        ///  </code>
         /// </summary>
-        INITIAL_WINDOW_SIZE = 0x04,
+        InitialWindowSize = 0x04,
 
         /// <summary>
-        /// Indicates the size of the largest frame payload that the sender is willing to receive, in octets.
+        /// <code>
+        /// 指示发送方愿意接收的最大帧有效负载的大小，以八字节为单位。
         ///
-        /// The initial value is 2^14 (16,384) octets.
-        /// The value advertised by an endpoint MUST be between this initial value and the maximum allowed frame size
-        /// (2^24-1 or 16,777,215 octets), inclusive.
-        /// Values outside this range MUST be treated as a connection error (Section 5.4.1) of type PROTOCOL_ERROR.
+        /// 初始值是2^14(16,384)个字节。
+        /// 端点发布的值必须在这个初始值和允许的最大帧大小(2^24-1或16,777,215字节)之间，
+        /// 包括超出这个范围的值必须作为类型为协议错误的连接错误(章节5.4.1)处理。
+        ///  </code>
         /// </summary>
-        MAX_FRAME_SIZE = 0x05,
+        MaxFrameSize = 0x05,
 
         /// <summary>
-        /// This advisory setting informs a peer of the maximum size of header list that the sender is prepared to accept, in octets.
-        /// The value is based on the uncompressed size of header fields,
-        /// including the length of the name and value in octets plus an overhead of 32 octets for each header field.
+        /// <code>
+        /// 此通知设置以字节为单位通知对等体发送方准备接受的报头列表的最大大小。
+        /// 该值基于头字段的未压缩大小，
+        /// 包括以字节为单位的名称和值的长度，加上每个报头字段32个字节的开销。
         ///
-        /// For any given request, a lower limit than what is advertised MAY be enforced. The initial value of this setting is unlimited.
+        /// 对于任何给定的请求，可能会强制执行比所宣传的更低的限制。此设置的初始值是无限的。
+        /// </code>
         /// </summary>
-        MAX_HEADER_LIST_SIZE = 0x06,
+        MaxHeaderListSize = 0x06,
 
-        RESERVED = 0x07,
+        Reserved = 0x07,
 
         /// <summary>
+        /// <code>
         /// https://tools.ietf.org/html/rfc8441
-        ///  Upon receipt of SETTINGS_ENABLE_CONNECT_PROTOCOL with a value of 1, a client MAY use the Extended CONNECT as defined in this document when creating new streams.
-        ///  Receipt of this parameter by a server does not have any impact.
+        ///  当接收到值为1的SETTINGS_ENABLE_CONNECT_PROTOCOL时，客户端可以在创建新流时使用本文档中定义的扩展连接。
+        ///  服务器接收此参数不会产生任何影响。
         ///  
-        ///  A sender MUST NOT send a SETTINGS_ENABLE_CONNECT_PROTOCOL parameter with the value of 0 after previously sending a value of 1.
+        ///  发送方绝对不能在之前发送值为1后，再发送值为0的SETTINGS_ENABLE_CONNECT_PROTOCOL参数。
+        /// </code>
         /// </summary>
-        ENABLE_CONNECT_PROTOCOL = 0x08
+        EnableConnectProtocol = 0x08
     }
 
-    public sealed class HTTP2SettingsRegistry
+    public sealed class Http2SettingsRegistry
     {
-        private HTTP2SettingsManager _parent;
-        private bool[] changeFlags;
-        public Action<HTTP2SettingsRegistry, HTTP2Settings, UInt32, UInt32> OnSettingChangedEvent;
+        private readonly bool[] _changeFlags;
+        private readonly Http2SettingsManager _parent;
 
-        private UInt32[] values;
+        private UInt32[] _values;
+        public Action<Http2SettingsRegistry, Http2Settings, UInt32, UInt32> OnSettingChangedEvent;
 
-        public HTTP2SettingsRegistry(HTTP2SettingsManager parent, bool readOnly, bool treatItAsAlreadyChanged)
+        public Http2SettingsRegistry(Http2SettingsManager parent, bool readOnly, bool treatItAsAlreadyChanged)
         {
             this._parent = parent;
 
-            this.values = new UInt32[HTTP2SettingsManager.SettingsCount];
+            this._values = new UInt32[Http2SettingsManager.SettingsCount];
 
             this.IsReadOnly = readOnly;
             if (!this.IsReadOnly)
-                this.changeFlags = new bool[HTTP2SettingsManager.SettingsCount];
+                this._changeFlags = new bool[Http2SettingsManager.SettingsCount];
 
             // Set default values (https://httpwg.org/specs/rfc7540.html#iana-settings)
-            this.values[(UInt16)HTTP2Settings.HEADER_TABLE_SIZE] = 4096;
-            this.values[(UInt16)HTTP2Settings.ENABLE_PUSH] = 1;
-            this.values[(UInt16)HTTP2Settings.MAX_CONCURRENT_STREAMS] = 128;
-            this.values[(UInt16)HTTP2Settings.INITIAL_WINDOW_SIZE] = 65535;
-            this.values[(UInt16)HTTP2Settings.MAX_FRAME_SIZE] = 16384;
-            this.values[(UInt16)HTTP2Settings.MAX_HEADER_LIST_SIZE] = UInt32.MaxValue; // infinite
+            this._values[(UInt16)Http2Settings.HeaderTableSize] = 4096;
+            this._values[(UInt16)Http2Settings.EnablePush] = 1;
+            this._values[(UInt16)Http2Settings.MaxConcurrentStreams] = 128;
+            this._values[(UInt16)Http2Settings.InitialWindowSize] = 65535;
+            this._values[(UInt16)Http2Settings.MaxFrameSize] = 16384;
+            this._values[(UInt16)Http2Settings.MaxHeaderListSize] = UInt32.MaxValue; // infinite
 
-            if (this.IsChanged = treatItAsAlreadyChanged)
+            if (this.IsChanged == treatItAsAlreadyChanged)
             {
-                this.changeFlags[(UInt16)HTTP2Settings.MAX_CONCURRENT_STREAMS] = true;
+                var changeFlags = this._changeFlags;
+                if (changeFlags != null) changeFlags[(UInt16)Http2Settings.MaxConcurrentStreams] = true;
             }
         }
 
-        public bool IsReadOnly { get; private set; }
+        private bool IsReadOnly { get; set; }
 
-        public UInt32 this[HTTP2Settings setting]
+        public UInt32 this[Http2Settings setting]
         {
-            get { return this.values[(ushort)setting]; }
+            get => this._values[(ushort)setting];
 
             set
             {
@@ -131,14 +142,14 @@ namespace BestHTTP.Connections.HTTP2
 
                 // https://httpwg.org/specs/rfc7540.html#SettingValues
                 // An endpoint that receives a SETTINGS frame with any unknown or unsupported identifier MUST ignore that setting.
-                if (idx == 0 || idx >= this.values.Length)
+                if (idx == 0 || idx >= this._values.Length)
                     return;
 
-                UInt32 oldValue = this.values[idx];
+                UInt32 oldValue = this._values[idx];
                 if (oldValue != value)
                 {
-                    this.values[idx] = value;
-                    this.changeFlags[idx] = true;
+                    this._values[idx] = value;
+                    this._changeFlags[idx] = true;
                     IsChanged = true;
 
                     if (this.OnSettingChangedEvent != null)
@@ -149,105 +160,112 @@ namespace BestHTTP.Connections.HTTP2
 
         public bool IsChanged { get; private set; }
 
-        public void Merge(List<KeyValuePair<HTTP2Settings, UInt32>> settings)
+        public void Merge(List<KeyValuePair<Http2Settings, UInt32>> settings)
         {
             if (settings == null)
                 return;
 
-            for (int i = 0; i < settings.Count; ++i)
+            foreach (var t in settings)
             {
-                HTTP2Settings setting = settings[i].Key;
+                Http2Settings setting = t.Key;
                 UInt16 key = (UInt16)setting;
-                UInt32 value = settings[i].Value;
+                UInt32 value = t.Value;
 
-                if (key > 0 && key <= HTTP2SettingsManager.SettingsCount)
+                if (key > 0 && key <= Http2SettingsManager.SettingsCount)
                 {
-                    UInt32 oldValue = this.values[key];
-                    this.values[key] = value;
+                    UInt32 oldValue = this._values[key];
+                    this._values[key] = value;
 
                     if (oldValue != value && this.OnSettingChangedEvent != null)
                         this.OnSettingChangedEvent(this, setting, oldValue, value);
 
                     if (HttpManager.Logger.Level <= Logger.Loglevels.All)
                         HttpManager.Logger.Information("HTTP2SettingsRegistry",
-                            string.Format("Merge {0}({1}) = {2}", setting, key, value), this._parent.Parent.Context);
+                            $"Merge {setting}({key}) = {value}", this._parent.Parent.Context);
                 }
             }
         }
 
-        public void Merge(HTTP2SettingsRegistry from)
+        public void Merge(Http2SettingsRegistry from)
         {
-            if (this.values != null)
-                this.values = new uint[from.values.Length];
+            if (this._values != null)
+                this._values = new uint[from._values.Length];
 
-            for (int i = 0; i < this.values.Length; ++i)
-                this.values[i] = from.values[i];
+            var values = this._values;
+            if (values != null)
+            {
+                for (int i = 0; i < values.Length; ++i)
+                {
+                    values[i] = from._values[i];
+                }
+            }
         }
 
-        internal HTTP2FrameHeaderAndPayload CreateFrame()
+        internal Http2FrameHeaderAndPayload CreateFrame()
         {
-            List<KeyValuePair<HTTP2Settings, UInt32>> keyValuePairs =
-                new List<KeyValuePair<HTTP2Settings, uint>>(HTTP2SettingsManager.SettingsCount);
+            List<KeyValuePair<Http2Settings, UInt32>> keyValuePairs =
+                new List<KeyValuePair<Http2Settings, uint>>(Http2SettingsManager.SettingsCount);
 
-            for (int i = 1; i < HTTP2SettingsManager.SettingsCount; ++i)
-                if (this.changeFlags[i])
-                {
-                    keyValuePairs.Add(new KeyValuePair<HTTP2Settings, uint>((HTTP2Settings)i, this[(HTTP2Settings)i]));
-                    this.changeFlags[i] = false;
-                }
+            for (int i = 1; i < Http2SettingsManager.SettingsCount; ++i)
+            {
+                if (!this._changeFlags[i]) continue;
+                keyValuePairs.Add(new KeyValuePair<Http2Settings, uint>((Http2Settings)i, this[(Http2Settings)i]));
+                this._changeFlags[i] = false;
+            }
 
             this.IsChanged = false;
 
-            return HTTP2FrameHelper.CreateSettingsFrame(keyValuePairs);
+            return Http2FrameHelper.CreateSettingsFrame(keyValuePairs);
         }
     }
 
-    public sealed class HTTP2SettingsManager
+    public sealed class Http2SettingsManager
     {
-        public static readonly int SettingsCount = Enum.GetNames(typeof(HTTP2Settings)).Length + 1;
+        public static readonly int SettingsCount = Enum.GetNames(typeof(Http2Settings)).Length + 1;
 
-        public HTTP2SettingsManager(HTTP2Handler parentHandler)
+        public Http2SettingsManager(Http2Handler parentHandler)
         {
             this.Parent = parentHandler;
 
-            this.MySettings = new HTTP2SettingsRegistry(this, readOnly: true, treatItAsAlreadyChanged: false);
-            this.InitiatedMySettings = new HTTP2SettingsRegistry(this, readOnly: false, treatItAsAlreadyChanged: true);
-            this.RemoteSettings = new HTTP2SettingsRegistry(this, readOnly: true, treatItAsAlreadyChanged: false);
+            this.MySettings = new Http2SettingsRegistry(this, readOnly: true, treatItAsAlreadyChanged: false);
+            this.InitiatedMySettings = new Http2SettingsRegistry(this, readOnly: false, treatItAsAlreadyChanged: true);
+            this.RemoteSettings = new Http2SettingsRegistry(this, readOnly: true, treatItAsAlreadyChanged: false);
             this.SettingsChangesSentAt = DateTime.MinValue;
         }
 
         /// <summary>
-        /// This is the ACKd or default settings that we sent to the server.
+        /// 这是我们发送给服务器的ACKd或默认设置。
         /// </summary>
-        public HTTP2SettingsRegistry MySettings { get; private set; }
+        public Http2SettingsRegistry MySettings { get; private set; }
 
         /// <summary>
-        /// This is the setting that can be changed. It will be sent to the server ASAP, and when ACKd, it will be copied
-        /// to MySettings.
+        /// 这是可以更改的设置。会尽快发送到服务器，ACKd时复制到MySettings。
         /// </summary>
-        public HTTP2SettingsRegistry InitiatedMySettings { get; private set; }
+        public Http2SettingsRegistry InitiatedMySettings { get; private set; }
 
         /// <summary>
-        /// Settings of the remote peer
+        /// 远端对等体设置
         /// </summary>
-        public HTTP2SettingsRegistry RemoteSettings { get; private set; }
+        public Http2SettingsRegistry RemoteSettings { get; private set; }
 
-        public DateTime SettingsChangesSentAt { get; private set; }
+        private DateTime SettingsChangesSentAt { get; set; }
 
-        public HTTP2Handler Parent { get; private set; }
+        public Http2Handler Parent { get; private set; }
 
-        internal void Process(HTTP2FrameHeaderAndPayload frame, List<HTTP2FrameHeaderAndPayload> outgoingFrames)
+        internal void Process(Http2FrameHeaderAndPayload frame, List<Http2FrameHeaderAndPayload> outgoingFrames)
         {
-            if (frame.Type != HTTP2FrameTypes.SETTINGS)
+            if (frame.Type != Http2FrameTypes.Settings)
                 return;
 
-            HTTP2SettingsFrame settingsFrame = HTTP2FrameHelper.ReadSettings(frame);
+            var settingsFrame = Http2FrameHelper.ReadSettings(frame);
 
             if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+            {
                 HttpManager.Logger.Information("HTTP2SettingsManager",
                     "Processing Settings frame: " + settingsFrame.ToString(), this.Parent.Context);
+            }
 
-            if ((settingsFrame.Flags & HTTP2SettingsFlags.ACK) == HTTP2SettingsFlags.ACK)
+            if ((settingsFrame.Flags & Http2SettingsFlags.Ack) == Http2SettingsFlags.Ack)
             {
                 this.MySettings.Merge(this.InitiatedMySettings);
                 this.SettingsChangesSentAt = DateTime.MinValue;
@@ -255,11 +273,11 @@ namespace BestHTTP.Connections.HTTP2
             else
             {
                 this.RemoteSettings.Merge(settingsFrame.Settings);
-                outgoingFrames.Add(HTTP2FrameHelper.CreateACKSettingsFrame());
+                outgoingFrames.Add(Http2FrameHelper.CreateAckSettingsFrame());
             }
         }
 
-        internal void SendChanges(List<HTTP2FrameHeaderAndPayload> outgoingFrames)
+        internal void SendChanges(List<Http2FrameHeaderAndPayload> outgoingFrames)
         {
             if (this.SettingsChangesSentAt != DateTime.MinValue &&
                 DateTime.UtcNow - this.SettingsChangesSentAt >= TimeSpan.FromSeconds(10))
@@ -269,7 +287,7 @@ namespace BestHTTP.Connections.HTTP2
                 this.SettingsChangesSentAt = DateTime.MinValue;
             }
 
-            //  Upon receiving a SETTINGS frame with the ACK flag set, the sender of the altered parameters can rely on the setting having been applied.
+            //  当接收到设置了ACK标志的设置帧时，更改参数的发送方可以依赖已应用的设置。
             if (!this.InitiatedMySettings.IsChanged)
                 return;
 

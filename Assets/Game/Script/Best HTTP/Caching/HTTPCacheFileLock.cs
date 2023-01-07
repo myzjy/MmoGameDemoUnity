@@ -1,8 +1,9 @@
 ﻿#if !BESTHTTP_DISABLE_CACHING
 
+// ReSharper disable once RedundantUsingDirective
 using System;
-using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Caching
 {
     //static class HTTPCacheFileLock

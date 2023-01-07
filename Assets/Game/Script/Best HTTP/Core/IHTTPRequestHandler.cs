@@ -17,7 +17,7 @@ namespace BestHTTP.Core
 
         LoggingContext Context { get; }
 
-        void Process(HTTPRequest request);
+        void Process(HttpRequest request);
 
         void RunHandler();
 

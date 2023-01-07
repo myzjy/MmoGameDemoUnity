@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
@@ -33,17 +32,17 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
         private const byte CONSTANT_128 = (byte)0x87;
         private const byte CONSTANT_64 = (byte)0x1b;
 
-        private byte[] ZEROES;
-
-        private byte[] mac;
-
         private byte[] buf;
         private int bufOff;
         private IBlockCipher cipher;
 
+        private byte[] L, Lu, Lu2;
+
+        private byte[] mac;
+
         private int macSize;
 
-        private byte[] L, Lu, Lu2;
+        private byte[] ZEROES;
 
         /**
         * create a standard MAC based on a CBC block cipher (64 or 128 bit block).
@@ -71,8 +70,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
         * @param macSizeInBits the size of the MAC in bits, must be a multiple of 8 and @lt;= 128.
         */
         public CMac(
-            IBlockCipher	cipher,
-            int				macSizeInBits)
+            IBlockCipher cipher,
+            int macSizeInBits)
         {
             if ((macSizeInBits % 8) != 0)
                 throw new ArgumentException("MAC size must be multiple of 8");
@@ -81,7 +80,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
             {
                 throw new ArgumentException(
                     "MAC size must be less or equal to "
-                        + (cipher.GetBlockSize() * 8));
+                    + (cipher.GetBlockSize() * 8));
             }
 
             if (cipher.GetBlockSize() != 8 && cipher.GetBlockSize() != 16)
@@ -105,33 +104,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
         public string AlgorithmName
         {
             get { return cipher.AlgorithmName; }
-        }
-
-        private static int ShiftLeft(byte[] block, byte[] output)
-        {
-            int i = block.Length;
-            uint bit = 0;
-            while (--i >= 0)
-            {
-                uint b = block[i];
-                output[i] = (byte)((b << 1) | bit);
-                bit = (b >> 7) & 1;
-            }
-            return (int)bit;
-        }
-
-        private static byte[] DoubleLu(byte[] input)
-        {
-            byte[] ret = new byte[input.Length];
-            int carry = ShiftLeft(input, ret);
-            int xor = input.Length == 16 ? CONSTANT_128 : CONSTANT_64;
-
-            /*
-             * NOTE: This construction is an attempt at a constant-time implementation.
-             */
-            ret[input.Length - 1] ^= (byte)(xor >> ((1 - carry) << 3));
-
-            return ret;
         }
 
         public void Init(
@@ -174,9 +146,9 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
         }
 
         public void BlockUpdate(
-            byte[]	inBytes,
-            int		inOff,
-            int		len)
+            byte[] inBytes,
+            int inOff,
+            int len)
         {
             if (len < 0)
                 throw new ArgumentException("Can't have a negative input length!");
@@ -209,8 +181,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
         }
 
         public int DoFinal(
-            byte[]	outBytes,
-            int		outOff)
+            byte[] outBytes,
+            int outOff)
         {
             int blockSize = cipher.GetBlockSize();
 
@@ -221,7 +193,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
             }
             else
             {
-                new ISO7816d4Padding().AddPadding(buf, bufOff);
+                new Iso7816d4Padding().AddPadding(buf, bufOff);
                 lu = Lu2;
             }
 
@@ -254,6 +226,34 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs
             * Reset the underlying cipher.
             */
             cipher.Reset();
+        }
+
+        private static int ShiftLeft(byte[] block, byte[] output)
+        {
+            int i = block.Length;
+            uint bit = 0;
+            while (--i >= 0)
+            {
+                uint b = block[i];
+                output[i] = (byte)((b << 1) | bit);
+                bit = (b >> 7) & 1;
+            }
+
+            return (int)bit;
+        }
+
+        private static byte[] DoubleLu(byte[] input)
+        {
+            byte[] ret = new byte[input.Length];
+            int carry = ShiftLeft(input, ret);
+            int xor = input.Length == 16 ? CONSTANT_128 : CONSTANT_64;
+
+            /*
+             * NOTE: This construction is an attempt at a constant-time implementation.
+             */
+            ret[input.Length - 1] ^= (byte)(xor >> ((1 - carry) << 3));
+
+            return ret;
         }
     }
 }

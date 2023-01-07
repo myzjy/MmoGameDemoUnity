@@ -144,8 +144,8 @@ namespace BestHTTP.Cookies
                 return false;
 
             foreach (var cookie in setCookieHeaders
-                         .Select(cookieHeader => Cookie.Parse(cookieHeader, response.baseRequest.CurrentUri,
-                             response.baseRequest.Context)).Where(cookie => cookie != null))
+                         .Select(cookieHeader => Cookie.Parse(cookieHeader, response.BaseRequest.CurrentUri,
+                             response.BaseRequest.Context)).Where(cookie => cookie != null))
             {
                 RwLock.EnterWriteLock();
                 try

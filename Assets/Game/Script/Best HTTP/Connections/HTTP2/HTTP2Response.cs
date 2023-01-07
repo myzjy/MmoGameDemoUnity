@@ -7,15 +7,16 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
-    public sealed class HTTP2Response : HttpResponse
+    public sealed class Http2Response : HttpResponse
     {
-        private Decompression.GZipDecompressor decompressor;
+        private Decompression.GZipDecompressor _decompressor;
 
-        bool isPrepared;
+        private bool _isPrepared;
 
-        public HTTP2Response(HTTPRequest request, bool isFromCache)
+        public Http2Response(HttpRequest request, bool isFromCache)
             : base(request, isFromCache)
         {
             this.VersionMajor = 2;
@@ -24,23 +25,21 @@ namespace BestHTTP.Connections.HTTP2
 
         // For progress report
         public long ExpectedContentLength { get; private set; }
-        public bool IsCompressed { get; private set; }
+        private bool IsCompressed { get; set; }
 
         internal void AddHeaders(List<KeyValuePair<string, string>> headers)
         {
             this.ExpectedContentLength = -1;
-            Dictionary<string, List<string>> newHeaders = this.baseRequest.OnHeadersReceived != null
+            Dictionary<string, List<string>> newHeaders = this.BaseRequest.OnHeadersReceived != null
                 ? new Dictionary<string, List<string>>()
                 : null;
 
-            for (int i = 0; i < headers.Count; ++i)
+            foreach (var header in headers)
             {
-                KeyValuePair<string, string> header = headers[i];
-
                 if (header.Key.Equals(":status", StringComparison.Ordinal))
                 {
-                    base.StatusCode = int.Parse(header.Value);
-                    base.Message = string.Empty;
+                    StatusCode = int.Parse(header.Value);
+                    Message = string.Empty;
                 }
                 else
                 {
@@ -48,89 +47,93 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         this.IsCompressed = true;
                     }
-                    else if (base.baseRequest.OnDownloadProgress != null &&
+                    else if (BaseRequest.OnDownloadProgress != null &&
                              header.Key.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                     {
-                        long contentLength;
-                        if (long.TryParse(header.Value, out contentLength))
+                        if (long.TryParse(header.Value, out var contentLength))
                             this.ExpectedContentLength = contentLength;
                         else
+                        {
                             HttpManager.Logger.Information("HTTP2Response",
-                                string.Format("AddHeaders - Can't parse Content-Length as an int: '{0}'", header.Value),
-                                this.baseRequest.Context, this.Context);
+                                $"AddHeaders - Can't parse Content-Length as an int: '{header.Value}'",
+                                this.BaseRequest.Context, this.Context);
+                        }
                     }
 
-                    base.AddHeader(header.Key, header.Value);
+                    AddHeader(header.Key, header.Value);
                 }
 
-                if (newHeaders != null)
+                if (newHeaders == null) continue;
+                if (!newHeaders.TryGetValue(header.Key, out var values))
                 {
-                    List<string> values;
-                    if (!newHeaders.TryGetValue(header.Key, out values))
-                        newHeaders.Add(header.Key, values = new List<string>(1));
-
-                    values.Add(header.Value);
+                    newHeaders.Add(header.Key, values = new List<string>(1));
                 }
+
+                values.Add(header.Value);
             }
 
-            if (this.ExpectedContentLength == -1 && base.baseRequest.OnDownloadProgress != null)
+            if (this.ExpectedContentLength == -1 && BaseRequest.OnDownloadProgress != null)
+            {
                 HttpManager.Logger.Information("HTTP2Response", "AddHeaders - No Content-Length header found!",
-                    this.baseRequest.Context, this.Context);
+                    this.BaseRequest.Context, this.Context);
+            }
 
-            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.baseRequest, newHeaders));
+            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, newHeaders));
         }
 
         internal void AddData(Stream stream)
         {
             if (this.IsCompressed)
             {
-                using (var decoderStream =
-                       new Decompression.Zlib.GZipStream(stream, Decompression.Zlib.CompressionMode.Decompress))
+                using var decoderStream =
+                    new Decompression.Zlib.GZipStream(stream, Decompression.Zlib.CompressionMode.Decompress);
+                using var ms = new BufferPoolMemoryStream((int)stream.Length);
                 {
-                    using (var ms = new BufferPoolMemoryStream((int)stream.Length))
+                    var buf = BufferPool.Get(8 * 1024, true);
+                    int byteCount;
+
+                    while ((byteCount = decoderStream.Read(buf, 0, buf.Length)) > 0)
                     {
-                        var buf = BufferPool.Get(8 * 1024, true);
-                        int byteCount = 0;
-
-                        while ((byteCount = decoderStream.Read(buf, 0, buf.Length)) > 0)
-                            ms.Write(buf, 0, byteCount);
-
-                        BufferPool.Release(buf);
-
-                        base.Data = ms.ToArray();
+                        ms.Write(buf, 0, byteCount);
                     }
+
+                    BufferPool.Release(buf);
+
+                    Data = ms.ToArray();
                 }
             }
             else
             {
-                base.Data = BufferPool.Get(stream.Length, false);
-                stream.Read(base.Data, 0, (int)stream.Length);
+                Data = BufferPool.Get(stream.Length, false);
+                // ReSharper disable once MustUseReturnValue
+                stream.Read(Data, 0, (int)stream.Length);
             }
         }
 
         internal void ProcessData(byte[] payload, int payloadLength)
         {
-            if (!this.isPrepared)
+            if (!this._isPrepared)
             {
-                this.isPrepared = true;
-                base.BeginReceiveStreamFragments();
+                this._isPrepared = true;
+                BeginReceiveStreamFragments();
             }
 
             if (this.IsCompressed)
             {
-                if (this.decompressor == null)
-                    this.decompressor = new Decompression.GZipDecompressor(0);
-                var result = this.decompressor.Decompress(payload, 0, payloadLength, true, true);
+                this._decompressor ??= new Decompression.GZipDecompressor(0);
+                var result = this._decompressor.Decompress(payload, 0, payloadLength, true, true);
 
-                base.FeedStreamFragment(result.Data, 0, result.Length);
+                FeedStreamFragment(result.Data, 0, result.Length);
             }
             else
-                base.FeedStreamFragment(payload, 0, payloadLength);
+            {
+                FeedStreamFragment(payload, 0, payloadLength);
+            }
         }
 
         internal void FinishProcessData()
         {
-            base.FlushRemainingFragmentBuffer();
+            FlushRemainingFragmentBuffer();
         }
 
         protected override void Dispose(bool disposing)
@@ -139,10 +142,10 @@ namespace BestHTTP.Connections.HTTP2
 
             if (disposing)
             {
-                if (this.decompressor != null)
+                if (this._decompressor != null)
                 {
-                    this.decompressor.Dispose();
-                    this.decompressor = null;
+                    this._decompressor.Dispose();
+                    this._decompressor = null;
                 }
             }
         }

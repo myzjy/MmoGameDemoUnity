@@ -20,7 +20,7 @@ namespace BestHTTP.Core
     public sealed class HostConnection
     {
         private readonly List<ConnectionBase> _connections = new List<ConnectionBase>();
-        private readonly List<HTTPRequest> _queue = new List<HTTPRequest>();
+        private readonly List<HttpRequest> _queue = new List<HttpRequest>();
 
         public HostConnection(HostDefinition host, string variantId)
         {
@@ -62,13 +62,13 @@ namespace BestHTTP.Core
             }
         }
 
-        internal HostConnection Send(HTTPRequest request)
+        internal HostConnection Send(HttpRequest request)
         {
             var conn = GetNextAvailable(request);
 
             if (conn != null)
             {
-                request.State = HTTPRequestStates.Processing;
+                request.State = HttpRequestStates.Processing;
 
                 request.Prepare();
 
@@ -84,7 +84,7 @@ namespace BestHTTP.Core
             return this;
         }
 
-        private ConnectionBase GetNextAvailable(HTTPRequest request)
+        private ConnectionBase GetNextAvailable(HttpRequest request)
         {
             int activeConnections = 0;
             ConnectionBase conn;

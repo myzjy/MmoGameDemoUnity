@@ -25,7 +25,7 @@ namespace BestHTTP.Connections
         public const string W3CHttp2 = "h2";
 #endif
 
-        public static HttpResponse Get(SupportedProtocols protocol, HTTPRequest request, Stream stream, bool isStreamed,
+        public static HttpResponse Get(SupportedProtocols protocol, HttpRequest request, Stream stream, bool isStreamed,
             bool isFromCache)
         {
             switch (protocol)

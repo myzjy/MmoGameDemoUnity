@@ -116,7 +116,7 @@ namespace BestHTTP.WebSocket
             this.Extensions = extensions;
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
-            if (HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableWebSocketOverHTTP2 &&
+            if (HttpManager.Http2Settings.WebSocketOverHttp2Settings.EnableWebSocketOverHttp2 &&
                 HttpProtocolFactory.IsSecureProtocol(uri))
             {
                 // Try to find a HTTP/2 connection that supports the connect protocol.
@@ -128,11 +128,11 @@ namespace BestHTTP.WebSocket
                 )).Find(c =>
                 {
                     var httpConnection = c as HTTPConnection;
-                    var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.HTTP2Handler;
+                    var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
                     return http2Handler != null &&
-                           http2Handler.settings.RemoteSettings
-                               [Connections.HTTP2.HTTP2Settings.ENABLE_CONNECT_PROTOCOL] != 0;
+                           http2Handler.Settings.RemoteSettings
+                               [Connections.HTTP2.Http2Settings.EnableConnectProtocol] != 0;
                 });
 
                 if (con != null)
@@ -141,7 +141,7 @@ namespace BestHTTP.WebSocket
                         this.Context);
 
                     var httpConnection = con as HTTPConnection;
-                    var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.HTTP2Handler;
+                    var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
                     this.implementation = new OverHTTP2(this, http2Handler, uri, origin, protocol);
                 }
@@ -309,7 +309,7 @@ namespace BestHTTP.WebSocket
         /// <summary>
         /// The internal HTTPRequest object.
         /// </summary>
-        public HTTPRequest InternalRequest
+        public HttpRequest InternalRequest
         {
             get { return this.implementation.InternalRequest; }
         }
@@ -339,7 +339,7 @@ namespace BestHTTP.WebSocket
         /// When the Websocket Over HTTP/2 implementation fails to connect and EnableImplementationFallback is true, the plugin tries to fall back to the HTTP/1 implementation.
         /// When this happens a new InternalRequest is created and all previous custom modifications (like added headers) are lost. With OnInternalRequestCreated these modifications can be reapplied.
         /// </summary>
-        public Action<WebSocket, HTTPRequest> OnInternalRequestCreated;
+        public Action<WebSocket, HttpRequest> OnInternalRequestCreated;
 #endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR

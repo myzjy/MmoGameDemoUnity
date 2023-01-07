@@ -72,7 +72,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             eventProgressBar.TotalSize = totalSize;
             eventProgressBar.CompletedSize = downloadedSize;
             yield return null;
-            List<KeyValuePair<BundleInfo, HTTPRequest>> tasks = new List<KeyValuePair<BundleInfo, HTTPRequest>>();
+            List<KeyValuePair<BundleInfo, HttpRequest>> tasks = new List<KeyValuePair<BundleInfo, HttpRequest>>();
             for (int i = 0; i < list.Count; i++)
             {
                 BundleInfo bundleInfo = list[i];
@@ -81,42 +81,42 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 #if UNITY_EDITOR || DEVELOP_BUILD
                 Debug.Log($"需要下载文件路径{fullname}");
 #endif
-                HTTPRequest request = new HTTPRequest(new Uri(GetAbsoluteUri(bundleInfo.Filename)));
+                HttpRequest request = new HttpRequest(new Uri(GetAbsoluteUri(bundleInfo.Filename)));
 
                 // 超时设定
                 request.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
                 request.Timeout = TimeSpan.FromSeconds(TimeoutSec);
-                request.Callback += (HTTPRequest originalBhRequest, HttpResponse bhResponse) =>
+                request.Callback += (HttpRequest originalBhRequest, HttpResponse bhResponse) =>
                 {
                     LogResponse(bhResponse, originalBhRequest);
 
                     switch (originalBhRequest.State)
                     {
-                        case HTTPRequestStates.Initial:
+                        case HttpRequestStates.Initial:
                             break;
-                        case HTTPRequestStates.Queued:
+                        case HttpRequestStates.Queued:
                             break;
-                        case HTTPRequestStates.Processing:
+                        case HttpRequestStates.Processing:
                             break;
 
-                        case HTTPRequestStates.Finished:
+                        case HttpRequestStates.Finished:
                         {
                             downloadedSize += bundleInfo.FileSize;
                             // 请求完成后没有任何问题。
                             eventProgressBar.CompletedCount += 1;
                         }
                             break;
-                        case HTTPRequestStates.Error:
+                        case HttpRequestStates.Error:
                         {
                             // errrorList.Add(bundleInfo);
                             Debug.LogError($"下载错误：{bundleInfo.Filename},{bundleInfo.FullName}");
                         }
                             break;
-                        case HTTPRequestStates.Aborted:
+                        case HttpRequestStates.Aborted:
                             break;
-                        case HTTPRequestStates.ConnectionTimedOut:
+                        case HttpRequestStates.ConnectionTimedOut:
                             break;
-                        case HTTPRequestStates.TimedOut:
+                        case HttpRequestStates.TimedOut:
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -158,7 +158,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                     return true;
                 };
                 request.Send();
-                while (request.State < HTTPRequestStates.Finished)
+                while (request.State < HttpRequestStates.Finished)
                 {
                     yield return new WaitForSeconds(0.1f);
 
@@ -171,7 +171,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             yield break;
         }
 
-        private void LogResponse(HttpResponse response, HTTPRequest request)
+        private void LogResponse(HttpResponse response, HttpRequest request)
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             StringBuilder sb = new StringBuilder();

@@ -57,7 +57,7 @@ namespace BestHTTP.Connections
 
     public static class ConnectionHelper
     {
-        public static void HandleResponse(string context, HTTPRequest request, out bool resendRequest,
+        public static void HandleResponse(string context, HttpRequest request, out bool resendRequest,
             out HttpConnectionStates proposedConnectionState, ref KeepAliveHeader keepAlive,
             LoggingContext loggingContext1 = null, LoggingContext loggingContext2 = null,
             LoggingContext loggingContext3 = null)
@@ -176,7 +176,7 @@ namespace BestHTTP.Connections
                                 loggingContext1, loggingContext2, loggingContext3);
 
                             // Update any caching value
-                            HTTPCacheService.SetUpCachingValues(request.CurrentUri, request.Response);
+                            HttpCacheService.SetUpCachingValues(request.CurrentUri, request.Response);
                         }
                         else
                         {
@@ -235,7 +235,7 @@ namespace BestHTTP.Connections
             }
         }
 
-        public static Uri GetRedirectUri(HTTPRequest request, string location)
+        public static Uri GetRedirectUri(HttpRequest request, string location)
         {
             Uri result;
             try
@@ -279,7 +279,7 @@ namespace BestHTTP.Connections
         }
 
 #if !BESTHTTP_DISABLE_CACHING
-        public static bool LoadFromCache(string context, HTTPRequest request, LoggingContext loggingContext1 = null,
+        public static bool LoadFromCache(string context, HttpRequest request, LoggingContext loggingContext1 = null,
             LoggingContext loggingContext2 = null, LoggingContext loggingContext3 = null)
         {
             if (request.IsRedirected)
@@ -289,19 +289,19 @@ namespace BestHTTP.Connections
                     return true;
                 else
                 {
-                    Caching.HTTPCacheService.DeleteEntity(request.RedirectUri);
+                    Caching.HttpCacheService.DeleteEntity(request.RedirectUri);
                 }
             }
 
             bool loaded = LoadFromCache(context, request, request.Uri, loggingContext1, loggingContext2,
                 loggingContext3);
             if (!loaded)
-                Caching.HTTPCacheService.DeleteEntity(request.Uri);
+                Caching.HttpCacheService.DeleteEntity(request.Uri);
 
             return loaded;
         }
 
-        private static bool LoadFromCache(string context, HTTPRequest request, Uri uri,
+        private static bool LoadFromCache(string context, HttpRequest request, Uri uri,
             LoggingContext loggingContext1 = null, LoggingContext loggingContext2 = null,
             LoggingContext loggingContext3 = null)
         {
@@ -310,7 +310,7 @@ namespace BestHTTP.Connections
                     string.Format("[{0}] - LoadFromCache for Uri: {1}", context, uri.ToString()), loggingContext1,
                     loggingContext2, loggingContext3);
 
-            var cacheEntity = HTTPCacheService.GetEntity(uri);
+            var cacheEntity = HttpCacheService.GetEntity(uri);
             if (cacheEntity == null)
             {
                 HttpManager.Logger.Warning("HTTPConnection",
@@ -345,7 +345,7 @@ namespace BestHTTP.Connections
             return true;
         }
 
-        public static bool TryLoadAllFromCache(string context, HTTPRequest request,
+        public static bool TryLoadAllFromCache(string context, HttpRequest request,
             LoggingContext loggingContext1 = null, LoggingContext loggingContext2 = null,
             LoggingContext loggingContext3 = null)
         {
@@ -360,7 +360,7 @@ namespace BestHTTP.Connections
                         $"[{context}] - TryLoadAllFromCache - whole response loading from cache", loggingContext1,
                         loggingContext2, loggingContext3);
 
-                request.Response = HTTPCacheService.GetFullResponse(request);
+                request.Response = HttpCacheService.GetFullResponse(request);
 
                 if (request.Response != null)
                     return true;
@@ -370,25 +370,25 @@ namespace BestHTTP.Connections
                 HttpManager.Logger.Verbose("ConnectionHelper",
                     $"[{context}] - TryLoadAllFromCache - failed to load content!", loggingContext1, loggingContext2,
                     loggingContext3);
-                HTTPCacheService.DeleteEntity(request.CurrentUri);
+                HttpCacheService.DeleteEntity(request.CurrentUri);
             }
 
             return false;
         }
 
-        public static void TryStoreInCache(HTTPRequest request)
+        public static void TryStoreInCache(HttpRequest request)
         {
             // if UseStreaming && !DisableCache then we already wrote the response to the cache
             if (!request.UseStreaming &&
                 !request.DisableCache &&
                 request.Response != null &&
-                HTTPCacheService.IsSupported &&
-                HTTPCacheService.IsCacheble(request.CurrentUri, request.MethodType, request.Response))
+                HttpCacheService.IsSupported &&
+                HttpCacheService.IsCacheable(request.CurrentUri, request.MethodType, request.Response))
             {
                 if (request.IsRedirected)
-                    HTTPCacheService.Store(request.Uri, request.MethodType, request.Response);
+                    HttpCacheService.Store(request.Uri, request.MethodType, request.Response);
                 else
-                    HTTPCacheService.Store(request.CurrentUri, request.MethodType, request.Response);
+                    HttpCacheService.Store(request.CurrentUri, request.MethodType, request.Response);
                 request.Timing.Add(TimingEventNames.Writing_To_Cache);
 
                 PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.SaveCacheLibrary));

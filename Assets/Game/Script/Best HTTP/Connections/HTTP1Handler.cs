@@ -38,7 +38,7 @@ namespace BestHTTP.Connections
 
         public LoggingContext Context { get; private set; }
 
-        public void Process(HTTPRequest request)
+        public void Process(HttpRequest request)
         {
         }
 
@@ -62,7 +62,7 @@ namespace BestHTTP.Connections
 #if !BESTHTTP_DISABLE_CACHING
                 // Setup cache control headers before we send out the request
                 if (!this.conn.CurrentRequest.DisableCache)
-                    HTTPCacheService.SetHeaders(this.conn.CurrentRequest);
+                    HttpCacheService.SetHeaders(this.conn.CurrentRequest);
 #endif
 
                 // Write the request to the stream
@@ -112,7 +112,7 @@ namespace BestHTTP.Connections
                     else
                     {
                         this.conn.CurrentRequest.Exception = e;
-                        this.conn.CurrentRequest.State = HTTPRequestStates.ConnectionTimedOut;
+                        this.conn.CurrentRequest.State = HttpRequestStates.ConnectionTimedOut;
                     }
                 }
 
@@ -150,7 +150,7 @@ namespace BestHTTP.Connections
 
 #if !BESTHTTP_DISABLE_CACHING
                 if (this.conn.CurrentRequest.UseStreaming)
-                    HTTPCacheService.DeleteEntity(this.conn.CurrentRequest.CurrentUri);
+                    HttpCacheService.DeleteEntity(this.conn.CurrentRequest.CurrentUri);
 #endif
 
                 // Something gone bad, Response must be null!
@@ -160,7 +160,7 @@ namespace BestHTTP.Connections
                 if (!this.conn.CurrentRequest.IsCancellationRequested)
                 {
                     this.conn.CurrentRequest.Exception = e;
-                    this.conn.CurrentRequest.State = HTTPRequestStates.Error;
+                    this.conn.CurrentRequest.State = HttpRequestStates.Error;
                 }
 
                 proposedConnectionState = HttpConnectionStates.Closed;
@@ -202,10 +202,10 @@ namespace BestHTTP.Connections
                     {
                         proposedConnectionState = HttpConnectionStates.WaitForProtocolShutdown;
                     }
-                    else if (this.conn.CurrentRequest.State == HTTPRequestStates.Processing)
+                    else if (this.conn.CurrentRequest.State == HttpRequestStates.Processing)
                     {
                         if (this.conn.CurrentRequest.Response != null)
-                            this.conn.CurrentRequest.State = HTTPRequestStates.Finished;
+                            this.conn.CurrentRequest.State = HttpRequestStates.Finished;
                         else
                         {
                             this.conn.CurrentRequest.Exception = new Exception(string.Format(
@@ -213,7 +213,7 @@ namespace BestHTTP.Connections
                                 this.ToString(),
                                 this.conn.CurrentRequest.State.ToString(),
                                 this.conn.State.ToString()));
-                            this.conn.CurrentRequest.State = HTTPRequestStates.Error;
+                            this.conn.CurrentRequest.State = HttpRequestStates.Error;
 
                             proposedConnectionState = HttpConnectionStates.Closed;
                         }
@@ -244,13 +244,13 @@ namespace BestHTTP.Connections
             GC.SuppressFinalize(this);
         }
 
-        private void OnCancellationRequested(HTTPRequest obj)
+        private void OnCancellationRequested(HttpRequest obj)
         {
             if (this.conn != null && this.conn.connector != null)
                 this.conn.connector.Dispose();
         }
 
-        private bool Receive(HTTPRequest request)
+        private bool Receive(HttpRequest request)
         {
             SupportedProtocols protocol = HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri);
 

@@ -28,7 +28,7 @@ namespace BestHTTP.Authentication
             this.Type = AuthenticationTypes.Unknown;
             this.Stale = false;
             this.Opaque = null;
-            this.HA1Sess = null;
+            this.Ha1Sess = null;
             this.NonceCount = 0;
             this.QualityOfProtections = null;
 
@@ -92,7 +92,7 @@ namespace BestHTTP.Authentication
         /// <summary>
         /// 生成可设置为授权标头的字符串。
         /// </summary>
-        public string GenerateResponseHeader(HTTPRequest request, Credentials credentials, bool isProxy = false)
+        public string GenerateResponseHeader(HttpRequest request, Credentials credentials, bool isProxy = false)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace BestHTTP.Authentication
                     {
                         NonceCount++;
 
-                        string HA1 = string.Empty;
+                        string ha1 = string.Empty;
 
                         // cnnonce -value是一个不透明的带引号的字符串值，由客户端提供，客户端和服务器都使用它来避免选择明文攻击，
                         // 提供相互身份验证，并提供一些消息完整性保护
@@ -118,16 +118,16 @@ namespace BestHTTP.Authentication
                         switch (Algorithm.TrimAndLower())
                         {
                             case "md5":
-                                HA1 = $"{credentials.UserName}:{Realm}:{credentials.Password}"
+                                ha1 = $"{credentials.UserName}:{Realm}:{credentials.Password}"
                                     .CalculateMD5Hash();
                                 break;
 
                             case "md5-sess":
-                                if (string.IsNullOrEmpty(this.HA1Sess))
-                                    this.HA1Sess =
+                                if (string.IsNullOrEmpty(this.Ha1Sess))
+                                    this.Ha1Sess =
                                         $"{credentials.UserName}:{Realm}:{credentials.Password}:{Nonce}:{ncvalue}"
                                             .CalculateMD5Hash();
-                                HA1 = this.HA1Sess;
+                                ha1 = this.Ha1Sess;
                                 break;
 
                             default:
@@ -153,9 +153,9 @@ namespace BestHTTP.Authentication
 
                         if (qop == null)
                         {
-                            string HA2 = string.Concat(request.MethodType.ToString().ToUpper(), ":",
+                            string ha2 = string.Concat(request.MethodType.ToString().ToUpper(), ":",
                                 request.CurrentUri.GetRequestPathAndQueryURL()).CalculateMD5Hash();
-                            response = $"{HA1}:{Nonce}:{HA2}".CalculateMD5Hash();
+                            response = $"{ha1}:{Nonce}:{ha2}".CalculateMD5Hash();
                         }
                         else if (qop.Contains("auth-int"))
                         {
@@ -166,16 +166,16 @@ namespace BestHTTP.Authentication
                             if (entityBody == null)
                                 entityBody = BufferPool.NoData; //string.Empty.GetASCIIBytes();
 
-                            string HA2 = $"{method}:{uri}:{entityBody.CalculateMD5Hash()}".CalculateMD5Hash();
+                            string ha2 = $"{method}:{uri}:{entityBody.CalculateMD5Hash()}".CalculateMD5Hash();
 
-                            response = $"{HA1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{HA2}".CalculateMD5Hash();
+                            response = $"{ha1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{ha2}".CalculateMD5Hash();
                         }
                         else if (qop.Contains("auth"))
                         {
                             qop = "auth";
-                            string HA2 = string.Concat(method, ":", uri).CalculateMD5Hash();
+                            string ha2 = string.Concat(method, ":", uri).CalculateMD5Hash();
 
-                            response = $"{HA1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{HA2}".CalculateMD5Hash();
+                            response = $"{ha1}:{Nonce}:{ncvalue}:{cnonce}:{qop}:{ha2}".CalculateMD5Hash();
                         }
                         else
                         {
@@ -303,7 +303,7 @@ namespace BestHTTP.Authentication
         /// <summary>
         /// 当Algorithm设置为“md5-sess”时，用于存储下一次生成报头时可以使用的最后一个HA1。
         /// </summary>
-        private string HA1Sess { get; set; }
+        private string Ha1Sess { get; set; }
 
         #endregion
     }

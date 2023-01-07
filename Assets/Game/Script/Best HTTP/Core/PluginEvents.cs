@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
+
 // Required for ConcurrentQueue.Clear extension.
 
 // ReSharper disable once CheckNamespace
@@ -138,7 +139,7 @@ namespace BestHTTP.Core
 
 #if !BESTHTTP_DISABLE_CACHING
             if (saveCacheLibrary)
-                PlatformSupport.Threading.ThreadedRunner.RunShortLiving(Caching.HTTPCacheService.SaveLibrary);
+                PlatformSupport.Threading.ThreadedRunner.RunShortLiving(Caching.HttpCacheService.SaveLibrary);
 #endif
         }
     }

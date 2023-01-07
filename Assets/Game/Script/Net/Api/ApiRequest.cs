@@ -8,7 +8,7 @@ namespace ZJYFrameWork.Net
     {
         private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
 
-        internal HTTPRequest _bhRequest;
+        internal HttpRequest _bhRequest;
 
         private Action<ApiRequest> _onBeforeSend;
         private Action<ApiResponse> _onComplete;
@@ -19,13 +19,14 @@ namespace ZJYFrameWork.Net
         private System.Diagnostics.Stopwatch _watch;
 
 
-        public ApiRequest(HTTPMethods method, Uri uri, byte[] data = null, Action<ApiRequest> onBeforeSend = null,
+        public ApiRequest(BestHTTP.HttpMethods method, Uri uri, byte[] data = null,
+            Action<ApiRequest> onBeforeSend = null,
             Action<ApiResponse> onSuccess = null, Action<ApiResponse> onError = null,
             Action<ApiResponse> onComplete = null)
         {
             this.Uri = uri;
             this.Method = method;
-            this._bhRequest = new HTTPRequest(uri, method);
+            this._bhRequest = new HttpRequest(uri, method);
 
             // 超时设定
             _bhRequest.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
@@ -53,7 +54,7 @@ namespace ZJYFrameWork.Net
         }
 
         public Uri Uri { get; private set; }
-        public HTTPMethods Method { get; private set; }
+        public BestHTTP.HttpMethods Method { get; private set; }
 
         public void Send(Action<long, long> onProgress = null)
         {
@@ -97,7 +98,7 @@ namespace ZJYFrameWork.Net
             return _bhRequest.DumpHeaders();
         }
 
-        private void HandleResponse(HTTPRequest originalBhRequest, HttpResponse bhResponse)
+        private void HandleResponse(HttpRequest originalBhRequest, HttpResponse bhResponse)
         {
             _watch.Stop();
             long elapsedMsec = _watch.ElapsedMilliseconds;

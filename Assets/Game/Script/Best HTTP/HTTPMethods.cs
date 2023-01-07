@@ -3,7 +3,7 @@ namespace BestHTTP
     /// <summary>
     /// Some supported methods described in the rfc: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9
     /// </summary>
-    public enum HTTPMethods : byte
+    public enum HttpMethods : byte
     {
         /// <summary>
         /// The GET method means retrieve whatever information (in the form of an entity) is identified by the Request-URI.

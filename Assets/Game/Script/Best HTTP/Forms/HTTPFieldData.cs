@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace BestHTTP.Forms
 {
     /// <summary>
     /// This class represents a HTTP Form's field.
     /// </summary>
-    public class HTTPFieldData
+    public class HttpFieldData
     {
         /// <summary>
         /// The form's field.

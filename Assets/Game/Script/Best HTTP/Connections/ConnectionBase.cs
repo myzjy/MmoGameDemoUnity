@@ -31,7 +31,7 @@ namespace BestHTTP.Connections
 
         public ShutdownTypes ShutdownType { get; protected set; }
 
-        internal virtual void Process(HTTPRequest request)
+        internal virtual void Process(HttpRequest request)
         {
             if (State == HttpConnectionStates.Processing)
                 throw new Exception("Connection already processing a request! " + this.ToString());
@@ -82,7 +82,7 @@ namespace BestHTTP.Connections
         /// <summary>
         /// If the State is HTTPConnectionStates.Processing, then it holds a HTTPRequest instance. Otherwise it's null.
         /// </summary>
-        public HTTPRequest CurrentRequest { get; internal set; }
+        public HttpRequest CurrentRequest { get; internal set; }
 
         /// <summary>
         /// How much the connection kept alive after its last request processing.

@@ -21,12 +21,12 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public static int RTTBufferCapacity = 5;
 
-        internal WebSocketResponse(HTTPRequest request, Stream stream, bool isStreamed, bool isFromCache)
+        internal WebSocketResponse(HttpRequest request, Stream stream, bool isStreamed, bool isFromCache)
             : base(request, stream, isStreamed, isFromCache)
         {
             base.IsClosedManually = true;
-            this.ConnectionKey = new HostConnectionKey(this.baseRequest.CurrentUri.Host,
-                HostDefinition.GetKeyForRequest(this.baseRequest));
+            this.ConnectionKey = new HostConnectionKey(this.BaseRequest.CurrentUri.Host,
+                HostDefinition.GetKeyForRequest(this.BaseRequest));
 
             closed = false;
             MaxFragmentSize = WebSocket.MaxFragmentSize;
@@ -84,7 +84,7 @@ namespace BestHTTP.WebSocket
             // 2015.05.09
             // State checking added because if there is an error the OnClose called first, and then the OnError.
             // Now, when there is an error only the OnError event will be called!
-            if (IsClosed && OnClosed != null && baseRequest.State == HTTPRequestStates.Processing)
+            if (IsClosed && OnClosed != null && BaseRequest.State == HttpRequestStates.Processing)
             {
                 HttpManager.Logger.Verbose("WebSocketResponse", "HandleEvents - Calling OnClosed", this.Context);
                 try
@@ -119,7 +119,7 @@ namespace BestHTTP.WebSocket
 
         void IProtocol.CancellationRequested()
         {
-            CloseWithError(HTTPRequestStates.Aborted, null);
+            CloseWithError(HttpRequestStates.Aborted, null);
         }
 
         internal void StartReceive()
@@ -160,7 +160,7 @@ namespace BestHTTP.WebSocket
             {
                 HttpManager.Logger.Information("WebSocketResponse",
                     "Error while sending PING message! Closing WebSocket.", this.Context);
-                CloseWithError(HTTPRequestStates.Error, "Error while sending PING message!");
+                CloseWithError(HttpRequestStates.Error, "Error while sending PING message!");
 
                 return false;
             }
@@ -168,11 +168,11 @@ namespace BestHTTP.WebSocket
             return true;
         }
 
-        private void CloseWithError(HTTPRequestStates state, string message)
+        private void CloseWithError(HttpRequestStates state, string message)
         {
             if (!string.IsNullOrEmpty(message))
-                this.baseRequest.Exception = new Exception(message);
-            this.baseRequest.State = state;
+                this.BaseRequest.Exception = new Exception(message);
+            this.BaseRequest.State = state;
 
             this.closed = true;
 
@@ -529,7 +529,7 @@ namespace BestHTTP.WebSocket
                                         this.lastPing, this.PingFrequnecy, this.WebSocket.CloseAfterNoMessage, now),
                                     this.Context);
 
-                                CloseWithError(HTTPRequestStates.Error, "No message received in the given time!");
+                                CloseWithError(HttpRequestStates.Error, "No message received in the given time!");
                                 continue;
                             }
                         }
@@ -562,13 +562,13 @@ namespace BestHTTP.WebSocket
                         }
                         catch (Exception ex)
                         {
-                            if (HTTPUpdateDelegator.IsCreated)
+                            if (HttpUpdateDelegator.IsCreated)
                             {
-                                this.baseRequest.Exception = ex;
-                                this.baseRequest.State = HTTPRequestStates.Error;
+                                this.BaseRequest.Exception = ex;
+                                this.BaseRequest.State = HttpRequestStates.Error;
                             }
                             else
-                                this.baseRequest.State = HTTPRequestStates.Aborted;
+                                this.BaseRequest.State = HttpRequestStates.Aborted;
 
                             closed = true;
                         }
@@ -708,13 +708,13 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception e)
                     {
-                        if (HTTPUpdateDelegator.IsCreated)
+                        if (HttpUpdateDelegator.IsCreated)
                         {
-                            this.baseRequest.Exception = e;
-                            this.baseRequest.State = HTTPRequestStates.Error;
+                            this.BaseRequest.Exception = e;
+                            this.BaseRequest.State = HttpRequestStates.Error;
                         }
                         else
-                            this.baseRequest.State = HTTPRequestStates.Aborted;
+                            this.BaseRequest.State = HttpRequestStates.Aborted;
 
                         closed = true;
                         newFrameSignal.Set();

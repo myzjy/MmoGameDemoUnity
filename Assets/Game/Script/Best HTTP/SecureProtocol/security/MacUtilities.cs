@@ -189,7 +189,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
 
             if (mechanism == "DESEDEMAC64WITHISO7816-4PADDING")
             {
-                return new CbcBlockCipherMac(new DesEdeEngine(), 64, new ISO7816d4Padding());
+                return new CbcBlockCipherMac(new DesEdeEngine(), 64, new Iso7816d4Padding());
             }
 
             if (mechanism == "DESWITHISO9797"
@@ -200,7 +200,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Security
 
             if (mechanism == "ISO9797ALG3WITHISO7816-4PADDING")
             {
-                return new ISO9797Alg3Mac(new DesEngine(), new ISO7816d4Padding());
+                return new ISO9797Alg3Mac(new DesEngine(), new Iso7816d4Padding());
             }
 
             if (mechanism == "SKIPJACKMAC")

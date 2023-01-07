@@ -44,7 +44,7 @@ namespace BestHTTP
 
     public static class HTTPRequestAsyncExtensions
     {
-        public static Task<HttpResponse> GetHTTPResponseAsync(this HTTPRequest request,
+        public static Task<HttpResponse> GetHTTPResponseAsync(this HttpRequest request,
             CancellationToken token = default)
         {
             return CreateTask<HttpResponse>(request, token, (req, resp, tcs) =>
@@ -52,12 +52,12 @@ namespace BestHTTP
                 switch (req.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         tcs.TrySetResult(resp);
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
+                    case HttpRequestStates.Error:
                         VerboseLogging(request,
                             "Request Finished with Error! " + (req.Exception != null
                                 ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
@@ -67,21 +67,21 @@ namespace BestHTTP
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         VerboseLogging(request, "Request Aborted!");
 
                         tcs.TrySetCanceled();
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         VerboseLogging(request, "Connection Timed Out!");
 
                         tcs.TrySetException(CreateException("Connection Timed Out!"));
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         VerboseLogging(request, "Processing the request Timed Out!");
 
                         tcs.TrySetException(CreateException("Processing the request Timed Out!"));
@@ -90,14 +90,14 @@ namespace BestHTTP
             });
         }
 
-        public static Task<string> GetAsStringAsync(this HTTPRequest request, CancellationToken token = default)
+        public static Task<string> GetAsStringAsync(this HttpRequest request, CancellationToken token = default)
         {
             return CreateTask<string>(request, token, (req, resp, tcs) =>
             {
                 switch (req.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         if (resp.IsSuccess)
                             tcs.TrySetResult(resp.DataAsText);
                         else
@@ -106,7 +106,7 @@ namespace BestHTTP
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
+                    case HttpRequestStates.Error:
                         VerboseLogging(request,
                             "Request Finished with Error! " + (req.Exception != null
                                 ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
@@ -116,21 +116,21 @@ namespace BestHTTP
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         VerboseLogging(request, "Request Aborted!");
 
                         tcs.TrySetCanceled();
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         VerboseLogging(request, "Connection Timed Out!");
 
                         tcs.TrySetException(CreateException("Connection Timed Out!"));
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         VerboseLogging(request, "Processing the request Timed Out!");
 
                         tcs.TrySetException(CreateException("Processing the request Timed Out!"));
@@ -139,14 +139,14 @@ namespace BestHTTP
             });
         }
 
-        public static Task<Texture2D> GetAsTexture2DAsync(this HTTPRequest request, CancellationToken token = default)
+        public static Task<Texture2D> GetAsTexture2DAsync(this HttpRequest request, CancellationToken token = default)
         {
             return CreateTask<Texture2D>(request, token, (req, resp, tcs) =>
             {
                 switch (req.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         if (resp.IsSuccess)
                             tcs.TrySetResult(resp.DataAsTexture2D);
                         else
@@ -155,7 +155,7 @@ namespace BestHTTP
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
+                    case HttpRequestStates.Error:
                         VerboseLogging(request,
                             "Request Finished with Error! " + (req.Exception != null
                                 ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
@@ -165,21 +165,21 @@ namespace BestHTTP
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         VerboseLogging(request, "Request Aborted!");
 
                         tcs.TrySetCanceled();
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         VerboseLogging(request, "Connection Timed Out!");
 
                         tcs.TrySetException(CreateException("Connection Timed Out!"));
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         VerboseLogging(request, "Processing the request Timed Out!");
 
                         tcs.TrySetException(CreateException("Processing the request Timed Out!"));
@@ -188,14 +188,14 @@ namespace BestHTTP
             });
         }
 
-        public static Task<byte[]> GetRawDataAsync(this HTTPRequest request, CancellationToken token = default)
+        public static Task<byte[]> GetRawDataAsync(this HttpRequest request, CancellationToken token = default)
         {
             return CreateTask<byte[]>(request, token, (req, resp, tcs) =>
             {
                 switch (req.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         if (resp.IsSuccess)
                             tcs.TrySetResult(resp.Data);
                         else
@@ -204,7 +204,7 @@ namespace BestHTTP
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
+                    case HttpRequestStates.Error:
                         VerboseLogging(request,
                             "Request Finished with Error! " + (req.Exception != null
                                 ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
@@ -214,21 +214,21 @@ namespace BestHTTP
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         VerboseLogging(request, "Request Aborted!");
 
                         tcs.TrySetCanceled();
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         VerboseLogging(request, "Connection Timed Out!");
 
                         tcs.TrySetException(CreateException("Connection Timed Out!"));
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         VerboseLogging(request, "Processing the request Timed Out!");
 
                         tcs.TrySetException(CreateException("Processing the request Timed Out!"));
@@ -238,8 +238,8 @@ namespace BestHTTP
         }
 
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public static Task<T> CreateTask<T>(HTTPRequest request, CancellationToken token,
-            Action<HTTPRequest, HttpResponse, TaskCompletionSource<T>> callback)
+        public static Task<T> CreateTask<T>(HttpRequest request, CancellationToken token,
+            Action<HttpRequest, HttpResponse, TaskCompletionSource<T>> callback)
         {
             HttpManager.Setup();
 
@@ -254,16 +254,16 @@ namespace BestHTTP
             };
 
             if (token.CanBeCanceled)
-                token.Register((state) => (state as HTTPRequest)?.Abort(), request);
+                token.Register((state) => (state as HttpRequest)?.Abort(), request);
 
-            if (request.State == HTTPRequestStates.Initial)
+            if (request.State == HttpRequestStates.Initial)
                 request.Send();
 
             return tcs.Task;
         }
 
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public static void VerboseLogging(HTTPRequest request, string str)
+        public static void VerboseLogging(HttpRequest request, string str)
         {
             HttpManager.Logger.Verbose("HTTPRequestAsyncExtensions", str, request.Context);
         }

@@ -106,12 +106,12 @@ namespace BestHTTP.Connections.HTTP2
                 );
         }
 
-        public static UInt32 ReadUInt31(byte[] buffer, int offset)
+        public static uint ReadUInt31(byte[] buffer, int offset)
         {
-            return (UInt32)(buffer[offset + 3] |
-                            buffer[offset + 2] << 8 |
-                            buffer[offset + 1] << 16 |
-                            (buffer[offset] & 0x7F) << 24
+            return (uint)(buffer[offset + 3] |
+                          buffer[offset + 2] << 8 |
+                          buffer[offset + 1] << 16 |
+                          (buffer[offset] & 0x7F) << 24
                 );
         }
 

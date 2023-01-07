@@ -1,10 +1,9 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
-using System;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Security;
 
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings
 {
     /**
@@ -12,13 +11,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings
      */
     public interface IBlockCipherPadding
     {
-        /**
-         * Initialise the padder.
-         *
-         * @param param parameters, if any required.
-         */
-        void Init(SecureRandom random);
-            //throws ArgumentException;
+        //throws ArgumentException;
 
         /**
          * Return the name of the algorithm the cipher implements.
@@ -27,7 +20,14 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings
          */
         string PaddingName { get; }
 
-		/**
+        /**
+         * Initialise the padder.
+         *
+         * @param param parameters, if any required.
+         */
+        void Init(SecureRandom random);
+
+        /**
          * add the pad bytes to the passed in block, returning the
          * number of bytes added.
          */
@@ -41,7 +41,6 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Paddings
         int PadCount(byte[] input);
         //throws InvalidCipherTextException;
     }
-
 }
 #pragma warning restore
 #endif

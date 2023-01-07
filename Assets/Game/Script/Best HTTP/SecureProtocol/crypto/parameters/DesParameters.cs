@@ -4,28 +4,9 @@ using System;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters
 {
-    public class DesParameters
-		: KeyParameter
+    public class DesParameters : KeyParameter
     {
-        public DesParameters(
-            byte[] key)
-			: base(key)
-        {
-            if (IsWeakKey(key))
-				throw new ArgumentException("attempt to create weak DES key");
-        }
-
-		public DesParameters(
-			byte[]	key,
-			int		keyOff,
-			int		keyLen)
-			: base(key, keyOff, keyLen)
-		{
-			if (IsWeakKey(key, keyOff))
-				throw new ArgumentException("attempt to create weak DES key");
-		}
-
-		/*
+        /*
         * DES Key Length in bytes.
         */
         public const int DesKeyLength = 8;
@@ -35,28 +16,46 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters
         */
         private const int N_DES_WEAK_KEYS = 16;
 
-        private static readonly byte[] DES_weak_keys =
+        private static readonly byte[] DesWeakKeys =
         {
             /* weak keys */
-            (byte)0x01,(byte)0x01,(byte)0x01,(byte)0x01, (byte)0x01,(byte)0x01,(byte)0x01,(byte)0x01,
-            (byte)0x1f,(byte)0x1f,(byte)0x1f,(byte)0x1f, (byte)0x0e,(byte)0x0e,(byte)0x0e,(byte)0x0e,
-            (byte)0xe0,(byte)0xe0,(byte)0xe0,(byte)0xe0, (byte)0xf1,(byte)0xf1,(byte)0xf1,(byte)0xf1,
-            (byte)0xfe,(byte)0xfe,(byte)0xfe,(byte)0xfe, (byte)0xfe,(byte)0xfe,(byte)0xfe,(byte)0xfe,
+            (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01, (byte)0x01,
+            (byte)0x1f, (byte)0x1f, (byte)0x1f, (byte)0x1f, (byte)0x0e, (byte)0x0e, (byte)0x0e, (byte)0x0e,
+            (byte)0xe0, (byte)0xe0, (byte)0xe0, (byte)0xe0, (byte)0xf1, (byte)0xf1, (byte)0xf1, (byte)0xf1,
+            (byte)0xfe, (byte)0xfe, (byte)0xfe, (byte)0xfe, (byte)0xfe, (byte)0xfe, (byte)0xfe, (byte)0xfe,
 
             /* semi-weak keys */
-            (byte)0x01,(byte)0xfe,(byte)0x01,(byte)0xfe, (byte)0x01,(byte)0xfe,(byte)0x01,(byte)0xfe,
-            (byte)0x1f,(byte)0xe0,(byte)0x1f,(byte)0xe0, (byte)0x0e,(byte)0xf1,(byte)0x0e,(byte)0xf1,
-            (byte)0x01,(byte)0xe0,(byte)0x01,(byte)0xe0, (byte)0x01,(byte)0xf1,(byte)0x01,(byte)0xf1,
-            (byte)0x1f,(byte)0xfe,(byte)0x1f,(byte)0xfe, (byte)0x0e,(byte)0xfe,(byte)0x0e,(byte)0xfe,
-            (byte)0x01,(byte)0x1f,(byte)0x01,(byte)0x1f, (byte)0x01,(byte)0x0e,(byte)0x01,(byte)0x0e,
-            (byte)0xe0,(byte)0xfe,(byte)0xe0,(byte)0xfe, (byte)0xf1,(byte)0xfe,(byte)0xf1,(byte)0xfe,
-            (byte)0xfe,(byte)0x01,(byte)0xfe,(byte)0x01, (byte)0xfe,(byte)0x01,(byte)0xfe,(byte)0x01,
-            (byte)0xe0,(byte)0x1f,(byte)0xe0,(byte)0x1f, (byte)0xf1,(byte)0x0e,(byte)0xf1,(byte)0x0e,
-            (byte)0xe0,(byte)0x01,(byte)0xe0,(byte)0x01, (byte)0xf1,(byte)0x01,(byte)0xf1,(byte)0x01,
-            (byte)0xfe,(byte)0x1f,(byte)0xfe,(byte)0x1f, (byte)0xfe,(byte)0x0e,(byte)0xfe,(byte)0x0e,
-            (byte)0x1f,(byte)0x01,(byte)0x1f,(byte)0x01, (byte)0x0e,(byte)0x01,(byte)0x0e,(byte)0x01,
-            (byte)0xfe,(byte)0xe0,(byte)0xfe,(byte)0xe0, (byte)0xfe,(byte)0xf1,(byte)0xfe,(byte)0xf1
+            (byte)0x01, (byte)0xfe, (byte)0x01, (byte)0xfe, (byte)0x01, (byte)0xfe, (byte)0x01, (byte)0xfe,
+            (byte)0x1f, (byte)0xe0, (byte)0x1f, (byte)0xe0, (byte)0x0e, (byte)0xf1, (byte)0x0e, (byte)0xf1,
+            (byte)0x01, (byte)0xe0, (byte)0x01, (byte)0xe0, (byte)0x01, (byte)0xf1, (byte)0x01, (byte)0xf1,
+            (byte)0x1f, (byte)0xfe, (byte)0x1f, (byte)0xfe, (byte)0x0e, (byte)0xfe, (byte)0x0e, (byte)0xfe,
+            (byte)0x01, (byte)0x1f, (byte)0x01, (byte)0x1f, (byte)0x01, (byte)0x0e, (byte)0x01, (byte)0x0e,
+            (byte)0xe0, (byte)0xfe, (byte)0xe0, (byte)0xfe, (byte)0xf1, (byte)0xfe, (byte)0xf1, (byte)0xfe,
+            (byte)0xfe, (byte)0x01, (byte)0xfe, (byte)0x01, (byte)0xfe, (byte)0x01, (byte)0xfe, (byte)0x01,
+            (byte)0xe0, (byte)0x1f, (byte)0xe0, (byte)0x1f, (byte)0xf1, (byte)0x0e, (byte)0xf1, (byte)0x0e,
+            (byte)0xe0, (byte)0x01, (byte)0xe0, (byte)0x01, (byte)0xf1, (byte)0x01, (byte)0xf1, (byte)0x01,
+            (byte)0xfe, (byte)0x1f, (byte)0xfe, (byte)0x1f, (byte)0xfe, (byte)0x0e, (byte)0xfe, (byte)0x0e,
+            (byte)0x1f, (byte)0x01, (byte)0x1f, (byte)0x01, (byte)0x0e, (byte)0x01, (byte)0x0e, (byte)0x01,
+            (byte)0xfe, (byte)0xe0, (byte)0xfe, (byte)0xe0, (byte)0xfe, (byte)0xf1, (byte)0xfe, (byte)0xf1
         };
+
+        public DesParameters(
+            byte[] key)
+            : base(key)
+        {
+            if (IsWeakKey(key))
+                throw new ArgumentException("attempt to create weak DES key");
+        }
+
+        public DesParameters(
+            byte[] key,
+            int keyOff,
+            int keyLen)
+            : base(key, keyOff, keyLen)
+        {
+            if (IsWeakKey(key, keyOff))
+                throw new ArgumentException("attempt to create weak DES key");
+        }
 
         /**
         * DES has 16 weak keys.  This method will check
@@ -70,40 +69,40 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters
         *     false otherwise.
         */
         public static bool IsWeakKey(
-            byte[]	key,
-            int		offset)
+            byte[] key,
+            int offset)
         {
             if (key.Length - offset < DesKeyLength)
                 throw new ArgumentException("key material too short.");
 
-			//nextkey:
+            //nextkey:
             for (int i = 0; i < N_DES_WEAK_KEYS; i++)
             {
                 bool unmatch = false;
                 for (int j = 0; j < DesKeyLength; j++)
                 {
-                    if (key[j + offset] != DES_weak_keys[i * DesKeyLength + j])
+                    if (key[j + offset] != DesWeakKeys[i * DesKeyLength + j])
                     {
                         //continue nextkey;
                         unmatch = true;
-						break;
+                        break;
                     }
                 }
 
-				if (!unmatch)
-				{
-					return true;
-				}
+                if (!unmatch)
+                {
+                    return true;
+                }
             }
 
-			return false;
+            return false;
         }
 
-		public static bool IsWeakKey(
-			byte[] key)
-		{
-			return IsWeakKey(key, 0);
-		}
+        public static bool IsWeakKey(
+            byte[] key)
+        {
+            return IsWeakKey(key, 0);
+        }
 
         public static byte SetOddParity(byte b)
         {

@@ -5,6 +5,7 @@ using System;
 namespace BestHTTP.SignalRCore
 {
     public delegate void OnAuthenticationSuccededDelegate(IAuthenticationProvider provider);
+
     public delegate void OnAuthenticationFailedDelegate(IAuthenticationProvider provider, string reason);
 
     public interface IAuthenticationProvider
@@ -32,7 +33,7 @@ namespace BestHTTP.SignalRCore
         /// <summary>
         /// This function will be called for every request before sending it.
         /// </summary>
-        void PrepareRequest(HTTPRequest request);
+        void PrepareRequest(HttpRequest request);
 
         /// <summary>
         /// This function can customize the given uri. If there's no intention to modify the uri, this function should return with the parameter.

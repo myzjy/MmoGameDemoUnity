@@ -50,7 +50,7 @@ namespace BestHTTP.Connections
             Close();
         }
 
-        public void Connect(HTTPRequest request)
+        public void Connect(HttpRequest request)
         {
             string negotiatedProtocol = HttpProtocolFactory.W3CHttp1;
 

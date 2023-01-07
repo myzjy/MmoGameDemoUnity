@@ -1,7 +1,7 @@
 #if !BESTHTTP_DISABLE_WEBSOCKET
-using System;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
+using System;
 using BestHTTP.WebSocket.Frames;
 #endif
 
@@ -20,9 +20,13 @@ namespace BestHTTP.WebSocket
     };
 
     public delegate void OnWebSocketOpenDelegate(WebSocket webSocket);
+
     public delegate void OnWebSocketMessageDelegate(WebSocket webSocket, string message);
+
     public delegate void OnWebSocketBinaryDelegate(WebSocket webSocket, byte[] data);
+
     public delegate void OnWebSocketClosedDelegate(WebSocket webSocket, UInt16 code, string message);
+
     public delegate void OnWebSocketErrorDelegate(WebSocket webSocket, string reason);
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -31,32 +35,6 @@ namespace BestHTTP.WebSocket
 
     public abstract class WebSocketBaseImplementation
     {
-        public virtual WebSocketStates State { get; protected set; }
-        public virtual bool IsOpen { get; protected set; }
-        public virtual int BufferedAmount { get; protected set; }
-
-#if !UNITY_WEBGL || UNITY_EDITOR
-        public HTTPRequest InternalRequest
-        {
-            get
-            {
-                if (this._internalRequest == null)
-                    CreateInternalRequest();
-
-                return this._internalRequest;
-            }
-        }
-        protected HTTPRequest _internalRequest;
-
-        public virtual int Latency { get; protected set; }
-        public virtual DateTime LastMessageReceived { get; protected set; }
-#endif
-
-        public WebSocket Parent { get; }
-        public Uri Uri { get; protected set; }
-        public string Origin { get; }
-        public string Protocol { get; }
-
         public WebSocketBaseImplementation(WebSocket parent, Uri uri, string origin, string protocol)
         {
             this.Parent = parent;
@@ -73,12 +51,39 @@ namespace BestHTTP.WebSocket
 #endif
         }
 
+        public virtual WebSocketStates State { get; protected set; }
+        public virtual bool IsOpen { get; protected set; }
+        public virtual int BufferedAmount { get; protected set; }
+
+        public WebSocket Parent { get; }
+        public Uri Uri { get; protected set; }
+        public string Origin { get; }
+        public string Protocol { get; }
+
         public abstract void StartOpen();
         public abstract void StartClose(UInt16 code, string message);
 
         public abstract void Send(string message);
         public abstract void Send(byte[] buffer);
         public abstract void Send(byte[] buffer, ulong offset, ulong count);
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        public HttpRequest InternalRequest
+        {
+            get
+            {
+                if (this._internalRequest == null)
+                    CreateInternalRequest();
+
+                return this._internalRequest;
+            }
+        }
+
+        protected HttpRequest _internalRequest;
+
+        public virtual int Latency { get; protected set; }
+        public virtual DateTime LastMessageReceived { get; protected set; }
+#endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         protected abstract void CreateInternalRequest();

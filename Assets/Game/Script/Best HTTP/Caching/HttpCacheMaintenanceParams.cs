@@ -2,11 +2,12 @@
 
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace BestHTTP.Caching
 {
-    public sealed class HttpCacheMaintananceParams
+    public abstract class HttpCacheMaintenanceParams
     {
-        public HttpCacheMaintananceParams(TimeSpan deleteOlder, ulong maxCacheSize)
+        public HttpCacheMaintenanceParams(TimeSpan deleteOlder, ulong maxCacheSize)
         {
             this.DeleteOlder = deleteOlder;
             this.MaxCacheSize = maxCacheSize;

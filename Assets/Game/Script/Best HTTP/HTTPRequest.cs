@@ -21,7 +21,7 @@ namespace BestHTTP
     /// <summary>
     /// Possible logical states of a HTTTPRequest object.
     /// </summary>
-    public enum HTTPRequestStates
+    public enum HttpRequestStates
     {
         /// <summary>
         /// Initial status of a request. No callback will be called with this status.
@@ -64,20 +64,20 @@ namespace BestHTTP
         TimedOut
     }
 
-    public delegate void OnRequestFinishedDelegate(HTTPRequest originalRequest, HttpResponse response);
+    public delegate void OnRequestFinishedDelegate(HttpRequest originalRequest, HttpResponse response);
 
-    public delegate void OnDownloadProgressDelegate(HTTPRequest originalRequest, long downloaded, long downloadLength);
+    public delegate void OnDownloadProgressDelegate(HttpRequest originalRequest, long downloaded, long downloadLength);
 
-    public delegate void OnUploadProgressDelegate(HTTPRequest originalRequest, long uploaded, long uploadLength);
+    public delegate void OnUploadProgressDelegate(HttpRequest originalRequest, long uploaded, long uploadLength);
 
-    public delegate bool OnBeforeRedirectionDelegate(HTTPRequest originalRequest, HttpResponse response,
+    public delegate bool OnBeforeRedirectionDelegate(HttpRequest originalRequest, HttpResponse response,
         Uri redirectUri);
 
     public delegate void OnHeaderEnumerationDelegate(string header, List<string> values);
 
-    public delegate void OnBeforeHeaderSendDelegate(HTTPRequest req);
+    public delegate void OnBeforeHeaderSendDelegate(HttpRequest req);
 
-    public delegate void OnHeadersReceivedDelegate(HTTPRequest originalRequest, HttpResponse response,
+    public delegate void OnHeadersReceivedDelegate(HttpRequest originalRequest, HttpResponse response,
         Dictionary<string, List<string>> headers);
 
     /// <summary>
@@ -87,29 +87,29 @@ namespace BestHTTP
     /// <param name="response">The HTTPResponse object.</param>
     /// <param name="dataFragment">The downloaded data. The byte[] can be larger than the actual payload! Its valid length that can be used is in the dataFragmentLength param.</param>
     /// <param name="dataFragmentLength">Length of the downloaded data.</param>
-    public delegate bool OnStreamingDataDelegate(HTTPRequest request, HttpResponse response, byte[] dataFragment,
+    public delegate bool OnStreamingDataDelegate(HttpRequest request, HttpResponse response, byte[] dataFragment,
         int dataFragmentLength);
 
-    public sealed class HTTPRequest : IEnumerator, IEnumerator<HTTPRequest>
+    public sealed class HttpRequest : IEnumerator, IEnumerator<HttpRequest>
     {
         #region Statics
 
-        public static readonly byte[] EOL = { HttpResponse.CR, HttpResponse.LF };
+        public static readonly byte[] Eol = { HttpResponse.CR, HttpResponse.LF };
 
         /// <summary>
         /// Cached uppercase values to save some cpu cycles and GC alloc per request.
         /// </summary>
         public static readonly string[] MethodNames =
         {
-            HTTPMethods.Get.ToString().ToUpper(),
-            HTTPMethods.Head.ToString().ToUpper(),
-            HTTPMethods.Post.ToString().ToUpper(),
-            HTTPMethods.Put.ToString().ToUpper(),
-            HTTPMethods.Delete.ToString().ToUpper(),
-            HTTPMethods.Patch.ToString().ToUpper(),
-            HTTPMethods.Merge.ToString().ToUpper(),
-            HTTPMethods.Options.ToString().ToUpper(),
-            HTTPMethods.Connect.ToString().ToUpper(),
+            HttpMethods.Get.ToString().ToUpper(),
+            HttpMethods.Head.ToString().ToUpper(),
+            HttpMethods.Post.ToString().ToUpper(),
+            HttpMethods.Put.ToString().ToUpper(),
+            HttpMethods.Delete.ToString().ToUpper(),
+            HttpMethods.Patch.ToString().ToUpper(),
+            HttpMethods.Merge.ToString().ToUpper(),
+            HttpMethods.Options.ToString().ToUpper(),
+            HttpMethods.Connect.ToString().ToUpper(),
         };
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace BestHTTP
         /// <summary>
         /// The method that how we want to process our request the server.
         /// </summary>
-        public HTTPMethods MethodType { get; set; }
+        public HttpMethods MethodType { get; set; }
 
         /// <summary>
         /// The raw data to send in a POST request. If it set all other fields that added to this request will be ignored.
@@ -162,13 +162,13 @@ namespace BestHTTP
         /// </summary>
         public bool IsKeepAlive
         {
-            get { return isKeepAlive; }
+            get { return _isKeepAlive; }
             set
             {
-                if (State == HTTPRequestStates.Processing)
+                if (State == HttpRequestStates.Processing)
                     throw new NotSupportedException(
                         "Changing the IsKeepAlive property while processing the request is not supported.");
-                isKeepAlive = value;
+                _isKeepAlive = value;
             }
         }
 
@@ -178,13 +178,13 @@ namespace BestHTTP
         /// </summary>
         public bool DisableCache
         {
-            get { return disableCache; }
+            get { return _disableCache; }
             set
             {
-                if (State == HTTPRequestStates.Processing)
+                if (State == HttpRequestStates.Processing)
                     throw new NotSupportedException(
                         "Changing the DisableCache property while processing the request is not supported.");
-                disableCache = value;
+                _disableCache = value;
             }
         }
 
@@ -193,13 +193,13 @@ namespace BestHTTP
         /// </summary>
         public bool CacheOnly
         {
-            get { return cacheOnly; }
+            get { return _cacheOnly; }
             set
             {
-                if (State == HTTPRequestStates.Processing)
+                if (State == HttpRequestStates.Processing)
                     throw new NotSupportedException(
                         "Changing the CacheOnly property while processing the request is not supported.");
-                cacheOnly = value;
+                _cacheOnly = value;
             }
         }
 #endif
@@ -209,17 +209,17 @@ namespace BestHTTP
         /// </summary>
         public int StreamFragmentSize
         {
-            get { return streamFragmentSize; }
+            get { return _streamFragmentSize; }
             set
             {
-                if (State == HTTPRequestStates.Processing)
+                if (State == HttpRequestStates.Processing)
                     throw new NotSupportedException(
                         "Changing the StreamFragmentSize property while processing the request is not supported.");
 
                 if (value < 1)
                     throw new System.ArgumentException("StreamFragmentSize must be at least 1.");
 
-                streamFragmentSize = value;
+                _streamFragmentSize = value;
             }
         }
 
@@ -385,25 +385,25 @@ namespace BestHTTP
         {
             get
             {
-                if (customCookies == null)
-                    customCookies = new List<Cookie>();
-                return customCookies;
+                if (_customCookies == null)
+                    _customCookies = new List<Cookie>();
+                return _customCookies;
             }
-            set { customCookies = value; }
+            set { _customCookies = value; }
         }
 
-        private List<Cookie> customCookies;
+        private List<Cookie> _customCookies;
 #endif
 
         /// <summary>
         /// What form should used. Its default value is Automatic.
         /// </summary>
-        public HTTPFormUsage FormUsage { get; set; }
+        public HttpFormUsage FormUsage { get; set; }
 
         /// <summary>
         /// Current state of this request.
         /// </summary>
-        public HTTPRequestStates State
+        public HttpRequestStates State
         {
             get { return this._state; }
             internal set
@@ -423,7 +423,7 @@ namespace BestHTTP
             }
         }
 
-        private volatile HTTPRequestStates _state;
+        private volatile HttpRequestStates _state;
 
         /// <summary>
         /// How many times redirected.
@@ -457,11 +457,11 @@ namespace BestHTTP
         /// </summary>
         public event OnBeforeRedirectionDelegate OnBeforeRedirection
         {
-            add { onBeforeRedirection += value; }
-            remove { onBeforeRedirection -= value; }
+            add { _onBeforeRedirection += value; }
+            remove { _onBeforeRedirection -= value; }
         }
 
-        private OnBeforeRedirectionDelegate onBeforeRedirection;
+        private OnBeforeRedirectionDelegate _onBeforeRedirection;
 
         /// <summary>
         /// This event will be fired before the plugin will write headers to the wire. New headers can be added in this callback. This event is called on a non-Unity thread!
@@ -535,7 +535,7 @@ namespace BestHTTP
         /// <summary>
         /// This action is called when a user calls the Abort function. Do not use it outside of the plugin!
         /// </summary>
-        internal Action<HTTPRequest> OnCancellationRequested;
+        internal Action<HttpRequest> OnCancellationRequested;
 #endif
 
         #endregion
@@ -544,25 +544,25 @@ namespace BestHTTP
 
         #region Privates
 
-        private bool isKeepAlive;
+        private bool _isKeepAlive;
 #if !BESTHTTP_DISABLE_CACHING
-        private bool disableCache;
-        private bool cacheOnly;
+        private bool _disableCache;
+        private bool _cacheOnly;
 #endif
-        private int streamFragmentSize;
+        private int _streamFragmentSize;
 
         private Dictionary<string, List<string>> Headers { get; set; }
 
         /// <summary>
         /// We will collect the fields and values to the FieldCollector through the AddField and AddBinaryData functions.
         /// </summary>
-        private HTTPFormBase FieldCollector;
+        private HttpFormBase _fieldCollector;
 
         /// <summary>
         /// When the request about to send the request we will create a specialized form implementation(url-encoded, multipart, or the legacy WWWForm based).
         /// And we will use this instance to create the data that we will send to the server.
         /// </summary>
-        private HTTPFormBase FormImpl;
+        private HttpFormBase _formImpl;
 
         #endregion
 
@@ -570,8 +570,8 @@ namespace BestHTTP
 
         #region Default Get Constructors
 
-        public HTTPRequest(Uri uri)
-            : this(uri, HTTPMethods.Get, HttpManager.KeepAliveDefaultValue,
+        public HttpRequest(Uri uri)
+            : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
                 HttpManager.IsCachingDisabled
 #else
@@ -581,8 +581,8 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, OnRequestFinishedDelegate callback)
-            : this(uri, HTTPMethods.Get, HttpManager.KeepAliveDefaultValue,
+        public HttpRequest(Uri uri, OnRequestFinishedDelegate callback)
+            : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
                 HttpManager.IsCachingDisabled
 #else
@@ -592,8 +592,8 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, bool isKeepAlive, OnRequestFinishedDelegate callback)
-            : this(uri, HTTPMethods.Get, isKeepAlive,
+        public HttpRequest(Uri uri, bool isKeepAlive, OnRequestFinishedDelegate callback)
+            : this(uri, HttpMethods.Get, isKeepAlive,
 #if !BESTHTTP_DISABLE_CACHING
                 HttpManager.IsCachingDisabled
 #else
@@ -604,17 +604,17 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, bool isKeepAlive, bool disableCache, OnRequestFinishedDelegate callback)
-            : this(uri, HTTPMethods.Get, isKeepAlive, disableCache, callback)
+        public HttpRequest(Uri uri, bool isKeepAlive, bool disableCache, OnRequestFinishedDelegate callback)
+            : this(uri, HttpMethods.Get, isKeepAlive, disableCache, callback)
         {
         }
 
         #endregion
 
-        public HTTPRequest(Uri uri, HTTPMethods methodType)
+        public HttpRequest(Uri uri, HttpMethods methodType)
             : this(uri, methodType, HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HTTPMethods.Get
+                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
             true
 #endif
@@ -622,10 +622,10 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, HTTPMethods methodType, OnRequestFinishedDelegate callback)
+        public HttpRequest(Uri uri, HttpMethods methodType, OnRequestFinishedDelegate callback)
             : this(uri, methodType, HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HTTPMethods.Get
+                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
             true
 #endif
@@ -633,10 +633,10 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, HTTPMethods methodType, bool isKeepAlive, OnRequestFinishedDelegate callback)
+        public HttpRequest(Uri uri, HttpMethods methodType, bool isKeepAlive, OnRequestFinishedDelegate callback)
             : this(uri, methodType, isKeepAlive,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HTTPMethods.Get
+                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
             true
 #endif
@@ -644,7 +644,7 @@ namespace BestHTTP
         {
         }
 
-        public HTTPRequest(Uri uri, HTTPMethods methodType, bool isKeepAlive, bool disableCache,
+        public HttpRequest(Uri uri, HttpMethods methodType, bool isKeepAlive, bool disableCache,
             OnRequestFinishedDelegate callback)
         {
             this.Uri = uri;
@@ -657,14 +657,14 @@ namespace BestHTTP
             this.StreamFragmentSize = 1024 * 1024;
             this.MaxFragmentQueueLength = 10;
 
-            this.MaxRetries = methodType == HTTPMethods.Get ? 1 : 0;
+            this.MaxRetries = methodType == HttpMethods.Get ? 1 : 0;
             this.MaxRedirects = 10;
             this.RedirectCount = 0;
 #if !BESTHTTP_DISABLE_COOKIES
             this.IsCookiesEnabled = HttpManager.IsCookiesEnabled;
 #endif
 
-            this.State = HTTPRequestStates.Initial;
+            this.State = HttpRequestStates.Initial;
 
             this.ConnectTimeout = HttpManager.ConnectTimeout;
             this.Timeout = HttpManager.RequestTimeout;
@@ -704,10 +704,10 @@ namespace BestHTTP
         /// </summary>
         public void AddField(string fieldName, string value, System.Text.Encoding e)
         {
-            if (FieldCollector == null)
-                FieldCollector = new HTTPFormBase();
+            if (_fieldCollector == null)
+                _fieldCollector = new HttpFormBase();
 
-            FieldCollector.AddField(fieldName, value, e);
+            _fieldCollector.AddField(fieldName, value, e);
         }
 
         /// <summary>
@@ -731,29 +731,29 @@ namespace BestHTTP
         /// </summary>
         public void AddBinaryData(string fieldName, byte[] content, string fileName, string mimeType)
         {
-            if (FieldCollector == null)
-                FieldCollector = new HTTPFormBase();
+            if (_fieldCollector == null)
+                _fieldCollector = new HttpFormBase();
 
-            FieldCollector.AddBinaryData(fieldName, content, fileName, mimeType);
+            _fieldCollector.AddBinaryData(fieldName, content, fileName, mimeType);
         }
 
         /// <summary>
         /// Manually set a HTTP Form.
         /// </summary>
-        public void SetForm(HTTPFormBase form)
+        public void SetForm(HttpFormBase form)
         {
-            FormImpl = form;
+            _formImpl = form;
         }
 
         /// <summary>
         /// Returns with the added form-fields or null if no one added.
         /// </summary>
-        public List<HTTPFieldData> GetFormFields()
+        public List<HttpFieldData> GetFormFields()
         {
-            if (this.FieldCollector == null || this.FieldCollector.IsEmpty)
+            if (this._fieldCollector == null || this._fieldCollector.IsEmpty)
                 return null;
 
-            return new List<HTTPFieldData>(this.FieldCollector.Fields);
+            return new List<HttpFieldData>(this._fieldCollector.Fields);
         }
 
         /// <summary>
@@ -761,45 +761,45 @@ namespace BestHTTP
         /// </summary>
         public void ClearForm()
         {
-            FormImpl = null;
-            FieldCollector = null;
+            _formImpl = null;
+            _fieldCollector = null;
         }
 
         /// <summary>
         /// Will create the form implementation based on the value of the FormUsage property.
         /// </summary>
-        private HTTPFormBase SelectFormImplementation()
+        private HttpFormBase SelectFormImplementation()
         {
             // Our form already created with a previous
-            if (FormImpl != null)
-                return FormImpl;
+            if (_formImpl != null)
+                return _formImpl;
 
             // No field added to this request yet
-            if (FieldCollector == null)
+            if (_fieldCollector == null)
                 return null;
 
             switch (FormUsage)
             {
-                case HTTPFormUsage.Automatic:
+                case HttpFormUsage.Automatic:
                     // A really simple decision making: if there are at least one field with binary data, or a 'long' string value then we will choose a Multipart form.
                     //  Otherwise Url Encoded form will be used.
-                    if (FieldCollector.HasBinary || FieldCollector.HasLongValue)
-                        goto case HTTPFormUsage.Multipart;
+                    if (_fieldCollector.HasBinary || _fieldCollector.HasLongValue)
+                        goto case HttpFormUsage.Multipart;
                     else
-                        goto case HTTPFormUsage.UrlEncoded;
+                        goto case HttpFormUsage.UrlEncoded;
 
-                case HTTPFormUsage.UrlEncoded:
-                    FormImpl = new HTTPUrlEncodedForm();
+                case HttpFormUsage.UrlEncoded:
+                    _formImpl = new HttpUrlEncodedForm();
                     break;
-                case HTTPFormUsage.Multipart:
-                    FormImpl = new HTTPMultiPartForm();
+                case HttpFormUsage.Multipart:
+                    _formImpl = new HttpMultiPartForm();
                     break;
             }
 
             // Copy the fields, and other properties to the new implementation
-            FormImpl.CopyFrom(FieldCollector);
+            _formImpl.CopyFrom(_fieldCollector);
 
-            return FormImpl;
+            return _formImpl;
         }
 
         #endregion
@@ -982,11 +982,11 @@ namespace BestHTTP
                 byte[] entityBody = GetEntityBody();
                 contentLength = entityBody != null ? entityBody.Length : 0;
 
-                if (RawData == null && (FormImpl != null || (FieldCollector != null && !FieldCollector.IsEmpty)))
+                if (RawData == null && (_formImpl != null || (_fieldCollector != null && !_fieldCollector.IsEmpty)))
                 {
                     SelectFormImplementation();
-                    if (FormImpl != null)
-                        FormImpl.PrepareRequest(this);
+                    if (_formImpl != null)
+                        _formImpl.PrepareRequest(this);
                 }
             }
             else
@@ -1080,14 +1080,14 @@ namespace BestHTTP
 
             // Merge server sent cookies with user-set cookies
             if (cookies == null || cookies.Count == 0)
-                cookies = this.customCookies;
-            else if (this.customCookies != null)
+                cookies = this._customCookies;
+            else if (this._customCookies != null)
             {
                 // Merge
                 int idx = 0;
-                while (idx < this.customCookies.Count)
+                while (idx < this._customCookies.Count)
                 {
-                    Cookie customCookie = customCookies[idx];
+                    Cookie customCookie = _customCookies[idx];
 
                     int foundIdx = cookies.FindIndex(c => c.Name.Equals(customCookie.Name));
                     if (foundIdx >= 0)
@@ -1178,7 +1178,7 @@ namespace BestHTTP
 
                     stream.WriteArray(headerName);
                     stream.WriteArray(valueBytes);
-                    stream.WriteArray(EOL);
+                    stream.WriteArray(Eol);
 
                     BufferPool.Release(valueBytes);
                 }
@@ -1208,11 +1208,11 @@ namespace BestHTTP
             if (RawData != null)
                 return RawData;
 
-            if (FormImpl != null || (FieldCollector != null && !FieldCollector.IsEmpty))
+            if (_formImpl != null || (_fieldCollector != null && !_fieldCollector.IsEmpty))
             {
                 SelectFormImplementation();
-                if (FormImpl != null)
-                    return FormImpl.GetData();
+                if (_formImpl != null)
+                    return _formImpl.GetData();
             }
 
             return null;
@@ -1235,15 +1235,15 @@ namespace BestHTTP
             byte[] data = RawData;
 
             // We are sending forms? Then convert the form to a byte array
-            if (data == null && FormImpl != null)
-                data = FormImpl.GetData();
+            if (data == null && _formImpl != null)
+                data = _formImpl.GetData();
 
             if (data != null || UploadStream != null)
             {
                 // Make a new reference, as we will check the UploadStream property in the HTTPManager
                 Stream uploadStream = UploadStream;
 
-                long UploadLength = 0;
+                long uploadLength = 0;
 
                 if (uploadStream == null)
                 {
@@ -1253,12 +1253,12 @@ namespace BestHTTP
                     uploadStream = new MemoryStream(data, 0, data.Length);
 
                     // Initialize progress report variable
-                    UploadLength = data.Length;
+                    uploadLength = data.Length;
                 }
                 else
-                    UploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
+                    uploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
 
-                return new UploadStreamInfo(uploadStream, UploadLength);
+                return new UploadStreamInfo(uploadStream, uploadLength);
             }
 
             return new UploadStreamInfo(null, 0);
@@ -1294,13 +1294,13 @@ namespace BestHTTP
             {
                 byte[] requestLineBytes = requestLine.GetASCIIBytes();
                 bufferStream.WriteArray(requestLineBytes);
-                bufferStream.WriteArray(EOL);
+                bufferStream.WriteArray(Eol);
 
                 BufferPool.Release(requestLineBytes);
 
                 // Write headers to the buffer
                 SendHeaders(bufferStream);
-                bufferStream.WriteArray(EOL);
+                bufferStream.WriteArray(Eol);
 
                 // Send remaining data to the wire
                 bufferStream.Flush();
@@ -1308,15 +1308,15 @@ namespace BestHTTP
                 byte[] data = RawData;
 
                 // We are sending forms? Then convert the form to a byte array
-                if (data == null && FormImpl != null)
-                    data = FormImpl.GetData();
+                if (data == null && _formImpl != null)
+                    data = _formImpl.GetData();
 
                 if (data != null || UploadStream != null)
                 {
                     // Make a new reference, as we will check the UploadStream property in the HTTPManager
                     Stream uploadStream = UploadStream;
 
-                    long UploadLength = 0;
+                    long uploadLength = 0;
 
                     if (uploadStream == null)
                     {
@@ -1326,13 +1326,13 @@ namespace BestHTTP
                         uploadStream = new MemoryStream(data, 0, data.Length);
 
                         // Initialize progress report variable
-                        UploadLength = data.Length;
+                        uploadLength = data.Length;
                     }
                     else
-                        UploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
+                        uploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
 
                     // Initialize the progress report variables
-                    long Uploaded = 0;
+                    long uploaded = 0;
 
                     // Upload buffer. First we will read the data into this buffer from the UploadStream, then write this buffer to our outStream
                     byte[] buffer = BufferPool.Get(UploadChunkSize, true);
@@ -1346,7 +1346,7 @@ namespace BestHTTP
                         {
                             byte[] countBytes = count.ToString("X").GetASCIIBytes();
                             bufferStream.WriteArray(countBytes);
-                            bufferStream.WriteArray(EOL);
+                            bufferStream.WriteArray(Eol);
 
                             BufferPool.Release(countBytes);
                         }
@@ -1356,17 +1356,17 @@ namespace BestHTTP
 
                         // chunk trailing EOL
                         if (!UseUploadStreamLength)
-                            bufferStream.WriteArray(EOL);
+                            bufferStream.WriteArray(Eol);
 
                         // update how many bytes are uploaded
-                        Uploaded += count;
+                        uploaded += count;
 
                         // Write to the wire
                         bufferStream.Flush();
 
                         if (this.OnUploadProgress != null)
                             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this,
-                                RequestEvents.UploadProgress, Uploaded, UploadLength));
+                                RequestEvents.UploadProgress, uploaded, uploadLength));
 
                         if (this.IsCancellationRequested)
                             return;
@@ -1380,8 +1380,8 @@ namespace BestHTTP
                         byte[] noMoreChunkBytes = BufferPool.Get(1, true);
                         noMoreChunkBytes[0] = (byte)'0';
                         bufferStream.Write(noMoreChunkBytes, 0, 1);
-                        bufferStream.WriteArray(EOL);
-                        bufferStream.WriteArray(EOL);
+                        bufferStream.WriteArray(Eol);
+                        bufferStream.WriteArray(Eol);
 
                         BufferPool.Release(noMoreChunkBytes);
                     }
@@ -1421,8 +1421,8 @@ namespace BestHTTP
 
         internal bool CallOnBeforeRedirection(Uri redirectUri)
         {
-            if (onBeforeRedirection != null)
-                return onBeforeRedirection(this, this.Response, redirectUri);
+            if (_onBeforeRedirection != null)
+                return _onBeforeRedirection(this, this.Response, redirectUri);
 
             return true;
         }
@@ -1439,7 +1439,7 @@ namespace BestHTTP
         /// <summary>
         /// Starts processing the request.
         /// </summary>
-        public HTTPRequest Send()
+        public HttpRequest Send()
         {
             this.IsCancellationRequested = false;
             this.Exception = null;
@@ -1456,7 +1456,7 @@ namespace BestHTTP
 
             lock (this)
             {
-                if (this.State >= HTTPRequestStates.Finished)
+                if (this.State >= HttpRequestStates.Finished)
                     return;
 
                 this.IsCancellationRequested = true;
@@ -1474,11 +1474,11 @@ namespace BestHTTP
                 if (this.IsTimedOut)
                 {
                     this.State = this.IsConnectTimedOut
-                        ? HTTPRequestStates.ConnectionTimedOut
-                        : HTTPRequestStates.TimedOut;
+                        ? HttpRequestStates.ConnectionTimedOut
+                        : HttpRequestStates.TimedOut;
                 }
                 else
-                    this.State = HTTPRequestStates.Aborted;
+                    this.State = HttpRequestStates.Aborted;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
                 if (this.OnCancellationRequested != null)
@@ -1522,7 +1522,7 @@ namespace BestHTTP
 
         public bool MoveNext()
         {
-            return this.State < HTTPRequestStates.Finished;
+            return this.State < HttpRequestStates.Finished;
         }
 
         public void Reset()
@@ -1532,7 +1532,7 @@ namespace BestHTTP
 
         #endregion
 
-        HTTPRequest IEnumerator<HTTPRequest>.Current
+        HttpRequest IEnumerator<HttpRequest>.Current
         {
             get { return this; }
         }

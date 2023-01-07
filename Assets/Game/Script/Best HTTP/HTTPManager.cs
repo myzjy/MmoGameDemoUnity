@@ -26,12 +26,12 @@ namespace BestHTTP
     }
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
-    public delegate Connections.TLS.AbstractTls13Client TlsClientFactoryDelegate(HTTPRequest request,
+    public delegate Connections.TLS.AbstractTls13Client TlsClientFactoryDelegate(HttpRequest request,
         List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols);
 #endif
 
     public delegate System.Security.Cryptography.X509Certificates.X509Certificate ClientCertificateSelector(
-        HTTPRequest request, string targetHost,
+        HttpRequest request, string targetHost,
         System.Security.Cryptography.X509Certificates.X509CertificateCollection localCertificates,
         System.Security.Cryptography.X509Certificates.X509Certificate remoteCertificate, string[] acceptableIssuers);
 
@@ -46,8 +46,8 @@ namespace BestHTTP
         /// HTTP/2 settings
         /// </summary>
         // ReSharper disable once UnusedMember.Local
-        public static readonly Connections.HTTP2.HTTP2PluginSettings Http2Settings =
-            new Connections.HTTP2.HTTP2PluginSettings();
+        public static readonly Connections.HTTP2.Http2PluginSettings Http2Settings =
+            new Connections.HTTP2.Http2PluginSettings();
 #endif
 
         #region Manager variables
@@ -216,7 +216,7 @@ namespace BestHTTP
         public static TlsClientFactoryDelegate TlsClientFactory { get; set; }
 #pragma warning restore CS0169
 
-        public static Connections.TLS.AbstractTls13Client DefaultTlsClientFactory(HTTPRequest request,
+        public static Connections.TLS.AbstractTls13Client DefaultTlsClientFactory(HttpRequest request,
             List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols)
         {
             // http://tools.ietf.org/html/rfc3546#section-3.1
@@ -248,7 +248,7 @@ namespace BestHTTP
 #if !NETFX_CORE
 #pragma warning disable CS0169
 
-        public static Func<HTTPRequest, X509Certificate, X509Chain, SslPolicyErrors, bool>
+        public static Func<HttpRequest, X509Certificate, X509Chain, SslPolicyErrors, bool>
             DefaultCertificationValidator => null;
 #pragma warning restore CS0169
 #pragma warning disable CS0169
@@ -312,10 +312,10 @@ namespace BestHTTP
 
             HttpManager.Logger.Information("HTTPManager", "Setup called! UserAgent: " + UserAgent);
 
-            HTTPUpdateDelegator.CheckInstance();
+            HttpUpdateDelegator.CheckInstance();
 
 #if !BESTHTTP_DISABLE_CACHING
-            HTTPCacheService.CheckSetup();
+            HttpCacheService.CheckSetup();
 #endif
 
 #if !BESTHTTP_DISABLE_COOKIES
@@ -326,29 +326,29 @@ namespace BestHTTP
             HostManager.Load();
         }
 
-        public static HTTPRequest SendRequest(string url, OnRequestFinishedDelegate callback)
+        public static HttpRequest SendRequest(string url, OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HTTPRequest(new Uri(url), HTTPMethods.Get, callback));
+            return SendRequest(new HttpRequest(new Uri(url), HttpMethods.Get, callback));
         }
 
-        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, OnRequestFinishedDelegate callback)
+        public static HttpRequest SendRequest(string url, HttpMethods methodType, OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HTTPRequest(new Uri(url), methodType, callback));
+            return SendRequest(new HttpRequest(new Uri(url), methodType, callback));
         }
 
-        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive,
+        public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive,
             OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HTTPRequest(new Uri(url), methodType, isKeepAlive, callback));
+            return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, callback));
         }
 
-        public static HTTPRequest SendRequest(string url, HTTPMethods methodType, bool isKeepAlive, bool disableCache,
+        public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive, bool disableCache,
             OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HTTPRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
+            return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
         }
 
-        public static HTTPRequest SendRequest(HTTPRequest request)
+        public static HttpRequest SendRequest(HttpRequest request)
         {
             if (!_isSetupCalled)
                 Setup();
@@ -358,7 +358,7 @@ namespace BestHTTP
 
 #if !BESTHTTP_DISABLE_CACHING
             // If possible load the full response from cache.
-            if (HTTPCacheService.IsCachedEntityExpiresInTheFuture(request))
+            if (HttpCacheService.IsCachedEntityExpiresInTheFuture(request))
             {
                 var started = DateTime.Now;
                 PlatformSupport.Threading.ThreadedRunner.RunShortLiving((req) =>
@@ -366,13 +366,13 @@ namespace BestHTTP
                     if (ConnectionHelper.TryLoadAllFromCache("HTTPManager", req, req.Context))
                     {
                         req.Timing.Add("Full Cache Load", DateTime.Now - started);
-                        req.State = HTTPRequestStates.Finished;
+                        req.State = HttpRequestStates.Finished;
                     }
                     else
                     {
                         // If for some reason it couldn't load we place back the request to the queue.
 
-                        request.State = HTTPRequestStates.Queued;
+                        request.State = HttpRequestStates.Queued;
                         RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
                     }
                 }, request);
@@ -380,7 +380,7 @@ namespace BestHTTP
             else
 #endif
             {
-                request.State = HTTPRequestStates.Queued;
+                request.State = HttpRequestStates.Queued;
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
             }
 
@@ -455,7 +455,7 @@ namespace BestHTTP
             AbortAll();
 
 #if !BESTHTTP_DISABLE_CACHING
-            HTTPCacheService.SaveLibrary();
+            HttpCacheService.SaveLibrary();
 #endif
 
 #if !BESTHTTP_DISABLE_COOKIES

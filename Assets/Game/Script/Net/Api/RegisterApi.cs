@@ -1,12 +1,10 @@
-﻿using BestHTTP;
-
-namespace ZJYFrameWork.Net
+﻿namespace ZJYFrameWork.Net
 {
-    public class RegisterApi:ApiHttp<RegisterDataModel,RegisterServerCodeData,Error>
+    public class RegisterApi : ApiHttp<RegisterDataModel, RegisterServerCodeData, Error>
     {
         public RegisterApi()
         {
-            Method = HTTPMethods.Post;
+            Method = BestHTTP.HttpMethods.Post;
             Param = new RegisterDataModel();
             Path = "/api/register";
             authorize = true;

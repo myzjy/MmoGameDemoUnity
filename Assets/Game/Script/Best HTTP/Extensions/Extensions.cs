@@ -1,24 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 #if NETFX_CORE
     using Windows.Security.Cryptography;
     using Windows.Security.Cryptography.Core;
     using Windows.Storage.Streams;
 #else
-    using Cryptography = System.Security.Cryptography;
-    using FileStream = System.IO.FileStream;
+using Cryptography = System.Security.Cryptography;
 #endif
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.Extensions
 {
     public static class Extensions
     {
+#if NET_STANDARD_2_0 || NETFX_CORE || NET_4_6
+        public static void Clear<T>(this System.Collections.Concurrent.ConcurrentQueue<T> queue)
+        {
+            T result;
+            while (queue.TryDequeue(out result))
+                ;
+        }
+#endif
+
         #region ASCII Encoding (These are required because Windows Phone doesn't supports the Encoding.ASCII class.)
 
         /// <summary>
@@ -63,7 +68,7 @@ namespace BestHTTP.Extensions
 
         public static void WriteLine(this Stream fs)
         {
-            fs.Write(HTTPRequest.EOL, 0, 2);
+            fs.Write(HttpRequest.Eol, 0, 2);
         }
 
         public static void WriteLine(this Stream fs, string line)
@@ -137,7 +142,9 @@ namespace BestHTTP.Extensions
 
         // Original idea from: https://www.code4copy.com/csharp/c-validate-ip-address-string/
         // Working regex: https://www.regular-expressions.info/ip.html
-        private static readonly System.Text.RegularExpressions.Regex validIpV4AddressRegex = new System.Text.RegularExpressions.Regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        private static readonly System.Text.RegularExpressions.Regex validIpV4AddressRegex =
+            new System.Text.RegularExpressions.Regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Validates an IPv4 address.
@@ -160,7 +167,7 @@ namespace BestHTTP.Extensions
             {
                 System.Net.IPAddress ip;
                 if (System.Net.IPAddress.TryParse(address, out ip))
-                  return ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6;
+                    return ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6;
             }
 #endif
             return false;
@@ -207,7 +214,8 @@ namespace BestHTTP.Extensions
 
             try
             {
-                DateTime.TryParse(str, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out defaultValue);
+                DateTime.TryParse(str, System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out defaultValue);
                 return defaultValue.ToUniversalTime();
             }
             catch
@@ -258,7 +266,8 @@ namespace BestHTTP.Extensions
             var res = CryptographicBuffer.EncodeToHexString(hashed);
             return res;
 #else
-            using (var md5 = Cryptography.MD5.Create()) {
+            using (var md5 = Cryptography.MD5.Create())
+            {
                 var hash = md5.ComputeHash(input);
                 var sb = new StringBuilder(hash.Length);
                 for (int i = 0; i < hash.Length; ++i)
@@ -467,25 +476,16 @@ namespace BestHTTP.Extensions
 
         public static void WriteLine(this BufferPoolMemoryStream ms)
         {
-            ms.Write(HTTPRequest.EOL, 0, HTTPRequest.EOL.Length);
+            ms.Write(HttpRequest.Eol, 0, HttpRequest.Eol.Length);
         }
 
         public static void WriteLine(this BufferPoolMemoryStream ms, string str)
         {
             ms.WriteString(str);
-            ms.Write(HTTPRequest.EOL, 0, HTTPRequest.EOL.Length);
+            ms.Write(HttpRequest.Eol, 0, HttpRequest.Eol.Length);
         }
 
         #endregion
-
-#if NET_STANDARD_2_0 || NETFX_CORE || NET_4_6
-        public static void Clear<T>(this System.Collections.Concurrent.ConcurrentQueue<T> queue)
-        {
-            T result;
-            while (queue.TryDequeue(out result))
-                ;
-        }
-#endif
     }
 
     public static class ExceptionHelper

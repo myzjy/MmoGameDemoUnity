@@ -11,14 +11,14 @@ namespace BestHTTP
     /// </summary>
     [ExecuteInEditMode]
     [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
-    public sealed class HTTPUpdateDelegator : MonoBehaviour
+    public sealed class HttpUpdateDelegator : MonoBehaviour
     {
         #region Public Properties
 
         /// <summary>
         /// The singleton instance of the HTTPUpdateDelegator
         /// </summary>
-        public static HTTPUpdateDelegator Instance { get; private set; }
+        public static HttpUpdateDelegator Instance { get; private set; }
 
         /// <summary>
         /// True, if the Instance property should hold a valid value.
@@ -50,8 +50,8 @@ namespace BestHTTP
 
         #endregion
 
-        private static bool IsSetupCalled;
-        private int isHTTPManagerOnUpdateRunning;
+        private static bool _isSetupCalled;
+        private int _isHttpManagerOnUpdateRunning;
 
 #if UNITY_EDITOR
         /// <summary>
@@ -62,12 +62,12 @@ namespace BestHTTP
 #endif
         static void ResetSetup()
         {
-            IsSetupCalled = false;
+            _isSetupCalled = false;
             HttpManager.Logger.Information("HTTPUpdateDelegator", "Reset called!");
         }
 #endif
 
-        static HTTPUpdateDelegator()
+        static HttpUpdateDelegator()
         {
             ThreadFrequencyInMS = 100;
         }
@@ -84,14 +84,14 @@ namespace BestHTTP
                     GameObject go = GameObject.Find("HTTP Update Delegator");
 
                     if (go != null)
-                        Instance = go.GetComponent<HTTPUpdateDelegator>();
+                        Instance = go.GetComponent<HttpUpdateDelegator>();
 
                     if (Instance == null)
                     {
                         go = new GameObject("HTTP Update Delegator");
                         go.hideFlags = HideFlags.HideAndDontSave;
 
-                        Instance = go.AddComponent<HTTPUpdateDelegator>();
+                        Instance = go.AddComponent<HttpUpdateDelegator>();
                     }
 
                     IsCreated = true;
@@ -144,9 +144,9 @@ namespace BestHTTP
 
         private void Setup()
         {
-            if (IsSetupCalled)
+            if (_isSetupCalled)
                 return;
-            IsSetupCalled = true;
+            _isSetupCalled = true;
 
             HttpManager.Setup();
 
@@ -191,7 +191,7 @@ namespace BestHTTP
 
         void Update()
         {
-            if (!IsSetupCalled)
+            if (!_isSetupCalled)
                 Setup();
 
             if (!IsThreaded)
@@ -201,7 +201,7 @@ namespace BestHTTP
         private void CallOnUpdate()
         {
             // Prevent overlapping call of OnUpdate from unity's main thread and a separate thread
-            if (Interlocked.CompareExchange(ref isHTTPManagerOnUpdateRunning, 1, 0) == 0)
+            if (Interlocked.CompareExchange(ref _isHttpManagerOnUpdateRunning, 1, 0) == 0)
             {
                 try
                 {
@@ -209,7 +209,7 @@ namespace BestHTTP
                 }
                 finally
                 {
-                    Interlocked.Exchange(ref isHTTPManagerOnUpdateRunning, 0);
+                    Interlocked.Exchange(ref _isHttpManagerOnUpdateRunning, 0);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace BestHTTP
                 UnityEditor.EditorApplication.update -= Update;
                 UnityEditor.EditorApplication.update += Update;
 
-                HTTPUpdateDelegator.ResetSetup();
+                HttpUpdateDelegator.ResetSetup();
                 HttpManager.ResetSetup();
             }
         }
@@ -257,8 +257,8 @@ namespace BestHTTP
         {
             HttpManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
 
-            if (HTTPUpdateDelegator.OnApplicationForegroundStateChanged != null)
-                HTTPUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
+            if (HttpUpdateDelegator.OnApplicationForegroundStateChanged != null)
+                HttpUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
         }
 
         private static bool UnityApplication_WantsToQuit()

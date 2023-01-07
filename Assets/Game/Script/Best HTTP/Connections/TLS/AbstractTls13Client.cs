@@ -41,10 +41,10 @@ namespace BestHTTP.Connections.TLS
 
         protected List<ProtocolName> _protocols;
 
-        protected HTTPRequest _request;
+        protected HttpRequest _request;
         protected List<ServerName> _sniServerNames;
 
-        protected AbstractTls13Client(HTTPRequest request, List<ServerName> sniServerNames,
+        protected AbstractTls13Client(HttpRequest request, List<ServerName> sniServerNames,
             List<ProtocolName> protocols, TlsCrypto crypto)
             : base(crypto)
         {

@@ -51,7 +51,7 @@ namespace BestHTTP.Connections
                 if (!CurrentRequest.IsCancellationRequested)
                 {
                     CurrentRequest.Exception = e;
-                    CurrentRequest.State = HTTPRequestStates.Error;
+                    CurrentRequest.State = HttpRequestStates.Error;
                 }
             }
             finally
@@ -60,13 +60,13 @@ namespace BestHTTP.Connections
                 {
                     this.CurrentRequest.Response = null;
                     this.CurrentRequest.State = this.CurrentRequest.IsTimedOut
-                        ? HTTPRequestStates.TimedOut
-                        : HTTPRequestStates.Aborted;
+                        ? HttpRequestStates.TimedOut
+                        : HttpRequestStates.Aborted;
                 }
                 else if (this.CurrentRequest.Response == null)
-                    this.CurrentRequest.State = HTTPRequestStates.Error;
+                    this.CurrentRequest.State = HttpRequestStates.Error;
                 else
-                    this.CurrentRequest.State = HTTPRequestStates.Finished;
+                    this.CurrentRequest.State = HttpRequestStates.Finished;
 
                 ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
                     HttpConnectionStates.Closed));

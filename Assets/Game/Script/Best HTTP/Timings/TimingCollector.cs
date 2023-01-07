@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
-
 using BestHTTP.Core;
 
 namespace BestHTTP.Timings
 {
     public sealed class TimingCollector
     {
-        public HTTPRequest ParentRequest { get; }
+        public TimingCollector(HttpRequest parentRequest)
+        {
+            this.ParentRequest = parentRequest;
+            this.Start = DateTime.Now;
+        }
+
+        public HttpRequest ParentRequest { get; }
 
         /// <summary>
         /// When the TimingCollector instance created.
@@ -18,12 +23,6 @@ namespace BestHTTP.Timings
         /// List of added events.
         /// </summary>
         public List<TimingEvent> Events { get; private set; }
-
-        public TimingCollector(HTTPRequest parentRequest)
-        {
-            this.ParentRequest = parentRequest;
-            this.Start = DateTime.Now;
-        }
 
         internal void AddEvent(string name, DateTime when, TimeSpan duration)
         {
@@ -37,6 +36,7 @@ namespace BestHTTP.Timings
                     prevEventAt = this.Events[this.Events.Count - 1].When;
                 duration = when - prevEventAt;
             }
+
             this.Events.Add(new TimingEvent(name, when, duration));
         }
 

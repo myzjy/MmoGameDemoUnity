@@ -19,7 +19,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         private volatile bool closeSent;
 
-        private HTTP2Handler http2Handler;
+        private Http2Handler http2Handler;
 
         private PeekableIncomingSegmentStream incomingSegmentStream = new PeekableIncomingSegmentStream();
 
@@ -39,7 +39,7 @@ namespace BestHTTP.WebSocket
 
         private bool waitingForPong = false;
 
-        public OverHTTP2(WebSocket parent, HTTP2Handler handler, Uri uri, string origin, string protocol) : base(parent,
+        public OverHTTP2(WebSocket parent, Http2Handler handler, Uri uri, string origin, string protocol) : base(parent,
             uri, origin, protocol)
         {
             this.http2Handler = handler;
@@ -71,7 +71,7 @@ namespace BestHTTP.WebSocket
                 case WebSocketStates.Connecting:
                     if (now - this.InternalRequest.Timing.Start >= this.Parent.CloseAfterNoMessage)
                     {
-                        if (HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
+                        if (HttpManager.Http2Settings.WebSocketOverHttp2Settings.EnableImplementationFallback)
                         {
                             this.State = WebSocketStates.Closed;
                             this.InternalRequest.OnHeadersReceived = null;
@@ -109,14 +109,14 @@ namespace BestHTTP.WebSocket
 
                 case WebSocketStates.Closed:
                     HttpManager.Heartbeats.Unsubscribe(this);
-                    HTTPUpdateDelegator.OnApplicationForegroundStateChanged -= OnApplicationForegroundStateChanged;
+                    HttpUpdateDelegator.OnApplicationForegroundStateChanged -= OnApplicationForegroundStateChanged;
                     break;
             }
         }
 
         protected override void CreateInternalRequest()
         {
-            base._internalRequest = new HTTPRequest(base.Uri, HTTPMethods.Connect, OnInternalRequestCallback);
+            base._internalRequest = new HttpRequest(base.Uri, HttpMethods.Connect, OnInternalRequestCallback);
             base._internalRequest.Context.Add("WebSocket", this.Parent.Context);
 
             base._internalRequest.SetHeader(":protocol", "websocket");
@@ -167,7 +167,7 @@ namespace BestHTTP.WebSocket
             }
         }
 
-        private void OnHeadersReceived(HTTPRequest req, HttpResponse resp, Dictionary<string, List<string>> newHeaders)
+        private void OnHeadersReceived(HttpRequest req, HttpResponse resp, Dictionary<string, List<string>> newHeaders)
         {
             if (resp != null && resp.StatusCode == 200)
             {
@@ -270,7 +270,7 @@ namespace BestHTTP.WebSocket
             return stream.Length >= (long)Length;
         }
 
-        private bool OnFrame(HTTPRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
+        private bool OnFrame(HttpRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
         {
             base.LastMessageReceived = DateTime.Now;
 
@@ -462,14 +462,14 @@ namespace BestHTTP.WebSocket
             return false;
         }
 
-        private void OnInternalRequestCallback(HTTPRequest req, HttpResponse resp)
+        private void OnInternalRequestCallback(HttpRequest req, HttpResponse resp)
         {
             // If it's already closed, all events are called too.
             if (this.State == WebSocketStates.Closed)
                 return;
 
             if (this.State == WebSocketStates.Connecting &&
-                HttpManager.Http2Settings.WebSocketOverHTTP2Settings.EnableImplementationFallback)
+                HttpManager.Http2Settings.WebSocketOverHttp2Settings.EnableImplementationFallback)
             {
                 this.Parent.FallbackToHTTP1();
                 return;
@@ -479,7 +479,7 @@ namespace BestHTTP.WebSocket
 
             switch (req.State)
             {
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     HttpManager.Logger.Information("OverHTTP2",
                         string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
                             resp.Message), this.Parent.Context);
@@ -499,24 +499,24 @@ namespace BestHTTP.WebSocket
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Request Finished with Error! " + (req.Exception != null
                         ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace)
                         : string.Empty);
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     reason = "Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Processing the request Timed Out!";
                     break;
 
@@ -577,7 +577,7 @@ namespace BestHTTP.WebSocket
 
             base.InternalRequest.Send();
             HttpManager.Heartbeats.Subscribe(this);
-            HTTPUpdateDelegator.OnApplicationForegroundStateChanged += OnApplicationForegroundStateChanged;
+            HttpUpdateDelegator.OnApplicationForegroundStateChanged += OnApplicationForegroundStateChanged;
 
             this.State = WebSocketStates.Connecting;
         }
@@ -612,7 +612,7 @@ namespace BestHTTP.WebSocket
 
             var frame = new WebSocketFrame(this.Parent, WebSocketFrameTypes.Text, data, 0, (ulong)count, true, true);
 
-            var maxFrameSize = this.http2Handler.settings.RemoteSettings[HTTP2Settings.MAX_FRAME_SIZE];
+            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
@@ -635,7 +635,7 @@ namespace BestHTTP.WebSocket
 
             WebSocketFrame frame = new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, buffer);
 
-            var maxFrameSize = this.http2Handler.settings.RemoteSettings[HTTP2Settings.MAX_FRAME_SIZE];
+            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
@@ -659,7 +659,7 @@ namespace BestHTTP.WebSocket
             WebSocketFrame frame =
                 new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, data, offset, count, true, true);
 
-            var maxFrameSize = this.http2Handler.settings.RemoteSettings[HTTP2Settings.MAX_FRAME_SIZE];
+            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
