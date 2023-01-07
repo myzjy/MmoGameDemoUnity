@@ -1,5 +1,4 @@
-﻿using Tools.Util;
-using ZJYFrameWork.UISerializable;
+﻿using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UI.GameMain
 {
@@ -10,11 +9,6 @@ namespace ZJYFrameWork.UI.GameMain
     {
         public override void OnInit()
         {
-            viewPanel.pveButton.SetListener(() =>
-            {
-                //pve
-                //打开地图界面
-            });
             OnShow();
         }
 

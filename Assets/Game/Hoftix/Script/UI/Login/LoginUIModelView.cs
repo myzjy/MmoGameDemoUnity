@@ -54,6 +54,9 @@ namespace ZJYFrameWork.UISerializable
                     InstanceOrReuse();
                     break;
                 case UINotifEnum.CLOSE_LOGIN_UI:
+                {
+                    selfView.OnHide();
+                }
                     break;
             }
         }

@@ -40,6 +40,11 @@ namespace ZJYFrameWork.UISerializable
             return UICanvasType.UI;
         }
 
+        public override UISortType GetSortType()
+        {
+            return UISortType.Last;
+        }
+
         public override string[] Notification()
         {
             return new[]
@@ -60,6 +65,7 @@ namespace ZJYFrameWork.UISerializable
                     break;
                 case UINotifEnum.CLOSE_GAMEMAIN_PANEL:
                 {
+                    selfView.OnHide();
                 }
                     break;
             }

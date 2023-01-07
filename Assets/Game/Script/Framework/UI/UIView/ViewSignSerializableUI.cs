@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -67,8 +66,12 @@ namespace ZJYFrameWork.UISerializable
         public bool Contains(Object thisObj)
         {
             //循环判断是否存在
-            return kodComs.Any(item => item.UI_Serializable_Obj == thisObj);
+            return kodComs.Any(item =>
+                item.UI_Serializable_Obj == thisObj && item.UI_Serializable_Obj.name == thisObj.name);
         }
+
+        public bool IsContains(Object thisObj) => kodComs.Any(a =>
+            a.UI_Serializable_Obj.name == thisObj.name);
 
         public void Delete(Object DeleteObj)
         {

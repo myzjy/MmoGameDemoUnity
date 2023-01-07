@@ -15,6 +15,8 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
             //设置为1
             SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);
+            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOADING_UIPAENL);
+
             UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }
     }

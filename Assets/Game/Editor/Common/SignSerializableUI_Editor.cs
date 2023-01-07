@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
 
-using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +17,11 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             // EditorGUI.BeginChangeCheck();
             //返回活动的游戏对象。(检查图中所示)
             var obj = Selection.activeGameObject;
+            if (target.name != obj.name)
+            {
+                return;
+            }
+
             var cms = obj.GetComponents(typeof(Component));
 
             cms = cms.Where(a => gizmos is { } && a.GetType() != gizmos.GetType()).ToArray();
@@ -101,7 +105,6 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             // {
             //     gizmos.ViewRootFlush();
             // }
-
         }
     }
 }
