@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ZJYFrameWork.UISerializable.Framwork.UIRootCS
 {
@@ -8,39 +9,61 @@ namespace ZJYFrameWork.UISerializable.Framwork.UIRootCS
         /// 背景panel
         /// </summary>
         [SerializeField] private GameObject bgPanel;
+
+        [FormerlySerializedAs("BgTransformPanel")] [SerializeField]
+        private Transform bgTransformPanel;
+
+        [FormerlySerializedAs("UIPanel")] [SerializeField]
+        private GameObject uiPanel;
+
+        [FormerlySerializedAs("UITransformPanel")] [SerializeField]
+        private Transform uiTransformPanel;
+
+        [FormerlySerializedAs("UITopPanel")] [SerializeField]
+        private GameObject uiTopPanel;
+
+        [FormerlySerializedAs("UITopTransformPanel")] [SerializeField]
+        private Transform uiTopTransformPanel;
+
+        [FormerlySerializedAs("NoticeCanvasPanel")] [SerializeField]
+        private GameObject noticeCanvasPanel;
+
+        [FormerlySerializedAs("NoticeCanvasTransformPanel")] [SerializeField]
+        private Transform noticeCanvasTransformPanel;
+
+        [FormerlySerializedAs("ActiviesCanvasTransformPanel")] [SerializeField]
+        private Transform activiesCanvasTransformPanel;
+
+        [FormerlySerializedAs("ActiviesNoticeCanvasTransformPanel")] [SerializeField]
+        private Transform activiesNoticeCanvasTransformPanel;
+
         public GameObject GetBgPanel => bgPanel;
 
-        [SerializeField] private Transform BgTransformPanel;
-        public Transform GetBgTransformPanel => BgTransformPanel;
-        
-        [SerializeField] private GameObject UIPanel;
-        public GameObject GetUIPanel => UIPanel;
+        public Transform GetBgTransformPanel => bgTransformPanel;
 
-        [SerializeField] private Transform UITransformPanel;
-        public Transform GetUITransformPanel => UITransformPanel;
-        
-        [SerializeField] private GameObject UITopPanel;
-        public GameObject GetUITopPanel => UITopPanel;
+        public GameObject GetUIPanel => uiPanel;
 
-        [SerializeField] private Transform UITopTransformPanel;
-        public Transform GetUITopTransformPanel => UITopTransformPanel;
-        
-        [SerializeField] private GameObject NoticeCanvasPanel;
-        public GameObject GetNoticeCanvasPanel => NoticeCanvasPanel;
+        public Transform GetUITransformPanel => uiTransformPanel;
 
-        [SerializeField] private Transform NoticeCanvasTransformPanel;
-        public Transform GetNoticeCanvasTransformPanel => NoticeCanvasTransformPanel;
-        [SerializeField] private Transform ActiviesCanvasTransformPanel;
-        public Transform GetActivieseCanvasTransformPanel => ActiviesCanvasTransformPanel;
-        [SerializeField] private Transform ActiviesNoticeCanvasTransformPanel;
-        public Transform ActiviesGetNoticeCanvasTransformPanel => ActiviesNoticeCanvasTransformPanel;
+        public GameObject GetUITopPanel => uiTopPanel;
+
+        public Transform GetUITopTransformPanel => uiTopTransformPanel;
+
+        public GameObject GetNoticeCanvasPanel => noticeCanvasPanel;
+
+        public Transform GetNoticeCanvasTransformPanel => noticeCanvasTransformPanel;
+
+        public Transform GetActivieseCanvasTransformPanel => activiesCanvasTransformPanel;
+
+        public Transform ActiviesGetNoticeCanvasTransformPanel => activiesNoticeCanvasTransformPanel;
+
         public void SortOrder()
         {
             bgPanel.GetComponent<Canvas>().sortingOrder = 20;
-            UIPanel.GetComponent<Canvas>().sortingOrder = 50;
-            ActiviesCanvasTransformPanel.GetComponent<Canvas>().sortingOrder = 55;
-            UITopPanel.GetComponent<Canvas>().sortingOrder = 80;
-            NoticeCanvasPanel.GetComponent<Canvas>().sortingOrder = 100;
+            uiPanel.GetComponent<Canvas>().sortingOrder = 50;
+            activiesCanvasTransformPanel.GetComponent<Canvas>().sortingOrder = 55;
+            uiTopPanel.GetComponent<Canvas>().sortingOrder = 80;
+            noticeCanvasPanel.GetComponent<Canvas>().sortingOrder = 100;
         }
     }
 }
