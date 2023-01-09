@@ -1057,7 +1057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: top_res_Gold_Button
+  - UI_Serializable_Key: click
     UI_Serializable_Obj: {fileID: 8296769673514044249}
     Path: MainPanel/top/res/Gold/Button (2)
   maskIndex: 8
@@ -2503,7 +2503,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  dataViewList:
+  - {fileID: 322521718187732064}
+  - {fileID: 8703936505502277179}
+  - {fileID: 5325102661034973507}
 --- !u!1 &1757926902643137353
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,7 +3490,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7270235024204293535}
   - component: {fileID: 2428024969104855026}
-  - component: {fileID: 7135514484043840327}
   m_Layer: 0
   m_Name: head
   m_TagString: Untagged
@@ -3533,27 +3535,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: head_UISerializableKeyObject
-    UI_Serializable_Obj: {fileID: 7135514484043840327}
-    Path: head
+  - UI_Serializable_Key: top_head
+    UI_Serializable_Obj: {fileID: 2223853104877776177}
+    Path: GameMainUIPanel/top/head
   maskIndex: 2
---- !u!114 &7135514484043840327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2223853104877776177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 7980182404494979033}
-  - {fileID: 8589622646896454913}
-  - {fileID: 6042036458737491014}
-  - {fileID: 3764733413937404737}
 --- !u!1 &2247250904253847794
 GameObject:
   m_ObjectHideFlags: 0
@@ -3635,7 +3620,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataViewList:
-  - {fileID: 1524230989969240491}
   - {fileID: 3376466310750741369}
   - {fileID: 2435889219497832143}
   - {fileID: 1524230989969240491}
@@ -6739,8 +6723,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kodComs: []
-  maskIndex: 0
+  kodComs:
+  - UI_Serializable_Key: add
+    UI_Serializable_Obj: {fileID: 3049891610219849552}
+    Path: GemsTim/add
+  maskIndex: 8
 --- !u!1 &4261368079617208740
 GameObject:
   m_ObjectHideFlags: 0
@@ -7624,6 +7611,10 @@ MonoBehaviour:
   - {fileID: 1209972635360041020}
   - {fileID: 2428024969104855026}
   - {fileID: 6415215422164549904}
+  - {fileID: 7980182404494979033}
+  - {fileID: 8589622646896454913}
+  - {fileID: 6042036458737491014}
+  - {fileID: 3764733413937404737}
   mSelfObj: {fileID: 4661571486731509016}
   MTransform: {fileID: 3325962904225119346}
   MObjCanvasGroup: {fileID: 8692498964730069026}
@@ -14258,7 +14249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: GoldText
+  - UI_Serializable_Key: numText
     UI_Serializable_Obj: {fileID: 4033683301967542443}
     Path: MainPanel/top/res/Gold/Text
   maskIndex: 4

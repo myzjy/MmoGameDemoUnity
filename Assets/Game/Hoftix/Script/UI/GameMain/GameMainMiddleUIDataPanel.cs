@@ -130,6 +130,19 @@ namespace ZJYFrameWork.UISerializable
             skillButton = null;
             BagButton = null;
         }
+
+        public static GameMainMiddleDownRightUIPanel ValueOf(UISerializableKeyObject serializableKeyObject)
+        {
+            var item = ReferenceCache.Acquire<GameMainMiddleDownRightUIPanel>();
+            item.ArmsBtn = serializableKeyObject.GetObjType<Button>("ArmsBtn");
+            item.BagButton = serializableKeyObject.GetObjType<Button>("BagButton");
+            item.HeroBtn = serializableKeyObject.GetObjType<Button>("HeroBtn");
+            item.RecruitBtn = serializableKeyObject.GetObjType<Button>("RecruitBtn");
+            item.skillButton = serializableKeyObject.GetObjType<Button>("skillButton");
+            item.TaskButton = serializableKeyObject.GetObjType<Button>("TaskButton");
+            item.UniversityBtn = serializableKeyObject.GetObjType<Button>("UniversityBtn");
+            return item;
+        }
     }
 
     /// <summary>
@@ -149,7 +162,8 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         private Button FuLiBtn;
 
-        private GameMainMiddleDownRightUIPanel GameMainMiddleDownRightUIPanel;
+        private GameMainMiddleDownRightUIPanel gameMainMiddleDownRightUIPanel;
+
 
         /// <summary>
         /// 生成角色
@@ -176,13 +190,14 @@ namespace ZJYFrameWork.UISerializable
                 {
                     if (_gameMainMiddleRightUIPanel == null)
                     {
-                        _gameMainMiddleRightUIPanel = GameMainMiddleRightUIPanel.ValueOf(Right_UISerializableKeyObject);
+                        _gameMainMiddleRightUIPanel =
+                            GameMainMiddleRightUIPanel.ValueOf(Right_UISerializableKeyObject);
                     }
                 }
                 catch (Exception e)
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-
+                    Debug.Log($"{e.Message}");
 #endif
                     // Console.WriteLine(e);
                     throw new NullReferenceException(e.Message);
@@ -190,6 +205,20 @@ namespace ZJYFrameWork.UISerializable
 
 
                 return _gameMainMiddleRightUIPanel;
+            }
+        }
+
+        public GameMainMiddleDownRightUIPanel GameMainMiddleDownRightUIPanel
+        {
+            get
+            {
+                if (gameMainMiddleDownRightUIPanel == null)
+                {
+                    gameMainMiddleDownRightUIPanel =
+                        GameMainMiddleDownRightUIPanel.ValueOf(downRight_UISerializableKeyObject);
+                }
+
+                return gameMainMiddleDownRightUIPanel;
             }
         }
 
