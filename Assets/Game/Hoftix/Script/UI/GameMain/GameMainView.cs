@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using Tools.Util;
+using UnityEngine.UI;
 using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UI.GameMain
@@ -21,7 +22,10 @@ namespace ZJYFrameWork.UI.GameMain
 
             GemButton = viewPanel.Gem_UISerializableKeyObject.GetObjType<Button>("click");
             GemText = viewPanel.Gem_UISerializableKeyObject.GetObjType<Text>("numText");
-
+            viewPanel.headImgClick.SetListener(() =>
+            {
+                //点击头像
+            });
             DataPanel.Init(viewPanel.middle_UISerializableKeyObject);
             OnShow();
         }
