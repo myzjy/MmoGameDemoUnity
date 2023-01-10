@@ -27,6 +27,13 @@ namespace ZJYFrameWork.UI.GameMain
                 //点击头像
             });
             DataPanel.Init(viewPanel.middle_UISerializableKeyObject);
+
+            //pve 主线
+            DataPanel.GameMainMiddleRightUIPanel.PveBtnButton.SetListener(() => { });
+            DataPanel.GameMainMiddleDownRightUIPanel.BagButton.SetListener(() =>
+            {
+                //背包界面
+            });
             OnShow();
         }
 

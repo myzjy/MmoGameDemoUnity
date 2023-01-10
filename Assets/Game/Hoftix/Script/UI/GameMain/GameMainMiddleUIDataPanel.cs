@@ -13,59 +13,50 @@ namespace ZJYFrameWork.UISerializable
         private Button _migongBtnButton;
 
         /// <summary>
-        /// PVE 按钮
-        /// </summary>
-        private Button _pveBtnButton;
-
-        /// <summary>
         /// PVP按钮
         /// </summary>
         private Button _pvpBtnButton;
-
-        /// <summary>
-        /// 入侵按钮 pvp
-        /// </summary>
-        private Button _ruqinButton;
 
         /// <summary>
         ///  爬塔按钮
         /// </summary>
         private Button _wujinBtnButton;
 
-        public Button PveBtnButton
-        {
-            get => _pveBtnButton;
-            set => _pveBtnButton = value;
-        }
+        /// <summary>
+        /// PVE 按钮
+        /// </summary>
+        public Button PveBtnButton { get; private set; }
 
-        public Button RuqinButton
-        {
-            get => _ruqinButton;
-            set => _ruqinButton = value;
-        }
+        /// <summary>
+        /// 入侵按钮 pvp
+        /// </summary>
+        public Button RuqinButton { get; protected set; }
 
+        /// <summary>
+        ///  爬塔按钮
+        /// </summary>
         public Button WujinBtnButton
         {
             get => _wujinBtnButton;
-            set => _wujinBtnButton = value;
+            protected set => _wujinBtnButton = value;
         }
 
         public Button PvpBtnButton
         {
             get => _pvpBtnButton;
-            set => _pvpBtnButton = value;
+            protected set => _pvpBtnButton = value;
         }
 
         public Button MigongBtnButton
         {
             get => _migongBtnButton;
-            set => _migongBtnButton = value;
+            protected set => _migongBtnButton = value;
         }
 
         public void Clear()
         {
-            _pveBtnButton = null;
-            _ruqinButton = null;
+            PveBtnButton = null;
+            RuqinButton = null;
             _wujinBtnButton = null;
             _pvpBtnButton = null;
             _migongBtnButton = null;
@@ -74,8 +65,8 @@ namespace ZJYFrameWork.UISerializable
         public static GameMainMiddleRightUIPanel ValueOf(UISerializableKeyObject serializableKeyObject)
         {
             var item = ReferenceCache.Acquire<GameMainMiddleRightUIPanel>();
-            item._pveBtnButton = serializableKeyObject.GetObjType<Button>("PVEBtn_Button");
-            item._ruqinButton = serializableKeyObject.GetObjType<Button>("ruqin_Button");
+            item.PveBtnButton = serializableKeyObject.GetObjType<Button>("PVEBtn_Button");
+            item.RuqinButton = serializableKeyObject.GetObjType<Button>("ruqin_Button");
             item._wujinBtnButton = serializableKeyObject.GetObjType<Button>("wujinBtn_Button");
             item._pvpBtnButton = serializableKeyObject.GetObjType<Button>("pvpBtn_Button");
             item._migongBtnButton = serializableKeyObject.GetObjType<Button>("migongBtn_Button");
@@ -83,42 +74,45 @@ namespace ZJYFrameWork.UISerializable
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class GameMainMiddleDownRightUIPanel : IReference
     {
         /// <summary>
         /// 编制
         /// </summary>
-        private Button ArmsBtn;
+        public Button ArmsBtn { get; protected set; }
 
         /// <summary>
         /// 背包
         /// </summary>
-        private Button BagButton;
+        public Button BagButton { get; protected set; }
 
         /// <summary>
         /// 英雄
         /// </summary>
-        private Button HeroBtn;
+        public Button HeroBtn { get; protected set; }
 
         /// <summary>
         ///  抽卡界面按钮
         /// </summary>
-        private Button RecruitBtn;
+        public Button RecruitBtn { get; protected set; }
 
         /// <summary>
         /// 技能
         /// </summary>
-        private Button skillButton;
+        public Button skillButton { get; protected set; }
 
         /// <summary>
         /// 任务按钮
         /// </summary>
-        private Button TaskButton;
+        public Button TaskButton { get; protected set; }
 
         /// <summary>
         /// 科技按钮
         /// </summary>
-        private Button UniversityBtn;
+        public Button UniversityBtn { get; protected set; }
 
         public void Clear()
         {
@@ -182,17 +176,17 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         private Button storeButton;
 
+        /// <summary>
+        /// 中间部分包括pve按钮，爬塔按钮
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
         public GameMainMiddleRightUIPanel GameMainMiddleRightUIPanel
         {
             get
             {
                 try
                 {
-                    if (_gameMainMiddleRightUIPanel == null)
-                    {
-                        _gameMainMiddleRightUIPanel =
-                            GameMainMiddleRightUIPanel.ValueOf(Right_UISerializableKeyObject);
-                    }
+                    _gameMainMiddleRightUIPanel ??= GameMainMiddleRightUIPanel.ValueOf(Right_UISerializableKeyObject);
                 }
                 catch (Exception e)
                 {
@@ -208,14 +202,25 @@ namespace ZJYFrameWork.UISerializable
             }
         }
 
+        /// <summary>
+        /// 编制  背包 角色界面 技能 抽卡界面按钮 科技按钮
+        /// </summary>
         public GameMainMiddleDownRightUIPanel GameMainMiddleDownRightUIPanel
         {
             get
             {
-                if (gameMainMiddleDownRightUIPanel == null)
+                try
                 {
-                    gameMainMiddleDownRightUIPanel =
+                    gameMainMiddleDownRightUIPanel ??=
                         GameMainMiddleDownRightUIPanel.ValueOf(downRight_UISerializableKeyObject);
+                }
+                catch (Exception e)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"{e}");
+                    //可能消息需要传递给服务器，错误消息进行保存
+#endif
+                    throw;
                 }
 
                 return gameMainMiddleDownRightUIPanel;
