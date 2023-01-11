@@ -8,6 +8,10 @@ namespace Net.Https
     {
         [SerializeField] private string authToken = "";
 
+        public UserAuth()
+        {
+        }
+
 
         public string AuthToken
         {
@@ -15,14 +19,9 @@ namespace Net.Https
             set { authToken = value; }
         }
 
-        public UserAuth()
-        {
-        }
-
         public override string ToString()
         {
             return AuthToken;
         }
-        
     }
 }

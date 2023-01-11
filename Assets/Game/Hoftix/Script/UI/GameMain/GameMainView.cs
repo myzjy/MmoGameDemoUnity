@@ -1,5 +1,7 @@
 ﻿using Tools.Util;
 using UnityEngine.UI;
+using ZJYFrameWork.Common;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UI.GameMain
@@ -9,7 +11,6 @@ namespace ZJYFrameWork.UI.GameMain
     /// </summary>
     public class GameMainView : UIBaseView<GameMainUIPanelView>
     {
-        public readonly GameMainMiddleUIDataPanel DataPanel = new GameMainMiddleUIDataPanel();
         public Button GemButton;
         public Text GemsText;
         public Button GemsTimButton;
@@ -19,18 +20,16 @@ namespace ZJYFrameWork.UI.GameMain
         {
             GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject.GetObjType<Button>("click");
             GemsText = viewPanel.GemsTim_UISerializableKeyObject.GetObjType<Text>("numText");
-
+            viewPanel.top_head_Name_Text.text = SpringContext.GetBean<PlayerUserCaCheData>().userName;
             GemButton = viewPanel.Gem_UISerializableKeyObject.GetObjType<Button>("click");
             GemText = viewPanel.Gem_UISerializableKeyObject.GetObjType<Text>("numText");
             viewPanel.headImgClick.SetListener(() =>
             {
                 //点击头像
             });
-            DataPanel.Init(viewPanel.middle_UISerializableKeyObject);
-
             //pve 主线
-            DataPanel.GameMainMiddleRightUIPanel.PveBtnButton.SetListener(() => { });
-            DataPanel.GameMainMiddleDownRightUIPanel.BagButton.SetListener(() =>
+            viewPanel.PVEBtn_Button.SetListener(() => { });
+            viewPanel.BagButton.SetListener(() =>
             {
                 //背包界面
             });

@@ -7610,11 +7610,28 @@ MonoBehaviour:
   - {fileID: 255846827893910411}
   - {fileID: 1209972635360041020}
   - {fileID: 2428024969104855026}
-  - {fileID: 6415215422164549904}
   - {fileID: 7980182404494979033}
   - {fileID: 8589622646896454913}
   - {fileID: 6042036458737491014}
   - {fileID: 3764733413937404737}
+  - {fileID: 3546725129240308725}
+  - {fileID: 6649318717195930066}
+  - {fileID: 5573931427313865637}
+  - {fileID: 1768227876982746246}
+  - {fileID: 6274756663544891452}
+  - {fileID: 8589984084725049443}
+  - {fileID: 7978631720171844224}
+  - {fileID: 4650519327790291780}
+  - {fileID: 3765879439791069020}
+  - {fileID: 8314870251884442923}
+  - {fileID: 4937484820137370708}
+  - {fileID: 2664927934448808783}
+  - {fileID: 554056683222946558}
+  - {fileID: 8825913016399106064}
+  - {fileID: 3067981683258812574}
+  - {fileID: 6637971697017359798}
+  - {fileID: 1486541540598521166}
+  - {fileID: 5980225769488201095}
   mSelfObj: {fileID: 4661571486731509016}
   MTransform: {fileID: 3325962904225119346}
   MObjCanvasGroup: {fileID: 8692498964730069026}
@@ -8109,7 +8126,6 @@ GameObject:
   m_Component:
   - component: {fileID: 640587292795653105}
   - component: {fileID: 1768227876982746246}
-  - component: {fileID: 2770352755656163570}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
@@ -8154,28 +8170,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: Right_UISerializableKeyObject
-    UI_Serializable_Obj: {fileID: 2770352755656163570}
-    Path: Right
+  - UI_Serializable_Key: middle_Right
+    UI_Serializable_Obj: {fileID: 4941852257259891517}
+    Path: GameMainUIPanel/middle/Right
   maskIndex: 2
---- !u!114 &2770352755656163570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4941852257259891517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 6274756663544891452}
-  - {fileID: 8589984084725049443}
-  - {fileID: 7978631720171844224}
-  - {fileID: 4650519327790291780}
-  - {fileID: 3765879439791069020}
 --- !u!1 &4966724742014981683
 GameObject:
   m_ObjectHideFlags: 0
@@ -10386,7 +10384,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8893045349989607076}
-  - component: {fileID: 6705942105298575397}
   - component: {fileID: 8314870251884442923}
   m_Layer: 0
   m_Name: downRight
@@ -10421,26 +10418,6 @@ RectTransform:
   m_AnchoredPosition: {x: 598.25, y: -313.32297}
   m_SizeDelta: {x: 723.5, y: 453.3539}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6705942105298575397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6345907927856258489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 4937484820137370708}
-  - {fileID: 2664927934448808783}
-  - {fileID: 554056683222946558}
-  - {fileID: 8825913016399106064}
-  - {fileID: 3067981683258812574}
-  - {fileID: 6637971697017359798}
-  - {fileID: 1486541540598521166}
 --- !u!114 &8314870251884442923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10454,13 +10431,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: downRight_UISerializableKeyObject
-    UI_Serializable_Obj: {fileID: 6705942105298575397}
-    Path: downRight
-  - UI_Serializable_Key: downRight
+  - UI_Serializable_Key: middle_downRight
     UI_Serializable_Obj: {fileID: 6345907927856258489}
-    Path: downRight
-  maskIndex: 6
+    Path: GameMainUIPanel/middle/downRight
+  maskIndex: 2
 --- !u!1 &6399707900489631374
 GameObject:
   m_ObjectHideFlags: 0
@@ -15103,7 +15077,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5566417202470413751}
-  - component: {fileID: 7434199948269097541}
   - component: {fileID: 6415215422164549904}
   m_Layer: 0
   m_Name: middle
@@ -15136,26 +15109,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7434199948269097541
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9069628990251018792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 1219173927379914827}
-  - {fileID: 3546725129240308725}
-  - {fileID: 6649318717195930066}
-  - {fileID: 5573931427313865637}
-  - {fileID: 1768227876982746246}
-  - {fileID: 8314870251884442923}
-  - {fileID: 5980225769488201095}
 --- !u!114 &6415215422164549904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15171,9 +15124,6 @@ MonoBehaviour:
   kodComs:
   - UI_Serializable_Key: middle
     UI_Serializable_Obj: {fileID: 9069628990251018792}
-    Path: middle
-  - UI_Serializable_Key: middle_UISerializableKeyObject
-    UI_Serializable_Obj: {fileID: 7434199948269097541}
     Path: middle
   maskIndex: 6
 --- !u!1 &9168592382626153016

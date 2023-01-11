@@ -1,20 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ZJYFrameWork.Net
 {
     public class UserAgent
     {
         private static UserAgent instance;
-
-        public static string Value
-        {
-            get
-            {
-                instance = instance ?? new UserAgent();
-                return instance.ToString();
-            }
-        }
 
         private string cached;
 
@@ -38,6 +28,15 @@ namespace ZJYFrameWork.Net
             };
             cached += $"<Emulating:{platform}>";
 #endif
+        }
+
+        public static string Value
+        {
+            get
+            {
+                instance = instance ?? new UserAgent();
+                return instance.ToString();
+            }
         }
 
         public override string ToString()
