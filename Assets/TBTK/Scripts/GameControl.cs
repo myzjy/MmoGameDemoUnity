@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace TBTK
@@ -12,56 +10,26 @@ namespace TBTK
         public static bool inspector = false;
 #endif
 
+
+        public static GameControl instance;
+
+        public static int factionWon_ID = -1; //for loading/saving data from cache
+
         public bool useGlobalSetting = false;
 
         public bool enableUnitDeployment = true;
 
-        public static bool EnableUnitDeployment()
-        {
-            return instance.enableUnitDeployment;
-        }
-
         public bool autoEndTurn = false;
-
-        public static bool AutoEndTurn()
-        {
-            return instance.autoEndTurn;
-        }
 
         public bool endMoveAfterAttack = false;
 
-        public static bool EndMoveAfterAttack()
-        {
-            return instance.endMoveAfterAttack;
-        }
-
         public bool enableCounterAttack = false;
-
-        public static bool EnableCounterAttack()
-        {
-            return instance.enableCounterAttack;
-        }
 
         public bool restoreAPOnTurn;
 
-        public static bool RestoreAPOnTurn()
-        {
-            return instance.restoreAPOnTurn;
-        }
-
         public bool useAPToMove;
 
-        public static bool UseAPToMove()
-        {
-            return instance.useAPToMove;
-        }
-
         public bool useAPToAttack;
-
-        public static bool UseAPToAttack()
-        {
-            return instance.useAPToAttack;
-        }
 
 
         public int apPerMove = 1;
@@ -69,54 +37,34 @@ namespace TBTK
         //public int apPerNode=0;
         public int apPerAttack = 1;
 
-        public static int GetAPPerMove()
-        {
-            return instance.apPerMove;
-        }
-
-        //public static int GetAPPerNode(){ return instance.apPerNode; }
-        public static int GetAPPerAttack()
-        {
-            return instance.apPerAttack;
-        }
-
 
         public bool enableCoverSystem;
         public float coverCritBonus = 0.25f;
         public float coverDodgeBonus = 0.3f;
 
-        public static bool EnableCoverSystem()
-        {
-            return instance.enableCoverSystem;
-        }
-
-        public static float GetCoverCritBonus()
-        {
-            return EnableCoverSystem() ? instance.coverCritBonus : 0;
-        }
-
-        public static float GetCoverDodgeBonus()
-        {
-            return EnableCoverSystem() ? instance.coverDodgeBonus : 0;
-        }
-
 
         public bool enableSideStepping;
 
-        public static bool EnableSideStepping()
-        {
-            return instance != null ? instance.enableSideStepping : false;
-        }
-
         public bool enableFogOfWar;
 
-        public static bool EnableFogOfWar()
-        {
-            return instance != null ? instance.enableFogOfWar : false;
-        }
+        public bool actionInProgress = false;
+
+        //~ public static void CollectibleUseAbility(Ability ability, Node node){
+        //~ instance.StartCoroutine(instance.ColAbilityRoutine(ability, node));
+        //~ //GridManager.ClearSelectUnit();
+        //~ }
+        //~ public IEnumerator ColAbilityRoutine(Faction fac, Ability ability, Node node){
+        //~ SetActionInProgress(true);
+        //~ yield return CRoutine.Get().StartCoroutine(ability.HitTarget(target));
+        //~ //yield return StartCoroutine(fac.UseAbilityRoutine(ability, node));
+        //~ SetActionInProgress(false);
+        //~ }
 
 
-        public static GameControl instance;
+        public bool gameOver = false;
+
+        //public int winFacIdx=-1;
+        public Faction winningFac;
 
         void Awake()
         {
@@ -174,6 +122,77 @@ namespace TBTK
             TBTK.OnGameStart(); //inform UI to start game
         }
 
+        public static bool EnableUnitDeployment()
+        {
+            return instance.enableUnitDeployment;
+        }
+
+        public static bool AutoEndTurn()
+        {
+            return instance.autoEndTurn;
+        }
+
+        public static bool EndMoveAfterAttack()
+        {
+            return instance.endMoveAfterAttack;
+        }
+
+        public static bool EnableCounterAttack()
+        {
+            return instance.enableCounterAttack;
+        }
+
+        public static bool RestoreAPOnTurn()
+        {
+            return instance.restoreAPOnTurn;
+        }
+
+        public static bool UseAPToMove()
+        {
+            return instance.useAPToMove;
+        }
+
+        public static bool UseAPToAttack()
+        {
+            return instance.useAPToAttack;
+        }
+
+        public static int GetAPPerMove()
+        {
+            return instance.apPerMove;
+        }
+
+        //public static int GetAPPerNode(){ return instance.apPerNode; }
+        public static int GetAPPerAttack()
+        {
+            return instance.apPerAttack;
+        }
+
+        public static bool EnableCoverSystem()
+        {
+            return instance.enableCoverSystem;
+        }
+
+        public static float GetCoverCritBonus()
+        {
+            return EnableCoverSystem() ? instance.coverCritBonus : 0;
+        }
+
+        public static float GetCoverDodgeBonus()
+        {
+            return EnableCoverSystem() ? instance.coverDodgeBonus : 0;
+        }
+
+        public static bool EnableSideStepping()
+        {
+            return instance != null ? instance.enableSideStepping : false;
+        }
+
+        public static bool EnableFogOfWar()
+        {
+            return instance != null ? instance.enableFogOfWar : false;
+        }
+
         public static bool EndTurn()
         {
             if (IsGameOver()) return false;
@@ -194,8 +213,6 @@ namespace TBTK
             TurnControl.EndTurn();
         }
 
-        public bool actionInProgress = false;
-
         public static bool ActionInProgress()
         {
             return instance.actionInProgress || AI.ActionInProgress();
@@ -214,14 +231,14 @@ namespace TBTK
         /// <param name="node"></param>
         public static void UnitMove(Unit unit, Node node)
         {
-            ZJYFrameWork.Debug.Log($"开始移动，{node}");
+            Debug.Log($"开始移动，{node}");
             GridManager.ClearSelectUnit();
             instance.StartCoroutine(instance.UnitMoveRoutine(unit, node));
         }
 
         public IEnumerator UnitMoveRoutine(Unit unit, Node node)
         {
-            ZJYFrameWork.Debug.Log($"StartCoroutine 开始移动，{node}");
+            Debug.Log($"StartCoroutine 开始移动，{node}");
 
             SetActionInProgress(true);
             yield return StartCoroutine(unit.MoveRoutine(node));
@@ -232,7 +249,7 @@ namespace TBTK
 
         public static void UnitAttack(Unit unit, Node node)
         {
-            ZJYFrameWork.Debug.Log($" 开始UnitAttack,{unit}，{node}");
+            Debug.Log($" 开始UnitAttack,{unit}，{node}");
 
             GridManager.ClearSelectUnit();
             instance.StartCoroutine(instance.UnitAttackRoutine(unit, node));
@@ -240,7 +257,7 @@ namespace TBTK
 
         public IEnumerator UnitAttackRoutine(Unit unit, Node node)
         {
-            ZJYFrameWork.Debug.Log($"StartCoroutine UnitAttackRoutine 开始UnitAttack,{unit}，{node}");
+            Debug.Log($"StartCoroutine UnitAttackRoutine 开始UnitAttack,{unit}，{node}");
 
             SetActionInProgress(true);
             yield return StartCoroutine(unit.AttackRoutine(node));
@@ -279,34 +296,15 @@ namespace TBTK
             TBTK.OnSelectFaction(fac);
         }
 
-        //~ public static void CollectibleUseAbility(Ability ability, Node node){
-        //~ instance.StartCoroutine(instance.ColAbilityRoutine(ability, node));
-        //~ //GridManager.ClearSelectUnit();
-        //~ }
-        //~ public IEnumerator ColAbilityRoutine(Faction fac, Ability ability, Node node){
-        //~ SetActionInProgress(true);
-        //~ yield return CRoutine.Get().StartCoroutine(ability.HitTarget(target));
-        //~ //yield return StartCoroutine(fac.UseAbilityRoutine(ability, node));
-        //~ SetActionInProgress(false);
-        //~ }
-
-
-        public bool gameOver = false;
-
         public static bool IsGameOver()
         {
             return instance.gameOver;
         }
 
-        //public int winFacIdx=-1;
-        public Faction winningFac;
-
         public static int winningFacIdx()
         {
             return instance.winningFac.factionID;
         }
-
-        public static int factionWon_ID = -1; //for loading/saving data from cache
 
         public static void GameOver(Faction fac)
         {

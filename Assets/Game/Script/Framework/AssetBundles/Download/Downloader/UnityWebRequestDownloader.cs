@@ -14,6 +14,7 @@ using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Http;
 using ZJYFrameWork.Spring.Core;
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.AssetBundles.Bundle
 {
 #if UNITY_2017_1_OR_NEWER
@@ -22,7 +23,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
     public class UnityWebRequestDownloader : AbstractDownloader
     {
         private const float TimeoutSec = 6f; //10 => 6 => 3 => 6
-        private List<BundleInfo> errrorList = new List<BundleInfo>();
 
         public UnityWebRequestDownloader()
         {
@@ -72,7 +72,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             eventProgressBar.TotalSize = totalSize;
             eventProgressBar.CompletedSize = downloadedSize;
             yield return null;
-            List<KeyValuePair<BundleInfo, HttpRequest>> tasks = new List<KeyValuePair<BundleInfo, HttpRequest>>();
             for (int i = 0; i < list.Count; i++)
             {
                 BundleInfo bundleInfo = list[i];
@@ -86,7 +85,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                 // 超时设定
                 request.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
                 request.Timeout = TimeSpan.FromSeconds(TimeoutSec);
-                request.Callback += (HttpRequest originalBhRequest, HttpResponse bhResponse) =>
+                request.Callback += (originalBhRequest, bhResponse) =>
                 {
                     LogResponse(bhResponse, originalBhRequest);
 
@@ -143,7 +142,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         var fs = req.Tag as FileStream;
                         if (fs == null)
                         {
-                            req.Tag = fs = new System.IO.FileStream(fullname, System.IO.FileMode.Create);
+                            req.Tag = fs = new FileStream(fullname, FileMode.Create);
                         }
 
                         tmpSize += Math.Max(0,
@@ -167,8 +166,6 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             }
 
             promise.SetResult(true);
-
-            yield break;
         }
 
         private void LogResponse(HttpResponse response, HttpRequest request)
@@ -196,7 +193,7 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             }
 
             Debug.Log($"{request.Uri.AbsoluteUri}");
-            Debug.Log($"{sb.ToString()}");
+            Debug.Log($"{sb}");
 #endif
         }
 
@@ -254,17 +251,17 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                     for (int j = tasks.Count - 1; j >= 0; j--)
                     {
                         var task = tasks[j];
-                        BundleInfo _bundleInfo = task.Key;
-                        UnityWebRequest _www = task.Value;
+                        BundleInfo taskKey = task.Key;
+                        UnityWebRequest value = task.Value;
                         var downFilenamePath = BundleUtil.GetStorableDirectory() + bundleInfo.Filename;
-                        if (!_www.isDone)
+                        if (!value.isDone)
                         {
                             tmpSize += (long)Math.Max(0,
-                                _www.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
-                            DownloadUpdateEventArgs eventArgs = DownloadUpdateEventArgs.Create(serialId: _bundleInfo,
-                                downloadPath: downFilenamePath, downloadUri: _www.url
-                                , currentLength: tmpSize, _bundleInfo);
-                            DownloadManager.GetDownloadUpdate(_bundleInfo, eventArgs);
+                                value.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
+                            DownloadUpdateEventArgs eventArgs = DownloadUpdateEventArgs.Create(serialId: taskKey,
+                                downloadPath: downFilenamePath, downloadUri: value.url
+                                , currentLength: tmpSize, taskKey);
+                            DownloadManager.GetDownloadUpdate(taskKey, eventArgs);
                             ReferenceCache.Release(eventArgs);
 
                             continue;
@@ -272,21 +269,23 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
                         progress.CompletedCount += 1;
                         tasks.RemoveAt(j);
-                        downloadedSize += _bundleInfo.FileSize;
+                        downloadedSize += taskKey.FileSize;
 #if UNITY_2018_1_OR_NEWER
-                        if (_www.isNetworkError)
+#pragma warning disable CS0618
+                        if (value.isNetworkError)
+#pragma warning restore CS0618
 #else
                         if (_www.isError)
 #endif
                         {
-                            promise.SetException(new Exception(_www.error));
+                            promise.SetException(new Exception(value.error));
                             string errorMessage =
-                                $"从地址'[{GetAbsoluteUri(_bundleInfo.Filename)}]'下载AssetBundle '[{_bundleInfo.FullName}]'失败。原因:[{_www.error}]";
-                            ZJYFrameWork.Debug.Log(errorMessage);
-                            _www.Dispose();
-                            DownloadFailureEventArgs failureEventArgs = DownloadFailureEventArgs.Create(_bundleInfo,
-                                downFilenamePath, _www.url, errorMessage, _bundleInfo);
-                            DownloadManager.GetDownloadFailure(_bundleInfo, failureEventArgs);
+                                $"从地址'[{GetAbsoluteUri(taskKey.Filename)}]'下载AssetBundle '[{taskKey.FullName}]'失败。原因:[{value.error}]";
+                            Debug.Log(errorMessage);
+                            value.Dispose();
+                            DownloadFailureEventArgs failureEventArgs = DownloadFailureEventArgs.Create(taskKey,
+                                downFilenamePath, value.url, errorMessage, taskKey);
+                            DownloadManager.GetDownloadFailure(taskKey, failureEventArgs);
                             try
                             {
                                 foreach (var kv in tasks)
@@ -296,12 +295,13 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                             }
                             catch (Exception)
                             {
+                                // ignored
                             }
 
                             yield break;
                         }
 
-                        _www.Dispose();
+                        value.Dispose();
                     }
 
                     progress.CompletedSize = downloadedSize + tmpSize;
@@ -358,30 +358,32 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                     for (int j = tasks.Count - 1; j >= 0; j--)
                     {
                         var task = tasks[j];
-                        BundleInfo _bundleInfo = task.Key;
-                        UnityWebRequest _www = task.Value;
+                        BundleInfo taskKey = task.Key;
+                        UnityWebRequest value = task.Value;
 
-                        if (!_www.isDone)
+                        if (!value.isDone)
                         {
                             tmpSize += (long)Math.Max(0,
-                                _www.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
+                                value.downloadedBytes); //the UnityWebRequest.downloadedProgress has a bug in android platform
                             continue;
                         }
 
                         progress.CompletedCount += 1;
                         tasks.RemoveAt(j);
-                        downloadedSize += _bundleInfo.FileSize;
+                        downloadedSize += taskKey.FileSize;
 #if UNITY_2018_1_OR_NEWER
-                        if (_www.result == UnityWebRequest.Result.ConnectionError)
+                        if (value.result == UnityWebRequest.Result.ConnectionError)
 //                      if (_www.isNetworkError)
 #else
                         if (_www.isError)
 #endif
                         {
-                            promise.SetException(new Exception(_www.error));
-                            ZJYFrameWork.Debug.Log("从地址'[{}]'下载AssetBundle '[{}]'失败。原因:[{}]", _bundleInfo.FullName,
-                                GetAbsoluteUri(_bundleInfo.Filename), _www.error);
-                            _www.Dispose();
+                            promise.SetException(new Exception(value.error));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"从地址'[{taskKey.FullName}]'下载AssetBundle '[{GetAbsoluteUri(taskKey.Filename)}]'失败。原因:[{value.error}]");
+#endif
+                            value.Dispose();
 
                             try
                             {
@@ -392,12 +394,13 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                             }
                             catch (Exception)
                             {
+                                // ignored
                             }
 
                             yield break;
                         }
 
-                        _www.Dispose();
+                        value.Dispose();
                     }
 
                     progress.CompletedSize = downloadedSize + tmpSize;

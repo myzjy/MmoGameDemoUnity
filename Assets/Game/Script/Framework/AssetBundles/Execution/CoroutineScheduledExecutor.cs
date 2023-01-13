@@ -23,91 +23,52 @@
  */
 
 using System;
-using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
 using ZJYFrameWork.Asynchronous;
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.Execution
 {
     public class CoroutineScheduledExecutor : AbstractExecutor, IScheduledExecutor
     {
-        private ComparerImpl<IDelayTask> comparer = new ComparerImpl<IDelayTask>();
-        private List<IDelayTask> queue = new List<IDelayTask>();
-        private bool running = false;
+        private readonly ComparerImpl<IDelayTask> _comparer = new ComparerImpl<IDelayTask>();
+        private readonly List<IDelayTask> _queue = new List<IDelayTask>();
+        private bool _running;
 
+        // ReSharper disable once EmptyConstructor
         public CoroutineScheduledExecutor()
         {
         }
 
-        private void Add(IDelayTask task)
-        {
-            queue.Add(task);
-            queue.Sort(comparer);
-        }
-
-        private bool Remove(IDelayTask task)
-        {
-            if (queue.Remove(task))
-            {
-                queue.Sort(comparer);
-                return true;
-            }
-
-            return false;
-        }
-
         public void Start()
         {
-            if (this.running)
+            if (this._running)
                 return;
 
-            this.running = true;
+            this._running = true;
 
             InterceptableEnumerator ie = new InterceptableEnumerator(DoStart());
-            ie.RegisterCatchBlock(e => { this.running = false; });
+            ie.RegisterCatchBlock(e => { this._running = false; });
             Executors.RunOnCoroutineNoReturn(ie);
-        }
-
-        protected virtual IEnumerator DoStart()
-        {
-            while (running)
-            {
-                while (running && (queue.Count <= 0 || queue[0].Delay.Ticks > 0))
-                {
-                    yield return null;
-                }
-
-                if (!running)
-                    yield break;
-
-                IDelayTask task = queue[0];
-                queue.RemoveAt(0);
-                task.Run();
-            }
         }
 
         public void Stop()
         {
-            if (!this.running)
+            if (!this._running)
                 return;
 
-            this.running = false;
-            List<IDelayTask> list = new List<IDelayTask>(queue);
-            foreach (IDelayTask task in list)
+            this._running = false;
+            List<IDelayTask> list = new List<IDelayTask>(_queue);
+            foreach (var task in list.Where(task => task is { IsDone: false }))
             {
-                if (task != null && !task.IsDone)
-                    task.Cancel();
+                task.Cancel();
             }
 
-            this.queue.Clear();
-        }
-
-        protected virtual void Check()
-        {
-            if (!this.running)
-                throw new RejectedExecutionException("The ScheduledExecutor isn't started.");
+            this._queue.Clear();
         }
 
         public virtual Asynchronous.IAsyncResult Schedule(Action command, long delay)
@@ -163,6 +124,47 @@ namespace ZJYFrameWork.Execution
             this.Stop();
         }
 
+        private void Add(IDelayTask task)
+        {
+            _queue.Add(task);
+            _queue.Sort(_comparer);
+        }
+
+        private bool Remove(IDelayTask task)
+        {
+            if (_queue.Remove(task))
+            {
+                _queue.Sort(_comparer);
+                return true;
+            }
+
+            return false;
+        }
+
+        protected virtual IEnumerator DoStart()
+        {
+            while (_running)
+            {
+                while (_running && (_queue.Count <= 0 || _queue[0].Delay.Ticks > 0))
+                {
+                    yield return null;
+                }
+
+                if (!_running)
+                    yield break;
+
+                IDelayTask task = _queue[0];
+                _queue.RemoveAt(0);
+                task.Run();
+            }
+        }
+
+        protected virtual void Check()
+        {
+            if (!this._running)
+                throw new RejectedExecutionException("The ScheduledExecutor isn't started.");
+        }
+
         interface IDelayTask : Asynchronous.IAsyncResult
         {
             TimeSpan Delay { get; }
@@ -170,33 +172,31 @@ namespace ZJYFrameWork.Execution
             void Run();
         }
 
-        class OneTimeDelayTask : AsyncResult, IDelayTask
+        private sealed class OneTimeDelayTask : AsyncResult, IDelayTask
         {
-            private long startTime;
-            private TimeSpan delay;
-            private Action command;
-            private CoroutineScheduledExecutor executor;
+            private readonly Action _command;
+            private readonly CoroutineScheduledExecutor _executor;
+            private readonly long _startTime;
+            private TimeSpan _delay;
 
             public OneTimeDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan delay)
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
-                this.delay = delay;
-                this.executor = executor;
-                this.command = command;
-                this.executor.Add(this);
+                this._startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this._delay = delay;
+                this._executor = executor;
+                this._command = command;
+                this._executor.Add(this);
             }
 
-            public virtual TimeSpan Delay
-            {
-                get { return new TimeSpan(startTime + delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); }
-            }
+            public TimeSpan Delay =>
+                new TimeSpan(_startTime + _delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond));
 
             public override bool Cancel()
             {
                 if (this.IsDone)
                     return false;
 
-                if (!this.executor.Remove(this))
+                if (!this._executor.Remove(this))
                     return false;
 
                 this.cancellationRequested = true;
@@ -204,7 +204,7 @@ namespace ZJYFrameWork.Execution
                 return true;
             }
 
-            public virtual void Run()
+            public void Run()
             {
                 try
                 {
@@ -217,45 +217,45 @@ namespace ZJYFrameWork.Execution
                     }
                     else
                     {
-                        command();
+                        _command();
                         this.SetResult();
                     }
                 }
                 catch (Exception e)
                 {
                     this.SetException(e);
-                    ZJYFrameWork.Debug.LogError(e);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(e);
+#endif
                 }
             }
         }
 
-        class OneTimeDelayTask<TResult> : AsyncResult<TResult>, IDelayTask
+        sealed class OneTimeDelayTask<TResult> : AsyncResult<TResult>, IDelayTask
         {
-            private long startTime;
-            private TimeSpan delay;
-            private Func<TResult> command;
-            private CoroutineScheduledExecutor executor;
+            private readonly Func<TResult> _command;
+            private readonly CoroutineScheduledExecutor _executor;
+            private readonly long _startTime;
+            private TimeSpan _delay;
 
             public OneTimeDelayTask(CoroutineScheduledExecutor executor, Func<TResult> command, TimeSpan delay)
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
-                this.delay = delay;
-                this.executor = executor;
-                this.command = command;
-                this.executor.Add(this);
+                this._startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this._delay = delay;
+                this._executor = executor;
+                this._command = command;
+                this._executor.Add(this);
             }
 
-            public virtual TimeSpan Delay
-            {
-                get { return new TimeSpan(startTime + delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); }
-            }
+            public TimeSpan Delay =>
+                new TimeSpan(_startTime + _delay.Ticks - (long)(Time.fixedTime * TimeSpan.TicksPerSecond));
 
             public override bool Cancel()
             {
                 if (this.IsDone)
                     return false;
 
-                if (!this.executor.Remove(this))
+                if (!this._executor.Remove(this))
                     return false;
 
                 this.cancellationRequested = true;
@@ -263,7 +263,7 @@ namespace ZJYFrameWork.Execution
                 return true;
             }
 
-            public virtual void Run()
+            public void Run()
             {
                 try
                 {
@@ -276,7 +276,7 @@ namespace ZJYFrameWork.Execution
                     }
                     else
                     {
-                        this.SetResult(command());
+                        this.SetResult(_command());
                     }
                 }
                 catch (Exception e)
@@ -287,47 +287,42 @@ namespace ZJYFrameWork.Execution
             }
         }
 
-        class FixedRateDelayTask : AsyncResult, IDelayTask
+        private sealed class FixedRateDelayTask : AsyncResult, IDelayTask
         {
-            private long startTime;
-            private TimeSpan initialDelay;
-            private TimeSpan period;
-            private CoroutineScheduledExecutor executor;
-            private Action command;
-            private int count = 0;
+            private readonly Action _command;
+            private readonly CoroutineScheduledExecutor _executor;
+            private readonly long _startTime;
+            private int _count;
+            private TimeSpan _initialDelay;
+            private TimeSpan _period;
 
             public FixedRateDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay,
-                TimeSpan period) : base()
+                TimeSpan period)
             {
-                this.startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
-                this.initialDelay = initialDelay;
-                this.period = period;
-                this.executor = executor;
-                this.command = command;
-                this.executor.Add(this);
+                this._startTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond);
+                this._initialDelay = initialDelay;
+                this._period = period;
+                this._executor = executor;
+                this._command = command;
+                this._executor.Add(this);
             }
 
-            public virtual TimeSpan Delay
-            {
-                get
-                {
-                    return new TimeSpan(startTime + initialDelay.Ticks + period.Ticks * count -
-                                        (long)(Time.fixedTime * TimeSpan.TicksPerSecond));
-                }
-            }
+            public TimeSpan Delay =>
+                new TimeSpan(_startTime + _initialDelay.Ticks + _period.Ticks * _count -
+                             (long)(Time.fixedTime * TimeSpan.TicksPerSecond));
 
             public override bool Cancel()
             {
                 if (this.IsDone)
                     return false;
 
-                this.executor.Remove(this);
+                this._executor.Remove(this);
                 this.cancellationRequested = true;
                 this.SetCancelled();
                 return true;
             }
 
-            public virtual void Run()
+            public void Run()
             {
                 try
                 {
@@ -340,9 +335,9 @@ namespace ZJYFrameWork.Execution
                     }
                     else
                     {
-                        Interlocked.Increment(ref count);
-                        this.executor.Add(this);
-                        command();
+                        Interlocked.Increment(ref _count);
+                        this._executor.Add(this);
+                        _command();
                     }
                 }
                 catch (Exception e)
@@ -352,40 +347,37 @@ namespace ZJYFrameWork.Execution
             }
         }
 
-        class FixedDelayDelayTask : AsyncResult, IDelayTask
+        private sealed class FixedDelayDelayTask : AsyncResult, IDelayTask
         {
-            private TimeSpan delay;
-            private long nextTime;
-            private CoroutineScheduledExecutor executor;
-            private Action command;
+            private readonly Action _command;
+            private readonly CoroutineScheduledExecutor _executor;
+            private TimeSpan _delay;
+            private long _nextTime;
 
             public FixedDelayDelayTask(CoroutineScheduledExecutor executor, Action command, TimeSpan initialDelay,
-                TimeSpan delay) : base()
+                TimeSpan delay)
             {
-                this.delay = delay;
-                this.executor = executor;
-                this.command = command;
-                this.nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + initialDelay.Ticks);
-                this.executor.Add(this);
+                this._delay = delay;
+                this._executor = executor;
+                this._command = command;
+                this._nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + initialDelay.Ticks);
+                this._executor.Add(this);
             }
 
-            public virtual TimeSpan Delay
-            {
-                get { return new TimeSpan(nextTime - (long)(Time.fixedTime * TimeSpan.TicksPerSecond)); }
-            }
+            public TimeSpan Delay => new TimeSpan(_nextTime - (long)(Time.fixedTime * TimeSpan.TicksPerSecond));
 
             public override bool Cancel()
             {
                 if (this.IsDone)
                     return false;
 
-                this.executor.Remove(this);
+                this._executor.Remove(this);
                 this.cancellationRequested = true;
                 this.SetCancelled();
                 return true;
             }
 
-            public virtual void Run()
+            public void Run()
             {
                 try
                 {
@@ -398,7 +390,7 @@ namespace ZJYFrameWork.Execution
                     }
                     else
                     {
-                        command();
+                        _command();
                     }
                 }
                 catch (Exception e)
@@ -413,8 +405,8 @@ namespace ZJYFrameWork.Execution
                     }
                     else
                     {
-                        this.nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + this.delay.Ticks);
-                        this.executor.Add(this);
+                        this._nextTime = (long)(Time.fixedTime * TimeSpan.TicksPerSecond + this._delay.Ticks);
+                        this._executor.Add(this);
                     }
                 }
             }
@@ -424,10 +416,12 @@ namespace ZJYFrameWork.Execution
         {
             public int Compare(T x, T y)
             {
-                if (x.Delay.Ticks == y.Delay.Ticks)
+                if (y != null && x != null && x.Delay.Ticks == y.Delay.Ticks)
+                {
                     return 0;
+                }
 
-                return x.Delay.Ticks > y.Delay.Ticks ? 1 : -1;
+                return y != null && x != null && x.Delay.Ticks > y.Delay.Ticks ? 1 : -1;
             }
         }
     }

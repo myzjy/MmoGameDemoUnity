@@ -19,47 +19,47 @@ namespace BestHTTP
 #endif
 
     /// <summary>
-    /// Possible logical states of a HTTTPRequest object.
+    /// HttpRequest对象可能的逻辑状态。
     /// </summary>
     public enum HttpRequestStates
     {
         /// <summary>
-        /// Initial status of a request. No callback will be called with this status.
+        /// 请求的初始状态。在此状态下不会调用任何回调函数。
         /// </summary>
         Initial,
 
         /// <summary>
-        /// The request queued for processing.
+        /// 请求排队等待处理。
         /// </summary>
         Queued,
 
         /// <summary>
-        /// Processing of the request started. In this state the client will send the request, and parse the response. No callback will be called with this status.
+        ///开始处理请求。在这种状态下，客户端将发送请求并解析响应。在此状态下不会调用任何回调函数。
         /// </summary>
         Processing,
 
         /// <summary>
-        /// The request finished without problem. Parsing the response done, the result can be used. The user defined callback will be called with a valid response object. The request’s Exception property will be null.
+        ///请求完成。解析响应完成后，可以使用结果。用户定义的回调将使用有效的响应对象调用。请求的Exception属性将为空。
         /// </summary>
         Finished,
 
         /// <summary>
-        /// The request finished with an unexpected error. The user defined callback will be called with a null response object. The request's Exception property may contain more info about the error, but it can be null.
+        /// 请求结束时出现意外错误。用户定义的回调将使用空响应对象调用。请求的Exception属性可能包含更多关于错误的信息，但它可以为空。
         /// </summary>
         Error,
 
         /// <summary>
-        /// The request aborted by the client(HTTPRequest’s Abort() function). The user defined callback will be called with a null response. The request’s Exception property will be null.
+        /// 请求被客户端中止(HTTPRequest的Abort()函数)。用户定义的回调将以空响应被调用。请求的Exception属性将为空。
         /// </summary>
         Aborted,
 
         /// <summary>
-        /// Connecting to the server timed out. The user defined callback will be called with a null response. The request’s Exception property will be null.
+        /// 连接服务器超时。处理步骤用户定义的回调将以空响应被调用。请求的Exception属性将为空。
         /// </summary>
         ConnectionTimedOut,
 
         /// <summary>
-        /// The request didn't finished in the given time. The user defined callback will be called with a null response. The request’s Exception property will be null.
+        /// 请求没有在规定的时间内完成。用户定义的回调将以空响应被调用。请求的Exception属性将为空。
         /// </summary>
         TimedOut
     }
@@ -81,23 +81,23 @@ namespace BestHTTP
         Dictionary<string, List<string>> headers);
 
     /// <summary>
-    /// Called for every fragment of data downloaded from the server. Its return value indicates whether the plugin free to reuse the dataFragment array.
+    /// 调用从服务器下载的每个数据片段。它的返回值表示插件是否可以重用dataFragment数组。
     /// </summary>
-    /// <param name="request">The parent HTTPRequest object</param>
-    /// <param name="response">The HTTPResponse object.</param>
-    /// <param name="dataFragment">The downloaded data. The byte[] can be larger than the actual payload! Its valid length that can be used is in the dataFragmentLength param.</param>
-    /// <param name="dataFragmentLength">Length of the downloaded data.</param>
+    /// <param name="request">父HTTPRequest对象</param>
+    /// <param name="response">HTTPResponse对象.</param>
+    /// <param name="dataFragment">下载的数据。字节[]可以比实际负载更大!它可以使用的有效长度在dataFragmentLength参数中.</param>
+    /// <param name="dataFragmentLength">下载数据的长度。</param>
     public delegate bool OnStreamingDataDelegate(HttpRequest request, HttpResponse response, byte[] dataFragment,
         int dataFragmentLength);
 
     public sealed class HttpRequest : IEnumerator, IEnumerator<HttpRequest>
     {
-        #region Statics
+        #region 静态属性
 
         public static readonly byte[] Eol = { HttpResponse.CR, HttpResponse.LF };
 
         /// <summary>
-        /// Cached uppercase values to save some cpu cycles and GC alloc per request.
+        /// 缓存大写值以节省cpu周期和每个请求的GC分配。
         /// </summary>
         public static readonly string[] MethodNames =
         {
@@ -113,52 +113,52 @@ namespace BestHTTP
         };
 
         /// <summary>
-        /// Size of the internal buffer, and upload progress will be fired when this size of data sent to the wire. Its default value is 4 KiB.
+        /// 内部缓冲区大小，上传过程中会触发此大小的数据发送到线路。默认值为4kib。
         /// </summary>
-        public static int UploadChunkSize = 4 * 1024;
+        public static readonly int UploadChunkSize = 4 * 1024;
 
         #endregion
 
-        #region Properties
+        #region 属性
 
         /// <summary>
-        /// The original request's Uri.
+        /// 原始请求的Uri。
         /// </summary>
         public Uri Uri { get; set; }
 
         /// <summary>
-        /// The method that how we want to process our request the server.
+        /// 该方法表示我们希望如何处理服务器请求。
         /// </summary>
         public HttpMethods MethodType { get; set; }
 
         /// <summary>
-        /// The raw data to send in a POST request. If it set all other fields that added to this request will be ignored.
+        /// 在POST请求中发送的原始数据。如果设置了，添加到此请求的所有其他字段将被忽略。
         /// </summary>
         public byte[] RawData { get; set; }
 
         /// <summary>
-        /// The stream that the plugin will use to get the data to send out the server. When this property is set, no forms or the RawData property will be used
+        /// 插件用来获取数据并发送到服务器的流。当设置此属性时，将不使用任何表单或RawData属性
         /// </summary>
         public Stream UploadStream { get; set; }
 
         /// <summary>
-        /// When set to true(its default value) the plugin will call the UploadStream's Dispose() function when finished uploading the data from it. Default value is true.
+        /// 当设置为true(它的默认值)时，插件将在上传完数据后调用UploadStream的Dispose()函数。默认值为true
         /// </summary>
         public bool DisposeUploadStream { get; set; }
 
         /// <summary>
-        /// If it's true, the plugin will use the Stream's Length property. Otherwise the plugin will send the data chunked. Default value is true.
+        /// 如果为真，插件将使用流的长度属性。否则插件将发送数据分块。默认值为true。
         /// </summary>
         public bool UseUploadStreamLength { get; set; }
 
         /// <summary>
-        /// Called after data sent out to the wire.
+        /// 在数据发送到线路后调用。
         /// </summary>
         public OnUploadProgressDelegate OnUploadProgress;
 
         /// <summary>
-        /// Indicates that the connection should be open after the response received. If its true, then the internal TCP connections will be reused if it's possible. Default value is true.
-        /// The default value can be changed in the HTTPManager class. If you make rare request to the server it's should be changed to false.
+        /// 指示在接收到响应后应打开连接。如果为真，那么内部TCP连接将被重用(如果可能的话)。默认值为true。
+        /// 缺省值可以在HTTPManager类中更改。如果你很少向服务器发出请求，它应该被更改为false。
         /// </summary>
         public bool IsKeepAlive
         {
@@ -542,7 +542,7 @@ namespace BestHTTP
 
         #endregion
 
-        #region Privates
+        #region 私有属性
 
         private bool _isKeepAlive;
 #if !BESTHTTP_DISABLE_CACHING

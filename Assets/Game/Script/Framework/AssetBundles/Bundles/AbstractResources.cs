@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZJYFrameWork.Asynchronous;
@@ -8,17 +9,22 @@ using ZJYFrameWork.Execution;
 using ZJYFrameWork.Utilities;
 using Object = UnityEngine.Object;
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
 #pragma warning disable 0414, 0219
     public abstract class AbstractResources : IResources, IDisposable
     {
-        protected const float DEFAULT_WEIGHT = 0.8f;
+        protected const float DefaultWeight = 0.8f;
 
-        protected WeakValueDictionary<string, Object> assetCache = new WeakValueDictionary<string, Object>();
-        protected IPathInfoParser pathInfoParser;
+        private readonly WeakValueDictionary<string, Object> _assetCache = new WeakValueDictionary<string, Object>();
+
+        // ReSharper disable once InconsistentNaming
+        protected IPathInfoParser _pathInfoParser;
+
+        // ReSharper disable once InconsistentNaming
         protected IBundleManager bundleManager;
-        protected bool useWeakCache;
+        private bool _useWeakCache;
 
         protected AbstractResources()
         {
@@ -26,66 +32,60 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         protected AbstractResources(IPathInfoParser pathInfoParser, IBundleManager manager, bool useWeakCache)
         {
-            this.pathInfoParser = pathInfoParser;
+            this._pathInfoParser = pathInfoParser;
             this.bundleManager = manager;
-            this.useWeakCache = useWeakCache;
+            this._useWeakCache = useWeakCache;
         }
 
         protected virtual void AddCache<T>(string key, T obj) where T : Object
         {
-            if (!useWeakCache)
+            if (!_useWeakCache)
                 return;
 
-            this.assetCache[key] = obj;
+            this._assetCache[key] = obj;
         }
 
         protected virtual T GetCache<T>(string key) where T : Object
         {
             try
             {
-                if (!useWeakCache)
+                if (!_useWeakCache)
                     return null;
 
-                Object value;
-                if (this.assetCache.TryGetValue(key, out value) && value != null && value is T)
+                if (this._assetCache.TryGetValue(key, out var value) && value != null && value is T o)
                 {
-                    //Check if the object is valid because it may have been destroyed.
-                    //Unmanaged objects,the weak caches do not accurately track the validity of objects.
-                    var name = value.name;
-                    return (T)value;
+                    //检查对象是否有效，因为它可能已被销毁。
+                    //非托管对象，弱缓存不能准确跟踪对象的有效性。
+                    return o;
                 }
 
                 return null;
             }
-            catch (System.Exception)
+            catch (Exception)
             {
-                //if (log.IsWarnEnabled)
-                //    log.WarnFormat("The cache is invalid and the object[{0}] has been destroyed.", key);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"事件解释缓存无效，对象[{key}]已销毁");
+#endif
                 return null;
             }
         }
 
-        private WaitForSecondsRealtime waitForSeconds;
+        private WaitForSecondsRealtime _waitForSeconds;
 
         protected WaitForSecondsRealtime WaitForSeconds()
         {
 #if UNITY_2018_4_OR_NEWER
-            if (waitForSeconds == null)
-                waitForSeconds = new WaitForSecondsRealtime(0.1f);
-            return waitForSeconds;
+            return _waitForSeconds ??= new WaitForSecondsRealtime(0.1f);
 #else
             return new WaitForSecondsRealtime(0.1f);
 #endif
         }
 
-        public virtual IBundleManager BundleManager
-        {
-            get { return this.bundleManager; }
-        }
+        public virtual IBundleManager BundleManager => this.bundleManager;
 
-        public virtual IPathInfoParser PathInfoParser => this.pathInfoParser;
+        public virtual IPathInfoParser PathInfoParser => this._pathInfoParser;
 
-        #region IBundleManager Support
+        #region IBundleManager支持
 
         public virtual ISceneLoadingResult<Scene> LoadLocalSceneAsync(string path,
             LoadSceneMode mode = LoadSceneMode.Single)
@@ -100,7 +100,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             enumerator.RegisterFinallyBlock(() =>
             {
                 if (!result.IsDone)
-                    result.SetException(new System.Exception("没有给出结果的值"));
+                {
+                    result.SetException(new Exception("没有给出结果的值"));
+                }
             });
             Executors.RunOnCoroutineNoReturn(enumerator);
 
@@ -141,9 +143,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public void SetIPathAndBundleResource(IPathInfoParser pathInfo, IBundleManager manager)
         {
-            this.pathInfoParser = pathInfo;
+            this._pathInfoParser = pathInfo;
             this.bundleManager = manager;
-            useWeakCache = true;
+            _useWeakCache = true;
         }
 
         public virtual byte[] LoadData(string path)
@@ -167,65 +169,79 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAsset<Object>(path);
         }
 
-        public virtual Object LoadAsset(string path, System.Type type)
+        public virtual Object LoadAsset(string path, Type type)
         {
             if (string.IsNullOrEmpty(path))
-                throw new System.ArgumentNullException("path", "The path is null or empty!");
+            {
+                throw new ArgumentNullException(nameof(path), "The path is null or empty!");
+            }
 
             if (type == null)
-                throw new System.ArgumentNullException("type");
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
-            AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
+            AssetPathInfo pathInfo = this._pathInfoParser.Parse(path);
             if (pathInfo == null)
-                throw new System.Exception($"Not found the AssetBundle or parses the path info '{path}' failure.");
+            {
+                throw new Exception($"没有找到AssetBundle或解析路径信息“{path}”失败.");
+            }
 
             Object asset = this.GetCache<Object>(path);
             if (asset != null)
-                return asset;
-
-            using (IBundle bundle = this.GetBundle(pathInfo.BundleName))
             {
-                if (bundle == null)
-                {
-                    ZJYFrameWork.Debug.LogError("当前资产(路径:{})的资产包未加载，请先加载资产包.", path);
-                    return null;
-                }
-
-                asset = bundle.LoadAsset(pathInfo.AssetName, type);
-                if (asset != null)
-                    this.AddCache(path, asset);
-
                 return asset;
             }
+
+            using IBundle bundle = this.GetBundle(pathInfo.BundleName);
+            if (bundle == null)
+            {
+                Debug.LogError("当前资产(路径:{})的资产包未加载，请先加载资产包.", path);
+                return null;
+            }
+
+            asset = bundle.LoadAsset(pathInfo.AssetName, type);
+            if (asset != null)
+            {
+                this.AddCache(path, asset);
+            }
+
+            return asset;
         }
 
         public virtual T LoadAsset<T>(string path) where T : Object
         {
             if (string.IsNullOrEmpty(path))
-                throw new System.ArgumentNullException(nameof(path), "The path is null or empty!");
+            {
+                throw new ArgumentNullException(nameof(path), "The path is null or empty!");
+            }
 
-            AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
+            AssetPathInfo pathInfo = this._pathInfoParser.Parse(path);
             if (pathInfo == null)
-                throw new System.Exception($"未找到资源包或解析路径信息“{path}”失败。");
+            {
+                throw new Exception($"未找到资源包或解析路径信息“{path}”失败。");
+            }
 
             T asset = this.GetCache<T>(path);
             if (asset != null)
-                return asset;
-
-            using (IBundle bundle = this.GetBundle(pathInfo.BundleName))
             {
-                if (bundle == null)
-                {
-                    ZJYFrameWork.Debug.LogError("当前资产(路径:{})的资产包未加载，请先加载资产包", path);
-                    return null;
-                }
-
-                asset = bundle.LoadAsset<T>(pathInfo.AssetName);
-                if (asset != null)
-                    this.AddCache<T>(path, asset);
-
                 return asset;
             }
+
+            using var bundle = this.GetBundle(pathInfo.BundleName);
+            if (bundle == null)
+            {
+                Debug.LogError("当前资产(路径:{})的资产包未加载，请先加载资产包", path);
+                return null;
+            }
+
+            asset = bundle.LoadAsset<T>(pathInfo.AssetName);
+            if (asset != null)
+            {
+                this.AddCache(path, asset);
+            }
+
+            return asset;
         }
 
         public virtual IProgressResult<float, Object> LoadAssetAsync(string path)
@@ -233,21 +249,26 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAssetAsync<Object>(path);
         }
 
-        public virtual IProgressResult<float, Object> LoadAssetAsync(string path, System.Type type)
+        public virtual IProgressResult<float, Object> LoadAssetAsync(string path, Type type)
         {
             try
             {
                 if (string.IsNullOrEmpty(path))
-                    throw new System.ArgumentNullException("path", "The path is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(path), "路径为空或空!");
+                }
 
                 if (type == null)
-                    throw new System.ArgumentNullException("type");
+                {
+                    throw new ArgumentNullException(nameof(type));
+                }
 
-                ProgressResult<float, Object> result = new ProgressResult<float, Object>();
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
+                var result = new ProgressResult<float, Object>();
+                var pathInfo = this._pathInfoParser.Parse(path);
                 if (pathInfo == null)
-                    throw new System.Exception(
-                        string.Format("Not found the AssetBundle or parses the path info '{0}' failure.", path));
+                {
+                    throw new Exception($"没有找到AssetBundle或者解析路径信息 '{path}' 失败.");
+                }
 
                 Object asset = this.GetCache<Object>(path);
                 if (asset != null)
@@ -257,8 +278,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     return result;
                 }
 
-                IProgressResult<float, IBundle> bundleResult = this.LoadBundle(pathInfo.BundleName);
-                float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+                var bundleResult = this.LoadBundle(pathInfo.BundleName);
+                var weight = bundleResult.IsDone ? 0f : DefaultWeight;
                 bundleResult.Callbackable().OnProgressCallback(p => result.UpdateProgress(p * weight));
                 bundleResult.Callbackable().OnCallback((r) =>
                 {
@@ -268,26 +289,26 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                         return;
                     }
 
-                    using (IBundle bundle = r.Result)
+                    using var bundle = r.Result;
+                    IProgressResult<float, Object> assetResult = bundle.LoadAssetAsync(pathInfo.AssetName, type);
+                    assetResult.Callbackable()
+                        .OnProgressCallback(p => result.UpdateProgress(weight + (1f - weight) * p));
+                    assetResult.Callbackable().OnCallback((ar) =>
                     {
-                        IProgressResult<float, Object> assetResult = bundle.LoadAssetAsync(pathInfo.AssetName, type);
-                        assetResult.Callbackable()
-                            .OnProgressCallback(p => result.UpdateProgress(weight + (1f - weight) * p));
-                        assetResult.Callbackable().OnCallback((ar) =>
+                        if (ar.Exception != null)
                         {
-                            if (ar.Exception != null)
-                                result.SetException(ar.Exception);
-                            else
-                            {
-                                result.SetResult(ar.Result);
-                                this.AddCache<Object>(path, ar.Result);
-                            }
-                        });
-                    }
+                            result.SetException(ar.Exception);
+                        }
+                        else
+                        {
+                            result.SetResult(ar.Result);
+                            this.AddCache(path, ar.Result);
+                        }
+                    });
                 });
                 return result;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, Object>(e, 0f);
             }
@@ -298,15 +319,18 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (string.IsNullOrEmpty(path))
-                    throw new System.ArgumentNullException("path", "The path is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(path), "路径为空或空!");
+                }
 
-                ProgressResult<float, T> result = new ProgressResult<float, T>();
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
+                var result = new ProgressResult<float, T>();
+                var pathInfo = this._pathInfoParser.Parse(path);
                 if (pathInfo == null)
-                    throw new System.Exception(
-                        string.Format("Not found the AssetBundle or parses the path info '{0}' failure.", path));
+                {
+                    throw new Exception($"没有找到AssetBundle或解析路径信息“{path}”失败.");
+                }
 
-                T asset = this.GetCache<T>(path);
+                var asset = this.GetCache<T>(path);
                 if (asset != null)
                 {
                     result.UpdateProgress(1f);
@@ -314,8 +338,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     return result;
                 }
 
-                IProgressResult<float, IBundle> bundleResult = this.LoadBundle(pathInfo.BundleName);
-                float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+                var bundleResult = this.LoadBundle(pathInfo.BundleName);
+                var weight = bundleResult.IsDone ? 0f : DefaultWeight;
                 bundleResult.Callbackable().OnProgressCallback(p => result.UpdateProgress(p * weight));
                 bundleResult.Callbackable().OnCallback((r) =>
                 {
@@ -325,26 +349,24 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                         return;
                     }
 
-                    using (IBundle bundle = r.Result)
+                    using var bundle = r.Result;
+                    var assetResult = bundle.LoadAssetAsync<T>(pathInfo.AssetName);
+                    assetResult.Callbackable()
+                        .OnProgressCallback(p => result.UpdateProgress(weight + (1f - weight) * p));
+                    assetResult.Callbackable().OnCallback((ar) =>
                     {
-                        IProgressResult<float, T> assetResult = bundle.LoadAssetAsync<T>(pathInfo.AssetName);
-                        assetResult.Callbackable()
-                            .OnProgressCallback(p => result.UpdateProgress(weight + (1f - weight) * p));
-                        assetResult.Callbackable().OnCallback((ar) =>
+                        if (ar.Exception != null)
+                            result.SetException(ar.Exception);
+                        else
                         {
-                            if (ar.Exception != null)
-                                result.SetException(ar.Exception);
-                            else
-                            {
-                                result.SetResult(ar.Result);
-                                this.AddCache<T>(path, ar.Result);
-                            }
-                        });
-                    }
+                            result.SetResult(ar.Result);
+                            this.AddCache(path, ar.Result);
+                        }
+                    });
                 });
                 return result;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, T>(e, 0f);
             }
@@ -355,39 +377,29 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAssets<Object>(paths);
         }
 
-        public virtual Object[] LoadAssets(System.Type type, params string[] paths)
+        public virtual Object[] LoadAssets(Type type, params string[] paths)
         {
             if (paths == null || paths.Length <= 0)
-                throw new System.ArgumentNullException("paths", "The paths is null or empty!");
-
-            if (type == null)
-                throw new System.ArgumentNullException("type");
-
-            List<Object> list = new List<Object>();
-            foreach (string path in paths)
             {
-                Object r = this.LoadAsset(path, type);
-                if (r != null)
-                    list.Add(r);
+                throw new ArgumentNullException(nameof(paths), "路径为空或空!");
             }
 
-            return list.ToArray();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            return paths.Select(path => this.LoadAsset(path, type)).Where(r => r != null).ToArray();
         }
 
         public virtual T[] LoadAssets<T>(params string[] paths) where T : Object
         {
             if (paths == null || paths.Length <= 0)
-                throw new System.ArgumentNullException("paths", "The paths is null or empty!");
-
-            List<T> list = new List<T>();
-            foreach (string path in paths)
             {
-                T r = this.LoadAsset<T>(path);
-                if (r != null)
-                    list.Add(r);
+                throw new ArgumentNullException(nameof(paths), "路径为空或空!");
             }
 
-            return list.ToArray();
+            return paths.Select(this.LoadAsset<T>).Where(r => r != null).ToArray();
         }
 
         public virtual Dictionary<string, Object> LoadAssetsToMap(params string[] paths)
@@ -395,22 +407,27 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAssetsToMap(typeof(Object), paths);
         }
 
-        public virtual Dictionary<string, Object> LoadAssetsToMap(System.Type type, params string[] paths)
+        public virtual Dictionary<string, Object> LoadAssetsToMap(Type type, params string[] paths)
         {
             if (paths == null || paths.Length <= 0)
-                throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+            {
+                throw new ArgumentNullException(nameof(paths), "路径为空或空!");
+            }
 
             if (type == null)
-                throw new System.ArgumentNullException("type");
-
-            Dictionary<string, Object> dict = new Dictionary<string, Object>();
-            for (int i = 0; i < paths.Length; i++)
             {
-                var path = paths[i];
-                if (dict.ContainsKey(path))
-                    continue;
+                throw new ArgumentNullException(nameof(type));
+            }
 
-                Object asset = this.LoadAsset(path, type);
+            var dict = new Dictionary<string, Object>();
+            foreach (var path in paths)
+            {
+                if (dict.ContainsKey(path))
+                {
+                    continue;
+                }
+
+                var asset = this.LoadAsset(path, type);
                 dict.Add(path, asset);
             }
 
@@ -420,14 +437,17 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         public virtual Dictionary<string, T> LoadAssetsToMap<T>(params string[] paths) where T : Object
         {
             if (paths == null || paths.Length <= 0)
-                throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+            {
+                throw new ArgumentNullException(nameof(paths), "路径为空或空!");
+            }
 
             Dictionary<string, T> dict = new Dictionary<string, T>();
-            for (int i = 0; i < paths.Length; i++)
+            foreach (var path in paths)
             {
-                var path = paths[i];
                 if (dict.ContainsKey(path))
+                {
                     continue;
+                }
 
                 T asset = this.LoadAsset<T>(path);
                 dict.Add(path, asset);
@@ -441,25 +461,29 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAssetsAsync<Object>(paths);
         }
 
-        public virtual IProgressResult<float, Object[]> LoadAssetsAsync(System.Type type, params string[] paths)
+        public virtual IProgressResult<float, Object[]> LoadAssetsAsync(Type type, params string[] paths)
         {
             try
             {
                 if (paths == null || paths.Length <= 0)
-                    throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(paths), "路径为空或空 !");
+                }
 
                 if (type == null)
-                    throw new System.ArgumentNullException("type");
+                {
+                    throw new ArgumentNullException(nameof(type));
+                }
 
                 return Executors.RunOnCoroutine<float, Object[]>((promise) => DoLoadAssetsAsync(promise, type, paths));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, Object[]>(e, 0f);
             }
         }
 
-        protected virtual IEnumerator DoLoadAssetsAsync(IProgressPromise<float, Object[]> promise, System.Type type,
+        protected virtual IEnumerator DoLoadAssetsAsync(IProgressPromise<float, Object[]> promise, Type type,
             params string[] paths)
         {
             List<Object> results = new List<Object>();
@@ -467,11 +491,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             List<string> bundleNames = new List<string>();
             foreach (string path in paths)
             {
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
-                if (pathInfo == null || pathInfo.BundleName == null)
+                var pathInfo = this._pathInfoParser.Parse(path);
+                if (pathInfo?.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("未找到资源包或解析路径信息[{}]失败。",
-                        path);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError("未找到资源包或解析路径信息[{}]失败。", path);
+#endif
                     continue;
                 }
 
@@ -482,8 +507,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     continue;
                 }
 
-                List<string> list = null;
-                if (!groups.TryGetValue(pathInfo.BundleName, out list))
+                if (!groups.TryGetValue(pathInfo.BundleName, out var list))
                 {
                     list = new List<string>();
                     groups.Add(pathInfo.BundleName, list);
@@ -502,7 +526,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
 
             IProgressResult<float, IBundle[]> bundleResult = this.LoadBundle(bundleNames.ToArray(), 0);
-            float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+            var weight = bundleResult.IsDone ? 0f : DefaultWeight;
             bundleResult.Callbackable().OnProgressCallback(p => promise.UpdateProgress(weight * p));
 
             yield return bundleResult.WaitForDone();
@@ -518,25 +542,29 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             IBundle[] bundles = bundleResult.Result;
             for (int i = 0; i < bundles.Length; i++)
             {
-                using (IBundle bundle = bundles[i])
+                using IBundle bundle = bundles[i];
+                if (!groups.ContainsKey(bundle.Name))
                 {
-                    if (!groups.ContainsKey(bundle.Name))
-                        continue;
-
-                    List<string> assetNames = groups[bundle.Name];
-                    if (assetNames == null || assetNames.Count < 0)
-                        continue;
-
-                    IProgressResult<float, Object[]> assetResult = bundle.LoadAssetsAsync(type, assetNames.ToArray());
-                    assetResult.Callbackable().OnCallback(ar =>
-                    {
-                        if (ar.Exception != null)
-                            return;
-
-                        results.AddRange(ar.Result);
-                    });
-                    assetResults.Add(bundle.Name, assetResult);
+                    continue;
                 }
+
+                List<string> assetNames = groups[bundle.Name];
+                if (assetNames == null || assetNames.Count < 0)
+                {
+                    continue;
+                }
+
+                IProgressResult<float, Object[]> assetResult = bundle.LoadAssetsAsync(type, assetNames.ToArray());
+                assetResult.Callbackable().OnCallback(ar =>
+                {
+                    if (ar.Exception != null)
+                    {
+                        return;
+                    }
+
+                    results.AddRange(ar.Result);
+                });
+                assetResults.Add(bundle.Name, assetResult);
             }
 
             if (assetResults.Count < 0)
@@ -546,23 +574,24 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 yield break;
             }
 
-            bool finished = false;
-            float progress = 0f;
+            bool finished;
             int assetCount = assetResults.Count;
             do
             {
                 yield return WaitForSeconds();
 
                 finished = true;
-                progress = 0f;
+                var progress = 0f;
 
-                var assetEnumerator = assetResults.GetEnumerator();
+                using var assetEnumerator = assetResults.GetEnumerator();
                 while (assetEnumerator.MoveNext())
                 {
                     var kv = assetEnumerator.Current;
                     var assetResult = kv.Value;
                     if (!assetResult.IsDone)
+                    {
                         finished = false;
+                    }
 
                     progress += (1f - weight) * assetResult.Progress / assetCount;
                 }
@@ -579,11 +608,13 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (paths == null || paths.Length <= 0)
-                    throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(paths), "The paths is null or empty!");
+                }
 
                 return Executors.RunOnCoroutine<float, T[]>((promise) => DoLoadAssetsAsync(promise, paths));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, T[]>(e, 0f);
             }
@@ -597,11 +628,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             List<string> bundleNames = new List<string>();
             foreach (string path in paths)
             {
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
-                if (pathInfo == null || pathInfo.BundleName == null)
+                AssetPathInfo pathInfo = this._pathInfoParser.Parse(path);
+                if (pathInfo?.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{}' failure.",
-                        path);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError("没有找到AssetBundle或解析路径信息“{}”失败.", path);
+#endif
                     continue;
                 }
 
@@ -612,8 +644,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     continue;
                 }
 
-                List<string> list = null;
-                if (!groups.TryGetValue(pathInfo.BundleName, out list))
+                if (!groups.TryGetValue(pathInfo.BundleName, out var list))
                 {
                     list = new List<string>();
                     groups.Add(pathInfo.BundleName, list);
@@ -632,7 +663,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
 
             IProgressResult<float, IBundle[]> bundleResult = this.LoadBundle(bundleNames.ToArray(), 0);
-            float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+            float weight = bundleResult.IsDone ? 0f : DefaultWeight;
             bundleResult.Callbackable().OnProgressCallback(p => promise.UpdateProgress(weight * p));
 
             yield return bundleResult.WaitForDone();
@@ -646,27 +677,27 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             Dictionary<string, IProgressResult<float, T[]>> assetResults =
                 new Dictionary<string, IProgressResult<float, T[]>>();
             IBundle[] bundles = bundleResult.Result;
-            for (int i = 0; i < bundles.Length; i++)
+            foreach (var t in bundles)
             {
-                using (IBundle bundle = bundles[i])
+                using IBundle bundle = t;
+                if (!groups.ContainsKey(bundle.Name))
+                    continue;
+
+                List<string> assetNames = groups[bundle.Name];
+                if (assetNames == null || assetNames.Count < 0)
+                    continue;
+
+                var assetResult = bundle.LoadAssetsAsync<T>(assetNames.ToArray());
+                assetResult.Callbackable().OnCallback(ar =>
                 {
-                    if (!groups.ContainsKey(bundle.Name))
-                        continue;
-
-                    List<string> assetNames = groups[bundle.Name];
-                    if (assetNames == null || assetNames.Count < 0)
-                        continue;
-
-                    IProgressResult<float, T[]> assetResult = bundle.LoadAssetsAsync<T>(assetNames.ToArray());
-                    assetResult.Callbackable().OnCallback(ar =>
+                    if (ar.Exception != null)
                     {
-                        if (ar.Exception != null)
-                            return;
+                        return;
+                    }
 
-                        results.AddRange(ar.Result);
-                    });
-                    assetResults.Add(bundle.Name, assetResult);
-                }
+                    results.AddRange(ar.Result);
+                });
+                assetResults.Add(bundle.Name, assetResult);
             }
 
             if (assetResults.Count < 0)
@@ -676,23 +707,24 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 yield break;
             }
 
-            bool finished = false;
-            float progress = 0f;
+            bool finished;
             int assetCount = assetResults.Count;
             do
             {
                 yield return WaitForSeconds();
 
                 finished = true;
-                progress = 0f;
+                var progress = 0f;
 
-                var assetEnumerator = assetResults.GetEnumerator();
+                using var assetEnumerator = assetResults.GetEnumerator();
                 while (assetEnumerator.MoveNext())
                 {
                     var kv = assetEnumerator.Current;
                     var assetResult = kv.Value;
                     if (!assetResult.IsDone)
+                    {
                         finished = false;
+                    }
 
                     progress += (1f - weight) * assetResult.Progress / assetCount;
                 }
@@ -709,41 +741,45 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             return this.LoadAssetsToMapAsync(typeof(Object), paths);
         }
 
-        public virtual IProgressResult<float, Dictionary<string, Object>> LoadAssetsToMapAsync(System.Type type,
+        public virtual IProgressResult<float, Dictionary<string, Object>> LoadAssetsToMapAsync(Type type,
             params string[] paths)
         {
             try
             {
                 if (paths == null || paths.Length <= 0)
-                    throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(paths), "The paths is null or empty!");
+                }
 
                 if (type == null)
-                    throw new System.ArgumentNullException("type");
+                {
+                    throw new ArgumentNullException(nameof(type));
+                }
 
                 return Executors.RunOnCoroutine<float, Dictionary<string, Object>>((promise) =>
                     DoLoadAssetsToMapAsync(promise, type, paths));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, Dictionary<string, Object>>(e, 0f);
             }
         }
 
         protected virtual IEnumerator DoLoadAssetsToMapAsync(
-            IProgressPromise<float, Dictionary<string, Object>> promise, System.Type type, params string[] paths)
+            IProgressPromise<float, Dictionary<string, Object>> promise, Type type, params string[] paths)
         {
             Dictionary<string, Object> results = new Dictionary<string, Object>();
             Dictionary<string, List<string>> groups = new Dictionary<string, List<string>>();
             Dictionary<string, string> assetNameAndPathMapping = new Dictionary<string, string>();
             List<string> bundleNames = new List<string>();
-            for (int i = 0; i < paths.Length; i++)
+            foreach (var path in paths)
             {
-                var path = paths[i];
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
-                if (pathInfo == null || pathInfo.BundleName == null)
+                AssetPathInfo pathInfo = this._pathInfoParser.Parse(path);
+                if (pathInfo?.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.",
-                        path);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError("没有找到AssetBundle或解析路径信息“{}”失败.", path);
+#endif
                     continue;
                 }
 
@@ -751,12 +787,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 if (asset != null)
                 {
                     if (!results.ContainsKey(path))
+                    {
                         results.Add(path, asset);
+                    }
+
                     continue;
                 }
 
-                List<string> list = null;
-                if (!groups.TryGetValue(pathInfo.BundleName, out list))
+                if (!groups.TryGetValue(pathInfo.BundleName, out var list))
                 {
                     list = new List<string>();
                     groups.Add(pathInfo.BundleName, list);
@@ -778,7 +816,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
 
             IProgressResult<float, IBundle[]> bundleResult = this.LoadBundle(bundleNames.ToArray(), 0);
-            float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+            var weight = bundleResult.IsDone ? 0f : DefaultWeight;
             bundleResult.Callbackable().OnProgressCallback(p => promise.UpdateProgress(weight * p));
 
             yield return bundleResult.WaitForDone();
@@ -794,32 +832,36 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             IBundle[] bundles = bundleResult.Result;
             for (int i = 0; i < bundles.Length; i++)
             {
-                using (IBundle bundle = bundles[i])
+                using var bundle = bundles[i];
+                if (!groups.ContainsKey(bundle.Name))
                 {
-                    if (!groups.ContainsKey(bundle.Name))
-                        continue;
-
-                    List<string> assetNames = groups[bundle.Name];
-                    if (assetNames == null || assetNames.Count < 0)
-                        continue;
-
-                    IProgressResult<float, Dictionary<string, Object>> assetResult =
-                        bundle.LoadAssetsToMapAsync(type, assetNames.ToArray());
-                    assetResult.Callbackable().OnCallback(ar =>
-                    {
-                        if (ar.Exception != null)
-                            return;
-
-                        foreach (var kv in ar.Result)
-                        {
-                            string key = assetNameAndPathMapping[kv.Key];
-                            var value = kv.Value;
-                            if (!results.ContainsKey(key))
-                                results.Add(key, value);
-                        }
-                    });
-                    assetResults.Add(bundle.Name, assetResult);
+                    continue;
                 }
+
+                List<string> assetNames = groups[bundle.Name];
+                if (assetNames == null || assetNames.Count < 0)
+                {
+                    continue;
+                }
+
+                IProgressResult<float, Dictionary<string, Object>> assetResult =
+                    bundle.LoadAssetsToMapAsync(type, assetNames.ToArray());
+                assetResult.Callbackable().OnCallback(ar =>
+                {
+                    if (ar.Exception != null)
+                        return;
+
+                    foreach (var kv in ar.Result)
+                    {
+                        var key = assetNameAndPathMapping[kv.Key];
+                        var value = kv.Value;
+                        if (!results.ContainsKey(key))
+                        {
+                            results.Add(key, value);
+                        }
+                    }
+                });
+                assetResults.Add(bundle.Name, assetResult);
             }
 
             if (assetResults.Count < 0)
@@ -829,23 +871,24 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 yield break;
             }
 
-            bool finished = false;
-            float progress = 0f;
+            bool finished;
             int assetCount = assetResults.Count;
             do
             {
                 yield return WaitForSeconds();
 
                 finished = true;
-                progress = 0f;
+                var progress = 0f;
 
-                var assetEnumerator = assetResults.GetEnumerator();
+                using var assetEnumerator = assetResults.GetEnumerator();
                 while (assetEnumerator.MoveNext())
                 {
                     var kv = assetEnumerator.Current;
                     var assetResult = kv.Value;
                     if (!assetResult.IsDone)
+                    {
                         finished = false;
+                    }
 
                     progress += (1f - weight) * assetResult.Progress / assetCount;
                 }
@@ -863,12 +906,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (paths == null || paths.Length <= 0)
-                    throw new System.ArgumentNullException("paths", "The paths is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(paths), "The paths is null or empty!");
+                }
 
                 return Executors.RunOnCoroutine<float, Dictionary<string, T>>((promise) =>
                     DoLoadAssetsToMapAsync(promise, paths));
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 return new ImmutableProgressResult<float, Dictionary<string, T>>(e, 0f);
             }
@@ -881,14 +926,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             Dictionary<string, List<string>> groups = new Dictionary<string, List<string>>();
             Dictionary<string, string> assetNameAndPathMapping = new Dictionary<string, string>();
             List<string> bundleNames = new List<string>();
-            for (int i = 0; i < paths.Length; i++)
+            foreach (var path in paths)
             {
-                var path = paths[i];
-                AssetPathInfo pathInfo = this.pathInfoParser.Parse(path);
-                if (pathInfo == null || pathInfo.BundleName == null)
+                AssetPathInfo pathInfo = this._pathInfoParser.Parse(path);
+                if (pathInfo?.BundleName == null)
                 {
-                    ZJYFrameWork.Debug.LogError("Not found the AssetBundle or parses the path info '{0}' failure.",
-                        path);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError("没有找到AssetBundle或解析路径信息“{}”失败.", path);
+#endif
                     continue;
                 }
 
@@ -896,23 +941,23 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 if (asset != null)
                 {
                     if (!results.ContainsKey(path))
+                    {
                         results.Add(path, asset);
+                    }
+
                     continue;
                 }
 
-                List<string> list = null;
-                if (!groups.TryGetValue(pathInfo.BundleName, out list))
+                if (!groups.TryGetValue(pathInfo.BundleName, out var list))
                 {
                     list = new List<string>();
                     groups.Add(pathInfo.BundleName, list);
                     bundleNames.Add(pathInfo.BundleName);
                 }
 
-                if (!list.Contains(pathInfo.AssetName))
-                {
-                    list.Add(pathInfo.AssetName);
-                    assetNameAndPathMapping[pathInfo.AssetName] = path;
-                }
+                if (list.Contains(pathInfo.AssetName)) continue;
+                list.Add(pathInfo.AssetName);
+                assetNameAndPathMapping[pathInfo.AssetName] = path;
             }
 
             if (bundleNames.Count <= 0)
@@ -923,7 +968,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
 
             IProgressResult<float, IBundle[]> bundleResult = this.LoadBundle(bundleNames.ToArray(), 0);
-            float weight = bundleResult.IsDone ? 0f : DEFAULT_WEIGHT;
+            float weight = bundleResult.IsDone ? 0f : DefaultWeight;
             bundleResult.Callbackable().OnProgressCallback(p => promise.UpdateProgress(weight * p));
 
             yield return bundleResult.WaitForDone();
@@ -937,34 +982,32 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             Dictionary<string, IProgressResult<float, Dictionary<string, T>>> assetResults =
                 new Dictionary<string, IProgressResult<float, Dictionary<string, T>>>();
             IBundle[] bundles = bundleResult.Result;
-            for (int i = 0; i < bundles.Length; i++)
+            foreach (var t in bundles)
             {
-                using (IBundle bundle = bundles[i])
+                using IBundle bundle = t;
+                if (!groups.ContainsKey(bundle.Name))
+                    continue;
+
+                List<string> assetNames = groups[bundle.Name];
+                if (assetNames == null || assetNames.Count < 0)
+                    continue;
+
+                IProgressResult<float, Dictionary<string, T>> assetResult =
+                    bundle.LoadAssetsToMapAsync<T>(assetNames.ToArray());
+                assetResult.Callbackable().OnCallback(ar =>
                 {
-                    if (!groups.ContainsKey(bundle.Name))
-                        continue;
+                    if (ar.Exception != null)
+                        return;
 
-                    List<string> assetNames = groups[bundle.Name];
-                    if (assetNames == null || assetNames.Count < 0)
-                        continue;
-
-                    IProgressResult<float, Dictionary<string, T>> assetResult =
-                        bundle.LoadAssetsToMapAsync<T>(assetNames.ToArray());
-                    assetResult.Callbackable().OnCallback(ar =>
+                    foreach (var kv in ar.Result)
                     {
-                        if (ar.Exception != null)
-                            return;
-
-                        foreach (var kv in ar.Result)
-                        {
-                            string key = assetNameAndPathMapping[kv.Key];
-                            var value = kv.Value;
-                            if (!results.ContainsKey(key))
-                                results.Add(key, value);
-                        }
-                    });
-                    assetResults.Add(bundle.Name, assetResult);
-                }
+                        string key = assetNameAndPathMapping[kv.Key];
+                        var value = kv.Value;
+                        if (!results.ContainsKey(key))
+                            results.Add(key, value);
+                    }
+                });
+                assetResults.Add(bundle.Name, assetResult);
             }
 
             if (assetResults.Count < 0)
@@ -974,17 +1017,16 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 yield break;
             }
 
-            bool finished = false;
-            float progress = 0f;
+            bool finished;
             int assetCount = assetResults.Count;
             do
             {
                 yield return WaitForSeconds();
 
                 finished = true;
-                progress = 0f;
+                var progress = 0f;
 
-                var assetEnumerator = assetResults.GetEnumerator();
+                using var assetEnumerator = assetResults.GetEnumerator();
                 while (assetEnumerator.MoveNext())
                 {
                     var kv = assetEnumerator.Current;
@@ -1133,22 +1175,28 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (string.IsNullOrEmpty(path))
-                    throw new System.ArgumentNullException("path", "The path is null or empty!");
+                {
+                    throw new ArgumentNullException(nameof(path), "The path is null or empty!");
+                }
 
                 InterceptableEnumerator enumerator = new InterceptableEnumerator(DoLoadSceneAsync(result, path, mode));
                 enumerator.RegisterCatchBlock(e =>
                 {
                     result.SetException(e);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.LogError(e);
+#endif
                 });
                 enumerator.RegisterFinallyBlock(() =>
                 {
                     if (!result.IsDone)
-                        result.SetException(new System.Exception("No value given the Result"));
+                    {
+                        result.SetException(new Exception("没有给出结果值"));
+                    }
                 });
                 Executors.RunOnCoroutineNoReturn(enumerator);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 result.Progress = 0f;
                 result.SetException(e);
@@ -1164,20 +1212,20 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         #region IDisposable Support
 
-        private bool disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
-                    this.assetCache.Clear();
-                    if (bundleManager is IDisposable)
-                        ((IDisposable)bundleManager).Dispose();
+                    this._assetCache.Clear();
+                    if (bundleManager is IDisposable disposable)
+                        disposable.Dispose();
                 }
 
-                disposed = true;
+                _disposed = true;
             }
         }
 

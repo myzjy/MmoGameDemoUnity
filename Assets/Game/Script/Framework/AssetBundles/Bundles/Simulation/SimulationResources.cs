@@ -1,11 +1,9 @@
 ﻿#if UNITY_EDITOR
-using System.Collections;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.SceneManagement;
-using ZJYFrameWork.Spring.Core;
 #if UNITY_2018_3_OR_NEWER
+using System.Collections;
 using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 #endif
 
 namespace ZJYFrameWork.AssetBundles.Bundles
@@ -16,28 +14,31 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 
         public SimulationResources() : base()
         {
-            
         }
         // public SimulationResources() : this(new SimulationAutoMappingPathInfoParser(), new SimulationBundleManager())
         // {
         // }
 
-        public SimulationResources(IPathInfoParser pathInfoParser) : base(pathInfoParser, new SimulationBundleManager(), false)
+        public SimulationResources(IPathInfoParser pathInfoParser) : base(pathInfoParser, new SimulationBundleManager(),
+            false)
         {
         }
 
-        public SimulationResources(IPathInfoParser pathInfoParser, IBundleManager manager) : base(pathInfoParser, manager, false)
+        public SimulationResources(IPathInfoParser pathInfoParser, IBundleManager manager) : base(pathInfoParser,
+            manager, false)
         {
         }
 
-        protected override IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
+        protected override IEnumerator DoLoadLocalSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
+            LoadSceneMode mode = LoadSceneMode.Single)
         {
-            yield return DoLoadSceneAsync(promise,path,mode);
+            yield return DoLoadSceneAsync(promise, path, mode);
         }
 
-        protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path, LoadSceneMode mode = LoadSceneMode.Single)
+        protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
+            LoadSceneMode mode = LoadSceneMode.Single)
         {
-            AssetPathInfo pathInfo = pathInfoParser.Parse(path);
+            AssetPathInfo pathInfo = _pathInfoParser.Parse(path);
             if (pathInfo == null)
             {
                 promise.Progress = 0f;
@@ -49,7 +50,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
 #if UNITY_2018_3_OR_NEWER
             AsyncOperation operation = EditorSceneManager.LoadSceneAsyncInPlayMode(name, new LoadSceneParameters(mode));
 #else
-            AsyncOperation operation = LoadSceneMode.Additive.Equals(mode) ? EditorApplication.LoadLevelAdditiveAsyncInPlayMode(name) : EditorApplication.LoadLevelAsyncInPlayMode(name);
+            AsyncOperation operation =
+ LoadSceneMode.Additive.Equals(mode) ? EditorApplication.LoadLevelAdditiveAsyncInPlayMode(name) : EditorApplication.LoadLevelAsyncInPlayMode(name);
 #endif
             if (operation == null)
             {
@@ -66,6 +68,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 promise.Progress = operation.progress;
                 yield return WaitForSeconds();
             }
+
             promise.Progress = operation.progress;
             promise.State = LoadState.SceneActivationReady;
 

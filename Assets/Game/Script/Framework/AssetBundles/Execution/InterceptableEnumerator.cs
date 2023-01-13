@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.Execution
 {
     /// <summary>
@@ -35,22 +36,19 @@ namespace ZJYFrameWork.Execution
     /// </summary>
     public class InterceptableEnumerator : IEnumerator
     {
-        private object current;
-        private Stack<IEnumerator> stack = new Stack<IEnumerator>();
+        private readonly Stack<IEnumerator> _stack = new Stack<IEnumerator>();
+        private object _current;
+        private Func<bool> _hasNext;
 
-        private Action<Exception> onException;
-        private Action onFinally;
-        private Func<bool> hasNext;
+        private Action<Exception> _onException;
+        private Action _onFinally;
 
         public InterceptableEnumerator(IEnumerator routine)
         {
-            this.stack.Push(routine);
+            this._stack.Push(routine);
         }
 
-        public object Current
-        {
-            get { return this.current; }
-        }
+        public object Current => this._current;
 
         public bool MoveNext()
         {
@@ -62,30 +60,33 @@ namespace ZJYFrameWork.Execution
                     return false;
                 }
 
-                if (stack.Count <= 0)
+                if (_stack.Count <= 0)
                 {
                     this.OnFinally();
                     return false;
                 }
 
-                IEnumerator ie = stack.Peek();
+                IEnumerator ie = _stack.Peek();
                 bool hasNext = ie.MoveNext();
                 if (!hasNext)
                 {
-                    this.stack.Pop();
+                    this._stack.Pop();
                     return MoveNext();
                 }
 
-                this.current = ie.Current;
-                if (this.current is IEnumerator enumerator)
+                this._current = ie.Current;
+                switch (this._current)
                 {
-                    stack.Push(enumerator);
-                    return MoveNext();
+                    case IEnumerator enumerator:
+                        _stack.Push(enumerator);
+                        return MoveNext();
+                    case Coroutine _:
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            "枚举器的结果包含'UnityEngine。协程的类型，如果发生异常，它不能被捕获。建议使用“yield return例程”，而不是“yield return StartCoroutine(例程)”。.");
+#endif
+                        break;
                 }
-
-                if (this.current is Coroutine)
-                    ZJYFrameWork.Debug.Log(
-                        "枚举器的结果包含'UnityEngine。协程的类型，如果发生异常，它不能被捕获。建议使用“yield return例程”，而不是“yield return StartCoroutine(例程)”。.");
 
                 return true;
             }
@@ -106,23 +107,28 @@ namespace ZJYFrameWork.Execution
         {
             try
             {
-                if (this.onException == null)
+                if (this._onException == null)
                     return;
 
-                foreach (Action<Exception> action in this.onException.GetInvocationList())
+                foreach (var @delegate in this._onException.GetInvocationList())
                 {
+                    var action = (Action<Exception>)@delegate;
                     try
                     {
                         action(e);
                     }
                     catch (Exception ex)
                     {
-                        ZJYFrameWork.Debug.Log("{}", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log($"[InterceptableEnumerator] [msg:{ex}]");
+#endif
                     }
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 
@@ -130,10 +136,10 @@ namespace ZJYFrameWork.Execution
         {
             try
             {
-                if (this.onFinally == null)
+                if (this._onFinally == null)
                     return;
 
-                foreach (var @delegate in this.onFinally.GetInvocationList())
+                foreach (var @delegate in this._onFinally.GetInvocationList())
                 {
                     var action = (Action)@delegate;
                     try
@@ -142,7 +148,10 @@ namespace ZJYFrameWork.Execution
                     }
                     catch (Exception ex)
                     {
-                        ZJYFrameWork.Debug.LogError("{}", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log($"[InterceptableEnumerator] [msg:{ex}]");
+#endif
                     }
                 }
             }
@@ -154,25 +163,26 @@ namespace ZJYFrameWork.Execution
 
         private bool HasNext()
         {
-            return hasNext == null || hasNext();
+            return _hasNext == null || _hasNext();
         }
 
         /// <summary>
         /// Register a condition code block.
         /// </summary>
-        /// <param name="hasNext"></param>
-        public virtual void RegisterConditionBlock(Func<bool> hasNext)
+        /// <param name="haseHasNext"></param>
+        public virtual void RegisterConditionBlock(Func<bool> haseHasNext)
         {
-            this.hasNext = hasNext;
+            this._hasNext = haseHasNext;
         }
 
         /// <summary>
         /// Register a code block, when an exception occurs it will be executed.
         /// </summary>
-        /// <param name="onException"></param>
-        public virtual void RegisterCatchBlock(Action<Exception> onException)
+        /// <param name="OnException"></param>
+        // ReSharper disable once InconsistentNaming
+        public virtual void RegisterCatchBlock(Action<Exception> OnException)
         {
-            this.onException += onException;
+            this._onException += OnException;
         }
 
         /// <summary>
@@ -181,7 +191,7 @@ namespace ZJYFrameWork.Execution
         /// <param name="onFinally"></param>
         public virtual void RegisterFinallyBlock(Action onFinally)
         {
-            this.onFinally += onFinally;
+            this._onFinally += onFinally;
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
@@ -19,7 +19,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         protected override IEnumerator DoLoadSceneAsync(ISceneLoadingPromise<Scene> promise, string path,
             LoadSceneMode mode = LoadSceneMode.Single)
         {
-            AssetPathInfo pathInfo = pathInfoParser.Parse(path);
+            AssetPathInfo pathInfo = _pathInfoParser.Parse(path);
             if (pathInfo == null)
             {
                 promise.Progress = 0f;

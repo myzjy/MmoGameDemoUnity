@@ -1,16 +1,17 @@
 ﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
 
+#if UNITY_2017_1_OR_NEWER
 using System;
-using UnityEngine;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using ZJYFrameWork.Asynchronous;
-using ZJYFrameWork.AssetBundles.Bundles;
-#if UNITY_2017_1_OR_NEWER
+using System.IO;
+using UnityEngine;
 using UnityEngine.Networking;
+using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.Asynchronous;
 #endif
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.AssetBundles.Bundle
 {
 #if UNITY_2017_1_OR_NEWER
@@ -24,8 +25,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
 
         public WWWDownloader()
         {
-            
         }
+
         public WWWDownloader(Uri baseUri, bool useCache) : this(baseUri, SystemInfo.processorCount * 2, useCache)
         {
         }
@@ -112,9 +113,10 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         if (!string.IsNullOrEmpty(_www.error))
                         {
                             promise.SetException(new Exception(_www.error));
-                            ZJYFrameWork.Debug.Log(
-                                "从地址'{1}'下载AssetBundle '{0}'失败。原因:{2}",
-                                _bundleInfo.FullName, GetAbsoluteUri(_bundleInfo.Filename), _www.error);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"从地址[url:{GetAbsoluteUri(_bundleInfo.Filename)}]下载[AssetBundle:{_bundleInfo.FullName}]失败。[原因:{_www.error}]");
+#endif
                             yield break;
                         }
 
@@ -124,17 +126,23 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                             {
                                 AssetBundle bundle = ((DownloadHandlerAssetBundle)_www.downloadHandler).assetBundle;
                                 if (bundle != null)
+                                {
                                     bundle.Unload(true);
+                                }
                             }
                             else
                             {
                                 string fullname = BundleUtil.GetStorableDirectory() + _bundleInfo.Filename;
                                 FileInfo info = new FileInfo(fullname);
                                 if (info.Exists)
+                                {
                                     info.Delete();
+                                }
 
-                                if (!info.Directory.Exists)
+                                if (info.Directory is { Exists: false })
+                                {
                                     info.Directory.Create();
+                                }
 
                                 File.WriteAllBytes(info.FullName, _www.downloadHandler.data);
                             }
@@ -142,9 +150,10 @@ namespace ZJYFrameWork.AssetBundles.Bundle
                         catch (Exception e)
                         {
                             promise.SetException(e);
-                            ZJYFrameWork.Debug.Log(
-                                "Downloads AssetBundle '{0}' failure from the address '{1}'.Reason:{2}",
-                                _bundleInfo.FullName, GetAbsoluteUri(_bundleInfo.Filename), e);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[Downloads] [AssetBundle:{_bundleInfo.FullName}] 下载失败 [Url:{GetAbsoluteUri(_bundleInfo.Filename)}].原因:{e}");
+#endif
                             yield break;
                         }
                     }
@@ -159,7 +168,8 @@ namespace ZJYFrameWork.AssetBundles.Bundle
             promise.SetResult(true);
         }
 
-        protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise, BundleInfo bundleInfo)
+        protected override IEnumerator DoDownloadBundles(IProgressPromise<Progress, bool> promise,
+            BundleInfo bundleInfo)
         {
             throw new NotImplementedException();
         }

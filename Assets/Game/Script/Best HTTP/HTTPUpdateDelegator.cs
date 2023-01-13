@@ -8,42 +8,41 @@ using UnityEngine;
 namespace BestHTTP
 {
     /// <summary>
-    /// Will route some U3D calls to the HTTPManager.
+    /// 将一些U3D调用路由到HTTPManager。
     /// </summary>
     [ExecuteInEditMode]
     [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     public sealed class HttpUpdateDelegator : MonoBehaviour
     {
-        #region Public Properties
+        #region HttpUpdateDelegator 公共属性
 
         /// <summary>
-        /// The singleton instance of the HTTPUpdateDelegator
+        /// HTTPUpdateDelegator的单例实例
         /// </summary>
         private static HttpUpdateDelegator Instance { get; set; }
 
         /// <summary>
-        /// True, if the Instance property should hold a valid value.
+        /// 如果Instance属性应保留有效值，则为true。
         /// </summary>
         public static bool IsCreated { get; private set; }
 
         /// <summary>
-        /// Set it true before any CheckInstance() call, or before any request sent to dispatch callbacks on another thread.
+        /// 在任何CheckInstance()调用之前，或在任何请求发送到另一个线程上分派回调之前，将其设置为true。
         /// </summary>
         private static bool IsThreaded { get; set; }
 
         /// <summary>
-        /// It's true if the dispatch thread running.
+        /// 如果调度线程正在运行，这是正确的。
         /// </summary>
         private static bool IsThreadRunning { get; set; }
 
         /// <summary>
-        /// How much time the plugin should wait between two update call. Its default value 100 ms.
+        /// 插件在两次更新调用之间应该等待多长时间。默认值为100毫秒。
         /// </summary>
         private static int ThreadFrequencyInMS { get; set; }
 
         /// <summary>
-        /// Called in the OnApplicationQuit function. If this function returns False, the plugin will not start to
-        /// shut down itself.
+        /// 在OnApplicationQuit函数中调用。如果这个函数返回False，插件将不会自动关闭。
         /// </summary>
 #pragma warning disable CS0649
         private static System.Func<bool> _onBeforeApplicationQuit;
@@ -58,7 +57,7 @@ namespace BestHTTP
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Called after scene loaded to support Configurable Enter Play Mode (https://docs.unity3d.com/2019.3/Documentation/Manual/ConfigurableEnterPlayMode.html)
+        /// 在场景加载后调用以支持可配置的进入播放模式 (https://docs.unity3d.com/2019.3/Documentation/Manual/ConfigurableEnterPlayMode.html)
         /// </summary>
 #if UNITY_2019_3_OR_NEWER
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -66,6 +65,9 @@ namespace BestHTTP
         static void ResetSetup()
         {
             _isSetupCalled = false;
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("[HTTPUpdateDelegator]  [msg:重置 called!]");
+#endif
             HttpManager.Logger.Information("HTTPUpdateDelegator", "Reset called!");
         }
 #endif
@@ -76,7 +78,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Will create the HTTPUpdateDelegator instance and set it up.
+        /// 将创建HTTPUpdateDelegator实例并对其进行设置。
         /// </summary>
         public static void CheckInstance()
         {
@@ -120,14 +122,18 @@ namespace BestHTTP
                     // https://docs.unity3d.com/ScriptReference/Application-wantsToQuit.html
                     Application.wantsToQuit -= UnityApplication_WantsToQuit;
                     Application.wantsToQuit += UnityApplication_WantsToQuit;
-
-                    HttpManager.Logger.Information("HTTPUpdateDelegator", "Instance Created!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"[HTTPUpdateDelegator] [msg:实例创建!]");
+#endif
+                    // HttpManager.Logger.Information("HTTPUpdateDelegator", "");
                 }
             }
             catch
             {
-                HttpManager.Logger.Error("HTTPUpdateDelegator",
-                    "Please call the BestHTTP.HTTPManager.Setup() from one of Unity's event(eg. awake, start) before you send any request!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HTTPUpdateDelegator] [msg:请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!]");
+#endif
+                // HttpManager.Logger.Error("HTTPUpdateDelegator", "请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!");
             }
         }
 
@@ -156,23 +162,29 @@ namespace BestHTTP
             HttpManager.Setup();
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-            // Threads are not implemented in WEBGL builds, disable it for now.
+            // 线程在WEBGL构建中没有实现，现在禁用它。
             IsThreaded = false;
 #endif
             if (IsThreaded)
+            {
                 PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ThreadFunc);
+            }
 
-            // Unity doesn't tolerate well if the DontDestroyOnLoad called when purely in editor mode. So, we will set the flag
-            //  only when we are playing, or not in the editor.
+            // Unity不能很好地容忍DontDestroyOnLoad在纯编辑模式下调用。因此，我们将只在播放时设置标志，或者不在编辑器中设置。
             if (!Application.isEditor || Application.isPlaying)
-                GameObject.DontDestroyOnLoad(this.gameObject);
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
 
             HttpManager.Logger.Information("HTTPUpdateDelegator", "Setup done!");
         }
 
         void ThreadFunc()
         {
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Started");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("[HTTPUpdateDelegator] [msg:更新线程已启动]");
+#endif
+            // HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Started");
 
             try
             {
@@ -190,7 +202,10 @@ namespace BestHTTP
             }
             finally
             {
-                HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Ended");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log("[HTTPUpdateDelegator] [msg:更新线程结束]");
+#endif
+                // HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Ended");
             }
         }
 
@@ -205,7 +220,7 @@ namespace BestHTTP
 
         private void CallOnUpdate()
         {
-            // Prevent overlapping call of OnUpdate from unity's main thread and a separate thread
+            // 防止OnUpdate从unity主线程和单独的线程中重复调用
             if (Interlocked.CompareExchange(ref _isHttpManagerOnUpdateRunning, 1, 0) == 0)
             {
                 try
@@ -250,7 +265,10 @@ namespace BestHTTP
 
         void OnDisable()
         {
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "OnDisable Called!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("[HTTPUpdateDelegator] [msg:OnDisable Called!]");
+#endif
+            //HttpManager.Logger.Information("HTTPUpdateDelegator", "OnDisable Called!");
 
 #if UNITY_EDITOR
             if (UnityEditor.EditorApplication.isPlaying)
@@ -260,15 +278,23 @@ namespace BestHTTP
 
         void OnApplicationPause(bool isPaused)
         {
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HTTPUpdateDelegator] [msg:OnApplicationPause 是否暂停-->[{isPaused}]]");
+#endif
+            // HttpManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
 
             if (HttpUpdateDelegator.OnApplicationForegroundStateChanged != null)
+            {
                 HttpUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
+            }
         }
 
         private static bool UnityApplication_WantsToQuit()
         {
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HTTPUpdateDelegator] [msg:UnityApplication_WantsToQuit Called!!!]");
+#endif
+            //HttpManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
 
             if (_onBeforeApplicationQuit != null)
             {
@@ -276,14 +302,20 @@ namespace BestHTTP
                 {
                     if (!_onBeforeApplicationQuit())
                     {
-                        HttpManager.Logger.Information("HTTPUpdateDelegator",
-                            "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log($"[HTTPUpdateDelegator] [msg:OnBeforeApplicationQuit调用返回false，延迟插件和应用程序关闭。]");
+#endif
+                        // HttpManager.Logger.Information("HTTPUpdateDelegator",
+                        //     "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
                         return false;
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    HttpManager.Logger.Exception("HTTPUpdateDelegator", string.Empty, ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"[HTTPUpdateDelegator] [msg:{ex}]");
+#endif
+                    //              HttpManager.Logger.Exception("HTTPUpdateDelegator", string.Empty, ex);
                 }
             }
 

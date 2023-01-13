@@ -31,7 +31,7 @@ namespace BestHTTP
         internal const byte LF = 10;
 
         /// <summary>
-        /// Minimum size of the read buffer.
+        ///读取缓冲区的最小大小。
         /// </summary>
         private const int MinReadBufferSize = 16 * 1024;
 
@@ -42,22 +42,22 @@ namespace BestHTTP
         public int VersionMinor { get; protected set; }
 
         /// <summary>
-        /// The status code that sent from the server.
+        /// 从服务器发送的状态码。
         /// </summary>
         public int StatusCode { get; protected set; }
 
         /// <summary>
-        /// Returns true if the status code is in the range of [200..300[ or 304 (Not Modified)
+        /// 如果状态码在[200..]范围内，返回true。300[或304(未经修改)
         /// </summary>
         public bool IsSuccess => (this.StatusCode >= 200 && this.StatusCode < 300) || this.StatusCode == 304;
 
         /// <summary>
-        /// The message that sent along with the StatusCode from the server. You can check it for errors from the server.
+        /// 与StatusCode一起从服务器发送的消息。您可以从服务器上检查它的错误。
         /// </summary>
         public string Message { get; protected set; }
 
         /// <summary>
-        /// True if it's a streamed response.
+        /// 如果是流响应则为True。
         /// </summary>
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
@@ -65,58 +65,58 @@ namespace BestHTTP
 
 #if !BESTHTTP_DISABLE_CACHING
         /// <summary>
-        /// Indicates that the response body is read from the cache.
+        /// 指示从缓存中读取响应体。
         /// </summary>
         public bool IsFromCache { get; internal set; }
 
         /// <summary>
-        /// Provides information about the file used for caching the request.
+        /// 提供有关用于缓存请求的文件的信息。
         /// </summary>
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public HttpCacheFileInfo CacheFileInfo { get; internal set; }
 
         /// <summary>
-        /// Determines if this response is only stored to cache.
-        /// If both IsCacheOnly and IsStreamed are true, OnStreamingData isn't called.
+        /// 确定此响应是否仅存储到缓存。
+        /// 如果IsCacheOnly和isstreaming都为true, OnStreamingData不会被调用。
         /// </summary>
         private bool IsCacheOnly { get; set; }
 #endif
 
         /// <summary>
-        /// True, if this is a response for a HTTPProxy request.
+        /// 如果这是HTTPProxy请求的响应，则为True。
         /// </summary>
         private bool IsProxyResponse { get; set; }
 
         /// <summary>
-        /// The headers that sent from the server.
+        /// 从服务器发送的报头。
         /// </summary>
         public Dictionary<string, List<string>> Headers { get; private set; }
 
         /// <summary>
-        /// The data that downloaded from the server. All Transfer and Content encodings decoded if any(eg. chunked, gzip, deflate).
+        /// 从服务器上下载的数据。所有传输和内容编码解码(如有)。Chunked, gzip, deflate)。
         /// </summary>
         public byte[] Data { get; internal set; }
 
         /// <summary>
-        /// The normal HTTP protocol is upgraded to an other.
+        /// 正常HTTP协议升级为其他HTTP协议。
         /// </summary>
         public bool IsUpgraded { get; private set; }
 
 #if !BESTHTTP_DISABLE_COOKIES
         /// <summary>
-        /// The cookies that the server sent to the client.
+        /// 服务器发送给客户端的cookie。
         /// </summary>
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public List<Cookie> Cookies { get; internal set; }
 #endif
 
         /// <summary>
-        /// Cached, converted data.
+        /// 缓存、转换的数据。
         /// </summary>
         private string _dataAsString;
 
         /// <summary>
-        /// The data converted to an UTF8 string.
+        /// 转换为UTF8字符串的数据。
         /// </summary>
         public string DataAsText
         {
@@ -133,12 +133,12 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Cached converted data.
+        /// 缓存转换的数据。
         /// </summary>
         private Texture2D _texture;
 
         /// <summary>
-        /// The data loaded to a Texture2D.
+        /// 加载到Texture2D的数据.
         /// </summary>
         public Texture2D DataAsTexture2D
         {
@@ -158,17 +158,17 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// True if the connection's stream will be closed manually. Used in custom protocols (WebSocket, EventSource).
+        /// 如果连接流将手动关闭，则为。用于自定义协议(WebSocket, EventSource).
         /// </summary>
         public bool IsClosedManually { get; protected set; }
 
         /// <summary>
-        /// IProtocol.LoggingContext implementation.
+        /// IProtocol。LoggingContext实现。
         /// </summary>
         public LoggingContext Context { get; private set; }
 
         /// <summary>
-        /// Count of streaming data fragments sitting in the HTTPManager's request event queue.
+        /// HTTPManager请求事件队列中的流数据片段的计数。
         /// </summary>
 #if UNITY_EDITOR
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -177,13 +177,13 @@ namespace BestHTTP
 
         #endregion
 
-        #region Internal Fields
+        #region 内部字段
 
         internal readonly HttpRequest BaseRequest;
 
         #endregion
 
-        #region Protected Properties And Fields
+        #region 受保护属性和字段
 
         protected Stream Stream;
 
@@ -241,8 +241,8 @@ namespace BestHTTP
                 VerboseLogging(
                     $"Receive. forceReadRawContentLength: '{forceReadRawContentLength:N0}', readPayloadData: '{readPayloadData}'");
 
-            // On WP platform we aren't able to determined sure enough whether the tcp connection is closed or not.
-            //  So if we get an exception here, we need to recreate the connection.
+            // 在WP平台上，我们不能确定tcp连接是否关闭。
+            //  因此，如果我们在这里得到一个异常，我们需要重新创建连接。
             try
             {
                 // Read out 'HTTP/1.1' from the "HTTP/1.1 {StatusCode} {Message}"
@@ -251,19 +251,26 @@ namespace BestHTTP
             catch
             {
                 if (BaseRequest.IsCancellationRequested)
-                    return false;
-
-                if (BaseRequest.Retries >= BaseRequest.MaxRetries)
                 {
-                    HttpManager.Logger.Warning("HTTPResponse",
-                        "Failed to read Status Line! Retry is enabled, returning with false.", this.Context,
-                        this.BaseRequest.Context);
                     return false;
                 }
 
-                HttpManager.Logger.Warning("HTTPResponse",
-                    "Failed to read Status Line! Retry is disabled, re-throwing exception.", this.Context,
-                    this.BaseRequest.Context);
+                if (BaseRequest.Retries >= BaseRequest.MaxRetries)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log("[HTTPResponse] [msg:读取状态行失败!启用Retry，返回false.] []");
+#endif
+                    // HttpManager.Logger.Warning("HTTPResponse",
+                    //     "读取状态行失败!启用Retry，返回false.", this.Context,
+                    //     this.BaseRequest.Context);
+                    return false;
+                }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log("[HTTPResponse] [msg:取状态行失败!禁用重试，重新抛出异常。] []");
+#endif
+                // HttpManager.Logger.Warning("HTTPResponse",
+                //     "读取状态行失败!禁用重试，重新抛出异常。", this.Context,
+                //     this.BaseRequest.Context);
                 throw;
             }
 
@@ -1177,33 +1184,35 @@ namespace BestHTTP
 
         #endregion
 
-        #region Streaming Fragments Support
+        #region 流片段支持
 
         protected void BeginReceiveStreamFragments()
         {
 #if !BESTHTTP_DISABLE_CACHING
             if (!BaseRequest.DisableCache && BaseRequest.UseStreaming)
             {
-                // If caching is enabled and the response not from cache and it's cacheble we will cache the downloaded data.
+                // 如果缓存被启用，并且响应不是来自缓存，它是可缓存的，我们将缓存下载的数据。
                 if (!IsFromCache && HttpCacheService.IsCacheable(BaseRequest.CurrentUri, BaseRequest.MethodType, this))
+                {
                     _cacheStream = HttpCacheService.PrepareStreamed(BaseRequest.CurrentUri, this);
+                }
             }
 #endif
             _allFragmentSize = 0;
         }
 
         /// <summary>
-        /// Add data to the fragments list.
+        /// 向片段列表中添加数据。
         /// </summary>
-        /// <param name="buffer">The buffer to be added.</param>
-        /// <param name="pos">The position where we start copy the data.</param>
-        /// <param name="length">How many data we want to copy.</param>
+        /// <param name="buffer">要添加的缓冲区.</param>
+        /// <param name="pos">我们开始复制数据的位置.</param>
+        /// <param name="length">我们要复制多少数据.</param>
         protected void FeedStreamFragment(byte[] buffer, int pos, int length)
         {
             if (buffer == null || length == 0)
                 return;
 
-            // If reading from cache, we don't want to read too much data to memory. So we will wait until the loaded fragment processed.
+            // 如果从缓存中读取，我们不想读取太多的数据到内存中。因此，我们将等待加载的片段处理完毕。
 #if !UNITY_WEBGL || UNITY_EDITOR
 #if CSHARP_7_3_OR_NEWER
             SpinWait spinWait = new SpinWait();
@@ -1289,13 +1298,19 @@ namespace BestHTTP
             }
 
             if (HttpManager.Logger.Level == Loglevels.All && buffer != null)
-                VerboseLogging(string.Format("AddStreamedFragment buffer length: {0:N0} UnprocessedFragments: {1:N0}",
-                    bufferLength, Interlocked.Read(ref this.UnprocessedFragments)));
+            {
+                VerboseLogging(
+                    $"AddStreamedFragment缓冲区长度: {bufferLength:N0} UnprocessedFragments: {Interlocked.Read(ref this.UnprocessedFragments):N0}");
+            }
 
 #if !BESTHTTP_DISABLE_CACHING
             if (_cacheStream != null)
             {
-                if (buffer != null) _cacheStream.Write(buffer, 0, bufferLength);
+                if (buffer != null)
+                {
+                    _cacheStream.Write(buffer, 0, bufferLength);
+                }
+
                 _allFragmentSize += bufferLength;
             }
 #endif
@@ -1307,13 +1322,14 @@ namespace BestHTTP
         private bool FragmentQueueIsFull()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            long unprocessedFragments = Interlocked.Read(ref UnprocessedFragments);
+            var unprocessedFragments = Interlocked.Read(ref UnprocessedFragments);
 
-            bool result = unprocessedFragments >= BaseRequest.MaxFragmentQueueLength;
+            var result = unprocessedFragments >= BaseRequest.MaxFragmentQueueLength;
 
             if (result && HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging(string.Format("FragmentQueueIsFull - {0} / {1}", unprocessedFragments,
-                    BaseRequest.MaxFragmentQueueLength));
+            {
+                VerboseLogging($"FragmentQueueIsFull - {unprocessedFragments} / {BaseRequest.MaxFragmentQueueLength}");
+            }
 
             return result;
 #else
@@ -1325,12 +1341,15 @@ namespace BestHTTP
 
         void VerboseLogging(string str)
         {
-            if (HttpManager.Logger.Level == Loglevels.All)
-                HttpManager.Logger.Verbose("HTTPResponse", str, this.Context, this.BaseRequest.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HTTPResponse]  [message: {str}]");
+#endif
+            // if (HttpManager.Logger.Level == Loglevels.All)
+            //     HttpManager.Logger.Verbose("HTTPResponse", str, this.Context, this.BaseRequest.Context);
         }
 
         /// <summary>
-        /// IDisposable implementation.
+        /// IDisposable实现。
         /// </summary>
         public void Dispose()
         {
@@ -1342,8 +1361,8 @@ namespace BestHTTP
         {
             if (disposing)
             {
-                // Release resources in case we are using ReadOnlyBufferedStream, it will not close its inner stream.
-                // Otherwise, closing the (inner) Stream is the connection's responsibility
+                // 释放资源，如果我们正在使用ReadOnlyBufferedStream，它将不会关闭它的内部流。
+                // 否则，关闭(内部)流是连接的责任
                 if (Stream is ReadOnlyBufferedStream _)
                 {
                     ((IDisposable)Stream).Dispose();
@@ -1352,11 +1371,9 @@ namespace BestHTTP
                 Stream = null;
 
 #if !BESTHTTP_DISABLE_CACHING
-                if (_cacheStream != null)
-                {
-                    _cacheStream.Dispose();
-                    _cacheStream = null;
-                }
+                if (_cacheStream == null) return;
+                _cacheStream.Dispose();
+                _cacheStream = null;
 #endif
             }
         }

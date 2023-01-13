@@ -6,10 +6,23 @@ namespace TBTK
 {
     public class Unit : TBMonoItem
     {
+        public delegate bool ActionCamCheck(bool actionType);
+
+        public delegate IEnumerator ActionCamEnd();
+
+        public delegate IEnumerator ActionCamStart(Vector3 srcPos, Vector3 tgtPos);
+
         public static bool enableRotation = true;
         public static bool enableAura = true;
 
         public static bool inspector = true;
+
+        public static ActionCamCheck actionCamCheck;
+        public static ActionCamStart actionCamStart;
+        public static ActionCamEnd actionCamEnd;
+
+
+        private static GameObject dummySO;
 
         [HideInInspector] public bool loadedFromCache = false;
 
@@ -17,6 +30,139 @@ namespace TBTK
         public int value = 50;
 
         [Space(5)] public int facID; //in runtime, this also correspond to the faction index in factionList
+
+        public bool playableUnit = false;
+
+        public AI._AIBehaviour aiBehaviour = AI._AIBehaviour.aggressive;
+
+        public bool
+            requireTrigger =
+                true; //when true, unit starts in passive state, then switch to aggressive or evasive (doesnt apply for passive)
+
+        //[HideInInspector] 
+        public bool triggered = false;
+
+        //public bool IsPassive(){ return aiBehaviour==AI._AIBehaviour.passive || !IsAggressive(); }
+        //public bool IsAggressive(){ return aiBehaviour==AI._AIBehaviour.aggressive && (triggered || !requireTrigger); }
+        //public bool IsEvasive(){ return aiBehaviour=AI._AIBehaviour.evasive && (triggered || !requireTrigger); }
+
+
+        [Space(8)] public float hp = 10;
+        public float ap = 2;
+
+        public int moveThisTurn = 0;
+
+        public int attackThisTurn = 0;
+
+        public int counterThisTurn = 0;
+
+        public int abilityThisTurn = 0;
+
+        [Space(8)] public AStar._BypassUnit canMovePastUnit;
+
+        //public bool canMovePastUnit;
+        public bool canMovePastObs;
+
+        [Space(8)] public Transform targetPoint;
+        public float radius = 0.25f;
+
+        public ShootObject soRange;
+        public ShootObject soMelee;
+        public float shootPointSpacing = 0.1f;
+        public List<Transform> shootPointList = new List<Transform>();
+
+        public Transform turretPivot;
+        public Transform barrelPivot;
+        public bool snapAiming;
+        public bool aimInXAxis;
+        public bool rotateWhileAiming;
+        [Space(5)] public float moveSpeed = 5;
+
+
+        [Space(8)] public bool hasMeleeAttack = true;
+        public bool requireLOSToAttack = true;
+
+        public int armorType = 0;
+
+        public int damageType = 0;
+        public Stats stats;
+
+        public int damageTypeMelee = 0;
+        public Stats statsMelee;
+
+        public List<int> auraIDList = new List<int>();
+        public List<Effect> auraMulList = new List<Effect>();
+        public List<Effect> auraModList = new List<Effect>();
+
+
+        public List<int> attackEffectIDList = new List<int>();
+        //public int GetAttackRangeMelee(){ return 	(int)(statsMelee.attackRange	*activeEffectMul.stats.attackRange 	+ 	activeEffectMod.stats.attackRange); }
+
+
+        public bool overwatching;
+
+
+        [Space(8)] //faction switch
+        public int tempFacID = -1;
+
+        public int tempFacDur = -1;
+        public bool tempFacControl = false;
+
+
+        [Space(8)] public List<int> immuneEffectList = new List<int>();
+
+        public Effect activeEffectMod;
+        public Effect activeEffectMul;
+        public List<Effect> effectList = new List<Effect>();
+
+
+        [Space(8)] public bool dead = false;
+
+
+        [Header("Visual Effects")] public VisualObject effectAttackHit = new VisualObject();
+        public VisualObject effectAttackHitMelee = new VisualObject();
+
+        public VisualObject effectOnDestroyed = new VisualObject();
+
+        private float aimSpeed = 7;
+
+        private bool auraInitiated = false;
+        private Quaternion defaultBarrelRot;
+
+        private Quaternion defaultTurretRot;
+        private bool instantRotate = false;
+        private bool waitingForCounter = false;
+        private bool waitingForHit = false;
+
+        private bool waitingForMoveRoutine = false;
+
+
+        void Awake()
+        {
+            thisT = transform;
+            thisObj = gameObject;
+
+            if (shootPointList.Count == 0) shootPointList.Add(thisT);
+
+            InitAbility();
+            InitAura();
+            UpdateActiveEffect();
+
+            if (turretPivot != null) defaultTurretRot = turretPivot.localRotation;
+            if (barrelPivot != null) defaultBarrelRot = barrelPivot.localRotation;
+
+            triggered = false;
+
+            InitAnimation();
+        }
+
+        void Start()
+        {
+            if (GameControl.EnableFogOfWar() && !playableUnit)
+            {
+                Utility.SetLayerRecursively(thisT, TBTK.GetLayerInvisible());
+            }
+        }
 
         public void SetFacID(int id)
         {
@@ -33,17 +179,6 @@ namespace TBTK
             return tempFacID >= 0 ? tempFacID : facID;
         }
 
-        public bool playableUnit = false;
-
-        public AI._AIBehaviour aiBehaviour = AI._AIBehaviour.aggressive;
-
-        public bool
-            requireTrigger =
-                true; //when true, unit starts in passive state, then switch to aggressive or evasive (doesnt apply for passive)
-
-        //[HideInInspector] 
-        public bool triggered = false;
-
         public bool IsPassive()
         {
             return aiBehaviour == AI._AIBehaviour.passive;
@@ -53,14 +188,6 @@ namespace TBTK
         {
             return (aiBehaviour == AI._AIBehaviour.aggressive && !requireTrigger) || triggered;
         }
-
-        //public bool IsPassive(){ return aiBehaviour==AI._AIBehaviour.passive || !IsAggressive(); }
-        //public bool IsAggressive(){ return aiBehaviour==AI._AIBehaviour.aggressive && (triggered || !requireTrigger); }
-        //public bool IsEvasive(){ return aiBehaviour=AI._AIBehaviour.evasive && (triggered || !requireTrigger); }
-
-
-        [Space(8)] public float hp = 10;
-        public float ap = 2;
 
         //public float GetFullHP(){ return stats.hp; }
         public float GetHPRatio()
@@ -155,8 +282,6 @@ namespace TBTK
             return GetMoveLimit() - moveThisTurn;
         }
 
-        public int moveThisTurn = 0;
-
         public int GetAttackLimit()
         {
             return (int)(stats.attackLimit * GetAttackLimitMul()) + (int)GetAttackLimitMod();
@@ -177,8 +302,6 @@ namespace TBTK
             return GetAttackLimit() - attackThisTurn;
         }
 
-        public int attackThisTurn = 0;
-
         public int GetCounterLimit()
         {
             return (int)(stats.counterLimit * GetCounterLimitMul()) + (int)GetCounterLimitMod();
@@ -193,8 +316,6 @@ namespace TBTK
         {
             return activeEffectMod.stats.counterLimit + PerkManager.GetUnitModCounterLim(prefabID);
         }
-
-        public int counterThisTurn = 0;
 
         public int GetAbilityLimit()
         {
@@ -216,8 +337,6 @@ namespace TBTK
             return GetAbilityLimit() - abilityThisTurn;
         }
 
-        public int abilityThisTurn = 0;
-
         //public const int apPerMove=1;
         //public const int apPerNode=0;
         //public const int apPerAttack=1;
@@ -227,14 +346,6 @@ namespace TBTK
             return (moveThisTurn + attackThisTurn + abilityThisTurn + counterThisTurn) > 0;
         }
 
-        [Space(8)] public AStar._BypassUnit canMovePastUnit;
-
-        //public bool canMovePastUnit;
-        public bool canMovePastObs;
-
-        [Space(8)] public Transform targetPoint;
-        public float radius = 0.25f;
-
         public Vector3 GetTargetPoint()
         {
             return targetPoint != null ? targetPoint.position : GetPos();
@@ -243,60 +354,6 @@ namespace TBTK
         public float GetRadius()
         {
             return radius;
-        }
-
-        public ShootObject soRange;
-        public ShootObject soMelee;
-        public float shootPointSpacing = 0.1f;
-        public List<Transform> shootPointList = new List<Transform>();
-
-        public Transform turretPivot;
-        public Transform barrelPivot;
-        public bool snapAiming;
-        public bool aimInXAxis;
-        public bool rotateWhileAiming;
-
-        private float aimSpeed = 7;
-        private bool instantRotate = false;
-        [Space(5)] public float moveSpeed = 5;
-
-
-        public delegate bool ActionCamCheck(bool actionType);
-
-        public delegate IEnumerator ActionCamStart(Vector3 srcPos, Vector3 tgtPos);
-
-        public delegate IEnumerator ActionCamEnd();
-
-        public static ActionCamCheck actionCamCheck;
-        public static ActionCamStart actionCamStart;
-        public static ActionCamEnd actionCamEnd;
-
-
-        void Awake()
-        {
-            thisT = transform;
-            thisObj = gameObject;
-
-            if (shootPointList.Count == 0) shootPointList.Add(thisT);
-
-            InitAbility();
-            InitAura();
-            UpdateActiveEffect();
-
-            if (turretPivot != null) defaultTurretRot = turretPivot.localRotation;
-            if (barrelPivot != null) defaultBarrelRot = barrelPivot.localRotation;
-
-            triggered = false;
-
-            InitAnimation();
-        }
-
-        void Start()
-        {
-            if (GameControl.EnableFogOfWar() && !playableUnit)
-            {
-                Utility.SetLayerRecursively(thisT, TBTK.GetLayerInvisible());
-            }
         }
 
 
@@ -349,22 +406,6 @@ namespace TBTK
             return true;
         }
 
-
-        [Space(8)] public bool hasMeleeAttack = true;
-        public bool requireLOSToAttack = true;
-
-        public int armorType = 0;
-
-        public int damageType = 0;
-        public Stats stats;
-
-        public int damageTypeMelee = 0;
-        public Stats statsMelee;
-
-        public List<int> auraIDList = new List<int>();
-        public List<Effect> auraMulList = new List<Effect>();
-        public List<Effect> auraModList = new List<Effect>();
-
         //public List<int> activeAuraIDList=new List<int>();
         //public Effect activeAuraMul;
         //public Effect activeAuraMod;
@@ -378,8 +419,6 @@ namespace TBTK
         {
             return auraIDList.Count > 0;
         }
-
-        private bool auraInitiated = false;
 
         public void InitAura()
         {
@@ -903,9 +942,6 @@ namespace TBTK
             return value;
         }
 
-
-        public List<int> attackEffectIDList = new List<int>();
-
         public List<int> GetRuntimeAttackEffectIDList()
         {
             return PerkManager.ModifyUnitAttackEffectList(prefabID, attackEffectIDList);
@@ -1343,22 +1379,11 @@ namespace TBTK
         {
             return (int)(statsMelee.attackRange);
         }
-        //public int GetAttackRangeMelee(){ return 	(int)(statsMelee.attackRange	*activeEffectMul.stats.attackRange 	+ 	activeEffectMod.stats.attackRange); }
-
-
-        public bool overwatching;
 
         public bool HasOverwatch()
         {
             return activeEffectMod.overwatch || overwatching;
         }
-
-
-        [Space(8)] //faction switch
-        public int tempFacID = -1;
-
-        public int tempFacDur = -1;
-        public bool tempFacControl = false;
 
         public void SwitchFaction(int newFacID, int dur, bool controllable)
         {
@@ -1368,13 +1393,6 @@ namespace TBTK
 
             UnitManager.AddFacSwitchUnit(this);
         }
-
-
-        [Space(8)] public List<int> immuneEffectList = new List<int>();
-
-        public Effect activeEffectMod;
-        public Effect activeEffectMul;
-        public List<Effect> effectList = new List<Effect>();
 
         public Effect GetEffect(int idx)
         {
@@ -1515,129 +1533,11 @@ namespace TBTK
         }
 
 
-        #region ability
-
-        [Space(8)] public List<int> abilityIDList = new List<int>();
-        public List<Ability> abilityList = new List<Ability>(); //runtime attribute
-
-        public Ability GetAbility(int idx)
-        {
-            return abilityList[idx];
-        }
-        //private int selectedAbIdx=-1;
-
-        private bool abilityInitiated = false;
-
-        public void InitAbility()
-        {
-            if (abilityInitiated) return;
-            abilityInitiated = true;
-
-            //abilityIDList=new List<int>{ 0, 1 };
-
-            abilityList.Clear();
-
-            List<int> extraAbIDList = PerkManager.GetUnitAbilityID(prefabID);
-            abilityIDList.AddRange(extraAbIDList);
-
-            for (int i = 0; i < abilityIDList.Count; i++) AddAbility(abilityIDList[i]);
-        }
-
-        public void AddAbility(int abPrefabID)
-        {
-            abilityList.Add(AbilityUDB.GetPrefab(abPrefabID).Clone());
-            abilityList[abilityList.Count - 1].Init(this, abilityList.Count - 1);
-        }
-
-
-        public Ability._AbilityStatus SelectAbility(int idx)
-        {
-            Ability._AbilityStatus abilityStatus = abilityList[idx].IsAvailable();
-            if (abilityStatus != Ability._AbilityStatus.Ready) return abilityStatus;
-
-            //~ int usable=abilityList[idx].IsAvailable();
-            //~ if(usable!=0) return usable;
-
-            if (!abilityList[idx].requireTarget)
-            {
-                //cast ability on self
-                UseAbility(idx, node);
-            }
-            else
-            {
-                //GridManager.SetupAbilityTargetList(this, abilityList[idx]);
-                //selectedAbIdx=idx;
-                AbilityManager.AbilityTargetModeUnit(this, abilityList[idx]);
-            }
-
-            return 0;
-        }
-
-        public void UseAbility(int idx, Node target)
-        {
-            GameControl.UnitUseAbility(this, abilityList[idx], target);
-            //StartCoroutine(_UseAbility(abilityList[idx], target)); 
-        }
-
-        public IEnumerator UseAbilityRoutine(Ability ability, Node tgtNode)
-        {
-            bool actionCam = (actionCamCheck != null && actionCamStart != null && actionCamCheck(false));
-            if (actionCam) yield return StartCoroutine(actionCamStart(GetTargetPoint(), tgtNode.GetPos()));
-
-            ability.Activate();
-
-            if (ability.requireTarget)
-            {
-                if (ability.IsLine()) tgtNode = tgtNode.abLineParent;
-
-                //yield return StartCoroutine(AbilityRoutine(target, ability));
-                while (Rotate(tgtNode.GetPos()) > 2) yield return null;
-
-                if (ability.useAttackSequence)
-                {
-                    bool useMelee = CheckUseMeleeAttack(tgtNode);
-                    float attackDelay = AnimPlayAttack(useMelee);
-                    AudioPlayAttack(useMelee);
-                    if (attackDelay > 0) yield return new WaitForSeconds(attackDelay);
-
-                    GameObject soObj = ability.shootObject != null
-                        ? ability.shootObject.gameObject
-                        : GetShootObject(tgtNode);
-                    //Vector3 offset=new Vector3(0, (ability.IsLine() ? shootPointList[0].position.y-node.GetPos().y : 0), 0);
-                    Vector3 offset = new Vector3(0, shootPointList[0].position.y - node.GetPos().y, 0);
-                    yield return StartCoroutine(FireShootObject(soObj, tgtNode,
-                        ability.aimAtUnit & ability.type != Ability._AbilityType.Line, offset));
-                }
-                else
-                {
-                    float animationDelay = AnimPlayAbility(ability.index);
-                    if (animationDelay > 0) yield return new WaitForSeconds(animationDelay);
-                }
-            }
-            else
-            {
-                float animationDelay = AnimPlayAbility(ability.index);
-                if (animationDelay > 0) yield return new WaitForSeconds(animationDelay);
-            }
-
-            yield return CRoutine.Get().StartCoroutine(ability.HitTarget(tgtNode));
-            //AbilityHit(ability, target);
-
-            if (actionCam && actionCamEnd != null) yield return StartCoroutine(actionCamEnd());
-        }
-
-        //~ public void AbilityHit(Ability ability, Node target){
-        //~ ability.HitTarget(target);
-        //~ }
-
-        #endregion
-
-
         void CheckMoveSpeed()
         {
             if (moveSpeed <= 0)
             {
-                Debug.LogError("Setting Error, unit move speed has been set to 0", gameObject);
+                Debug.LogError("Setting Error, unit move speed has been set to 0");
                 moveSpeed = 1;
             }
         }
@@ -1700,9 +1600,6 @@ namespace TBTK
                 yield return null;
             }
         }
-
-        private Quaternion defaultTurretRot;
-        private Quaternion defaultBarrelRot;
 
         IEnumerator ResetAim()
         {
@@ -1974,10 +1871,6 @@ namespace TBTK
             while (waitingForHit) yield return null;
         }
 
-        private bool waitingForMoveRoutine = false;
-        private bool waitingForCounter = false;
-        private bool waitingForHit = false;
-
         public void HitCallback()
         {
             waitingForHit = false;
@@ -2097,9 +1990,6 @@ namespace TBTK
             yield return null;
         }
 
-
-        [Space(8)] public bool dead = false;
-
         public IEnumerator DestroyRoutine()
         {
             node.unit = null;
@@ -2149,9 +2039,6 @@ namespace TBTK
             return thisObj.layer != TBTK.GetLayerInvisible();
         }
 
-
-        private static GameObject dummySO;
-
         public static GameObject GetDummySO()
         {
             if (dummySO == null)
@@ -2166,10 +2053,122 @@ namespace TBTK
         }
 
 
-        [Header("Visual Effects")] public VisualObject effectAttackHit = new VisualObject();
-        public VisualObject effectAttackHitMelee = new VisualObject();
+        #region ability
 
-        public VisualObject effectOnDestroyed = new VisualObject();
+        [Space(8)] public List<int> abilityIDList = new List<int>();
+        public List<Ability> abilityList = new List<Ability>(); //runtime attribute
+
+        public Ability GetAbility(int idx)
+        {
+            return abilityList[idx];
+        }
+        //private int selectedAbIdx=-1;
+
+        private bool abilityInitiated = false;
+
+        public void InitAbility()
+        {
+            if (abilityInitiated) return;
+            abilityInitiated = true;
+
+            //abilityIDList=new List<int>{ 0, 1 };
+
+            abilityList.Clear();
+
+            List<int> extraAbIDList = PerkManager.GetUnitAbilityID(prefabID);
+            abilityIDList.AddRange(extraAbIDList);
+
+            for (int i = 0; i < abilityIDList.Count; i++) AddAbility(abilityIDList[i]);
+        }
+
+        public void AddAbility(int abPrefabID)
+        {
+            abilityList.Add(AbilityUDB.GetPrefab(abPrefabID).Clone());
+            abilityList[abilityList.Count - 1].Init(this, abilityList.Count - 1);
+        }
+
+
+        public Ability._AbilityStatus SelectAbility(int idx)
+        {
+            Ability._AbilityStatus abilityStatus = abilityList[idx].IsAvailable();
+            if (abilityStatus != Ability._AbilityStatus.Ready) return abilityStatus;
+
+            //~ int usable=abilityList[idx].IsAvailable();
+            //~ if(usable!=0) return usable;
+
+            if (!abilityList[idx].requireTarget)
+            {
+                //cast ability on self
+                UseAbility(idx, node);
+            }
+            else
+            {
+                //GridManager.SetupAbilityTargetList(this, abilityList[idx]);
+                //selectedAbIdx=idx;
+                AbilityManager.AbilityTargetModeUnit(this, abilityList[idx]);
+            }
+
+            return 0;
+        }
+
+        public void UseAbility(int idx, Node target)
+        {
+            GameControl.UnitUseAbility(this, abilityList[idx], target);
+            //StartCoroutine(_UseAbility(abilityList[idx], target)); 
+        }
+
+        public IEnumerator UseAbilityRoutine(Ability ability, Node tgtNode)
+        {
+            bool actionCam = (actionCamCheck != null && actionCamStart != null && actionCamCheck(false));
+            if (actionCam) yield return StartCoroutine(actionCamStart(GetTargetPoint(), tgtNode.GetPos()));
+
+            ability.Activate();
+
+            if (ability.requireTarget)
+            {
+                if (ability.IsLine()) tgtNode = tgtNode.abLineParent;
+
+                //yield return StartCoroutine(AbilityRoutine(target, ability));
+                while (Rotate(tgtNode.GetPos()) > 2) yield return null;
+
+                if (ability.useAttackSequence)
+                {
+                    bool useMelee = CheckUseMeleeAttack(tgtNode);
+                    float attackDelay = AnimPlayAttack(useMelee);
+                    AudioPlayAttack(useMelee);
+                    if (attackDelay > 0) yield return new WaitForSeconds(attackDelay);
+
+                    GameObject soObj = ability.shootObject != null
+                        ? ability.shootObject.gameObject
+                        : GetShootObject(tgtNode);
+                    //Vector3 offset=new Vector3(0, (ability.IsLine() ? shootPointList[0].position.y-node.GetPos().y : 0), 0);
+                    Vector3 offset = new Vector3(0, shootPointList[0].position.y - node.GetPos().y, 0);
+                    yield return StartCoroutine(FireShootObject(soObj, tgtNode,
+                        ability.aimAtUnit & ability.type != Ability._AbilityType.Line, offset));
+                }
+                else
+                {
+                    float animationDelay = AnimPlayAbility(ability.index);
+                    if (animationDelay > 0) yield return new WaitForSeconds(animationDelay);
+                }
+            }
+            else
+            {
+                float animationDelay = AnimPlayAbility(ability.index);
+                if (animationDelay > 0) yield return new WaitForSeconds(animationDelay);
+            }
+
+            yield return CRoutine.Get().StartCoroutine(ability.HitTarget(tgtNode));
+            //AbilityHit(ability, target);
+
+            if (actionCam && actionCamEnd != null) yield return StartCoroutine(actionCamEnd());
+        }
+
+        //~ public void AbilityHit(Ability ability, Node target){
+        //~ ability.HitTarget(target);
+        //~ }
+
+        #endregion
 
 
         #region animation

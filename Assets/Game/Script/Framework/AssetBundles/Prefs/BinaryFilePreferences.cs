@@ -23,11 +23,12 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
-using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace ZJYFrameWork.Prefs
 {
     /// <summary>
@@ -38,15 +39,7 @@ namespace ZJYFrameWork.Prefs
         /// <summary>
         /// 
         /// </summary>
-        public BinaryFilePreferencesFactory() : this(null, null)
-        {
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="serializer"></param>
-        public BinaryFilePreferencesFactory(ISerializer serializer) : this(serializer, null)
+        public BinaryFilePreferencesFactory() : this(null)
         {
         }
 
@@ -55,7 +48,8 @@ namespace ZJYFrameWork.Prefs
         /// </summary>
         /// <param name="serializer"></param>
         /// <param name="encryptor"></param>
-        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor) : base(serializer, encryptor)
+        public BinaryFilePreferencesFactory(ISerializer serializer, IEncryptor encryptor = null) : base(serializer,
+            encryptor)
         {
         }
 
@@ -73,23 +67,24 @@ namespace ZJYFrameWork.Prefs
     /// <summary>
     /// 
     /// </summary>
-    public class BinaryFilePreferences : Preferences
+    public sealed class BinaryFilePreferences : Preferences
     {
-
-        private string root;
         /// <summary>
         /// cache.
         /// </summary>
-        protected readonly Dictionary<string, string> dict = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
+
+        /// <summary>
+        /// encryptor
+        /// </summary>
+        private readonly IEncryptor _encryptor;
+
+        private readonly string _root;
 
         /// <summary>
         /// serializer
         /// </summary>
-        protected readonly ISerializer serializer;
-        /// <summary>
-        /// encryptor
-        /// </summary>
-        protected readonly IEncryptor encryptor;
+        private readonly ISerializer _serializer;
 
         /// <summary>
         /// 
@@ -99,9 +94,9 @@ namespace ZJYFrameWork.Prefs
         /// <param name="encryptor"></param>
         public BinaryFilePreferences(string name, ISerializer serializer, IEncryptor encryptor) : base(name)
         {
-            this.root = Application.persistentDataPath;
-            this.serializer = serializer;
-            this.encryptor = encryptor;
+            this._root = Application.persistentDataPath;
+            this._serializer = serializer;
+            this._encryptor = encryptor;
             this.Load();
         }
 
@@ -109,9 +104,9 @@ namespace ZJYFrameWork.Prefs
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual StringBuilder GetDirectory()
+        private StringBuilder GetDirectory()
         {
-            StringBuilder buf = new StringBuilder(this.root);
+            StringBuilder buf = new StringBuilder(this._root);
             buf.Append("/").Append(this.Name).Append("/");
             return buf;
         }
@@ -120,7 +115,7 @@ namespace ZJYFrameWork.Prefs
         /// 
         /// </summary>
         /// <returns></returns>
-        public virtual StringBuilder GetFullFileName()
+        private StringBuilder GetFullFileName()
         {
             return this.GetDirectory().Append("prefs.dat");
         }
@@ -137,54 +132,55 @@ namespace ZJYFrameWork.Prefs
                     return;
 
                 byte[] data = File.ReadAllBytes(filename);
-                if (data == null || data.Length <= 0)
-                    return;
-
-                if (this.encryptor != null)
-                    data = encryptor.Decode(data);
-
-                this.dict.Clear();
-                using (MemoryStream stream = new MemoryStream(data))
+                if (data.Length <= 0)
                 {
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
-                        int count = reader.ReadInt32();
-                        for (int i = 0; i < count; i++)
-                        {
-                            string key = reader.ReadString();
-                            string value = reader.ReadString();
-                            this.dict.Add(key, value);
-                        }
-                    }
+                    return;
+                }
+
+                if (this._encryptor != null)
+                {
+                    data = _encryptor.Decode(data);
+                }
+
+                this._dict.Clear();
+                using MemoryStream stream = new MemoryStream(data);
+                using BinaryReader reader = new BinaryReader(stream);
+                int count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    string key = reader.ReadString();
+                    string value = reader.ReadString();
+                    this._dict.Add(key, value);
                 }
             }
             catch (Exception e)
             {
-                    ZJYFrameWork.Debug.LogError("Load failed,{0}", e);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError($"Load failed,[msg:{e}]");
+#endif
             }
         }
 
         public override object GetObject(string key, Type type, object defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
+            {
                 return defaultValue;
+            }
 
-            string str = this.dict[key];
-            if (string.IsNullOrEmpty(str))
-                return defaultValue;
-
-            return serializer.Deserialize(str, type);
+            string str = this._dict[key];
+            return string.IsNullOrEmpty(str) ? defaultValue : _serializer.Deserialize(str, type);
         }
 
         public override void SetObject(string key, object value)
         {
             if (value == null)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
 
-            this.dict[key] = serializer.Serialize(value);
+            this._dict[key] = _serializer.Serialize(value);
         }
 
         /// <summary>
@@ -196,14 +192,14 @@ namespace ZJYFrameWork.Prefs
         /// <returns></returns>
         public override T GetObject<T>(string key, T defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
 
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            return (T)serializer.Deserialize(str, typeof(T));
+            return (T)_serializer.Deserialize(str, typeof(T));
         }
 
         /// <summary>
@@ -216,34 +212,30 @@ namespace ZJYFrameWork.Prefs
         {
             if (value == null)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
 
-            this.dict[key] = serializer.Serialize(value);
+            this._dict[key] = _serializer.Serialize(value);
         }
 
         public override object[] GetArray(string key, Type type, object[] defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
 
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<object> list = new List<object>();
-            for (int i = 0; i < items.Length; i++)
+            foreach (var t in items)
             {
-                string item = items[i];
-                if (string.IsNullOrEmpty(item))
-                    list.Add(null);
-                else
-                {
-                    list.Add(serializer.Deserialize(items[i], type));
-                }
+                string item = t;
+                list.Add(string.IsNullOrEmpty(item) ? null : _serializer.Deserialize(t, type));
             }
+
             return list.ToArray();
         }
 
@@ -251,7 +243,7 @@ namespace ZJYFrameWork.Prefs
         {
             if (values == null || values.Length == 0)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
 
@@ -259,35 +251,36 @@ namespace ZJYFrameWork.Prefs
             for (int i = 0; i < values.Length; i++)
             {
                 var value = values[i];
-                buf.Append(serializer.Serialize(value));
+                buf.Append(_serializer.Serialize(value));
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
 
-            this.dict[key] = buf.ToString();
+            this._dict[key] = buf.ToString();
         }
 
         public override T[] GetArray<T>(string key, T[] defaultValue)
         {
-            if (!this.dict.ContainsKey(key))
+            if (!this._dict.ContainsKey(key))
                 return defaultValue;
 
-            string str = this.dict[key];
+            string str = this._dict[key];
             if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
             string[] items = str.Split(ARRAY_SEPARATOR);
             List<T> list = new List<T>();
-            for (int i = 0; i < items.Length; i++)
+            foreach (var i in items)
             {
-                string item = items[i];
+                string item = i;
                 if (string.IsNullOrEmpty(item))
                     list.Add(default(T));
                 else
                 {
-                    list.Add((T)serializer.Deserialize(items[i], typeof(T)));
+                    list.Add((T)_serializer.Deserialize(i, typeof(T)));
                 }
             }
+
             return list.ToArray();
         }
 
@@ -295,7 +288,7 @@ namespace ZJYFrameWork.Prefs
         {
             if (values == null || values.Length == 0)
             {
-                this.dict.Remove(key);
+                this._dict.Remove(key);
                 return;
             }
 
@@ -303,12 +296,12 @@ namespace ZJYFrameWork.Prefs
             for (int i = 0; i < values.Length; i++)
             {
                 var value = values[i];
-                buf.Append(serializer.Serialize(value));
+                buf.Append(_serializer.Serialize(value));
                 if (i < values.Length - 1)
                     buf.Append(ARRAY_SEPARATOR);
             }
 
-            this.dict[key] = buf.ToString();
+            this._dict[key] = buf.ToString();
         }
 
         /// <summary>
@@ -318,7 +311,7 @@ namespace ZJYFrameWork.Prefs
         /// <returns></returns>
         public override bool ContainsKey(string key)
         {
-            return this.dict.ContainsKey(key);
+            return this._dict.ContainsKey(key);
         }
 
         /// <summary>
@@ -327,8 +320,8 @@ namespace ZJYFrameWork.Prefs
         /// <param name="key"></param>
         public override void Remove(string key)
         {
-            if (this.dict.ContainsKey(key))
-                this.dict.Remove(key);
+            if (this._dict.ContainsKey(key))
+                this._dict.Remove(key);
         }
 
         /// <summary>
@@ -336,7 +329,7 @@ namespace ZJYFrameWork.Prefs
         /// </summary>
         public override void RemoveAll()
         {
-            this.dict.Clear();
+            this._dict.Clear();
         }
 
         /// <summary>
@@ -344,32 +337,32 @@ namespace ZJYFrameWork.Prefs
         /// </summary>
         public override void Save()
         {
-            if (this.dict.Count <= 0)
+            if (this._dict.Count <= 0)
             {
                 this.Delete();
                 return;
             }
 
             Directory.CreateDirectory(this.GetDirectory().ToString());
-            using (MemoryStream stream = new MemoryStream())
+            using MemoryStream stream = new MemoryStream();
+            using (BinaryWriter writer = new BinaryWriter(stream))
             {
-                using (BinaryWriter writer = new BinaryWriter(stream))
+                writer.Write(this._dict.Count);
+                foreach (KeyValuePair<string, string> kv in this._dict)
                 {
-                    writer.Write(this.dict.Count);
-                    foreach (KeyValuePair<string, string> kv in this.dict)
-                    {
-                        writer.Write(kv.Key);
-                        writer.Write(kv.Value);
-                    }
-                    writer.Flush();
+                    writer.Write(kv.Key);
+                    writer.Write(kv.Value);
                 }
-                byte[] data = stream.ToArray();
-                if (this.encryptor != null)
-                    data = encryptor.Encode(data);
 
-                var filename = this.GetFullFileName().ToString();
-                File.WriteAllBytes(filename, data);
+                writer.Flush();
             }
+
+            byte[] data = stream.ToArray();
+            if (this._encryptor != null)
+                data = _encryptor.Encode(data);
+
+            var filename = this.GetFullFileName().ToString();
+            File.WriteAllBytes(filename, data);
         }
 
         /// <summary>
@@ -377,7 +370,7 @@ namespace ZJYFrameWork.Prefs
         /// </summary>
         public override void Delete()
         {
-            this.dict.Clear();
+            this._dict.Clear();
             string filename = this.GetFullFileName().ToString();
             if (File.Exists(filename))
                 File.Delete(filename);
