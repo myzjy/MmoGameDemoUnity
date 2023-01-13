@@ -50,26 +50,9 @@ namespace ZJYFrameWork.Utilities
                         _assetManager = context.Call<AndroidJavaObject>("getAssets");
                     }
                 }
+
                 return _assetManager;
             }
-        }
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void OnInitialized()
-        {
-            FileUtil.Register(new ZipAccessorForAndroidStreamingAssets());
-        }
-
-        private string GetAssetFilePath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                return path;
-
-            int start = path.LastIndexOf("!/assets/", StringComparison.Ordinal);
-            if (start < 0)
-                return path;
-
-            return path.Substring(start + 9);
         }
 
         public int Priority => 0;
@@ -78,7 +61,8 @@ namespace ZJYFrameWork.Utilities
         {
             try
             {
-                using AndroidJavaObject fileDescriptor = AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(path));
+                using AndroidJavaObject fileDescriptor =
+                    AssetManager.Call<AndroidJavaObject>("openFd", GetAssetFilePath(path));
                 if (fileDescriptor != null)
                     return true;
             }
@@ -104,19 +88,39 @@ namespace ZJYFrameWork.Utilities
                 return false;
 
             string fullname = path.ToLower();
-            if (fullname.IndexOf(".apk", StringComparison.Ordinal) > 0 && fullname.LastIndexOf("!/assets/", StringComparison.Ordinal) > 0)
+            if (fullname.IndexOf(".apk", StringComparison.Ordinal) > 0 &&
+                fullname.LastIndexOf("!/assets/", StringComparison.Ordinal) > 0)
                 return true;
 
             return false;
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void OnInitialized()
+        {
+            FileUtil.Register(new ZipAccessorForAndroidStreamingAssets());
+        }
+
+        private string GetAssetFilePath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            int start = path.LastIndexOf("!/assets/", StringComparison.Ordinal);
+            if (start < 0)
+                return path;
+
+            return path.Substring(start + 9);
+        }
+
         private class InputStreamWrapper : Stream
         {
-            private readonly object _lock = new object();
-            private readonly long _length;
             // ReSharper disable once InconsistentNaming
             private const long position = 0;
+            private readonly long _length;
+            private readonly object _lock = new object();
             private AndroidJavaObject _inputStream;
+
             public InputStreamWrapper(AndroidJavaObject inputStream)
             {
                 this._inputStream = inputStream;
@@ -142,7 +146,6 @@ namespace ZJYFrameWork.Utilities
                 throw new NotSupportedException();
             }
 
-            [Obsolete("Obsolete")]
             public override int Read(byte[] buffer, int offset, int count)
             {
                 lock (_lock)
@@ -151,10 +154,15 @@ namespace ZJYFrameWork.Utilities
                     IntPtr array = IntPtr.Zero;
                     try
                     {
+#pragma warning disable CS0618
                         array = AndroidJNI.NewByteArray(count);
+#pragma warning restore CS0618
                         var method = AndroidJNIHelper.GetMethodID(_inputStream.GetRawClass(), "read", "([B)I");
-                        ret = AndroidJNI.CallIntMethod(_inputStream.GetRawObject(), method, new[] { new jvalue() { l = array } });
+                        ret = AndroidJNI.CallIntMethod(_inputStream.GetRawObject(), method,
+                            new[] { new jvalue() { l = array } });
+#pragma warning disable CS0618
                         byte[] data = AndroidJNI.FromByteArray(array);
+#pragma warning restore CS0618
                         Array.Copy(data, 0, buffer, offset, ret);
                     }
                     finally
@@ -162,6 +170,7 @@ namespace ZJYFrameWork.Utilities
                         if (array != IntPtr.Zero)
                             AndroidJNI.DeleteLocalRef(array);
                     }
+
                     return ret;
                 }
             }

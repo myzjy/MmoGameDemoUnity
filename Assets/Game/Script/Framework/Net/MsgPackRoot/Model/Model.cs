@@ -69,8 +69,6 @@ namespace ZJYFrameWork.Net
                 throw new NotImplementedException("ToJson() is not Implemented for class " +
                                                   GetType().FullName);
             }
-
-            return string.Empty;
         }
 
         /// <summary>

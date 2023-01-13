@@ -22,16 +22,15 @@
  * SOFTWARE.
  */
 
-using ZJYFrameWork.Asynchronous;
 using System;
-using System.IO;
 using System.Collections;
-using UnityEngine.Networking;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine.Networking;
 using ZJYFrameWork.AssetBundles.Net;
+using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.Spring.Core;
-
 
 namespace ZJYFrameWork.Net.Http
 {
@@ -83,7 +82,9 @@ namespace ZJYFrameWork.Net.Http
             }
 
 #if UNITY_2018_1_OR_NEWER
+#pragma warning disable CS0618
             if (www.isNetworkError)
+#pragma warning restore CS0618
 #else
                 if (www.isError)
 #endif
@@ -190,15 +191,18 @@ namespace ZJYFrameWork.Net.Http
                         tasks.RemoveAt(j);
                         downloadedSize += _info.FileSize;
 #if UNITY_2018_1_OR_NEWER
+#pragma warning disable CS0618
                         if (_www.isNetworkError)
+#pragma warning restore CS0618
 #else
                         if (_www.isError)
 #endif
                         {
                             promise.SetException(new Exception(_www.error));
-
-                            Debug.LogError("从地址{}下载文件'{}'失败。原因:{}", _info.FileInfo.FullName, GetAbsoluteUri(_info.Path),
-                                _www.error);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"从地址{_info.FileInfo.FullName}下载文件'{GetAbsoluteUri(_info.Path)}'失败。原因:{_www.error}");
+#endif
                             _www.Dispose();
 
                             try

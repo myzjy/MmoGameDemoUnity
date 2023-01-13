@@ -1,11 +1,10 @@
 ﻿#if UNITY_EDITOR
 using System;
-using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Framework.AssetBundles.Config;
-using ZJYFrameWork.Spring.Core;
+using UnityEditor;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
@@ -59,8 +58,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             catch (Exception e)
             {
                 //代表没找到
-              
-                    Debug.Log("没有找到资产包，请检查资产的配置 '{0}'.", path);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"没有找到资产包，请检查资产的配置 '{path}'.");
+                Debug.LogError($"[SimulationAutoMappingPathInfoParser] [msg:{e}]");
+#endif
                 return null;
             }
             // if (!this.dict.TryGetValue(path.ToLower(), out var bundleName))
@@ -71,7 +72,6 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             // }
 
             return new AssetPathInfo(path, bundleName);
-
         }
 
         public BundleManifest BundleManifest { get; set; }

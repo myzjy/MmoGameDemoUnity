@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
-using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol
 {
-    public class Pong :Model, IPacket
+    public class Pong : Model, IPacket
     {
         public long time;
+
+        public short ProtocolId()
+        {
+            return 104;
+        }
 
         public static Pong ValueOf(long time)
         {
@@ -19,12 +22,6 @@ namespace ZJYFrameWork.Net.CsProtocol
             };
             return packet;
         }
-
-        public short ProtocolId()
-        {
-            return 104;
-        }
-        
     }
 
     public class PongRegistration : IProtocolRegistration
@@ -47,7 +44,7 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteLong(message.time);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object,object> dict)
+        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
         {
             // var json = StringUtils.BytesToString(buffer.ToBytes());
             // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
@@ -86,11 +83,6 @@ namespace ZJYFrameWork.Net.CsProtocol
             {
                 throw new NullReferenceException($"Pong Response消息为空找不到 packet 解析出错");
             }
-
-            var packet = JsonConvert.DeserializeObject<Pong>(packetJson.ToString());
-
-
-            return packet;
         }
     }
 }

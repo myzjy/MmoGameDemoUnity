@@ -1,35 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-// using ZJYFrameWork;
 using GameTools.Singletons;
-using UnityEngine;
+// using ZJYFrameWork;
 
 namespace ZJYFrameWork.Framwork.Times
 {
     //定时器
     public class TimeTools : MMOSingletonDontDestroy<TimeTools>
     {
-        protected List<DelayMethod> listDelayMethods = new List<DelayMethod>();
-        protected List<DelayMethod> lastDelayMethods = new List<DelayMethod>();
-
-        private event Action updateEvent;
-
-        public event Action GetUpdateEvent
-        {
-            add => updateEvent += value;
-            remove => updateEvent -= value;
-        }
-
-        private event Action lateUpdateEvent;
-
-        public event Action GetLastUpdateEvent
-        {
-            add => lateUpdateEvent += value;
-            remove => lateUpdateEvent -= value;
-        }
-
         private readonly int MaxExcuteCount = 3;
         private int count = 0;
+        protected List<DelayMethod> lastDelayMethods = new List<DelayMethod>();
+        protected List<DelayMethod> listDelayMethods = new List<DelayMethod>();
 
         private void Update()
         {
@@ -79,6 +61,24 @@ namespace ZJYFrameWork.Framwork.Times
             }
         }
 
+        private event Action updateEvent;
+
+        public event Action GetUpdateEvent
+        {
+            add => updateEvent += value;
+            remove => updateEvent -= value;
+        }
+
+#pragma warning disable CS0067
+        private event Action LateUpdateEvent;
+#pragma warning restore CS0067
+
+        public event Action GetLastUpdateEvent
+        {
+            add => LateUpdateEvent += value;
+            remove => LateUpdateEvent -= value;
+        }
+
         #region Public Method
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace ZJYFrameWork.Framwork.Times
         /// <returns>返回延迟方法</returns>
         public DelayMethod TimeInvoke(Action action, float second)
         {
-            return TimeInvoke(action,  null, null, second);
+            return TimeInvoke(action, null, null, second);
         }
 
         /// <summary>

@@ -7,29 +7,24 @@ namespace ZJYFrameWork.Editors.GameTools
     public class MessageDataToolWindows : EditorWindow
     {
         private const string WINDOW_NAME = "MessageDataTool";
+
+        private const float ButtonHeight = 24f;
+
+        private const float ButtonMaxWidth = 500f;
         private static MessageDataToolWindows window;
+
+#pragma warning disable CS0414
+        private bool _isSubMessageTab = false;
+#pragma warning restore CS0414
         private Message checkKey = Message.MAX_NUM;
         private string checkKeyStr = string.Empty;
 
         private bool isUseStringSreachMode = false;
 
         private string[] notUseKeys = null;
-
-        private Vector2 scrollPosNotUse = Vector2.zero;
         private Vector2 scrollPosAll = Vector2.zero;
 
-        private const float ButtonHeight = 24f;
-
-        private const float ButtonMaxWidth = 500f;
-
-        private bool isSubMessageTab = false;
-
-        [MenuItem("Tools/Localize/MessageDataTool")]
-        public static void ShowWindow()
-        {
-            MessageDataToolWindows.window = EditorWindow.GetWindow<MessageDataToolWindows>(false, WINDOW_NAME);
-            MessageDataToolWindows.window.Show();
-        }
+        private Vector2 scrollPosNotUse = Vector2.zero;
 
         private void OnGUI()
         {
@@ -39,6 +34,13 @@ namespace ZJYFrameWork.Editors.GameTools
                 DrawCommonMessage();
             }
             EditorGUILayout.EndScrollView();
+        }
+
+        [MenuItem("Tools/Localize/MessageDataTool")]
+        public static void ShowWindow()
+        {
+            MessageDataToolWindows.window = EditorWindow.GetWindow<MessageDataToolWindows>(false, WINDOW_NAME);
+            MessageDataToolWindows.window.Show();
         }
 
         private void DrawCommonMessage()
@@ -97,7 +99,6 @@ namespace ZJYFrameWork.Editors.GameTools
                     checkKey = (Message)EditorGUILayout.EnumPopup(checkKey, GUILayout.Height(ButtonHeight),
                         GUILayout.MaxWidth(ButtonMaxWidth));
                 }
-
 
 
                 EditorGUILayout.Separator();

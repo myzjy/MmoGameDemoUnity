@@ -2,7 +2,6 @@
 using System.Text;
 using BestHTTP.WebSocket;
 using GameTools.Singletons;
-using MiniJSON;
 using Newtonsoft.Json;
 
 namespace ZJYFrameWork.UISerializable.Manager
@@ -18,6 +17,7 @@ namespace ZJYFrameWork.UISerializable.Manager
         public string account { get; set; }
         public string password { get; set; }
     }
+
     /// <summary>
     /// WebSocket管理类
     /// </summary>
@@ -59,9 +59,9 @@ namespace ZJYFrameWork.UISerializable.Manager
             data.packet.password = "1111";
             webSocket.Send(JsonConvert.SerializeObject(data));
         }
+
         public void Send()
         {
-         
         }
 
         #region WebSocket Event Handlers
@@ -69,23 +69,28 @@ namespace ZJYFrameWork.UISerializable.Manager
         /// <summary>
         /// 是否打开链接了
         /// </summary>
-        private bool isOpenSocket = false;
+#pragma warning disable CS0414
+        private bool _isOpenSocket = false;
+#pragma warning restore CS0414
         /// <summary>
         /// 链接是否关闭
         /// </summary>
+#pragma warning disable CS0414
         private bool isCloseSocket = false;
+#pragma warning restore CS0414
         /// <summary>
         /// 是否退出
         /// </summary>
-        private bool isOutGame = false;
+#pragma warning disable CS0414
+        private bool _isOutGame = false;
+#pragma warning restore CS0414
 
         /// <summary>
         /// Called when the web socket is open, and we are ready to send and receive data
         /// </summary>
         void OnOpen(WebSocket ws)
         {
-            
-            isOpenSocket = true;
+            _isOpenSocket = true;
         }
 
         /// <summary>
@@ -95,17 +100,19 @@ namespace ZJYFrameWork.UISerializable.Manager
         {
             Debug.Log(message);
         }
+
         void OnMessageReceived(WebSocket ws, byte[] message)
         {
             var s = Encoding.UTF8.GetString(message);
             Debug.Log(s);
         }
+
         /// <summary>
         /// Called when the web socket closed
         /// </summary>
         void OnClosed(WebSocket ws, UInt16 code, string message)
         {
-            isOpenSocket = false;
+            _isOpenSocket = false;
             webSocket = null;
         }
 
@@ -121,8 +128,8 @@ namespace ZJYFrameWork.UISerializable.Manager
 
         public void OnApplicationQuit()
         {
-            isOutGame = true;
-            isOpenSocket = false;
+            _isOutGame = true;
+            _isOpenSocket = false;
         }
 
         #endregion

@@ -126,13 +126,7 @@ namespace ZJYFrameWork.AssetBundles
             {
                 var method = eventInfo.GetAddMethod();
                 return method.IsStatic;
-
-                method = eventInfo.GetRemoveMethod();
-                if (method != null)
-                    return method.IsStatic;
             }
-
-            return false;
         }
 
         /// <summary>

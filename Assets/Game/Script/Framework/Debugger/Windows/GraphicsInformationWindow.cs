@@ -4,7 +4,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Debugger.Windows
 {
-     public sealed class GraphicsInformationWindow : ScrollableDebuggerWindowBase
+    public sealed class GraphicsInformationWindow : ScrollableDebuggerWindowBase
     {
         protected override void OnDrawScrollableWindow()
         {
@@ -32,9 +32,13 @@ namespace ZJYFrameWork.Debugger.Windows
                 DrawItem("Uses Reversed ZBuffer", SystemInfo.usesReversedZBuffer.ToString());
                 DrawItem("Max Cubemap Size", SystemInfo.maxCubemapSize.ToString());
                 DrawItem("Graphics UV Starts At Top", SystemInfo.graphicsUVStartsAtTop.ToString());
-                DrawItem("Min Constant Buffer Offset Alignment", SystemInfo.minConstantBufferOffsetAlignment.ToString());
+#pragma warning disable CS0618
+                DrawItem("Min Constant Buffer Offset Alignment",
+                    SystemInfo.minConstantBufferOffsetAlignment.ToString());
+#pragma warning restore CS0618
                 DrawItem("Has Hidden Surface Removal On GPU", SystemInfo.hasHiddenSurfaceRemovalOnGPU.ToString());
-                DrawItem("Has Dynamic Uniform Array Indexing In Fragment Shaders", SystemInfo.hasDynamicUniformArrayIndexingInFragmentShaders.ToString());
+                DrawItem("Has Dynamic Uniform Array Indexing In Fragment Shaders",
+                    SystemInfo.hasDynamicUniformArrayIndexingInFragmentShaders.ToString());
                 DrawItem("Has Mip Max Level", SystemInfo.hasMipMaxLevel.ToString());
                 DrawItem("Supports Sparse Textures", SystemInfo.supportsSparseTextures.ToString());
                 DrawItem("Supports 3D Textures", SystemInfo.supports3DTextures.ToString());
@@ -55,7 +59,8 @@ namespace ZJYFrameWork.Debugger.Windows
                 DrawItem("Supports Hardware Quad Topology", SystemInfo.supportsHardwareQuadTopology.ToString());
                 DrawItem("Supports Mip Streaming", SystemInfo.supportsMipStreaming.ToString());
                 DrawItem("Supports Multisample Auto Resolve", SystemInfo.supportsMultisampleAutoResolve.ToString());
-                DrawItem("Supports Separated Render Targets Blend", SystemInfo.supportsSeparatedRenderTargetsBlend.ToString());
+                DrawItem("Supports Separated Render Targets Blend",
+                    SystemInfo.supportsSeparatedRenderTargetsBlend.ToString());
                 DrawItem("Supports Set Constant Buffer", SystemInfo.supportsSetConstantBuffer.ToString());
             }
             GUILayout.EndVertical();
@@ -63,7 +68,8 @@ namespace ZJYFrameWork.Debugger.Windows
 
         private static string GetShaderLevelString(int shaderLevel)
         {
-            return StringUtils.Format("Shader Model {}.{}", (shaderLevel / 10).ToString(), (shaderLevel % 10).ToString());
+            return StringUtils.Format("Shader Model {}.{}", (shaderLevel / 10).ToString(),
+                (shaderLevel % 10).ToString());
         }
     }
 }

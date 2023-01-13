@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles;
 using ZJYFrameWork.AssetBundles.Model;
@@ -14,15 +13,32 @@ namespace ZJYFrameWork.I18n
     [Bean]
     public class I18nManager : II18nManager
     {
+#pragma warning disable CS0414
         private static readonly string LANGUAGES_TAG = "languages";
+#pragma warning restore CS0414
+#pragma warning disable CS0414
         private static readonly string LANGUAGE_TAG = "language";
+#pragma warning restore CS0414
+#pragma warning disable CS0414
         private static readonly string LANGUAGE_ATTRIBUTE = "name";
+#pragma warning restore CS0414
+#pragma warning disable CS0414
         private static readonly string PAIR_TAG = "pair";
+#pragma warning restore CS0414
+#pragma warning disable CS0414
         private static readonly string PAIR_KEY = "key";
+#pragma warning restore CS0414
+#pragma warning disable CS0414
         private static readonly string PAIR_VALUE = "value";
+#pragma warning restore CS0414
         private readonly Dictionary<string, string> dictionary = new Dictionary<string, string>(StringComparer.Ordinal);
 
         private readonly List<SystemLanguage> supportedLanguages = new List<SystemLanguage>();
+
+        private LoadAssetCallbacks _loadAssetCallbacks;
+
+        private bool isLoad = false;
+        private bool isLoadAsset = false;
         public SystemLanguage language { get; set; }
         public object mainFontAsset { get; set; }
 
@@ -30,15 +46,6 @@ namespace ZJYFrameWork.I18n
         {
             return supportedLanguages;
         }
-
-        [PostConstruct]
-        public void Init()
-        {
-            _loadAssetCallbacks =
-                new LoadAssetCallbacks(LoadAssetSuccessCallback, LoadAssetFailureCallback, null, null);
-        }
-
-        private LoadAssetCallbacks _loadAssetCallbacks;
 
         /// <summary>
         /// 根据字典主键获取字典内容字符串。
@@ -160,21 +167,6 @@ namespace ZJYFrameWork.I18n
             }
         }
 
-        /// <summary>
-        /// 根据字典主键获取字典值。
-        /// </summary>
-        /// <param name="key">字典主键。</param>
-        /// <returns>字典值。</returns>
-        public string GetValue(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new Exception("Key is invalid.");
-            }
-
-            return !dictionary.TryGetValue(key, out var value) ? null : value;
-        }
-
         public bool AddString(string key, string value)
         {
             if (string.IsNullOrEmpty(key))
@@ -196,9 +188,6 @@ namespace ZJYFrameWork.I18n
             throw new System.NotImplementedException();
         }
 
-        private bool isLoad = false;
-        private bool isLoadAsset = false;
-
         public bool ParseData(string dictionaryString)
         {
             if (isLoadAsset)
@@ -216,6 +205,28 @@ namespace ZJYFrameWork.I18n
             return true;
         }
 
+        [PostConstruct]
+        public void Init()
+        {
+            _loadAssetCallbacks =
+                new LoadAssetCallbacks(LoadAssetSuccessCallback, LoadAssetFailureCallback, null, null);
+        }
+
+        /// <summary>
+        /// 根据字典主键获取字典值。
+        /// </summary>
+        /// <param name="key">字典主键。</param>
+        /// <returns>字典值。</returns>
+        public string GetValue(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new Exception("Key is invalid.");
+            }
+
+            return !dictionary.TryGetValue(key, out var value) ? null : value;
+        }
+
         private void LoadAssetSuccessCallback(string assetName, UnityEngine.Object asset, float duration,
             object userData)
         {
@@ -224,7 +235,7 @@ namespace ZJYFrameWork.I18n
             if (messageData != null)
             {
                 var listString = messageData.messages;
-                string[]   arrNames = Enum.GetNames(typeof(Message));
+                string[] arrNames = Enum.GetNames(typeof(Message));
                 for (int i = 0; i < listString.Length; i++)
                 {
                     var key = arrNames[i];

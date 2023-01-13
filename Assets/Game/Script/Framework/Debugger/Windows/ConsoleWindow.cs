@@ -4,8 +4,6 @@ using UnityEngine;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Debugger.Widows.Model;
 using ZJYFrameWork.Debugger.Widows.Model.VO;
-using ZJYFrameWork.Log;
-using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Debugger.Windows
@@ -13,21 +11,16 @@ namespace ZJYFrameWork.Debugger.Windows
     [Serializable]
     public sealed class ConsoleWindow : IDebuggerWindow
     {
-        private  Queue<LogNode> logNodes = new Queue<LogNode>();
-        private readonly TextEditor textEditor = new TextEditor();
-
-        private Vector2 logScrollPosition = Vector2.zero;
-        private Vector2 stackScrollPosition = Vector2.zero;
-        private int infoCount = 0;
-        private int warningCount = 0;
-        private int errorCount = 0;
-        private int fatalCount = 0;
-        private LogNode selectedNode = null;
-        private bool _lastLockScroll = true;
-        private bool _lastInfoFilter = true;
-        private bool _lastWarningFilter = true;
-        private bool _lastErrorFilter = true;
-        private bool _lastFatalFilter = true;
+        // // ReSharper disable once UnusedMember.Local
+        // private bool _lastLockScroll = true;
+        // // ReSharper disable once UnusedMember.Local
+        // private bool _lastInfoFilter = true;
+        // // ReSharper disable once UnusedMember.Local
+        // private bool _lastWarningFilter = true;
+        // // ReSharper disable once UnusedMember.Local
+        // private bool _lastErrorFilter = true;
+        // // ReSharper disable once UnusedMember.Local
+        // private bool _lastFatalFilter = true;
 
         [SerializeField] private bool lockScroll = true;
 
@@ -48,6 +41,16 @@ namespace ZJYFrameWork.Debugger.Windows
         [SerializeField] private Color32 errorColor = Color.red;
 
         [SerializeField] private Color32 fatalColor = new Color(0.7f, 0.2f, 0.2f);
+        private readonly TextEditor textEditor = new TextEditor();
+        private int errorCount = 0;
+        private int fatalCount = 0;
+        private int infoCount = 0;
+        private Queue<LogNode> logNodes = new Queue<LogNode>();
+
+        private Vector2 logScrollPosition = Vector2.zero;
+        private LogNode selectedNode = null;
+        private Vector2 stackScrollPosition = Vector2.zero;
+        private int warningCount = 0;
 
         public bool LockScroll
         {

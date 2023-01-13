@@ -6,18 +6,18 @@ using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UI.UIModel
 {
-   public class Dialog : DialogBase
+    public class Dialog : DialogBase
     {
-        public enum ButtonType
-        {
-            YesNo,
-            Yes
-        }
-
         public enum ButtonColor
         {
             Yellow,
             Red
+        }
+
+        public enum ButtonType
+        {
+            YesNo,
+            Yes
         }
 
         public enum Result
@@ -46,16 +46,16 @@ namespace ZJYFrameWork.UI.UIModel
         /// 文字主题
         /// </summary>
         [SerializeField] protected Text bodyText = null;
-        
+
         [SerializeField] protected Button noButton = null;
         [SerializeField] protected Text noButtonText = null;
         [SerializeField] protected Button yesButton = null;
         [SerializeField] protected Text yesButtonText = null;
         [SerializeField] protected Text yesRedButtonText = null;
         protected System.Action<Result> onClickAction = null;
-        ButtonType openButtonType;
 
         System.Action onEscClickEvent;
+        ButtonType openButtonType;
 
         public override void Init()
         {
@@ -73,7 +73,7 @@ namespace ZJYFrameWork.UI.UIModel
             SetTitleText(title);
             SetBodyText(body);
             SetupButtons(type);
-          
+
             this.onEscClickEvent = onEscClick;
             if (backgroundCloseButton != null)
             {
@@ -90,7 +90,9 @@ namespace ZJYFrameWork.UI.UIModel
             onClickAction = onClick;
             return true;
         }
-        public bool Open(ButtonType type, string title, string body,string YesButtonText, string NoButtonText, Action<Result> onClick = null,
+
+        public bool Open(ButtonType type, string title, string body, string YesButtonText, string NoButtonText,
+            Action<Result> onClick = null,
             Action onOpen = null, Action onClose = null, Action onEscClick = null)
         {
             if (!base.Open())
@@ -118,13 +120,16 @@ namespace ZJYFrameWork.UI.UIModel
             {
                 yesButtonText.text = YesButtonText;
             }
+
             if (noButtonText != null)
             {
                 noButtonText.text = NoButtonText;
             }
+
             onClickAction = onClick;
             return true;
         }
+
         protected void SetTitleText(string text)
         {
             if (titleText == null)
@@ -132,8 +137,7 @@ namespace ZJYFrameWork.UI.UIModel
                 return;
             }
 
-            bool isEnableTitle = !string.IsNullOrEmpty(text);
-            titleText.text = text = text;
+            titleText.text = text;
         }
 
         protected void SetBodyText(string text, TextAnchor alignment = TextAnchor.MiddleCenter)
@@ -168,7 +172,6 @@ namespace ZJYFrameWork.UI.UIModel
 
             switch (type)
             {
-
                 case ButtonType.YesNo:
                     if (noButton != null)
                     {
@@ -218,7 +221,5 @@ namespace ZJYFrameWork.UI.UIModel
         {
             OnButton(Result.Yes);
         }
-        
-        
     }
 }

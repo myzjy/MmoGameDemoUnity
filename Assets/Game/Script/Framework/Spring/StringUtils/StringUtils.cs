@@ -6,17 +6,13 @@ namespace ZJYFrameWork.Spring.Utils
 {
     public abstract class StringUtils
     {
-        [ThreadStatic]
-        private static StringBuilder cachedStringBuilder;
+        [ThreadStatic] private static StringBuilder cachedStringBuilder;
 
-        [ThreadStatic]
-        private static object[] oneArgs;
+        [ThreadStatic] private static object[] oneArgs;
 
-        [ThreadStatic]
-        private static object[] twoArgs;
+        [ThreadStatic] private static object[] twoArgs;
 
-        [ThreadStatic]
-        private static object[] threeArgs;
+        [ThreadStatic] private static object[] threeArgs;
 
         public static readonly string EMPTY = "";
 
@@ -24,7 +20,7 @@ namespace ZJYFrameWork.Spring.Utils
 
         public static readonly string[] EMPTY_STRING_ARRAY = new string[] { };
 
-        public static readonly object[] ONE_OBJECT_ARRAY = {NULL_OBJECT_string};
+        public static readonly object[] ONE_OBJECT_ARRAY = { NULL_OBJECT_string };
 
         public static readonly string COMMA = ","; // [com·ma || 'kɒmə] n.  逗点; 逗号
         public static readonly string COMMA_REGEX = ",|，";
@@ -67,7 +63,8 @@ namespace ZJYFrameWork.Spring.Utils
 
         public static readonly string EMPTY_JSON = "{}";
 
-        public static readonly string MULTIPLE_HYPHENS = "-----------------------------------------------------------------------";
+        public static readonly string MULTIPLE_HYPHENS =
+            "-----------------------------------------------------------------------";
 
 
         public static readonly int INDEX_NOT_FOUND = -1; //Represents a failed index search.
@@ -86,8 +83,10 @@ namespace ZJYFrameWork.Spring.Utils
 
         public static readonly HashSet<char> ENGLISH_SET = new HashSet<char>()
         {
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+            'v', 'w', 'x', 'y', 'z',
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+            'V', 'W', 'X', 'Y', 'Z'
         };
 
         /**
@@ -309,6 +308,9 @@ namespace ZJYFrameWork.Spring.Utils
             }
             catch (Exception e)
             {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError($"[StringUtils] [方法:BytesToString(byte[] bytes)] [msg:{e}]");
+#endif
                 return EMPTY;
             }
         }

@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections;
-using Framework.AssetBundles.Utilty;
-using ZJYFrameWork.Game.Framwork;
-using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
-using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
-using UnityEngine.UI;
 using ZJYFrameWork.AssetBundles;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
-using ZJYFrameWork.ObjectPool;
+using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.Spring.Core;
-using ZJYFrameWork.UISerializable.Manager;
+using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
+using ZJYFrameWork.UISerializable.UIInitView;
 using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.UISerializable
@@ -20,8 +15,10 @@ namespace ZJYFrameWork.UISerializable
         where TuiView : UIBaseView<TuiPanelView>, new()
         where TuiPanelView : UIViewInterface, new()
     {
-        public TuiView selfView;
         private readonly LoadAssetCallbacks _loadAssetCallbacks;
+
+        private bool isResuse = false;
+        public TuiView selfView;
 
         public UIBaseModule()
         {
@@ -30,39 +27,8 @@ namespace ZJYFrameWork.UISerializable
                 new LoadAssetCallbacks(LoadAssetSuccessCallback, LoadAssetFailureCallback, null, null);
         }
 
-        /// <summary>
-        /// 预制体 UI名
-        /// </summary>
-        /// <returns></returns>
-        public abstract string PrefabName();
-
 
         public int InstanceID { get; protected set; }
-
-        public abstract UICanvasType GetCanvasType();
-
-        public virtual UISortType GetSortType()
-        {
-            return UISortType.First;
-        }
-
-        public virtual string[] Notification()
-        {
-            return Array.Empty<string>();
-        }
-
-        public virtual void NotificationHandler(UINotification _eventNotification)
-        {
-        }
-
-        public UIView GetUIView()
-        {
-            return selfView?.GetSelfUIView;
-        }
-
-        public void Refresh()
-        {
-        }
 
         public bool IsActive
         {
@@ -90,7 +56,36 @@ namespace ZJYFrameWork.UISerializable
             }
         }
 
-        private bool isResuse = false;
+        /// <summary>
+        /// 预制体 UI名
+        /// </summary>
+        /// <returns></returns>
+        public abstract string PrefabName();
+
+        public abstract UICanvasType GetCanvasType();
+
+        public virtual UISortType GetSortType()
+        {
+            return UISortType.First;
+        }
+
+        public virtual string[] Notification()
+        {
+            return Array.Empty<string>();
+        }
+
+        public virtual void NotificationHandler(UINotification _eventNotification)
+        {
+        }
+
+        public UIView GetUIView()
+        {
+            return selfView?.GetSelfUIView;
+        }
+
+        public void Refresh()
+        {
+        }
 
         protected void InstanceOrReuse(Action action = null)
         {
@@ -181,7 +176,6 @@ namespace ZJYFrameWork.UISerializable
                 {
                     return ROOT.GetActivieseCanvasTransformPanel;
                 }
-                    break;
 
                 default:
                     break;
