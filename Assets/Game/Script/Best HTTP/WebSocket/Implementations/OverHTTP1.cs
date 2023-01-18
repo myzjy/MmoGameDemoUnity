@@ -199,22 +199,36 @@ namespace BestHTTP.WebSocket
             if (this.State != WebSocketStates.Connecting || !string.IsNullOrEmpty(reason))
             {
                 if (this.Parent.OnError != null)
+                {
                     this.Parent.OnError(this.Parent, reason);
+                }
                 else if (!HttpManager.IsQuitting)
-                    HttpManager.Logger.Error("OverHTTP1", reason, this.Parent.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[OverHTTP1] [msg:{reason}]");
+#endif
+                    // HttpManager.Logger.Error("OverHTTP1", reason, this.Parent.Context);
+                }
             }
             else if (this.Parent.OnClosed != null)
+            {
                 this.Parent.OnClosed(this.Parent, (ushort)WebSocketStausCodes.NormalClosure, "Closed while opening");
+            }
 
             this.State = WebSocketStates.Closed;
 
-            if (!req.IsKeepAlive && resp != null && resp is WebSocketResponse)
-                (resp as WebSocketResponse).CloseStream();
+            if (!req.IsKeepAlive && resp is WebSocketResponse response)
+            {
+                response.CloseStream();
+            }
         }
 
         private void OnInternalRequestUpgraded(HttpRequest req, HttpResponse resp)
         {
-            HttpManager.Logger.Information("OverHTTP1", "Internal request upgraded!", this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[OverHTTP1] [msg:内部请求升级!]");
+#endif
+            // HttpManager.Logger.Information("OverHTTP1", "Internal request upgraded!", this.Parent.Context);
 
             webSocket = resp as WebSocketResponse;
 
@@ -222,9 +236,11 @@ namespace BestHTTP.WebSocket
             {
                 if (this.Parent.OnError != null)
                 {
-                    string reason = string.Empty;
+                    var reason = string.Empty;
                     if (req.Exception != null)
-                        reason = req.Exception.Message + " " + req.Exception.StackTrace;
+                    {
+                        reason = $"{req.Exception.Message}  {req.Exception.StackTrace}";
+                    }
 
                     this.Parent.OnError(this.Parent, reason);
                 }

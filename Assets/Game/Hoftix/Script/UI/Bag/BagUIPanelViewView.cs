@@ -29,6 +29,7 @@ namespace ZJYFrameWork.UI.BagUI
 
         public override void OnInit()
         {
+            InitEquipPanel();
         }
 
         public override void OnShow()

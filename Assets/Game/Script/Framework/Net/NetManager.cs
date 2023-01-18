@@ -19,47 +19,6 @@ namespace ZJYFrameWork.Net
         private AbstractClient netClient;
 
         /// <summary>
-        /// 轮询
-        /// </summary>
-        /// <param name="elapseSeconds"></param>
-        /// <param name="realElapseSeconds"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        public override void Update(float elapseSeconds, float realElapseSeconds)
-        {
-            if (netClient == null)
-            {
-                return;
-            }
-
-            Message message;
-            while (netClient.GetNextMessage(out message))
-            {
-                switch (message.messageType)
-                {
-                    case MessageType.Connected:
-                        Debug.Log("Connected server [{}]", netClient.ToConnectUrl());
-
-                        break;
-                    case MessageType.Data:
-                        PacketDispatcher.Receive(message.packet);
-
-                        break;
-                    case MessageType.Disconnected:
-                        Debug.Log("Disconnected");
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-        public override void Shutdown()
-        {
-            Close();
-        }
-
-        /// <summary>
         /// 链接
         /// </summary>
         /// <param name="url"></param>
@@ -109,6 +68,46 @@ namespace ZJYFrameWork.Net
                     byteBuffer.Clear();
                 }
             }
+        }
+
+        /// <summary>
+        /// 轮询
+        /// </summary>
+        /// <param name="elapseSeconds"></param>
+        /// <param name="realElapseSeconds"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public override void Update(float elapseSeconds, float realElapseSeconds)
+        {
+            if (netClient == null)
+            {
+                return;
+            }
+
+            while (netClient.GetNextMessage(out var message))
+            {
+                switch (message.messageType)
+                {
+                    case MessageType.Connected:
+                        Debug.Log("Connected server [{}]", netClient.ToConnectUrl());
+
+                        break;
+                    case MessageType.Data:
+                        PacketDispatcher.Receive(message.packet);
+
+                        break;
+                    case MessageType.Disconnected:
+                        Debug.Log("Disconnected");
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public override void Shutdown()
+        {
+            Close();
         }
     }
 }
