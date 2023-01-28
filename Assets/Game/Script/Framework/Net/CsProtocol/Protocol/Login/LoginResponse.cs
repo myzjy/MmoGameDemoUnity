@@ -7,6 +7,21 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
     public class LoginResponse : Model, IPacket
     {
+        /**
+     * 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
+     */
+        public long DiamondNum;
+
+        /**
+     * 金币
+     */
+        public long goldNum;
+
+        /**
+     * 付费钻石 一般充值才有，付费钻石转换成普通钻石
+     */
+        public long PremiumDiamondNum;
+
         public string token;
         public long uid;
         public string userName;
@@ -16,13 +31,17 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             return 1001;
         }
 
-        public static LoginResponse ValueOf(string token, long uid, string userName)
+        public static LoginResponse ValueOf(string token, long uid, string userName, long goldNum,
+            long premiumDiamondNum, long diamondNum)
         {
             var packet = new LoginResponse
             {
                 token = token,
                 uid = uid,
-                userName = userName
+                userName = userName,
+                goldNum = goldNum,
+                PremiumDiamondNum = premiumDiamondNum,
+                DiamondNum = diamondNum
             };
             return packet;
         }

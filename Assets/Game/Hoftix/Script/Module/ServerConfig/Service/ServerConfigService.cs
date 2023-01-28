@@ -11,7 +11,7 @@ namespace ZJYFrameWork.Module.ServerConfig.Service
 
         public void SendServerConfigService()
         {
-            netManager.Send(new ServerConfigRequest());
+            netManager.Send(ServerConfigRequest.ValueOf());
         }
     }
 }

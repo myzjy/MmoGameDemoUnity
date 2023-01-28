@@ -8,7 +8,11 @@ namespace ZJYFrameWork.Setting
     [Bean]
     public class ServerDataManager
     {
+        /// <summary>
+        /// 基础配置相关
+        /// </summary>
         private List<ItemBaseData> _itemBaseDataList = new List<ItemBaseData>();
+
         [Autowired] private LoginClientCacheData LoginCacheData;
         [Autowired] private RegisterPartClientCacheData RegisterPartClientCacheData;
 

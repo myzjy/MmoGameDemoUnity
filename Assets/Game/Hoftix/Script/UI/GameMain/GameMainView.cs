@@ -18,10 +18,13 @@ namespace ZJYFrameWork.UI.GameMain
 
         public override void OnInit()
         {
+            //转换水晶
             GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject.GetObjType<Button>("click");
+            //普通水晶 数量显示
             GemsText = viewPanel.GemsTim_UISerializableKeyObject.GetObjType<Text>("numText");
             viewPanel.top_head_Name_Text.text = SpringContext.GetBean<PlayerUserCaCheData>().userName;
             GemButton = viewPanel.Gem_UISerializableKeyObject.GetObjType<Button>("click");
+            //付费水晶 数量显示
             GemText = viewPanel.Gem_UISerializableKeyObject.GetObjType<Text>("numText");
             viewPanel.headImgClick.SetListener(() =>
             {
@@ -32,7 +35,9 @@ namespace ZJYFrameWork.UI.GameMain
             viewPanel.BagButton.SetListener(() =>
             {
                 //背包界面
+                // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
             });
+            // SpringContext.GetBean<>()
             OnShow();
         }
 
