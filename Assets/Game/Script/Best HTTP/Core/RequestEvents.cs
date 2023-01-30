@@ -233,9 +233,10 @@ namespace BestHTTP.Core
 
         public static void EnqueueRequestEvent(RequestEventInfo @event)
         {
-            if (HttpManager.Logger.Level == Loglevels.All)
-                HttpManager.Logger.Information("RequestEventHelper", "Enqueue request event: " + @event.ToString(),
-                    @event.SourceRequest.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[RequestEventHelper] [method:EnqueueRequestEvent(RequestEventInfo @event)] Enqueue request event: {@event.ToString()}");
+#endif
 
             requestEventQueue.Enqueue(@event);
         }

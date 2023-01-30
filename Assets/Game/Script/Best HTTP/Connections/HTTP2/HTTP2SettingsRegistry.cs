@@ -178,10 +178,10 @@ namespace BestHTTP.Connections.HTTP2
 
                     if (oldValue != value && this.OnSettingChangedEvent != null)
                         this.OnSettingChangedEvent(this, setting, oldValue, value);
-
-                    if (HttpManager.Logger.Level <= Logger.Loglevels.All)
-                        HttpManager.Logger.Information("HTTP2SettingsRegistry",
-                            $"Merge {setting}({key}) = {value}", this._parent.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(
+                        $"[HTTP2SettingsRegistry] [method:Merge(List<KeyValuePair<Http2Settings, UInt32>> settings)] Merge {setting}({key}) = {value}");
+#endif
                 }
             }
         }

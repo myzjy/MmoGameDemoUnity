@@ -51,12 +51,15 @@ namespace BestHTTP.Connections.HTTP2
                              header.Key.Equals("content-length", StringComparison.OrdinalIgnoreCase))
                     {
                         if (long.TryParse(header.Value, out var contentLength))
+                        {
                             this.ExpectedContentLength = contentLength;
+                        }
                         else
                         {
-                            HttpManager.Logger.Information("HTTP2Response",
-                                $"AddHeaders - Can't parse Content-Length as an int: '{header.Value}'",
-                                this.BaseRequest.Context, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[HTTP2Response] [method:AddHeaders(List<KeyValuePair<string, string>> headers)] AddHeaders - Can't parse Content-Length as an int: '{header.Value}'");
+#endif
                         }
                     }
 
@@ -74,8 +77,10 @@ namespace BestHTTP.Connections.HTTP2
 
             if (this.ExpectedContentLength == -1 && BaseRequest.OnDownloadProgress != null)
             {
-                HttpManager.Logger.Information("HTTP2Response", "AddHeaders - No Content-Length header found!",
-                    this.BaseRequest.Context, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP2Response] [method:AddHeaders(List<KeyValuePair<string, string>> headers)] AddHeaders -没有发现内容长度的头!");
+#endif
             }
 
             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, newHeaders));

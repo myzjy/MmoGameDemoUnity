@@ -68,8 +68,9 @@ namespace BestHTTP.Caching
                 catch
                 {
                     _isSupported = false;
-
-                    HttpManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogWarning($"[HTTPCacheService] 缓存服务关闭!");
+#endif
                 }
                 finally
                 {
@@ -146,8 +147,9 @@ namespace BestHTTP.Caching
             catch
             {
                 _isSupported = false;
-
-                HttpManager.Logger.Warning("HTTPCacheService", "Cache Service Disabled!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogWarning($"[HTTPCacheService] 缓存服务关闭!");
+#endif
             }
         }
 
@@ -414,9 +416,9 @@ namespace BestHTTP.Caching
                 try
                 {
                     info.Store(response);
-                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                        HttpManager.Logger.Verbose("HTTPCacheService",
-                            $"{uri} - Saved to cache", response.BaseRequest.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"[HTTPCacheService]{uri} - Saved to cache ");
+#endif
                 }
                 catch
                 {
@@ -448,10 +450,9 @@ namespace BestHTTP.Caching
                 try
                 {
                     info.SetUpCachingValues(response);
-                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                        HttpManager.Logger.Verbose("HTTPCacheService",
-                            $"{uri} - SetUpCachingValues done!",
-                            response.BaseRequest.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"[HTTPCacheService]{uri} - SetUpCachingValues done! ");
+#endif
                 }
                 catch
                 {
@@ -726,8 +727,11 @@ namespace BestHTTP.Caching
                 }
                 catch (Exception ex)
                 {
-                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                        HttpManager.Logger.Exception("HTTPCacheService", "LoadLibrary", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[HTTPCacheService] LoadLibrary [Exception]  {ex}");
+#else
+                    Debug.LogError($"[HTTPCacheService] LoadLibrary [Exception]  {ex}");
+#endif
                 }
             }
 
@@ -764,10 +768,11 @@ namespace BestHTTP.Caching
                 }
                 catch (Exception ex)
                 {
-                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    {
-                        HttpManager.Logger.Exception("HTTPCacheService", "SaveLibrary", ex);
-                    }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[HTTPCacheService] SaveLibrary [Exception]  {ex}");
+#else
+                    Debug.LogError($"[HTTPCacheService] LoadLibrary [Exception]  {ex}");
+#endif
                 }
             }
         }

@@ -91,8 +91,9 @@ namespace BestHTTP.Connections.HTTP2
 
         public void Process(HttpRequest request)
         {
-            HttpManager.Logger.Information("HTTP2Handler", "Process request called", this.Context, request.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.LogError($"[HTTP2Handler] 流程请求被调用");
+#endif
             request.QueuedAt = DateTime.MinValue;
             request.ProcessingStarted = this._lastInteraction = DateTime.UtcNow;
 
@@ -107,8 +108,9 @@ namespace BestHTTP.Connections.HTTP2
 
         public void RunHandler()
         {
-            HttpManager.Logger.Information("HTTP2Handler", "Processing thread up and running!", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HTTP2Handler] [method:RunHandler()] 处理线程启动并运行!");
+#endif
             Thread.CurrentThread.Name = "BestHTTP.HTTP2 Process";
 
             PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ReadThread);
@@ -197,9 +199,9 @@ namespace BestHTTP.Connections.HTTP2
 
                         if (wait >= 1)
                         {
-                            if (HttpManager.Logger.Level <= Loglevels.All)
-                                HttpManager.Logger.Information("HTTP2Handler",
-                                    $"Sleeping for {wait:N0}ms", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[HTTP2Handler] [method:RunHandler()] 休眠{wait:N0}ms");
+#endif
                             this._newFrameSignal.WaitOne(wait);
 
                             now = DateTime.UtcNow;
@@ -222,6 +224,9 @@ namespace BestHTTP.Connections.HTTP2
                     if (this._waitingForPingAck != 0 &&
                         now - this._lastPingSent >= HttpManager.Http2Settings.Timeout)
                     {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError($"[HTTP2Handler] [method:RunHandler()] Ping ACK未及时收到!");
+#endif
                         throw new TimeoutException("Ping ACK未及时收到!");
                     }
 
@@ -239,11 +244,11 @@ namespace BestHTTP.Connections.HTTP2
                             }
                             else
                             {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                                 // 错误呢?当服务器正在发送帧时，我们可能关闭并删除了流
-                                if (HttpManager.Logger.Level == Loglevels.All)
-                                    HttpManager.Logger.Warning("HTTP2Handler",
-                                        $"No stream found for id: {header.StreamId}! Can't deliver frame: {header}",
-                                        this.Context, http2Stream.Context);
+                                Debug.LogWarning(
+                                    $"[HTTP2Handler] [method:RunHandler()] id: {header.StreamId}没有找到流!不能传递帧:{header}");
+#endif
                             }
                         }
                         else
@@ -251,6 +256,7 @@ namespace BestHTTP.Connections.HTTP2
                             switch (header.Type)
                             {
                                 case Http2FrameTypes.Settings:
+                                {
                                     this.Settings.Process(header, this._outgoingFrames);
 
                                     PluginEventHelper.EnqueuePluginEvent(
@@ -259,9 +265,11 @@ namespace BestHTTP.Connections.HTTP2
                                                 this.Settings.MySettings[Http2Settings.EnableConnectProtocol] ==
                                                 1 && this.Settings.RemoteSettings[
                                                     Http2Settings.EnableConnectProtocol] == 1)));
+                                }
                                     break;
 
                                 case Http2FrameTypes.Ping:
+                                {
                                     var pingFrame = Http2FrameHelper.ReadPingFrame(header);
 
                                     // https://httpwg.org/specs/rfc7540.html#PING
@@ -274,21 +282,23 @@ namespace BestHTTP.Connections.HTTP2
 
                                         this._outgoingFrames.Add(frame);
                                     }
-
+                                }
                                     break;
-
                                 case Http2FrameTypes.WindowUpdate:
+                                {
                                     var windowUpdateFrame = Http2FrameHelper.ReadWindowUpdateFrame(header);
                                     this._remoteWindow += windowUpdateFrame.WindowSizeIncrement;
+                                }
                                     break;
 
                                 case Http2FrameTypes.Goaway:
                                     //解析框架，这样我们就可以打印出详细的信息
                                     Http2GoAwayFrame goAwayFrame = Http2FrameHelper.ReadGoAwayFrame(header);
 
-                                    HttpManager.Logger.Information("HTTP2Handler",
-                                        "Received GOAWAY frame: " + goAwayFrame.ToString(), this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.Log(
+                                        $"[HTTP2Handler] [method:RunHandler()] Received GOAWAY frame: {goAwayFrame.ToString()}");
+#endif
                                     var msg =
                                         $"Server closing the connection! Error code: {goAwayFrame.Error} ({goAwayFrame.ErrorCode})";
                                     foreach (var t in this._clientInitiatedStreams)
@@ -372,8 +382,9 @@ namespace BestHTTP.Connections.HTTP2
                             when now - this._lastInteraction >= HttpManager.Http2Settings.MaxIdleTime:
                         {
                             this._lastInteraction = DateTime.UtcNow;
-                            HttpManager.Logger.Information("HTTP2Handler", "Reached idle time, sending GoAway frame!",
-                                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[HTTP2Handler] [method:RunHandler()] 到达空闲时间，发送超时帧! ");
+#endif
                             this._outgoingFrames.Add(Http2FrameHelper.CreateGoAwayFrame(0, Http2ErrorCodes.NoError));
                             this._goAwaySentAt = DateTime.UtcNow;
                         }
@@ -383,9 +394,9 @@ namespace BestHTTP.Connections.HTTP2
                         // 端点在关闭连接之前应该总是发送一个超时帧，这样远端对等端就可以知道流是否被部分处理了。
                         case ShutdownTypes.Gentle:
                         {
-                            HttpManager.Logger.Information("HTTP2Handler",
-                                "Connection abort requested, sending GoAway frame!", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[HTTP2Handler] [method:RunHandler()] 请求连接中断，发送超时帧! ");
+#endif
                             this._outgoingFrames.Clear();
                             this._outgoingFrames.Add(Http2FrameHelper.CreateGoAwayFrame(0, Http2ErrorCodes.NoError));
                             this._goAwaySentAt = DateTime.UtcNow;
@@ -395,8 +406,9 @@ namespace BestHTTP.Connections.HTTP2
 
                     if (this._isRunning && now - _goAwaySentAt >= this.MaxGoAwayWaitTime)
                     {
-                        HttpManager.Logger.Information("HTTP2Handler",
-                            "No GoAway frame received back. Really quitting now!", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log($"[HTTP2Handler] [method:RunHandler()] 没有接收到超时帧。真的要放弃了!");
+#endif
                         this._isRunning = false;
                         _conn.State = HttpConnectionStates.Closed;
                     }
@@ -408,42 +420,53 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         var frame = this._outgoingFrames[i];
 
-                        if (HttpManager.Logger.Level <= Loglevels.All &&
+                        if ( /*HttpManager.Logger.Level <= Loglevels.All &&*/
                             frame.Type != Http2FrameTypes.Data /*&& frame.Type != HTTP2FrameTypes.PING*/)
                         {
-                            HttpManager.Logger.Information("HTTP2Handler", "Sending frame: " + frame.ToString(),
-                                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[HTTP2Handler] [method:RunHandler()] Sending frame: {frame.ToString()}");
+#endif
                         }
 
                         // post process frames
                         switch (frame.Type)
                         {
                             case Http2FrameTypes.Data:
+                            {
                                 if (haltDataSending)
+                                {
                                     continue;
+                                }
 
                                 //如果跟踪的remoteWindow小于帧的有效负载，我们停止发送数据帧，直到我们收到窗口更新帧
                                 if (frame.PayloadLength > this._remoteWindow)
                                 {
                                     haltDataSending = true;
-                                    HttpManager.Logger.Warning("HTTP2Handler",
-                                        $"Data sending halted for this round. Remote Window: {this._remoteWindow:N0}, frame: {frame.ToString()}",
-                                        this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.Log(
+                                        $"[HTTP2Handler] [method:RunHandler()] 这一轮停止了数据发送。远程窗口: {this._remoteWindow:N0}, frame: {frame.ToString()}");
+#endif
                                     continue;
                                 }
-
+                            }
                                 break;
 
                             case Http2FrameTypes.WindowUpdate:
+                            {
                                 if (frame.StreamId > 0)
+                                {
                                     streamWindowUpdates += BufferHelper.ReadUInt31(frame.Payload, 0);
+                                }
+                            }
                                 break;
                         }
 
                         this._outgoingFrames.RemoveAt(i--);
 
                         using (var buffer = Http2FrameHelper.HeaderAsBinary(frame))
+                        {
                             bufferedStream.Write(buffer.Data, 0, buffer.Length);
+                        }
 
                         if (frame.PayloadLength > 0)
                         {
@@ -454,19 +477,22 @@ namespace BestHTTP.Connections.HTTP2
                         }
 
                         if (frame.Type == Http2FrameTypes.Data)
+                        {
                             this._remoteWindow -= frame.PayloadLength;
+                        }
                     }
 
                     if (streamWindowUpdates > 0)
                     {
                         var frame = Http2FrameHelper.CreateWindowUpdateFrame(0, streamWindowUpdates);
-
-                        if (HttpManager.Logger.Level <= Loglevels.All)
-                            HttpManager.Logger.Information("HTTP2Handler", "Sending frame: " + frame.ToString(),
-                                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log($"[HTTP2Handler] [method:RunHandler()] Sending frame: {frame.ToString()}");
+#endif
 
                         using (var buffer = Http2FrameHelper.HeaderAsBinary(frame))
+                        {
                             bufferedStream.Write(buffer.Data, 0, buffer.Length);
+                        }
 
                         bufferedStream.Write(frame.Payload, (int)frame.PayloadOffset, (int)frame.PayloadLength);
                     }
@@ -479,23 +505,27 @@ namespace BestHTTP.Connections.HTTP2
                 // Log out the exception if it's a non-expected one.
                 if (this.ShutdownType == ShutdownTypes.Running && this._goAwaySentAt == DateTime.MaxValue &&
                     HttpManager.IsQuitting)
-                    HttpManager.Logger.Exception("HTTP2Handler", "Sender thread", ex, this.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[HTTP2Handler] [method:RunHandler()] Sender thread [Exception] {ex}");
+#endif
+                }
             }
             finally
             {
                 TryToCleanup();
-
-                HttpManager.Logger.Information("HTTP2Handler",
-                    "Sender thread closing - cleaning up remaining request...", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HTTP2Handler] [method:RunHandler()] 发送者线程关闭-清理剩余的请求…");
+#endif
                 foreach (var t in this._clientInitiatedStreams)
                 {
-                    t.Abort("Connection closed unexpectedly");
+                    t.Abort("连接异常关闭");
                 }
 
                 this._clientInitiatedStreams.Clear();
-
-                HttpManager.Logger.Information("HTTP2Handler", "Sender thread closing", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HTTP2Handler] [method:RunHandler()] Sender thread closing");
+#endif
             }
 
             try
@@ -504,15 +534,17 @@ namespace BestHTTP.Connections.HTTP2
                 {
                     // Works in the new runtime
                     if (this._conn.connector.TopmostStream != null)
+                    {
                         using (this._conn.connector.TopmostStream)
                         {
                         }
+                    }
 
                     // Works in the old runtime
-                    if (this._conn.connector.Stream != null)
-                        using (this._conn.connector.Stream)
-                        {
-                        }
+                    if (this._conn.connector.Stream == null) return;
+                    using (this._conn.connector.Stream)
+                    {
+                    }
                 }
             }
             catch
@@ -543,9 +575,10 @@ namespace BestHTTP.Connections.HTTP2
         {
             while (this._requestQueue.TryDequeue(out var request))
             {
-                HttpManager.Logger.Information("HTTP2Handler",
-                    $"Dispose - Request '{request.CurrentUri}' IsCancellationRequested: {request.IsCancellationRequested.ToString()}",
-                    this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP2Handler] [method:Dispose()] Dispose - Request '{request.CurrentUri}' IsCancellationRequested: {request.IsCancellationRequested.ToString()}");
+#endif
                 if (request.IsCancellationRequested)
                 {
                     request.Response = null;
@@ -577,56 +610,66 @@ namespace BestHTTP.Connections.HTTP2
             try
             {
                 Thread.CurrentThread.Name = "BestHTTP.HTTP2 Read";
-                HttpManager.Logger.Information("HTTP2Handler", "Reader thread up and running!", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP2Handler] [method:ReadThread()] 阅读线程启动并运行!");
+#endif
 
                 while (this._isRunning)
                 {
                     Http2FrameHeaderAndPayload header = Http2FrameHelper.ReadHeader(this._conn.connector.Stream);
 
-                    if (HttpManager.Logger.Level <= Loglevels.Information &&
+                    if ( /*HttpManager.Logger.Level <= Loglevels.Information &&*/
                         header.Type != Http2FrameTypes.Data /*&& header.Type != HTTP2FrameTypes.PING*/)
-                        HttpManager.Logger.Information("HTTP2Handler", "New frame received: " + header.ToString(),
-                            this.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTP2Handler] [method:ReadThread()] New frame received: {header.ToString()}");
+#endif
+                    }
 
-                    // Add the new frame to the queue. Processing it on the write thread gives us the advantage that
-                    //  we don't have to deal with too much locking.
+                    // 将新帧添加到队列中。
+                    // 在写线程上处理它的好处是不需要处理太多的锁定。
                     this._newFrames.Enqueue(header);
 
-                    // ping write thread to process the new frame
+                    // Ping写线程来处理新的帧
                     this._newFrameSignal.Set();
 
                     switch (header.Type)
                     {
-                        // Handle pongs on the read thread, so no additional latency is added to the rtt calculation.
+                        // 在读线程上处理pongs，因此不会向rtt计算添加额外的延迟。
                         case Http2FrameTypes.Ping:
                             var pingFrame = Http2FrameHelper.ReadPingFrame(header);
 
                             if ((pingFrame.Flags & Http2PingFlags.Ack) != 0)
                             {
                                 if (Interlocked.CompareExchange(ref this._waitingForPingAck, 0, 1) == 0)
-                                    break; // waitingForPingAck was 0 == aren't expecting a ping ack!
+                                {
+                                    // waitingForPingAck was 0 ==不期待一个ping ack!
+                                    break;
+                                }
 
-                                // it was an ack, payload must contain what we sent
-
+                                // 这是一个ack，有效载荷必须包含我们发送的内容
                                 var ticks = BufferHelper.ReadLong(pingFrame.OpaqueData, 0);
 
-                                // the difference between the current time and the time when the ping message is sent
+                                // 当前时间与发送ping消息时的时间差
                                 TimeSpan diff = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - ticks);
 
-                                // add it to the buffer
+                                // 将其添加到缓冲区
                                 this._rtts.Add(diff.TotalMilliseconds);
 
-                                // and calculate the new latency
+                                // 计算新的延迟
                                 this.Latency = CalculateLatency();
-
-                                HttpManager.Logger.Verbose("HTTP2Handler",
-                                    $"Latency: {this.Latency:F2}ms, RTT buffer: {this._rtts}", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.Log(
+                                    $"[HTTP2Handler] [method:ReadThread()] Latency: {this.Latency:F2}ms, RTT buffer: {this._rtts}");
+#endif
                             }
 
                             break;
 
                         case Http2FrameTypes.Goaway:
-                            // Just exit from this thread. The processing thread will handle the frame too.
+                            // 退出这个线程。处理线程也会处理框架。
                             return;
                     }
                 }
@@ -640,7 +683,10 @@ namespace BestHTTP.Connections.HTTP2
             finally
             {
                 TryToCleanup();
-                HttpManager.Logger.Information("HTTP2Handler", "Reader thread closing", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP2Handler] [method:ReadThread()] 读取线程关闭");
+#endif
             }
         }
 
@@ -648,7 +694,7 @@ namespace BestHTTP.Connections.HTTP2
         {
             this._isRunning = false;
 
-            // First thread closing notifies the ConnectionEventHelper
+            // 第一个线程关闭通知ConnectionEventHelper
             int counter = Interlocked.Increment(ref this._threadExitCount);
             if (counter == 1)
                 ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this._conn,

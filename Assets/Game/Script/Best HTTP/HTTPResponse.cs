@@ -448,8 +448,10 @@ namespace BestHTTP
             var isFromCache = this.IsFromCache;
 #endif
             if (!isFromCache && name.Equals("alt-svc", StringComparison.Ordinal))
+            {
                 PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.AltSvcHeader,
                     new AltSvcEventInfo(this.BaseRequest.CurrentUri.Host, this)));
+            }
         }
 
         /// <summary>
