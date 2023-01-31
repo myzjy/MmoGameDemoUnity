@@ -23,6 +23,7 @@ using BestHTTP.Connections.TLS;
 #else
 using TcpClient = BestHTTP.PlatformSupport.TcpClient.General.TcpClient;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using BestHTTP.Timings;
 #endif
 
@@ -64,8 +65,7 @@ namespace BestHTTP.Connections
 
             #region TCP Connection
 
-            if (Client == null)
-                Client = new TcpClient();
+            Client ??= new TcpClient();
 
             if (!Client.Connected)
             {
@@ -78,12 +78,10 @@ namespace BestHTTP.Connections
 #endif
                     HTTPProtocolFactory.IsSecureProtocol(uri);
 #endif
-
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("TCPConnector",
-                        string.Format("'{0}' - Connecting to {1}:{2}", request.CurrentUri.ToString(), uri.Host,
-                            uri.Port.ToString()), request.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] '{request.CurrentUri.ToString()}' - Connecting to {uri.Host}:{uri.Port.ToString()}");
+#endif
 #if !NETFX_CORE && (!UNITY_WEBGL || UNITY_EDITOR)
                 bool changed = false;
                 int? sendBufferSize = null, receiveBufferSize = null;
@@ -105,20 +103,32 @@ namespace BestHTTP.Connections
                 if (HttpManager.Logger.Level == Logger.Loglevels.All)
                 {
                     if (changed)
-                        HttpManager.Logger.Verbose("TCPConnector", string.Format(
-                                "'{0}' - Buffer sizes changed - Send from: {1} to: {2}, Receive from: {3} to: {4}, Blocking: {5}",
-                                request.CurrentUri.ToString(),
-                                sendBufferSize,
-                                Client.SendBufferSize,
-                                receiveBufferSize,
-                                Client.ReceiveBufferSize,
-                                Client.Client.Blocking),
-                            request.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append($"'{request.CurrentUri.ToString()}'");
+                        sb.Append($"- Buffer sizes changed - Send from: {sendBufferSize}");
+                        sb.Append($" to: {Client.SendBufferSize},");
+                        sb.Append($" Receive from: {receiveBufferSize}");
+                        sb.Append($" to: {Client.ReceiveBufferSize},");
+                        sb.Append($" Blocking: {Client.Client.Blocking}");
+
+                        Debug.Log(
+                            $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] {sb.ToString()}");
+#endif
+                    }
                     else
-                        HttpManager.Logger.Verbose("TCPConnector",
-                            string.Format("'{0}' - Buffer sizes - Send: {1} Receive: {2} Blocking: {3}",
-                                request.CurrentUri.ToString(), Client.SendBufferSize, Client.ReceiveBufferSize,
-                                Client.Client.Blocking), request.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append($"'{request.CurrentUri.ToString()}'");
+                        sb.Append($"- Buffer sizes changed - Send: {Client.SendBufferSize},");
+                        sb.Append($" Receive: {Client.ReceiveBufferSize},");
+                        sb.Append($" Blocking: {Client.Client.Blocking}");
+                        Debug.Log($"[TCPConnector] [method: Connect(HttpRequest request)] [msg] {sb.ToString()}");
+#endif
+                    }
                 }
 #endif
 

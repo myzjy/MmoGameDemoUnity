@@ -177,7 +177,9 @@ namespace BestHTTP.Connections.HTTP2
                     this._values[key] = value;
 
                     if (oldValue != value && this.OnSettingChangedEvent != null)
+                    {
                         this.OnSettingChangedEvent(this, setting, oldValue, value);
+                    }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.Log(
                         $"[HTTP2SettingsRegistry] [method:Merge(List<KeyValuePair<Http2Settings, UInt32>> settings)] Merge {setting}({key}) = {value}");

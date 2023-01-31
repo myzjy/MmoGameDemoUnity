@@ -118,26 +118,25 @@ namespace BestHTTP.Connections
                         if (!string.IsNullOrEmpty(location))
                         {
                             Uri redirectUri = ConnectionHelper.GetRedirectUri(request, location);
-
-                            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                                HttpManager.Logger.Verbose("HTTPConnection",
-                                    string.Format("[{0}] - Redirected to Location: '{1}' redirectUri: '{1}'", context,
-                                        location, redirectUri), loggingContext1, loggingContext2, loggingContext3);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[HTTPConnection][method:HandleResponse] [msg] [{context}] - Redirected to Location: '{location}' redirectUri: '{redirectUri}'");
+#endif
                             if (redirectUri == request.CurrentUri)
                             {
-                                HttpManager.Logger.Information("HTTPConnection",
-                                    string.Format("[{0}] - Redirected to the same location!", context), loggingContext1,
-                                    loggingContext2, loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.Log($"[HTTPConnection][method:HandleResponse] [msg] [{context}] - 重定向到相同的位置!");
+#endif
                                 goto default;
                             }
 
                             // Let the user to take some control over the redirection
                             if (!request.CallOnBeforeRedirection(redirectUri))
                             {
-                                HttpManager.Logger.Information("HTTPConnection",
-                                    string.Format("[{0}] OnBeforeRedirection returned False", context), loggingContext1,
-                                    loggingContext2, loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.Log(
+                                    $"[HTTPConnection][method:HandleResponse] [msg] [{context}] OnBeforeRedirection返回False");
+#endif
                                 goto default;
                             }
 
@@ -155,9 +154,8 @@ namespace BestHTTP.Connections
                             resendRequest = true;
                         }
                         else
-                            throw new Exception(string.Format(
-                                "[{0}] Got redirect status({1}) without 'location' header!", context,
-                                request.Response.StatusCode.ToString()));
+                            throw new Exception(
+                                $"[{context}] Got redirect status({request.Response.StatusCode.ToString()}) without 'location' header!");
 
                         goto default;
                     }
@@ -171,18 +169,19 @@ namespace BestHTTP.Connections
                                 loggingContext3))
                         {
                             request.Timing.Add(TimingEventNames.Loading_From_Cache);
-                            HttpManager.Logger.Verbose("HTTPConnection",
-                                string.Format("[{0}] - HandleResponse - Loaded from cache successfully!", context),
-                                loggingContext1, loggingContext2, loggingContext3);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[HTTPConnection][method:HandleResponse] [msg] [{context}] - HandleResponse - 成功从缓存加载!");
+#endif
                             // Update any caching value
                             HttpCacheService.SetUpCachingValues(request.CurrentUri, request.Response);
                         }
                         else
                         {
-                            HttpManager.Logger.Verbose("HTTPConnection",
-                                string.Format("[{0}] - HandleResponse - Loaded from cache failed!", context),
-                                loggingContext1, loggingContext2, loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[HTTPConnection][method:HandleResponse] [msg] [{context}] - HandleResponse - 从缓存加载失败!");
+#endif
                             resendRequest = true;
                         }
 
@@ -196,11 +195,10 @@ namespace BestHTTP.Connections
                         break;
                 }
 
-                // Closing the stream is done manually?
+                // 关闭流是手动完成的?
                 if (request.Response != null && !request.Response.IsClosedManually)
                 {
-                    // If we have a response and the server telling us that it closed the connection after the message sent to us, then
-                    //  we will close the connection too.
+                    // 如果我们有一个响应，并且服务器在消息发送给我们之后告诉我们它关闭了连接，那么我们也将关闭连接。
                     bool closeByServer = request.Response.HasHeaderWithValue("connection", "close");
                     bool closeByClient = !request.IsKeepAlive;
 
@@ -213,24 +211,24 @@ namespace BestHTTP.Connections
                         var keepAliveheaderValues = request.Response.GetHeaderValues("keep-alive");
                         if (keepAliveheaderValues != null && keepAliveheaderValues.Count > 0)
                         {
-                            if (keepAlive == null)
-                                keepAlive = new KeepAliveHeader();
+                            keepAlive ??= new KeepAliveHeader();
+
                             keepAlive.Parse(keepAliveheaderValues);
                         }
                     }
                 }
 
-                // Null out the response here instead of the redirected cases (301, 302, 307, 308)
-                //  because response might have a Connection: Close header that we would miss to process.
-                // If Connection: Close is present, the server is closing the connection and we would
-                // reuse that closed connection.
+                // 在这里取消响应，而不是重定向的情况(301,302,307,308)，因为响应可能有一个Connection: Close报头，我们会错过处理。
+                // 如果Connection: Close存在，则服务器正在关闭连接，我们将重用已关闭的连接。
                 if (resendRequest)
                 {
-                    // Discard the redirect response, we don't need it any more
+                    // 丢弃重定向响应，我们不再需要它了
                     request.Response = null;
 
                     if (proposedConnectionState == HttpConnectionStates.Closed)
+                    {
                         proposedConnectionState = HttpConnectionStates.ClosedResendRequest;
+                    }
                 }
             }
         }
@@ -247,7 +245,7 @@ namespace BestHTTP.Connections
             }
             catch
             {
-                // Sometimes the server sends back only the path and query component of the new uri
+                // 有时服务器只发回新uri的路径和查询组件
                 result = null;
             }
 
@@ -268,11 +266,17 @@ namespace BestHTTP.Connections
                 bool endsWithSlash = baseURL[baseURL.Length - 1] == '/';
                 bool startsWithSlash = location[0] == '/';
                 if (endsWithSlash && startsWithSlash)
-                    result = new Uri(baseURL + location.Substring(1));
+                {
+                    result = new Uri($"{baseURL}{location.Substring(1)}");
+                }
                 else if (!endsWithSlash && !startsWithSlash)
-                    result = new Uri(baseURL + '/' + location);
+                {
+                    result = new Uri($"{baseURL}/{location}");
+                }
                 else
-                    result = new Uri(baseURL + location);
+                {
+                    result = new Uri($"{baseURL}{location}");
+                }
             }
 
             return result;
@@ -286,7 +290,9 @@ namespace BestHTTP.Connections
             {
                 if (LoadFromCache(context, request, request.RedirectUri, loggingContext1, loggingContext2,
                         loggingContext3))
+                {
                     return true;
+                }
                 else
                 {
                     Caching.HttpCacheService.DeleteEntity(request.RedirectUri);
@@ -296,7 +302,9 @@ namespace BestHTTP.Connections
             bool loaded = LoadFromCache(context, request, request.Uri, loggingContext1, loggingContext2,
                 loggingContext3);
             if (!loaded)
+            {
                 Caching.HttpCacheService.DeleteEntity(request.Uri);
+            }
 
             return loaded;
         }
@@ -305,17 +313,17 @@ namespace BestHTTP.Connections
             LoggingContext loggingContext1 = null, LoggingContext loggingContext2 = null,
             LoggingContext loggingContext3 = null)
         {
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("HTTPConnection",
-                    string.Format("[{0}] - LoadFromCache for Uri: {1}", context, uri.ToString()), loggingContext1,
-                    loggingContext2, loggingContext3);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPConnection][method:LoadFromCache] [msg] [{context}] - LoadFromCache for Uri: {uri.ToString()}");
+#endif
             var cacheEntity = HttpCacheService.GetEntity(uri);
             if (cacheEntity == null)
             {
-                HttpManager.Logger.Warning("HTTPConnection",
-                    string.Format("[{0}] - LoadFromCache for Uri: {1} - Cached entity not found!", context,
-                        uri.ToString()), loggingContext1, loggingContext2, loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTPConnection] [method:LoadFromCache] [msg] [{context}] - LoadFromCache for Uri: {uri.ToString()} - 缓存实体未找到!");
+#endif
                 return false;
             }
 
@@ -323,18 +331,20 @@ namespace BestHTTP.Connections
 
             try
             {
-                int bodyLength;
-                using (var cacheStream = cacheEntity.GetBodyStream(out bodyLength))
+                using var cacheStream = cacheEntity.GetBodyStream(out var bodyLength);
+                if (cacheStream == null)
+                    return false;
+
+                if (!request.Response.HasHeader("content-length"))
                 {
-                    if (cacheStream == null)
-                        return false;
+                    request.Response.AddHeader("content-length", bodyLength.ToString());
+                }
 
-                    if (!request.Response.HasHeader("content-length"))
-                        request.Response.AddHeader("content-length", bodyLength.ToString());
-                    request.Response.IsFromCache = true;
+                request.Response.IsFromCache = true;
 
-                    if (!request.CacheOnly)
-                        request.Response.ReadRaw(cacheStream, bodyLength);
+                if (!request.CacheOnly)
+                {
+                    request.Response.ReadRaw(cacheStream, bodyLength);
                 }
             }
             catch
@@ -349,27 +359,29 @@ namespace BestHTTP.Connections
             LoggingContext loggingContext1 = null, LoggingContext loggingContext2 = null,
             LoggingContext loggingContext3 = null)
         {
-            // We will try to read the response from the cache, but if something happens we will fallback to the normal way.
+            // 我们将尝试从缓存中读取响应，但如果发生了什么事情，我们将退回到正常的方式。
             try
             {
-                //Unless specifically constrained by a cache-control (section 14.9) directive, a caching system MAY always store a successful response (see section 13.8) as a cache entity,
-                //  MAY return it without validation if it is fresh, and MAY    return it after successful validation.
-                // MAY return it without validation if it is fresh!
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("ConnectionHelper",
-                        $"[{context}] - TryLoadAllFromCache - whole response loading from cache", loggingContext1,
-                        loggingContext2, loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                //除非被缓存控制指令(第14.9节)特别约束，缓存系统可能总是将一个成功的响应(见第13.8节)存储为缓存实体，
+                //如果它是新鲜的，可以不经过验证就返回，并且在验证成功后可以返回。
+                //如果它是新鲜的，可能不需要验证就返回它!
+                Debug.Log(
+                    $"[ConnectionHelper] [method:TryLoadAllFromCache] [msg] [{context}] - TryLoadAllFromCache - 从缓存加载整个响应");
+#endif
 
                 request.Response = HttpCacheService.GetFullResponse(request);
-
                 if (request.Response != null)
+                {
                     return true;
+                }
             }
             catch
             {
-                HttpManager.Logger.Verbose("ConnectionHelper",
-                    $"[{context}] - TryLoadAllFromCache - failed to load content!", loggingContext1, loggingContext2,
-                    loggingContext3);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    "[ConnectionHelper] [method:TryLoadAllFromCache] [msg] [{context}] - TryLoadAllFromCache - 加载内容失败!");
+#endif
                 HttpCacheService.DeleteEntity(request.CurrentUri);
             }
 
@@ -378,7 +390,7 @@ namespace BestHTTP.Connections
 
         public static void TryStoreInCache(HttpRequest request)
         {
-            // if UseStreaming && !DisableCache then we already wrote the response to the cache
+            // 如果UseStreaming && !DisableCache，那么我们已经写了对缓存的响应
             if (!request.UseStreaming &&
                 !request.DisableCache &&
                 request.Response != null &&
@@ -386,9 +398,14 @@ namespace BestHTTP.Connections
                 HttpCacheService.IsCacheable(request.CurrentUri, request.MethodType, request.Response))
             {
                 if (request.IsRedirected)
+                {
                     HttpCacheService.Store(request.Uri, request.MethodType, request.Response);
+                }
                 else
+                {
                     HttpCacheService.Store(request.CurrentUri, request.MethodType, request.Response);
+                }
+
                 request.Timing.Add(TimingEventNames.Writing_To_Cache);
 
                 PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.SaveCacheLibrary));

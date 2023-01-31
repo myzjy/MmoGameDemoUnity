@@ -44,10 +44,10 @@ namespace BestHTTP.Connections
 
         public void RunHandler()
         {
-            HttpManager.Logger.Information("HTTP1Handler",
-                string.Format("[{0}] started processing request '{1}'", this,
-                    this.conn.CurrentRequest.CurrentUri.ToString()), this.Context, this.conn.CurrentRequest.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTP1Handler] [method:RunHandler] [msg|Exception] [{this}]开始处理请求 '{this.conn.CurrentRequest.CurrentUri.ToString()}'");
+#endif
             System.Threading.Thread.CurrentThread.Name = "BestHTTP.HTTP1 R&W";
 
             HttpConnectionStates proposedConnectionState = HttpConnectionStates.Processing;
@@ -57,32 +57,40 @@ namespace BestHTTP.Connections
             try
             {
                 if (this.conn.CurrentRequest.IsCancellationRequested)
+                {
                     return;
+                }
 
 #if !BESTHTTP_DISABLE_CACHING
-                // Setup cache control headers before we send out the request
+                // 在我们发送请求之前设置缓存控制头
                 if (!this.conn.CurrentRequest.DisableCache)
+                {
                     HttpCacheService.SetHeaders(this.conn.CurrentRequest);
+                }
 #endif
 
-                // Write the request to the stream
+                // 将请求写入流
                 this.conn.CurrentRequest.QueuedAt = DateTime.MinValue;
                 this.conn.CurrentRequest.ProcessingStarted = DateTime.UtcNow;
                 this.conn.CurrentRequest.SendOutTo(this.conn.connector.Stream);
                 this.conn.CurrentRequest.Timing.Add(TimingEventNames.Request_Sent);
 
                 if (this.conn.CurrentRequest.IsCancellationRequested)
+                {
                     return;
+                }
 
                 this.conn.CurrentRequest.OnCancellationRequested += OnCancellationRequested;
 
-                // Receive response from the server
+                // 从服务器接收响应
                 bool received = Receive(this.conn.CurrentRequest);
 
                 this.conn.CurrentRequest.Timing.Add(TimingEventNames.Response_Received);
 
                 if (this.conn.CurrentRequest.IsCancellationRequested)
+                {
                     return;
+                }
 
                 if (!received && this.conn.CurrentRequest.Retries < this.conn.CurrentRequest.MaxRetries)
                 {
@@ -144,9 +152,9 @@ namespace BestHTTP.Connections
 
                     exceptionMessage = sb.ToString();
                 }
-
-                HttpManager.Logger.Verbose("HTTP1Handler", exceptionMessage, this.Context,
-                    this.conn.CurrentRequest.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HTTP1Handler] [method:RunHandler] [msg|Exception] {exceptionMessage}");
+#endif
 
 #if !BESTHTTP_DISABLE_CACHING
                 if (this.conn.CurrentRequest.UseStreaming)
@@ -253,30 +261,26 @@ namespace BestHTTP.Connections
         private bool Receive(HttpRequest request)
         {
             SupportedProtocols protocol = HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri);
-
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("HTTPConnection",
-                    string.Format("[{0}] - Receive - protocol: {1}", this.ToString(), protocol.ToString()),
-                    this.Context, request.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPConnection] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - protocol: {protocol.ToString()}");
+#endif
             request.Response = HttpProtocolFactory.Get(protocol, request, this.conn.connector.Stream,
                 request.UseStreaming, false);
 
             if (!request.Response.Receive())
             {
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("HTTP1Handler",
-                        string.Format("[{0}] - Receive - Failed! Response will be null, returning with false.",
-                            this.ToString()), this.Context, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP1Handler] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - 失败了!响应将为空，返回false。");
+#endif
                 request.Response = null;
                 return false;
             }
-
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("HTTP1Handler",
-                    string.Format("[{0}] - Receive - Finished Successfully!", this.ToString()), this.Context,
-                    request.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTP1Handler] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - 成功完成了!");
+#endif
             return true;
         }
 

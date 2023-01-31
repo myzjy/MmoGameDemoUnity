@@ -20,7 +20,9 @@ namespace BestHTTP.Connections.TLS.Crypto
         public override TlsCipher CreateCipher(TlsCryptoParameters cryptoParams, int encryptionAlgorithm,
             int macAlgorithm)
         {
-            HttpManager.Logger.Verbose(nameof(FastTlsCrypto), $"CreateCipher({encryptionAlgorithm}, {macAlgorithm})");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[{nameof(FastTlsCrypto)}] [msg] CreateCipher({encryptionAlgorithm}, {macAlgorithm})");
+#endif
 
             switch (encryptionAlgorithm)
             {
