@@ -1,5 +1,6 @@
 #if CSHARP_7_OR_LATER
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -37,8 +38,8 @@ namespace BestHTTP
 
         public override string ToString()
         {
-            return string.Format("StatusCode: {0}, Message: {1}, Content: {2}, StackTrace: {3}", this.StatusCode,
-                this.Message, this.Content, this.StackTrace);
+            return
+                $"StatusCode: {this.StatusCode}, Message: {this.Message}, Content: {this.Content}, StackTrace: {this.StackTrace}";
         }
     }
 
@@ -51,40 +52,57 @@ namespace BestHTTP
             {
                 switch (req.State)
                 {
-                    // The request finished without any problem.
+                    // 请求顺利完成。
                     case HttpRequestStates.Finished:
+                    {
                         tcs.TrySetResult(resp);
+                    }
                         break;
 
-                    // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                    // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                     case HttpRequestStates.Error:
-                        VerboseLogging(request,
-                            "Request Finished with Error! " + (req.Exception != null
-                                ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
-                                : "No Exception"));
-
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(10);
+                        sb.Append($"Request Finished with Error! ");
+                        sb.Append((req.Exception != null
+                            ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
+                            : "No Exception"));
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetHTTPResponseAsync] [msg|Exception] {sb.ToString()}");
+#endif
                         tcs.TrySetException(CreateException("No Exception", null, req.Exception));
+                    }
                         break;
 
-                    // The request aborted, initiated by the user.
+                    // 由用户发起的请求中止。
                     case HttpRequestStates.Aborted:
-                        VerboseLogging(request, "Request Aborted!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetHTTPResponseAsync] [msg|Exception] 请求被中止！");
+#endif
 
                         tcs.TrySetCanceled();
                         break;
 
-                    // Connecting to the server is timed out.
+                    // 连接服务器超时。处理步骤
                     case HttpRequestStates.ConnectionTimedOut:
-                        VerboseLogging(request, "Connection Timed Out!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetHTTPResponseAsync] [msg|Exception] 连接超时");
+#endif
 
-                        tcs.TrySetException(CreateException("Connection Timed Out!"));
+                        tcs.TrySetException(CreateException("连接超时!"));
                         break;
 
-                    // The request didn't finished in the given time.
+                    // 请求没有在规定的时间内完成。
                     case HttpRequestStates.TimedOut:
-                        VerboseLogging(request, "Processing the request Timed Out!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetHTTPResponseAsync] [msg|Exception] 处理请求超时！");
+#endif
 
-                        tcs.TrySetException(CreateException("Processing the request Timed Out!"));
+                        tcs.TrySetException(CreateException("处理请求超时!"));
                         break;
                 }
             });
@@ -96,44 +114,64 @@ namespace BestHTTP
             {
                 switch (req.State)
                 {
-                    // The request finished without any problem.
+                    // 请求顺利完成。
                     case HttpRequestStates.Finished:
                         if (resp.IsSuccess)
+                        {
                             tcs.TrySetResult(resp.DataAsText);
+                        }
                         else
+                        {
                             tcs.TrySetException(
-                                CreateException("Request finished Successfully, but the server sent an error.", resp));
+                                CreateException("求成功完成，但是服务器发送了一个错误.", resp));
+                        }
+
                         break;
 
-                    // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                    // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                     case HttpRequestStates.Error:
-                        VerboseLogging(request,
-                            "Request Finished with Error! " + (req.Exception != null
-                                ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
-                                : "No Exception"));
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(10);
+                        sb.Append($"Request Finished with Error! ");
+                        sb.Append((req.Exception != null
+                            ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
+                            : "No Exception"));
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsStringAsync] [msg|Exception] {sb.ToString()}");
+#endif
 
                         tcs.TrySetException(CreateException("No Exception", null, req.Exception));
+                    }
                         break;
 
-                    // The request aborted, initiated by the user.
+                    // 由用户发起的请求中止。
                     case HttpRequestStates.Aborted:
-                        VerboseLogging(request, "Request Aborted!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsStringAsync] [msg|Exception] 请求被中止！");
+#endif
 
                         tcs.TrySetCanceled();
                         break;
 
-                    // Connecting to the server is timed out.
+                    // 连接服务器超时。处理步骤
                     case HttpRequestStates.ConnectionTimedOut:
-                        VerboseLogging(request, "Connection Timed Out!");
-
-                        tcs.TrySetException(CreateException("Connection Timed Out!"));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsStringAsync] [msg|Exception] 连接超时");
+#endif
+                        tcs.TrySetException(CreateException("连接超时!"));
                         break;
 
-                    // The request didn't finished in the given time.
+                    // 请求没有在规定的时间内完成。
                     case HttpRequestStates.TimedOut:
-                        VerboseLogging(request, "Processing the request Timed Out!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsStringAsync] [msg|Exception] 处理请求超时！");
+#endif
 
-                        tcs.TrySetException(CreateException("Processing the request Timed Out!"));
+                        tcs.TrySetException(CreateException("处理请求超时!"));
                         break;
                 }
             });
@@ -145,44 +183,65 @@ namespace BestHTTP
             {
                 switch (req.State)
                 {
-                    // The request finished without any problem.
+                    // 请求顺利完成。
                     case HttpRequestStates.Finished:
                         if (resp.IsSuccess)
+                        {
                             tcs.TrySetResult(resp.DataAsTexture2D);
+                        }
                         else
+                        {
                             tcs.TrySetException(
-                                CreateException("Request finished Successfully, but the server sent an error.", resp));
+                                CreateException("求成功完成，但是服务器发送了一个错误.", resp));
+                        }
+
                         break;
 
-                    // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                    // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                     case HttpRequestStates.Error:
-                        VerboseLogging(request,
-                            "Request Finished with Error! " + (req.Exception != null
-                                ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
-                                : "No Exception"));
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(10);
+                        sb.Append($"Request Finished with Error! ");
+                        sb.Append((req.Exception != null
+                            ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
+                            : "No Exception"));
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsTexture2DAsync] [msg|Exception] {sb.ToString()}");
+#endif
 
                         tcs.TrySetException(CreateException("No Exception", null, req.Exception));
+                    }
+
                         break;
 
-                    // The request aborted, initiated by the user.
+                    // 由用户发起的请求中止。
                     case HttpRequestStates.Aborted:
-                        VerboseLogging(request, "Request Aborted!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsTexture2DAsync] [msg|Exception] 请求被中止！");
+#endif
 
                         tcs.TrySetCanceled();
                         break;
 
-                    // Connecting to the server is timed out.
+                    // 连接服务器超时。处理步骤
                     case HttpRequestStates.ConnectionTimedOut:
-                        VerboseLogging(request, "Connection Timed Out!");
-
-                        tcs.TrySetException(CreateException("Connection Timed Out!"));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsTexture2DAsync] [msg|Exception] 连接超时");
+#endif
+                        tcs.TrySetException(CreateException("连接超时!"));
                         break;
 
-                    // The request didn't finished in the given time.
+                    // 请求没有在规定的时间内完成。
                     case HttpRequestStates.TimedOut:
-                        VerboseLogging(request, "Processing the request Timed Out!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetAsTexture2DAsync] [msg|Exception] 处理请求超时！");
+#endif
 
-                        tcs.TrySetException(CreateException("Processing the request Timed Out!"));
+                        tcs.TrySetException(CreateException("处理请求超时!"));
                         break;
                 }
             });
@@ -194,44 +253,67 @@ namespace BestHTTP
             {
                 switch (req.State)
                 {
-                    // The request finished without any problem.
+                    // 请求顺利完成。
                     case HttpRequestStates.Finished:
+                    {
                         if (resp.IsSuccess)
+                        {
                             tcs.TrySetResult(resp.Data);
+                        }
                         else
+                        {
                             tcs.TrySetException(
-                                CreateException("Request finished Successfully, but the server sent an error.", resp));
+                                CreateException("请求成功完成，但是服务器发送了一个错误.", resp));
+                        }
+                    }
+
                         break;
 
-                    // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                    // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                     case HttpRequestStates.Error:
-                        VerboseLogging(request,
-                            "Request Finished with Error! " + (req.Exception != null
-                                ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
-                                : "No Exception"));
-
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(10);
+                        sb.Append($"Request Finished with Error! ");
+                        sb.Append((req.Exception != null
+                            ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
+                            : "No Exception"));
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetRawDataAsync] [msg|Exception] {sb.ToString()}");
+#endif
                         tcs.TrySetException(CreateException("No Exception", null, req.Exception));
+                    }
                         break;
 
-                    // The request aborted, initiated by the user.
+                    // 由用户发起的请求中止。
                     case HttpRequestStates.Aborted:
-                        VerboseLogging(request, "Request Aborted!");
-
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetRawDataAsync] [msg|Exception] 请求被中止！");
+#endif
                         tcs.TrySetCanceled();
+                    }
                         break;
 
-                    // Connecting to the server is timed out.
+                    // 连接服务器超时。处理步骤
                     case HttpRequestStates.ConnectionTimedOut:
-                        VerboseLogging(request, "Connection Timed Out!");
-
-                        tcs.TrySetException(CreateException("Connection Timed Out!"));
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetRawDataAsync] [msg|Exception] 连接超时");
+#endif
+                        tcs.TrySetException(CreateException("连接超时!"));
+                    }
                         break;
 
-                    // The request didn't finished in the given time.
+                    // 请求没有在规定的时间内完成。
                     case HttpRequestStates.TimedOut:
-                        VerboseLogging(request, "Processing the request Timed Out!");
-
-                        tcs.TrySetException(CreateException("Processing the request Timed Out!"));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HTTPRequestAsyncExtensions] [method: GetRawDataAsync] [msg|Exception] 处理请求超时！");
+#endif
+                        tcs.TrySetException(CreateException("处理请求超时!"));
                         break;
                 }
             });
@@ -248,16 +330,24 @@ namespace BestHTTP
             request.Callback = (req, resp) =>
             {
                 if (token.IsCancellationRequested)
+                {
                     tcs.SetCanceled();
+                }
                 else
+                {
                     callback(req, resp, tcs);
+                }
             };
 
             if (token.CanBeCanceled)
+            {
                 token.Register((state) => (state as HttpRequest)?.Abort(), request);
+            }
 
             if (request.State == HttpRequestStates.Initial)
+            {
                 request.Send();
+            }
 
             return tcs.Task;
         }
@@ -265,18 +355,27 @@ namespace BestHTTP
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static void VerboseLogging(HttpRequest request, string str)
         {
-            HttpManager.Logger.Verbose("HTTPRequestAsyncExtensions", str, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPRequestAsyncExtensions] [method: VerboseLogging(HttpRequest request, string str)] [msg|Exception] {str}");
+#endif
         }
 
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static Exception CreateException(string errorMessage, HttpResponse resp = null, Exception ex = null)
         {
             if (resp != null)
+            {
                 return new AsyncHTTPException(resp.StatusCode, resp.Message, resp.DataAsText);
+            }
             else if (ex != null)
+            {
                 return new AsyncHTTPException(ex.Message, ex);
+            }
             else
+            {
                 return new AsyncHTTPException(errorMessage);
+            }
         }
     }
 }

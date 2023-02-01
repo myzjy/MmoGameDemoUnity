@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
@@ -15,7 +16,7 @@ namespace BestHTTP.Core
     }
 
     /// <summary>
-    /// A HostConnection object manages the connections to a host and the request queue.
+    /// HostConnection对象管理到主机和请求队列的连接。
     /// </summary>
     public sealed class HostConnection
     {
@@ -53,9 +54,10 @@ namespace BestHTTP.Core
             {
                 this.ProtocolSupport = protocolSupport;
 
-                HttpManager.Logger.Information(nameof(HostConnection),
-                    $"AddProtocol({this.VariantId}) - changing from {oldProtocol} to {protocolSupport}", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[{nameof(HostConnection)}] [method:AddProtocol(HostProtocolSupport protocolSupport)] [msg|Exception] AddProtocol({this.VariantId}) - changing from {oldProtocol} to {protocolSupport}");
+#endif
                 HostManager.Save();
 
                 TryToSendQueuedRequests();
@@ -72,12 +74,12 @@ namespace BestHTTP.Core
 
                 request.Prepare();
 
-                // then start process the request
+                // 然后开始处理请求
                 conn.Process(request);
             }
             else
             {
-                // If no free connection found and creation prohibited, we will put back to the queue
+                // 如果没有发现空闲连接且创建被禁止，则将其放回队列
                 this._queue.Add(request);
             }
 
@@ -88,8 +90,7 @@ namespace BestHTTP.Core
         {
             int activeConnections = 0;
             ConnectionBase conn;
-            // Check the last created connection first. This way, if a higher level protocol is present that can handle more requests (== HTTP/2) that protocol will be chosen
-            //  and others will be closed when their inactivity time is reached.
+            //首先检查最后创建的连接。这样，如果存在一个更高级别的协议，可以处理更多的请求(== HTTP/2)，该协议将被选择，而其他协议将在达到不活动时间时关闭。
             for (int i = _connections.Count - 1; i >= 0; --i)
             {
                 conn = _connections[i];
@@ -99,18 +100,20 @@ namespace BestHTTP.Core
                 {
                     if (!conn.TestConnection())
                     {
-                        HttpManager.Logger.Verbose("HostConnection",
-                            "GetNextAvailable - TestConnection returned false!", this.Context, request.Context,
-                            conn.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] GetNextAvailable - TestConnection returned false!");
+#endif
                         RemoveConnectionImpl(conn, HttpConnectionStates.Closed);
                         continue;
                     }
-
-                    HttpManager.Logger.Verbose("HostConnection",
-                        string.Format(
-                            "GetNextAvailable - returning with connection. state: {0}, CanProcessMultiple: {1}",
-                            conn.State, conn.CanProcessMultiple), this.Context, request.Context, conn.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($" GetNextAvailable -返回连接。 ");
+                    sb.Append($" state: {conn.State}, CanProcessMultiple: {conn.CanProcessMultiple}");
+                    Debug.Log(
+                        $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] {sb.ToString()}");
+#endif
                     return conn;
                 }
 
@@ -119,10 +122,13 @@ namespace BestHTTP.Core
 
             if (activeConnections >= HttpManager.MaxConnectionPerServer)
             {
-                HttpManager.Logger.Verbose("HostConnection",
-                    string.Format(
-                        "GetNextAvailable - activeConnections({0}) >= HTTPManager.MaxConnectionPerServer({1})",
-                        activeConnections, HttpManager.MaxConnectionPerServer), this.Context, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"GetNextAvailable - activeConnections({activeConnections}) ");
+                sb.Append($" >= HTTPManager.MaxConnectionPerServer({HttpManager.MaxConnectionPerServer})");
+                Debug.Log(
+                    $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] {sb.ToString()}");
+#endif
                 return null;
             }
 
@@ -136,25 +142,33 @@ namespace BestHTTP.Core
             else
             {
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL
-                // Hold back the creation of a new connection until we know more about the remote host's features.
-                // If we send out multiple requests at once it will execute the first and delay the others. 
-                // While it will decrease performance initially, it will prevent the creation of TCP connections
-                //  that will be unused after their first request processing if the server supports HTTP/2.
+                //在我们了解更多远程主机的特性之前，暂停创建新连接。
+                //如果我们一次发送多个请求，它将执行第一个请求，并延迟其他请求。
+                //虽然会降低初始性能，但会阻止TCP连接的创建
+                //如果服务器支持HTTP/2，在第一次请求处理后将不使用。
                 if (activeConnections >= 1 && (this.ProtocolSupport == HostProtocolSupport.Unknown ||
                                                this.ProtocolSupport == HostProtocolSupport.Http2))
                 {
-                    HttpManager.Logger.Verbose("HostConnection",
-                        string.Format(
-                            "GetNextAvailable - waiting for protocol support message. activeConnections: {0}, ProtocolSupport: {1} ",
-                            activeConnections, this.ProtocolSupport), this.Context, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"GetNextAvailable - 等待协议支持消息。如果连接: {activeConnections},");
+                    sb.Append($"ProtocolSupport: {this.ProtocolSupport} ");
+                    Debug.Log(
+                        $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] {sb.ToString()}");
+#endif
                     return null;
                 }
 #endif
 
                 conn = new HTTPConnection(key);
-                HttpManager.Logger.Verbose("HostConnection",
-                    $"GetNextAvailable - creating new connection, key: {key} ", this.Context,
-                    request.Context, conn.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"GetNextAvailable - creating new connection, key: {key} ");
+                    Debug.Log(
+                        $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] {sb.ToString()}");
+#endif
+                }
             }
 #endif
             _connections.Add(conn);
@@ -180,9 +194,14 @@ namespace BestHTTP.Core
             bool found = this._connections.Remove(conn);
 
             if (!found)
-                HttpManager.Logger.Information(nameof(HostConnection),
-                    $"RemoveConnection - Couldn't find connection! key: {conn.ServerAddress}", this.Context,
-                    conn.Context);
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"RemoveConnection - 找不到联系! key: {conn.ServerAddress} ");
+                Debug.Log(
+                    $"[{nameof(HostConnection)}] [method: RemoveConnectionImpl(ConnectionBase conn, HttpConnectionStates setState)] [msg|Exception] {sb.ToString()}");
+#endif
+            }
 
             return found;
         }
@@ -218,29 +237,38 @@ namespace BestHTTP.Core
                                    now - conn.LastProcessTime >= conn.KeepAliveTime;
             if (closeConnection)
             {
-                HttpManager.Logger.Information(nameof(HostConnection),
-                    $"CloseConnectionAfterInactivity - [{conn}] Closing! State: {conn.State}, Now: {now.ToString(System.Globalization.CultureInfo.InvariantCulture)}, LastProcessTime: {conn.LastProcessTime.ToString(System.Globalization.CultureInfo.InvariantCulture)}, KeepAliveTime: {conn.KeepAliveTime}",
-                    this.Context, conn.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"CloseConnectionAfterInactivity - [{conn}] Closing!");
+                sb.Append(
+                    $" State: {conn.State}, Now: {now.ToString(System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.Append(
+                    $" LastProcessTime: {conn.LastProcessTime.ToString(System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.Append($" KeepAliveTime: {conn.KeepAliveTime}");
+                Debug.Log(
+                    $"[{nameof(HostConnection)}] [method: CloseConnectionAfterInactivity(DateTime now, object context)] [msg|Exception] {sb.ToString()}");
+#endif
                 RemoveConnection(conn, HttpConnectionStates.Closed);
                 return false;
             }
 
-            // repeat until the connection's state is free
+            // 重复该操作，直到连接状态为空闲
             return conn is { State: HttpConnectionStates.Free };
         }
 
         public void RemoveAllIdleConnections()
         {
             for (int i = 0; i < this._connections.Count; i++)
-                if (this._connections[i].State == HttpConnectionStates.Free)
-                {
-                    int countBefore = this._connections.Count;
-                    RemoveConnection(this._connections[i], HttpConnectionStates.Closed);
+            {
+                if (this._connections[i].State != HttpConnectionStates.Free) continue;
+                int countBefore = this._connections.Count;
+                RemoveConnection(this._connections[i], HttpConnectionStates.Closed);
 
-                    if (countBefore != this._connections.Count)
-                        i--;
+                if (countBefore != this._connections.Count)
+                {
+                    i--;
                 }
+            }
         }
 
         internal void Shutdown()
@@ -249,7 +277,7 @@ namespace BestHTTP.Core
 
             foreach (var conn in this._connections)
             {
-                // Swallow any exceptions, we are quitting anyway.
+                // 没有任何例外，我们无论如何都要退出。
                 try
                 {
                     conn.Shutdown(ShutdownTypes.Immediate);
@@ -275,17 +303,31 @@ namespace BestHTTP.Core
 
             if (DateTime.UtcNow - this.LastProtocolSupportUpdate >= TimeSpan.FromDays(1))
             {
-                HttpManager.Logger.Verbose("HostConnection",
-                    string.Format("LoadFrom - Too Old! LastProtocolSupportUpdate: {0}, ProtocolSupport: {1}",
-                        this.LastProtocolSupportUpdate.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                        this.ProtocolSupport), this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"LoadFrom - Too Old! LastProtocolSupportUpdate:");
+                sb.Append(
+                    $" {this.LastProtocolSupportUpdate.ToString(System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.Append(
+                    $" ProtocolSupport: {this.ProtocolSupport}");
+                Debug.Log(
+                    $"[{nameof(HostConnection)}] [method: LoadFrom(int version, System.IO.BinaryReader br)] [msg|Exception] {sb.ToString()}");
+#endif
                 this.ProtocolSupport = HostProtocolSupport.Unknown;
             }
             else
-                HttpManager.Logger.Verbose("HostConnection",
-                    string.Format("LoadFrom - LastProtocolSupportUpdate: {0}, ProtocolSupport: {1}",
-                        this.LastProtocolSupportUpdate.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                        this.ProtocolSupport), this.Context);
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"LoadFrom - LastProtocolSupportUpdate:");
+                sb.Append(
+                    $" {this.LastProtocolSupportUpdate.ToString(System.Globalization.CultureInfo.InvariantCulture)},");
+                sb.Append(
+                    $" ProtocolSupport: {this.ProtocolSupport}");
+                Debug.Log(
+                    $"[{nameof(HostConnection)}] [method: LoadFrom(int version, System.IO.BinaryReader br)] [msg|Exception] {sb.ToString()}");
+#endif
+            }
         }
     }
 }

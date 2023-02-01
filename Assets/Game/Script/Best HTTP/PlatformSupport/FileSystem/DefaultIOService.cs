@@ -8,59 +8,57 @@ namespace BestHTTP.PlatformSupport.FileSystem
     {
         public Stream CreateFileStream(string path, FileStreamModes mode)
         {
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService",
-                    string.Format("CreateFileStream path: '{0}' mode: {1}", path, mode));
-
-            switch (mode)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: CreateFileStream(path:{path}, mode:{mode})] [msg|Exception] CreateFileStream path: '{path}' mode: {mode}");
+#endif
+            return mode switch
             {
-                case FileStreamModes.Create:
-                    return new FileStream(path, FileMode.Create);
-                case FileStreamModes.OpenRead:
-                    return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                case FileStreamModes.OpenReadWrite:
-                    return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-                case FileStreamModes.Append:
-                    return new FileStream(path, FileMode.Append);
-            }
-
-            throw new NotImplementedException("DefaultIOService.CreateFileStream - mode not implemented: " +
-                                              mode.ToString());
+                FileStreamModes.Create => new FileStream(path, FileMode.Create),
+                FileStreamModes.OpenRead => new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read),
+                FileStreamModes.OpenReadWrite => new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                    FileShare.ReadWrite),
+                FileStreamModes.Append => new FileStream(path, FileMode.Append),
+                _ => throw new NotImplementedException(
+                    $"DefaultIOService.CreateFileStream - mode not implemented: {mode.ToString()}")
+            };
         }
 
         public void DirectoryCreate(string path)
         {
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService", string.Format("DirectoryCreate path: '{0}'", path));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: DirectoryCreate(path:{path})] [msg|Exception] DirectoryCreate path: '{path}'");
+#endif
             Directory.CreateDirectory(path);
         }
 
         public bool DirectoryExists(string path)
         {
             bool exists = Directory.Exists(path);
-
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService",
-                    string.Format("DirectoryExists path: '{0}' exists: {1}", path, exists));
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: DirectoryExists(path:{path})] [msg|Exception] DirectoryExists path: '{path}' exists: {exists}");
+#endif
             return exists;
         }
 
         public string[] GetFiles(string path)
         {
             var files = Directory.GetFiles(path);
-
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService",
-                    string.Format("GetFiles path: '{0}' files count: {1}", path, files.Length));
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: GetFiles(path:{path})] [msg|Exception] GetFiles path: '{path}' files count: {files.Length}");
+#endif
             return files;
         }
 
         public void FileDelete(string path)
         {
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService", string.Format("FileDelete path: '{0}'", path));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: FileDelete(path:{path})] [msg|Exception] FileDelete path: '{path}'");
+#endif
             File.Delete(path);
         }
 
@@ -68,10 +66,10 @@ namespace BestHTTP.PlatformSupport.FileSystem
         {
             bool exists = File.Exists(path);
 
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("DefaultIOService",
-                    string.Format("FileExists path: '{0}' exists: {1}", path, exists));
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[DefaultIOService] [method: FileExists(path:{path})] [msg|Exception] FileExists path: '{path}' exists: {exists}");
+#endif
             return exists;
         }
     }

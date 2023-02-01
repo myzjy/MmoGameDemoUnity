@@ -457,27 +457,27 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
 
                     Init(address.AddressFamily);
 
-                    if (address.AddressFamily == AddressFamily.InterNetwork)
+                    switch (address.AddressFamily)
                     {
-                        //client.Bind(new IPEndPoint(IPAddress.Any, 0));
-                    }
-                    else if (address.AddressFamily == AddressFamily.InterNetworkV6)
-                    {
-                        //client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(
-                            "This method is only valid for sockets in the InterNetwork and InterNetworkV6 families");
+                        case AddressFamily.InterNetwork:
+                            //client.Bind(new IPEndPoint(IPAddress.Any, 0));
+                            break;
+                        case AddressFamily.InterNetworkV6:
+                            //client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+                            break;
+                        default:
+                            throw new NotSupportedException(
+                                "此方法仅对InterNetwork和InterNetworkV6系列中的套接字有效");
                     }
 
                     if (request != null && request.IsCancellationRequested)
+                    {
                         throw new Exception("IsCancellationRequested");
-
-                    HttpManager.Logger.Verbose("TcpClient",
-                        string.Format("Trying to connect to {0}:{1}", address.ToString(), port.ToString()),
-                        request.Context);
-
+                    }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(
+                        $"[TcpClient] [method: TcpClient.Connect] [msg|Exception] Trying to connect to {address.ToString()}:{port.ToString()}");
+#endif
                     Connect(new IPEndPoint(address, port));
 
                     if (values != 0)
@@ -517,10 +517,10 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     {
                     }
 #endif
-
-                    HttpManager.Logger.Information("TcpClient",
-                        string.Format("Connected to {0}:{1}", address.ToString(), port.ToString()), request.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(
+                        $"[TcpClient] [method: TcpClient.Connect] [msg|Exception] Connected to {address.ToString()}:{port.ToString()}");
+#endif
                     break;
                 }
                 catch (Exception e)
@@ -599,9 +599,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
         {
             try
             {
-                if (stream == null)
-                    stream = new NetworkStream(client, true);
-                return stream;
+                return stream ??= new NetworkStream(client, true);
             }
             finally
             {

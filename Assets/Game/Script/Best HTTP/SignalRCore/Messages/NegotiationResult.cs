@@ -1,6 +1,7 @@
 #if !BESTHTTP_DISABLE_SIGNALR_CORE
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace BestHTTP.SignalRCore.Messages
 {
@@ -135,13 +136,20 @@ namespace BestHTTP.SignalRCore.Messages
                     //  as it should be able to successfully parse whole (absolute) urls (like "https://server:url/path")
                     //  and relative ones (like "/path").
                     if (!Uri.TryCreate(uriStr, UriKind.RelativeOrAbsolute, out redirectUri))
-                        throw new Exception(string.Format("Couldn't parse url: '{0}'", uriStr));
+                    {
+                        throw new Exception($"Couldn't parse url: '{uriStr}'");
+                    }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"Parsed url({uriStr}) ");
+                    sb.Append($"into uri({redirectUri}). ");
+                    sb.Append($"uri.IsAbsoluteUri: {redirectUri.IsAbsoluteUri}, ");
+                    sb.Append($"IsAbsolute: {IsAbsolute(uriStr)}");
+                    Debug.Log(
+                        $"[NegotiationResult] [method: NegotiationResult.Parse] [msg|Exception] {sb.ToString()}");
+#endif
 
-                    HttpManager.Logger.Verbose("NegotiationResult",
-                        string.Format("Parsed url({0}) into uri({1}). uri.IsAbsoluteUri: {2}, IsAbsolute: {3}", uriStr,
-                            redirectUri, redirectUri.IsAbsoluteUri, IsAbsolute(uriStr)));
-
-                    // If received a relative url we will use the hub's current url to append the new path to it.
+                    // 如果收到一个相对url，我们将使用中心的当前url附加到它的新路径。
                     if (!IsAbsolute(uriStr))
                     {
                         Uri oldUri = hub.Uri;
@@ -151,10 +159,7 @@ namespace BestHTTP.SignalRCore.Messages
                         var pathAndQuery = uriStr.Split(new string[] { "?", "%3F", "%3f", "/", "%2F", "%2f" },
                             StringSplitOptions.RemoveEmptyEntries);
 
-                        if (pathAndQuery.Length > 1)
-                            builder.Query = pathAndQuery[1];
-                        else
-                            builder.Query = string.Empty;
+                        builder.Query = pathAndQuery.Length > 1 ? pathAndQuery[1] : string.Empty;
 
                         builder.Path = pathAndQuery[0];
 
@@ -165,15 +170,19 @@ namespace BestHTTP.SignalRCore.Messages
                 }
 
                 if (response.TryGetValue("accessToken", out value))
+                {
                     result.AccessToken = value.ToString();
+                }
                 else if (hub.NegotiationResult != null)
+                {
                     result.AccessToken = hub.NegotiationResult.AccessToken;
+                }
 
                 return result;
             }
             catch (Exception ex)
             {
-                error = "Error while parsing result: " + ex.Message + " StackTrace: " + ex.StackTrace;
+                error = $"Error while parsing result: {ex.Message} StackTrace: {ex.StackTrace} ";
                 return null;
             }
         }

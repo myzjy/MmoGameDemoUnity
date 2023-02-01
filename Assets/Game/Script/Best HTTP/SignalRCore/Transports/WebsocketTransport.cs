@@ -25,8 +25,10 @@ namespace BestHTTP.SignalRCore.Transports
 
         public override void StartConnect()
         {
-            HttpManager.Logger.Verbose("WebSocketTransport", "StartConnect", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[WebSocketTransport] [method: WebSocketTransport.StartConnect] [msg|Exception] StartConnect");
+#endif
             if (this.webSocket == null)
             {
                 Uri uri = this.connection.Uri;
@@ -35,18 +37,20 @@ namespace BestHTTP.SignalRCore.Transports
                     ? uri.Port
                     : (scheme.Equals("wss", StringComparison.OrdinalIgnoreCase) ? 443 : 80);
 
-                // Somehow if i use the UriBuilder it's not the same as if the uri is constructed from a string...
-                uri = new Uri(scheme + "://" + uri.Host + ":" + port + uri.GetRequestPathAndQueryURL());
+                // 不知怎的，如果我使用UriBuilder，这是不一样的，如果uri是由字符串构造的
+                uri = new Uri($"{scheme}://{uri.Host}:{port}{uri.GetRequestPathAndQueryURL()}");
 
                 uri = BuildUri(uri);
 
-                // Also, if there's an authentication provider it can alter further our uri.
+                // 此外，如果有一个身份验证提供者，它可以进一步改变我们的uri。
                 if (this.connection.AuthenticationProvider != null)
+                {
                     uri = this.connection.AuthenticationProvider.PrepareUri(uri) ?? uri;
-
-                HttpManager.Logger.Verbose("WebSocketTransport", "StartConnect connecting to Uri: " + uri.ToString(),
-                    this.Context);
-
+                }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[WebSocketTransport] [method: WebSocketTransport.StartConnect] [msg|Exception] StartConnect connecting to Uri: {uri.ToString()}");
+#endif
                 this.webSocket = new WebSocket.WebSocket(uri);
                 this.webSocket.Context.Add("Transport", this.Context);
             }

@@ -148,27 +148,25 @@ namespace BestHTTP.Connections
                     if (Client.ConnectTimeout > TimeSpan.Zero)
                     {
                         // https://forum.unity3d.com/threads/best-http-released.200006/page-37#post-3150972
-                        using (System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false))
+                        using System.Threading.ManualResetEvent mre = new System.Threading.ManualResetEvent(false);
+                        var result = System.Net.Dns.BeginGetHostAddresses(uri.Host, (res) =>
                         {
-                            IAsyncResult result = System.Net.Dns.BeginGetHostAddresses(uri.Host, (res) =>
+                            try
                             {
-                                try
-                                {
-                                    mre.Set();
-                                }
-                                catch
-                                {
-                                }
-                            }, null);
-                            bool success = mre.WaitOne(Client.ConnectTimeout);
-                            if (success)
-                            {
-                                addresses = System.Net.Dns.EndGetHostAddresses(result);
+                                mre.Set();
                             }
-                            else
+                            catch
                             {
-                                throw new TimeoutException("DNS resolve timed out!");
                             }
+                        }, null);
+                        bool success = mre.WaitOne(Client.ConnectTimeout);
+                        if (success)
+                        {
+                            addresses = System.Net.Dns.EndGetHostAddresses(result);
+                        }
+                        else
+                        {
+                            throw new TimeoutException("DNS resolve timed out!");
                         }
                     }
                     else
@@ -180,14 +178,19 @@ namespace BestHTTP.Connections
                 {
                     request.Timing.Add(TimingEventNames.DNS_Lookup);
                 }
-
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("TCPConnector",
-                        string.Format("'{0}' - DNS Query returned with addresses: {1}", request.CurrentUri.ToString(),
-                            addresses != null ? addresses.Length : -1), request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] '{request.CurrentUri.ToString()}' - 返回带有地址的DNS查询: {addresses?.Length ?? -1}");
+#endif
 
                 if (request.IsCancellationRequested)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] IsCancellationRequested(是否要求取消)");
+#endif
                     throw new Exception("IsCancellationRequested");
+                }
 
                 try
                 {
@@ -199,16 +202,26 @@ namespace BestHTTP.Connections
                 }
 
                 if (request.IsCancellationRequested)
-                    throw new Exception("IsCancellationRequested");
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[TCPConnector] [method: Connect(HttpRequest request)] [msg|Exception] IsCancellationRequested(是否要求取消)");
 #endif
-
-                if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                    HttpManager.Logger.Information("TCPConnector",
-                        "Connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
+                    throw new Exception("IsCancellationRequested");
+                }
+#endif
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] Connected to {uri.Host}:{uri.Port.ToString()}");
+#endif
             }
-            else if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                HttpManager.Logger.Information("TCPConnector",
-                    "Already connected to " + uri.Host + ":" + uri.Port.ToString(), request.Context);
+            else
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] Already connected to {uri.Host}:{uri.Port.ToString()}");
+#endif
+            }
 
             #endregion
 
@@ -216,7 +229,7 @@ namespace BestHTTP.Connections
             {
                 bool isSecure = HttpProtocolFactory.IsSecureProtocol(request.CurrentUri);
 
-                // set the stream to Client.GetStream() so the proxy, if there's any can use it directly.
+                // 将流设置为Client.GetStream()以便代理(如果有的话)可以直接使用它。
                 this.Stream = this.TopmostStream = Client.GetStream();
 
                 /*if (Stream.CanTimeout)
@@ -236,14 +249,20 @@ namespace BestHTTP.Connections
                 }
 
                 if (request.IsCancellationRequested)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[TCPConnector] [method: Connect(HttpRequest request)] [msg|Exception] IsCancellationRequested(是否要求取消)");
+#endif
                     throw new Exception("IsCancellationRequested");
+                }
 #endif
 
-                // proxy connect is done, we can set the stream to a buffered one. HTTPProxy requires the raw NetworkStream for HTTPResponse's ReadUnknownSize!
+                // 代理连接完成后，我们可以将流设置为缓冲流。HTTPProxy需要HTTPResponse的ReadUnknownSize的原始网络流!
                 this.Stream = this.TopmostStream = new BufferedReadNetworkStream(Client.GetStream(),
                     Math.Max(8 * 1024, HttpManager.ReceiveBufferSize ?? Client.ReceiveBufferSize));
 
-                // We have to use Request.CurrentUri here, because uri can be a proxy uri with a different protocol
+                // 我们必须使用Request。这里是CurrentUri，因为uri可以是不同协议的代理uri
                 if (isSecure)
                 {
                     DateTime tlsNegotiationStartedAt = DateTime.Now;
@@ -280,12 +299,14 @@ namespace BestHTTP.Connections
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception(nameof(TCPConnector), nameof(HttpManager.TlsClientFactory),
-                                    ex, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[{nameof(TCPConnector)}] [method: Connect(HttpRequest request)] [msg|Exception] {nameof(HttpManager.TlsClientFactory)} ex:{ex}");
+#endif
+                                //这里看后续是否需要拦截，如果需要就写，不需要就不写
                             }
 
-                            if (tlsClient == null)
-                                tlsClient = HttpManager.DefaultTlsClientFactory(request, protocols);
+                            tlsClient ??= HttpManager.DefaultTlsClientFactory(request, protocols);
                         }
 
                         //tlsClient.LoggingContext = request.Context;
@@ -293,7 +314,9 @@ namespace BestHTTP.Connections
 
                         var applicationProtocol = tlsClient.GetNegotiatedApplicationProtocol();
                         if (!string.IsNullOrEmpty(applicationProtocol))
+                        {
                             negotiatedProtocol = applicationProtocol;
+                        }
 
                         Stream = handler.Stream;
                     }
@@ -304,30 +327,29 @@ namespace BestHTTP.Connections
                         SslStream sslStream = null;
 
                         if (HttpManager.ClientCertificationProvider == null)
-                            sslStream = new SslStream(Client.GetStream(), false, (sender, cert, chain, errors) =>
-                            {
-                                if (HttpManager.DefaultCertificationValidator != null)
-                                    return HttpManager.DefaultCertificationValidator(request, cert, chain, errors);
-                                else
-                                    return true;
-                            });
+                        {
+                            sslStream = new SslStream(Client.GetStream(), false,
+                                (sender, cert, chain, errors) => HttpManager.DefaultCertificationValidator == null ||
+                                                                 HttpManager.DefaultCertificationValidator(request,
+                                                                     cert, chain, errors));
+                        }
                         else
-                            sslStream = new SslStream(Client.GetStream(), false, (sender, cert, chain, errors) =>
-                                {
-                                    if (HttpManager.DefaultCertificationValidator != null)
-                                        return HttpManager.DefaultCertificationValidator(request, cert, chain, errors);
-                                    else
-                                        return true;
-                                },
+                        {
+                            sslStream = new SslStream(Client.GetStream(), false,
+                                (sender, cert, chain, errors) => HttpManager.DefaultCertificationValidator == null ||
+                                                                 HttpManager.DefaultCertificationValidator(request,
+                                                                     cert, chain, errors),
                                 (object sender, string targetHost, X509CertificateCollection localCertificates,
-                                    X509Certificate remoteCertificate, string[] acceptableIssuers) =>
-                                {
-                                    return HttpManager.ClientCertificationProvider(request, targetHost,
-                                        localCertificates, remoteCertificate, acceptableIssuers);
-                                });
+                                        X509Certificate remoteCertificate, string[] acceptableIssuers) =>
+                                    HttpManager.ClientCertificationProvider(request, targetHost,
+                                        localCertificates, remoteCertificate, acceptableIssuers));
+                        }
 
                         if (!sslStream.IsAuthenticated)
+                        {
                             sslStream.AuthenticateAsClient(request.CurrentUri.Host);
+                        }
+
                         Stream = sslStream;
 #else
                         Stream = Client.GetStream();
@@ -350,10 +372,13 @@ namespace BestHTTP.Connections
                 try
                 {
                     if (Stream != null)
+                    {
                         Stream.Close();
+                    }
                 }
                 catch
                 {
+                    // ignored
                 }
                 finally
                 {
