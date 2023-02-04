@@ -260,13 +260,10 @@ namespace BestHTTP.Connections.HTTP2
                 return;
 
             var settingsFrame = Http2FrameHelper.ReadSettings(frame);
-
-            if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-            {
-                HttpManager.Logger.Information("HTTP2SettingsManager",
-                    "Processing Settings frame: " + settingsFrame.ToString(), this.Parent.Context);
-            }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTP2SettingsManager] [method:Process] [msg|Exception] Processing Settings frame: {settingsFrame.ToString()}");
+#endif
             if ((settingsFrame.Flags & Http2SettingsFlags.Ack) == Http2SettingsFlags.Ack)
             {
                 this.MySettings.Merge(this.InitiatedMySettings);

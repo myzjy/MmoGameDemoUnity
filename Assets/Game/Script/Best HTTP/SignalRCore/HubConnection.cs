@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BestHTTP.Futures;
@@ -11,6 +13,7 @@ using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Threading;
 using BestHTTP.SignalRCore.Authentication;
 using BestHTTP.SignalRCore.Messages;
+using ZJYFrameWork.UISerializable.Manager;
 #endif
 
 namespace BestHTTP.SignalRCore
@@ -21,7 +24,6 @@ namespace BestHTTP.SignalRCore
         private volatile int _state;
 
         private DateTime connectionStartedAt;
-
         private RetryContext currentContext;
 
         bool defaultReconnect = true;
@@ -29,26 +31,25 @@ namespace BestHTTP.SignalRCore
         List<Message> delayedMessages;
 
         /// <summary>
-        ///  Store the callback for all sent message that expect a return value from the server. All sent message has
-        ///  a unique invocationId that will be sent back from the server.
+        ///  存储所有期望从服务器返回值的已发送消息的回调。所有发送的消息都有一个唯一的invocationId，该id将从服务器发送回来。
         /// </summary>
         private ConcurrentDictionary<long, InvocationDefinition> invocations =
             new ConcurrentDictionary<long, InvocationDefinition>();
 
         /// <summary>
-        /// This will be increment to add a unique id to every message the plugin will send.
+        /// 这将为插件发送的每条消息添加一个唯一的id。
         /// </summary>
         private long lastInvocationId = 1;
 
         private DateTime lastMessageReceivedAt;
 
         /// <summary>
-        /// When we sent out the last message to the server.
+        /// 当我们向服务器发送最后一条消息时。
         /// </summary>
         private DateTime lastMessageSentAt;
 
         /// <summary>
-        /// Id of the last streaming parameter.
+        /// 最后一个流参数的Id。
         /// </summary>
         private int lastStreamId = 1;
 
@@ -59,7 +60,7 @@ namespace BestHTTP.SignalRCore
         private ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
 
         /// <summary>
-        /// This is where we store the methodname => callback mapping.
+        /// 这是我们存储方法名的地方 => 回调函数的映射。
         /// </summary>
         private ConcurrentDictionary<string, Subscription> subscriptions =
             new ConcurrentDictionary<string, Subscription>(StringComparer.OrdinalIgnoreCase);
@@ -84,12 +85,12 @@ namespace BestHTTP.SignalRCore
         }
 
         /// <summary>
-        /// Uri of the Hub endpoint
+        /// Hub端点的Uri
         /// </summary>
         public Uri Uri { get; private set; }
 
         /// <summary>
-        /// Current state of this connection.
+        /// 此连接的当前状态。
         /// </summary>
         public ConnectionStates State
         {
@@ -98,42 +99,42 @@ namespace BestHTTP.SignalRCore
         }
 
         /// <summary>
-        /// Current, active ITransport instance.
+        /// 当前活动的transport实例。
         /// </summary>
         public ITransport Transport { get; private set; }
 
         /// <summary>
-        /// The IProtocol implementation that will parse, encode and decode messages.
+        /// 将解析、编码和解码消息的IProtocol实现。
         /// </summary>
         public IProtocol Protocol { get; private set; }
 
         /// <summary>
-        /// An IAuthenticationProvider implementation that will be used to authenticate the connection.
+        /// 用于验证连接的IAuthenticationProvider实现。
         /// </summary>
         public IAuthenticationProvider AuthenticationProvider { get; set; }
 
         /// <summary>
-        /// Negotiation response sent by the server.
+        /// 服务器发送的协商响应。
         /// </summary>
         public NegotiationResult NegotiationResult { get; private set; }
 
         /// <summary>
-        /// Options that has been used to create the HubConnection.
+        ///用于创建HubConnection的选项。
         /// </summary>
         public HubOptions Options { get; private set; }
 
         /// <summary>
-        /// How many times this connection is redirected.
+        /// 这个连接被重定向了多少次.
         /// </summary>
         public int RedirectCount { get; private set; }
 
         /// <summary>
-        /// The reconnect policy that will be used when the underlying connection is lost. Its default value is null.
+        /// 当底层连接丢失时将使用的重新连接策略。缺省值为空。
         /// </summary>
         public IRetryPolicy ReconnectPolicy { get; set; }
 
         /// <summary>
-        /// Logging context of this HubConnection instance.
+        /// 此HubConnection实例的日志记录上下文。
         /// </summary>
         public LoggingContext Context { get; private set; }
 
@@ -144,7 +145,9 @@ namespace BestHTTP.SignalRCore
                 case ConnectionStates.Negotiating:
                 case ConnectionStates.Authenticating:
                 case ConnectionStates.Redirected:
-                    if (DateTime.Now >= this.connectionStartedAt + this.Options.ConnectTimeout)
+                {
+                    var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
+                    if (now >= this.connectionStartedAt + this.Options.ConnectTimeout)
                     {
                         if (this.AuthenticationProvider != null)
                         {
@@ -157,8 +160,10 @@ namespace BestHTTP.SignalRCore
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HubConnection",
-                                    "Exception in AuthenticationProvider.Cancel !", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[HubConnection] [method:BestHTTP.Extensions.IHeartbeat.OnHeartbeatUpdate] [msg|Exception]AuthenticationProvider中的异常。取消 !");
+#endif
                             }
                         }
 
@@ -169,22 +174,25 @@ namespace BestHTTP.SignalRCore
                         }
 
                         SetState(ConnectionStates.Closed,
-                            string.Format("Couldn't connect in the given time({0})!", this.Options.ConnectTimeout),
+                            $"在给定的时间内无法连接({this.Options.ConnectTimeout})!",
                             this.defaultReconnect);
                     }
-
+                }
                     break;
 
                 case ConnectionStates.Connected:
+                {
                     if (this.delayedMessages?.Count > 0)
                     {
                         pausedInLastFrame = false;
                         try
                         {
-                            // if there's any Close message clear any other one.
+                            // 如果有任何关闭消息清除任何其他。
                             int idx = this.delayedMessages.FindLastIndex(dm => dm.type == MessageTypes.Close);
                             if (idx > 0)
+                            {
                                 this.delayedMessages.RemoveRange(0, idx);
+                            }
 
                             OnMessages(this.delayedMessages);
                         }
@@ -200,7 +208,7 @@ namespace BestHTTP.SignalRCore
                         if (this.Options.PingInterval != TimeSpan.Zero && DateTime.Now - this.lastMessageReceivedAt >=
                             this.Options.PingTimeoutInterval)
                         {
-                            // The transport itself can be in a failure state or in a completely valid one, so while we do not want to receive anything from it, we have to try to close it
+                            // 传输本身可能处于失败状态，也可能处于完全有效的状态，因此当我们不想从它接收任何东西时，我们必须尝试关闭它
                             if (this.Transport != null)
                             {
                                 this.Transport.OnStateChanged -= Transport_OnStateChanged;
@@ -208,70 +216,71 @@ namespace BestHTTP.SignalRCore
                             }
 
                             SetState(ConnectionStates.Closed,
-                                string.Format(
-                                    "PingInterval set to '{0}' and no message is received since '{1}'. PingTimeoutInterval: '{2}'",
-                                    this.Options.PingInterval, this.lastMessageReceivedAt,
-                                    this.Options.PingTimeoutInterval),
+                                $"PingInterval set to '{this.Options.PingInterval}' and no message is received since '{this.lastMessageReceivedAt}'. PingTimeoutInterval: '{this.Options.PingTimeoutInterval}'",
                                 this.defaultReconnect);
                         }
                         else if (this.Options.PingInterval != TimeSpan.Zero &&
-                                 DateTime.Now - this.lastMessageSentAt >= this.Options.PingInterval)
+                                 connectionStartedAt - this.lastMessageSentAt >= this.Options.PingInterval)
+                        {
                             SendMessage(new Message() { type = MessageTypes.Ping });
+                        }
                     }
-
+                }
                     break;
 
                 case ConnectionStates.Reconnecting:
+                {
                     if (this.reconnectAt != DateTime.MinValue && DateTime.Now >= this.reconnectAt)
                     {
                         this.delayedMessages?.Clear();
-                        this.connectionStartedAt = DateTime.Now;
+                        var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
+                        this.connectionStartedAt = now;
                         this.reconnectAt = DateTime.MinValue;
                         this.triedoutTransports.Clear();
                         this.StartConnect();
                     }
-
+                }
                     break;
             }
         }
 
         /// <summary>
-        /// This event is called when the connection is redirected to a new uri.
+        /// 当连接重定向到一个新的uri时，将调用此事件。
         /// </summary>
         public event Action<HubConnection, Uri, Uri> OnRedirected;
 
         /// <summary>
-        /// This event is called when successfully connected to the hub.
+        /// 当成功连接到集线器时调用此事件。
         /// </summary>
         public event Action<HubConnection> OnConnected;
 
         /// <summary>
-        /// This event is called when an unexpected error happen and the connection is closed.
+        /// 当发生意外错误并关闭连接时，将调用此事件。
         /// </summary>
         public event Action<HubConnection, string> OnError;
 
         /// <summary>
-        /// This event is called when the connection is gracefully terminated.
+        /// 当连接正常终止时调用此事件。
         /// </summary>
         public event Action<HubConnection> OnClosed;
 
         /// <summary>
-        /// This event is called for every server-sent message. When returns false, no further processing of the message is done by the plugin.
+        /// 每个服务器发送的消息都会调用此事件。当返回false时，插件不会对消息做进一步的处理。
         /// </summary>
         public event Func<HubConnection, Message, bool> OnMessage;
 
         /// <summary>
-        /// Called when the HubConnection start its reconnection process after loosing its underlying connection.
+        /// 当HubConnection在失去底层连接后启动其重连接过程时调用。
         /// </summary>
         public event Action<HubConnection, string> OnReconnecting;
 
         /// <summary>
-        /// Called after a successful reconnection.
+        /// 重新连接成功后调用。
         /// </summary>
         public event Action<HubConnection> OnReconnected;
 
         /// <summary>
-        /// Called for transport related events.
+        /// 调用与运输相关的事件。
         /// </summary>
         public event Action<HubConnection, ITransport, TransportEvents> OnTransportEvent;
 
@@ -281,41 +290,54 @@ namespace BestHTTP.SignalRCore
                 this.State != ConnectionStates.Redirected &&
                 this.State != ConnectionStates.Reconnecting)
             {
-                HttpManager.Logger.Warning("HubConnection",
-                    "StartConnect - Expected Initial or Redirected state, got " + this.State.ToString(), this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogWarning(
+                    $"[HubConnection] [method:StartConnect] [msg] StartConnect -预期的初始或重定向状态，已获得 {this.State.ToString()}");
+#endif
                 return;
             }
 
             if (this.State == ConnectionStates.Initial)
             {
-                this.connectionStartedAt = DateTime.Now;
+                var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
+                this.connectionStartedAt = now;
                 HttpManager.Heartbeats.Subscribe(this);
             }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            StringBuilder sb = new StringBuilder(3);
+            sb.Append($"StartConnect State: {this.State},");
+            var atToString = this.connectionStartedAt.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            sb.Append($"connectionStartedAt: {atToString}");
+            Debug.Log(
+                $"[HubConnection] [method:StartConnect] [msg]{sb.ToString()}");
 
-            HttpManager.Logger.Verbose("HubConnection",
-                $"StartConnect State: {this.State}, connectionStartedAt: {this.connectionStartedAt.ToString(System.Globalization.CultureInfo.InvariantCulture)}",
-                this.Context);
-
+#endif
             if (this.AuthenticationProvider != null && this.AuthenticationProvider.IsPreAuthRequired)
             {
-                HttpManager.Logger.Information("HubConnection", "StartConnect - Authenticating", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HubConnection] [method:StartConnect] [msg] StartConnect - Authenticating");
+#endif
 
                 SetState(ConnectionStates.Authenticating, null, this.defaultReconnect);
 
                 this.AuthenticationProvider.OnAuthenticationSucceded += OnAuthenticationSucceded;
                 this.AuthenticationProvider.OnAuthenticationFailed += OnAuthenticationFailed;
 
-                // Start the authentication process
+                // 启动身份验证过程
                 this.AuthenticationProvider.StartAuthentication();
             }
             else
+            {
                 StartNegotiation();
+            }
         }
 
         private void OnAuthenticationSucceded(IAuthenticationProvider provider)
         {
-            HttpManager.Logger.Verbose("HubConnection", "OnAuthenticationSucceded", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HubConnection] [method:OnAuthenticationSucceded] [msg] OnAuthenticationSucceded");
+#endif
             this.AuthenticationProvider.OnAuthenticationSucceded -= OnAuthenticationSucceded;
             this.AuthenticationProvider.OnAuthenticationFailed -= OnAuthenticationFailed;
 
@@ -324,8 +346,9 @@ namespace BestHTTP.SignalRCore
 
         private void OnAuthenticationFailed(IAuthenticationProvider provider, string reason)
         {
-            HttpManager.Logger.Error("HubConnection", "OnAuthenticationFailed: " + reason, this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.LogError($"[HubConnection] [method:OnAuthenticationFailed] [msg] OnAuthenticationFailed: {reason}");
+#endif
             this.AuthenticationProvider.OnAuthenticationSucceded -= OnAuthenticationSucceded;
             this.AuthenticationProvider.OnAuthenticationFailed -= OnAuthenticationFailed;
 
@@ -334,7 +357,9 @@ namespace BestHTTP.SignalRCore
 
         private void StartNegotiation()
         {
-            HttpManager.Logger.Verbose("HubConnection", "StartNegotiation", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HubConnection] [method:StartNegotiation] [msg] StartNegotiation");
+#endif
 
             if (this.State == ConnectionStates.CloseInitiated)
             {
@@ -345,7 +370,9 @@ namespace BestHTTP.SignalRCore
 #if !BESTHTTP_DISABLE_WEBSOCKET
             if (this.Options.SkipNegotiation && this.Options.PreferedTransport == TransportTypes.WebSocket)
             {
-                HttpManager.Logger.Verbose("HubConnection", "Skipping negotiation", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HubConnection] [method:StartNegotiation] [msg] 跳过谈判");
+#endif
                 ConnectImpl(this.Options.PreferedTransport);
 
                 return;
@@ -360,15 +387,23 @@ namespace BestHTTP.SignalRCore
 
             UriBuilder builder = new UriBuilder(this.Uri);
             if (builder.Path.EndsWith("/"))
+            {
                 builder.Path += "negotiate";
+            }
             else
+            {
                 builder.Path += "/negotiate";
+            }
 
             string query = builder.Query;
             if (string.IsNullOrEmpty(query))
+            {
                 query = "negotiateVersion=1";
+            }
             else
+            {
                 query = query.Remove(0, 1) + "&negotiateVersion=1";
+            }
 
             builder.Query = query;
 
@@ -376,43 +411,50 @@ namespace BestHTTP.SignalRCore
             request.Context.Add("Hub", this.Context);
 
             if (this.AuthenticationProvider != null)
+            {
                 this.AuthenticationProvider.PrepareRequest(request);
+            }
 
             request.Send();
         }
 
         private void ConnectImpl(TransportTypes transport)
         {
-            HttpManager.Logger.Verbose("HubConnection", "ConnectImpl - " + transport, this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HubConnection] [method:ConnectImpl] [msg] ConnectImpl - {transport}");
+#endif
             switch (transport)
             {
 #if !BESTHTTP_DISABLE_WEBSOCKET
                 case TransportTypes.WebSocket:
+                {
                     if (this.NegotiationResult != null && !IsTransportSupported("WebSockets"))
                     {
                         SetState(ConnectionStates.Closed,
-                            "Couldn't use preferred transport, as the 'WebSockets' transport isn't supported by the server!",
+                            "不能使用首选传输，因为服务器不支持“WebSockets”传输!",
                             this.defaultReconnect);
                         return;
                     }
 
                     this.Transport = new Transports.WebSocketTransport(this);
                     this.Transport.OnStateChanged += Transport_OnStateChanged;
+                }
                     break;
 #endif
 
                 case TransportTypes.LongPolling:
+                {
                     if (this.NegotiationResult != null && !IsTransportSupported("LongPolling"))
                     {
                         SetState(ConnectionStates.Closed,
-                            "Couldn't use preferred transport, as the 'LongPolling' transport isn't supported by the server!",
+                            "不能使用首选传输，因为服务器不支持'LongPolling'传输!",
                             this.defaultReconnect);
                         return;
                     }
 
                     this.Transport = new Transports.LongPollingTransport(this);
                     this.Transport.OnStateChanged += Transport_OnStateChanged;
+                }
                     break;
 
                 default:
@@ -423,12 +465,16 @@ namespace BestHTTP.SignalRCore
             try
             {
                 if (this.OnTransportEvent != null)
+                {
                     this.OnTransportEvent(this, this.Transport, TransportEvents.SelectedToConnect);
+                }
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("HubConnection", "ConnectImpl - OnTransportEvent exception in user code!",
-                    ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError(
+                    $"[HubConnection] [method:ConnectImpl] [msg] 用户代码中的OnTransportEvent异常! Exception:{ex.Message}");
+#endif
             }
 
             this.Transport.StartConnect();
@@ -439,14 +485,12 @@ namespace BestHTTP.SignalRCore
             // https://github.com/dotnet/aspnetcore/blob/master/src/SignalR/docs/specs/TransportProtocols.md#post-endpoint-basenegotiate-request
             // If the negotiation response contains only the url and accessToken, no 'availableTransports' list is sent
             if (this.NegotiationResult.SupportedTransports == null)
+            {
                 return true;
+            }
 
-            for (int i = 0; i < this.NegotiationResult.SupportedTransports.Count; ++i)
-                if (this.NegotiationResult.SupportedTransports[i].Name
-                    .Equals(transportName, StringComparison.OrdinalIgnoreCase))
-                    return true;
-
-            return false;
+            return this.NegotiationResult.SupportedTransports.Any(t =>
+                t.Name.Equals(transportName, StringComparison.OrdinalIgnoreCase));
         }
 
         private void OnNegotiationRequestFinished(HttpRequest req, HttpResponse resp)
@@ -466,6 +510,7 @@ namespace BestHTTP.SignalRCore
             {
                 // The request finished without any problem.
                 case HttpRequestStates.Finished:
+                {
                     if (resp.IsSuccess)
                     {
                         HttpManager.Logger.Information("HubConnection",
@@ -485,8 +530,9 @@ namespace BestHTTP.SignalRCore
                                 this.SetState(ConnectionStates.Redirected, null, this.defaultReconnect);
 
                                 if (++this.RedirectCount >= this.Options.MaxRedirects)
-                                    errorReason = string.Format("MaxRedirects ({0:N0}) reached!",
-                                        this.Options.MaxRedirects);
+                                {
+                                    errorReason = $"MaxRedirects ({this.Options.MaxRedirects:N0}) reached!";
+                                }
                                 else
                                 {
                                     var oldUri = this.Uri;
@@ -509,38 +555,41 @@ namespace BestHTTP.SignalRCore
                                 }
                             }
                             else
+                            {
                                 ConnectImpl(this.Options.PreferedTransport);
+                            }
                         }
                     }
                     else // Internal server error?
-                        errorReason = string.Format(
-                            "Negotiation Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText);
-
+                    {
+                        errorReason =
+                            $"Negotiation Request Finished Successfully, but the server sent an error. Status Code: {resp.StatusCode}-{resp.Message} Message: {resp.DataAsText}";
+                    }
+                }
                     break;
 
-                // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                 case HttpRequestStates.Error:
+                {
                     errorReason = "Negotiation Request Finished with Error! " + (req.Exception != null
                         ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
                         : "No Exception");
+                }
                     break;
 
-                // The request aborted, initiated by the user.
+                // 由用户发起的请求中止。
                 case HttpRequestStates.Aborted:
                     errorReason = "Negotiation Request Aborted!";
                     break;
 
-                // Connecting to the server is timed out.
+                // 连接服务器超时。处理步骤
                 case HttpRequestStates.ConnectionTimedOut:
                     errorReason = "Negotiation Request - Connection Timed Out!";
                     break;
 
-                // The request didn't finished in the given time.
+                // 请求没有在规定的时间内完成。
                 case HttpRequestStates.TimedOut:
-                    errorReason = "Negotiation Request - Processing the request Timed Out!";
+                    errorReason = "Negotiation Request - 处理请求超时!";
                     break;
             }
 
@@ -555,24 +604,32 @@ namespace BestHTTP.SignalRCore
 
         public void StartClose()
         {
-            HttpManager.Logger.Verbose("HubConnection", "StartClose", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HubConnection] [method:StartClose] [msg] StartClose");
+#endif
             this.defaultReconnect = false;
 
             switch (this.State)
             {
                 case ConnectionStates.Initial:
+                {
                     SetState(ConnectionStates.Closed, null, this.defaultReconnect);
+                }
                     break;
 
                 case ConnectionStates.Authenticating:
+                {
                     this.AuthenticationProvider.OnAuthenticationSucceded -= OnAuthenticationSucceded;
                     this.AuthenticationProvider.OnAuthenticationFailed -= OnAuthenticationFailed;
                     this.AuthenticationProvider.Cancel();
                     SetState(ConnectionStates.Closed, null, this.defaultReconnect);
+                }
                     break;
 
                 case ConnectionStates.Reconnecting:
+                {
                     SetState(ConnectionStates.Closed, null, this.defaultReconnect);
+                }
                     break;
 
                 case ConnectionStates.CloseInitiated:
@@ -581,6 +638,7 @@ namespace BestHTTP.SignalRCore
                     break;
 
                 default:
+                {
                     if (HttpManager.IsQuitting)
                     {
                         SetState(ConnectionStates.Closed, null, this.defaultReconnect);
@@ -590,9 +648,11 @@ namespace BestHTTP.SignalRCore
                         SetState(ConnectionStates.CloseInitiated, null, this.defaultReconnect);
 
                         if (this.Transport != null)
+                        {
                             this.Transport.StartClose();
+                        }
                     }
-
+                }
                     break;
             }
         }
@@ -607,14 +667,20 @@ namespace BestHTTP.SignalRCore
                 {
                     bool isSuccess = string.IsNullOrEmpty(message.error);
                     if (isSuccess)
+                    {
                         future.Assign((TResult)this.Protocol.ConvertTo(typeof(TResult), message.result));
+                    }
                     else
+                    {
                         future.Fail(new Exception(message.error));
+                    }
                 },
                 typeof(TResult));
 
             if (id < 0)
+            {
                 future.Fail(new Exception("Not in Connected state! Current state: " + this.State));
+            }
 
             return future;
         }
@@ -673,24 +739,24 @@ namespace BestHTTP.SignalRCore
 
         internal void SendMessage(Message message)
         {
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("HubConnection", "SendMessage: " + message.ToString(), this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HubConnection] [method:StartClose] [msg] SendMessage: {message.ToString()}");
+#endif
             try
             {
                 using (new WriteLock(this.rwLock))
                 {
                     var encoded = this.Protocol.EncodeMessage(message);
-                    if (encoded.Data != null)
-                    {
-                        this.lastMessageSentAt = DateTime.Now;
-                        this.Transport.Send(encoded);
-                    }
+                    if (encoded.Data == null) return;
+                    this.lastMessageSentAt = DateTime.Now;
+                    this.Transport.Send(encoded);
                 }
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("HubConnection", "SendMessage", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError($"[HubConnection] [method:StartClose] [msg] SendMessage  Exception:{ex.Message}");
+#endif
             }
         }
 
@@ -1036,45 +1102,55 @@ namespace BestHTTP.SignalRCore
 
         private void Transport_OnStateChanged(TransportStates oldState, TransportStates newState)
         {
-            HttpManager.Logger.Verbose("HubConnection",
-                string.Format("Transport_OnStateChanged - oldState: {0} newState: {1}", oldState.ToString(),
-                    newState.ToString()), this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            var sb = new StringBuilder(3);
+            sb.Append($"Transport_OnStateChanged - oldState: {oldState.ToString()}");
+            sb.Append($" newState: {newState.ToString()}");
+            Debug.Log($"[HubConnection] [method:Transport_OnStateChanged] [msg] {sb.ToString()}");
+#endif
             if (this.State == ConnectionStates.Closed)
             {
-                HttpManager.Logger.Verbose("HubConnection", "Transport_OnStateChanged - already closed!", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HubConnection] [method:Transport_OnStateChanged] [msg] Transport_OnStateChanged - already closed!");
+#endif
                 return;
             }
 
             switch (newState)
             {
                 case TransportStates.Connected:
+                {
                     try
                     {
-                        if (this.OnTransportEvent != null)
-                            this.OnTransportEvent(this, this.Transport, TransportEvents.Connected);
+                        this.OnTransportEvent?.Invoke(this, this.Transport, TransportEvents.Connected);
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("HubConnection", "Exception in OnTransportEvent user code!", ex,
-                            this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[HubConnection] [method:Transport_OnStateChanged] [msg] Exception in OnTransportEvent user code! Exception:{ex.Message}");
+#endif
                     }
 
                     SetState(ConnectionStates.Connected, null, this.defaultReconnect);
+                }
                     break;
 
                 case TransportStates.Failed:
+                {
                     if (this.State == ConnectionStates.Negotiating && !HttpManager.IsQuitting)
                     {
                         try
                         {
-                            if (this.OnTransportEvent != null)
-                                this.OnTransportEvent(this, this.Transport, TransportEvents.FailedToConnect);
+                            this.OnTransportEvent?.Invoke(this, this.Transport, TransportEvents.FailedToConnect);
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("HubConnection", "Exception in OnTransportEvent user code!",
-                                ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[HubConnection] [method:Transport_OnStateChanged] [msg] Exception in OnTransportEvent user code! Exception:{ex.Message}");
+#endif
                         }
 
                         this.triedoutTransports.Add(this.Transport.TransportType);
@@ -1094,13 +1170,14 @@ namespace BestHTTP.SignalRCore
                     {
                         try
                         {
-                            if (this.OnTransportEvent != null)
-                                this.OnTransportEvent(this, this.Transport, TransportEvents.ClosedWithError);
+                            this.OnTransportEvent?.Invoke(this, this.Transport, TransportEvents.ClosedWithError);
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("HubConnection", "Exception in OnTransportEvent user code!",
-                                ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[HubConnection] [method:Transport_OnStateChanged] [msg] Exception in OnTransportEvent user code! Exception:{ex.Message}");
+#endif
                         }
 
                         var reason = this.Transport.ErrorReason;
@@ -1109,26 +1186,29 @@ namespace BestHTTP.SignalRCore
                         SetState(ConnectionStates.Closed, HttpManager.IsQuitting ? null : reason,
                             this.defaultReconnect);
                     }
-
+                }
                     break;
 
                 case TransportStates.Closed:
                 {
                     try
                     {
-                        if (this.OnTransportEvent != null)
-                            this.OnTransportEvent(this, this.Transport, TransportEvents.Closed);
+                        this.OnTransportEvent?.Invoke(this, this.Transport, TransportEvents.Closed);
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("HubConnection", "Exception in OnTransportEvent user code!", ex,
-                            this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[HubConnection] [method:Transport_OnStateChanged] [msg] Exception in OnTransportEvent user code! Exception:{ex.Message}");
+#endif
                     }
 
-                    // Check wheter we have any delayed message and a Close message among them. If there's one, delay the SetState(Close) too.
+                    // 检查我们是否有延迟消息和关闭消息。如果有，也延迟SetState(Close)。
                     if (this.delayedMessages == null ||
                         this.delayedMessages.FindLast(dm => dm.type == MessageTypes.Close).type != MessageTypes.Close)
+                    {
                         SetState(ConnectionStates.Closed, null, this.defaultReconnect);
+                    }
                 }
                     break;
             }
@@ -1145,13 +1225,21 @@ namespace BestHTTP.SignalRCore
 
         private void SetState(ConnectionStates state, string errorReason, bool allowReconnect)
         {
-            HttpManager.Logger.Information("HubConnection",
-                string.Format(
-                    "SetState - from State: '{0}' to State: '{1}', errorReason: '{2}', allowReconnect: {3}, isQuitting: {4}",
-                    this.State, state, errorReason, allowReconnect, HttpManager.IsQuitting), this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
 
+            StringBuilder sb = new StringBuilder(5);
+            sb.Append($"SetState - from State: '{this.State}'");
+            sb.Append($" to State: '{state}',");
+            sb.Append($" errorReason: '{errorReason}', ");
+            sb.Append($"allowReconnect: {allowReconnect}, ");
+            sb.Append($"isQuitting: {HttpManager.IsQuitting}");
+            Debug.Log(
+                $"[HubConnection] [method:SetState] [msg]{sb.ToString()}");
+#endif
             if (this.State == state)
+            {
                 return;
+            }
 
             var previousState = this.State;
 
@@ -1169,7 +1257,8 @@ namespace BestHTTP.SignalRCore
                     break;
 
                 case ConnectionStates.Connected:
-                    // If reconnectStartTime isn't its default value we reconnected
+                {
+                    // 如果reconnectStartTime不是它的默认值，我们重新连接
                     if (this.reconnectStartTime != DateTime.MinValue)
                     {
                         try
@@ -1179,7 +1268,9 @@ namespace BestHTTP.SignalRCore
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("HubConnection", "OnReconnected", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError($"[HubConnection] [method:SetState] [msg(OnReconnected)] {ex}");
+#endif
                         }
                     }
                     else
@@ -1187,33 +1278,40 @@ namespace BestHTTP.SignalRCore
                         try
                         {
                             if (this.OnConnected != null)
+                            {
                                 this.OnConnected(this);
+                            }
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("HubConnection", "Exception in OnConnected user code!", ex,
-                                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[HubConnection] [method:SetState] [msg|Exception] Exception in OnConnected user code!{ex}");
+#endif
                         }
                     }
 
                     this.lastMessageSentAt = DateTime.Now;
                     this.lastMessageReceivedAt = DateTime.Now;
 
-                    // Clean up reconnect related fields
+                    // 清理重新连接相关字段
                     this.currentContext = new RetryContext();
                     this.reconnectStartTime = DateTime.MinValue;
                     this.reconnectAt = DateTime.MinValue;
 
                     HttpUpdateDelegator.OnApplicationForegroundStateChanged -= this.OnApplicationForegroundStateChanged;
                     HttpUpdateDelegator.OnApplicationForegroundStateChanged += this.OnApplicationForegroundStateChanged;
-
+                }
                     break;
 
                 case ConnectionStates.Closed:
-                    // Go through all invocations and cancel them.
-                    var error = new Message();
-                    error.type = MessageTypes.Close;
-                    error.error = errorReason;
+                {
+                    // 检查所有调用并取消它们。
+                    var error = new Message
+                    {
+                        type = MessageTypes.Close,
+                        error = errorReason
+                    };
 
                     foreach (var kvp in this.invocations)
                     {
@@ -1223,6 +1321,7 @@ namespace BestHTTP.SignalRCore
                         }
                         catch
                         {
+                            // ignored
                         }
                     }
 
@@ -1239,8 +1338,10 @@ namespace BestHTTP.SignalRCore
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HubConnection", "Exception in OnClosed user code!", ex,
-                                    this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[HubConnection] [method:SetState] [msg|Exception] Exception in OnConnected user code!{ex}");
+#endif
                             }
                         }
 
@@ -1262,15 +1363,19 @@ namespace BestHTTP.SignalRCore
                             (previousState == ConnectionStates.Connected ||
                              this.reconnectStartTime != DateTime.MinValue))
                         {
-                            // It's the first attempt after a successful connection
+                            // 这是成功连接后的第一次尝试
                             if (this.reconnectStartTime == DateTime.MinValue)
                             {
-                                this.connectionStartedAt = this.reconnectStartTime = DateTime.Now;
+                                var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
+
+                                this.connectionStartedAt = this.reconnectStartTime = now;
 
                                 try
                                 {
                                     if (this.OnReconnecting != null)
+                                    {
                                         this.OnReconnecting(this, errorReason);
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
@@ -1336,8 +1441,12 @@ namespace BestHTTP.SignalRCore
                             }
                         }
                     }
-
+                }
                     break;
+                case ConnectionStates.Redirected:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
             }
         }
 

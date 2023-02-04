@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace ZJYFrameWork.UISerializable.Manager
 {
-
     public static class DateTimeUtil
     {
         // 一秒钟对应的纳秒数
@@ -27,7 +26,7 @@ namespace ZJYFrameWork.UISerializable.Manager
         /// <summary>
         /// Unix时间起始时间
         /// </summary>
-        public static readonly DateTime START_TIME_LOCAL = new DateTime(1970, 1, 1, 0, 0, 0);
+        public static readonly DateTime START_TIME_LOCAL = new DateTime(1970, 1, 1, 8, 0, 0);
 
         public static readonly DateTime START_TIME_UTC = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -39,9 +38,10 @@ namespace ZJYFrameWork.UISerializable.Manager
         /// <summary>
         /// 周未定义
         /// </summary>
-        public static readonly DayOfWeek[] WEEKEND = {DayOfWeek.Saturday, DayOfWeek.Sunday};
+        public static readonly DayOfWeek[] WEEKEND = { DayOfWeek.Saturday, DayOfWeek.Sunday };
 
         private static long timestamp = CurrentTimeMillis();
+        public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
 
         /**
          * 使用服务器的时间戳，会有一些误差
@@ -54,14 +54,17 @@ namespace ZJYFrameWork.UISerializable.Manager
         {
             return timestamp;
         }
+
         public static double ToUnixTimeStamp(this DateTime time)
         {
             return (time - START_TIME_UTC).TotalSeconds;
         }
+
         public static bool IsValid(this DateTime time)
         {
             return time != START_TIME_LOCAL && time != DateTime.MinValue;
         }
+
         public static void SetNow(long time)
         {
             if (time - timestamp < 5)
@@ -69,9 +72,9 @@ namespace ZJYFrameWork.UISerializable.Manager
                 //有加速器
                 return;
             }
+
             timestamp = time;
         }
-        public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
 
         /**
          * 获取精确的时间戳
@@ -84,9 +87,13 @@ namespace ZJYFrameWork.UISerializable.Manager
         public static DateTime TimestampToDateTime(long time)
         {
             var startTime = TimeZoneInfo.ConvertTime(START_TIME_UTC, TimeZoneInfo.Local);
-            return startTime.AddSeconds(time / (double) MILLIS_PER_SECOND);
+            return startTime.AddSeconds(time / (double)MILLIS_PER_SECOND);
         }
 
+        public static DateTime GetCurrEntTimeMilliseconds(long timesLong)
+        {
+            return START_TIME_LOCAL.AddMilliseconds(timesLong);
+        }
 
         /// <summary>
         /// 明天

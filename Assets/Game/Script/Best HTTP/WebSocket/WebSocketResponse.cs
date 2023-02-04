@@ -39,8 +39,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         void IProtocol.HandleEvents()
         {
-            WebSocketFrameReader frame;
-            while (CompletedFrames.TryDequeue(out frame))
+            while (CompletedFrames.TryDequeue(out var frame))
             {
                 // Bugs in the clients shouldn't interrupt the code, so we need to try-catch and ignore any exception occurring here
                 try
@@ -48,30 +47,41 @@ namespace BestHTTP.WebSocket
                     switch (frame.Type)
                     {
                         case WebSocketFrameTypes.Continuation:
-                            HttpManager.Logger.Verbose("WebSocketResponse", "HandleEvents - OnIncompleteFrame",
-                                this.Context);
-                            if (OnIncompleteFrame != null)
-                                OnIncompleteFrame(this, frame);
+                        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnIncompleteFrame");
+#endif
+                            OnIncompleteFrame?.Invoke(this, frame);
+                        }
                             break;
 
                         case WebSocketFrameTypes.Text:
-                            // Any not Final frame is handled as a fragment
+                        {
+                            // 任何非Final帧都被作为片段处理
                             if (!frame.IsFinal)
+                            {
                                 goto case WebSocketFrameTypes.Continuation;
-
-                            HttpManager.Logger.Verbose("WebSocketResponse", "HandleEvents - OnText", this.Context);
-                            if (OnText != null)
-                                OnText(this, frame.DataAsText);
+                            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnText");
+#endif
+                            OnText?.Invoke(this, frame.DataAsText);
+                        }
                             break;
 
                         case WebSocketFrameTypes.Binary:
+                        {
                             // Any not Final frame is handled as a fragment
                             if (!frame.IsFinal)
                                 goto case WebSocketFrameTypes.Continuation;
-
-                            HttpManager.Logger.Verbose("WebSocketResponse", "HandleEvents - OnBinary", this.Context);
-                            if (OnBinary != null)
-                                OnBinary(this, frame.Data);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnBinary");
+#endif
+                            OnBinary?.Invoke(this, frame.Data);
+                        }
                             break;
                     }
                 }
@@ -86,7 +96,10 @@ namespace BestHTTP.WebSocket
             // Now, when there is an error only the OnError event will be called!
             if (IsClosed && OnClosed != null && BaseRequest.State == HttpRequestStates.Processing)
             {
-                HttpManager.Logger.Verbose("WebSocketResponse", "HandleEvents - Calling OnClosed", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - Calling OnClosed");
+#endif
                 try
                 {
                     UInt16 statusCode = 0;
@@ -96,11 +109,16 @@ namespace BestHTTP.WebSocket
                     if ( /*CloseFrame != null && */CloseFrame.Data != null && CloseFrame.Data.Length >= 2)
                     {
                         if (BitConverter.IsLittleEndian)
+                        {
                             Array.Reverse(CloseFrame.Data, 0, 2);
+                        }
+
                         statusCode = BitConverter.ToUInt16(CloseFrame.Data, 0);
 
                         if (CloseFrame.Data.Length > 2)
+                        {
                             msg = Encoding.UTF8.GetString(CloseFrame.Data, 2, CloseFrame.Data.Length - 2);
+                        }
 
                         CloseFrame.ReleaseData();
                     }
@@ -110,7 +128,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("WebSocketResponse", "HandleEvents - OnClosed", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnClosed Exception--->>:{ex} ");
+#endif
                 }
             }
         }
@@ -461,13 +482,14 @@ namespace BestHTTP.WebSocket
         public void Close(UInt16 code, string msg)
         {
             if (closed)
+            {
                 return;
-
-            HttpManager.Logger.Verbose("WebSocketResponse", string.Format("Close({0}, \"{1}\")", code, msg),
-                this.Context);
-
-            WebSocketFrame frame;
-            while (this.unsentFrames.TryDequeue(out frame))
+            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[WebSocketResponse] [method:Close] [msg] HandleEvents - Close({code}, \"{msg}\") ");
+#endif
+            while (this.unsentFrames.TryDequeue(out _))
                 ;
             //this.unsentFrames.Clear();
 

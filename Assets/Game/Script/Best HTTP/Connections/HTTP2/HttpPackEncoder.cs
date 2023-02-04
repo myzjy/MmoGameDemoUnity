@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 
@@ -73,21 +74,23 @@ namespace BestHTTP.Connections.HTTP2
                 // 但是，在HTTP/2中，报头字段名必须在编码之前转换为小写。 
                 //包含大写报头字段名的请求或响应必须被视为畸形
                 if (header.Any(char.IsUpper))
+                {
                     header = header.ToLower();
+                }
 
                 for (var i = 0; i < values.Count; ++i)
                 {
                     // ReSharper disable once AccessToDisposedClosure
                     WriteHeader(bufferStream, header, values[i]);
 
-                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                    {
-                        // ReSharper disable once StringLiteralTypo
-                        HttpManager.Logger.Information("HPACKEncoder",
-                            $"[{context.Id}] - Encode - Header({i + 1}/{values.Count}): '{header}': '{values[i]}'",
-                            this._parent.Context, context.Context,
-                            request.Context);
-                    }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder(3);
+                    sb.Append($"[{context.Id}] ");
+                    sb.Append("- Encode - Header");
+                    sb.Append($"({i + 1}/{values.Count}):");
+                    sb.Append($" '{header}': '{values[i]}'");
+                    Debug.Log($"[HPACKEncoder] [method: Encode] [msg|Exception]{sb.ToString()}");
+#endif
                 }
             }, true);
 

@@ -280,14 +280,16 @@ namespace BestHTTP.WebSocket
             {
                 WebSocketFrameReader frame = new WebSocketFrameReader();
                 frame.Read(this.incomingSegmentStream);
-
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("OverHTTP2", "Frame received: " + frame.Type, this.Parent.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[OverHTTP2] [method:OnFrame] [msg] Frame received: {frame.Type}");
+#endif
                 if (!frame.IsFinal)
                 {
                     if (this.Parent.OnIncompleteFrame == null)
+                    {
                         IncompleteFrames.Add(frame);
+                    }
                     else if (this.Parent.OnIncompleteFrame != null)
                     {
                         try

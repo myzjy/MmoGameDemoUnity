@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SignalRCore.Messages;
 #if NETFX_CORE || NET_4_6
@@ -74,14 +75,19 @@ namespace BestHTTP.SignalRCore
             int from = segment.Offset;
             int separatorIdx = Array.IndexOf<byte>(segment.Data, (byte)JsonProtocol.Separator, from);
             if (separatorIdx == -1)
+            {
                 throw new Exception("Missing separator in data! Segment: " + segment.ToString());
+            }
 
             while (separatorIdx != -1)
             {
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Verbose("JsonProtocol",
-                        "ParseMessages - " +
-                        System.Text.Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                var sb = new StringBuilder(3);
+                var encodingString = System.Text.Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from);
+                sb.Append($"ParseMessages - {encodingString}");
+                Debug.Log(
+                    $"[JsonProtocol] [method:ParseMessages] [msg]{sb.ToString()}");
+#endif
                 var message =
                     this.Encoder.DecodeAs<Message>(new BufferSegment(segment.Data, from, separatorIdx - from));
 
@@ -96,20 +102,22 @@ namespace BestHTTP.SignalRCore
         {
             BufferSegment result = BufferSegment.Empty;
 
-            // While message contains all informations already, the spec states that no additional field are allowed in messages
-            //  So we are creating 'specialized' messages here to send to the server.
+            //虽然消息已经包含了所有的信息，规范规定消息中不允许有额外的字段，所以我们在这里创建“专门的”消息发送到服务器。
             switch (message.type)
             {
                 case MessageTypes.StreamItem:
+                {
                     result = this.Encoder.Encode<StreamItemMessage>(new StreamItemMessage()
                     {
                         type = message.type,
                         invocationId = message.invocationId,
                         item = message.item
                     });
+                }
                     break;
 
                 case MessageTypes.Completion:
+                {
                     if (!string.IsNullOrEmpty(message.error))
                     {
                         result = this.Encoder.Encode<CompletionWithError>(new CompletionWithError()
@@ -129,16 +137,19 @@ namespace BestHTTP.SignalRCore
                         });
                     }
                     else
+                    {
                         result = this.Encoder.Encode<Completion>(new Completion()
                         {
                             type = MessageTypes.Completion,
                             invocationId = message.invocationId
                         });
-
+                    }
+                }
                     break;
 
                 case MessageTypes.Invocation:
                 case MessageTypes.StreamInvocation:
+                {
                     if (message.streamIds != null)
                     {
                         result = this.Encoder.Encode<UploadInvocationMessage>(new UploadInvocationMessage()
@@ -162,32 +173,45 @@ namespace BestHTTP.SignalRCore
                             arguments = message.arguments
                         });
                     }
-
+                }
                     break;
 
                 case MessageTypes.CancelInvocation:
+                {
                     result = this.Encoder.Encode<CancelInvocationMessage>(new CancelInvocationMessage()
                     {
                         invocationId = message.invocationId
                     });
+                }
                     break;
 
                 case MessageTypes.Ping:
+                {
                     result = this.Encoder.Encode<PingMessage>(new PingMessage());
+                }
                     break;
 
                 case MessageTypes.Close:
+                {
                     if (!string.IsNullOrEmpty(message.error))
+                    {
                         result = this.Encoder.Encode<CloseWithErrorMessage>(new CloseWithErrorMessage()
                             { error = message.error });
+                    }
                     else
+                    {
                         result = this.Encoder.Encode<CloseMessage>(new CloseMessage());
+                    }
+                }
                     break;
             }
-
-            if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                HttpManager.Logger.Verbose("JsonProtocol",
-                    "EncodeMessage - json: " + System.Text.Encoding.UTF8.GetString(result.Data, 0, result.Count - 1));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            var sb = new StringBuilder(3);
+            var encodingString = System.Text.Encoding.UTF8.GetString(result.Data, 0, result.Count - 1);
+            sb.Append($"EncodeMessage - json: {encodingString}");
+            Debug.Log(
+                $"[JsonProtocol] [method:EncodeMessage] [msg]{sb.ToString()}");
+#endif
 
             return result;
         }

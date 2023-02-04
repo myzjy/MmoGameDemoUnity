@@ -1510,7 +1510,10 @@ namespace BestHTTP
 
         private void VerboseLogging(string str)
         {
-            HttpManager.Logger.Verbose("HTTPRequest", str, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPRequest] [method:VerboseLogging] [msg] {str}");
+#endif
         }
 
         #region System.Collections.IEnumerator implementation

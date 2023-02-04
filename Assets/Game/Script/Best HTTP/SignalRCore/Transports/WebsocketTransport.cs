@@ -92,12 +92,14 @@ namespace BestHTTP.SignalRCore.Transports
         // The websocket connection is open
         private void OnOpen(WebSocket.WebSocket webSocket)
         {
-            HttpManager.Logger.Verbose("WebSocketTransport", "OnOpen", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[WebSocketTransport] [method:OnOpen] [msg] OnOpen");
+#endif
 
             // https://github.com/dotnet/aspnetcore/blob/master/src/SignalR/docs/specs/HubProtocol.md#overview
             // When our websocket connection is open, send the 'negotiation' message to the server.
             (this as ITransport).Send(JsonProtocol.WithSeparator(
-                string.Format("{{\"protocol\":\"{0}\", \"version\": 1}}", this.connection.Protocol.Name)));
+                $"{{\"protocol\":\"{this.connection.Protocol.Name}\", \"version\": 1}}"));
         }
 
         private void OnMessage(WebSocket.WebSocket webSocket, string data)
@@ -146,7 +148,9 @@ namespace BestHTTP.SignalRCore.Transports
         private void OnBinary(WebSocket.WebSocket webSocket, byte[] data)
         {
             if (this.State == TransportStates.Closing)
+            {
                 return;
+            }
 
             if (this.State == TransportStates.Connecting)
             {
@@ -164,7 +168,12 @@ namespace BestHTTP.SignalRCore.Transports
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage(byte[])", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError(
+                    $"[WebSocketTransport] [method:OnMessage(byte[])] [msg|Exception] OnMessage(byte[])Exception:{ex}");
+#endif
+                throw new Exception(
+                    $"[WebSocketTransport] [method:OnMessage(byte[])] [msg|Exception] OnMessage(byte[])Exception:{ex}");
             }
             finally
             {
@@ -176,8 +185,9 @@ namespace BestHTTP.SignalRCore.Transports
 
         private void OnError(WebSocket.WebSocket webSocket, string reason)
         {
-            HttpManager.Logger.Verbose("WebSocketTransport", "OnError: " + reason, this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[WebSocketTransport] [method:OnError] [msg] OnError");
+#endif
             if (this.State == TransportStates.Closing)
             {
                 this.State = TransportStates.Closed;
@@ -191,7 +201,9 @@ namespace BestHTTP.SignalRCore.Transports
 
         private void OnClosed(WebSocket.WebSocket webSocket, ushort code, string message)
         {
-            HttpManager.Logger.Verbose("WebSocketTransport", "OnClosed: " + code + " " + message, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[WebSocketTransport] [method:OnError] [msg] OnClosed:{code} {message}");
+#endif
 
             this.webSocket = null;
 
@@ -200,7 +212,9 @@ namespace BestHTTP.SignalRCore.Transports
 
         public override void StartClose()
         {
-            HttpManager.Logger.Verbose("WebSocketTransport", "StartClose", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[WebSocketTransport] [method:StartClose] [msg] StartClose");
+#endif
 
             if (this.webSocket != null && this.webSocket.IsOpen)
             {

@@ -16,12 +16,12 @@ namespace BestHTTP.SignalRCore
         bool IsPreAuthRequired { get; }
 
         /// <summary>
-        /// This event must be called when the pre-authentication succeded. When IsPreAuthRequired is false, no-one will subscribe to this event.
+        /// 当预身份验证成功时，必须调用此事件。当IsPreAuthRequired为false时，没有人订阅此事件。
         /// </summary>
         event OnAuthenticationSuccededDelegate OnAuthenticationSucceded;
 
         /// <summary>
-        /// This event must be called when the pre-authentication failed. When IsPreAuthRequired is false, no-one will subscribe to this event.
+        /// 当预身份验证失败时，必须调用此事件。当IsPreAuthRequired为false时，没有人订阅此事件。
         /// </summary>
         event OnAuthenticationFailedDelegate OnAuthenticationFailed;
 

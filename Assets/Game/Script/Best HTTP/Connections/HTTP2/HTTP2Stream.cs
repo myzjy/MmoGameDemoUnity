@@ -1,8 +1,10 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
 
+
 #if !BESTHTTP_DISABLE_CACHING
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.Caching;
 using BestHTTP.Core;
 using BestHTTP.Logger;
@@ -119,10 +121,10 @@ namespace BestHTTP.Connections.HTTP2
                 if (oldState != this._state)
                 {
                     this._lastStateChangedAt = DateTime.Now;
-
-                    HttpManager.Logger.Information("HTTP2Stream",
-                        string.Format("[{0}] State changed from {1} to {2}", this.Id, oldState, this._state),
-                        this.Context, this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(
+                        $"[HTTP2Stream] [method: this Http2StreamStates State set] [msg|Exception] [{this.Id}] State changed from {oldState} to {this._state}");
+#endif
                 }
             }
         }
@@ -148,15 +150,17 @@ namespace BestHTTP.Connections.HTTP2
 
         public void Assign(HttpRequest request)
         {
-            if (request.IsRedirected)
-                request.Timing.Add(TimingEventNames.Queued_For_Redirection);
-            else
-                request.Timing.Add(TimingEventNames.Queued);
-
-            HttpManager.Logger.Information("HTTP2Stream",
-                string.Format("[{0}] Request assigned to stream. Remote Window: {1:N0}. Uri: {2}", this.Id,
-                    this.remoteWindow, request.CurrentUri.ToString()), this.Context, request.Context,
-                this.parent.Context);
+            request.Timing.Add(request.IsRedirected
+                ? TimingEventNames.Queued_For_Redirection
+                : TimingEventNames.Queued);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            StringBuilder sb = new StringBuilder(3);
+            sb.Append($"[{this.Id}] Request assigned to stream.");
+            sb.Append($"  Remote Window: {this.remoteWindow:N0}.");
+            sb.Append($" Uri: {request.CurrentUri.ToString()}");
+            Debug.Log(
+                $"[HTTP2Stream] [method: Assign] [msg|Exception] {sb.ToString()}");
+#endif
             this.AssignedRequest = request;
             this._isStreamedDownload = request.UseStreaming && request.OnStreamingData != null;
             this._downloaded = 0;
@@ -260,18 +264,26 @@ namespace BestHTTP.Connections.HTTP2
                     continue;
                 }
 
-                if ( /*HTTPManager.Logger.Level == Logger.Loglevels.All && */frame.Type != Http2FrameTypes.Data &&
-                                                                             frame.Type !=
-                                                                             Http2FrameTypes.WindowUpdate)
-                    HttpManager.Logger.Information("HTTP2Stream",
-                        string.Format("[{0}] Process - processing frame: {1}", this.Id, frame.ToString()), this.Context,
-                        this.AssignedRequest.Context, this.parent.Context);
+                if ( /*HTTPManager.Logger.Level == Logger.Loglevels.All && */
+                    frame.Type != Http2FrameTypes.Data &&
+                    frame.Type !=
+                    Http2FrameTypes.WindowUpdate)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append($"[{this.Id}] Process - processing frame: {frame.ToString()}");
+                    Debug.Log(
+                        $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+#endif
+                }
 
                 switch (frame.Type)
                 {
                     case Http2FrameTypes.Headers:
                     case Http2FrameTypes.Continuation:
-                        if (this.State != Http2StreamStates.HalfClosedLocal && this.State != Http2StreamStates.Open &&
+                    {
+                        if (this.State != Http2StreamStates.HalfClosedLocal &&
+                            this.State != Http2StreamStates.Open &&
                             this.State != Http2StreamStates.Idle)
                         {
                             // ERROR!
@@ -291,7 +303,9 @@ namespace BestHTTP.Connections.HTTP2
 
                         // END_STREAM may arrive sooner than an END_HEADERS, so we have to store that we already received it
                         if ((frame.Flags & (byte)Http2HeadersFlags.EndStream) != 0)
+                        {
                             this._isEndStrReceived = true;
+                        }
 
                         if ((frame.Flags & (byte)Http2HeadersFlags.EndHeaders) != 0)
                         {
@@ -345,10 +359,11 @@ namespace BestHTTP.Connections.HTTP2
                                     this.State = Http2StreamStates.HalfClosedRemote;
                             }
                         }
-
+                    }
                         break;
 
                     case Http2FrameTypes.Data:
+                    {
                         if (this.State != Http2StreamStates.HalfClosedLocal && this.State != Http2StreamStates.Open)
                         {
                             // ERROR!
@@ -373,9 +388,8 @@ namespace BestHTTP.Connections.HTTP2
                         if (this.localWindow < frame.PayloadLength)
                         {
                             HttpManager.Logger.Error("HTTP2Stream",
-                                string.Format(
-                                    "[{0}] Frame's PayloadLength ({1:N0}) is larger then local window ({2:N0}). Frame: {3}",
-                                    this.Id, frame.PayloadLength, this.localWindow, frame), this.Context,
+                                $"[{this.Id}] Frame's PayloadLength ({frame.PayloadLength:N0}) is larger then local window ({this.localWindow:N0}). Frame: {frame}",
+                                this.Context,
                                 this.AssignedRequest.Context, this.parent.Context);
                         }
                         else
@@ -397,12 +411,16 @@ namespace BestHTTP.Connections.HTTP2
                         if (this._isEndStrReceived)
                         {
                             if (this._isStreamedDownload)
+                            {
                                 this.response.FinishProcessData();
-
-                            HttpManager.Logger.Information("HTTP2Stream",
-                                string.Format("[{0}] All data arrived, data length: {1:N0}", this.Id, this._downloaded),
-                                this.Context, this.AssignedRequest.Context, this.parent.Context);
-
+                            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            var sb = new StringBuilder(3);
+                            sb.Append($"[{this.Id}] All data arrived,");
+                            sb.Append($" data length: {this._downloaded:N0}");
+                            Debug.Log(
+                                $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+#endif
                             // create a short living thread to process the downloaded data:
                             PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HTTP2Stream, FramesAsStreamView>(
                                 FinishRequest, this, this._dataView);
@@ -415,29 +433,36 @@ namespace BestHTTP.Connections.HTTP2
                                 this.State = Http2StreamStates.HalfClosedRemote;
                         }
                         else if (this.AssignedRequest.OnDownloadProgress != null)
+                        {
                             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.AssignedRequest,
                                 RequestEvents.DownloadProgress,
                                 _downloaded,
                                 this.response.ExpectedContentLength));
-
+                        }
+                    }
                         break;
 
                     case Http2FrameTypes.WindowUpdate:
+                    {
                         Http2WindowUpdateFrame windowUpdateFrame = Http2FrameHelper.ReadWindowUpdateFrame(frame);
 
-                        if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                            HttpManager.Logger.Information("HTTP2Stream",
-                                string.Format(
-                                    "[{0}] Received Window Update: {1:N0}, new remoteWindow: {2:N0}, initial remote window: {3:N0}, total data sent: {4:N0}",
-                                    this.Id, windowUpdateFrame.WindowSizeIncrement,
-                                    this.remoteWindow + windowUpdateFrame.WindowSizeIncrement,
-                                    this.settings.RemoteSettings[Http2Settings.InitialWindowSize], this.sentData),
-                                this.Context, this.AssignedRequest.Context, this.parent.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        var windowSizeIncrement = windowUpdateFrame.WindowSizeIncrement;
+                        var remoteWindowSizeIncrement = this.remoteWindow + windowUpdateFrame.WindowSizeIncrement;
+                        var remoteSettings = this.settings.RemoteSettings[Http2Settings.InitialWindowSize];
+                        sb.Append($"[{this.Id}] Received Window Update: {windowSizeIncrement:N0},");
+                        sb.Append($" new remoteWindow: {(remoteWindowSizeIncrement):N0}");
+                        sb.Append($", initial remote window: {remoteSettings:N0},");
+                        sb.Append($", total data sent: {this.sentData:N0}");
+                        Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+#endif
                         this.remoteWindow += windowUpdateFrame.WindowSizeIncrement;
+                    }
                         break;
 
                     case Http2FrameTypes.RstStream:
+                    {
                         // https://httpwg.org/specs/rfc7540.html#RST_STREAM
 
                         // It's possible to receive an RST_STREAM on a closed stream. In this case, we have to ignore it.
@@ -448,15 +473,18 @@ namespace BestHTTP.Connections.HTTP2
 
                         //HTTPManager.Logger.Error("HTTP2Stream", string.Format("[{0}] RST Stream frame ({1}) received in state {2}!", this.Id, rstStreamFrame, this.State), this.Context, this.AssignedRequest.Context, this.parent.Context);
 
-                        Abort(string.Format("RST_STREAM frame received! Error code: {0}({1})",
-                            rstStreamFrame.Error.ToString(), rstStreamFrame.ErrorCode));
+                        Abort(
+                            $"RST_STREAM frame received! Error code: {rstStreamFrame.Error.ToString()}({rstStreamFrame.ErrorCode})");
+                    }
                         break;
 
                     default:
+                    {
                         HttpManager.Logger.Warning("HTTP2Stream",
-                            string.Format("[{0}] Unexpected frame ({1}, Payload: {2}) in state {3}!", this.Id, frame,
-                                frame.PayloadAsHex(), this.State), this.Context, this.AssignedRequest.Context,
+                            $"[{this.Id}] Unexpected frame ({frame}, Payload: {frame.PayloadAsHex()}) in state {this.State}!",
+                            this.Context, this.AssignedRequest.Context,
                             this.parent.Context);
+                    }
                         break;
                 }
 
@@ -467,12 +495,17 @@ namespace BestHTTP.Connections.HTTP2
             if (windowUpdate > 0)
             {
                 if (HttpManager.Logger.Level <= Logger.Loglevels.All)
-                    HttpManager.Logger.Information("HTTP2Stream",
-                        string.Format(
-                            "[{0}] Sending window update: {1:N0}, current window: {2:N0}, initial window size: {3:N0}",
-                            this.Id, windowUpdate, this.localWindow,
-                            this.settings.MySettings[Http2Settings.InitialWindowSize]), this.Context,
-                        this.AssignedRequest.Context, this.parent.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    var windowUpdateLog = windowUpdate;
+                    var mySettings = this.settings.MySettings[Http2Settings.InitialWindowSize];
+                    sb.Append($"[{this.Id}] Sending window update: {windowUpdateLog:N0},");
+                    sb.Append($" current window: {this.localWindow:N0},");
+                    sb.Append($" initial window size: {mySettings:N0}");
+                    Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+#endif
+                }
 
                 this.localWindow += windowUpdate;
 
@@ -485,7 +518,7 @@ namespace BestHTTP.Connections.HTTP2
             switch (this.State)
             {
                 case Http2StreamStates.Idle:
-
+                {
                     UInt32 initiatedInitialWindowSize =
                         this.settings.InitiatedMySettings[Http2Settings.InitialWindowSize];
                     this.localWindow = initiatedInitialWindowSize;
@@ -519,16 +552,19 @@ namespace BestHTTP.Connections.HTTP2
                         this.State = Http2StreamStates.Open;
                         this._lastReadCount = 1;
                     }
-
+                }
                     break;
 
                 case Http2StreamStates.Open:
+                {
                     // remote Window can be negative! See https://httpwg.org/specs/rfc7540.html#InitialWindowSize
                     if (this.remoteWindow <= 0)
                     {
-                        HttpManager.Logger.Information("HTTP2Stream",
-                            string.Format("[{0}] Skipping data sending as remote Window is {1}!", this.Id,
-                                this.remoteWindow), this.Context, this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append($"[{this.Id}] Skipping data sending as remote Window is {this.remoteWindow}!");
+                        Debug.Log($"[HTTP2Stream] [method: ProcessState] [msg|Exception] {sb.ToString()}");
+#endif
                         return;
                     }
 
@@ -537,13 +573,14 @@ namespace BestHTTP.Connections.HTTP2
                     Int64 maxFrameSize = Math.Min(this.remoteWindow,
                         this.settings.RemoteSettings[Http2Settings.MaxFrameSize]);
 
-                    Http2FrameHeaderAndPayload frame = new Http2FrameHeaderAndPayload();
-                    frame.Type = Http2FrameTypes.Data;
-                    frame.StreamId = this.Id;
+                    Http2FrameHeaderAndPayload frame = new Http2FrameHeaderAndPayload
+                    {
+                        Type = Http2FrameTypes.Data,
+                        StreamId = this.Id,
+                        Payload = BufferPool.Get(maxFrameSize, true)
+                    };
 
-                    frame.Payload = BufferPool.Get(maxFrameSize, true);
-
-                    // Expect a readCount of zero if it's end of the stream. But, to enable non-blocking scenario to wait for data, going to treat a negative value as no data.
+                    // 如果它是流的结尾，则期望readCount为零。但是，为了使非阻塞场景能够等待数据，将负值视为没有数据。
                     this._lastReadCount =
                         this.uploadStreamInfo.Stream.Read(frame.Payload, 0, (int)Math.Min(maxFrameSize, int.MaxValue));
                     if (this._lastReadCount <= 0)
@@ -553,10 +590,14 @@ namespace BestHTTP.Connections.HTTP2
                         frame.PayloadLength = 0;
 
                         if (this._lastReadCount < 0)
+                        {
                             break;
+                        }
                     }
                     else
+                    {
                         frame.PayloadLength = (UInt32)this._lastReadCount;
+                    }
 
                     frame.PayloadOffset = 0;
                     frame.DontUseMemPool = false;
@@ -580,9 +621,11 @@ namespace BestHTTP.Connections.HTTP2
                     this.sentData += frame.PayloadLength;
 
                     if (this.AssignedRequest.OnUploadProgress != null)
+                    {
                         RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.AssignedRequest,
                             RequestEvents.UploadProgress, this.sentData, this.uploadStreamInfo.Length));
-
+                    }
+                }
                     //HTTPManager.Logger.Information("HTTP2Stream", string.Format("[{0}] New DATA frame created! remoteWindow: {1:N0}", this.Id, this.remoteWindow), this.Context, this.AssignedRequest.Context, this.parent.Context);
                     break;
 
@@ -603,37 +646,33 @@ namespace BestHTTP.Connections.HTTP2
             switch (setting)
             {
                 case Http2Settings.InitialWindowSize:
+                {
                     // https://httpwg.org/specs/rfc7540.html#InitialWindowSize
-                    // "Prior to receiving a SETTINGS frame that sets a value for SETTINGS_INITIAL_WINDOW_SIZE,
-                    // an endpoint can only use the default initial window size when sending flow-controlled frames."
-                    // "In addition to changing the flow-control window for streams that are not yet active,
-                    // a SETTINGS frame can alter the initial flow-control window size for streams with active flow-control windows
-                    // (that is, streams in the "open" or "half-closed (remote)" state). When the value of SETTINGS_INITIAL_WINDOW_SIZE changes,
-                    // a receiver MUST adjust the size of all stream flow-control windows that it maintains by the difference between the new value and the old value."
-
-                    // So, if we created a stream before the remote peer's initial settings frame is received, we
-                    // will adjust the window size. For example: initial window size by default is 65535, if we later
-                    // receive a change to 1048576 (1 MB) we will increase the current remoteWindow by (1 048 576 - 65 535 =) 983 041
-
-                    // But because initial window size in a setting frame can be smaller then the default 65535 bytes,
-                    // the difference can be negative:
-                    // "A change to SETTINGS_INITIAL_WINDOW_SIZE can cause the available space in a flow-control window to become negative.
-                    // A sender MUST track the negative flow-control window and MUST NOT send new flow-controlled frames
-                    // until it receives WINDOW_UPDATE frames that cause the flow-control window to become positive.
-
-                    // For example, if the client sends 60 KB immediately on connection establishment
-                    // and the server sets the initial window size to be 16 KB, the client will recalculate
-                    // the available flow - control window to be - 44 KB on receipt of the SETTINGS frame.
-                    // The client retains a negative flow-control window until WINDOW_UPDATE frames restore the
-                    // window to being positive, after which the client can resume sending."
+                    // "在接收设置帧之前，设置SETTINGS_INITIAL_WINDOW_SIZE的值，
+                    //终端发送流控制帧时只能使用默认的初始窗口大小。"
+                    // "除了为尚未激活的流更改流量控制窗口外，
+                    // a设置帧可以改变流的初始流量控制窗口大小
+                    //(即流处于“打开”或“半封闭(远程)”状态)。当SETTINGS_INITIAL_WINDOW_SIZE的值改变时，
+                    //接收端必须根据新值和旧值之间的差异来调整所有流流量控制窗口的大小。"
+                    //所以，如果我们在远端对等体的初始设置帧被接收之前创建了一个流，我们
+                    //将调整窗口大小。例如:初始窗口大小默认为65535，如果我们以后
+                    //收到一个改变到1048576 (1 MB)，我们将增加当前的remoteWindow (1 048576 - 65 535 =) 983 041
+                    //但由于初始窗口大小在设置帧可以小于默认的65535字节，
+                    //差值可以是负的:
+                    // " SETTINGS_INITIAL_WINDOW_SIZE的改变会导致流量控制窗口的可用空间变为负值。
+                    //发送方必须跟踪负流量控制窗口，不能发送新的流量控制帧
+                    //直到它接收到WINDOW_UPDATE帧，导致流控制窗口变成正的。
 
                     this.remoteWindow += newValue - oldValue;
-
-                    HttpManager.Logger.Information("HTTP2Stream",
-                        string.Format(
-                            "[{0}] Remote Setting's Initial Window Updated from {1:N0} to {2:N0}, diff: {3:N0}, new remoteWindow: {4:N0}, total data sent: {5:N0}",
-                            this.Id, oldValue, newValue, newValue - oldValue, this.remoteWindow, this.sentData),
-                        this.Context, this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append($"[{this.Id}] Remote Setting's Initial Window Updated from {oldValue:N0}");
+                    sb.Append($" to {newValue:N0}, diff: {newValue - oldValue:N0},");
+                    sb.Append($" new remoteWindow: {this.remoteWindow:N0},");
+                    sb.Append($" total data sent: {this.sentData:N0}");
+                    Debug.Log($"[HTTP2Stream] [method: OnRemoteSettingChanged] [msg|Exception] {sb.ToString()}");
+#endif
+                }
                     break;
             }
         }
@@ -654,19 +693,21 @@ namespace BestHTTP.Connections.HTTP2
 
             stream.AssignedRequest.Timing.Add(TimingEventNames.Response_Received);
 
-            bool resendRequest;
-            HttpConnectionStates proposedConnectionStates; // ignored
             KeepAliveHeader keepAliveHeader = null; // ignored
 
-            ConnectionHelper.HandleResponse("HTTP2Stream", stream.AssignedRequest, out resendRequest,
-                out proposedConnectionStates, ref keepAliveHeader, stream.Context, stream.AssignedRequest.Context);
+            ConnectionHelper.HandleResponse("HTTP2Stream", stream.AssignedRequest, out var resendRequest,
+                out _, ref keepAliveHeader, stream.Context, stream.AssignedRequest.Context);
 
             if (resendRequest && !stream.AssignedRequest.IsCancellationRequested)
+            {
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(stream.AssignedRequest,
                     RequestEvents.Resend));
+            }
             else if (stream.AssignedRequest.State == HttpRequestStates.Processing &&
                      !stream.AssignedRequest.IsCancellationRequested)
+            {
                 stream.AssignedRequest.State = HttpRequestStates.Finished;
+            }
             else
             {
                 // Already set in HTTPRequest's Abort().
@@ -689,9 +730,9 @@ namespace BestHTTP.Connections.HTTP2
             // https://github.com/Benedicht/BestHTTP-Issues/issues/77
             // Unsubscribe from OnSettingChangedEvent to remove reference to this instance.
             this.settings.RemoteSettings.OnSettingChangedEvent -= OnRemoteSettingChanged;
-
-            HttpManager.Logger.Information("HTTP2Stream", "Stream removed: " + this.Id.ToString(), this.Context,
-                this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HTTP2Stream] [method: Removed] [msg|Exception] Stream removed: {this.Id.ToString()}");
+#endif
         }
     }
 }
