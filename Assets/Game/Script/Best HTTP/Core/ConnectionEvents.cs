@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
-using BestHTTP.Logger;
 
 // Required for ConcurrentQueue.Clear extension.
 
@@ -99,10 +98,10 @@ namespace BestHTTP.Core
 
         public static void EnqueueConnectionEvent(ConnectionEventInfo @event)
         {
-            if (HttpManager.Logger.Level == Loglevels.All)
-                HttpManager.Logger.Information("ConnectionEventHelper",
-                    "Enqueue connection event: " + @event.ToString(), @event.Source.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(ConnectionEventHelper)}] [method:EnqueueConnectionEvent] [msg] Enqueue connection event: {@event.ToString()}");
+#endif
             ConnectionEventQueue.Enqueue(@event);
         }
 
@@ -115,10 +114,10 @@ namespace BestHTTP.Core
         {
             while (ConnectionEventQueue.TryDequeue(out var connectionEvent))
             {
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    HttpManager.Logger.Information("ConnectionEventHelper",
-                        "Processing connection event: " + connectionEvent.ToString(), connectionEvent.Source.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[{nameof(ConnectionEventHelper)}] [method:ProcessQueue] [msg] Processing connection event:  {connectionEvent.ToString()}");
+#endif
                 if (_onEvent != null)
                 {
                     try
@@ -134,8 +133,10 @@ namespace BestHTTP.Core
 
                 if (connectionEvent.Source.LastProcessedUri == null)
                 {
-                    HttpManager.Logger.Information("ConnectionEventHelper",
-                        $"Ignoring ConnectionEventInfo({connectionEvent.ToString()}) because its LastProcessedUri is null!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(
+                        $"[{nameof(ConnectionEventHelper)}] [method:ProcessQueue] [msg] Ignoring ConnectionEventInfo({connectionEvent.ToString()}) because its LastProcessedUri is null!");
+#endif
                     return;
                 }
 

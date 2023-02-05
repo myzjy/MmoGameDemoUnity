@@ -74,8 +74,10 @@ namespace BestHTTP.Core
 
         public void HandleConnectProtocol(Http2ConnectProtocolInfo info)
         {
-            HttpManager.Logger.Information(nameof(HostDefinition),
-                $"Received HandleConnectProtocol message. Connect protocol for host {info.Host}. Enabled: {info.Enabled}");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(HostDefinition)}] [method:HandleConnectProtocol] [msg] Received HandleConnectProtocol message. Connect protocol for host {info.Host}. Enabled: {info.Enabled}");
+#endif
         }
 
         internal void Shutdown()

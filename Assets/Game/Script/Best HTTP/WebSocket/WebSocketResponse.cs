@@ -626,11 +626,10 @@ namespace BestHTTP.WebSocket
                     {
                         WebSocketFrameReader frame = new WebSocketFrameReader();
                         frame.Read(this.Stream);
-
-                        if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                            HttpManager.Logger.Information("WebSocketResponse", "Frame received: " + frame.Type,
-                                this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Frame received: {frame.Type}");
+#endif
                         lastMessage = DateTime.UtcNow;
 
                         // A server MUST NOT mask any frames that it sends to the client.  A client MUST close a connection if it detects a masked frame.
@@ -638,8 +637,10 @@ namespace BestHTTP.WebSocket
                         // (These rules might be relaxed in a future specification.)
                         if (frame.HasMask)
                         {
-                            HttpManager.Logger.Warning("WebSocketResponse",
-                                "Protocol Error: masked frame received from server!", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log(
+                                $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Protocol Error: masked frame received from server!");
+#endif
                             Close(1002, "Protocol Error: masked frame received from server!");
                             continue;
                         }
@@ -647,9 +648,14 @@ namespace BestHTTP.WebSocket
                         if (!frame.IsFinal)
                         {
                             if (OnIncompleteFrame == null)
+                            {
                                 IncompleteFrames.Add(frame);
+                            }
                             else
+                            {
                                 CompletedFrames.Enqueue(frame);
+                            }
+
                             continue;
                         }
 
@@ -658,6 +664,7 @@ namespace BestHTTP.WebSocket
                             // For a complete documentation and rules on fragmentation see http://tools.ietf.org/html/rfc6455#section-5.4
                             // A fragmented Frame's last fragment's opcode is 0 (Continuation) and the FIN bit is set to 1.
                             case WebSocketFrameTypes.Continuation:
+                            {
                                 // Do an assemble pass only if OnFragment is not set. Otherwise put it in the CompletedFrames, we will handle it in the HandleEvent phase.
                                 if (OnIncompleteFrame == null)
                                 {
@@ -674,23 +681,30 @@ namespace BestHTTP.WebSocket
                                     CompletedFrames.Enqueue(frame);
                                     ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
                                 }
-
+                            }
                                 break;
 
                             case WebSocketFrameTypes.Text:
                             case WebSocketFrameTypes.Binary:
+                            {
                                 frame.DecodeWithExtensions(WebSocket);
                                 CompletedFrames.Enqueue(frame);
                                 ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
+                            }
                                 break;
 
                             // Upon receipt of a Ping frame, an endpoint MUST send a Pong frame in response, unless it already received a Close frame.
                             case WebSocketFrameTypes.Ping:
+                            {
                                 if (!closeSent && !closed)
+                                {
                                     Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Pong, frame.Data));
+                                }
+                            }
                                 break;
 
                             case WebSocketFrameTypes.Pong:
+                            {
                                 try
                                 {
                                     // the difference between the current time and the time when the ping message is sent
@@ -713,18 +727,21 @@ namespace BestHTTP.WebSocket
                                 {
                                     waitingForPong = false;
                                 }
-
+                            }
                                 break;
 
                             // If an endpoint receives a Close frame and did not previously send a Close frame, the endpoint MUST send a Close frame in response.
                             case WebSocketFrameTypes.ConnectionClose:
-                                HttpManager.Logger.Information("WebSocketResponse", "ConnectionClose packet received!",
-                                    this.Context);
-
+                            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.Log(
+                                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] ConnectionClose packet received!");
+#endif
                                 CloseFrame = frame;
                                 if (!closeSent)
                                     Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.ConnectionClose, null));
                                 closed = true;
+                            }
                                 break;
                         }
                     }
@@ -742,14 +759,17 @@ namespace BestHTTP.WebSocket
                         newFrameSignal.Set();
                     }
                 }
-
-                HttpManager.Logger.Information("WebSocketResponse", "Ending Read thread! closed: " + closed,
-                    this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Ending Read thread! closed: {closed}");
+#endif
             }
             finally
             {
-                HttpManager.Logger.Information("WebSocketResponse", "ReceiveThread - Closed!", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] ReceiveThread - Closed!");
+#endif
                 TryToCleanup();
             }
         }

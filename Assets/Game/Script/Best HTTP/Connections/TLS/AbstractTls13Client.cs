@@ -61,15 +61,21 @@ namespace BestHTTP.Connections.TLS
 
         public virtual TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(GetClientCredentials)}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            // ReSharper disable once StringLiteralTypo
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:GetClientCredentials] [msg] [{nameof(GetClientCredentials)}]");
+#endif
             return null;
         }
 
         public virtual void NotifyServerCertificate(TlsServerCertificate serverCertificate)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifyServerCertificate)}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            // ReSharper disable once StringLiteralTypo
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyServerCertificate] [msg] [{nameof(NotifyServerCertificate)}]");
+#endif
         }
 
         /// <summary>
@@ -88,109 +94,131 @@ namespace BestHTTP.Connections.TLS
 
         protected override int[] GetSupportedCipherSuites()
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(GetSupportedCipherSuites)}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            // ReSharper disable once StringLiteralTypo
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:GetSupportedCipherSuites] [msg] [{nameof(GetSupportedCipherSuites)}]");
+#endif
             return TlsUtilities.GetSupportedCipherSuites(Crypto, DefaultCipherSuites);
         }
 
         // TlsAuthentication implementation
         public override TlsAuthentication GetAuthentication()
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(GetAuthentication)}", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            // ReSharper disable once StringLiteralTypo
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:GetAuthentication] [msg] [{nameof(GetAuthentication)}]");
+#endif
             return this;
         }
 
         public override void NotifyAlertReceived(short alertLevel, short alertDescription)
         {
             base.NotifyAlertReceived(alertLevel, alertDescription);
-
-            HttpManager.Logger.Information(nameof(AbstractTls13Client),
-                $"{nameof(NotifyAlertReceived)}({alertLevel}, {alertDescription})", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            // ReSharper disable once StringLiteralTypo
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyAlertReceived] [msg] {nameof(NotifyAlertReceived)}({alertLevel}, {alertDescription})");
+#endif
         }
 
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message,
             Exception cause)
         {
             base.NotifyAlertRaised(alertLevel, alertDescription, message, cause);
-
-            HttpManager.Logger.Information(nameof(AbstractTls13Client),
-                $"{nameof(NotifyAlertRaised)}({alertLevel}, {alertDescription}, {message}, {cause?.StackTrace})",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyAlertRaised] [msg] {nameof(NotifyAlertRaised)}({alertLevel}, {alertDescription}, {message}, {cause?.StackTrace})");
+#endif
         }
 
         public override void NotifyHandshakeBeginning()
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifyHandshakeBeginning)}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyHandshakeBeginning] [msg] [{nameof(NotifyHandshakeBeginning)}]");
+#endif
         }
 
         public override void NotifyHandshakeComplete()
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifyHandshakeComplete)}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyHandshakeComplete] [msg] [{nameof(NotifyHandshakeComplete)}]");
+#endif
             this._request = null;
         }
 
         public override void NotifyNewSessionTicket(NewSessionTicket newSessionTicket)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifyNewSessionTicket)}",
-                this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyNewSessionTicket] [msg] [{nameof(NotifyNewSessionTicket)}]");
+#endif
             base.NotifyNewSessionTicket(newSessionTicket);
         }
 
         public override void NotifySecureRenegotiation(bool secureRenegotiation)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifySecureRenegotiation)}",
-                this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifySecureRenegotiation] [msg] [{nameof(NotifySecureRenegotiation)}]");
+#endif
             base.NotifySecureRenegotiation(secureRenegotiation);
         }
 
         public override void NotifySelectedCipherSuite(int selectedCipherSuite)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client),
-                $"{nameof(NotifySelectedCipherSuite)}({selectedCipherSuite})", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifySelectedCipherSuite] [msg] [{nameof(NotifySelectedCipherSuite)}] ({selectedCipherSuite})");
+#endif
             base.NotifySelectedCipherSuite(selectedCipherSuite);
         }
 
         public override void NotifySelectedPsk(TlsPsk selectedPsk)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client),
-                $"{nameof(NotifySelectedPsk)}({selectedPsk?.PrfAlgorithm})", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifySelectedPsk] [msg] [{nameof(NotifySelectedPsk)}] ({selectedPsk?.PrfAlgorithm})");
+#endif
             base.NotifySelectedPsk(selectedPsk);
         }
 
         public override void NotifyServerVersion(ProtocolVersion serverVersion)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client),
-                $"{nameof(NotifyServerVersion)}({serverVersion})", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifyServerVersion] [msg] [{nameof(NotifyServerVersion)}] ({serverVersion})");
+#endif
             base.NotifyServerVersion(serverVersion);
         }
 
         public override void NotifySessionID(byte[] sessionID)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifySessionID)}", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifySessionID] [msg] [{nameof(NotifySessionID)}]");
+#endif
             base.NotifySessionID(sessionID);
         }
 
         public override void NotifySessionToResume(TlsSession session)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(NotifySessionToResume)}",
-                this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:NotifySessionToResume] [msg] [{nameof(NotifySessionToResume)}]");
+#endif
             base.NotifySessionToResume(session);
         }
 
         public override void ProcessServerExtensions(IDictionary serverExtensions)
         {
-            HttpManager.Logger.Information(nameof(AbstractTls13Client), $"{nameof(ProcessServerExtensions)}",
-                this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[{nameof(AbstractTls13Client)}] [method:ProcessServerExtensions] [msg] [{nameof(ProcessServerExtensions)}]");
+#endif
             base.ProcessServerExtensions(serverExtensions);
         }
     }

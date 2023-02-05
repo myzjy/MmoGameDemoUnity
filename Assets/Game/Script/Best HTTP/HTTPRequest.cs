@@ -1280,16 +1280,16 @@ namespace BestHTTP
 #endif
                     CurrentUri.GetRequestPathAndQueryURL();
 
-            string requestLine = string.Format("{0} {1} HTTP/1.1", MethodNames[(byte)MethodType], requestPathAndQuery);
-
-            if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                HttpManager.Logger.Information("HTTPRequest", string.Format("Sending request: '{0}'", requestLine),
-                    this.Context);
+            string requestLine = $"{MethodNames[(byte)MethodType]} {requestPathAndQuery} HTTP/1.1";
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPRequest] [method:SendOutTo] [msg] Sending request: '{requestLine}'");
+#endif
 
             // Create a buffer stream that will not close 'stream' when disposed or closed.
             // buffersize should be larger than UploadChunkSize as it might be used for uploading user data and
             //  it should have enough room for UploadChunkSize data and additional chunk information.
-            using (WriteOnlyBufferedStream bufferStream =
+            using (var bufferStream =
                    new WriteOnlyBufferedStream(stream, (int)(UploadChunkSize * 1.5f)))
             {
                 byte[] requestLineBytes = requestLine.GetASCIIBytes();
@@ -1397,7 +1397,10 @@ namespace BestHTTP
                     bufferStream.Flush();
             } // bufferStream.Dispose
 
-            HttpManager.Logger.Information("HTTPRequest", "'" + requestLine + "' sent out", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPRequest] [method:SendOutTo] [msg] '{requestLine}' sent out");
+#endif
 #endif
         }
 

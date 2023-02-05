@@ -157,25 +157,28 @@ namespace BestHTTP.Connections
                 this.connector.Client.NoDelay = true;
 #endif
                 StartTime = DateTime.UtcNow;
-
-                HttpManager.Logger.Information("HTTPConnection",
-                    "Negotiated protocol through ALPN: '" + this.connector.NegotiatedProtocol + "'", this.Context,
-                    this.CurrentRequest.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[{nameof(HTTPConnection)}] [method:ThreadFunc] [msg] Negotiated protocol through ALPN: '{this.connector.NegotiatedProtocol}'");
+#endif
                 switch (this.connector.NegotiatedProtocol)
                 {
                     case HttpProtocolFactory.W3CHttp1:
+                    {
                         this.requestHandler = new Connections.HTTP1Handler(this);
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
                             HostProtocolSupport.Http1));
+                    }
                         break;
 
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
                     case HttpProtocolFactory.W3CHttp2:
+                    {
                         this.requestHandler = new Connections.HTTP2.Http2Handler(this);
                         this.CurrentRequest = null;
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,
                             HostProtocolSupport.Http2));
+                    }
                         break;
 #endif
 

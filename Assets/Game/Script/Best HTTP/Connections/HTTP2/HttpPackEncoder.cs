@@ -133,15 +133,12 @@ namespace BestHTTP.Connections.HTTP2
                         // 带增量索引的文字头字段-新名称
                         var header = ReadLiteralHeaderFieldWithIncrementalIndexing_NewName(stream);
 
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                $"[{context.Id}] Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
 
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName: {header.ToString()}");
+#endif
                         this._responseTable.Add(header);
                         to.Add(header);
                     }
@@ -149,16 +146,11 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         // 字面值报头字段与增量索引-索引名称
                         var header = ReadLiteralHeaderFieldWithIncrementalIndexing_IndexedName(firstDataByte, stream);
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                $"[{context.Id}] Decode - LiteralHeaderFieldWithIncrementalIndexing_IndexedName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldWithIncrementalIndexing_IndexedName: {header.ToString()}");
+#endif
                         this._responseTable.Add(header);
                         to.Add(header);
                     }
@@ -171,34 +163,22 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         // 没有索引的文字头字段-新名称
                         var header = ReadLiteralHeaderFieldwithoutIndexing_NewName(stream);
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                // ReSharper disable once StringLiteralTypo
-                                $"[{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_NewName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_NewName: {header.ToString()}");
+#endif
                         to.Add(header);
                     }
                     else
                     {
                         // Literal Header Field without Indexing — Indexed Name
                         var header = ReadLiteralHeaderFieldwithoutIndexing_IndexedName(firstDataByte, stream);
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                // ReSharper disable once StringLiteralTypo
-                                $"[{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_IndexedName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_IndexedName: {header.ToString()}");
+#endif
                         to.Add(header);
                     }
                 }
@@ -210,32 +190,22 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         // Literal Header Field Never Indexed — New Name
                         var header = ReadLiteralHeaderFieldNeverIndexed_NewName(stream);
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                $"[{context.Id}] Decode - LiteralHeaderFieldNeverIndexed_NewName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldNeverIndexed_NewName: {header.ToString()}");
+#endif
                         to.Add(header);
                     }
                     else
                     {
                         // 字面头字段从未被索引-被索引的名称
                         var header = ReadLiteralHeaderFieldNeverIndexed_IndexedName(firstDataByte, stream);
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        {
-                            // ReSharper disable once StringLiteralTypo
-                            HttpManager.Logger.Information("HPACKEncoder",
-                                $"[{context.Id}] Decode - LiteralHeaderFieldNeverIndexed_IndexedName: {header.ToString()}",
-                                this._parent.Context, context.Context,
-                                context.AssignedRequest.Context);
-                        }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        // ReSharper disable once StringLiteralTypo
+                        Debug.Log(
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldNeverIndexed_IndexedName: {header.ToString()}");
+#endif
                         to.Add(header);
                     }
                 }
@@ -244,15 +214,11 @@ namespace BestHTTP.Connections.HTTP2
                     // https://http2.github.io/http2-spec/compression.html#encoding.context.update
 
                     UInt32 newMaxSize = DecodeInteger(5, firstDataByte, stream);
-
-                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                    {
-                        // ReSharper disable once StringLiteralTypo
-                        HttpManager.Logger.Information("HPACKEncoder",
-                            msg: $"[{context.Id}] Decode - Dynamic Table Size Update: {newMaxSize}",
-                            this._parent.Context, context.Context, context.AssignedRequest.Context);
-                    }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    // ReSharper disable once StringLiteralTypo
+                    Debug.Log(
+                        $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - Dynamic Table Size Update: {newMaxSize}");
+#endif
                     //this.settingsRegistry[HTTP2Settings.HEADER_TABLE_SIZE] = (UInt16)newMaxSize;
                     this._responseTable.MaxDynamicTableSize = (UInt16)newMaxSize;
                 }

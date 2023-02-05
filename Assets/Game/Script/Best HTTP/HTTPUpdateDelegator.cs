@@ -68,7 +68,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log("[HTTPUpdateDelegator]  [msg:重置 called!]");
 #endif
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "Reset called!");
         }
 #endif
 
@@ -175,8 +174,10 @@ namespace BestHTTP
             {
                 DontDestroyOnLoad(this.gameObject);
             }
-
-            HttpManager.Logger.Information("HTTPUpdateDelegator", "Setup done!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPUpdateDelegator] [method:Setup] [msg] Setup done!");
+#endif
         }
 
         void ThreadFunc()

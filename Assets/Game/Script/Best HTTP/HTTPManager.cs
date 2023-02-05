@@ -309,9 +309,10 @@ namespace BestHTTP
                 return;
             _isSetupCalled = true;
             IsQuitting = false;
-
-            HttpManager.Logger.Information("HTTPManager", "Setup called! UserAgent: " + UserAgent);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:Setup] [msg]Setup called! UserAgent: {UserAgent}");
+#endif
             HttpUpdateDelegator.CheckInstance();
 
 #if !BESTHTTP_DISABLE_CACHING
@@ -421,7 +422,10 @@ namespace BestHTTP
         {
             _isSetupCalled = false;
             BufferedReadNetworkStream.ResetNetworkStats();
-            HttpManager.Logger.Information("HTTPManager", "Reset called!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:ResetSetup] [msg] Reset called!");
+#endif
         }
 #endif
 
@@ -448,8 +452,10 @@ namespace BestHTTP
 
         public static void OnQuit()
         {
-            HttpManager.Logger.Information("HTTPManager", "OnQuit called!");
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:OnQuit] [msg] OnQuit called!");
+#endif
             IsQuitting = true;
 
             AbortAll();
@@ -471,8 +477,10 @@ namespace BestHTTP
 
         private static void AbortAll()
         {
-            HttpManager.Logger.Information("HTTPManager", "AbortAll called!");
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:AbortAll] [msg] AbortAll called!");
+#endif
             // This is an immediate shutdown request!
 
             RequestEventHelper.Clear();
