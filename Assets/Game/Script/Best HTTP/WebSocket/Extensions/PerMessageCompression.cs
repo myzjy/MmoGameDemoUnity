@@ -1,6 +1,7 @@
 #if !BESTHTTP_DISABLE_WEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
 
 using System;
+using System.Text;
 using BestHTTP.Decompression.Zlib;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
@@ -171,31 +172,39 @@ namespace BestHTTP.WebSocket.Extensions
                     if (!string.IsNullOrEmpty(value.Key) &&
                         value.Key.StartsWith("permessage-deflate", StringComparison.OrdinalIgnoreCase))
                     {
-                        HttpManager.Logger.Information("PerMessageCompression",
-                            "Enabled with header: " + headerValues[i]);
-
-                        HeaderValue option;
-                        if (value.TryGetOption("client_no_context_takeover", out option))
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append($"Enabled with header:{headerValues[i]}");
+                        sb.Append($" Message: {resp.Message}");
+                        Debug.Log($"[PerMessageCompression] [method:ParseNegotiation] [msg] {sb.ToString()}");
+#endif
+                        if (value.TryGetOption("client_no_context_takeover", out var option))
                             this.ClientNoContextTakeover = true;
 
                         if (value.TryGetOption("server_no_context_takeover", out option))
                             this.ServerNoContextTakeover = true;
 
                         if (value.TryGetOption("client_max_window_bits", out option))
+                        {
                             if (option.HasValue)
                             {
-                                int windowBits;
-                                if (int.TryParse(option.Value, out windowBits))
+                                if (int.TryParse(option.Value, out var windowBits))
+                                {
                                     this.ClientMaxWindowBits = windowBits;
+                                }
                             }
+                        }
 
                         if (value.TryGetOption("server_max_window_bits", out option))
+                        {
                             if (option.HasValue)
                             {
-                                int windowBits;
-                                if (int.TryParse(option.Value, out windowBits))
+                                if (int.TryParse(option.Value, out var windowBits))
+                                {
                                     this.ServerMaxWindowBits = windowBits;
+                                }
                             }
+                        }
 
                         return true;
                     }

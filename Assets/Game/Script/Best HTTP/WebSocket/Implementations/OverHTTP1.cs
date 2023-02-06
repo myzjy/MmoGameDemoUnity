@@ -1,5 +1,6 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_WEBSOCKET
 using System;
+using System.Text;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.WebSocket.Frames;
@@ -152,9 +153,16 @@ namespace BestHTTP.WebSocket
             switch (req.State)
             {
                 case HttpRequestStates.Finished:
-                    HttpManager.Logger.Information("OverHTTP1",
-                        string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
-                            resp.Message), this.Parent.Context);
+                {
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append("Request finished.");
+                        sb.Append($" Status Code: {resp.StatusCode.ToString()}");
+                        sb.Append($" Message: {resp.Message}");
+                        Debug.Log($"[OverHTTP1] [method:OnInternalRequestCallback] [msg] {sb.ToString()}");
+#endif
+                    }
 
                     if (resp.StatusCode == 101)
                     {
@@ -162,19 +170,20 @@ namespace BestHTTP.WebSocket
                         return;
                     }
                     else
-                        reason = string.Format(
-                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText);
-
+                    {
+                        reason =
+                            $"Request Finished Successfully, but the server sent an error. Status Code: {resp.StatusCode}-{resp.Message} Message: {resp.DataAsText}";
+                    }
+                }
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
                 case HttpRequestStates.Error:
+                {
                     reason = "Request Finished with Error! " + (req.Exception != null
                         ? ("Exception: " + req.Exception.Message + req.Exception.StackTrace)
                         : string.Empty);
+                }
                     break;
 
                 // The request aborted, initiated by the user.
@@ -207,7 +216,6 @@ namespace BestHTTP.WebSocket
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.LogError($"[OverHTTP1] [msg:{reason}]");
 #endif
-                    // HttpManager.Logger.Error("OverHTTP1", reason, this.Parent.Context);
                 }
             }
             else if (this.Parent.OnClosed != null)

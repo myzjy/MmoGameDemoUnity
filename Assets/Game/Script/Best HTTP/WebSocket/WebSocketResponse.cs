@@ -165,9 +165,12 @@ namespace BestHTTP.WebSocket
 
         private bool SendPing()
         {
-            HttpManager.Logger.Information("WebSocketResponse", "Sending Ping frame, waiting for a pong...",
-                this.Context);
-
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                var str = "Sending Ping frame, waiting for a pong...";
+                Debug.Log($"[WebSocketResponse] [method:SendPing] [msg] {str}");
+#endif
+            }
             lastPing = DateTime.UtcNow;
             waitingForPong = true;
 
@@ -179,8 +182,10 @@ namespace BestHTTP.WebSocket
             }
             catch
             {
-                HttpManager.Logger.Information("WebSocketResponse",
-                    "Error while sending PING message! Closing WebSocket.", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                var str = "Error while sending PING message! Closing WebSocket.";
+                Debug.Log($"[WebSocketResponse] [method:SendPing] [msg] {str}");
+#endif
                 CloseWithError(HttpRequestStates.Error, "Error while sending PING message!");
 
                 return false;
@@ -222,8 +227,9 @@ namespace BestHTTP.WebSocket
                 newFrameSignal = null;
 
                 CloseStream();
-
-                HttpManager.Logger.Information("WebSocketResponse", "TryToCleanup - finished!", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[WebSocketResponse] [method:TryToCleanup] [msg] TryToCleanup - finished!");
+#endif
             }
         }
 
@@ -455,8 +461,9 @@ namespace BestHTTP.WebSocket
 
             if (Interlocked.CompareExchange(ref this.sendThreadCreated, 1, 0) == 0)
             {
-                HttpManager.Logger.Information("WebSocketResponse", "Send - Creating thread", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[WebSocketResponse] [method:Send] [msg] Send - Creating thread");
+#endif
                 BestHTTP.PlatformSupport.Threading.ThreadedRunner.RunLongLiving(SendThreadFunc);
             }
 
@@ -595,10 +602,13 @@ namespace BestHTTP.WebSocket
                             closed = true;
                         }
                     }
-
-                    HttpManager.Logger.Information("WebSocketResponse",
-                        string.Format("Ending Send thread. Closed: {0}, closeSent: {1}", closed, closeSent),
-                        this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder(3);
+                    sb.Append($"Ending Send thread. ");
+                    sb.Append($" Closed: {closed},");
+                    sb.Append($" closeSent: {closeSent}");
+                    Debug.Log($"[WebSocketResponse] [method:SendThreadFunc] [msg] {sb.ToString()}");
+#endif
                 }
             }
             catch (Exception ex)
@@ -609,9 +619,9 @@ namespace BestHTTP.WebSocket
             finally
             {
                 Interlocked.Exchange(ref sendThreadCreated, 0);
-
-                HttpManager.Logger.Information("WebSocketResponse", "SendThread - Closed!", this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[WebSocketResponse] [method:SendThreadFunc] [msg] SendThread - Closed!");
+#endif
                 TryToCleanup();
             }
         }

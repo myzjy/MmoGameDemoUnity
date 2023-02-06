@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BestHTTP.PlatformSupport.FileSystem;
 
 namespace BestHTTP.Core
@@ -23,10 +24,13 @@ namespace BestHTTP.Core
 
         public static void RemoveAllIdleConnections()
         {
-            HttpManager.Logger.Information("HostManager", "RemoveAllIdleConnections");
-            foreach (var host_kvp in hosts)
-            foreach (var variant_kvp in host_kvp.Value.HostConnectionVariant)
-                variant_kvp.Value.RemoveAllIdleConnections();
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HostManager] [method:RemoveAllIdleConnections] [msg] RemoveAllIdleConnections");
+#endif
+            foreach (var variantKvp in hosts.SelectMany(hostKvp => hostKvp.Value.HostConnectionVariant))
+            {
+                variantKvp.Value.RemoveAllIdleConnections();
+            }
         }
 
         public static void TryToSendQueuedRequests()
@@ -37,14 +41,20 @@ namespace BestHTTP.Core
 
         public static void Shutdown()
         {
-            HttpManager.Logger.Information("HostManager", "Shutdown initiated!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HostManager] [method:Shutdown] [msg] Shutdown initiated!");
+#endif
             foreach (var kvp in hosts)
+            {
                 kvp.Value.Shutdown();
+            }
         }
 
         public static void Clear()
         {
-            HttpManager.Logger.Information("HostManager", "Clearing hosts!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[HostManager] [method:Clear] [msg] Clearing hosts!");
+#endif
             hosts.Clear();
         }
 
@@ -61,7 +71,9 @@ namespace BestHTTP.Core
                 catch
                 {
                     IsSaveAndLoadSupported = false;
-                    HttpManager.Logger.Warning("HostManager", "Save and load Disabled!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log($"[HostManager] [method:SetupFolder] [msg] Save and load Disabled!");
+#endif
                 }
             }
         }
@@ -86,11 +98,13 @@ namespace BestHTTP.Core
                         kvp.Value.SaveTo(bw);
                     }
                 }
-
-                HttpManager.Logger.Information("HostManager", hosts.Count + " hosts saved!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HostManager] [method:Save] [msg] {hosts.Count} hosts saved!");
+#endif
             }
             catch
             {
+                // ignored
             }
         }
 
@@ -108,21 +122,19 @@ namespace BestHTTP.Core
 
             try
             {
-                using (var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead))
-                using (var br = new System.IO.BinaryReader(fs))
+                using var fs = HttpManager.IOService.CreateFileStream(LibraryPath, FileStreamModes.OpenRead);
+                using var br = new System.IO.BinaryReader(fs);
+                int version = br.ReadInt32();
+
+                int hostCount = br.ReadInt32();
+
+                for (int i = 0; i < hostCount; ++i)
                 {
-                    int version = br.ReadInt32();
-
-                    int hostCount = br.ReadInt32();
-
-                    for (int i = 0; i < hostCount; ++i)
-                    {
-                        GetHost(br.ReadString())
-                            .LoadFrom(version, br);
-                    }
-
-                    HttpManager.Logger.Information("HostManager", hostCount.ToString() + " HostDefinitions loaded!");
+                    GetHost(br.ReadString()).LoadFrom(version, br);
                 }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[HostManager] [method:Load] [msg] {hostCount.ToString()} HostDefinitions loaded!");
+#endif
             }
             catch
             {
@@ -132,6 +144,7 @@ namespace BestHTTP.Core
                 }
                 catch
                 {
+                    // ignored
                 }
             }
         }

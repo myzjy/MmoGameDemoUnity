@@ -137,8 +137,12 @@ namespace BestHTTP.WebSocket
 
                 if (con != null)
                 {
-                    HttpManager.Logger.Information("WebSocket", "Connection with enabled Connect Protocol found!",
-                        this.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var str = "Connection with enabled Connect Protocol found!";
+                        Debug.Log($"[WebSocket] [method:WebSocket] [msg] {str}");
+#endif
+                    }
 
                     var httpConnection = con as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;

@@ -50,10 +50,12 @@ namespace BestHTTP.SignalRCore.Transports
         public override void StartConnect()
         {
             if (this.State != TransportStates.Initial)
+            {
                 return;
-
-            HttpManager.Logger.Information("LongPollingTransport", "StartConnect", this.Context);
-
+            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[LongPollingTransport] [method:StartConnect] [msg] StartConnect");
+#endif
             this.State = TransportStates.Connecting;
 
             // https://github.com/dotnet/aspnetcore/blob/master/src/SignalR/docs/specs/HubProtocol.md#overview
@@ -69,7 +71,9 @@ namespace BestHTTP.SignalRCore.Transports
             request.UploadStream = this.stream;
 
             if (this.connection.AuthenticationProvider != null)
+            {
                 this.connection.AuthenticationProvider.PrepareRequest(request);
+            }
 
             request.Send();
         }
@@ -87,10 +91,12 @@ namespace BestHTTP.SignalRCore.Transports
         public override void StartClose()
         {
             if (this.State != TransportStates.Connected)
+            {
                 return;
-
-            HttpManager.Logger.Information("LongPollingTransport", "StartClose", this.Context);
-
+            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[LongPollingTransport] [method:StartClose] [msg] StartClose");
+#endif
             this.State = TransportStates.Closing;
 
             SendConnectionCloseRequest();
@@ -130,10 +136,12 @@ namespace BestHTTP.SignalRCore.Transports
         private void DoPoll()
         {
             if (this.State != TransportStates.Connecting && this.State != TransportStates.Connected)
+            {
                 return;
-
-            HttpManager.Logger.Information("LongPollingTransport", "Sending Poll request", this.Context);
-
+            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[LongPollingTransport] [method:DoPoll] [msg] Sending Poll request");
+#endif
             var request = new HttpRequest(BuildUri(this.connection.Uri), OnPollRequestFinished);
             request.Context.Add("Transport", this.Context);
 
@@ -141,7 +149,9 @@ namespace BestHTTP.SignalRCore.Transports
             request.Timeout = TimeSpan.FromMinutes(2);
 
             if (this.connection.AuthenticationProvider != null)
+            {
                 this.connection.AuthenticationProvider.PrepareRequest(request);
+            }
 
             request.Send();
         }
@@ -149,10 +159,12 @@ namespace BestHTTP.SignalRCore.Transports
         private void SendConnectionCloseRequest(int retryCount = 0)
         {
             if (this.State != TransportStates.Closing)
+            {
                 return;
-
-            HttpManager.Logger.Information("LongPollingTransport", "Sending DELETE request", this.Context);
-
+            }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[LongPollingTransport] [method:SendConnectionCloseRequest] [msg] Sending DELETE request");
+#endif
             var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Delete,
                 OnConnectionCloseRequestFinished);
             request.Context.Add("Transport", this.Context);
@@ -160,7 +172,9 @@ namespace BestHTTP.SignalRCore.Transports
             request.Tag = retryCount;
 
             if (this.connection.AuthenticationProvider != null)
+            {
                 this.connection.AuthenticationProvider.PrepareRequest(request);
+            }
 
             request.Send();
         }

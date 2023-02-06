@@ -113,15 +113,13 @@ namespace BestHTTP.Connections.HTTP2
                 if (BufferHelper.ReadBit(firstDataByte, 0) == 1)
                 {
                     var header = ReadIndexedHeader(firstDataByte, stream);
-
-                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                    {
-                        // ReSharper disable once StringLiteralTypo
-                        HttpManager.Logger.Information("HPACKEncoder",
-                            $"[{context.Id}] Decode - IndexedHeader: {header.ToString()}",
-                            this._parent.Context, context.Context, context.AssignedRequest.Context);
-                    }
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder(3);
+                    sb.Append($"[{context.Id}] ");
+                    sb.Append(" Decode - IndexedHeader：");
+                    sb.Append($" {header.ToString()}");
+                    Debug.Log($"[HPACKEncoder] [method: Encode] [msg|Exception]{sb.ToString()}");
+#endif
                     to.Add(header);
                 }
                 else if (BufferHelper.ReadValue(firstDataByte, 0, 1) == 1)
@@ -135,9 +133,12 @@ namespace BestHTTP.Connections.HTTP2
 
 
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(3);
+                        sb.Append($"[{context.Id}] ");
+                        sb.Append("Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName:");
+                        sb.Append($"{header.ToString()}");
                         // ReSharper disable once StringLiteralTypo
-                        Debug.Log(
-                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName: {header.ToString()}");
+                        Debug.Log($"[HPACKEncoder] [method:Decode] [msg] {sb.ToString()}");
 #endif
                         this._responseTable.Add(header);
                         to.Add(header);

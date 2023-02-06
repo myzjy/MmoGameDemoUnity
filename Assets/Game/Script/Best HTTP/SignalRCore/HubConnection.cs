@@ -513,8 +513,13 @@ namespace BestHTTP.SignalRCore
                 {
                     if (resp.IsSuccess)
                     {
-                        HttpManager.Logger.Information("HubConnection",
-                            "Negotiation Request Finished Successfully! Response: " + resp.DataAsText, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append($"Negotiation Request");
+                        sb.Append($" Finished Successfully!");
+                        sb.Append($" Response: {resp.DataAsText}");
+                        Debug.Log($"[HubConnection] [method:SetState] [msg] {sb.ToString()}");
+#endif
 
                         // Parse negotiation
                         this.NegotiationResult = NegotiationResult.Parse(resp, out errorReason, this);
@@ -1225,17 +1230,19 @@ namespace BestHTTP.SignalRCore
 
         private void SetState(ConnectionStates state, string errorReason, bool allowReconnect)
         {
+            {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
 
-            StringBuilder sb = new StringBuilder(5);
-            sb.Append($"SetState - from State: '{this.State}'");
-            sb.Append($" to State: '{state}',");
-            sb.Append($" errorReason: '{errorReason}', ");
-            sb.Append($"allowReconnect: {allowReconnect}, ");
-            sb.Append($"isQuitting: {HttpManager.IsQuitting}");
-            Debug.Log(
-                $"[HubConnection] [method:SetState] [msg]{sb.ToString()}");
+                StringBuilder sb = new StringBuilder(5);
+                sb.Append($"SetState - from State: '{this.State}'");
+                sb.Append($" to State: '{state}',");
+                sb.Append($" errorReason: '{errorReason}', ");
+                sb.Append($"allowReconnect: {allowReconnect}, ");
+                sb.Append($"isQuitting: {HttpManager.IsQuitting}");
+                Debug.Log(
+                    $"[HubConnection] [method:SetState] [msg]{sb.ToString()}");
 #endif
+            }
             if (this.State == state)
             {
                 return;
@@ -1299,8 +1306,10 @@ namespace BestHTTP.SignalRCore
                     this.reconnectStartTime = DateTime.MinValue;
                     this.reconnectAt = DateTime.MinValue;
 
-                    HttpUpdateDelegator.OnApplicationForegroundStateChanged -= this.OnApplicationForegroundStateChanged;
-                    HttpUpdateDelegator.OnApplicationForegroundStateChanged += this.OnApplicationForegroundStateChanged;
+                    HttpUpdateDelegator.OnApplicationForegroundStateChanged -=
+                        this.OnApplicationForegroundStateChanged;
+                    HttpUpdateDelegator.OnApplicationForegroundStateChanged +=
+                        this.OnApplicationForegroundStateChanged;
                 }
                     break;
 
@@ -1344,8 +1353,9 @@ namespace BestHTTP.SignalRCore
 #endif
                             }
                         }
-
-                        HttpManager.Logger.Information("HubConnection", "Cleaning up", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log($"[HubConnection] [method:SetState] [msg] Cleaning up");
+#endif
 
                         this.delayedMessages?.Clear();
                         HttpManager.Heartbeats.Unsubscribe(this);
@@ -1398,14 +1408,16 @@ namespace BestHTTP.SignalRCore
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HubConnection", "ReconnectPolicy.GetNextRetryDelay", ex,
+                                HttpManager.Logger.Exception("HubConnection", "ReconnectPolicy.GetNextRetryDelay",
+                                    ex,
                                     this.Context);
                             }
 
                             // No more reconnect attempt, we are closing
                             if (nextAttempt == null)
                             {
-                                HttpManager.Logger.Warning("HubConnection", "No more reconnect attempt!", this.Context);
+                                HttpManager.Logger.Warning("HubConnection", "No more reconnect attempt!",
+                                    this.Context);
 
                                 // Clean up everything
                                 this.currentContext = new RetryContext();
@@ -1414,9 +1426,12 @@ namespace BestHTTP.SignalRCore
                             }
                             else
                             {
-                                HttpManager.Logger.Information("HubConnection",
-                                    "Next reconnect attempt after " + nextAttempt.Value.ToString(), this.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                var sb = new StringBuilder(3);
+                                sb.Append($"Next reconnect attempt after");
+                                sb.Append($" {nextAttempt.Value.ToString()}");
+                                Debug.Log($"[HubConnection] [method:SetState] [msg] {sb.ToString()}");
+#endif
                                 this.currentContext = context;
                                 this.currentContext.PreviousRetryCount += 1;
 
@@ -1453,10 +1468,13 @@ namespace BestHTTP.SignalRCore
         private void OnApplicationForegroundStateChanged(bool isPaused)
         {
             pausedInLastFrame = !isPaused;
-
-            HttpManager.Logger.Information("HubConnection",
-                $"OnApplicationForegroundStateChanged isPaused: {isPaused} pausedInLastFrame: {pausedInLastFrame}",
-                this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            var sb = new StringBuilder(3);
+            sb.Append($"OnApplicationForegroundStateChanged");
+            sb.Append($" isPaused: {isPaused}");
+            sb.Append($" pausedInLastFrame: {pausedInLastFrame}");
+            Debug.Log($"[HubConnection] [method:OnApplicationForegroundStateChanged] [msg] {sb.ToString()}");
+#endif
         }
 
 #if CSHARP_7_OR_LATER

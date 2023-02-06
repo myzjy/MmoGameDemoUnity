@@ -405,9 +405,12 @@ namespace BestHTTP.ServerSentEvents
 #if !UNITY_WEBGL || UNITY_EDITOR
         private void OnRequestFinished(HttpRequest req, HttpResponse resp)
         {
-            HttpManager.Logger.Information("EventSource",
-                string.Format("OnRequestFinished - State: {0}, StatusCode: {1}", this.State,
-                    resp != null ? resp.StatusCode : 0), req.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            var sb = new StringBuilder(3);
+            sb.Append($"OnRequestFinished - State: {this.State},");
+            sb.Append($" StatusCode: {resp?.StatusCode ?? 0}");
+            Debug.Log($"[EventSource] [method:OnRequestFinished] [msg] {sb.ToString()}");
+#endif
 
             if (this.State == States.Closed)
                 return;
@@ -446,11 +449,8 @@ namespace BestHTTP.ServerSentEvents
                     {
                         canRetry = false;
 
-                        reason = string.Format(
-                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText);
+                        reason =
+                            $"Request Finished Successfully, but the server sent an error. Status Code: {resp.StatusCode}-{resp.Message} Message: {resp.DataAsText}";
                     }
 
                     break;
@@ -486,12 +486,18 @@ namespace BestHTTP.ServerSentEvents
                     CallOnError(reason, "OnRequestFinished");
 
                 if (canRetry)
+                {
                     Retry();
+                }
                 else
+                {
                     SetClosed("OnRequestFinished");
+                }
             }
             else
+            {
                 SetClosed("OnRequestFinished");
+            }
         }
 
         private bool OnData(HttpRequest request, HttpResponse response, byte[] dataFragment, int dataFragmentLength)
