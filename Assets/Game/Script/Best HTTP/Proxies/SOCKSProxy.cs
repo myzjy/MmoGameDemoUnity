@@ -208,8 +208,9 @@ namespace BestHTTP
                             //           +----+------+----------+------+----------+
                             //           | 1  |  1   | 1 to 255 |  1   | 1 to 255 |
                             //           +----+------+----------+------+----------+
-
-                            HttpManager.Logger.Information("SOCKSProxy", "starting sub-negotiation", request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[SOCKSProxy] [Connect] [msg] starting sub-negotiation");
+#endif
                             count = 0;
                             buffer[count++] = 0x01; // version of sub negotiation
 
@@ -261,8 +262,9 @@ namespace BestHTTP
                             {
                                 throw new Exception("SOCKS proxy: username+password authentication failed!");
                             }
-
-                            HttpManager.Logger.Information("SOCKSProxy", "Authenticated!", request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.Log($"[SOCKSProxy] [Connect] [msg] Authenticated");
+#endif
                             break;
 
                         case SOCKSMethods.GSSAPI:
@@ -323,19 +325,27 @@ namespace BestHTTP
                 // destination port in network octet order
                 buffer[count++] = (byte)((request.CurrentUri.Port >> 8) & 0xFF);
                 buffer[count++] = (byte)(request.CurrentUri.Port & 0xFF);
-
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Information("SOCKSProxy",
-                        string.Format("Sending connect request - count: {0} buffer: {1} ", count.ToString(),
-                            BufferToHexStr(buffer, count)), request.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Sending connect request");
+                    sb.Append($" - count: {count.ToString()}");
+                    sb.Append($"  buffer: {BufferToHexStr(buffer, count)} ");
+                    Debug.Log($"[SOCKSProxy] [Connect] [msg] {sb.ToString()}");
+#endif
+                }
 
                 stream.Write(buffer, 0, count);
                 count = stream.Read(buffer, 0, buffer.Length);
-
-                if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                    HttpManager.Logger.Information("SOCKSProxy",
-                        string.Format("Connect response - count: {0} buffer: {1} ", count.ToString(),
-                            BufferToHexStr(buffer, count)), request.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Connect response");
+                    sb.Append($" - count: {count.ToString()}");
+                    sb.Append($"  buffer: {BufferToHexStr(buffer, count)} ");
+                    Debug.Log($"[SOCKSProxy] [Connect] [msg] {sb.ToString()}");
+#endif
+                }
 
                 //   The SOCKS request information is sent by the client as soon as it has
                 //   established a connection to the SOCKS server, and completed the

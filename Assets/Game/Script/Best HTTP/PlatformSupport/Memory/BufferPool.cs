@@ -645,8 +645,14 @@ namespace BestHTTP.PlatformSupport.Memory
                             var entry = store.buffers[cv];
                             if (System.Object.ReferenceEquals(entry.buffer, buffer))
                             {
-                                HttpManager.Logger.Error("BufferPool",
-                                    string.Format("Buffer ({0}) already added to the pool!", entry.ToString()));
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                var sb = new StringBuilder(3);
+                                sb.Append("[BufferPool] ");
+                                sb.Append("[method:AddFreeBuffer] ");
+                                sb.Append($"[msg] Unknown negotiated protocol: ");
+                                sb.Append($"Buffer ({entry.ToString()}) already added to the pool!");
+                                Debug.LogError(sb.ToString());
+#endif
                                 return;
                             }
                         }

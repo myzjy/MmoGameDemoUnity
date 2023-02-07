@@ -2,6 +2,7 @@
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL
 using System;
+using System.Text;
 using BestHTTP.Core;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.Timings;
@@ -131,10 +132,13 @@ namespace BestHTTP.Connections
                 }
                 catch (Exception ex)
                 {
-                    if (HttpManager.Logger.Level == Logger.Loglevels.All)
-                        HttpManager.Logger.Exception("HTTPConnection", "Connector.Connect", ex, this.Context,
-                            this.CurrentRequest.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append("[HTTPConnection] ");
+                    sb.Append("[method:ThreadFunc] ");
+                    sb.Append($"[msg|Exception]Connector.Connect Exception:{ex} ");
+                    Debug.LogError(sb.ToString());
+#endif
 
                     if (ex is TimeoutException)
                         this.CurrentRequest.State = HttpRequestStates.ConnectionTimedOut;
@@ -183,10 +187,14 @@ namespace BestHTTP.Connections
 #endif
 
                     default:
-                        HttpManager.Logger.Error("HTTPConnection",
-                            "Unknown negotiated protocol: " + this.connector.NegotiatedProtocol, this.Context,
-                            this.CurrentRequest.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append("[HTTPConnection] ");
+                        sb.Append("[method:ThreadFunc] ");
+                        sb.Append($"[msg] Unknown negotiated protocol: ");
+                        sb.Append($"{this.connector.NegotiatedProtocol}");
+                        Debug.LogError(sb.ToString());
+#endif
                         RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(CurrentRequest,
                             RequestEvents.Resend));
                         ConnectionEventHelper.EnqueueConnectionEvent(new ConnectionEventInfo(this,

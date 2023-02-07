@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using BestHTTP.Core;
 using BestHTTP.PlatformSupport.FileSystem;
@@ -46,8 +47,16 @@ namespace BestHTTP.Cookies
                 catch
                 {
                     _isSavingSupported = false;
-
-                    HttpManager.Logger.Warning("CookieJar", "Cookie saving and loading disabled!");
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[CookieJar] ");
+                        sb.Append("[method: IsSavingSupported GET] ");
+                        sb.Append("[msg|Exception] ");
+                        sb.Append($"Cookie saving and loading disabled!");
+                        Debug.Log(sb.ToString());
+#endif
+                    }
                 }
                 finally
                 {

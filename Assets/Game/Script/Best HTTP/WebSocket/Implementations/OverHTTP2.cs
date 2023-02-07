@@ -1,6 +1,7 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2 && !BESTHTTP_DISABLE_WEBSOCKET
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.Connections.HTTP2;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
@@ -95,11 +96,20 @@ namespace BestHTTP.WebSocket
 
                         if (waitingForPong && now - lastPing > this.Parent.CloseAfterNoMessage)
                         {
-                            HttpManager.Logger.Warning("OverHTTP2",
-                                string.Format(
-                                    "No message received in the given time! Closing WebSocket. LastPing: {0}, PingFrequency: {1}, Close After: {2}, Now: {3}",
-                                    this.lastPing, TimeSpan.FromMilliseconds(this.Parent.PingFrequency),
-                                    this.Parent.CloseAfterNoMessage, now), this.Parent.Context);
+                            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append("[OverHTTP2] ");
+                                sb.Append("[method: OnHeartbeatUpdate] ");
+                                sb.Append("[msg|Exception] ");
+                                sb.Append($"No message received in the given time!");
+                                sb.Append($" Closing WebSocket. LastPing: {this.lastPing}");
+                                sb.Append($", PingFrequency: {TimeSpan.FromMilliseconds(this.Parent.PingFrequency)}");
+                                sb.Append($", Close After: {this.Parent.CloseAfterNoMessage},");
+                                sb.Append($" Now: {now}");
+                                Debug.Log(sb.ToString());
+#endif
+                            }
 
                             CloseWithError("No message received in the given time!");
                         }
@@ -410,9 +420,10 @@ namespace BestHTTP.WebSocket
 
                     // If an endpoint receives a Close frame and did not previously send a Close frame, the endpoint MUST send a Close frame in response.
                     case WebSocketFrameTypes.ConnectionClose:
-                        HttpManager.Logger.Information("OverHTTP2", "ConnectionClose packet received!",
-                            this.Parent.Context);
 
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log($"[OverHTTP2] [method:OnFrame] [msg] ConnectionClose packet received!");
+#endif
                         //CloseFrame = frame;
                         if (!closeSent)
                             Send(new WebSocketFrame(this.Parent, WebSocketFrameTypes.ConnectionClose, null));
@@ -482,22 +493,26 @@ namespace BestHTTP.WebSocket
             switch (req.State)
             {
                 case HttpRequestStates.Finished:
-                    HttpManager.Logger.Information("OverHTTP2",
-                        string.Format("Request finished. Status Code: {0} Message: {1}", resp.StatusCode.ToString(),
-                            resp.Message), this.Parent.Context);
-
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder(3);
+                    sb.Append($"Request finished. Status Code:");
+                    sb.Append($" {resp.StatusCode.ToString()}");
+                    sb.Append($" Message: {resp.Message}");
+                    Debug.Log(
+                        $"[OverHTTP2] [OnInternalRequestCallback] [msg]{sb.ToString()}");
+#endif
                     if (resp.StatusCode == 101)
                     {
                         // The request upgraded successfully.
                         return;
                     }
                     else
-                        reason = string.Format(
-                            "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText);
-
+                    {
+                        reason =
+                            $"Request Finished Successfully, but the server sent an error. Status Code: {resp.StatusCode}-{resp.Message} Message: {resp.DataAsText}";
+                    }
+                }
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
@@ -540,7 +555,16 @@ namespace BestHTTP.WebSocket
                     }
                 }
                 else if (!HttpManager.IsQuitting)
-                    HttpManager.Logger.Error("OverHTTP2", reason, this.Parent.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append("[OverHTTP2] ");
+                    sb.Append("[method:OnInternalRequestCallback] ");
+                    sb.Append($"[msg] Unknown negotiated protocol: ");
+                    sb.Append($"{reason}");
+                    Debug.LogError(sb.ToString());
+#endif
+                }
             }
             else if (this.Parent.OnClosed != null)
             {
@@ -714,9 +738,9 @@ namespace BestHTTP.WebSocket
 
         private void SendPing()
         {
-            HttpManager.Logger.Information("OverHTTP2", "Sending Ping frame, waiting for a pong...",
-                this.Parent.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[OverHTTP2] [SendPing] [msg] Sending Ping frame, waiting for a pong...");
+#endif
             lastPing = DateTime.Now;
             waitingForPong = true;
 
@@ -741,7 +765,15 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append("[WebSocketResponse] ");
+                        sb.Append("[method:CloseWithError] ");
+                        sb.Append($"[msg|Exception] OnError [Exception] {ex}");
+                        Debug.LogError(sb.ToString());
+#endif
+                    }
                 }
             }
 

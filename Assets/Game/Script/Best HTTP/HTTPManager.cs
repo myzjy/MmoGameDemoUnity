@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using BestHTTP.Connections;
 using BestHTTP.Core;
 using BestHTTP.Extensions;
@@ -404,7 +405,15 @@ namespace BestHTTP
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("HTTPManager", "GetRootCacheFolder", ex);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append("[HTTPRequest] ");
+                    sb.Append("[method:GetRootCacheFolder] ");
+                    sb.Append($"[msg|Exception] GetRootCacheFolder [Exception] {ex}");
+                    Debug.LogError(sb.ToString());
+#endif
+                }
             }
 
 #if NETFX_CORE

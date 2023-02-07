@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Core
@@ -68,8 +69,18 @@ namespace BestHTTP.Core
         {
             var headerValues = response.GetHeaderValues("alt-svc");
             if (headerValues == null)
-                HttpManager.Logger.Warning(nameof(HostDefinition),
-                    "Received HandleAltSvcHeader message, but no Alt-Svc header found!", response.Context);
+            {
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"[{nameof(HostDefinition)}] ");
+                    sb.Append("[method:OnConnectionCloseRequestFinished] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"Received HandleAltSvcHeader message, but no Alt-Svc header found!");
+                    Debug.Log(sb.ToString());
+#endif
+                }
+            }
         }
 
         public void HandleConnectProtocol(Http2ConnectProtocolInfo info)

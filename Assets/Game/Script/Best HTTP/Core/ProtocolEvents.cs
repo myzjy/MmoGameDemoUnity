@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using BestHTTP.Extensions;
-using BestHTTP.Logger;
+
 // Required for ConcurrentQueue.Clear extension.
 
 namespace BestHTTP.Core
@@ -37,10 +37,10 @@ namespace BestHTTP.Core
 
         public static void EnqueueProtocolEvent(ProtocolEventInfo @event)
         {
-            if (HttpManager.Logger.Level == Loglevels.All)
-                HttpManager.Logger.Information("ProtocolEventHelper", "Enqueue protocol event: " + @event.ToString(),
-                    @event.Source.LoggingContext);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[ProtocolEventHelper] [EnqueueProtocolEvent] [msg] Enqueue protocol event: {@event.ToString()}");
+#endif
             protocolEvents.Enqueue(@event);
         }
 
@@ -51,13 +51,12 @@ namespace BestHTTP.Core
 
         internal static void ProcessQueue()
         {
-            ProtocolEventInfo protocolEvent;
-            while (protocolEvents.TryDequeue(out protocolEvent))
+            while (protocolEvents.TryDequeue(out var protocolEvent))
             {
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    HttpManager.Logger.Information("ProtocolEventHelper",
-                        "Processing protocol event: " + protocolEvent.ToString(), protocolEvent.Source.LoggingContext);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[ProtocolEventHelper] [ProcessQueue] [msg] Processing protocol event: {protocolEvent.ToString()}");
+#endif
                 if (OnEvent != null)
                 {
                     try

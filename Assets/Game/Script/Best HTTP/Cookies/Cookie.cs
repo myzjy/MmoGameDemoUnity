@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using BestHTTP.Extensions;
 
 // ReSharper disable once CheckNamespace
@@ -144,9 +145,17 @@ namespace BestHTTP.Cookies
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Warning("Cookie",
-                    $"Parse - Couldn't parse header:{header}  exception:{ex}  {ex.StackTrace}",
-                    context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[Cookie] ");
+                    sb.Append("[method: Parse] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"Parse - Couldn't parse header:{header}");
+                    sb.Append($" exception:{ex}  {ex.StackTrace}");
+                    Debug.Log(sb.ToString());
+#endif
+                }
             }
 
             return cookie;

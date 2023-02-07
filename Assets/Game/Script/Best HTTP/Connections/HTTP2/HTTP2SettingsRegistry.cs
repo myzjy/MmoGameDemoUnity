@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
@@ -281,8 +282,13 @@ namespace BestHTTP.Connections.HTTP2
             if (this.SettingsChangesSentAt != DateTime.MinValue &&
                 DateTime.UtcNow - this.SettingsChangesSentAt >= TimeSpan.FromSeconds(10))
             {
-                HttpManager.Logger.Error("HTTP2SettingsManager", "No ACK received for settings frame!",
-                    this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                var sb = new StringBuilder(3);
+                sb.Append("[HTTP2SettingsManager] ");
+                sb.Append("[method:SendChanges] ");
+                sb.Append("[msg] No ACK received for settings frame!");
+                Debug.LogError(sb.ToString());
+#endif
                 this.SettingsChangesSentAt = DateTime.MinValue;
             }
 

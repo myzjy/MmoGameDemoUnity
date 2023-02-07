@@ -1140,14 +1140,24 @@ namespace BestHTTP
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("HTTPRequest", "OnBeforeHeaderSend", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append("[HTTPRequest] ");
+                    sb.Append("[method:EnumerateHeaders] ");
+                    sb.Append($"[msg|Exception]OnBeforeHeaderSend [Exception] {ex}");
+                    Debug.LogError(sb.ToString());
+#endif
                 }
             }
 
             // Write out the headers to the stream
             if (callback != null && Headers != null)
+            {
                 foreach (var kvp in Headers)
+                {
                     callback(kvp.Key, kvp.Value);
+                }
+            }
         }
 
         /// <summary>
@@ -1162,19 +1172,27 @@ namespace BestHTTP
 
                 byte[] headerName = string.Concat(header, ": ").GetASCIIBytes();
 
-                for (int i = 0; i < values.Count; ++i)
+                foreach (var t in values)
                 {
-                    if (string.IsNullOrEmpty(values[i]))
+                    if (string.IsNullOrEmpty(t))
                     {
-                        HttpManager.Logger.Warning("HTTPRequest",
-                            string.Format("Null/empty value for header: {0}", header), this.Context);
+                        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("[HTTPRequest] ");
+                            sb.Append("[method: SendHeaders] ");
+                            sb.Append("[msg|Exception] ");
+                            sb.Append($"Null/empty value for header: {header}");
+                            Debug.Log(sb.ToString());
+#endif
+                        }
                         continue;
                     }
 
-                    if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                        VerboseLogging("Header - '" + header + "': '" + values[i] + "'");
+                    // if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
+                    VerboseLogging($"Header - '{header}': '{t}'");
 
-                    byte[] valueBytes = values[i].GetASCIIBytes();
+                    byte[] valueBytes = t.GetASCIIBytes();
 
                     stream.WriteArray(headerName);
                     stream.WriteArray(valueBytes);
@@ -1417,7 +1435,13 @@ namespace BestHTTP
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("HTTPRequest", "UpgradeCallback", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                var sb = new StringBuilder(3);
+                sb.Append("[HTTPRequest] ");
+                sb.Append("[method:ThreadFunc] ");
+                sb.Append($"[msg|Exception]UpgradeCallback [Exception] {ex}");
+                Debug.LogError(sb.ToString());
+#endif
             }
         }
 #endif
@@ -1425,7 +1449,9 @@ namespace BestHTTP
         internal bool CallOnBeforeRedirection(Uri redirectUri)
         {
             if (_onBeforeRedirection != null)
+            {
                 return _onBeforeRedirection(this, this.Response, redirectUri);
+            }
 
             return true;
         }

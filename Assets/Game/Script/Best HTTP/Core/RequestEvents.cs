@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.Extensions;
-using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.Timings;
 
@@ -248,15 +248,13 @@ namespace BestHTTP.Core
 
         internal static void ProcessQueue()
         {
-            RequestEventInfo requestEvent;
-            while (requestEventQueue.TryDequeue(out requestEvent))
+            while (requestEventQueue.TryDequeue(out var requestEvent))
             {
                 HttpRequest source = requestEvent.SourceRequest;
-
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    HttpManager.Logger.Information("RequestEventHelper",
-                        "Processing request event: " + requestEvent.ToString(), source.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[RequestEventHelper] [ProcessQueue] [msg] Processing request event: {requestEvent.ToString()}");
+#endif
                 if (OnEvent != null)
                 {
                     try
@@ -397,13 +395,16 @@ namespace BestHTTP.Core
 
             // Protocols will shut down themselves
             if (request.Response is IProtocol)
+            {
                 return false;
+            }
 
             if (request.IsTimedOut)
             {
-                HttpManager.Logger.Information("RequestEventHelper",
-                    "AbortRequestWhenTimedOut - Request timed out. CurrentUri: " + request.CurrentUri.ToString(),
-                    request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[RequestEventHelper] [AbortRequestWhenTimedOut] [msg] AbortRequestWhenTimedOut - Request timed out. CurrentUri: {request.CurrentUri.ToString()}");
+#endif
                 request.Abort();
 
                 return false; // don't repeat
@@ -464,10 +465,13 @@ namespace BestHTTP.Core
                                         source.Response.StatusCode >= 500);
                         if (tryLoad && Caching.HttpCacheService.IsCachedEntityExpiresInTheFuture(source))
                         {
-                            HttpManager.Logger.Information("RequestEventHelper",
-                                "IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: " +
-                                source.CurrentUri.ToString(), source.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            var sb = new StringBuilder(3);
+                            sb.Append($"IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: ");
+                            sb.Append($" {source.CurrentUri.ToString()}");
+                            Debug.Log(
+                                $"[RequestEventHelper] [HandleRequestStateChange] [msg]{sb.ToString()}");
+#endif
                             PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HttpRequest>((req) =>
                             {
                                 // Disable any other cache activity.
@@ -485,10 +489,13 @@ namespace BestHTTP.Core
                                 }
                                 else
                                 {
-                                    HttpManager.Logger.Information("RequestEventHelper",
-                                        "TryLoadAllFromCache failed to load! CurrentUri: " + req.CurrentUri.ToString(),
-                                        source.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    var sb = new StringBuilder(3);
+                                    sb.Append($"TryLoadAllFromCache failed to load! CurrentUri: ");
+                                    sb.Append($" {req.CurrentUri.ToString()}");
+                                    Debug.Log(
+                                        $"[RequestEventHelper] [HandleRequestStateChange] [msg]{sb.ToString()}");
+#endif
                                     // If for some reason it couldn't load we place back the request to the queue.
                                     RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(req, originalState));
                                 }
@@ -516,10 +523,13 @@ namespace BestHTTP.Core
                             source.Callback(source, source.Response);
 
                             source.Timing.AddEvent(TimingEventNames.Callback, DateTime.Now, TimeSpan.Zero);
-
-                            if (HttpManager.Logger.Level <= Loglevels.Information)
-                                HttpManager.Logger.Information("RequestEventHelper",
-                                    "Finishing request. Timings: " + source.Timing.ToString(), source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            var sb = new StringBuilder(3);
+                            sb.Append($"Finishing request. Timings: ");
+                            sb.Append($" {source.Timing.ToString()}");
+                            Debug.Log(
+                                $"[RequestEventHelper] [HandleRequestStateChange] [msg]{sb.ToString()}");
+#endif
                         }
                         catch (Exception ex)
                         {

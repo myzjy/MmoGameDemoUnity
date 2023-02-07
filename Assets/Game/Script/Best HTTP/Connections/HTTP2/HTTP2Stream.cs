@@ -317,11 +317,15 @@ namespace BestHTTP.Connections.HTTP2
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HTTP2Stream",
-                                    string.Format("[{0}] ProcessIncomingFrames - Header Frames: {1}, Encoder: {2}",
-                                        this.Id, this._headerView.ToString(), this.Encoder.ToString()), ex,
-                                    this.Context,
-                                    this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                var sb = new StringBuilder(3);
+                                sb.Append("[HTTP2Stream] ");
+                                sb.Append("[method:ProcessIncomingFrames] ");
+                                sb.Append($"[msg] [{this.Id}] ProcessIncomingFrames ");
+                                sb.Append($"- Header Frames: {this._headerView.ToString()},");
+                                sb.Append($" Encoder: {this.Encoder.ToString()},");
+                                Debug.LogError(sb.ToString());
+#endif
                             }
 
                             this.AssignedRequest.Timing.Add(TimingEventNames.Headers);
@@ -387,13 +391,20 @@ namespace BestHTTP.Connections.HTTP2
                         // Track received data, and if necessary(local window getting too low), send a window update frame
                         if (this.localWindow < frame.PayloadLength)
                         {
-                            HttpManager.Logger.Error("HTTP2Stream",
-                                $"[{this.Id}] Frame's PayloadLength ({frame.PayloadLength:N0}) is larger then local window ({this.localWindow:N0}). Frame: {frame}",
-                                this.Context,
-                                this.AssignedRequest.Context, this.parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            var sb = new StringBuilder(3);
+                            sb.Append("[HTTP2Stream] ");
+                            sb.Append("[method:ProcessIncomingFrames] ");
+                            sb.Append($"[msg] [{this.Id}] Frame's PayloadLength");
+                            sb.Append($" ({frame.PayloadLength:N0}) is larger then local window ");
+                            sb.Append($" ({this.localWindow:N0}). Frame: {frame}");
+                            Debug.LogError(sb.ToString());
+#endif
                         }
                         else
+                        {
                             this.localWindow -= frame.PayloadLength;
+                        }
 
                         if ((frame.Flags & (byte)Http2DataFlags.EndStream) != 0)
                             this._isEndStrReceived = true;
@@ -480,10 +491,18 @@ namespace BestHTTP.Connections.HTTP2
 
                     default:
                     {
-                        HttpManager.Logger.Warning("HTTP2Stream",
-                            $"[{this.Id}] Unexpected frame ({frame}, Payload: {frame.PayloadAsHex()}) in state {this.State}!",
-                            this.Context, this.AssignedRequest.Context,
-                            this.parent.Context);
+                        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("[HTTP2Stream] ");
+                            sb.Append("[method: ProcessIncomingFrames] ");
+                            sb.Append("[msg|Exception] ");
+                            sb.Append($"[{this.Id}] Unexpected frame");
+                            sb.Append($" ({frame}, Payload: {frame.PayloadAsHex()})");
+                            sb.Append($" in state {this.State}!");
+                            Debug.Log(sb.ToString());
+#endif
+                        }
                     }
                         break;
                 }

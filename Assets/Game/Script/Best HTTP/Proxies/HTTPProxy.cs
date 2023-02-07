@@ -164,10 +164,12 @@ namespace BestHTTP
                         // If we have to because of a authentication request, we will switch it to true
                         retry = false;
 
-                        string connectStr = string.Format("CONNECT {0}:{1} HTTP/1.1", request.CurrentUri.Host,
-                            request.CurrentUri.Port.ToString());
-
-                        HttpManager.Logger.Information("HTTPProxy", "Sending " + connectStr, request.Context);
+                        string connectStr =
+                            $"CONNECT {request.CurrentUri.Host}:{request.CurrentUri.Port.ToString()} HTTP/1.1";
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.Log(
+                            $"[RequestEventHelper] [HandleRequestStateChange] [msg] Sending {connectStr}");
+#endif
 
                         outStream.SendAsASCII(connectStr);
                         outStream.Write(HttpRequest.Eol);
@@ -178,8 +180,7 @@ namespace BestHTTP
                         outStream.SendAsASCII("Connection: Keep-Alive");
                         outStream.Write(HttpRequest.Eol);
 
-                        outStream.SendAsASCII(string.Format("Host: {0}:{1}", request.CurrentUri.Host,
-                            request.CurrentUri.Port.ToString()));
+                        outStream.SendAsASCII($"Host: {request.CurrentUri.Host}:{request.CurrentUri.Port.ToString()}");
                         outStream.Write(HttpRequest.Eol);
 
                         // Proxy Authentication
@@ -189,10 +190,9 @@ namespace BestHTTP
                             {
                                 case AuthenticationTypes.Basic:
                                     // With Basic authentication we don't want to wait for a challenge, we will send the hash with the first request
-                                    outStream.Write(string.Format("Proxy-Authorization: {0}",
-                                        string.Concat("Basic ",
-                                            Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Credentials.UserName +
-                                                ":" + this.Credentials.Password)))).GetASCIIBytes());
+                                    outStream.Write(
+                                        $"Proxy-Authorization: {string.Concat("Basic ", Convert.ToBase64String(Encoding.UTF8.GetBytes(this.Credentials.UserName + ":" + this.Credentials.Password)))}"
+                                            .GetASCIIBytes());
                                     outStream.Write(HttpRequest.Eol);
                                     break;
 
@@ -205,10 +205,11 @@ namespace BestHTTP
                                             digest.GenerateResponseHeader(request, this.Credentials, true);
                                         if (!string.IsNullOrEmpty(authentication))
                                         {
-                                            string auth = string.Format("Proxy-Authorization: {0}", authentication);
-                                            if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                                                HttpManager.Logger.Information("HTTPProxy",
-                                                    "Sending proxy authorization header: " + auth, request.Context);
+                                            string auth = $"Proxy-Authorization: {authentication}";
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                            Debug.Log(
+                                                $"[HTTPProxy] [Connect] [msg] Sending proxy authorization header: {auth}");
+#endif
 
                                             var bytes = auth.GetASCIIBytes();
                                             outStream.Write(bytes);
@@ -230,13 +231,16 @@ namespace BestHTTP
 
                         // Read back the response of the proxy
                         if (!request.ProxyResponse.Receive(-1, true))
+                        {
                             throw new Exception("Connection to the Proxy Server failed!");
-
-                        if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
-                            HttpManager.Logger.Information("HTTPProxy",
-                                "Proxy returned - status code: " + request.ProxyResponse.StatusCode + " message: " +
-                                request.ProxyResponse.Message + " Body: " + request.ProxyResponse.DataAsText,
-                                request.Context);
+                        }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append($"Proxy returned - status code:{request.ProxyResponse.StatusCode}");
+                        sb.Append($" message: {request.ProxyResponse.Message} ");
+                        sb.Append($" Body: {request.ProxyResponse.DataAsText} ");
+                        Debug.Log($"[HTTPProxy] [Connect] [msg] {sb.ToString()}");
+#endif
 
                         switch (request.ProxyResponse.StatusCode)
                         {

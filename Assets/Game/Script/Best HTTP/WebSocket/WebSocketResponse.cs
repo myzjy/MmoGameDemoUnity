@@ -87,7 +87,15 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("WebSocketResponse", "HandleEvents", ex, this.Context);
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        var sb = new StringBuilder(3);
+                        sb.Append("[WebSocketResponse] ");
+                        sb.Append("[method:HandleEvents] ");
+                        sb.Append($"[msg|Exception] HandleEvents [Exception] {ex}");
+                        Debug.LogError(sb.ToString());
+#endif
+                    }
                 }
             }
 
@@ -197,7 +205,10 @@ namespace BestHTTP.WebSocket
         private void CloseWithError(HttpRequestStates state, string message)
         {
             if (!string.IsNullOrEmpty(message))
+            {
                 this.BaseRequest.Exception = new Exception(message);
+            }
+
             this.BaseRequest.State = state;
 
             this.closed = true;
@@ -525,83 +536,91 @@ namespace BestHTTP.WebSocket
         {
             try
             {
-                using (WriteOnlyBufferedStream bufferedStream = new WriteOnlyBufferedStream(this.Stream, 16 * 1024))
+                using WriteOnlyBufferedStream bufferedStream = new WriteOnlyBufferedStream(this.Stream, 16 * 1024);
+                while (!closed && !closeSent)
                 {
-                    while (!closed && !closeSent)
+                    //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
+                    //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Waiting...", this.Context);
+
+                    TimeSpan waitTime = TimeSpan.FromMilliseconds(int.MaxValue);
+
+                    if (this.PingFrequnecy != TimeSpan.Zero)
                     {
-                        //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
-                        //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Waiting...", this.Context);
+                        DateTime now = DateTime.UtcNow;
+                        waitTime = lastMessage + PingFrequnecy - now;
 
-                        TimeSpan waitTime = TimeSpan.FromMilliseconds(int.MaxValue);
-
-                        if (this.PingFrequnecy != TimeSpan.Zero)
+                        if (waitTime <= TimeSpan.Zero)
                         {
-                            DateTime now = DateTime.UtcNow;
-                            waitTime = lastMessage + PingFrequnecy - now;
-
-                            if (waitTime <= TimeSpan.Zero)
+                            if (!waitingForPong && now - lastMessage >= PingFrequnecy)
                             {
-                                if (!waitingForPong && now - lastMessage >= PingFrequnecy)
-                                {
-                                    if (!SendPing())
-                                        continue;
-                                }
-
-                                waitTime = PingFrequnecy;
+                                if (!SendPing())
+                                    continue;
                             }
 
-                            if (waitingForPong && now - lastPing > this.WebSocket.CloseAfterNoMessage)
-                            {
-                                HttpManager.Logger.Warning("WebSocketResponse",
-                                    string.Format(
-                                        "No message received in the given time! Closing WebSocket. LastPing: {0}, PingFrequency: {1}, Close After: {2}, Now: {3}",
-                                        this.lastPing, this.PingFrequnecy, this.WebSocket.CloseAfterNoMessage, now),
-                                    this.Context);
-
-                                CloseWithError(HttpRequestStates.Error, "No message received in the given time!");
-                                continue;
-                            }
+                            waitTime = PingFrequnecy;
                         }
 
-                        newFrameSignal.WaitOne(waitTime);
-
-                        try
+                        if (waitingForPong && now - lastPing > this.WebSocket.CloseAfterNoMessage)
                         {
-                            //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
-                            //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Wait is over, about " + this.unsentFrames.Count.ToString() + " new frames!", this.Context);
-
-                            WebSocketFrame frame;
-                            while (this.unsentFrames.TryDequeue(out frame))
                             {
-                                if (!closeSent)
-                                {
-                                    using (var rawData = frame.Get())
-                                        bufferedStream.Write(rawData.Data, 0, rawData.Length);
-
-                                    BufferPool.Release(frame.Data);
-
-                                    if (frame.Type == WebSocketFrameTypes.ConnectionClose)
-                                        closeSent = true;
-                                }
-
-                                Interlocked.Add(ref this._bufferedAmount, -frame.DataLength);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append("[WebSocketResponse] ");
+                                sb.Append("[method: SendThreadFunc] ");
+                                sb.Append("[msg|Exception] ");
+                                sb.Append($"No message received in the given time!");
+                                sb.Append($" Closing WebSocket. LastPing: {this.lastPing}");
+                                sb.Append($" , PingFrequency: {this.PingFrequnecy},");
+                                sb.Append($" Close After: {this.WebSocket.CloseAfterNoMessage},");
+                                sb.Append($" Now: {now}");
+                                Debug.Log(sb.ToString());
+#endif
                             }
-
-                            bufferedStream.Flush();
-                        }
-                        catch (Exception ex)
-                        {
-                            if (HttpUpdateDelegator.IsCreated)
-                            {
-                                this.BaseRequest.Exception = ex;
-                                this.BaseRequest.State = HttpRequestStates.Error;
-                            }
-                            else
-                                this.BaseRequest.State = HttpRequestStates.Aborted;
-
-                            closed = true;
+                            CloseWithError(HttpRequestStates.Error, "No message received in the given time!");
+                            continue;
                         }
                     }
+
+                    newFrameSignal.WaitOne(waitTime);
+
+                    try
+                    {
+                        //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
+                        //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Wait is over, about " + this.unsentFrames.Count.ToString() + " new frames!", this.Context);
+
+                        while (this.unsentFrames.TryDequeue(out var frame))
+                        {
+                            if (!closeSent)
+                            {
+                                using (var rawData = frame.Get())
+                                    bufferedStream.Write(rawData.Data, 0, rawData.Length);
+
+                                BufferPool.Release(frame.Data);
+
+                                if (frame.Type == WebSocketFrameTypes.ConnectionClose)
+                                    closeSent = true;
+                            }
+
+                            Interlocked.Add(ref this._bufferedAmount, -frame.DataLength);
+                        }
+
+                        bufferedStream.Flush();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (HttpUpdateDelegator.IsCreated)
+                        {
+                            this.BaseRequest.Exception = ex;
+                            this.BaseRequest.State = HttpRequestStates.Error;
+                        }
+                        else
+                            this.BaseRequest.State = HttpRequestStates.Aborted;
+
+                        closed = true;
+                    }
+                }
+
+                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     StringBuilder sb = new StringBuilder(3);
                     sb.Append($"Ending Send thread. ");
@@ -613,8 +632,15 @@ namespace BestHTTP.WebSocket
             }
             catch (Exception ex)
             {
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    HttpManager.Logger.Exception("WebSocketResponse", "SendThread", ex);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    var sb = new StringBuilder(3);
+                    sb.Append("[WebSocketResponse] ");
+                    sb.Append("[method:SendThreadFunc] ");
+                    sb.Append($"[msg|Exception] SendThread [Exception] {ex}");
+                    Debug.LogError(sb.ToString());
+#endif
+                }
             }
             finally
             {

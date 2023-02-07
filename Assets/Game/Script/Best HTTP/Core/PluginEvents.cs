@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using BestHTTP.Extensions;
-using BestHTTP.Logger;
 
 // Required for ConcurrentQueue.Clear extension.
 
@@ -58,9 +57,9 @@ namespace BestHTTP.Core
 
         public static void EnqueuePluginEvent(PluginEventInfo @event)
         {
-            if (HttpManager.Logger.Level == Loglevels.All)
-                HttpManager.Logger.Information("PluginEventHelper", "Enqueue plugin event: " + @event.ToString());
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"[PluginEventHelper] [EnqueuePluginEvent] [msg] Enqueue plugin event: {@event.ToString()}");
+#endif
             PluginEvents.Enqueue(@event);
         }
 
@@ -81,9 +80,9 @@ namespace BestHTTP.Core
 
             while (PluginEvents.TryDequeue(out var pluginEvent))
             {
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    HttpManager.Logger.Information("PluginEventHelper", $"Processing plugin event: {pluginEvent}");
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log($"[PluginEventHelper] [ProcessQueue] [msg] Processing plugin event: {pluginEvent}");
+#endif
                 if (_onEvent != null)
                 {
                     try

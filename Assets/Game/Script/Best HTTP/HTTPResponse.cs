@@ -318,8 +318,16 @@ namespace BestHTTP
             }
             else
             {
-                HttpManager.Logger.Warning("HTTPResponse", "Skipping Status Message reading!", this.Context,
-                    this.BaseRequest.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[HTTPResponse] ");
+                    sb.Append("[method: Receive] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"Skipping Status Message reading!");
+                    Debug.Log(sb.ToString());
+#endif
+                }
 
                 this.Message = string.Empty;
             }

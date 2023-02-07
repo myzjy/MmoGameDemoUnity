@@ -734,10 +734,23 @@ namespace BestHTTP.SignalRCore
             SendMessage(message);
 
             if (!blockingInvocation)
+            {
                 if (!this.invocations.TryAdd(invocationId,
                         new InvocationDefinition { callback = callback, returnType = itemType }))
-                    HttpManager.Logger.Warning("HubConnection",
-                        "InvokeImp - invocations already contains id: " + invocationId, this.Context);
+                {
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[HubConnection] ");
+                        sb.Append("[method:InvokeImp] ");
+                        sb.Append("[msg|Exception] ");
+                        sb.Append($"InvokeImp - invocations already contains id: ");
+                        sb.Append($"{invocationId}");
+                        Debug.Log(sb.ToString());
+#endif
+                    }
+                }
+            }
 
             return invocationId;
         }
@@ -825,10 +838,23 @@ namespace BestHTTP.SignalRCore
             SendMessage(message);
 
             if (callback != null)
+            {
                 if (!this.invocations.TryAdd(invocationId,
                         new InvocationDefinition { callback = callback, returnType = typeof(TDown) }))
-                    HttpManager.Logger.Warning("HubConnection",
-                        "GetDownStreamController - invocations already contains id: " + invocationId, this.Context);
+                {
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[HubConnection] ");
+                        sb.Append("[method:GetDownStreamController] ");
+                        sb.Append("[msg|Exception] ");
+                        sb.Append($"GetUpStreamController - invocations already contains id: ");
+                        sb.Append($"{invocationId}");
+                        Debug.Log(sb.ToString());
+#endif
+                    }
+                }
+            }
 
             return controller;
         }
@@ -903,8 +929,19 @@ namespace BestHTTP.SignalRCore
 
             if (!this.invocations.TryAdd(invocationId,
                     new InvocationDefinition { callback = callback, returnType = typeof(TResult) }))
-                HttpManager.Logger.Warning("HubConnection",
-                    "GetUpStreamController - invocations already contains id: " + invocationId, this.Context);
+            {
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[HubConnection] ");
+                    sb.Append("[method:SetState] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"GetUpStreamController - invocations already contains id: ");
+                    sb.Append($"{invocationId}");
+                    Debug.Log(sb.ToString());
+#endif
+                }
+            }
 
             return controller;
         }
@@ -1416,8 +1453,16 @@ namespace BestHTTP.SignalRCore
                             // No more reconnect attempt, we are closing
                             if (nextAttempt == null)
                             {
-                                HttpManager.Logger.Warning("HubConnection", "No more reconnect attempt!",
-                                    this.Context);
+                                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.Append("[HubConnection] ");
+                                    sb.Append("[method:SetState] ");
+                                    sb.Append("[msg|Exception] ");
+                                    sb.Append($"No more reconnect attempt!");
+                                    Debug.Log(sb.ToString());
+#endif
+                                }
 
                                 // Clean up everything
                                 this.currentContext = new RetryContext();

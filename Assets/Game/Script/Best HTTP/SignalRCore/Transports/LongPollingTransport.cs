@@ -1,6 +1,7 @@
 #if !BESTHTTP_DISABLE_SIGNALR_CORE
 using System;
 using System.Collections.Concurrent;
+using System.Text;
 using System.Threading;
 using BestHTTP.Core;
 using BestHTTP.Extensions;
@@ -432,39 +433,83 @@ namespace BestHTTP.SignalRCore.Transports
                     }
                     else
                     {
-                        HttpManager.Logger.Warning("LongPollingTransport", string.Format(
-                            "Connection Close Request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                            resp.StatusCode,
-                            resp.Message,
-                            resp.DataAsText), this.Context);
+                        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append("[LongPollingTransport] ");
+                            sb.Append("[method:OnConnectionCloseRequestFinished] ");
+                            sb.Append("[msg|Exception] ");
+                            sb.Append($"Connection Close Request finished Successfully,");
+                            sb.Append($" but the server sent an error. Status Code: {resp.StatusCode}");
+                            sb.Append($"-{resp.Message} Message: {resp.DataAsText}");
+                            Debug.Log(sb.ToString());
+#endif
+                        }
                     }
 
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
                 case HttpRequestStates.Error:
-                    HttpManager.Logger.Warning("LongPollingTransport",
-                        "Connection Close Request Finished with Error! " + (req.Exception != null
-                            ? (req.Exception.Message + "\n" + req.Exception.StackTrace)
-                            : "No Exception"), this.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[LongPollingTransport] ");
+                    sb.Append("[method:OnPollRequestFinished] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"Connection Close Request Finished with Error! ");
+                    sb.Append((req.Exception != null
+                        ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
+                        : "No Exception"));
+                    Debug.Log(sb.ToString());
+#endif
+                }
                     break;
 
                 // The request aborted, initiated by the user.
                 case HttpRequestStates.Aborted:
-                    HttpManager.Logger.Warning("LongPollingTransport", "Connection Close Request Aborted!",
-                        this.Context);
+                {
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[LongPollingTransport] ");
+                        sb.Append("[method:OnPollRequestFinished] ");
+                        sb.Append("[msg|Exception] ");
+                        sb.Append($"Connection Close Request Aborted!");
+                        Debug.Log(sb.ToString());
+#endif
+                    }
+                }
                     break;
 
                 // Connecting to the server is timed out.
                 case HttpRequestStates.ConnectionTimedOut:
-                    HttpManager.Logger.Warning("LongPollingTransport", "Connection Close - Connection Timed Out!",
-                        this.Context);
+                {
+                    {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("[LongPollingTransport] ");
+                        sb.Append("[method:OnPollRequestFinished] ");
+                        sb.Append("[msg|Exception] ");
+                        sb.Append($"Connection Close - Connection Timed Out!");
+                        Debug.Log(sb.ToString());
+#endif
+                    }
+                }
                     break;
 
                 // The request didn't finished in the given time.
                 case HttpRequestStates.TimedOut:
-                    HttpManager.Logger.Warning("LongPollingTransport",
-                        "Connection Close - Processing the request Timed Out!", this.Context);
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[LongPollingTransport] ");
+                    sb.Append("[method:OnPollRequestFinished] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"Connection Close - Processing the request Timed Out!");
+                    Debug.Log(sb.ToString());
+#endif
+                }
                     break;
             }
 
