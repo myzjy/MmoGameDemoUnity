@@ -172,7 +172,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP2", "CreateInternalRequest", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP2] [method:CreateInternalRequest] [msg|Exception] CreateInternalRequest  Exception:{ex}");
+#endif
                 }
             }
         }
@@ -191,7 +194,10 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("OverHTTP2", "OnOpen", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[OverHTTP2] [method:OnHeadersReceived] [msg|Exception] OnOpen  Exception:{ex}");
+#endif
                     }
                 }
 
@@ -308,7 +314,10 @@ namespace BestHTTP.WebSocket
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnIncompleteFrame  Exception:{ex}");
+#endif
                         }
                     }
 
@@ -345,8 +354,10 @@ namespace BestHTTP.WebSocket
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("OverHTTP2", "OnIncompleteFrame", ex,
-                                        this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnIncompleteFrame  Exception:{ex}");
+#endif
                                 }
                             }
                         }
@@ -363,7 +374,10 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("OverHTTP2", "OnMessage", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnMessage  Exception:{ex}");
+#endif
                             }
                         }
 
@@ -379,7 +393,10 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("OverHTTP2", "OnBinary", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnBinary  Exception:{ex}");
+#endif
                             }
                         }
 
@@ -448,8 +465,10 @@ namespace BestHTTP.WebSocket
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("OverHTTP2", "OnFrame - parsing ConnectionClose data", ex,
-                                this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnFrame - parsing ConnectionClose data  Exception:{ex}");
+#endif
                         }
 
                         if (this.Parent.OnClosed != null)
@@ -460,7 +479,10 @@ namespace BestHTTP.WebSocket
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[OverHTTP2] [method:OnFrame] [msg|Exception] OnClosed  Exception:{ex}");
+#endif
                             }
 
                             this.Parent.OnClosed = null;
@@ -551,7 +573,10 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("OverHTTP2", "OnError", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[OverHTTP2] [method:OnInternalRequestCallback] [msg|Exception] OnError  Exception:{ex}");
+#endif
                     }
                 }
                 else if (!HttpManager.IsQuitting)
@@ -575,7 +600,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP2", "OnClosed", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP2] [method:OnInternalRequestCallback] [msg|Exception] OnClosed  Exception:{ex}");
+#endif
                 }
             }
 
@@ -597,7 +625,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP2", "Open", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP2] [method:StartOpen] [msg|Exception] Open  Exception:{ex}");
+#endif
                 }
             }
 

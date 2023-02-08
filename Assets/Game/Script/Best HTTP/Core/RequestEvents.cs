@@ -263,7 +263,10 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("RequestEventHelper", "ProcessQueue", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] ProcessQueue  Exception:{ex}");
+#endif
                     }
                 }
 
@@ -284,8 +287,10 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "Process RequestEventQueue - RequestEvents.StreamingData", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.StreamingData  Exception:{ex}");
+#endif
                         }
 
                         if (reuseBuffer)
@@ -297,12 +302,16 @@ namespace BestHTTP.Core
                         try
                         {
                             if (source.OnDownloadProgress != null)
+                            {
                                 source.OnDownloadProgress(source, requestEvent.Progress, requestEvent.ProgressLength);
+                            }
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "Process RequestEventQueue - RequestEvents.DownloadProgress", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.DownloadProgress  Exception:{ex}");
+#endif
                         }
 
                         break;
@@ -311,12 +320,16 @@ namespace BestHTTP.Core
                         try
                         {
                             if (source.OnUploadProgress != null)
+                            {
                                 source.OnUploadProgress(source, requestEvent.Progress, requestEvent.ProgressLength);
+                            }
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "Process RequestEventQueue - RequestEvents.UploadProgress", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.UploadProgress  Exception:{ex}");
+#endif
                         }
 
                         break;
@@ -330,13 +343,17 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "Process RequestEventQueue - RequestEvents.Upgraded", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.Upgraded  Exception:{ex}");
+#endif
                         }
 
-                        IProtocol protocol = source.Response as IProtocol;
-                        if (protocol != null)
+                        if (source.Response is IProtocol protocol)
+                        {
                             ProtocolEventHelper.AddProtocol(protocol);
+                        }
+
                         break;
 #endif
 
@@ -359,8 +376,10 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "Process RequestEventQueue - RequestEvents.Headers", ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.Headers  Exception:{ex}");
+#endif
                         }
 
                         break;
@@ -373,8 +392,10 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper", "HandleRequestStateChange", ex,
-                                source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] HandleRequestStateChange  Exception:{ex}");
+#endif
                         }
 
                         break;
@@ -505,11 +526,19 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("RequestEventHelper",
-                            string.Format(
-                                "HandleRequestStateChange - Cache probe - CurrentUri: \"{0}\" State: {1} StatusCode: {2}",
-                                source.CurrentUri, source.State,
-                                source.Response != null ? source.Response.StatusCode : 0), ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        StringBuilder sb = new StringBuilder(3);
+                        sb.Append("[RequestEventHelper]");
+                        sb.Append(" [method:ProcessQueue] ");
+                        sb.Append(" [msg|Exception] ");
+                        sb.Append("HandleRequestStateChange ");
+                        sb.Append("- Cache probe - ");
+                        sb.Append($" CurrentUri: \"{source.CurrentUri}\" ");
+                        sb.Append($"State: {source.State} ");
+                        sb.Append($" StatusCode: {source.Response?.StatusCode ?? 0}");
+                        sb.Append($" Exception:{ex}");
+                        Debug.LogError($"{sb.ToString()}");
+#endif
                     }
 #endif
 
@@ -533,8 +562,15 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("RequestEventHelper",
-                                "HandleRequestStateChange " + @event.State, ex, source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            StringBuilder sb = new StringBuilder(3);
+                            sb.Append("[RequestEventHelper]");
+                            sb.Append(" [method:HandleRequestStateChange] ");
+                            sb.Append(" [msg|Exception] ");
+                            sb.Append("HandleRequestStateChange ");
+                            sb.Append($"{@event.State}");
+                            Debug.LogError($"{sb.ToString()}");
+#endif
                         }
                     }
 

@@ -96,7 +96,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP1", "CreateInternalRequest", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP1] [method:CreateInternalRequest] [msg|Exception] CreateInternalRequest  Exception:{ex}");
+#endif
                 }
             }
         }
@@ -122,7 +125,7 @@ namespace BestHTTP.WebSocket
         public override void StartOpen()
         {
             if (requestSent)
-                throw new InvalidOperationException("Open already called! You can't reuse this WebSocket instance!");
+                throw new InvalidOperationException("已经叫开了!你不能重用这个WebSocket实例!");
 
             if (this.Parent.Extensions != null)
             {
@@ -137,7 +140,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP1", "Open", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP1] [method:StartOpen] [msg|Exception] Open  Exception:{ex}");
+#endif
                 }
             }
 
@@ -289,8 +295,10 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("OverHTTP1", "ParseNegotiation", ex, this.Parent.Context);
-
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[OverHTTP1] [method:OnInternalRequestUpgraded] [msg|Exception] ParseNegotiation  Exception:{ex}");
+#endif
                         // Do not try to use a defective extension in the future
                         this.Parent.Extensions[i] = null;
                     }
@@ -306,7 +314,10 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("OverHTTP1", "OnOpen", ex, this.Parent.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[OverHTTP1] [method:OnInternalRequestUpgraded] [msg|Exception] Open  Exception:{ex}");
+#endif
                 }
             }
 

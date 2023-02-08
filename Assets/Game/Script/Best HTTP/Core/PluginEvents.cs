@@ -91,7 +91,10 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("PluginEventHelper", "ProcessQueue", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[PluginEventHelper] [method:ProcessQueue] [msg|Exception] ProcessQueue  Exception:{ex}");
+#endif
                     }
                 }
 

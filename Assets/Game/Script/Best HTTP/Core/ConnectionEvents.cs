@@ -20,15 +20,14 @@ namespace BestHTTP.Core
 #endif
         struct ConnectionEventInfo
     {
-        public readonly ConnectionBase Source;
-
         public readonly ConnectionEvents Event;
-
-        public readonly HttpConnectionStates State;
 
         public readonly HostProtocolSupport ProtocolSupport;
 
         public readonly HttpRequest Request;
+        public readonly ConnectionBase Source;
+
+        public readonly HttpConnectionStates State;
 
         public ConnectionEventInfo(ConnectionBase sourceConn, ConnectionEvents @event)
         {
@@ -126,8 +125,10 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("ConnectionEventHelper", "ProcessQueue", ex,
-                            connectionEvent.Source.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[ConnectionEventHelper] [method:ProcessQueue] [msg|Exception]ProcessQueue  Exception:{ex}");
+#endif
                     }
                 }
 
