@@ -551,8 +551,10 @@ namespace BestHTTP.SignalRCore
                                         }
                                         catch (Exception ex)
                                         {
-                                            HttpManager.Logger.Exception("HubConnection",
-                                                "OnNegotiationRequestFinished - OnRedirected", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                            Debug.LogError(
+                                                $"[HubConnection] [method:OnNegotiationRequestFinished] [msg|Exception] OnNegotiationRequestFinished - OnRedirected [Exception] {ex}");
+#endif
                                         }
                                     }
 
@@ -1039,8 +1041,10 @@ namespace BestHTTP.SignalRCore
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("HubConnection", "Exception in OnMessage user code!", ex,
-                            this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[HubConnection] [method:OnMessages] [msg|Exception] Exception in OnMessage user code![Exception] {ex}");
+#endif
                     }
                 }
 
@@ -1048,12 +1052,11 @@ namespace BestHTTP.SignalRCore
                 {
                     case MessageTypes.Invocation:
                     {
-                        Subscription subscribtion = null;
-                        if (this.subscriptions.TryGetValue(message.target, out subscribtion))
+                        if (this.subscriptions.TryGetValue(message.target, out var subscription))
                         {
-                            for (int i = 0; i < subscribtion.callbacks.Count; ++i)
+                            for (int i = 0; i < subscription.callbacks.Count; ++i)
                             {
-                                var callbackDesc = subscribtion.callbacks[i];
+                                var callbackDesc = subscription.callbacks[i];
 
                                 object[] realArgs = null;
                                 try
@@ -1063,8 +1066,10 @@ namespace BestHTTP.SignalRCore
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("HubConnection",
-                                        "OnMessages - Invocation - GetRealArguments", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[HubConnection] [method:OnMessages] [msg|Exception] OnMessages - Invocation - GetRealArguments[Exception] {ex}");
+#endif
                                 }
 
                                 try
@@ -1073,8 +1078,10 @@ namespace BestHTTP.SignalRCore
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("HubConnection", "OnMessages - Invocation - Invoke",
-                                        ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[HubConnection] [method:OnMessages] [msg|Exception] OnMessages - Invocation - Invoke [Exception] {ex}");
+#endif
                                 }
                             }
                         }
@@ -1084,11 +1091,9 @@ namespace BestHTTP.SignalRCore
 
                     case MessageTypes.StreamItem:
                     {
-                        long invocationId;
-                        if (long.TryParse(message.invocationId, out invocationId))
+                        if (long.TryParse(message.invocationId, out var invocationId))
                         {
-                            InvocationDefinition def;
-                            if (this.invocations.TryGetValue(invocationId, out def) && def.callback != null)
+                            if (this.invocations.TryGetValue(invocationId, out var def) && def.callback != null)
                             {
                                 try
                                 {
@@ -1096,8 +1101,10 @@ namespace BestHTTP.SignalRCore
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("HubConnection", "OnMessages - StreamItem - callback",
-                                        ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[HubConnection] [method:OnMessages] [msg|Exception] OnMessages - StreamItem - callback [Exception] {ex}");
+#endif
                                 }
                             }
                         }
@@ -1107,11 +1114,9 @@ namespace BestHTTP.SignalRCore
 
                     case MessageTypes.Completion:
                     {
-                        long invocationId;
-                        if (long.TryParse(message.invocationId, out invocationId))
+                        if (long.TryParse(message.invocationId, out var invocationId))
                         {
-                            InvocationDefinition def;
-                            if (this.invocations.TryRemove(invocationId, out def) && def.callback != null)
+                            if (this.invocations.TryRemove(invocationId, out var def) && def.callback != null)
                             {
                                 try
                                 {
@@ -1119,8 +1124,10 @@ namespace BestHTTP.SignalRCore
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("HubConnection", "OnMessages - Completion - callback",
-                                        ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[HubConnection] [method:OnMessages] [msg|Exception] OnMessages - Completion - callback [Exception] {ex}");
+#endif
                                 }
                             }
                         }
@@ -1136,7 +1143,10 @@ namespace BestHTTP.SignalRCore
                     case MessageTypes.Close:
                         SetState(ConnectionStates.Closed, message.error, message.allowReconnect);
                         if (this.Transport != null)
+                        {
                             this.Transport.StartClose();
+                        }
+
                         return;
                 }
             }
@@ -1426,8 +1436,10 @@ namespace BestHTTP.SignalRCore
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("HubConnection",
-                                        "SetState - ConnectionStates.Reconnecting", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[HubConnection] [method:SetState] [msg|Exception] SetState - ConnectionStates.Reconnecting [Exception] {ex}");
+#endif
                                 }
                             }
 
@@ -1445,9 +1457,10 @@ namespace BestHTTP.SignalRCore
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HubConnection", "ReconnectPolicy.GetNextRetryDelay",
-                                    ex,
-                                    this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[HubConnection] [method:SetState] [msg|Exception] ReconnectPolicy.GetNextRetryDelay [Exception] {ex}");
+#endif
                             }
 
                             // No more reconnect attempt, we are closing
@@ -1496,8 +1509,10 @@ namespace BestHTTP.SignalRCore
                             }
                             catch (Exception ex)
                             {
-                                HttpManager.Logger.Exception("HubConnection", "Exception in OnError user code!", ex,
-                                    this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                Debug.LogError(
+                                    $"[HubConnection] [method:SetState] [msg|Exception] Exception in OnError user code! [Exception] {ex}");
+#endif
                             }
                         }
                     }

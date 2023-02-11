@@ -215,7 +215,9 @@ namespace BestHTTP.Connections
             base.Shutdown(type);
 
             if (this.requestHandler != null)
+            {
                 this.requestHandler.Shutdown(type);
+            }
 
             switch (this.ShutdownType)
             {

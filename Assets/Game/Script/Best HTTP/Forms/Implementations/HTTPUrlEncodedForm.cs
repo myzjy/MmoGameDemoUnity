@@ -4,7 +4,7 @@ using System.Text;
 namespace BestHTTP.Forms
 {
     /// <summary>
-    /// A HTTP Form implementation to send textual values.
+    /// 发送文本值的HTTP表单实现。
     /// </summary>
     public sealed class HttpUrlEncodedForm : HttpFormBase
     {
@@ -22,7 +22,7 @@ namespace BestHTTP.Forms
             if (_cachedData != null && !IsChanged)
                 return _cachedData;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             // Create a "field1=value1&field2=value2" formatted string
             for (int i = 0; i < Fields.Count; ++i)
@@ -30,16 +30,22 @@ namespace BestHTTP.Forms
                 var field = Fields[i];
 
                 if (i > 0)
+                {
                     sb.Append("&");
+                }
 
                 sb.Append(EscapeString(field.Name));
                 sb.Append("=");
 
                 if (!string.IsNullOrEmpty(field.Text) || field.Binary == null)
+                {
                     sb.Append(EscapeString(field.Text));
+                }
                 else
-                    // If forced to this form type with binary data, we will create a base64 encoded string from it.
+                {
+                    // 如果使用二进制数据强制使用此表单类型，则将从中创建base64编码的字符串。
                     sb.Append(Convert.ToBase64String(field.Binary, 0, field.Binary.Length));
+                }
             }
 
             IsChanged = false;

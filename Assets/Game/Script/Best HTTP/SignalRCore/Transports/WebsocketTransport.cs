@@ -137,7 +137,10 @@ namespace BestHTTP.SignalRCore.Transports
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage(string)", ex, this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError(
+                    $"[WebSocketTransport] [method:OnMessage] [msg|Exception] OnMessage(string) [Exception] {ex}");
+#endif
             }
             finally
             {

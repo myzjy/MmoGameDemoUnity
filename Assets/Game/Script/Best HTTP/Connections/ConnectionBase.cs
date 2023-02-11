@@ -43,9 +43,13 @@ namespace BestHTTP.Connections
             LastProcessedUri = CurrentRequest.CurrentUri;
 
             if (IsThreaded)
+            {
                 PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ThreadFunc);
+            }
             else
+            {
                 ThreadFunc();
+            }
         }
 
         protected virtual void ThreadFunc()
@@ -62,7 +66,7 @@ namespace BestHTTP.Connections
 
         public override string ToString()
         {
-            return string.Format("[{0}:{1}]", this.GetHashCode(), this.ServerAddress);
+            return $"[{this.GetHashCode()}:{this.ServerAddress}]";
         }
 
         public virtual bool TestConnection() => true;

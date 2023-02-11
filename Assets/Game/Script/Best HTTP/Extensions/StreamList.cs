@@ -90,7 +90,9 @@ namespace BestHTTP.Extensions
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("StreamList", "Dispose", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[StreamList] [method:Read] [msg|Exception] Dispose [Exception] {ex}");
+#endif
                 }
 
                 readCount += Streams[CurrentIdx].Read(buffer, offset + readCount, count - readCount);
@@ -128,7 +130,9 @@ namespace BestHTTP.Extensions
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("StreamList", "Dispose", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError($"[StreamList] [method:Dispose] [msg|Exception] Dispose [Exception] {ex}");
+#endif
                         }
                     }
             }

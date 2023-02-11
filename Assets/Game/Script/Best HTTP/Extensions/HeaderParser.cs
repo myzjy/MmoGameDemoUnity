@@ -31,7 +31,9 @@ namespace BestHTTP.Extensions
             }
             catch (System.Exception ex)
             {
-                HttpManager.Logger.Exception("HeaderParser - Parse", headerStr, ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError($"[HeaderParser] [method:Parse] [msg|Exception]{headerStr} [Exception] {ex}");
+#endif
             }
 
             return result;

@@ -84,7 +84,10 @@ namespace BestHTTP.ServerSentEvents
                     }
                     catch (Exception ex)
                     {
-                        HttpManager.Logger.Exception("EventSource", "OnStateChanged", ex);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                        Debug.LogError(
+                            $"[EventSource] [method:State GET] [msg|Exception] OnStateChanged [Exception] {ex}");
+#endif
                     }
                 }
             }
@@ -338,7 +341,10 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("EventSource", msg + " - OnError", ex, this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[EventSource] [method:CallOnError] [msg|Exception] {msg} - OnError [Exception] {ex}");
+#endif
                 }
             }
         }
@@ -354,7 +360,9 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("EventSource", "CallOnRetry", ex, this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError($"[EventSource] [method:CallOnRetry] [msg|Exception] CallOnRetry [Exception] {ex}");
+#endif
                 }
             }
 
@@ -374,7 +382,10 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("EventSource", msg + " - OnClosed", ex, this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[EventSource] [method:SetClosed] [msg|Exception] {msg} - OnClosed [Exception] {ex}");
+#endif
                 }
             }
         }
@@ -521,7 +532,9 @@ namespace BestHTTP.ServerSentEvents
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("EventSource", "OnOpen", ex, request.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError($"[EventSource] [method:OnData] [msg|Exception] OnOpen [Exception] {ex}");
+#endif
                         }
                     }
 
@@ -740,8 +753,10 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("EventSource", "OnMessageReceived - OnMessage", ex,
-                        this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[EventSource] [method:OnMessageReceived] [msg|Exception] OnMessageReceived - OnMessage [Exception] {ex}");
+#endif
                 }
             }
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -753,8 +768,10 @@ namespace BestHTTP.ServerSentEvents
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("EventSource", "OnMessageReceived - OnComment", ex,
-                        this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.LogError(
+                        $"[EventSource] [method:OnMessageReceived] [msg|Exception] OnMessageReceived - OnComment [Exception] {ex}");
+#endif
                 }
             }
 #endif
@@ -772,8 +789,10 @@ namespace BestHTTP.ServerSentEvents
                         }
                         catch (Exception ex)
                         {
-                            HttpManager.Logger.Exception("EventSource", "OnMessageReceived - action", ex,
-                                this.LoggingContext);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                            Debug.LogError(
+                                $"[EventSource] [method:OnMessageReceived] [msg|Exception] OnMessageReceived - action [Exception] {ex}");
+#endif
                         }
                     }
                 }
@@ -785,9 +804,10 @@ namespace BestHTTP.ServerSentEvents
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (this.State == States.Open)
             {
-                BestHTTP.ServerSentEvents.Message message;
-                while (this.CompletedMessages.TryDequeue(out message))
+                while (this.CompletedMessages.TryDequeue(out var message))
+                {
                     OnMessageReceived(message);
+                }
             }
 #endif
         }

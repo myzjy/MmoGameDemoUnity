@@ -341,10 +341,14 @@ namespace BestHTTP.SignalRCore.Transports
                                     offset = idx + 1;
 
                                     if (this.State == TransportStates.Connected)
+                                    {
                                         SendMessages();
+                                    }
                                 }
                                 else
+                                {
                                     DoPoll();
+                                }
                             }
 
                             if (this.State == TransportStates.Connected)
@@ -353,18 +357,24 @@ namespace BestHTTP.SignalRCore.Transports
                                 try
                                 {
                                     if (resp.Data.Length - offset > 0)
+                                    {
                                         this.connection.Protocol.ParseMessages(
                                             new BufferSegment(resp.Data, offset, resp.Data.Length - offset),
                                             ref this.messages);
+                                    }
                                     else
+                                    {
                                         this.messages.Add(new Messages.Message { type = Messages.MessageTypes.Ping });
+                                    }
 
                                     this.connection.OnMessages(this.messages);
                                 }
                                 catch (Exception ex)
                                 {
-                                    HttpManager.Logger.Exception("LongPollingTransport", "OnMessage(byte[])", ex,
-                                        this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                                    Debug.LogError(
+                                        $"[LongPollingTransport] [method:OnPollRequestFinished] [msg|Exception] OnMessage(byte[]) [Exception] {ex}");
+#endif
                                 }
                                 finally
                                 {
