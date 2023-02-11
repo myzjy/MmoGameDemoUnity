@@ -44,10 +44,11 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             // settingManager.Set(GameConstant.SETTING_LOGIN_TOKEN_USERID, uid);
             SpringContext.GetBean<PlayerUserCaCheData>().Uid = uid;
             SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
-            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOGIN_UI);
-            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
-            //跳转场景
-            SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
+            //只是关闭 输入账号
+            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOGIN_REGISTER_UI);
+            // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
+            // //跳转场景
+            // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
         }
 
         [PacketReceiver]
