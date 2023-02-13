@@ -132,7 +132,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log($"[HTTPUpdateDelegator] [msg:请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!]");
 #endif
-                // HttpManager.Logger.Error("HTTPUpdateDelegator", "请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!");
             }
         }
 
@@ -175,8 +174,7 @@ namespace BestHTTP
                 DontDestroyOnLoad(this.gameObject);
             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPUpdateDelegator] [method:Setup] [msg] Setup done!");
+            Debug.Log($"[HTTPUpdateDelegator] [method:Setup] [msg] Setup done!");
 #endif
         }
 
@@ -185,8 +183,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log("[HTTPUpdateDelegator] [msg:更新线程已启动]");
 #endif
-            // HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Started");
-
             try
             {
                 IsThreadRunning = true;
@@ -206,7 +202,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log("[HTTPUpdateDelegator] [msg:更新线程结束]");
 #endif
-                // HttpManager.Logger.Information("HTTPUpdateDelegator", "Update Thread Ended");
             }
         }
 
@@ -267,14 +262,15 @@ namespace BestHTTP
         void OnDisable()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log("[HTTPUpdateDelegator] [msg:OnDisable Called!]");
+            Debug.Log("[HTTPUpdateDelegator] [msg:OnDisable 调用!]");
 #endif
-            //HttpManager.Logger.Information("HTTPUpdateDelegator", "OnDisable Called!");
 
 #if UNITY_EDITOR
             if (UnityEditor.EditorApplication.isPlaying)
 #endif
+            {
                 UnityApplication_WantsToQuit();
+            }
         }
 
         void OnApplicationPause(bool isPaused)
@@ -282,8 +278,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[HTTPUpdateDelegator] [msg:OnApplicationPause 是否暂停-->[{isPaused}]]");
 #endif
-            // HttpManager.Logger.Information("HTTPUpdateDelegator", "OnApplicationPause isPaused: " + isPaused);
-
             if (HttpUpdateDelegator.OnApplicationForegroundStateChanged != null)
             {
                 HttpUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
@@ -295,8 +289,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[HTTPUpdateDelegator] [msg:UnityApplication_WantsToQuit Called!!!]");
 #endif
-            //HttpManager.Logger.Information("HTTPUpdateDelegator", "UnityApplication_WantsToQuit Called!");
-
             if (_onBeforeApplicationQuit != null)
             {
                 try
@@ -306,8 +298,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         Debug.Log($"[HTTPUpdateDelegator] [msg:OnBeforeApplicationQuit调用返回false，延迟插件和应用程序关闭。]");
 #endif
-                        // HttpManager.Logger.Information("HTTPUpdateDelegator",
-                        //     "OnBeforeApplicationQuit call returned false, postponing plugin and application shutdown.");
                         return false;
                     }
                 }
@@ -316,14 +306,15 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.Log($"[HTTPUpdateDelegator] [msg:{ex}]");
 #endif
-                    //              HttpManager.Logger.Exception("HTTPUpdateDelegator", string.Empty, ex);
                 }
             }
 
             IsThreadRunning = false;
 
             if (!IsCreated)
+            {
                 return true;
+            }
 
             IsCreated = false;
 

@@ -35,7 +35,7 @@ namespace BestHTTP
         /// </summary>
         private const int MinReadBufferSize = 16 * 1024;
 
-        #region Public Properties
+        #region 公共属性
 
         public int VersionMajor { get; protected set; }
 
@@ -291,21 +291,32 @@ namespace BestHTTP
             string[] versions = statusLine.Split(new char[] { '/', '.' });
             this.VersionMajor = int.Parse(versions[1]);
             this.VersionMinor = int.Parse(versions[2]);
-
-            if (HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging(string.Format("HTTP Version: '{0}.{1}'", this.VersionMajor.ToString(),
-                    this.VersionMinor.ToString()));
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"HTTP Version: '{this.VersionMajor.ToString()}.{this.VersionMinor.ToString()}'");
+                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+            }
 
             int statusCode;
             string statusCodeStr = NoTrimReadTo(Stream, (byte)' ', LF);
-
-            if (HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging($"Status Code: '{statusCodeStr}'");
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"Status Code: '{statusCodeStr}'");
+                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+            }
 
             if (BaseRequest.Retries >= BaseRequest.MaxRetries)
+            {
                 statusCode = int.Parse(statusCodeStr);
+            }
             else if (!int.TryParse(statusCodeStr, out statusCode))
+            {
                 return false;
+            }
 
             this.StatusCode = statusCode;
 
@@ -313,8 +324,13 @@ namespace BestHTTP
                 (byte)statusCodeStr[statusCodeStr.Length - 1] != CR)
             {
                 this.Message = ReadTo(Stream, LF);
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    VerboseLogging($"Status Message: '{this.Message}'");
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"Status Message: '{this.Message}'");
+                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+                }
             }
             else
             {
@@ -336,15 +352,21 @@ namespace BestHTTP
             ReadHeaders(Stream);
 
             if (!this.IsProxyResponse)
+            {
                 BaseRequest.Timing.Add(TimingEventNames.Headers);
+            }
 
             IsUpgraded = StatusCode == 101 && (HasHeaderWithValue("connection", "upgrade") || HasHeader("upgrade"));
 
             if (IsUpgraded)
             {
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    VerboseLogging("Request Upgraded!");
-
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"请求升级!");
+                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+                }
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, RequestEvents.Upgraded));
             }
 
@@ -359,52 +381,73 @@ namespace BestHTTP
 
         private bool ReadPayload(long forceReadRawContentLength)
         {
-            // Reading from an already unpacked stream (eq. From a file cache or all responses under webgl)
+            // 从已经打开的流中阅读 (eq. 从文件缓存或webgl下的所有响应)
             if (forceReadRawContentLength != -1)
             {
                 ReadRaw(Stream, forceReadRawContentLength);
-
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    VerboseLogging("ReadPayload Finished!");
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"ReadPayload完成!");
+                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+                }
                 return true;
             }
 
             //  http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
-            //  1.Any response message which "MUST NOT" include a message-body (such as the 1xx, 204, and 304 responses and any response to a HEAD request)
-            //      is always terminated by the first empty line after the header fields, regardless of the entity-header fields present in the message.
-            if ((StatusCode >= 100 && StatusCode < 200) || StatusCode == 204 || StatusCode == 304 ||
+            // 1。任何“MUST NOT”包含消息体的响应消息(例如1xx、204和304响应以及对HEAD请求的任何响应)
+            //总是以报头字段之后的第一个空行结束，而不管消息中出现的实体报头字段。
+            if ((StatusCode >= 100 &&
+                 StatusCode < 200) ||
+                StatusCode == 204 ||
+                StatusCode == 304 ||
                 BaseRequest.MethodType == HttpMethods.Head)
+            {
                 return true;
+            }
 
 #if (!UNITY_WEBGL || UNITY_EDITOR)
             if (HasHeaderWithValue("transfer-encoding", "chunked"))
+            {
                 ReadChunked(Stream);
+            }
             else
 #endif
             {
                 //  http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
                 //      Case 3 in the above link.
-                List<string> contentLengthHeaders = GetHeaderValues("content-length");
+                var contentLengthHeaders = GetHeaderValues("content-length");
                 var contentRangeHeaders = GetHeaderValues("content-range");
                 if (contentLengthHeaders != null && contentRangeHeaders == null)
+                {
                     ReadRaw(Stream, long.Parse(contentLengthHeaders[0]));
+                }
                 else if (contentRangeHeaders != null)
                 {
                     if (contentLengthHeaders != null)
+                    {
                         ReadRaw(Stream, long.Parse(contentLengthHeaders[0]));
+                    }
                     else
                     {
-                        HttpRange range = GetRange();
+                        var range = GetRange();
                         ReadRaw(Stream, (range.LastBytePos - range.FirstBytePos) + 1);
                     }
                 }
                 else
+                {
                     ReadUnknownSize(Stream);
+                }
             }
 
-            if (HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging("ReadPayload Finished!");
-
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                StringBuilder sb = new StringBuilder();
+                sb.Append($"ReadPayload完成!");
+                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+            }
             return true;
         }
 
@@ -418,9 +461,13 @@ namespace BestHTTP
             while (headerName != string.Empty)
             {
                 string value = ReadTo(stream, LF);
-
-                if (HttpManager.Logger.Level == Loglevels.All)
-                    VerboseLogging($"Header - '{headerName}': '{value}'");
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append($"Header - '{headerName}': '{value}'");
+                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
+#endif
+                }
 
                 AddHeader(headerName, value);
 
@@ -436,7 +483,9 @@ namespace BestHTTP
             }
 
             if (this.BaseRequest.OnHeadersReceived != null)
+            {
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, newHeaders));
+            }
         }
 
         public void AddHeader(string name, string value)
@@ -1354,8 +1403,6 @@ namespace BestHTTP
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[HTTPResponse]  [message: {str}]");
 #endif
-            // if (HttpManager.Logger.Level == Loglevels.All)
-            //     HttpManager.Logger.Verbose("HTTPResponse", str, this.Context, this.BaseRequest.Context);
         }
 
         /// <summary>

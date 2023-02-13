@@ -11,6 +11,7 @@ using BestHTTP.Forms;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.Timings;
+using ZJYFrameWork.UISerializable.Manager;
 
 namespace BestHTTP
 {
@@ -213,59 +214,61 @@ namespace BestHTTP
             set
             {
                 if (State == HttpRequestStates.Processing)
+                {
                     throw new NotSupportedException(
-                        "Changing the StreamFragmentSize property while processing the request is not supported.");
+                        "不支持在处理请求时更改StreamFragmentSize属性.");
+                }
 
                 if (value < 1)
-                    throw new System.ArgumentException("StreamFragmentSize must be at least 1.");
+                {
+                    throw new System.ArgumentException("StreamFragmentSize必须至少为1.");
+                }
 
                 _streamFragmentSize = value;
             }
         }
 
         /// <summary>
-        /// When set to true, StreamFragmentSize will be ignored and downloaded chunks will be sent immediately.
+        /// 当设置为true时，StreamFragmentSize将被忽略，下载的块将立即发送。
         /// </summary>
         public bool StreamChunksImmediately { get; set; }
 
         /// <summary>
-        /// This property can be used to force the HTTPRequest to use an exact sized read buffer.
+        /// 此属性可用于强制HTTPRequest使用精确大小的读缓冲区。
         /// </summary>
         public int ReadBufferSizeOverride { get; set; }
 
         /// <summary>
-        /// Maximum unprocessed fragments allowed to queue up. 
+        /// 允许排队的最大未处理片段。
         /// </summary>
         public int MaxFragmentQueueLength { get; set; }
 
         /// <summary>
-        /// The callback function that will be called when a request is fully processed or when any downloaded fragment is available if UseStreaming is true. Can be null for fire-and-forget requests.
+        /// 如果UseStreaming为true，则当请求完全处理或任何下载片段可用时将调用的回调函数。对于fire-and-forget请求可以为null。
         /// </summary>
         public OnRequestFinishedDelegate Callback { get; set; }
 
         /// <summary>
-        /// When the request is queued for processing.
+        /// 当请求排队等待处理时.
         /// </summary>
         public DateTime QueuedAt { get; internal set; }
 
-        public bool IsConnectTimedOut
-        {
-            get { return this.QueuedAt != DateTime.MinValue && DateTime.UtcNow - this.QueuedAt > this.ConnectTimeout; }
-        }
+        public bool IsConnectTimedOut =>
+            this.QueuedAt != DateTime.MinValue && DateTime.UtcNow - this.QueuedAt > this.ConnectTimeout;
 
         /// <summary>
-        /// When the processing of the request started
+        /// 当请求开始处理时
         /// </summary>
         public DateTime ProcessingStarted { get; internal set; }
 
         /// <summary>
-        /// Returns true if the time passed the Timeout setting since processing started.
+        /// 如果处理开始后经过Timeout设置的时间，则返回true
         /// </summary>
         public bool IsTimedOut
         {
             get
             {
-                DateTime now = DateTime.UtcNow;
+                var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
 
                 return (!this.UseStreaming || (this.UseStreaming && this.EnableTimoutForStreaming)) &&
                        ((this.ProcessingStarted != DateTime.MinValue && now - this.ProcessingStarted > this.Timeout) ||
@@ -274,49 +277,49 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Called for every fragment of data downloaded from the server. Return true if dataFrament is processed and the plugin can recycle the byte[].
+        /// 调用从服务器下载的每个数据片段。如果dataFrament被处理并且插件可以回收字节数组，则返回true。
         /// </summary>
         public OnStreamingDataDelegate OnStreamingData;
 
         /// <summary>
-        /// This event is called when the plugin received and parsed all headers.
+        /// 当插件接收并解析所有头文件时，调用此事件。
         /// </summary>
         public OnHeadersReceivedDelegate OnHeadersReceived;
 
         /// <summary>
-        /// Number of times that the plugin retried the request.
+        /// 插件重试请求的次数。
         /// </summary>
         public int Retries { get; internal set; }
 
         /// <summary>
-        /// Maximum number of tries allowed. To disable it set to 0. Its default value is 1 for GET requests, otherwise 0.
+        /// 允许的最大尝试次数。要禁用它，请设置为0。对于GET请求，缺省值为1，否则为0.
         /// </summary>
         public int MaxRetries { get; set; }
 
         /// <summary>
-        /// True if Abort() is called on this request.
+        /// 如果在此请求上调用Abort()则为True。
         /// </summary>
         public bool IsCancellationRequested { get; internal set; }
 
         /// <summary>
-        /// Called when new data downloaded from the server.
-        /// The first parameter is the original HTTTPRequest object itself, the second parameter is the downloaded bytes while the third parameter is the content length.
-        /// <remarks>There are download modes where we can't figure out the exact length of the final content. In these cases we just guarantee that the third parameter will be at least the size of the second one.</remarks>
+        /// 当从服务器下载新数据时调用。
+        /// 第一个参数是原始HTTTPRequest对象本身，第二个参数是下载的字节，第三个参数是内容长度。
+        /// <remarks>在某些下载模式中，我们无法计算出最终内容的确切长度。在这些情况下，我们只是保证第三个参数至少是第二个参数的大小.</remarks>
         /// </summary>
         public OnDownloadProgressDelegate OnDownloadProgress;
 
         /// <summary>
-        /// Indicates that the request is redirected. If a request is redirected, the connection that served it will be closed regardless of the value of IsKeepAlive.
+        /// 表示请求被重定向。如果请求被重定向，服务请求的连接将被关闭，而不管IsKeepAlive的值是多少。
         /// </summary>
         public bool IsRedirected { get; internal set; }
 
         /// <summary>
-        /// The Uri that the request redirected to.
+        /// 请求重定向到的Uri。
         /// </summary>
         public Uri RedirectUri { get; internal set; }
 
         /// <summary>
-        /// If redirected it contains the RedirectUri.
+        /// 如果重定向，则包含RedirectUri。
         /// </summary>
         public Uri CurrentUri
         {
@@ -324,36 +327,36 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// The response to the query.
-        /// <remarks>If an exception occurred during reading of the response stream or can't connect to the server, this will be null!</remarks>
+        /// 对查询的响应。
+        /// <remarks>如果在读取响应流期间发生异常或无法连接到服务器，则此值将为null!</remarks>
         /// </summary>
         public HttpResponse Response { get; internal set; }
 
 #if !BESTHTTP_DISABLE_PROXY
         /// <summary>
-        /// Response from the Proxy server. It's null with transparent proxies.
+        /// 来自代理服务器的响应。对于透明代理，它是空的。
         /// </summary>
         public HttpResponse ProxyResponse { get; internal set; }
 #endif
 
         /// <summary>
-        /// It there is an exception while processing the request or response the Response property will be null, and the Exception will be stored in this property.
+        /// 如果在处理请求或响应时出现异常，则response属性将为空，异常将存储在此属性中。
         /// </summary>
         public Exception Exception { get; internal set; }
 
         /// <summary>
-        /// Any object can be passed with the request with this property. (eq. it can be identified, etc.)
+        /// 具有此属性的任何对象都可以与请求一起传递。(例如，它可以被识别，等等)
         /// </summary>
         public object Tag { get; set; }
 
         /// <summary>
-        /// The UserName, Password pair that the plugin will use to authenticate to the remote server.
+        /// 用户名，密码对，插件将使用验证到远程服务器。
         /// </summary>
         public Credentials Credentials { get; set; }
 
 #if !BESTHTTP_DISABLE_PROXY
         /// <summary>
-        /// True, if there is a Proxy object.
+        /// 如果存在Proxy对象，则为True。
         /// </summary>
         public bool HasProxy
         {
@@ -361,25 +364,25 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// A web proxy's properties where the request must pass through.
+        /// 请求必须经过的web代理的属性。
         /// </summary>
         public Proxy Proxy { get; set; }
 #endif
 
         /// <summary>
-        /// How many redirection supported for this request. The default is 10. 0 or a negative value means no redirection supported.
+        /// 此请求支持多少重定向。默认值是10。0或负值表示不支持重定向。
         /// </summary>
         public int MaxRedirects { get; set; }
 
 #if !BESTHTTP_DISABLE_COOKIES
 
         /// <summary>
-        /// If true cookies will be added to the headers (if any), and parsed from the response. If false, all cookie operations will be ignored. It's default value is HTTPManager's IsCookiesEnabled.
+        /// 如果为真，cookie将被添加到报头(如果有的话)，并从响应中解析。如果为false，所有cookie操作将被忽略。它的默认值是HTTPManager的IsCookiesEnabled.
         /// </summary>
         public bool IsCookiesEnabled { get; set; }
 
         /// <summary>
-        /// Cookies that are added to this list will be sent to the server alongside withe the server sent ones. If cookies are disabled only these cookies will be sent.
+        /// 添加到此列表中的cookie将与服务器发送的cookie一起发送到服务器。如果cookies被禁用，只会发送这些cookies。
         /// </summary>
         public List<Cookie> Cookies
         {
@@ -396,12 +399,12 @@ namespace BestHTTP
 #endif
 
         /// <summary>
-        /// What form should used. Its default value is Automatic.
+        /// 应该用什么形式。默认值为“自动”。
         /// </summary>
         public HttpFormUsage FormUsage { get; set; }
 
         /// <summary>
-        /// Current state of this request.
+        /// 此请求的当前状态。
         /// </summary>
         public HttpRequestStates State
         {
@@ -426,34 +429,34 @@ namespace BestHTTP
         private volatile HttpRequestStates _state;
 
         /// <summary>
-        /// How many times redirected.
+        /// 多少次重定向。
         /// </summary>
         public int RedirectCount { get; internal set; }
 
         /// <summary>
-        /// Maximum time we wait to establish the connection to the target server. If set to TimeSpan.Zero or lower, no connect timeout logic is executed. Default value is 20 seconds.
+        /// 等待建立到目标服务器的连接的最长时间。如果设置为TimeSpan。0或更低，则不执行连接超时逻辑。缺省值是20秒。
         /// </summary>
         public TimeSpan ConnectTimeout { get; set; }
 
         /// <summary>
-        /// Maximum time we want to wait to the request to finish after the connection is established. Default value is 60 seconds.
-        /// <remarks>It's disabled for streaming requests! See <see cref="EnableTimoutForStreaming"/>.</remarks>
+        /// 连接建立后等待请求完成的最大时间。缺省值为60秒。
+        /// <remarks>它对流请求是禁用的! See <see cref="EnableTimoutForStreaming"/>.</remarks>
         /// </summary>
         public TimeSpan Timeout { get; set; }
 
         /// <summary>
-        /// Set to true to enable Timeouts on streaming request. Default value is false.
+        /// 设置为true以启用流请求的超时。默认值为false。
         /// </summary>
         public bool EnableTimoutForStreaming { get; set; }
 
         /// <summary>
-        /// Enables safe read method when the response's length of the content is unknown. Its default value is enabled (true).
+        /// 当内容的响应长度未知时启用安全读取方法。默认值为enabled (true)。
         /// </summary>
         public bool EnableSafeReadOnUnknownContentLength { get; set; }
 
         /// <summary>
-        /// It's called before the plugin will do a new request to the new uri. The return value of this function will control the redirection: if it's false the redirection is aborted.
-        /// This function is called on a thread other than the main Unity thread!
+        /// 它在插件对新uri执行新请求之前被调用。此函数的返回值将控制重定向:如果该值为false，则重定向将终止。
+        /// 这个函数在Unity主线程之外的线程上被调用!
         /// </summary>
         public event OnBeforeRedirectionDelegate OnBeforeRedirection
         {
@@ -464,7 +467,7 @@ namespace BestHTTP
         private OnBeforeRedirectionDelegate _onBeforeRedirection;
 
         /// <summary>
-        /// This event will be fired before the plugin will write headers to the wire. New headers can be added in this callback. This event is called on a non-Unity thread!
+        /// 该事件将在插件将头文件写入连接之前触发。可以在此回调中添加新的头文件。此事件在非unity线程上调用!
         /// </summary>
         public event OnBeforeHeaderSendDelegate OnBeforeHeaderSend
         {
@@ -475,7 +478,7 @@ namespace BestHTTP
         private OnBeforeHeaderSendDelegate _onBeforeHeaderSend;
 
         /// <summary>
-        /// Logging context of the request.
+        /// 请求的日志上下文。
         /// </summary>
         public LoggingContext Context { get; private set; }
 
@@ -486,22 +489,22 @@ namespace BestHTTP
 
 #if UNITY_WEBGL
         /// <summary>
-        /// Its value will be set to the XmlHTTPRequest's withCredentials field. Its default value is HTTPManager.IsCookiesEnabled's value.
+        /// 它的值将被设置为XmlHTTPRequest的withCredentials字段。默认值为HTTPManager。IsCookiesEnabled价值。
         /// </summary>
         public bool WithCredentials { get; set; }
 #endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         /// <summary>
-        /// Called when the current protocol is upgraded to an other. (HTTP => WebSocket for example)
+        /// 当当前协议升级到其他协议时调用。(HTTP =>例如WebSocket)
         /// </summary>
         internal OnRequestFinishedDelegate OnUpgraded;
 #endif
 
-        #region Internal Properties For Progress Report Support
+        #region 进度报告支持的内部属性
 
         /// <summary>
-        /// If it's true, the Callback will be called every time if we can send out at least one fragment.
+        /// 如果它为真，每次如果我们可以发送至少一个片段，Callback将被调用。
         /// </summary>
         internal bool UseStreaming
         {
@@ -509,7 +512,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Will return the length of the UploadStream, or -1 if it's not supported.
+        /// 将返回UploadStream的长度，如果不支持则返回-1。
         /// </summary>
         internal long UploadStreamLength
         {
@@ -533,7 +536,7 @@ namespace BestHTTP
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         /// <summary>
-        /// This action is called when a user calls the Abort function. Do not use it outside of the plugin!
+        /// 当用户调用Abort函数时，将调用此操作。不要在插件之外使用它!
         /// </summary>
         internal Action<HttpRequest> OnCancellationRequested;
 #endif
@@ -554,21 +557,21 @@ namespace BestHTTP
         private Dictionary<string, List<string>> Headers { get; set; }
 
         /// <summary>
-        /// We will collect the fields and values to the FieldCollector through the AddField and AddBinaryData functions.
+        /// 我们将通过AddField和AddBinaryData函数将字段和值收集到FieldCollector。
         /// </summary>
         private HttpFormBase _fieldCollector;
 
         /// <summary>
-        /// When the request about to send the request we will create a specialized form implementation(url-encoded, multipart, or the legacy WWWForm based).
-        /// And we will use this instance to create the data that we will send to the server.
+        /// 当请求即将发送请求时，我们将创建一个专门的表单实现(url编码的，多部分的，或基于遗留的WWWForm)。
+        /// 我们将使用这个实例创建数据，然后发送给服务器。
         /// </summary>
         private HttpFormBase _formImpl;
 
         #endregion
 
-        #region Constructors
+        #region 构造函数
 
-        #region Default Get Constructors
+        #region 默认Get构造函数
 
         public HttpRequest(Uri uri)
             : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
@@ -692,7 +695,7 @@ namespace BestHTTP
         #region Public Field Functions
 
         /// <summary>
-        /// Add a field with a given string value.
+        /// 用给定的字符串值添加一个字段。
         /// </summary>
         public void AddField(string fieldName, string value)
         {
@@ -700,7 +703,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Add a field with a given string value.
+        /// 用给定的字符串值添加一个字段。
         /// </summary>
         public void AddField(string fieldName, string value, System.Text.Encoding e)
         {

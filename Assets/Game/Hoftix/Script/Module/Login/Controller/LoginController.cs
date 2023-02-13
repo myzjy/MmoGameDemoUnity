@@ -46,6 +46,7 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
             //只是关闭 输入账号
             UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOGIN_REGISTER_UI);
+            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_TAP_TO_START_UI);
             // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
             // //跳转场景
             // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
