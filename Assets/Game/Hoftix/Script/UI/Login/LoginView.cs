@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using ZJYFrameWork.Execution;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -22,7 +23,8 @@ namespace ZJYFrameWork.UISerializable
         public void LoginTip()
         {
             viewPanel.tips.SetActive(true);
-            // viewPanel.UserNameText.text=
+            viewPanel.UserNameText.text = $"{viewPanel.LoginController.loginPartView.account.text}";
+            Executors.RunOnCoroutine(TipActiveMove());
         }
 
         private IEnumerator TipActiveMove()

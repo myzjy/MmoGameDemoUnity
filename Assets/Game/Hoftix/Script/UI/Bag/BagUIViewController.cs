@@ -1,37 +1,43 @@
 ﻿using UnityEngine;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UI.GameMain;
 using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UI.GameMain
+namespace ZJYFrameWork.UI.BagUI
 {
-    public class GameMainUIController : MonoBehaviour
+    /// <summary>
+    /// BagUIView 在build 方法注册 bean
+    /// </summary>
+    public class BagUIViewController : MonoBehaviour
     {
         /// <summary>
-        /// GameView
+        /// 
         /// </summary>
         private GameMainView _view;
 
         /// <summary>
-        /// 构建
+        /// build
         /// </summary>
         public void Build()
         {
-            //进行注册
             SpringContext.RegisterBean(this);
         }
 
-        public void SetGameMainView(GameMainView view)
+        public void SetGameView(GameMainView mainView)
         {
-            //这样可以关联起来
-            _view = view;
+            this._view = mainView;
         }
 
-        public void OnShow()
+        public void OnEnter()
         {
+            //打开界面
             UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }
 
-        public void OnHide()
+        /// <summary>
+        /// 隐藏
+        /// </summary>
+        public void OnLeave()
         {
             UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_GAMEMAIN_PANEL);
         }

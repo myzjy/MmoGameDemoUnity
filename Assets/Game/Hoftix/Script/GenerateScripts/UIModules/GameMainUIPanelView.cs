@@ -31,6 +31,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button SkillButton=null;
 		public UnityEngine.UI.Button BagButton=null;
 		public UnityEngine.UI.Button settingBtn=null;
+		public ZJYFrameWork.UI.GameMain.GameMainUIController GMUIController=null;
 		
 
 
@@ -61,6 +62,7 @@ namespace ZJYFrameWork.UISerializable
 			SkillButton=_view.GetObjType<UnityEngine.UI.Button>("SkillButton");
 			BagButton=_view.GetObjType<UnityEngine.UI.Button>("BagButton");
 			settingBtn=_view.GetObjType<UnityEngine.UI.Button>("settingBtn");
+			GMUIController=_view.GetObjType<ZJYFrameWork.UI.GameMain.GameMainUIController>("GMUIController");
 			
         }
     }

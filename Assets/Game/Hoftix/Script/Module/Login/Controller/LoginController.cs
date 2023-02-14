@@ -45,11 +45,9 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().Uid = uid;
             SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
             //只是关闭 输入账号
-            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOGIN_REGISTER_UI);
-            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_TAP_TO_START_UI);
-            // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
-            // //跳转场景
-            // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
+            UIComponentManager.DispatchEvent(UINotifEnum.CloseLoginRegisterUI);
+            UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
+            UIComponentManager.DispatchEvent(UINotifEnum.ShowLoginAccountUI);
         }
 
         [PacketReceiver]
@@ -70,7 +68,7 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log("连接成功事件，通过Token登录服务器");
 #endif
-                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
+                UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
                 //loginService.LoginByToken();
             }
             else
@@ -79,7 +77,7 @@ namespace ZJYFrameWork.Script.Module.Login.Controller
                 Debug.Log("连接成功事件，通过账号密码登录服务器");
 #endif
                 //没有登录过，没有记录
-                UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOGIN_UI);
+                UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
             }
         }
 

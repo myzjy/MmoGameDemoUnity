@@ -7578,6 +7578,7 @@ RectTransform:
   - {fileID: 7292818514093929753}
   - {fileID: 5291284591663998718}
   - {fileID: 6453042800040944581}
+  - {fileID: 6028224092630483943}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7632,6 +7633,7 @@ MonoBehaviour:
   - {fileID: 6637971697017359798}
   - {fileID: 1486541540598521166}
   - {fileID: 5980225769488201095}
+  - {fileID: 7776629327200437676}
   mSelfObj: {fileID: 4661571486731509016}
   MTransform: {fileID: 3325962904225119346}
   MObjCanvasGroup: {fileID: 8692498964730069026}
@@ -15126,6 +15128,67 @@ MonoBehaviour:
     UI_Serializable_Obj: {fileID: 9069628990251018792}
     Path: middle
   maskIndex: 6
+--- !u!1 &9094931767199199281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6028224092630483943}
+  - component: {fileID: 865797604313109005}
+  - component: {fileID: 7776629327200437676}
+  m_Layer: 0
+  m_Name: GameMainUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6028224092630483943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9094931767199199281}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3325962904225119346}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &865797604313109005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9094931767199199281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c7ad6db5e774bba9c0ecad333aa4c65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7776629327200437676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9094931767199199281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: GMUIController
+    UI_Serializable_Obj: {fileID: 865797604313109005}
+    Path: GameMainUIPanel/GameMainUIController
+  maskIndex: 2
 --- !u!1 &9168592382626153016
 GameObject:
   m_ObjectHideFlags: 0

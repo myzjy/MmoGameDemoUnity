@@ -2,6 +2,8 @@
 using Tools.Util;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Constant;
+using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.UISerializable
@@ -91,6 +93,8 @@ namespace ZJYFrameWork.UISerializable
                     }
 
                     SpringContext.GetBean<LoginController>().OnHide();
+                    //跳转场景 
+                    SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
 
                     // PlayManager.Instance.LoadScene(Data.scene_home);
                     // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.Menu);

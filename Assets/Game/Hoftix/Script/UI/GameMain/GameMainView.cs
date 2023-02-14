@@ -38,7 +38,9 @@ namespace ZJYFrameWork.UI.GameMain
                 // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
             });
             // SpringContext.GetBean<>()
+            viewPanel.GMUIController.Build();
             OnShow();
+            SpringContext.GetBean<GameMainUIController>().SetGameMainView(this);
         }
 
         public override void OnShow()

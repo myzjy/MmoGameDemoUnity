@@ -1,4 +1,6 @@
-﻿namespace ZJYFrameWork.Hoftix.Script.Module.Bag.Service
+﻿using ZJYFrameWork.UI.BagUI;
+
+namespace ZJYFrameWork.Hoftix.Script.Module.Bag.Service
 {
     /// <summary>
     /// 背包相关Service 接口
@@ -8,6 +10,6 @@
         /// <summary>
         /// 获取背包所有数据
         /// </summary>
-        void GetBagServerData();
+        void GetBagServerData(OpenBagType bagType);
     }
 }

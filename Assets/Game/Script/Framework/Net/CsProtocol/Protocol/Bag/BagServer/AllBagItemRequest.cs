@@ -7,6 +7,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
 {
     public class AllBagItemRequest : Model, IPacket
     {
+        public int type;
         public static AllBagItemRequest ValueOf()
         {
             var packet = new AllBagItemRequest();

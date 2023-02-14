@@ -2,6 +2,8 @@ using System;
 using Tools.Util;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Hoftix.Script.Module.Bag.Service;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.UI.BagUI
@@ -43,6 +45,7 @@ namespace ZJYFrameWork.UI.BagUI
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            SpringContext.GetBean<IBagServerService>().GetBagServerData(lastOpenBagType);
         }
 
 
