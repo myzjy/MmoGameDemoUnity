@@ -14,7 +14,7 @@
 /MmoGameUnity/AssetBundles/
 /MmoGameUnity/HybridCLRData/
 /MmoGameUnity/HybridCLRData.meta
-/MmoGameUnity/[Aa]ssets/HybridCLRData
+/MmoGameUnity/[Aa]ssets/HybridCLRData/
 /MmoGameUnity/[Aa]ssets/HybridCLRData.meta
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 /MmoGameUnity!/[Aa]ssets/**/*.meta
