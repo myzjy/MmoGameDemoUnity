@@ -3,6 +3,7 @@ using Net.Https;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.CsProtocol;

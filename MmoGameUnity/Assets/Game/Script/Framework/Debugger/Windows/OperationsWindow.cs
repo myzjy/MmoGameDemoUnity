@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Debugger.Widows.Model;
 using ZJYFrameWork.ObjectPool;
 using ZJYFrameWork.Spring.Core;

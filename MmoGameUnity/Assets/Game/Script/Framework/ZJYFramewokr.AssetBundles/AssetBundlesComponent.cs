@@ -4,6 +4,7 @@ using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 

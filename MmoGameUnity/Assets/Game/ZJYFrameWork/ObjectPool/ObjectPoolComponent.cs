@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 
 namespace ZJYFrameWork.ObjectPool
 {

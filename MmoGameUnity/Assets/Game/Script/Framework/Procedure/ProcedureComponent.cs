@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 

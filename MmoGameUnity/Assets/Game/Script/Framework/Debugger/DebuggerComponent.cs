@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Debugger.Widows.Model;
 using ZJYFrameWork.Debugger.Windows;
 using ZJYFrameWork.Spring.Core;

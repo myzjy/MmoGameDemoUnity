@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Log;
 using ZJYFrameWork.Spring.Utils;
 

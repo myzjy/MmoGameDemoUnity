@@ -1,4 +1,5 @@
 ﻿using ZJYFrameWork.Base;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Scheduler.Model;

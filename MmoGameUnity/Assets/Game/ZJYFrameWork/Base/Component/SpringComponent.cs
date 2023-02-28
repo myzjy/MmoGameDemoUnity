@@ -5,7 +5,7 @@ using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 
 // ReSharper disable once CheckNamespace
-namespace ZJYFrameWork.Base
+namespace ZJYFrameWork.Base.Component
 {
     /// <summary>
     /// 游戏基础组件 抽象类

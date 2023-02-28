@@ -1,4 +1,4 @@
-﻿namespace ZJYFrameWork.Base
+﻿namespace ZJYFrameWork.Base.Component
 {
     /// <summary>
     /// 关闭游戏框架类型。

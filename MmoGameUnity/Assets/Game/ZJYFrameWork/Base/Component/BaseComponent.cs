@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Framework.AssetBundles.Config;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Log;
@@ -13,7 +14,7 @@ using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.WebRequest;
 
-namespace ZJYFrameWork.Base
+namespace ZJYFrameWork.Base.Component
 {
     //只应许添加一个组件
     [DisallowMultipleComponent]
