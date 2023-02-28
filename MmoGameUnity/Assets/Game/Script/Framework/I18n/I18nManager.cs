@@ -57,7 +57,7 @@ namespace ZJYFrameWork.I18n
             string value = GetValue(key);
             if (value == null)
             {
-                return StringUtils.EMPTY;
+                return StringUtils.Empty;
             }
 
             return value;

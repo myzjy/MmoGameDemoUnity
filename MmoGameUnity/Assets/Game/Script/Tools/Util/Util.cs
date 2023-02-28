@@ -9,38 +9,36 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace Tools.Util
+public static class Util
 {
-    public static class Util
+    /// <summary>
+    /// button自定义设置
+    /// </summary>
+    /// <param name="button"></param>
+    /// <param name="action"></param>
+    public static void SetListener(this Button button, UnityAction action)
     {
-        /// <summary>
-        /// button自定义设置
-        /// </summary>
-        /// <param name="button"></param>
-        /// <param name="action"></param>
-        public static void SetListener(this Button button,UnityAction action)
-        {
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(action);
-        }
-        public const string NewLineCRLF = "\r\n";
-        public const string NewLineCR = "\r";
-        public const string NewLineLF = "\n";
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(action);
+    }
 
-        /// <summary>
-        /// 直の改行文字をNewLineにReplaceする
-        /// </summary>
-        public static string ReplaceNewLine(string source)
-        {
-            if (string.IsNullOrEmpty(source))
-            {
-                return "";
-            }
+    public const string NewLineCRLF = "\r\n";
+    public const string NewLineCR = "\r";
+    public const string NewLineLF = "\n";
 
-            return source
-                .Replace(NewLineCRLF, System.Environment.NewLine)
-                .Replace(NewLineCR, System.Environment.NewLine)
-                .Replace(NewLineLF, System.Environment.NewLine);
+    /// <summary>
+    /// 直の改行文字をNewLineにReplaceする
+    /// </summary>
+    public static string ReplaceNewLine(string source)
+    {
+        if (string.IsNullOrEmpty(source))
+        {
+            return "";
         }
+
+        return source
+            .Replace(NewLineCRLF, System.Environment.NewLine)
+            .Replace(NewLineCR, System.Environment.NewLine)
+            .Replace(NewLineLF, System.Environment.NewLine);
     }
 }

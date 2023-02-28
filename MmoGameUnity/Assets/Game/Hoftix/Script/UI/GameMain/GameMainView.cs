@@ -1,5 +1,4 @@
-﻿using Tools.Util;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;

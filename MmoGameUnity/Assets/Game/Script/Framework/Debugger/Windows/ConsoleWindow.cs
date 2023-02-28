@@ -139,7 +139,9 @@ namespace ZJYFrameWork.Debugger.Windows
                 var list = Debug.logNodes.ToArray();
                 foreach (var item in list)
                 {
-                    logNodes.Enqueue(item);
+                    var logNode = LogNode.Create(item.LogType, item.LogMessage, item.StackTrack,item.LogTime,item.LogFrameCount);
+             
+                    logNodes.Enqueue(logNode);
                 }
             }
 

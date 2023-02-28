@@ -1,22 +1,21 @@
-﻿using System;
+using System;
 using UnityEngine;
 using ZJYFrameWork.Collection.Reference;
-using ZJYFrameWork.Log;
 
-namespace ZJYFrameWork.Debugger.Widows.Model.VO
+namespace ZJYFrameWork.Log
 {
     /// <summary>
     /// 日志记录节点
     /// </summary>
-    public sealed class LogNode : IReference
+    public sealed class LogNode:IReference
     {
         /// <summary>
         /// 初始化日志记录结点的新实例。
         /// </summary>
         public LogNode()
         {
-            LogTime = default;
-
+            LogTime =default;
+        
             LogFrameCount = 0;
             LogType = LogType.Error;
             LogMessage = null;
@@ -60,18 +59,6 @@ namespace ZJYFrameWork.Debugger.Widows.Model.VO
             var logNode = ReferenceCache.Acquire<LogNode>();
             logNode.LogTime = DateTime.UtcNow.AddHours(8);
             logNode.LogFrameCount = Time.frameCount;
-            logNode.LogType = logType;
-            logNode.LogMessage = logMessage;
-            logNode.StackTrack = stackTrack;
-            return logNode;
-        }
-
-        public static LogNode Create(LogType logType, string logMessage, string stackTrack, DateTime logTime,
-            int logFrameCount)
-        {
-            var logNode = ReferenceCache.Acquire<LogNode>();
-            logNode.LogTime = logTime;
-            logNode.LogFrameCount = logFrameCount;
             logNode.LogType = logType;
             logNode.LogMessage = logMessage;
             logNode.StackTrack = stackTrack;
