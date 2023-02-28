@@ -11,7 +11,8 @@
 /MmoGameUnity/[Mm]emoryCaptures/
 /MmoGameUnity/Assets/StreamingAssets/
 /MmoGameUnity/AssetBundles/
-
+/MmoGameUnity/HybridCLRData
+/MmoGameUnity/[Aa]ssets/HybridCLRData
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 /MmoGameUnity!/[Aa]ssets/**/*.meta
 
