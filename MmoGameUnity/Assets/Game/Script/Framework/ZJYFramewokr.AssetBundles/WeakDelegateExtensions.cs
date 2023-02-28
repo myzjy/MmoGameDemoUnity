@@ -53,7 +53,7 @@ namespace ZJYFrameWork.DelegateExtensions
                 var target = targetRef.Target;
                 if (target == null)
                 {
-                    Debug.Log("您试图调用弱引用委托({0}.{1})，而目标对象已被销毁", type, method);
+                    Debug.Log($"您试图调用弱引用委托({type}.{method})，而目标对象已被销毁");
                     return;
                 }
 
@@ -78,7 +78,7 @@ namespace ZJYFrameWork.DelegateExtensions
                 var target = targetRef.Target;
                 if (target == null)
                 {
-                    Debug.Log("您试图调用弱引用委托({0}.{1})，而目标对象已被销毁。", type, method);
+                    Debug.Log($"您试图调用弱引用委托({type}.{method})，而目标对象已被销毁。");
                     return;
                 }
 
