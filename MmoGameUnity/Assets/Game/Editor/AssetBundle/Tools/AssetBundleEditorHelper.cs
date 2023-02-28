@@ -308,7 +308,7 @@ namespace AssetBundles
         //     }
         //     // string assetBundleName = Path.GetFileName(importer.assetPath);
         //     // ToolsDebug.Log($"assetBundleName-->{assetBundleName}");
-        //     // TODO：处理variant
+        //     // 
         //     // importer.assetBundleName =
         //     //     assetBundleName.Substring(0, assetBundleName.IndexOf(".", StringComparison.Ordinal)) +
         //     //     AssetBundleConfig.AssetBundleSuffix;
