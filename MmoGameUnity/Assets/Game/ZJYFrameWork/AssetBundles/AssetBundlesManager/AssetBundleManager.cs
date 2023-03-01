@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Framework.AssetBundles.Utilty;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
+using ZJYFrameWork.AssetBundles.Bundle.LoaderBuilders;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.Bundles.ILoaderBuilderInterface;
 using ZJYFrameWork.AssetBundles.Bundles.LoaderBuilders;
@@ -20,32 +22,31 @@ using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 {
-    [Bean]
-    public abstract class AssetBundleManager : AbstractManager, IAssetBundleManager
+    public abstract class AssetBundleManager : MonoBehaviour, IAssetBundleManager
     {
-        [Autowired] private IBundleManager _bundleManager;
+        private IBundleManager _bundleManager;
 
         /// <summary>
         /// 构建管理器
         /// </summary>
-        [Autowired] private ILoaderBuilder _loaderBuilder;
+        private ILoaderBuilder _loaderBuilder;
 
         /// <summary>
         /// 路径保存器
         /// </summary>
-        [Autowired] private IPathInfoParser _pathInfoParser;
+        private IPathInfoParser _pathInfoParser;
 
         /// <summary>
         /// BundleManifest 读取器
         /// </summary>
-        [Autowired] private IBundleManifestLoader BundleManifestLoader;
+        private IBundleManifestLoader BundleManifestLoader;
 
-        [Autowired] private IDownloadManager DownloadManager;
+     //   private IDownloadManager DownloadManager;
 
         /// <summary>
         /// 资源读取接口 需要在下载接口走完之后，查看有没有需要下载
         /// </summary>
-        [Autowired] private IResources Resources;
+        private IResources Resources;
 
 
         [Autowired] private IAssetBundleUpdater resourceUpdater;
@@ -62,6 +63,9 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         };
 
         public string BundleRoot => AssetBundleConfig.BundleRoot;
+
+        private string BundleManifestPath =>
+            $"{StorableDirectory}{AssetBundleConfig.ManifestFilename}";
 
         public string StorableDirectory
         {
@@ -95,30 +99,84 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 
         public void SetAssetBundle()
         {
-            BundleManifestLoader = SpringContext.GetBean<BundleManifestLoader>();
-            BundleManifest =
-                BundleManifestLoader.Load(BundleUtil.GetReadOnlyDirectory() + AssetBundleConfig.ManifestFilename);
-
-            //修正bundleManifest
-            _pathInfoParser.BundleManifest = BundleManifest;
-            _loaderBuilder.SetLoaderBuilder(new Uri(BundleUtil.GetReadOnlyDirectory()));
-#if UNITY_EDITOR
-            if (!AssetBundleConfig.IsEditorMode)
+            if (BundleManifestLoader == null)
             {
-                _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+                BundleManifestLoader = new BundleManifestLoader();
             }
-#else
-  _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+#if UNITY_EDITOR
+            if (AssetBundleConfig.IsEditorMode)
+            {
+                //编辑器
+                if (_pathInfoParser == null)
+                {
+                    _pathInfoParser = new SimulationAutoMappingPathInfoParser();
+                }
+
+                if (_bundleManager == null)
+                {
+                    _bundleManager = new SimulationBundleManager();
+                }
+
+                if (Resources == null)
+                {
+                    Resources = new SimulationResources();
+                }
+
+                Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
+            }
+            else
 #endif
+            {
+                //读取Manifest文件
+                BundleManifest = BundleManifestLoader.Load(BundleManifestPath);
+                if (_pathInfoParser == null)
+                {
+                    _pathInfoParser = new AutoMappingPathInfoParser();
+                }
 
-            //设置bundle 当有更新的时候就需要从新设置
-            Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
+                if (BundleManifest != null && _pathInfoParser != null)
+                {
+                    BundleManifest.ActiveVariants = new string[] { "", "hd" };
+                    _pathInfoParser.BundleManifest = BundleManifest;
+                }
 
-            resourceUpdater.ResourceUpdateStart = OnUpdaterResourceUpdateStart;
-            resourceUpdater.ResourceUpdateChanged = OnUpdaterResourceUpdateChanged;
-            resourceUpdater.ResourceUpdateSuccess = OnUpdaterResourceUpdateSuccess;
-            resourceUpdater.ResourceUpdateFailure = OnUpdaterResourceUpdateFailure;
-            // resourceUpdater.ResourceUpdateComplete += OnUpdaterResourceUpdateComplete;
+                if (_loaderBuilder == null)
+                {
+                    Uri baseUrl = new Uri(StorableDirectory);
+                    _loaderBuilder = new CustomBundleLoaderBuilder(baseUrl, false);
+                }
+
+                if (BundleManifest != null && _bundleManager == null)
+                {
+                    //先new出来，在
+                    _bundleManager = new BundleManager();
+                }
+
+                if (BundleManifest != null && Resources == null)
+                {
+                    Resources = new BundleResources();
+                    //下面的设置必须有先后顺序
+                    Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
+                    Resources.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+                }
+
+                if (BundleManifest != null
+                    && Resources != null
+                    && _bundleManager != null
+                    && _loaderBuilder != null)
+                {
+                    Uri baseUrl = new Uri(StorableDirectory);
+                    _loaderBuilder.SetUrl(baseUrl);
+                    Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
+                    Resources.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
+                }
+
+                resourceUpdater.ResourceUpdateStart = OnUpdaterResourceUpdateStart;
+                resourceUpdater.ResourceUpdateChanged = OnUpdaterResourceUpdateChanged;
+                resourceUpdater.ResourceUpdateSuccess = OnUpdaterResourceUpdateSuccess;
+                resourceUpdater.ResourceUpdateFailure = OnUpdaterResourceUpdateFailure;
+                // resourceUpdater.ResourceUpdateComplete += OnUpdaterResourceUpdateComplete;
+            }
         }
 
         public void LoadAssetBundle(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
@@ -179,15 +237,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         public void SetBundleManifest(BundleManifest bundleManifest)
         {
             BundleManifest = bundleManifest;
-            _pathInfoParser.BundleManifest = BundleManifest;
-            _bundleManager.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
-            //设置bundle 当有更新的时候就需要从新设置
-            Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
-        }
-
-        public IEnumerable StartIDownAssetBundle()
-        {
-            throw new NotImplementedException();
+            SetAssetBundle();
         }
 
         public void LoadScene(string sceneAssetName, int priority, LoadSceneCallbacks loadSceneCallbacks,
@@ -319,15 +369,6 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             loadSceneCallbacks.LoadSceneSuccessCallback(sceneName, 1, null);
         }
 
-        public override void Update(float elapseSeconds, float realElapseSeconds)
-        {
-            //不需要进行轮询，下载，更新走另外一套
-            return;
-        }
-
-        public override void Shutdown()
-        {
-        }
 
         private void OnUpdaterResourceUpdateStart(BundleInfo resourceName, string downloadPath, string downloadUri,
             int currentLength)
@@ -351,6 +392,11 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             int totalRetryCount, string errorMessage)
         {
             // EventBus.SyncSubmit(ResourceUpdateFailureEvent.ValueOf(resourceName.FullName, downloadUri, retryCount, totalRetryCount, errorMessage));
+        }
+
+        public void ReginBean()
+        {
+            SpringContext.RegisterBean(this);
         }
     }
 }

@@ -31,7 +31,20 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
             UnityEngine.iOS.Device.SetNoBackupFlag(GetStorableDirectory());
 #endif
         }
-
+        /// <summary>
+        /// 附在URL后面的各平台前缀
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPlatformName()
+        {
+#if UNITY_ANDROID
+            return "Android/";
+#elif UNITY_IOS
+            return "Ios/";
+#else
+            return "Pc/";
+#endif
+        }
         /// <summary>
         /// The AssetBundle's root.
         /// </summary>
@@ -41,9 +54,31 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
             {
                 if (!string.IsNullOrEmpty(root)) return root;
                 root = AssetBundleConfig.BundleRoot;
-                temporaryCacheDirectory = temporaryCachePath + "/" + root + "/";
-                storableDirectory = persistentDataPath + "/" + root + "/";
-                readOnlyDirectory = streamingAssetsPath + "/" + root + "/";
+  
+                temporaryCacheDirectory =
+#if UNITY_EDITOR
+                    $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#elif UNITY_IOS
+                $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#elif UNITY_STANDALONE_WIN
+                $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
+#elif UNITY_ANDROID
+                    $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#endif
+
+                storableDirectory =
+#if UNITY_EDITOR
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#elif UNITY_IOS
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#elif UNITY_STANDALONE_WIN
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
+#elif UNITY_ANDROID
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#endif
+
+                readOnlyDirectory =
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
                 return root;
             }
             set
@@ -53,9 +88,31 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
                     root = AssetBundleConfig.BundleRoot;
                 }
                 root = value;
-                temporaryCacheDirectory = temporaryCachePath + "/" + root + "/";
-                storableDirectory = persistentDataPath + "/" + root + "/";
-                readOnlyDirectory = streamingAssetsPath + "/" + root + "/";
+    
+                temporaryCacheDirectory =
+#if UNITY_EDITOR
+                    $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#elif UNITY_IOS
+                $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#elif UNITY_STANDALONE_WIN
+                $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
+#elif UNITY_ANDROID
+                    $"{temporaryCachePath}/{root}/{GetPlatformName()}";
+#endif
+
+                storableDirectory =
+#if UNITY_EDITOR
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#elif UNITY_IOS
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#elif UNITY_STANDALONE_WIN
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
+#elif UNITY_ANDROID
+                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+#endif
+
+                readOnlyDirectory =
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
             }
         }
 

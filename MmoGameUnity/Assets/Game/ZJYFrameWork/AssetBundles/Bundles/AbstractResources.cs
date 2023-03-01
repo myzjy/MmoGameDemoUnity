@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZJYFrameWork.AssetBundles.Bundles.ILoaderBuilderInterface;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.Utilities;
@@ -135,6 +136,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         public virtual IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority)
         {
             return this.bundleManager.LoadBundle(bundleNames, priority);
+        }
+
+        public void SetManifestAndLoadBuilder(BundleManifest manifest, ILoaderBuilder builder)
+        {
+            bundleManager.SetManifestAndLoadBuilder(manifest, builder);
         }
 
         #endregion

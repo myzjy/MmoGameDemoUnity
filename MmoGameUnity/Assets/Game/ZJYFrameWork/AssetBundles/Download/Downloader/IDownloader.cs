@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.AssetBundles.Bundles;
-using ZJYFrameWork.AssetBundles.DownLoadManager;
+// using ZJYFrameWork.AssetBundles.DownLoadManager;
 using ZJYFrameWork.AssetBundles.IDownLoadManagerInterface;
 
 namespace ZJYFrameWork.AssetBundles.IDownLoaderBundle

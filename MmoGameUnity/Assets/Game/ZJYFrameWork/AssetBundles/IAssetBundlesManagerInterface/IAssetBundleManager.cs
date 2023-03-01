@@ -95,8 +95,6 @@ namespace ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface
         /// </summary>
         /// <param name="bundleManifest"></param>
         void SetBundleManifest(BundleManifest bundleManifest);
-
-        IEnumerable StartIDownAssetBundle();
         
              
         /// <summary>

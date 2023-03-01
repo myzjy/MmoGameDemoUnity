@@ -61,7 +61,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles.LoaderBuilders
         }
 
 
-        public void SetLoaderBuilder(Uri baseUrl)
+        public void SetUrl(Uri baseUrl)
         {
             BaseUri = baseUrl;
         }

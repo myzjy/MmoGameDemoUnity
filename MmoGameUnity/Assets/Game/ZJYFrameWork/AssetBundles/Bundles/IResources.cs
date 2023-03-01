@@ -8,7 +8,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
     /// <summary>
     /// A common interface for the asset loader.
     /// </summary>
-    public interface IResources
+    public interface IResources:IBundleManager
     {
         void SetIPathAndBundleResource(IPathInfoParser pathInfo, IBundleManager manager);
 
@@ -265,5 +265,6 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <param name="priority">Positive or negative, the default value is 0.When multiple asynchronous operations are queued up, the operation with the higher priority will be executed first. Once an operation has been started on the background thread, changing the priority will have no effect anymore.</param>
         /// <returns></returns>
         IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority);
+        
     }
 }
