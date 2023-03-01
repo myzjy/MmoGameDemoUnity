@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.Component;
 using ZJYFrameWork.Base;
 
 namespace ZJYFrameWork.Editors.Inspector

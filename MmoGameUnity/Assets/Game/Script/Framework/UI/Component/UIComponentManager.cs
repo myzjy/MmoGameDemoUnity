@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ZJYFrameWork.Spring.Utils;
-using ZJYFrameWork.UISerializable.UIModel;
 
 namespace ZJYFrameWork.UISerializable
 {

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Framework.AssetBundles.Config;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.AssetBundles.Bundles.LoaderBuilders;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;

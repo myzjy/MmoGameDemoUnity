@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AssetBundles;
-using Framework.AssetBundles.Config;
 using UnityEditor;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 
 namespace AssetBundleEditorTools.AssetBundleSet
 {
