@@ -108,7 +108,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
                 if (dict == null)
                 {
-                    throw new AggregateException($"[type:{typeof(LoginResponse)}] [message:{message}] 无法完整解析成字典重新查看");
+                    throw new System.AggregateException($"[type:{typeof(LoginResponse)}] [message:{message}] 无法完整解析成字典重新查看");
                 }
 
                 foreach (var item in dict)

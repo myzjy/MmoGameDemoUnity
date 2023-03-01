@@ -1,4 +1,5 @@
 ﻿using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.IDownLoadManagerInterface;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Procedure.Scene;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Common;
@@ -201,7 +202,7 @@ namespace ZJYFrameWork.I18n
             }
 
             isLoad = true;
-            SpringContext.GetBean<AssetBundleManager>().LoadAsset(dictionaryString, _loadAssetCallbacks);
+            SpringContext.GetBean<IAssetBundleManager>().LoadAsset(dictionaryString, _loadAssetCallbacks);
             return true;
         }
 

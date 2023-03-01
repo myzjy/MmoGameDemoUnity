@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Framework.AssetBundles.Config;
 using UnityEngine;
 using UnityEditor;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors;
 
@@ -47,13 +48,13 @@ namespace ZJYFrameWork.Bundles.Editors
             foreach (FileInfo info in dir.GetFiles(AssetBundleConfig.ManifestFilename, SearchOption.AllDirectories))
             {
                 if (info.FullName.Replace(@"\", "/")
-                    .EndsWith(string.Format("{0}/{1}", GenOutputPath, AssetBundleConfig.ManifestFilename)))
+                    .EndsWith($"{GenOutputPath}/{AssetBundleConfig.ManifestFilename}"))
                     continue;
 
                 files.Add(info);
             }
 
-            files.Sort((x, y) => y.FullName.CompareTo(x.FullName));
+            files.Sort((x, y) => string.Compare(y.FullName, x.FullName, StringComparison.Ordinal));
             return files;
         }
 

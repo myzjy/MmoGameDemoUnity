@@ -7,6 +7,7 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using UnityEngine.Serialization;
 using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.AssetBundles.BundleUtils;
 using ZJYFrameWork.Attributes;
 using ZJYFrameWork.Bundles.Editors;
 using ZJYFrameWork.Security.Cryptography;

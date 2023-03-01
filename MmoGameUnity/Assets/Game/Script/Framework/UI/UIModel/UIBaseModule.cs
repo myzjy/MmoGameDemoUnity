@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.AssetBundlesManager;
+using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Game.Framwork;
@@ -142,7 +144,7 @@ namespace ZJYFrameWork.UISerializable
         {
             CommonController.Instance.loadingRotate.OnShow();
 
-            SpringContext.GetBean<AssetBundleManager>().LoadAsset(PrefabName(), _loadAssetCallbacks);
+            SpringContext.GetBean<IAssetBundleManager>().LoadAsset(PrefabName(), _loadAssetCallbacks);
         }
 
         private Transform GetPanelUIRoot(UICanvasType _canvas)

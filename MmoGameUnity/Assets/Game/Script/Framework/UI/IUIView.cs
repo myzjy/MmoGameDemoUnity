@@ -1,7 +1,7 @@
-﻿namespace ZJYFrameWork.Framwork
-{
-    public interface IUIView
-    {
-        
-    }
-}
+﻿// namespace ZJYFrameWork.Framwork
+// {
+//     public interface IUIView
+//     {
+//         
+//     }
+// }

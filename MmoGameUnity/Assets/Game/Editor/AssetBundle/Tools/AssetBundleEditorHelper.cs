@@ -4,7 +4,6 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Framework.AssetBundles.Config;
 using Framework.AssetBundles.Utilty;
 using Object = UnityEngine.Object;
 

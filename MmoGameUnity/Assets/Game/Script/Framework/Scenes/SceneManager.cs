@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles;
+using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Collection.Reference;

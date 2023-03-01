@@ -1,9 +1,9 @@
 ﻿#if ASSET_BUNDLE_DEVELOP_EDITOR
 
 using System.Collections;
-using Framework.AssetBundles.Config;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Contexts;
 

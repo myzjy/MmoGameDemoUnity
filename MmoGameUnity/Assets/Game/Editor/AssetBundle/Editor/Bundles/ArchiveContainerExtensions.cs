@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using Framework.AssetBundles.Config;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.AssetBundles.Bundles;
 using Path = System.IO.Path;
 

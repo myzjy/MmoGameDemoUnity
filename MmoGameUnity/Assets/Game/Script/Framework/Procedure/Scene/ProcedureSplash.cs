@@ -1,6 +1,4 @@
-﻿using Framework.AssetBundles.Config;
-using UnityEngine;
-using ZJYFrameWork.Base;
+﻿using UnityEngine;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Procedure.Scene
