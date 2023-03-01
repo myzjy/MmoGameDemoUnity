@@ -10,7 +10,7 @@ using ZJYFrameWork.WebRequest;
 
 public class SymbolWindows : EditorWindow
 {
-    private const string ITEMTOOLS = "Tool/Symbol";
+    private const string ITEMTOOLS = "Tools/Symbol";
     private const string SymbolString_WINDOWS = "Symbol";
 
     private class SymbolData

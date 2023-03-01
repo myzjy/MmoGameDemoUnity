@@ -126,8 +126,10 @@ namespace ZJYFrameWork.Utilities
 
 #if UNITY_ANDROID
             if (path.IndexOf(".obb", StringComparison.OrdinalIgnoreCase) > 0)
+            {
                 Debug.Log(
                     "无法读取\"中的内容。obb\"文件，请点击链接获取帮助，并启用对obb文件的访问。https://github.com/cocowolf/loxodon-framework/blob/master/docs/faq.md");
+            }
 
 #endif
 

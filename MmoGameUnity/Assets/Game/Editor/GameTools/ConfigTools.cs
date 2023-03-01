@@ -22,7 +22,7 @@ public class ConfigTools : EditorWindow
         ReadPath();
     }
 
-    [MenuItem("Tool/GameEditor/LuaConfig")]
+    [MenuItem("Tools/GameEditor/LuaConfig")]
     static void Init()
     {
         GetWindow(typeof(ConfigTools));

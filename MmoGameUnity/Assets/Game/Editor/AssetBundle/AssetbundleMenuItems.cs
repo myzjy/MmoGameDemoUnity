@@ -15,9 +15,9 @@ namespace AssetBundleEditorTools.AssetBundleSet
     {
         
         //%:ctrl,#:shift,&:alt
-        const string kSimulateMode = "AssetBundles/Switch Model/Simulate Mode";
-        const string kSimulateModeLog = "AssetBundles/Switch Model/Download Log Mod";
-        const string kEditorMode = "AssetBundles/Switch Model/Editor Mode";
+        const string kSimulateMode = "Tools/AssetBundles/Switch Model/Simulate Mode";
+        const string kSimulateModeLog = "Tools/AssetBundles/Switch Model/Download Log Mod";
+        const string kEditorMode = "Tools/AssetBundles/Switch Model/Editor Mode";
         // const string kToolRunAllCheckers = "AssetBundles/Run All Checkers";
         // const string kToolBuildForCurrentSetting = "AssetBundles/Build For Current Setting";
         // const string kToolsCopyAssetbundles = "AssetBundles/Copy To StreamingAssets";
