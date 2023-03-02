@@ -4,6 +4,7 @@ using ZJYFrameWork.AssetBundles.Bundle;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.DownLoader;
 using ZJYFrameWork.Asynchronous;
+using ZJYFrameWork.Base.Model;
 
 namespace ZJYFrameWork.AssetBundles.IDownLoadManagerInterface
 {

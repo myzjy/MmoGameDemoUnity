@@ -1,7 +1,10 @@
 {
-    "name": "ZJYFrameWork.Collection.Reference",
+    "name": "ZJYFrameWork.Spring.Core",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:01cc6f49cd8e7fe459cf336d67caef0a",
+        "GUID:d50e89131eca26a469b0dd3b3c3304ae"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

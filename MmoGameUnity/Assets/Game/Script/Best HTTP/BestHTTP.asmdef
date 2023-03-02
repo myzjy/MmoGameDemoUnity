@@ -1,10 +1,13 @@
 {
-    "name": "ZJYFrameWork.Collection.Reference",
+    "name": "BestHTTP",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:d50e89131eca26a469b0dd3b3c3304ae",
+        "GUID:01cc6f49cd8e7fe459cf336d67caef0a"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

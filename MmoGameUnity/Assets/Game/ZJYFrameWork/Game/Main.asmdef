@@ -1,13 +1,17 @@
 {
-    "name": "ZJYFrameWork.Log",
+    "name": "Main",
     "rootNamespace": "",
     "references": [
+        "GUID:d50e89131eca26a469b0dd3b3c3304ae",
         "GUID:01cc6f49cd8e7fe459cf336d67caef0a",
-        "GUID:cfc954a222077144a990b61b9b6b2f9c"
+        "GUID:3e718d984ceaed248bf4ec41cd7f28d1",
+        "GUID:ca8d574d9e58cdd4481102472565983a",
+        "GUID:63d592a3452e2f64d8b90d6c97107c62",
+        "GUID:48ad6efc7dae75341b7fa84ac8fb08ad"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

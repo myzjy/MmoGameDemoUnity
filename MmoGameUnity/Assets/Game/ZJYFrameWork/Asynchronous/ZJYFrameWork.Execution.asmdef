@@ -1,7 +1,10 @@
 {
-    "name": "ZJYFrameWork.Collection.Reference",
+    "name": "ZJYFrameWork.Execution",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "ZJYFrameWork.Log",
+        "ZJYFrameWork.Spring.Utils"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

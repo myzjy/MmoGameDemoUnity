@@ -1,7 +1,9 @@
 {
-    "name": "ZJYFrameWork.Collection.Reference",
+    "name": "ZJYFrameWork.Security.Cryptography",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:d50e89131eca26a469b0dd3b3c3304ae"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
