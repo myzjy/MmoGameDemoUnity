@@ -2,15 +2,20 @@
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using AssetBundles;
+using HybridCLR.Editor;
+using HybridCLR.Editor.Commands;
 using UnityEngine.Serialization;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.BundleUtils;
 using ZJYFrameWork.Attributes;
 using ZJYFrameWork.Bundles.Editors;
 using ZJYFrameWork.Security.Cryptography;
+using Path = System.IO.Path;
 
 namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 {
@@ -311,10 +316,206 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             return Directory.Exists(versionOutput);
         }
 
+        static Stopwatch sw = new Stopwatch();
+        static Stopwatch swCopy = new Stopwatch();
+        static Stopwatch swCopyDll = new Stopwatch();
+
+        public static List<string> AOTMetaAssemblyNames { get; } = new List<string>()
+        {
+            "mscorlib.dll",
+            "System.dll",
+            "System.Core.dll",
+        };
+
+        /// <summary>
+        /// copy dll
+        /// </summary>
+        public static void CopyDllAb()
+        {
+            swCopy = new Stopwatch();
+            var target = EditorUserBuildSettings.activeBuildTarget;
+            CompileDllCommand.CompileDll(target);
+
+            string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
+            string aotAssembliesDstDir = $"{Application.dataPath}/Game/AssetBundles/dllAb/";
+            sw = new Stopwatch();
+            if (Directory.Exists(aotAssembliesDstDir))
+            {
+                sw.Start();
+                Debug.Log("╔======================================╗");
+                Debug.Log($"┃     删除目录{aotAssembliesDstDir}                  ┃");
+                Debug.Log("╚======================================╝");
+                string[] filenames = Directory.GetFileSystemEntries(aotAssembliesDstDir);
+                if (filenames.Length > 0)
+                {
+                    Debug.Log($"当前目录下有文件,开始删除文件");
+                    for (int i = 0; i < filenames.Length; i++)
+                    {
+                        var pathString = filenames[i];
+                        Debug.Log(pathString);
+                        File.Delete(pathString);
+                    }
+                }
+
+                //移除 目录
+                Directory.Delete(aotAssembliesDstDir);
+                Debug.Log("╔======================================╗");
+                sw.Stop();
+                Debug.Log($"┃     删除目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
+                Debug.Log("╚======================================╝");
+                sw = new Stopwatch();
+                sw.Start();
+                Debug.Log("╔======================================╗");
+                Debug.Log($"┃     创建目录{aotAssembliesDstDir}                  ┃");
+                Debug.Log("╚======================================╝");
+                //移除之后
+                Directory.CreateDirectory(aotAssembliesDstDir);
+                Debug.Log("╔======================================╗");
+                sw.Stop();
+                Debug.Log($"┃     创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
+                Debug.Log("╚======================================╝");
+            }
+            else
+            {
+                //创建对应目录
+                sw = new Stopwatch();
+                sw.Start();
+                Debug.Log("╔======================================╗");
+                Debug.Log($"┃     创建目录{aotAssembliesDstDir}                  ┃");
+                Debug.Log("╚======================================╝");
+                Directory.CreateDirectory(aotAssembliesDstDir);
+                Debug.Log("╔======================================╗");
+                sw.Stop();
+                Debug.Log($"┃     创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
+                Debug.Log("╚======================================╝");
+            }
+
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+            Debug.Log("╔======================================╗");
+            Debug.Log($"┃     复制aot {aotAssembliesDstDir} 下相关dll                  ┃");
+            Debug.Log("╚======================================╝");
+            sw = new Stopwatch();
+            sw.Start();
+            foreach (var dll in AOTMetaAssemblyNames)
+            {
+                //dll aot 具体文件夹位置
+                string srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
+                if (!File.Exists(srcDllPath))
+                {
+                    Debug.LogError(
+                        $"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
+                    continue;
+                }
+
+                swCopyDll = new Stopwatch();
+                var s = dll.Replace(".dll", "");
+                swCopyDll.Start();
+                string dllBytesPath = $"{aotAssembliesDstDir}/{s}.bytes";
+                Debug.Log("╔======================================╗");
+                Debug.Log($"┃     复制{srcDllPath}--->{dllBytesPath}                  ┃");
+                Debug.Log("╚======================================╝");
+                File.Copy(srcDllPath, dllBytesPath, true);
+                Debug.Log("╔======================================╗");
+                swCopyDll.Stop();
+                Debug.Log(
+                    $"┃     复制{srcDllPath}--->{dllBytesPath}   复制成功 耗时:{swCopyDll.ElapsedMilliseconds}ms             ┃");
+                Debug.Log("╚======================================╝");
+                Debug.Log($"[CopyAOTAssembliesToPath] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+            }
+
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+            Debug.Log("╔======================================╗");
+            sw.Stop();
+            Debug.Log($"┃     复制{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
+            Debug.Log("╚======================================╝");
+            //复制需要热更的dll
+            string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+            aotAssembliesDstDir = $"{Application.dataPath}/Game/AssetBundles/dllAb/";
+
+            foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+            {
+                swCopyDll = new Stopwatch();
+                string dllPath = $"{hotfixDllSrcDir}/{dll}";
+                swCopyDll.Start();
+                var s = dll.Replace(".dll", "");
+
+                Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllPath:{dllPath}");
+                string dllBytesPath = $"{aotAssembliesDstDir}{s}.bytes";
+                Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllBytesPath:{dllBytesPath}");
+                File.Copy(dllPath, dllBytesPath, true);
+                Debug.Log("╔=================================================================╗");
+                swCopyDll.Stop();
+                Debug.Log(
+                    $"┃     复制{dllPath}--->{dllBytesPath}成功 耗时:{swCopyDll.ElapsedMilliseconds}ms                  ┃");
+                Debug.Log("╚=================================================================╝");
+                Debug.Log($"[CopyHotUpdateAssembliesToDllBytesPath] copy hotfix dll {dllPath} -> {dllBytesPath}");
+            }
+
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+            //为自己复制的dll 打ab标签
+            foreach (var dll in AOTMetaAssemblyNames)
+            {
+                sw = new Stopwatch();
+                sw.Start();
+                var s = dll.Replace(".dll", "");
+                string dllBytesPath = $"{aotAssembliesDstDir}{s}.bytes";
+                var index = dllBytesPath.IndexOf("Assets", StringComparison.Ordinal);
+                var path_last = dllBytesPath.Substring(index);
+                var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path_last);
+                Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
+                string assetPath = AssetDatabase.GetAssetPath(obj);
+                AssetImporter importer = AssetImporter.GetAtPath(assetPath);
+                Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
+
+                string assetBundleName = Path.GetFileName(dllBytesPath);
+                assetBundleName = assetBundleName.Replace(".", "_");
+                importer.assetBundleName =
+                    $"{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}";
+                Debug.Log(
+                    $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
+                sw.Stop();
+                Debug.Log($"┃     标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                EditorUtility.SetDirty(obj);
+            }
+
+            foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+            {
+                sw = new Stopwatch();
+                sw.Start();
+                var s = dll.Replace(".dll", "");
+                string dllBytesPath = $"{aotAssembliesDstDir}{s}.bytes";
+                var index = dllBytesPath.IndexOf("Assets", StringComparison.Ordinal);
+                var path_last = dllBytesPath.Substring(index);
+                var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path_last);
+                Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
+                string assetPath = AssetDatabase.GetAssetPath(obj);
+                AssetImporter importer = AssetImporter.GetAtPath(assetPath);
+                Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
+
+                string assetBundleName = Path.GetFileName(dllBytesPath);
+                assetBundleName = assetBundleName.Replace(".", "_");
+                importer.assetBundleName =
+                    $"{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}";
+                Debug.Log(
+                    $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
+                sw.Stop();
+                Debug.Log($"┃     标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                EditorUtility.SetDirty(obj);
+            }
+
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+        }
+
         public virtual void Build(bool forceRebuild)
         {
             Debug.Log("开始执行 ab出包逻辑");
             string path = this.OutputPath;
+            CopyDllAb();
+            return;
             if (string.IsNullOrEmpty(path))
                 BrowseOutputFolder();
 
@@ -376,7 +577,6 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
             this.CopyToStreamingAssets();
             Debug.Log(" ab出包 完成 结束");
-
         }
 
         protected virtual List<IBundleModifier> CreateBundleModifierChain()
