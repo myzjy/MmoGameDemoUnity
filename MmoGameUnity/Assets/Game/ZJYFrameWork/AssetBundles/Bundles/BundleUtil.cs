@@ -68,13 +68,13 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
 
                 storableDirectory =
 #if UNITY_EDITOR
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #elif UNITY_IOS
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                   $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #elif UNITY_STANDALONE_WIN
                     $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
 #elif UNITY_ANDROID
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                   $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #endif
 
                 readOnlyDirectory =

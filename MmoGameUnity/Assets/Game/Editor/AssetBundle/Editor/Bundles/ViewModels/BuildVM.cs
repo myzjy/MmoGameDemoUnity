@@ -313,6 +313,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public virtual void Build(bool forceRebuild)
         {
+            Debug.Log("开始执行 ab出包逻辑");
             string path = this.OutputPath;
             if (string.IsNullOrEmpty(path))
                 BrowseOutputFolder();
@@ -374,6 +375,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 return;
 
             this.CopyToStreamingAssets();
+            Debug.Log(" ab出包 完成 结束");
+
         }
 
         protected virtual List<IBundleModifier> CreateBundleModifierChain()
