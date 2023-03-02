@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
+using Object = System.Object;
 
 namespace ZJYFrameWork.Spring.Utils
 {
@@ -12,7 +14,13 @@ namespace ZJYFrameWork.Spring.Utils
         * 
         */
         private static readonly Assembly[] allAssemblys = AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-            a.Equals(typeof(AssemblyUtils).Assembly) || a.FullName.StartsWith("Assembly-CSharp-Editor")).ToArray();
+            a.Equals(typeof(AssemblyUtils).Assembly) || 
+            a.FullName.StartsWith("Assembly-CSharp-Editor")||
+            a.FullName.StartsWith("Assembly-CSharp")||
+            a.FullName.StartsWith("Main")||
+            a.FullName.StartsWith("ZJYFrameWork.AssetBundles.Bundles")||
+            a.FullName.StartsWith("ZJYFrameWork.Log")
+        ).ToArray();
 
         private static readonly Dictionary<string, Type> cachedTypes = new Dictionary<string, Type>();
 
@@ -126,7 +134,6 @@ namespace ZJYFrameWork.Spring.Utils
         public static List<Type> GetAllSubClassType(Type typeBase)
         {
             var allClassTypes = GetAllClassTypes();
-
             return allClassTypes.Where(type => type.IsClass && !type.IsAbstract && typeBase.IsAssignableFrom(type))
                 .ToList();
         }

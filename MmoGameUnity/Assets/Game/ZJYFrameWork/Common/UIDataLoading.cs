@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.UI.UIModel;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.UISerializable.Common
 {
     public class UIDataLoading : DialogBase
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.UISerializable.Common
 {
     /// <summary>
     /// 面板基础

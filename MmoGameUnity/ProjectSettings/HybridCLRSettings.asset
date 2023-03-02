@@ -17,11 +17,17 @@ MonoBehaviour:
   hybridclrRepoURL: https://gitee.com/focus-creative-games/hybridclr
   il2cppPlusRepoURL: https://gitee.com/focus-creative-games/il2cpp_plus
   hotUpdateAssemblyDefinitions:
-  - {fileID: 5897886265953266890, guid: 606c0d1f5b95aa943b1597d6c624b11a, type: 3}
-  - {fileID: 5897886265953266890, guid: 4f7d795bce7fca946a9b0bab5bbcd137, type: 3}
-  - {fileID: 5897886265953266890, guid: d50e89131eca26a469b0dd3b3c3304ae, type: 3}
+  - {fileID: 5897886265953266890, guid: 74ed2524083ea9d4c9d2a4b3faf69783, type: 3}
+  - {fileID: 5897886265953266890, guid: ca8d574d9e58cdd4481102472565983a, type: 3}
   - {fileID: 5897886265953266890, guid: 01cc6f49cd8e7fe459cf336d67caef0a, type: 3}
-  - {fileID: 5897886265953266890, guid: 786d803c014664e46906bdb3ea5ddaec, type: 3}
+  - {fileID: 5897886265953266890, guid: bfd860e13f5ec0a4a842b81b00368eab, type: 3}
+  - {fileID: 5897886265953266890, guid: 63d592a3452e2f64d8b90d6c97107c62, type: 3}
+  - {fileID: 5897886265953266890, guid: 3e718d984ceaed248bf4ec41cd7f28d1, type: 3}
+  - {fileID: 5897886265953266890, guid: cfc954a222077144a990b61b9b6b2f9c, type: 3}
+  - {fileID: 5897886265953266890, guid: d50e89131eca26a469b0dd3b3c3304ae, type: 3}
+  - {fileID: 5897886265953266890, guid: 48ad6efc7dae75341b7fa84ac8fb08ad, type: 3}
+  - {fileID: 5897886265953266890, guid: 6759613c9d6f3194a9e217f2106eeeea, type: 3}
+  - {fileID: 5897886265953266890, guid: 00097e8f45e78ed4c8617b5aa3988157, type: 3}
   hotUpdateAssemblies:
   - Assembly-CSharp
   preserveHotUpdateAssemblies: []

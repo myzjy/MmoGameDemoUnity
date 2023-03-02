@@ -13,6 +13,7 @@ using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Script.Module.Login.Controller

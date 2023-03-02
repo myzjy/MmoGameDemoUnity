@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.UI.UIModel
 {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.UI.UIModel;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.UISerializable.Common
 {
     public class Snackbar : MonoBehaviour
     {
@@ -52,7 +52,7 @@ namespace ZJYFrameWork.UISerializable
         /// <param name="downText"></param>
         /// <param name="nowDownNums"></param>
         /// <param name="maxDownNums"></param>
-        public void OpenUIDataLoadingPanel(string downText, float nowDownNums, float maxDownNums)
+        public void OpenUIDataLoadingPanel(string downText, float nowDownNums, float maxDownNums,string tips="")
         {
             if (UIDataLoading.GetSelfObjCanvasGroup.alpha < 1)
             {

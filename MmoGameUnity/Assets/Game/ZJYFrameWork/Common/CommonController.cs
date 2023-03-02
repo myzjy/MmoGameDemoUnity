@@ -1,8 +1,6 @@
-﻿using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.Ocsp;
-using UnityEngine;
-using ZJYFrameWork.Spring.Core;
+﻿using UnityEngine;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.UISerializable.Common
 {
     public class CommonController : Singleton<CommonController>
     {

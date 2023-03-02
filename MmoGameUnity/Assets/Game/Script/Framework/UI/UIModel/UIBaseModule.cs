@@ -7,6 +7,7 @@ using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Framwork.UIRootCS;
 using ZJYFrameWork.UISerializable.UIInitView;
 using Object = UnityEngine.Object;

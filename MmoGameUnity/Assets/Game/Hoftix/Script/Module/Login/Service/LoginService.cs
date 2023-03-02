@@ -9,6 +9,7 @@ using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Module.Login.Service

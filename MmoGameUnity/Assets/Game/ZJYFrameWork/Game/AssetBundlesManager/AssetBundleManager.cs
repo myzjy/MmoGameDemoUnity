@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Framework.AssetBundles.Utilty;
+using HybridCLR;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
@@ -17,10 +18,14 @@ using ZJYFrameWork.AssetBundles.Model.Callback;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
+using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 {
-    public abstract class AssetBundleManager : MonoBehaviour, IAssetBundleManager
+    [DisallowMultipleComponent]
+    [AddComponentMenu("Game/Framework/Asset Bundle Manager")]
+    public sealed  class AssetBundleManager : MonoBehaviour, IAssetBundleManager
     {
         private IBundleManager _bundleManager;
 
@@ -92,7 +97,68 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         /// 管理manifest
         /// </summary>
         public BundleManifest BundleManifest { get; set; }
+        public List<string> AOTMetaAssemblyNames { get; } = new List<string>()
+        {
+            "mscorlib_bytes",
+            "System_bytes",
+            "System_Core_bytes",
+        };
 
+        private void Awake()
+        {
+            Executors.RunOnCoroutine(InitBase());
+        }
+
+        /// <summary>
+        /// 为aot assembly加载原始metadata， 这个代码放aot或者热更新都行。
+        /// 一旦加载后，如果AOT泛型函数对应native实现不存在，则自动替换为解释模式执行
+        /// </summary>
+        private IEnumerator LoadMetadataForAOTAssemblies()
+        {
+            // 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
+            // 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
+            // 
+            HomologousImageMode mode = HomologousImageMode.SuperSet;
+            bool isLoad = false;
+            foreach (var aotDllName in AOTMetaAssemblyNames)
+            {
+                isLoad = false;
+                LoadAsset(aotDllName, res =>
+                {
+                    byte[] dllBytes = res;
+                    // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
+                    LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
+                    isLoad = true;
+                });
+                yield return new WaitUntil(() => isLoad);
+            }
+        }
+        public IEnumerator InitBase()
+        {
+            SetAssetBundle();
+            yield return LoadMetadataForAOTAssemblies();
+            bool isLoad = false;
+#if !UNITY_EDITOR
+            LoadAsset("Assembly-CSharp_bytes", res =>
+            {
+                byte[] dllBytes = res;
+                // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
+                System.Reflection.Assembly.Load(dllBytes);
+                isLoad = true;
+            });
+            yield return new WaitUntil(() => isLoad);
+#endif
+            isLoad = false;
+            Object obj = null;
+            LoadAsset("Base", res =>
+            {
+                //生成
+                obj = res;
+                isLoad = true;
+            });
+            yield return new WaitUntil(() => isLoad);
+            var baseObj = Instantiate(obj, this.transform) as GameObject;
+        }
         public void SetAssetBundle()
         {
             if (BundleManifestLoader == null)
@@ -183,10 +249,34 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             }
         }
 
-
+        public void LoadAsset(string assetBundle, System.Action<Object> loadAssetCallbacks)
+        {
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+            var obj = Resources.LoadAssetAsync(abName);
+            obj.WaitForDone();
+            obj.Callbackable().OnProgressCallback(res =>
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log("[{}]加载进度：[{}]%", abName, res * 100.0f);
+#endif
+                CommonController.Instance.snackbar.OpenUIDataLoadingPanel("", res, 1, "正在加载资源,请稍等...");
+            });
+            obj.Callbackable().OnCallback(res =>
+            {
+                if (res.Exception != null) return;
+                if (!res.IsDone) return;
+                if (res.Result != null)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log(res.Result);
+#endif
+                    loadAssetCallbacks(res.Result);
+                }
+            });
+        }
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
-            var abName = $"{assetBundle}{AssetBundleConfig.AssetBundleSuffix}";
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
             var obj = Resources.LoadAssetAsync(abName);
             obj.WaitForDone();
             obj.Callbackable().OnProgressCallback(res => { Debug.Log("[{}]加载进度：[{}]%", abName, res * 100.0f); });
@@ -389,6 +479,30 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         public void ReginBean()
         {
             SpringContext.RegisterBean(this);
+        }
+        public void LoadAsset(string assetBundle, Action<byte[]> loadAssetCallbacks)
+        {
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+
+            var obj = Resources.LoadAssetAsync<TextAsset>(abName);
+            obj.Callbackable().OnCallback(res =>
+            {
+                if (res.Result == null)
+                {
+                    var iBundle = Resources.LoadBundle(abName);
+                    iBundle.Callbackable().OnCallback(res =>
+                    {
+                        Debug.Log($"{res.Result}");
+                        var data = res.Result.LoadAsset<TextAsset>(abName);
+                        loadAssetCallbacks.Invoke(data.bytes);
+                    });
+                }
+                else
+                {
+                    Debug.Log(obj.Result);
+                    loadAssetCallbacks.Invoke(obj.Result.bytes);
+                }
+            });
         }
     }
 }

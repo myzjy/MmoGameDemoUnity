@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.UISerializable.Common
 {
     public class LoadingRotate : MonoBehaviour
     {

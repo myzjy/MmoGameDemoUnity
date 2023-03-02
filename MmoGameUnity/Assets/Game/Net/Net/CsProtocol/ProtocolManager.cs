@@ -7,6 +7,7 @@ using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UI.UIModel;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {

@@ -34,6 +34,7 @@ namespace ZJYFrameWork.Editors.Inspector
             if (string.IsNullOrEmpty(entranceProcedureTypeName.stringValue))
             {
                 EditorGUILayout.HelpBox("Entrance procedure is invalid.", MessageType.Error);
+                Debug.Log($"entranceProcedureTypeName.stringValue:{entranceProcedureTypeName.stringValue}");
             }
             else if (EditorApplication.isPlaying)
             {
@@ -45,6 +46,7 @@ namespace ZJYFrameWork.Editors.Inspector
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
                 GUILayout.Label("Available Procedures", EditorStyles.boldLabel);
+                Debug.Log($"m_ProcedureTypeNames:{m_ProcedureTypeNames.Length}");
                 if (m_ProcedureTypeNames.Length > 0)
                 {
                     EditorGUILayout.BeginVertical("box");
@@ -113,6 +115,7 @@ namespace ZJYFrameWork.Editors.Inspector
         private void RefreshTypeNames()
         {
             m_ProcedureTypeNames = AssemblyUtils.GetAllSubClassNames(typeof(FsmState<IProcedureFsmManager>));
+            Debug.Log($"[RefreshTypeNames] m_ProcedureTypeNames :{m_ProcedureTypeNames} m_ProcedureTypeNames.Length:{m_ProcedureTypeNames.Length}");
             ReadAvailableProcedureTypeNames();
             var oldCount = m_CurrentAvailableProcedureTypeNames.Count;
             m_CurrentAvailableProcedureTypeNames = m_CurrentAvailableProcedureTypeNames

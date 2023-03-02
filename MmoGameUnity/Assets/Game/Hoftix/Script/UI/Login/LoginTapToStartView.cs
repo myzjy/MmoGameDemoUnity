@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.UISerializable
 {

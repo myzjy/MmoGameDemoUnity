@@ -1,6 +1,7 @@
 using UnityEngine;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UI.UIModel;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.UISerializable
 {
