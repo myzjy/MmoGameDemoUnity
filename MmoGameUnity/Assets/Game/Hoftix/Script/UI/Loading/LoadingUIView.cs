@@ -1,4 +1,6 @@
-namespace ZJYFrameWork.UISerializable
+using ZJYFrameWork.UISerializable;
+
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     /// <summary>
     /// loadingView 

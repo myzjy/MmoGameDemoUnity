@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.Hotfix.UISerializable;
 
-namespace ZJYFrameWork.UI.GameMain
+namespace ZJYFrameWork.Hotfix.UI.GameMain
 {
     public class GameMainUIController : MonoBehaviour
     {

@@ -3,6 +3,7 @@ using DG.Tweening;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol.Buffer;

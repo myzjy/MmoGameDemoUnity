@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using ZJYFrameWork.Hoftix.Script.Module.Bag.Service;
+using ZJYFrameWork.Hotfix.Script.Module.Bag.Service;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UI.BagUI
+namespace ZJYFrameWork.Hotfix.UI.BagUI
 {
     /// <summary>
     /// 背包打开的type 根据type处理对于功能代码

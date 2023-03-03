@@ -1,6 +1,7 @@
 ﻿using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Hotfix.UISerializable;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -9,8 +10,8 @@ namespace ZJYFrameWork.UISerializable
         public UnityEngine.GameObject LoginPart=null;
 		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
 		public ZJYFrameWork.UISerializable.RegisterPartView RegisterPartView=null;
-		public ZJYFrameWork.UISerializable.LoginTapToStartView LoginTapToStartView=null;
-		public ZJYFrameWork.UISerializable.LoginController LoginController=null;
+		public LoginTapToStartView LoginTapToStartView=null;
+		public LoginController LoginController=null;
 		public UnityEngine.GameObject tips=null;
 		public UnityEngine.UI.Text UserNameText=null;
 		
@@ -21,8 +22,8 @@ namespace ZJYFrameWork.UISerializable
             LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
 			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
 			RegisterPartView=_view.GetObjType<ZJYFrameWork.UISerializable.RegisterPartView>("RegisterPartView");
-			LoginTapToStartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginTapToStartView>("LoginTapToStartView");
-			LoginController=_view.GetObjType<ZJYFrameWork.UISerializable.LoginController>("LoginController");
+			LoginTapToStartView=_view.GetObjType<LoginTapToStartView>("LoginTapToStartView");
+			LoginController=_view.GetObjType<LoginController>("LoginController");
 			tips=_view.GetObjType<UnityEngine.GameObject>("tips");
 			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
 			

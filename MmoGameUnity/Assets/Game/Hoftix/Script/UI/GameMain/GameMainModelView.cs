@@ -1,7 +1,8 @@
 ﻿using ZJYFrameWork.Game.Framwork;
-using ZJYFrameWork.UI.GameMain;
+using ZJYFrameWork.Hotfix.UI.GameMain;
+using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public partial class UINotifEnum
     {

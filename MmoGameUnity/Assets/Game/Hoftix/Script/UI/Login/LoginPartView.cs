@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Common;
+using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;

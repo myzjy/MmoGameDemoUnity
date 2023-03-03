@@ -106,6 +106,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 
         private void Awake()
         {
+            Debug.Log("[AssetBundleManager]");
             Executors.RunOnCoroutine(InitBase());
         }
 

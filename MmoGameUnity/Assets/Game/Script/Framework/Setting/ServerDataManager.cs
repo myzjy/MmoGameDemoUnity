@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ZJYFrameWork.Common;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item;
 using ZJYFrameWork.Spring.Core;
 

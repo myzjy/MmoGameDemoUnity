@@ -4,9 +4,10 @@ using UnityEngine.UI;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public class LoginTapToStartView : UISerializableKeyObject
     {

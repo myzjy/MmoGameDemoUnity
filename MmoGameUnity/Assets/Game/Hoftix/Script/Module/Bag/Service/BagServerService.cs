@@ -1,9 +1,10 @@
-﻿using ZJYFrameWork.Net;
+﻿using ZJYFrameWork.Hotfix.UI.BagUI;
+using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UI.BagUI;
 
-namespace ZJYFrameWork.Hoftix.Script.Module.Bag.Service
+namespace ZJYFrameWork.Hotfix.Script.Module.Bag.Service
 {
     /// <summary>
     /// 背包Service 具体实现

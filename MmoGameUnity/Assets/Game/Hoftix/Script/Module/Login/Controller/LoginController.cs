@@ -2,6 +2,8 @@
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
@@ -16,7 +18,7 @@ using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
 
-namespace ZJYFrameWork.Script.Module.Login.Controller
+namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 {
     /// <summary>
     /// 登录控制器

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using ZJYFrameWork.AssetBundles.Bundles;
@@ -208,28 +209,21 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                     if (newValue != buildOption.Value)
                     {
                         buildOption.Value = newValue;
-                        if (buildOption.Value && (buildOption.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges ||
-                                                  buildOption.Tag == BuildAssetBundleOptions.DisableWriteTypeTree))
+                        if (buildOption.Value && buildOption.Tag is BuildAssetBundleOptions.IgnoreTypeTreeChanges
+                                or BuildAssetBundleOptions.DisableWriteTypeTree)
                         {
-                            for (int j = 0; j < buildOptionList.Count; j++)
+                            foreach (var checkBox2 in buildOptionList.Where(checkBox2 => buildOption != checkBox2 &&
+                                         checkBox2.Tag is BuildAssetBundleOptions.IgnoreTypeTreeChanges
+                                             or BuildAssetBundleOptions.DisableWriteTypeTree &&
+                                         checkBox2.Value))
                             {
-                                var checkBox2 = buildOptionList[j];
-                                if (buildOption != checkBox2 &&
-                                    (checkBox2.Tag == BuildAssetBundleOptions.IgnoreTypeTreeChanges ||
-                                     checkBox2.Tag == BuildAssetBundleOptions.DisableWriteTypeTree) && checkBox2.Value)
-                                {
-                                    checkBox2.Value = false;
-                                    break;
-                                }
+                                checkBox2.Value = false;
+                                break;
                             }
                         }
 
-                        BuildAssetBundleOptions options = BuildAssetBundleOptions.None;
-                        foreach (var t in buildOptionList)
-                        {
-                            if (t.Value)
-                                options |= t.Tag;
-                        }
+                        BuildAssetBundleOptions options = buildOptionList.Where(t => t.Value)
+                            .Aggregate(BuildAssetBundleOptions.None, (current, t) => current | t.Tag);
 
                         this.buildVM.BuildAssetBundleOptions = options;
                     }

@@ -1,9 +1,10 @@
 ﻿using UnityEngine.UI;
 using ZJYFrameWork.Common;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UI.GameMain
+namespace ZJYFrameWork.Hotfix.UI.GameMain
 {
     /// <summary>
     /// 主界面

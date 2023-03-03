@@ -1,8 +1,9 @@
 ﻿using ZJYFrameWork.Common;
+using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.I18n;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.Dispatcher;
-using ZJYFrameWork.Script.Module.Login.Controller;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 
@@ -23,7 +24,7 @@ namespace ZJYFrameWork.Module.Register.Controller
             Debug.Log("AtRegisterResponse");
 #endif
             //重新打开登录面板
-            SpringContext.GetBean<UISerializable.LoginController>().OnInit();
+            SpringContext.GetBean<LoginController>().OnInit();
         }
     }
 }

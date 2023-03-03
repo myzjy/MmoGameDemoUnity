@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using ZJYFrameWork.Hotfix.UI.GameMain;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Spring.Core;
-using ZJYFrameWork.UI.GameMain;
 using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UI.BagUI
+namespace ZJYFrameWork.Hotfix.UI.BagUI
 {
     /// <summary>
     /// BagUIView 在build 方法注册 bean

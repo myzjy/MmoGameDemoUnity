@@ -1,6 +1,6 @@
 ﻿using ZJYFrameWork.Spring.Core;
 
-namespace ZJYFrameWork.Common
+namespace ZJYFrameWork.Hotfix.Common
 {
     [Bean]
     public class PlayerUserCaCheData

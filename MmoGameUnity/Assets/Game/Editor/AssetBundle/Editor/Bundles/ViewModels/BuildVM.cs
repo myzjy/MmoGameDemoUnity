@@ -512,10 +512,11 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public virtual void Build(bool forceRebuild)
         {
+            Debug.Log("----------------BuildAssetBundleWithCommandLineArgs------------------");
             Debug.Log("开始执行 ab出包逻辑");
             string path = this.OutputPath;
+            PrebuildCommand.GenerateAll();
             CopyDllAb();
-            return;
             if (string.IsNullOrEmpty(path))
                 BrowseOutputFolder();
 

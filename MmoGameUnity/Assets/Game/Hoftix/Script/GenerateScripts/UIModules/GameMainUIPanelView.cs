@@ -1,6 +1,7 @@
 ﻿using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Hotfix.UI.GameMain;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -31,7 +32,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button SkillButton=null;
 		public UnityEngine.UI.Button BagButton=null;
 		public UnityEngine.UI.Button settingBtn=null;
-		public ZJYFrameWork.UI.GameMain.GameMainUIController GMUIController=null;
+		public GameMainUIController GMUIController=null;
 		
 
 
@@ -62,7 +63,7 @@ namespace ZJYFrameWork.UISerializable
 			SkillButton=_view.GetObjType<UnityEngine.UI.Button>("SkillButton");
 			BagButton=_view.GetObjType<UnityEngine.UI.Button>("BagButton");
 			settingBtn=_view.GetObjType<UnityEngine.UI.Button>("settingBtn");
-			GMUIController=_view.GetObjType<ZJYFrameWork.UI.GameMain.GameMainUIController>("GMUIController");
+			GMUIController=_view.GetObjType<GameMainUIController>("GMUIController");
 			
         }
     }

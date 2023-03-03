@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Register.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;

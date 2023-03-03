@@ -1,6 +1,7 @@
 ﻿using System;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.I18n;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.Dispatcher;

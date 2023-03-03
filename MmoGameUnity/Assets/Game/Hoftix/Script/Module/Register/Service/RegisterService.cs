@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using ZJYFrameWork.Common;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Spring.Core;

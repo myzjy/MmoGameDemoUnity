@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig;
+﻿using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;

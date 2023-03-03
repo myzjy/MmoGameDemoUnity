@@ -1,6 +1,7 @@
-﻿using ZJYFrameWork.UI.BagUI;
+﻿using ZJYFrameWork.Hotfix.UI.BagUI;
+using ZJYFrameWork.UI.BagUI;
 
-namespace ZJYFrameWork.Hoftix.Script.Module.Bag.Service
+namespace ZJYFrameWork.Hotfix.Script.Module.Bag.Service
 {
     /// <summary>
     /// 背包相关Service 接口

@@ -1,8 +1,9 @@
 ﻿using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public class BagUIPanelView:UIViewInterface
     {

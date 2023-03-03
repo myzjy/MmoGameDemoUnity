@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public class LoginController : MonoBehaviour
     {

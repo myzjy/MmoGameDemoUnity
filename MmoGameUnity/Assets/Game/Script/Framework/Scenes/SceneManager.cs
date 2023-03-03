@@ -8,6 +8,7 @@ using ZJYFrameWork.AssetBundles.Model;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Spring.Core;

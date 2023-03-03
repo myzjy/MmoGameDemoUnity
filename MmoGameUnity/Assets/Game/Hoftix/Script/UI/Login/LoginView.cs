@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 using ZJYFrameWork.Execution;
+using ZJYFrameWork.UISerializable;
 
-namespace ZJYFrameWork.UISerializable
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public class LoginView : UIBaseView<LoginPanelView>
     {

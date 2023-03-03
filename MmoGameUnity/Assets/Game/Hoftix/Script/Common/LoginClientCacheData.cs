@@ -1,6 +1,6 @@
 ﻿using ZJYFrameWork.Spring.Core;
 
-namespace ZJYFrameWork.Common
+namespace ZJYFrameWork.Hotfix.Common
 {
     /// <summary>
     /// 登录的时候缓存数据
