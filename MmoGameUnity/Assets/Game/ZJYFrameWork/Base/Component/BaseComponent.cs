@@ -80,30 +80,6 @@ namespace ZJYFrameWork.Base.Component
             {
                 ConverterUtils.ScreenDpi = DefaultDpi;
             }
-            //保证
-            SpringContext.RegisterBean<BundleManifestLoader>();
-#if UNITY_EDITOR
-
-            if (AssetBundleConfig.IsEditorMode)
-            {
-                //编辑器下
-                Debug.Log("Use SimulationResources. Run In Editor");
-
-                SpringContext.RegisterBean<SimulationBundleManager>();
-                //管理类路径类
-                SpringContext.RegisterBean<SimulationAutoMappingPathInfoParser>();
-                //本地读取资源bean类
-                SpringContext.RegisterBean<SimulationResources>();
-            }
-            else
-#endif
-            {
-                Debug.Log("Use playResource");
-                SpringContext.RegisterBean<BundleManager>();
-                SpringContext.RegisterBean<BundleResources>();
-                SpringContext.RegisterBean<AutoMappingPathInfoParser>();
-                SpringContext.RegisterBean<UnityWebRequestBundleLoaderBuilder>();
-            }
 
             Application.targetFrameRate = frameRate;
             Time.timeScale = gameSpeed;
@@ -147,7 +123,6 @@ namespace ZJYFrameWork.Base.Component
             //初始化流程状态
             SpringContext.GetBean<NetworkManager>().Init();
             SpringContext.GetBean<ProcedureComponent>().StartProcedure();
-
         }
 
         private void LateUpdate()
@@ -188,6 +163,7 @@ namespace ZJYFrameWork.Base.Component
             // SpringContext.GetBean<IObjectPoolManager>().ReleaseAllUnused();
             // SpringContext.GetBean<ResourceComponent>().ForceUnloadUnusedAssets(true);
         }
+
         /// <summary>
         /// 关闭游戏框架。
         /// </summary>

@@ -366,13 +366,13 @@ namespace ZJYFrameWork.Asynchronous
                         }
                         catch (Exception e)
                         {
-                            Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
+                            Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
+                    Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
                 }
                 finally
                 {

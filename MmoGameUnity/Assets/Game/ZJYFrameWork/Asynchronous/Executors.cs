@@ -380,6 +380,7 @@ namespace ZJYFrameWork.Execution
 
         public static Asynchronous.IAsyncResult RunOnCoroutine(IEnumerator routine)
         {
+            Debug.Log("[Executors] [RunOnCoroutine]");
             CoroutineResult result = new CoroutineResult();
             DoRunOnCoroutine(routine, result);
             return result;

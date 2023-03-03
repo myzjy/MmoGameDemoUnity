@@ -278,9 +278,10 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             this.BundleManifest = manifest;
             this.loaderBuilder = builder;
-            this.executor = executor ?? new PriorityTaskExecutor();
+            this.executor = new PriorityTaskExecutor();
             this.loaders = new Dictionary<string, BundleLoader>();
             this.bundles = new Dictionary<string, DefaultBundle>();
+            this.lruCache = new LRUCache(1000);
         }
 
         public virtual IProgressResult<float, IBundle[]> LoadBundle(BundleInfo[] bundleInfos, int priority)

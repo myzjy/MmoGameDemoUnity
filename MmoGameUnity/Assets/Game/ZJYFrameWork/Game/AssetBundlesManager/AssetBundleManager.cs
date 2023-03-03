@@ -25,7 +25,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("Game/Framework/Asset Bundle Manager")]
-    public sealed  class AssetBundleManager : MonoBehaviour, IAssetBundleManager
+    public sealed class AssetBundleManager : MonoBehaviour, IAssetBundleManager
     {
         private IBundleManager _bundleManager;
 
@@ -44,13 +44,13 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         /// </summary>
         private IBundleManifestLoader BundleManifestLoader;
 
-     //   private IDownloadManager DownloadManager;
+        //   private IDownloadManager DownloadManager;
 
         /// <summary>
         /// 资源读取接口 需要在下载接口走完之后，查看有没有需要下载
         /// </summary>
         private IResources Resources;
-        
+
 
         /// <summary>
         /// 部分本地场景加载
@@ -97,6 +97,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         /// 管理manifest
         /// </summary>
         public BundleManifest BundleManifest { get; set; }
+
         public List<string> AOTMetaAssemblyNames { get; } = new List<string>()
         {
             "mscorlib_bytes",
@@ -124,6 +125,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             foreach (var aotDllName in AOTMetaAssemblyNames)
             {
                 isLoad = false;
+                Debug.Log($"[AOTMetaAssemblyNames] dll load assetName:{aotDllName}");
                 LoadAsset(aotDllName, res =>
                 {
                     byte[] dllBytes = res;
@@ -134,6 +136,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                 yield return new WaitUntil(() => isLoad);
             }
         }
+
         public IEnumerator InitBase()
         {
             SetAssetBundle();
@@ -158,8 +161,10 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                 isLoad = true;
             });
             yield return new WaitUntil(() => isLoad);
+            ReginBean();
             var baseObj = Instantiate(obj, this.transform) as GameObject;
         }
+
         public void SetAssetBundle()
         {
             if (BundleManifestLoader == null)
@@ -233,7 +238,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                     Resources.SetIPathAndBundleResource(_pathInfoParser, _bundleManager);
                     Resources.SetManifestAndLoadBuilder(BundleManifest, _loaderBuilder);
                 }
-                
+
                 // resourceUpdater.ResourceUpdateComplete += OnUpdaterResourceUpdateComplete;
             }
         }
@@ -275,6 +280,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                 }
             });
         }
+
         public void LoadAsset(string assetBundle, LoadAssetCallbacks loadAssetCallbacks)
         {
             var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
@@ -481,6 +487,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         {
             SpringContext.RegisterBean(this);
         }
+
         public void LoadAsset(string assetBundle, Action<byte[]> loadAssetCallbacks)
         {
             var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";

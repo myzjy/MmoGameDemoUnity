@@ -102,14 +102,15 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
 
                 storableDirectory =
 #if UNITY_EDITOR
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                    $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #elif UNITY_IOS
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                   $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #elif UNITY_STANDALONE_WIN
                     $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
 #elif UNITY_ANDROID
-                    $"{persistentDataPath}/{root}/{GetPlatformName()}";
+                   $"{streamingAssetsPath}/{root}/{GetPlatformName()}";// $"{persistentDataPath}/{root}/{GetPlatformName()}";
 #endif
+
 
                 readOnlyDirectory =
                     $"{streamingAssetsPath}/{root}/{GetPlatformName()}";
@@ -355,7 +356,7 @@ namespace ZJYFrameWork.AssetBundles.BundleUtils
                 catch (Exception e)
                 {
 #if !UNITY_WEBGL || UNITY_EDITOR
-                    Debug.LogErrorFormat("Clear {0}.Error:{1}", GetStorableDirectory(), e);
+                    Debug.LogErrorFormat("Clear {}.Error:{}", GetStorableDirectory(), e);
 #endif
                 }
 #if !UNITY_WEBGL || UNITY_EDITOR

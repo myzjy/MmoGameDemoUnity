@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
@@ -50,19 +53,59 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 var assets = info.Assets;
                 foreach (var t in assets)
                 {
-                    var assetPath = t.ToLower();
-                    var key = regex.Replace(assetPath, "");
-                    dict[key] = info.Name;
+                    // var assetPath = t.ToLower();
+                    // var key = regex.Replace(assetPath, "");
+                    // dict[key] = info.Name;
+                    var assetPath = t;
+                    if (!info.IsStreamedScene)
+                    {
+                        assetPath = t.ToLower();
+                    }
+
+                    var assetName = regex.Replace(assetPath, "");
+                    var bundleName = $"{info.Name}.{info.Variant}";
+                    //bunlename --> playerhuanzhuang_spriteatlas.assetbundle
+                    //assetName --> game/assetbundle/ui/uispriteatlas/playerhuanzhuang.spriteatlas
+                    dict[assetName] = bundleName;
                 }
             }
         }
 
         public AssetPathInfo Parse(string path)
         {
-            if (!this.dict.TryGetValue(path.ToLower(), out var bundleName))
-                return null;
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log($"开始查找 容器中 [{path}] Bundle");
+#endif
 
-            return new AssetPathInfo(bundleName, path);
+            string assetName;
+            try
+            {
+                var firstOrDefault = dict.Where(a => a.Value == path.ToLower());
+                if (path.EndsWith(AssetBundleConfig.SpriteAtlasABSuffix))
+                {
+                    //去除后缀
+                    var newPath = path.Replace(AssetBundleConfig.SpriteAtlasABSuffix,
+                        AssetBundleConfig.SpriteAtlasSuffix);
+                    var dictDefault = firstOrDefault.FirstOrDefault(a => a.Key.Contains(newPath));
+                    assetName = dictDefault.Key;
+                }
+                else
+                {
+                    var first = firstOrDefault.FirstOrDefault();
+
+                    assetName = first.Key;
+                }
+            }
+            catch (Exception e)
+            {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                //代表没找到
+                Debug.Log($"没有找到资产包，请检查资产的配置 '{path}'.");
+#endif
+                return null;
+            }
+
+            return new AssetPathInfo(path, assetName);
         }
     }
 }

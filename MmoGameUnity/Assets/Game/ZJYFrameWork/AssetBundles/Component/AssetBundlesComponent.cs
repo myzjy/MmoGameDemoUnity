@@ -12,7 +12,7 @@ namespace ZJYFrameWork.AssetBundles.Component
     public class AssetBundlesComponent : SpringComponent
     {
         [Autowired] private IAssetBundleManager AssetBundleManager;
-        [Autowired] private IDownloadManager DownloadManager;
+        // [Autowired] private IDownloadManager DownloadManager;
         protected override void OnAwake()
         {
             base.OnAwake();
