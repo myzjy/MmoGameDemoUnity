@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
 using ZJYFrameWork.Execution;
+using ZJYFrameWork.UI.UIModel;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Hotfix.UISerializable
 {
@@ -16,6 +18,11 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             viewPanel.LoginController.Build(viewPanel.LoginPartView, viewPanel.RegisterPartView,
                 loginTapToStartView: viewPanel.LoginTapToStartView, this);
             viewPanel.LoginController.OnInit();
+            viewPanel.Gonggao_Button.SetListener(() =>
+            {
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo, "", "点击按钮了",
+                    res => { }, "确定", "取消");
+            });
         }
 
         /// <summary>

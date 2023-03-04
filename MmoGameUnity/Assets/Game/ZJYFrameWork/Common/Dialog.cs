@@ -31,17 +31,7 @@ namespace ZJYFrameWork.UI.UIModel
         /// 标题
         /// </summary>
         [SerializeField] protected Text titleText = null;
-
-        /// <summary>
-        /// 标题背景
-        /// </summary>
-        [SerializeField] protected GameObject titleBg = null;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [SerializeField] protected GameObject noTitleBg = null;
-
+        
         /// <summary>
         /// 文字主题
         /// </summary>

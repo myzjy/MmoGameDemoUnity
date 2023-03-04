@@ -31,14 +31,6 @@ namespace ZJYFrameWork.UISerializable.Common
 
         public CanvasGroup serverErrorLandscapeLeftCanvasGroup;
         public Text serverLandscapeLeftError;
-        public CanvasGroup errorLandscapeLeftCanvasGroup;
-        public Text errorLandscapeLeft;
-
-        public CanvasGroup infoLandscapeLeftCanvasGroup;
-        public Text infoLandscapeLeft;
-
-        public CanvasGroup serverInfoLandscapeLeftCanvasGroup;
-        public Text serverInfoLandscapeLeft;
         public UIDataLoading UIDataLoading;
         public Dialog OverlayDialog;
 
@@ -52,7 +44,7 @@ namespace ZJYFrameWork.UISerializable.Common
         /// <param name="downText"></param>
         /// <param name="nowDownNums"></param>
         /// <param name="maxDownNums"></param>
-        public void OpenUIDataLoadingPanel(string downText, float nowDownNums, float maxDownNums,string tips="")
+        public void OpenUIDataLoadingPanel(string downText, float nowDownNums, float maxDownNums, string tips = "")
         {
             if (UIDataLoading.GetSelfObjCanvasGroup.alpha < 1)
             {

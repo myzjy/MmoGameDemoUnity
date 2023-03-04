@@ -1,7 +1,6 @@
 ﻿using ZJYFrameWork.UISerializable.UIInitView;
 using UnityEngine;
 using UnityEngine.UI;
-using ZJYFrameWork.Hotfix.UISerializable;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -10,7 +9,7 @@ namespace ZJYFrameWork.UISerializable
         public UnityEngine.UI.Slider leftSlider_Slider=null;
 		public UnityEngine.UI.Slider rightSlider_Slider=null;
 		public UnityEngine.UI.Text progressNum_Text=null;
-		public LoadUIController LoadingController=null;
+		public ZJYFrameWork.Hotfix.UISerializable.LoadUIController LoadingController=null;
 		
 
 
@@ -19,7 +18,7 @@ namespace ZJYFrameWork.UISerializable
             leftSlider_Slider=_view.GetObjType<UnityEngine.UI.Slider>("leftSlider_Slider");
 			rightSlider_Slider=_view.GetObjType<UnityEngine.UI.Slider>("rightSlider_Slider");
 			progressNum_Text=_view.GetObjType<UnityEngine.UI.Text>("progressNum_Text");
-			LoadingController=_view.GetObjType<LoadUIController>("LoadingController");
+			LoadingController=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoadUIController>("LoadingController");
 			
         }
     }

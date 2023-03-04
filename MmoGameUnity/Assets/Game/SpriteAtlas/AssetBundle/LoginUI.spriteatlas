@@ -6,7 +6,7 @@ SpriteAtlas:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LoginAtlas
+  m_Name: LoginUI
   serializedVersion: 2
   m_EditorData:
     serializedVersion: 2
@@ -24,7 +24,7 @@ SpriteAtlas:
     platformSettings: []
     packingSettings:
       serializedVersion: 2
-      padding: 8
+      padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 1
@@ -33,7 +33,33 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 102900000, guid: f2a78f7721614900853ff369d4f37ba2, type: 3}
+    - {fileID: 2800000, guid: d1f6d2af82831504aaf93174e0d99966, type: 3}
+    - {fileID: 2800000, guid: b1bb75fea2274df49a383d18bc6b0fcf, type: 3}
+    - {fileID: 2800000, guid: 16c741e06971b484fb380ea13db08541, type: 3}
+    - {fileID: 2800000, guid: 04be8ac631fdeae4a9755cc1c7cb8aab, type: 3}
+    - {fileID: 2800000, guid: d90e423993a13064aa79e2e9c2ad4412, type: 3}
+    - {fileID: 2800000, guid: 8dec9d31122e4884ea9184cedff8a5d0, type: 3}
+    - {fileID: 2800000, guid: c15b41f850392d0478b054aa9b22ad5e, type: 3}
+    - {fileID: 2800000, guid: 38789a3a7a2abcd41961f6f2cc21ec5d, type: 3}
+    - {fileID: 2800000, guid: b6fd8c838932b3c448c701c6860d24f6, type: 3}
+    - {fileID: 2800000, guid: ca0acb743ef9a5f4fabe5f01397db764, type: 3}
+    - {fileID: 2800000, guid: b048400c574ba5a498e8398fd91da69d, type: 3}
+    - {fileID: 2800000, guid: 355f5295668c3784abc01ea0482a867f, type: 3}
+    - {fileID: 2800000, guid: 71d7fe2f85cc777449f35a5cc5ce127d, type: 3}
+    - {fileID: 2800000, guid: c75b5985e0a852d4abf4ba37dfdba030, type: 3}
+    - {fileID: 2800000, guid: 91c583453852218489a4eaded8be63ca, type: 3}
+    - {fileID: 2800000, guid: 439f4820e3096b341882c77e0a05c473, type: 3}
+    - {fileID: 2800000, guid: 0c83d19454dc93842b4a0b611a5ec8e8, type: 3}
+    - {fileID: 2800000, guid: a6bbb599e97ebb149a7f1d806afb5b87, type: 3}
+    - {fileID: 2800000, guid: 9e5e88c666bc62e4d8a9d76570ec3a62, type: 3}
+    - {fileID: 2800000, guid: 173fef21f66d0f1488e69c65eab768d6, type: 3}
+    - {fileID: 2800000, guid: ea2c562514d4bac4d88e0b8a00f1a2f3, type: 3}
+    - {fileID: 2800000, guid: 901b70b7755384447bb7cb6e18b5b64e, type: 3}
+    - {fileID: 2800000, guid: 7defef903b4ba6d42891d24edbf8ab94, type: 3}
+    - {fileID: 2800000, guid: 3903ab3b5e2992d409bb7b9db95c1940, type: 3}
+    - {fileID: 2800000, guid: 4524cd442eb917247a62a0ced2de6eb5, type: 3}
+    - {fileID: 2800000, guid: e1f7c07988a5d9845be06fa889577246, type: 3}
+    - {fileID: 2800000, guid: 7229c75585966f04b991b6418c69cc59, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -95,6 +121,6 @@ SpriteAtlas:
   - frame_head
   - Portrait_20
   m_RenderDataMap: {}
-  m_Tag: LoginAtlas
+  m_Tag: LoginUI
   m_IsVariant: 0
   m_IsPlaceholder: 0
