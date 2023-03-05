@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
 {
-    public class AllBagItemResponse : Model, IPacket
+    public class AllBagItemResponse : Model, IPacket,IReference
     {
         public List<BagUserItemData> list;
 
         public static AllBagItemResponse ValueOf()
         {
-            var packet = new AllBagItemResponse
-            {
-                list = new List<BagUserItemData>()
-            };
+            var packet = ReferenceCache.Acquire<AllBagItemResponse>();
+            packet.Clear();
             return packet;
         }
 
@@ -38,6 +37,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
         public override void Unpack(byte[] bytes)
         {
             AllBagItemResponseSerializer.Unpack(this, bytes);
+        }
+
+        public void Clear()
+        {
+            list?.Clear();
+            list = new List<BagUserItemData>();
         }
     }
 

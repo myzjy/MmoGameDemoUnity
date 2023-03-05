@@ -5,7 +5,10 @@ namespace ZJYFrameWork.Net
     public class Serializer
     {
         private static System.DateTime UnixEpoch = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
-
+        protected static bool ReadAndCheck(string label)
+        {
+            return label == "[]";
+        }
         protected static void Indent(StringBuilder builder, int indent, bool isPretty)
         {
             if (!isPretty)

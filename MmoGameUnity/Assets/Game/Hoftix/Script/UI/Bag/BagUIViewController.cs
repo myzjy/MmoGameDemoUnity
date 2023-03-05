@@ -29,11 +29,12 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
             this._view = mainView;
         }
 
-        public void OnEnter()
-        {
-            //打开界面
-            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
-        }
+        //这个方法无法判断 是否生成了背包 点击过
+        // public void OnEnter()
+        // {
+        //     //打开界面
+        //     UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
+        // }
 
         /// <summary>
         /// 隐藏

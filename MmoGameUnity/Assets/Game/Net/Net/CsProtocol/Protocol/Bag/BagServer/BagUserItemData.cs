@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
 {
-    public class BagUserItemData : Model, IPacket
+    public class BagUserItemData : Model, IPacket,IReference
     {
         public int _id;
         public long masterUserId;
         public int nowItemNum;
         public int itemId;
-
+        public static BagUserItemData ValueOf()
+        {
+            var packet = ReferenceCache.Acquire<BagUserItemData>();
+            packet.Clear();
+            return packet;
+        }
         public static BagUserItemData ValueOf(int _id, int itemId, long masterUserId, int nowItemNum)
         {
             var packet = new BagUserItemData
@@ -36,6 +42,14 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
         {
             BagUserItemDataSerializer.Unpack(this, bytes);
         }
+
+        public void Clear()
+        {
+            _id = -1;
+            itemId = -1;
+            masterUserId = -1;
+            nowItemNum = -1;
+        }
     }
 
 
@@ -56,13 +70,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
 
         public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
         {
-            var packet = new BagUserItemData();
+            var packet = BagUserItemData.ValueOf();
             packet.Unpack( buffer.ToBytes());
             return packet;
         }
     }
 
-    public static class BagUserItemDataSerializer
+    internal abstract class BagUserItemDataSerializer
     {
         public static void Unpack(BagUserItemData response, byte[] bytes)
         {

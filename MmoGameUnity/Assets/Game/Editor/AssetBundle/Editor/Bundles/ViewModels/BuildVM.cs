@@ -349,52 +349,39 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 if (filenames.Length > 0)
                 {
                     Debug.Log($"当前目录下有文件,开始删除文件");
-                    for (int i = 0; i < filenames.Length; i++)
+                    foreach (var pathString in filenames)
                     {
-                        var pathString = filenames[i];
-                        Debug.Log(pathString);
+                        Debug.Log($"删除文件路径：{pathString}");
                         File.Delete(pathString);
                     }
                 }
 
                 //移除 目录
                 Directory.Delete(aotAssembliesDstDir);
-                Debug.Log("╔======================================╗");
                 sw.Stop();
-                Debug.Log($"┃     删除目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"删除目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
                 sw = new Stopwatch();
                 sw.Start();
-                Debug.Log("╔======================================╗");
-                Debug.Log($"┃     创建目录{aotAssembliesDstDir}                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"开始创建目录{aotAssembliesDstDir}");
                 //移除之后
                 Directory.CreateDirectory(aotAssembliesDstDir);
-                Debug.Log("╔======================================╗");
                 sw.Stop();
-                Debug.Log($"┃     创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             }
             else
             {
                 //创建对应目录
                 sw = new Stopwatch();
                 sw.Start();
-                Debug.Log("╔======================================╗");
-                Debug.Log($"┃     创建目录{aotAssembliesDstDir}                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"开始创建目录{aotAssembliesDstDir}");
                 Directory.CreateDirectory(aotAssembliesDstDir);
-                Debug.Log("╔======================================╗");
                 sw.Stop();
-                Debug.Log($"┃     创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             }
 
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
-            Debug.Log("╔======================================╗");
-            Debug.Log($"┃     复制aot {aotAssembliesDstDir} 下相关dll                  ┃");
-            Debug.Log("╚======================================╝");
+            Debug.Log($"复制aot {aotAssembliesDstDir} 下相关dll");
             sw = new Stopwatch();
             sw.Start();
             foreach (var dll in AOTMetaAssemblyNames)
@@ -412,24 +399,17 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 var s = dll.Replace(".dll", "");
                 swCopyDll.Start();
                 string dllBytesPath = $"{aotAssembliesDstDir}/{s}.bytes";
-                Debug.Log("╔======================================╗");
-                Debug.Log($"┃     复制{srcDllPath}--->{dllBytesPath}                  ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"复制{srcDllPath}--->{dllBytesPath}");
                 File.Copy(srcDllPath, dllBytesPath, true);
-                Debug.Log("╔======================================╗");
                 swCopyDll.Stop();
-                Debug.Log(
-                    $"┃     复制{srcDllPath}--->{dllBytesPath}   复制成功 耗时:{swCopyDll.ElapsedMilliseconds}ms             ┃");
-                Debug.Log("╚======================================╝");
+                Debug.Log($"复制{srcDllPath}--->{dllBytesPath}   复制成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
                 Debug.Log($"[CopyAOTAssembliesToPath] copy AOT dll {srcDllPath} -> {dllBytesPath}");
             }
 
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
-            Debug.Log("╔======================================╗");
             sw.Stop();
-            Debug.Log($"┃     复制{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms                  ┃");
-            Debug.Log("╚======================================╝");
+            Debug.Log($"复制{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             //复制需要热更的dll
             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
             aotAssembliesDstDir = $"{Application.dataPath}/Game/AssetBundles/dllAb/";
@@ -445,11 +425,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 string dllBytesPath = $"{aotAssembliesDstDir}{s}.bytes";
                 Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllBytesPath:{dllBytesPath}");
                 File.Copy(dllPath, dllBytesPath, true);
-                Debug.Log("╔=================================================================╗");
                 swCopyDll.Stop();
-                Debug.Log(
-                    $"┃     复制{dllPath}--->{dllBytesPath}成功 耗时:{swCopyDll.ElapsedMilliseconds}ms                  ┃");
-                Debug.Log("╚=================================================================╝");
+                Debug.Log($"复制{dllPath}--->{dllBytesPath}成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
                 Debug.Log($"[CopyHotUpdateAssembliesToDllBytesPath] copy hotfix dll {dllPath} -> {dllBytesPath}");
             }
 
@@ -477,7 +454,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 Debug.Log(
                     $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
                 sw.Stop();
-                Debug.Log($"┃     标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
                 EditorUtility.SetDirty(obj);
             }
 
@@ -502,7 +479,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 Debug.Log(
                     $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
                 sw.Stop();
-                Debug.Log($"┃     标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
                 EditorUtility.SetDirty(obj);
             }
 
