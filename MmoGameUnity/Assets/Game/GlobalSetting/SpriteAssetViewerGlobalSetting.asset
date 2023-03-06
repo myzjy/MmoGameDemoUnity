@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Packer2Atlas_IsCheckoutTag: 1
   Packer2Atlas_IsTightPack: 0
-  Packer2Atlas_CompressionSetting: 0
+  Packer2Atlas_CompressionSetting: 1
   packer2AtlasIsAddAtlasAbString: 1
   packer2AtlasIsAddAtlasContentsAbString: 1
   atlasCheckTightPackMessageType: 0

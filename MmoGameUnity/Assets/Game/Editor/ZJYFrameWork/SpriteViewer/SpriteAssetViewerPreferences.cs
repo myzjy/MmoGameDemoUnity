@@ -1,9 +1,10 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
 namespace ZJYFrameWork.SpriteViewer
 {
-    internal static class SpriteAssetViewerPreferences
+    internal class SpriteAssetViewerPreferences: EditorWindow
     {
         public const string PreferenceSaveKey = "SpritesViewer";
 
@@ -13,10 +14,14 @@ namespace ZJYFrameWork.SpriteViewer
 
 
         [MenuItem(PreferenceCategoryKey)]
-
-        private static void PreferencesGUI()
+        private static void OnMainWindow()
         {
-            settings.Save(false);
+            SpriteAssetViewerPreferences viewerPreferences=GetWindow<SpriteAssetViewerPreferences>();
+            viewerPreferences.minSize = new Vector2(300f, 400f);
+        }
+
+        private  void OnGUI()
+        {
             EditorGUI.BeginChangeCheck();
             {
                 DrawSpritePackerSetting(settings);
@@ -26,7 +31,7 @@ namespace ZJYFrameWork.SpriteViewer
             }
             if (EditorGUI.EndChangeCheck())
             {
-              
+                settings.Save(false);
             }
         }
 

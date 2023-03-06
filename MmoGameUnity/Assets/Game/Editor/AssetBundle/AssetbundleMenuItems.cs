@@ -13,10 +13,10 @@ namespace AssetBundleEditorTools.AssetBundleSet
     [InitializeOnLoad]
     public class AssetBundleMenuItems
     {
-        
         //%:ctrl,#:shift,&:alt
         const string kSimulateMode = "Tools/AssetBundles/Switch Model/Simulate Mode";
         const string kSimulateModeLog = "Tools/AssetBundles/Switch Model/Download Log Mod";
+
         const string kEditorMode = "Tools/AssetBundles/Switch Model/Editor Mode";
         // const string kToolRunAllCheckers = "AssetBundles/Run All Checkers";
         // const string kToolBuildForCurrentSetting = "AssetBundles/Build For Current Setting";
@@ -29,17 +29,15 @@ namespace AssetBundleEditorTools.AssetBundleSet
 
         const string kCreateAssetbundleForCurrent = "Assets/AssetBundles/Create Assetbundle For Current &#z";
         const string kCreateAssetbundleForFile = "Assets/AssetBundles/SetDefault without extension Name ";
-        const string kCreateAssetbundleForChildren = "Assets/AssetBundles/Create Assetbundle For Children &#x";
+        const string kCreateAssetbundleNoeForFile = "Assets/AssetBundles/SetDefault without None Name ";
         const string kAssetDependencis = "Assets/AssetBundles/Asset Dependencis &#h";
         const string kAssetbundleAllDependencis = "Assets/AssetBundles/Assetbundle All Dependencis &#j";
         const string kAssetbundleDirectDependencis = "Assets/AssetBundles/Assetbundle Direct Dependencis &#k";
-        
+        public const string OpenABNameAssetListWindows = "Tools/AssetBundles/ABName and Named asset list";
         static AssetBundleMenuItems()
         {
-       
         }
 
-     
 
         [MenuItem(kEditorMode, false)]
         public static void ToggleEditorMode()
@@ -54,14 +52,16 @@ namespace AssetBundleEditorTools.AssetBundleSet
             Menu.SetChecked(kEditorMode, AssetBundleConfig.IsEditorMode);
             return true;
         }
+
         [MenuItem(kSimulateModeLog)]
         public static void ToggleSimulateLogMode()
         {
             if (!AssetBundleConfig.IsEditorLogMode) return;
             AssetBundleConfig.IsEditorLogMode = true;
-       
+
             // LaunchAssetBundleServer.CheckAndDoRunning();
         }
+
         [MenuItem(kSimulateMode)]
         public static void ToggleSimulateMode()
         {
@@ -76,122 +76,6 @@ namespace AssetBundleEditorTools.AssetBundleSet
             return true;
         }
 
-        // [MenuItem(kToolRunAllCheckers)]
-        // public static void ToolRunAllCheckers()
-        // {
-            // var buildTargetName = PackageUtils.GetCurPlatformName();
-            // var channelName = PackageUtils.GetCurSelectedChannel().ToString();
-            // bool checkCopy = EditorUtility.DisplayDialog("Run Checkers Warning",
-            //     $"Run Checkers for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
-            //     "Confirm", "Cancel");
-            // if (!checkCopy)
-            // {
-            //     return;
-            // }
-            //
-            // bool checkChannel = PackageUtils.BuildAssetBundlesForPerChannel(EditorUserBuildSettings.activeBuildTarget);
-            // PackageUtils.CheckAndRunAllCheckers(checkChannel, true);
-        // }
-
-        // [MenuItem(kToolBuildForCurrentSetting, false, 1100)]
-        // public static void ToolBuildForCurrentSetting()
-        // {
-            // var buildTargetName = PackageUtils.GetCurPlatformName();
-            // var channelName = PackageUtils.GetCurSelectedChannel().ToString();
-            // bool checkCopy = EditorUtility.DisplayDialog("Build AssetBundles Warning",
-                // $"Build AssetBundles for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
-                // "Confirm", "Cancel");
-            // if (!checkCopy)
-            // {
-                // return;
-            // }
-
-            // PackageTool.BuildAssetBundlesForCurrentChannel();
-        // }
-
-        // [MenuItem(kToolsCopyAssetbundles, false, 1101)]
-        // public static void ToolsCopyAssetbundles()
-        // {
-            // var buildTargetName = PackageUtils.GetCurPlatformName();
-            // var channelName = PackageUtils.GetCurSelectedChannel().ToString();
-            // bool checkCopy = EditorUtility.DisplayDialog("Copy AssetBundles To StreamingAssets Warning",
-                // $"Copy AssetBundles to streamingAssets folder for : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\nContinue ?",
-                // "Confirm", "Cancel");
-            // if (!checkCopy)
-            // {
-                // return;
-            // }
-
-            // 拷贝到StreamingAssets目录时，相当于执行大版本更新，那么沙盒目录下的数据就作废了
-            // 真机上会对比这两个目录下的App版本号来删除，编辑器下暴力一点，直接删除
-            // ToolsClearPersistentAssets();
-            // PackageUtils.CopyCurSettingAssetBundlesToStreamingAssets();
-        // }
-
-        // [MenuItem(kToolsOpenOutput, false, 1201)]
-        // public static void ToolsOpenOutput()
-        // {
-        //     string outputPath = PackageUtils.GetCurBuildSettingAssetBundleOutputPath();
-        //     EditorUtils.ExplorerFolder(outputPath);
-        // }
-        //
-        // [MenuItem(kToolsOpenPerisitentData, false, 1202)]
-        // public static void ToolsOpenPerisitentData()
-        // {
-        //     EditorUtils.ExplorerFolder(Application.persistentDataPath);
-        // }
-        //
-        // [MenuItem(kToolsClearOutput, false, 1302)]
-        // public static void ToolsClearOutput()
-        // {
-        //     var buildTargetName = PackageUtils.GetCurPlatformName();
-        //     var channelName = PackageUtils.GetCurSelectedChannel().ToString();
-        //     bool checkClear = EditorUtility.DisplayDialog("ClearOutput Warning",
-        //         $"Clear output assetbundles will force to rebuild all : \n\nplatform : {buildTargetName} \nchannel : {channelName} \n\n continue ?",
-        //         "Yes", "No");
-        //     if (!checkClear)
-        //     {
-        //         return;
-        //     }
-        //
-        //     string outputPath = PackageUtils.GetCurBuildSettingAssetBundleOutputPath();
-        //     GameUtility.SafeDeleteDir(outputPath);
-        //     UnityEngine.Debug.Log($"Clear done : {outputPath}");
-        // }
-        //
-        // [MenuItem(kToolsClearStreamingAssets, false, 1303)]
-        // public static void ToolsClearStreamingAssets()
-        // {
-        //     bool checkClear = EditorUtility.DisplayDialog("ClearStreamingAssets Warning",
-        //         "Clear streaming assets assetbundles will lost the latest player build info, continue ?",
-        //         "Yes", "No");
-        //     if (!checkClear)
-        //     {
-        //         return;
-        //     }
-        //
-        //     string outputPath = Path.Combine(Application.streamingAssetsPath, AssetBundleConfig.AssetBundlesFolderName);
-        //     GameUtility.SafeClearDir(outputPath);
-        //     AssetDatabase.Refresh();
-        //     UnityEngine.Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle streaming assets done!");
-        // }
-        //
-        // [MenuItem(kToolsClearPersistentAssets, false, 1301)]
-        // public static void ToolsClearPersistentAssets()
-        // {
-        //     bool checkClear = EditorUtility.DisplayDialog("ClearPersistentAssets Warning",
-        //         "Clear persistent assetbundles will force to update all assetbundles that difference with streaming assets assetbundles, continue ?",
-        //         "Yes", "No");
-        //     if (!checkClear)
-        //     {
-        //         return;
-        //     }
-        //
-        //     string outputPath = Path.Combine(Application.persistentDataPath, AssetBundleConfig.AssetBundlesFolderName);
-        //     GameUtility.SafeDeleteDir(outputPath);
-        //     UnityEngine.Debug.Log($"Clear {PackageUtils.GetCurPlatformName()} assetbundle persistent assets done!");
-        // }
-
         [MenuItem(kCreateAssetbundleForFile)]
         public static void SetDefaultWithoutExtensionName()
         {
@@ -202,6 +86,15 @@ namespace AssetBundleEditorTools.AssetBundleSet
             AssetBundleEditorHelper.CreaeteAssetBundleForFile(selectObjs);
         }
 
+        [MenuItem(kCreateAssetbundleNoeForFile)]
+        public static void SetDefaultWithoutNoneExtensionName()
+        {
+            //有没有选择
+            if (!AssetBundleEditorHelper.HasValidSelection())
+                return;
+            var selectObjs = Selection.objects;
+            AssetBundleEditorHelper.CreaeteAssetBundleForFile(selectObjs);
+        }
         //
         // [MenuItem(kCreateAssetbundleForCurrent)]
         // public static void CreateAssetbundleForCurrent()
