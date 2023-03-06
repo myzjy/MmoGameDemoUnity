@@ -34,6 +34,8 @@ namespace AssetBundleEditorTools.AssetBundleSet
         const string kAssetbundleAllDependencis = "Assets/AssetBundles/Assetbundle All Dependencis &#j";
         const string kAssetbundleDirectDependencis = "Assets/AssetBundles/Assetbundle Direct Dependencis &#k";
         public const string OpenABNameAssetListWindows = "Tools/AssetBundles/ABName and Named asset list";
+        public const string FilterConsoleWindowMenu = "Tools/Windows/Console %&l";
+        public const string FilterConsoleEditorMenu = "Window/Filter Console";
         static AssetBundleMenuItems()
         {
         }
