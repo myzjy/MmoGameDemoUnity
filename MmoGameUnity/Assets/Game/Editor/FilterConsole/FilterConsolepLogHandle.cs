@@ -43,16 +43,16 @@ namespace FilterConsole
 
 			// 从下往上推的类型
 			{
-				if (logEntryList.Count >= LogEntryCount)
+				if (LOGEntryList.Count >= LogEntryCount)
 				{
-					logEntryList.RemoveAt(0);
+					LOGEntryList.RemoveAt(0);
 				}
-				logEntryList.Add(logEntry);
+				LOGEntryList.Add(logEntry);
 
 				// 随着滚动幅度的变动，追到最下端
 				if (Prefs.GetBool(PrefsKey.AutoScroll))
 				{
-					logScrollPosition.y = float.MaxValue;
+					_logScrollPosition.y = float.MaxValue;
 				}
 			}
 

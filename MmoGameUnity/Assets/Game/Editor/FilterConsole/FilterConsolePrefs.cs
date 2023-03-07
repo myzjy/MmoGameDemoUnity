@@ -1,12 +1,13 @@
 using System;
 using UnityEditor;
 
+// ReSharper disable once CheckNamespace
 namespace FilterConsole
 {
    	/// <summary>
 	/// Prefs相关隔离处
 	/// </summary>
-	public partial class FilterConsoleWindow
+	public abstract partial class FilterConsoleWindow
 	{
 
 		// 用于EditorPrefs的key组
@@ -30,13 +31,13 @@ namespace FilterConsole
 		/// <summary>
 		/// 键和default值的定义
 		/// </summary>
-		public class PrefsKey
+		public abstract class PrefsKey
 		{
 			private const string PrefsPrefix = "ZJYEditor.FilterConsole.";
 
 			#region bool
 
-			public static Key<bool>[] BoolKeys = {
+			public static readonly Key<bool>[] BoolKeys = {
 				new Key<bool>(BoolPrefsKeyName.DebugHeader.ToString(), "调试按钮", false),
 
 				new Key<bool>(BoolPrefsKeyName.DisplayLog.ToString(), "Log表示", true),
@@ -50,14 +51,14 @@ namespace FilterConsole
 				new Key<bool>(BoolPrefsKeyName.FoldDetail.ToString(), "窗口下部的快捷显示", true),
 			};
 
-			public static string DebugHeader { get { return BoolKeys[(int) BoolPrefsKeyName.DebugHeader].KeyName; } }
+			public static string DebugHeader => BoolKeys[(int) BoolPrefsKeyName.DebugHeader].KeyName;
 
-			public static string DisplayLog { get { return BoolKeys[(int) BoolPrefsKeyName.DisplayLog].KeyName; } }
-			public static string DisplayWarning { get { return BoolKeys[(int) BoolPrefsKeyName.DisplayWarning].KeyName; } }
-			public static string DisplayError { get { return BoolKeys[(int) BoolPrefsKeyName.DisplayError].KeyName; } }
+			public static string DisplayLog => BoolKeys[(int) BoolPrefsKeyName.DisplayLog].KeyName;
+			public static string DisplayWarning => BoolKeys[(int) BoolPrefsKeyName.DisplayWarning].KeyName;
+			public static string DisplayError => BoolKeys[(int) BoolPrefsKeyName.DisplayError].KeyName;
 
-			public static string DisplayDate { get { return BoolKeys[(int) BoolPrefsKeyName.DisplayDate].KeyName; } }
-			public static string AutoScroll { get { return BoolKeys[(int) BoolPrefsKeyName.AutoScroll].KeyName; } }
+			public static string DisplayDate => BoolKeys[(int) BoolPrefsKeyName.DisplayDate].KeyName;
+			public static string AutoScroll => BoolKeys[(int) BoolPrefsKeyName.AutoScroll].KeyName;
 
 			public static string IncludingStacktrace { get { return BoolKeys[(int) BoolPrefsKeyName.IncludingStacktrace].KeyName; } }
 
