@@ -4,12 +4,12 @@ using UnityEditor;
 namespace FilterConsole
 {
    	/// <summary>
-	/// Prefs関連の隔離先
+	/// Prefs相关隔离处
 	/// </summary>
 	public partial class FilterConsoleWindow
 	{
 
-		// EditorPrefs用のkey群
+		// 用于EditorPrefs的key组
 		public enum BoolPrefsKeyName
 		{
 			DebugHeader = 0,
@@ -28,26 +28,26 @@ namespace FilterConsole
 		}
 
 		/// <summary>
-		/// キーとdefault値の定義
+		/// 键和default值的定义
 		/// </summary>
 		public class PrefsKey
 		{
-			private const string PrefsPrefix = "ColoplEditor.FilterConsole.";
+			private const string PrefsPrefix = "ZJYEditor.FilterConsole.";
 
 			#region bool
 
 			public static Key<bool>[] BoolKeys = {
-				new Key<bool>(BoolPrefsKeyName.DebugHeader.ToString(), "デバッグボタン", false),
+				new Key<bool>(BoolPrefsKeyName.DebugHeader.ToString(), "调试按钮", false),
 
 				new Key<bool>(BoolPrefsKeyName.DisplayLog.ToString(), "Log表示", true),
 				new Key<bool>(BoolPrefsKeyName.DisplayWarning.ToString(), "Warning表示", true),
 				new Key<bool>(BoolPrefsKeyName.DisplayError.ToString(), "Error表示", true),
 
-				new Key<bool>(BoolPrefsKeyName.DisplayDate.ToString(), "時刻表示", false),
-				new Key<bool>(BoolPrefsKeyName.AutoScroll.ToString(), "自動スクロール", true),
-				new Key<bool>(BoolPrefsKeyName.IncludingStacktrace.ToString(), "StackTraceもフィルタのチェックに含む", false),
+				new Key<bool>(BoolPrefsKeyName.DisplayDate.ToString(), "时刻表示", false),
+				new Key<bool>(BoolPrefsKeyName.AutoScroll.ToString(), "自动滚动", true),
+				new Key<bool>(BoolPrefsKeyName.IncludingStacktrace.ToString(), "StackTrace也包含在过滤器的检查中", false),
 
-				new Key<bool>(BoolPrefsKeyName.FoldDetail.ToString(), "ウィンドウ下部の短縮表示", true),
+				new Key<bool>(BoolPrefsKeyName.FoldDetail.ToString(), "窗口下部的快捷显示", true),
 			};
 
 			public static string DebugHeader { get { return BoolKeys[(int) BoolPrefsKeyName.DebugHeader].KeyName; } }
@@ -91,7 +91,7 @@ namespace FilterConsole
 		}
 
 		/// <summary>
-		/// 値へのアクセス役
+		/// 访问值的角色
 		/// </summary>
 		public static class Prefs
 		{

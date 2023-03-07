@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FilterConsole
 {
    	/// <summary>
-	/// ログ関連
+	/// 日志关联
 	/// </summary>
 	public partial class FilterConsoleWindow
 	{
@@ -32,7 +32,7 @@ namespace FilterConsole
 		{
 			LogEntry logEntry = new LogEntry(logString, stackTrace, type);
 
-			// 上から差し込むタイプ
+			// 从上面插入的类型
 			{
 				// if (logEntryList.Count >= LOG_ENTRY_COUNT)
 				// {
@@ -41,7 +41,7 @@ namespace FilterConsole
 				// logEntryList.Insert(0, logEntry);
 			}
 
-			// 下から押し上げるタイプ
+			// 从下往上推的类型
 			{
 				if (logEntryList.Count >= LogEntryCount)
 				{
@@ -49,7 +49,7 @@ namespace FilterConsole
 				}
 				logEntryList.Add(logEntry);
 
-				// スクロール幅の変動タイミングに合わせて下端に追いやる
+				// 随着滚动幅度的变动，追到最下端
 				if (Prefs.GetBool(PrefsKey.AutoScroll))
 				{
 					logScrollPosition.y = float.MaxValue;
@@ -69,7 +69,7 @@ namespace FilterConsole
 		}
 
 		/// <summary>
-		/// Log情報の1行
+		/// Log信息的一行
 		/// </summary>
 		public class LogEntry
 		{
@@ -79,7 +79,7 @@ namespace FilterConsole
 				get { return message; }
 			}
 
-			// 描画用：GUIで描画が許される程度の長さに抑えたメッセージ
+			// 绘图用:控制在GUI允许绘图程度的长度的信息
 			private string messageShort;
 			public string MessageShort
 			{
@@ -164,7 +164,7 @@ namespace FilterConsole
 						break;
 				}
 
-				// 使用時には取得だけの負荷で済ませるため、生成時に全部キャッシュ
+				// 使用时只需取得的负荷，生成时全部缓存
 				messageShort = TrimLongMessage(message);
 				messageLower = !string.IsNullOrEmpty(message) ? message.ToLower() : "";
 				stackTraceLower = (!string.IsNullOrEmpty(this.stackTrace) ? this.stackTrace.ToLower() : "");
@@ -182,8 +182,8 @@ namespace FilterConsole
 					return true;
 				}
 
-				// 悩んだ
-				// けど 本文に含まれない物が並ぶと紛らわしくなるのでオプションで
+				// 烦恼了
+				// 但是不包含在正文里的东西就会混淆，所以可以选择
 				if (Prefs.GetBool(PrefsKey.IncludingStacktrace))
 				{
 					if (!string.IsNullOrEmpty(stackTraceLower) && stackTraceLower.Contains(filterText.ToLower()))

@@ -25,7 +25,7 @@ namespace FilterConsole
 				drawSplitterRect.y = 0f;
 			}
 
-			// ウィンドウサイズの変化についていかせるために見張る
+			// 监视窗口大小的变化
 			drawSplitterRect.width = position.width;
 			drawSplitterRect.height = position.height;
 
@@ -46,15 +46,15 @@ namespace FilterConsole
 		{
 			using(new GUILayout.AreaScope(rect))
 			{
-				// デバッグボタン
+				// 调试按钮
 				DrawDebug();
 				EditorGUILayout.Space();
 
-				// ツールバー
+				// 工具栏
 				DrawHeader();
 				EditorGUILayout.Space();
 
-				// ログのスクロールビュー
+				// 滚动浏览日志
 				DrawLogList(Rect.zero);
 			}
 		}
@@ -63,7 +63,7 @@ namespace FilterConsole
 		{
 			using(new GUILayout.AreaScope(rect))
 			{
-				// 選択したログ表示
+				// 所选择的记录显示
 				DrawDetail(rect);
 			}
 
@@ -72,8 +72,8 @@ namespace FilterConsole
 
 		public void AddItemsToMenu(GenericMenu menu)
 		{
-			string optionPrefix = "オプション";
-			menu.AddItem(new GUIContent(optionPrefix + "/設定リセット"), false, () => Prefs.Delete());
+			string optionPrefix = "选项";
+			menu.AddItem(new GUIContent($"{optionPrefix}/重置设定"), false, () => Prefs.Delete());
 
 			foreach (var key in PrefsKey.BoolKeys)
 			{
@@ -82,14 +82,14 @@ namespace FilterConsole
 				{
 					continue;
 				}
-				menu.AddItem(new GUIContent(optionPrefix + "/" + key.MenuName), Prefs.GetBool(keyName), () =>
+				menu.AddItem(new GUIContent($"{optionPrefix}/{key.MenuName}"), Prefs.GetBool(keyName), () =>
 				{
 					Prefs.SetBool(keyName, !Prefs.GetBool(keyName));
 				});
 			}
 		}
 
-		// 許容できる幅がわからない
+		// 不知道可以接受的范围
 		private const int LogEntryCount = 10000;
 		private static List<LogEntry> logEntryList = new List<LogEntry>(LogEntryCount);
 
@@ -125,7 +125,7 @@ namespace FilterConsole
 
 		private System.Text.RegularExpressions.Regex r = null;
 
-		// UIへのフォーカスを剥がす
+		// 剥离UI的焦点
 		private void ResetGUIFocus()
 		{
 			GUI.FocusControl("");
@@ -133,7 +133,7 @@ namespace FilterConsole
 			Repaint();
 		}
 
-		#region メイン機能と描画
+		#region 主要功能和绘图
 
 		private void DrawDebug()
 		{
@@ -224,7 +224,7 @@ namespace FilterConsole
 
 			GUILayout.FlexibleSpace();
 
-			// ここから右側
+			// 从这里往右
 
 			// @Date
 			TogglePrefs(PrefsKey.DisplayDate, TimeIcon, toolbarButtonStyle, GUILayout.Width(40));
@@ -344,7 +344,7 @@ namespace FilterConsole
 			GUI.backgroundColor = Color.white;
 		}
 
-		// ログ単位で、表示可否のチェック
+		// 以记录为单位，确认是否显示
 		private bool AllowDisplay(LogEntry logEntry)
 		{
 			if (!isDisplayLog)
@@ -379,7 +379,7 @@ namespace FilterConsole
 
 		const float DetailAreaHeight = 200f;
 
-		// 選択したログの表示
+		// 所选择的日志的显示
 		private void DrawDetail(Rect rect)
 		{
 			GUI.color = Color.white;
@@ -438,7 +438,7 @@ namespace FilterConsole
 			}
 		}
 
-		// 数行を一つのstringにまとめる
+		// 把几行总结成一个string
 		private List<string> LinesToMultilineGroup(string[] lines)
 		{
 			List<string> msgs = new List<string>();
@@ -482,7 +482,7 @@ namespace FilterConsole
 			menu.ShowAsContext();
 		}
 
-		// クリップボードもの
+		// 剪贴板
 		private void AddCopyItem(GenericMenu menu)
 		{
 			menu.AddItem(new GUIContent("Copy/All"), false, () =>
@@ -515,7 +515,7 @@ namespace FilterConsole
 			});
 		}
 
-		// ジャンプもの
+		// 跳跃者 
 		private void AddJumpItem(GenericMenu menu)
 		{
 			int addScriptCount = 0;
@@ -549,7 +549,7 @@ namespace FilterConsole
 			}
 
 			// Assets/Script.cs(144,3): error CS0000: 
-			// みたいなエラー時のメッセージに対応
+			// 这样的错误时的信息对应
 			if (!string.IsNullOrEmpty(selectLog.Message))
 			{
 				string path;
@@ -575,7 +575,7 @@ namespace FilterConsole
 			}
 		}
 
-		// StackTraceからパスを解釈する
+		// 从StackTrace解释路径
 		private void MessageToScriptPath(string source, out string path, out int lineNum)
 		{
 			string[] s = source.Split(':');
@@ -593,7 +593,7 @@ namespace FilterConsole
 			}
 		}
 
-		// Message本文からパスを解釈する
+		// Message从正文解释路径
 		private void MessageToScriptPathRegex(string source, out string path, out int lineNum)
 		{
 			if (r == null)
@@ -618,7 +618,7 @@ namespace FilterConsole
 			}
 		}
 
-		// ご利用のエディタで開くよ
+		// 用您的编辑器打开。
 		private void OpenScript(string path, int lineNum)
 		{
 			var script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
@@ -629,7 +629,7 @@ namespace FilterConsole
 			AssetDatabase.OpenAsset(script, lineNum);
 		}
 
-		// スクリプトを開くか、Projectビューでフォーカスするか
+		// 是打开脚本，还是聚焦在Project视图中
 		private void ChoiceScript(LogEntry logEntry, bool openScript, bool pingObject)
 		{
 			string path;
@@ -654,11 +654,6 @@ namespace FilterConsole
 					{
 						return;
 					}
-					// ラッパーはお断り
-					if (path.Contains("Assets/Plugins/Colopl/Libs/Debug.cs"))
-					{
-						continue;
-					}
 
 					if (openScript)
 					{
@@ -672,7 +667,7 @@ namespace FilterConsole
 							EditorGUIUtility.PingObject(s);
 						}
 					}
-					// パスが認識できたら終了
+					// 识别路径就结束了
 					return;
 				}
 			}
