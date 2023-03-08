@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2137,46 +2137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c30b56ab6ef1a43b84413ce9a331fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  show: 0
-  UserData: 
-  fps: 0
-  fpsText: 
-  images:
-    clearImage: {fileID: 2800000, guid: d2cbeffdf6cfb6d40b8b36dcf2cfe630, type: 3}
-    collapseImage: {fileID: 2800000, guid: adf7dad07ca692744ba35fba0be61d63, type: 3}
-    clearOnNewSceneImage: {fileID: 2800000, guid: aa0c6c8a80595364b891a1256ca072f6,
-      type: 3}
-    showTimeImage: {fileID: 2800000, guid: 6948b70287ecbf24c828af0a9a6d6e26, type: 3}
-    showSceneImage: {fileID: 2800000, guid: 62ab634df5c0d1842ae320db203fcb21, type: 3}
-    userImage: {fileID: 2800000, guid: fd8ddfec68f8e5443ad5b53a811c00d5, type: 3}
-    showMemoryImage: {fileID: 2800000, guid: 31cfd58e91274274b83a3f424bc48dd6, type: 3}
-    softwareImage: {fileID: 2800000, guid: 05237c9f2a393ba4ea72c54b8d3d413f, type: 3}
-    dateImage: {fileID: 2800000, guid: 37e5404546ec4454994ff2c0f172c424, type: 3}
-    showFpsImage: {fileID: 2800000, guid: e2e33489263ed7a40a24f030fe489118, type: 3}
-    infoImage: {fileID: 2800000, guid: 149599d358010054ab7f0b666884324f, type: 3}
-    saveLogsImage: {fileID: 2800000, guid: 398e430791a45cc46b031393f0a19562, type: 3}
-    searchImage: {fileID: 2800000, guid: 8fc939fb66c620f49952d2da2fd1a92c, type: 3}
-    copyImage: {fileID: 2800000, guid: e45b7ca511c9b6c458f4dee0521b4f54, type: 3}
-    closeImage: {fileID: 2800000, guid: 0b6fa2a608b649f409cdb4ee670639e7, type: 3}
-    buildFromImage: {fileID: 2800000, guid: c2f61b9f2735b2f4aaddad24243a4d69, type: 3}
-    systemInfoImage: {fileID: 2800000, guid: f7968a59bcc307b42b0dc6979e0d17c2, type: 3}
-    graphicsInfoImage: {fileID: 2800000, guid: b91d8d791528d7845b0f80cadf4c825f, type: 3}
-    backImage: {fileID: 2800000, guid: e9767e0779e592341ba99c34ea1f5962, type: 3}
-    logImage: {fileID: 2800000, guid: 8e8bbfbc3b52b094ea85d96ccbd01dee, type: 3}
-    warningImage: {fileID: 2800000, guid: 823ed79b59de17d47af85f2811386629, type: 3}
-    errorImage: {fileID: 2800000, guid: 7ffb2b00a94417649a327f387c87ea95, type: 3}
-    barImage: {fileID: 2800000, guid: 501b6de80b6367448a528ab85ebb544b, type: 3}
-    button_activeImage: {fileID: 2800000, guid: 3adfb41c6619931449738cd3f89de625,
-      type: 3}
-    even_logImage: {fileID: 2800000, guid: cc0471e94f51fd044992475dd7a395ac, type: 3}
-    odd_logImage: {fileID: 2800000, guid: acd3e52f4a4ddee45a012f38657ed003, type: 3}
-    selectedImage: {fileID: 2800000, guid: 4c937402c8f289541a3e4d0ca3c3f59f, type: 3}
-    reporterScrollerSkin: {fileID: 11400000, guid: 4c9b54ad3aebfc34abac904289861f77,
-      type: 2}
-  size: {x: 32, y: 32}
-  maxSize: 20
-  numOfCircleToShow: 1
-  Initialized: 0
 --- !u!4 &1400894738
 Transform:
   m_ObjectHideFlags: 0
@@ -2519,8 +2479,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6854297750889315737, guid: d71c57c43eca947f586ed23825960ceb,
-    type: 3}
+  m_Sprite: {fileID: -6854297750889315737, guid: d71c57c43eca947f586ed23825960ceb, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2645,14 +2604,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 1
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_LightCookieSize: {x: 1, y: 1}
-  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &1633028348
 GameObject:
   m_ObjectHideFlags: 0
@@ -3173,8 +3124,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8406978013554369639, guid: 1a8266829da224852aa57ef1f7085be0,
-    type: 3}
+  m_Sprite: {fileID: -8406978013554369639, guid: 1a8266829da224852aa57ef1f7085be0, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1

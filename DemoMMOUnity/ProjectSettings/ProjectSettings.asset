@@ -820,7 +820,8 @@ PlayerSettings:
     Standalone: DEVELOP_BUILD;BESTHTTP_DISABLE_SIGNALR;BESTHTTP_DISABLE_SOCKETIO;BESTHTTP_DISABLE_UNITY_FORM;ENABLE_LOG;ASSET_BUNDLE_DEVELOP_EDITOR;API_TEST
   additionalCompilerArguments: {}
   platformArchitecture: {}
-  scriptingBackend: {}
+  scriptingBackend:
+    Standalone: 1
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}
@@ -831,7 +832,7 @@ PlayerSettings:
   selectedPlatform: 0
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
-  gcIncremental: 1
+  gcIncremental: 0
   assemblyVersionValidation: 1
   gcWBarrierValidation: 0
   apiCompatibilityLevelPerPlatform: {}
@@ -905,7 +906,7 @@ PlayerSettings:
   luminVersion:
     m_VersionCode: 1
     m_VersionName: 
-  apiCompatibilityLevel: 6
+  apiCompatibilityLevel: 3
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
   cloudProjectId: 
