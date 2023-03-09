@@ -1,0 +1,195 @@
+fileFormatVersion: 2
+guid: 79bc64237bf784844a1893ea01d51851
+ModelImporter:
+  serializedVersion: 26
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C1_Material_Hair
+    second: {fileID: 2100000, guid: eb8889a5954f50e429afdba92f1ef110, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Body
+    second: {fileID: 2100000, guid: 0d7539b2aee59a348b5299f2a1125364, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Claw
+    second: {fileID: 2100000, guid: 51ef9a3b0a231254fbaf076f4267cfb7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Cloth
+    second: {fileID: 2100000, guid: 0d7539b2aee59a348b5299f2a1125364, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_FlowerEye
+    second: {fileID: 2100000, guid: bbe48d0cfb3a2b64aad2df8965e98319, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Hair
+    second: {fileID: 2100000, guid: 5cd2ff0e09bcad8419359d45a44296bf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Orange
+    second: {fileID: 2100000, guid: 0d7539b2aee59a348b5299f2a1125364, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_B_Material_Trail
+    second: {fileID: 2100000, guid: 57ac35af236f89e48a007dece83e0aaf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_W_Material_Body
+    second: {fileID: 2100000, guid: b114469e35a83e34ea08f501a6155ff0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_W_Material_Cloth
+    second: {fileID: 2100000, guid: b114469e35a83e34ea08f501a6155ff0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_W_Material_Orange
+    second: {fileID: 2100000, guid: b114469e35a83e34ea08f501a6155ff0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_C2_W_Material_White_Alpha
+    second: {fileID: 2100000, guid: 3297f965e4972464ba947a35d504c401, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Avatar_Seele_Face
+    second: {fileID: 2100000, guid: 742e0905f58be084089f53a280c3accf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: New_Avatar_Seele_LeftEye
+    second: {fileID: 2100000, guid: 59e9d42645198b54892d7e889440e480, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: New_Avatar_Seele_Mouth
+    second: {fileID: 2100000, guid: 41f9a5c575a718640bb3361fb62fb73a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: New_Avatar_Seele_RightEye
+    second: {fileID: 2100000, guid: 59e9d42645198b54892d7e889440e480, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stigmata1
+    second: {fileID: 2100000, guid: b3234e436f29c6a46b5764819dbda69a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stigmata2
+    second: {fileID: 2100000, guid: 540d141f01f81d74894b3e2d3be2291a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stigmata3
+    second: {fileID: 2100000, guid: e05b18938b6539a42950e484656834a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: StigmataSeele
+    second: {fileID: 2100000, guid: 897fdca13021a4945bd8697e2a3e9b3b, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 1
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
