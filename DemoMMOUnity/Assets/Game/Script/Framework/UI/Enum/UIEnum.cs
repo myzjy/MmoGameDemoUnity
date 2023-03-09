@@ -17,7 +17,14 @@
 
     public enum UISortType : int
     {
+        /// <summary>
+        /// 将变换移动到本地变换列表的开头
+        /// </summary>
         First,
+
+        /// <summary>
+        ///将变换移动到本地变换列表的末尾
+        /// </summary>
         Last
     }
 }

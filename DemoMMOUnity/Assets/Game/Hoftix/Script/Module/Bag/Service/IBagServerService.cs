@@ -1,5 +1,4 @@
 ﻿using ZJYFrameWork.Hotfix.UI.BagUI;
-using ZJYFrameWork.UI.BagUI;
 
 namespace ZJYFrameWork.Hotfix.Script.Module.Bag.Service
 {

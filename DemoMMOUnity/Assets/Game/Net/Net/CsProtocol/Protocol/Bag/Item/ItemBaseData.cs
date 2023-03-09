@@ -10,12 +10,35 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item
 {
     public class ItemBaseData : Model, IPacket, IReference
     {
+        /* 道具id */
         public int id;
+
+        /** 道具名 **/
         public string name;
+
+        /// <summary>
+        /// icon 资源名
+        /// </summary>
         public string icon;
+
+        /// <summary>
+        /// 最小个数
+        /// </summary>
         public int minNum;
+
+        /// <summary>
+        /// 最大数量
+        /// </summary>
         public int maxNum;
+
+        /// <summary>
+        /// 道具类型
+        /// </summary>
         public int type;
+
+        /// <summary>
+        /// 介绍 是一个 字符组合，需要拆分
+        /// </summary>
         public string des;
 
         public static ItemBaseData ValueOf()
@@ -60,7 +83,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item
 
         public override void Unpack(byte[] bytes)
         {
-            ItemBaseDataSerializer.Unpack(this,bytes);
+            ItemBaseDataSerializer.Unpack(this, bytes);
         }
     }
 
@@ -195,7 +218,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item
                             }
                                 break;
                         }
-                        
                     }
                 }
                 else
@@ -205,7 +227,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.LogError(e);
+#endif
                 throw;
             }
         }

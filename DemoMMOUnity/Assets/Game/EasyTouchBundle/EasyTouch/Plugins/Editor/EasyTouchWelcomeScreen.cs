@@ -6,7 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System;
 
-[InitializeOnLoad]
+// [InitializeOnLoad]
 public class EasyTouchWelcomeScreen : EditorWindow {
 
 	private const string VERSION = "5.0.0";
@@ -26,12 +26,12 @@ public class EasyTouchWelcomeScreen : EditorWindow {
 	private static Texture jsIcon;
 	private static Texture playmakerIcon;
 	private static Texture topicIcon;
-
+	private static EasyTouchWelcomeScreen windons;
 
 	[MenuItem("Tools/Easy Touch/Welcome Screen", false, 0)]
 	[MenuItem("Window/Easy Touch/Welcome Screen", false, 0)]
 	public static void OpenWelcomeWindow(){
-		GetWindow<EasyTouchWelcomeScreen>(true);
+		windons=GetWindow<EasyTouchWelcomeScreen>(true);
 	}
 
 	[MenuItem ("Tools/Easy Touch/Folder Structure/Switch to JS", false, 100)]

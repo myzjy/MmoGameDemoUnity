@@ -113,11 +113,13 @@ namespace ZJYFrameWork.UISerializable
             {
                 case UISortType.First:
                 {
+                    //将变换移动到本地变换列表的开头
                     selfView.GetSelfUIView.GetTransform.SetAsFirstSibling();
                 }
                     break;
                 case UISortType.Last:
                 {
+                    //将变换移动到本地变换列表的末尾
                     selfView.GetSelfUIView.GetTransform.SetAsLastSibling();
                 }
                     break;

@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
