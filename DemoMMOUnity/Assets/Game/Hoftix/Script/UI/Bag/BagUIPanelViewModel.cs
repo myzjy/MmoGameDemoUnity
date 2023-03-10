@@ -34,12 +34,31 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         public override string[] Notification()
         {
-            return base.Notification();
+            return new[]
+            {
+                UINotifEnum.OpenBagUiPanel,
+                UINotifEnum.CLOSE_BAGUI_PAENL
+            };
         }
 
         public override void NotificationHandler(UINotification _eventNotification)
         {
-            base.NotificationHandler(_eventNotification);
+            switch (_eventNotification.GetEventName)
+            {
+                case UINotifEnum.OpenBagUiPanel:
+                {
+                    InstanceOrReuse();
+                }
+                    break;
+                case UINotifEnum.CLOSE_BAGUI_PAENL:
+                {
+                    if (selfView != null && selfView.GetSelfUIView != null)
+                    {
+                        selfView.OnHide();
+                    }
+                }
+                    break;
+            }
         }
     }
 }
