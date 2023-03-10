@@ -36,7 +36,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             viewPanel.BagButton.SetListener(() =>
             {
                 //背包界面
-                // UIComponentManager.DispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
+                UIComponentManager.DispatchEvent(UINotifEnum.OpenBagUiPanel);
             });
             // SpringContext.GetBean<>()
             viewPanel.GMUIController.Build();
