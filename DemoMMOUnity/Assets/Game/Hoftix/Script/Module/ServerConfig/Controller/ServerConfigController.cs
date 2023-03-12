@@ -13,6 +13,7 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
         [PacketReceiver]
         public void AtServerConfigResponse(ServerConfigResponse response)
         {
+            //获取
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
             //设置为1
             SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);

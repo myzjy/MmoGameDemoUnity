@@ -13,7 +13,8 @@ namespace ZJYFrameWork.Hoftix.Script.Bag.Controller
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[BagItemController] [AtAllBagItemResponse] 协议号:{response.ProtocolId()}");
 #endif
-            //
+            //发过来消息就代表UI打开了
+            
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
+using Object = UnityEngine.Object;
 
 namespace GameDataEditor.Common
 {
@@ -433,7 +435,6 @@ namespace GameDataEditor.Common
                         {
                             settedCount++;
                             Debug.Log($"filePath:{filePath}");
-
                         }
 
                         continue;
@@ -669,14 +670,14 @@ namespace GameDataEditor.Common
     public class SpriteUtilEditor : Editor
     {
         private static readonly string AssetUIDataPath = $"{Application.dataPath}/Game/UI/";
-        private static string startWith = "Assets/Game/UI";
+        private static string startWith = "Assets/Game/AssetBundles/UI/Sprites";
 
         private const string IgnoreDirString = "Editor;Plugins;Android;IOS;Ios";
 
         //特定文件夹
         private const string SpriteDirString = "";
         private static string extString = "t:Texture";
-        private const string SPRITE_SETTINGS_EDITOR = "Tool/GameEditor/SpriteDefault";
+        private const string SPRITE_SETTINGS_EDITOR = "Tools/GameEditor/SpriteDefault";
         private static int SettedCount = 0;
 
         private TextureImporterSettings SpriteTextureImporterSettings = new TextureImporterSettings()
@@ -786,6 +787,8 @@ namespace GameDataEditor.Common
                             androidSettings = AndroidETC2Setting;
                         }
 
+                        _testureImp.textureType = TextureImporterType.Sprite;
+                        _testureImp.spriteImportMode = SpriteImportMode.Single;
                         androidSettings.maxTextureSize = _testureImp.maxTextureSize;
                         var setting = _testureImp.GetPlatformTextureSettings("Android");
                         //进行设置
@@ -796,6 +799,7 @@ namespace GameDataEditor.Common
                         }
                         else
                         {
+                            
                             _testureImp.SetPlatformTextureSettings(androidSettings);
 
                             _testureImp.SaveAndReimport();
@@ -810,6 +814,8 @@ namespace GameDataEditor.Common
                     {
                         TextureImporter _testureImp = (TextureImporter)AssetImporter.GetAtPath(file);
                         TextureImporterPlatformSettings IOSSetting = IOSASTC4Setting;
+                        _testureImp.textureType = TextureImporterType.Sprite;
+                        _testureImp.spriteImportMode = SpriteImportMode.Single;
                         IOSSetting.maxTextureSize = _testureImp.maxTextureSize;
 
                         var setting = _testureImp.GetPlatformTextureSettings("IOS");
@@ -871,6 +877,97 @@ namespace GameDataEditor.Common
                     paths.Add(filePath);
                 }
             }
+        }
+
+
+        [MenuItem("Assets/SpriteSlicer/SpriteSlice")]
+        public static void SpliceSprite()
+        {
+            Texture2D inputImage = Selection.activeObject as Texture2D;
+            Texture2D outputImage = GetChildTexture(inputImage);
+            Debug.Log(outputImage);
+            Sprite outputImage2 = GetChildSprite(inputImage);
+            Debug.Log(outputImage2);
+        }
+
+        private static Sprite GetChildSprite(Object image)
+        {
+            string rootPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(image)); //获取路径名称  
+            string path = $"{rootPath}/{image.name}.png"; //图片路径名称
+
+            UnityEngine.Object[] sprites = AssetDatabase.LoadAllAssetsAtPath(path);
+            //Object[] sprites = Resources.LoadAll<Sprite>(path);
+
+
+            Sprite outputSprite = (Sprite)sprites[^1];
+
+            Debug.Log(outputSprite.name);
+
+            return outputSprite;
+        }
+
+        private static Texture2D GetChildTexture(Texture2D image)
+        {
+            /*
+             * 存放所有转化的png 路径
+             */
+            var paths = new List<string>();
+
+            /*
+             * 获取路径
+             */
+            string rootPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(image));
+            /*
+             * 图片路径名称
+             */
+            string path = $"{rootPath}/{image.name}.png";
+
+            /*
+             * 获取图片入口
+             */
+            TextureImporter textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+
+            AssetDatabase.CreateFolder(rootPath, image.name);
+            if (textureImporter != null)
+            {
+                foreach (SpriteMetaData metaData in textureImporter.spritesheet) //遍历小图集  
+                {
+                    Texture2D myImage = new Texture2D((int)metaData.rect.width, (int)metaData.rect.height);
+
+
+                    //abc_0:(x:2.00, y:400.00, width:103.00, height:112.00)  
+                    for (int y = (int)metaData.rect.y; y < metaData.rect.y + metaData.rect.height; y++) //Y轴像素  
+                    {
+                        for (int x = (int)metaData.rect.x; x < metaData.rect.x + metaData.rect.width; x++)
+                        {
+                            myImage.SetPixel(x - (int)metaData.rect.x, y - (int)metaData.rect.y, image.GetPixel(x, y));
+                        }
+                    }
+
+
+                    //转换纹理到EncodeToPNG兼容格式  
+                    if (myImage.format != TextureFormat.ARGB32 && myImage.format != TextureFormat.RGB24)
+                    {
+                        Texture2D newTexture = new Texture2D(myImage.width, myImage.height);
+                        newTexture.SetPixels(myImage.GetPixels(0), 0);
+                        myImage = newTexture;
+                    }
+
+                    var pngData = myImage.EncodeToPNG();
+                    string outputPath = $"{rootPath}/{image.name}/{metaData.name}.png"; //子图片输出路径
+                    File.WriteAllBytes(outputPath, pngData); //输出子PNG图片
+
+                    paths.Add(outputPath);
+
+                    // 刷新资源窗口界面  
+                    AssetDatabase.Refresh();
+                }
+            }
+
+            Texture2D outputImage = AssetDatabase.LoadAssetAtPath<Texture2D>(paths[^1]);
+            Debug.Log(outputImage.name);
+
+            return outputImage;
         }
     }
 }

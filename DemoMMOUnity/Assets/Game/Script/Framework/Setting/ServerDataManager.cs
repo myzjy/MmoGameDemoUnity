@@ -55,7 +55,7 @@ namespace ZJYFrameWork.Setting
             RegisterPartClientCacheData.AffirmPassword = affirmPassword;
         }
 
-        public void SetItemBaseDataList(List<ItemBaseData> itemBaseList)
+        public void SetItemBaseDataList(IEnumerable<ItemBaseData> itemBaseList)
         {
             _itemBaseDataList = new List<ItemBaseData>();
             _itemBaseDataList.AddRange(itemBaseList);

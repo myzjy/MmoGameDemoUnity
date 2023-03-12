@@ -32,6 +32,7 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
         public override void OnInit()
         {
             InitEquipPanel();
+            OnShow();
         }
 
         public override void OnShow()

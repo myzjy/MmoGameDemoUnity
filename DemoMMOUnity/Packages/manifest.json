@@ -2,6 +2,7 @@
   "dependencies": {
     "com.focus-creative-games.hybridclr_unity": "https://gitee.com/focus-creative-games/hybridclr_unity.git",
     "com.unity.2d.sprite": "1.0.0",
+    "com.unity.2d.spriteshape": "7.0.7",
     "com.unity.cinemachine": "2.9.5",
     "com.unity.collab-proxy": "1.17.7",
     "com.unity.feature.development": "1.0.1",
