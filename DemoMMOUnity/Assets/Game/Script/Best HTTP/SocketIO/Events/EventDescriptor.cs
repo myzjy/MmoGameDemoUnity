@@ -80,7 +80,7 @@ namespace BestHTTP.SocketIO.Events
                     if (args == null || args.Length == 0 || !(args[0] is Error))
                         (socket as ISocket).EmitError(SocketIOErrors.User, ex.Message + " " + ex.StackTrace);
 
-                    HTTPManager.Logger.Exception("EventDescriptor", "Call", ex);
+                    HttpManager.Logger.Exception("EventDescriptor", "Call", ex);
                 }
 
                 // If these callbacks has to be called only once, remove them from the main list

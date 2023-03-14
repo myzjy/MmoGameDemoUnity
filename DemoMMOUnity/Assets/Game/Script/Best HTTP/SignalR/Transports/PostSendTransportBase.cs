@@ -14,7 +14,7 @@ namespace BestHTTP.SignalR.Transports
         /// <summary>
         /// Sent out send requests. Keeping a reference to them for future use.
         /// </summary>
-        protected List<HTTPRequest> sendRequestQueue = new List<HTTPRequest>();
+        protected List<HttpRequest> sendRequestQueue = new List<HttpRequest>();
 
         public PostSendTransportBase(string name, Connection con)
             : base(name, con)
@@ -26,9 +26,9 @@ namespace BestHTTP.SignalR.Transports
 
         protected override void SendImpl(string json)
         {
-            var request = new HTTPRequest(Connection.BuildUri(RequestTypes.Send, this), HTTPMethods.Post, true, true, OnSendRequestFinished);
+            var request = new HttpRequest(Connection.BuildUri(RequestTypes.Send, this), HttpMethods.Post, true, true, OnSendRequestFinished);
 
-            request.FormUsage = Forms.HTTPFormUsage.UrlEncoded;
+            request.FormUsage = Forms.HttpFormUsage.UrlEncoded;
             request.AddField("data", json);
 
             Connection.PrepareRequest(request, RequestTypes.Send);
@@ -38,7 +38,7 @@ namespace BestHTTP.SignalR.Transports
             sendRequestQueue.Add(request);
         }
 
-        void OnSendRequestFinished(HTTPRequest req, HTTPResponse resp)
+        void OnSendRequestFinished(HttpRequest req, HttpResponse resp)
         {
             sendRequestQueue.Remove(req);
 
@@ -48,10 +48,10 @@ namespace BestHTTP.SignalR.Transports
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("Transport - " + this.Name, "Send - Request Finished Successfully! " + resp.DataAsText);
+                        HttpManager.Logger.Information("Transport - " + this.Name, "Send - Request Finished Successfully! " + resp.DataAsText);
 
                         if (!string.IsNullOrEmpty(resp.DataAsText))
                         {
@@ -69,22 +69,22 @@ namespace BestHTTP.SignalR.Transports
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Send - Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     reason = "Send - Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Send - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Send - Processing the request Timed Out!";
                     break;
             }

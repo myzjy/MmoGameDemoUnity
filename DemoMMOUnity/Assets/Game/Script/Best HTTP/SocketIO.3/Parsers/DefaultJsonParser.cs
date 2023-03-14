@@ -246,7 +246,8 @@ namespace BestHTTP.SocketIO3.Parsers
                         }
                         catch(Exception ex)
                         {
-                            HTTPManager.Logger.Exception("DefaultJsonParser", string.Format("ReadParameters with eventName: {0}", eventName), ex);
+                            HttpManager.Logger.Exception("DefaultJsonParser",
+                                $"ReadParameters with eventName: {eventName}", ex);
                         }
                     }
 

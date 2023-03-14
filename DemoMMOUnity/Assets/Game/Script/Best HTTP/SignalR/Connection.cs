@@ -27,7 +27,7 @@ namespace BestHTTP.SignalR
     public delegate void OnClosedDelegate(Connection connection);
     public delegate void OnErrorDelegate(Connection connection, string error);
     public delegate void OnStateChanged(Connection connection, ConnectionStates oldState, ConnectionStates newState);
-    public delegate void OnPrepareRequestDelegate(Connection connection, HTTPRequest req, RequestTypes type);
+    public delegate void OnPrepareRequestDelegate(Connection connection, HttpRequest req, RequestTypes type);
 
     /// <summary>
     /// Interface to be able to hide internally used functions and properties.
@@ -45,7 +45,7 @@ namespace BestHTTP.SignalR
         void Error(string reason);
         Uri BuildUri(RequestTypes type);
         Uri BuildUri(RequestTypes type, TransportBase transport);
-        HTTPRequest PrepareRequest(HTTPRequest req, RequestTypes type);
+        HttpRequest PrepareRequest(HttpRequest req, RequestTypes type);
         string ParseResponse(string responseStr);
     }
 
@@ -308,7 +308,7 @@ namespace BestHTTP.SignalR
         /// <summary>
         /// Reference to the ping request.
         /// </summary>
-        private HTTPRequest PingRequest;
+        private HttpRequest PingRequest;
 
         /// <summary>
         /// When the transport started the connection process
@@ -510,7 +510,7 @@ namespace BestHTTP.SignalR
             if (protocolIdx == -1)
             {
                 protocolIdx = (byte)ProtocolVersions.Protocol_2_2;
-                HTTPManager.Logger.Warning("SignalR Connection", "Unknown protocol version: " + data.ProtocolVersion);
+                HttpManager.Logger.Warning("SignalR Connection", "Unknown protocol version: " + data.ProtocolVersion);
             }
 
             this.Protocol = (ProtocolVersions)protocolIdx;
@@ -533,7 +533,7 @@ namespace BestHTTP.SignalR
                     Transport = new ServerSentEventsTransport(this);
 
                     // Long-Poll
-                    NextProtocolToTry = SupportedProtocols.HTTP;
+                    NextProtocolToTry = SupportedProtocols.Http;
                 #else
 
                     Transport = new PollingTransport(this);
@@ -585,7 +585,7 @@ namespace BestHTTP.SignalR
 
             NegotiationResult = null;
 
-            HTTPManager.Heartbeats.Unsubscribe(this);
+            HttpManager.Heartbeats.Unsubscribe(this);
 
             LastReceivedMessage = null;
 
@@ -607,7 +607,7 @@ namespace BestHTTP.SignalR
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("SignalR Connection", "OnClosed", ex);
+                    HttpManager.Logger.Exception("SignalR Connection", "OnClosed", ex);
                 }
             }
         }
@@ -629,7 +629,7 @@ namespace BestHTTP.SignalR
 
             this.State = ConnectionStates.Reconnecting;
 
-            HTTPManager.Logger.Warning("SignalR Connection", "Reconnecting");
+            HttpManager.Logger.Warning("SignalR Connection", "Reconnecting");
 
             Transport.Reconnect();
 
@@ -644,7 +644,7 @@ namespace BestHTTP.SignalR
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("SignalR Connection", "OnReconnecting", ex);
+                    HttpManager.Logger.Exception("SignalR Connection", "OnReconnecting", ex);
                 }
             }
         }
@@ -665,7 +665,7 @@ namespace BestHTTP.SignalR
             string json = JsonEncoder.Encode(arg);
 
             if (string.IsNullOrEmpty(json))
-                HTTPManager.Logger.Error("SignalR Connection", "Failed to JSon encode the given argument. Please try to use an advanced JSon encoder(check the documentation how you can do it).");
+                HttpManager.Logger.Error("SignalR Connection", "Failed to JSon encode the given argument. Please try to use an advanced JSon encoder(check the documentation how you can do it).");
             else
                 Transport.Send(json);
 
@@ -721,14 +721,14 @@ namespace BestHTTP.SignalR
 
                     // Not received in the reconnect process, so we can't rely on it
                     if (LastReceivedMessage.IsInitialization)
-                        HTTPManager.Logger.Information("SignalR Connection", "OnMessage - Init");
+                        HttpManager.Logger.Information("SignalR Connection", "OnMessage - Init");
 
                     if (LastReceivedMessage.GroupsToken != null)
                         GroupsToken = LastReceivedMessage.GroupsToken;
 
                     if (LastReceivedMessage.ShouldReconnect)
                     {
-                        HTTPManager.Logger.Information("SignalR Connection", "OnMessage - Should Reconnect");
+                        HttpManager.Logger.Information("SignalR Connection", "OnMessage - Should Reconnect");
 
                         Reconnect();
 
@@ -750,7 +750,7 @@ namespace BestHTTP.SignalR
                     if (hub != null)
                         (hub as IHub).OnMethod(methodCall);
                     else
-                        HTTPManager.Logger.Warning("SignalR Connection", string.Format("Hub \"{0}\" not found!", methodCall.Hub));
+                        HttpManager.Logger.Warning("SignalR Connection", string.Format("Hub \"{0}\" not found!", methodCall.Hub));
 
                     break;
 
@@ -762,7 +762,7 @@ namespace BestHTTP.SignalR
                     if (hub != null)
                         (hub as IHub).OnMessage(msg);
                     else
-                        HTTPManager.Logger.Warning("SignalR Connection", string.Format("No Hub found for Progress message! Id: {0}", id.ToString()));
+                        HttpManager.Logger.Warning("SignalR Connection", string.Format("No Hub found for Progress message! Id: {0}", id.ToString()));
                     break;
 
                 case MessageTypes.Data:
@@ -774,7 +774,7 @@ namespace BestHTTP.SignalR
                     break;
 
                 default:
-                    HTTPManager.Logger.Warning("SignalR Connection", "Unknown message type received: " + msg.Type.ToString());
+                    HttpManager.Logger.Warning("SignalR Connection", "Unknown message type received: " + msg.Type.ToString());
                     break;
             }
         }
@@ -797,7 +797,7 @@ namespace BestHTTP.SignalR
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("SignalR Connection", "OnOpened", ex);
+                    HttpManager.Logger.Exception("SignalR Connection", "OnOpened", ex);
                 }
             }
 
@@ -821,7 +821,7 @@ namespace BestHTTP.SignalR
             if (this.State != ConnectionStates.Reconnecting)
                 return;
 
-            HTTPManager.Logger.Information("SignalR Connection", "Transport Reconnected");
+            HttpManager.Logger.Information("SignalR Connection", "Transport Reconnected");
 
             InitOnStart();
 
@@ -833,7 +833,7 @@ namespace BestHTTP.SignalR
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("SignalR Connection", "OnReconnected", ex);
+                    HttpManager.Logger.Exception("SignalR Connection", "OnReconnected", ex);
                 }
             }
         }
@@ -856,13 +856,13 @@ namespace BestHTTP.SignalR
                 return;
 
             // If we are just quitting, don't try to reconnect.
-            if (HTTPManager.IsQuitting)
+            if (HttpManager.IsQuitting)
             {
                 Close();
                 return;
             }
 
-            HTTPManager.Logger.Error("SignalR Connection", reason);
+            HttpManager.Logger.Error("SignalR Connection", reason);
 
             ReconnectStarted = false;
 
@@ -922,7 +922,7 @@ namespace BestHTTP.SignalR
                 case RequestTypes.Connect:
 #if !BESTHTTP_DISABLE_WEBSOCKET
                     if (transport != null && transport.Type == TransportTypes.WebSocket)
-                        uriBuilder.Scheme = HTTPProtocolFactory.IsSecureProtocol(Uri) ? "wss" : "ws";
+                        uriBuilder.Scheme = HttpProtocolFactory.IsSecureProtocol(Uri) ? "wss" : "ws";
 #endif
 
                     uriBuilder.Path += "connect";
@@ -959,7 +959,7 @@ namespace BestHTTP.SignalR
                 case RequestTypes.Reconnect:
 #if !BESTHTTP_DISABLE_WEBSOCKET
                     if (transport != null && transport.Type == TransportTypes.WebSocket)
-                        uriBuilder.Scheme = HTTPProtocolFactory.IsSecureProtocol(Uri) ? "wss" : "ws";
+                        uriBuilder.Scheme = HttpProtocolFactory.IsSecureProtocol(Uri) ? "wss" : "ws";
 #endif
 
                     uriBuilder.Path += "reconnect";
@@ -1045,7 +1045,7 @@ namespace BestHTTP.SignalR
         /// <summary>
         /// It's called on every request before sending it out to the server.
         /// </summary>
-        HTTPRequest IConnection.PrepareRequest(HTTPRequest req, RequestTypes type)
+        HttpRequest IConnection.PrepareRequest(HttpRequest req, RequestTypes type)
         {
             if (req != null && AuthenticationProvider != null)
                 AuthenticationProvider.PrepareRequest(req, type);
@@ -1102,14 +1102,14 @@ namespace BestHTTP.SignalR
                 case ConnectionStates.Reconnecting:
                     if ( DateTime.UtcNow - ReconnectStartedAt >= NegotiationResult.DisconnectTimeout)
                     {
-                        HTTPManager.Logger.Warning("SignalR Connection", "OnHeartbeatUpdate - Failed to reconnect in the given time!");
+                        HttpManager.Logger.Warning("SignalR Connection", "OnHeartbeatUpdate - Failed to reconnect in the given time!");
 
                         Close();
                     }
                     else if (DateTime.UtcNow - ReconnectDelayStartedAt >= ReconnectDelay)
                     {
-                        if (HTTPManager.Logger.Level <= Logger.Loglevels.Warning)
-                          HTTPManager.Logger.Warning("SignalR Connection", this.ReconnectStarted.ToString() + " " + this.ReconnectStartedAt.ToString() + " " + NegotiationResult.DisconnectTimeout.ToString());
+                        if (HttpManager.Logger.Level <= Logger.Loglevels.Warning)
+                          HttpManager.Logger.Warning("SignalR Connection", this.ReconnectStarted.ToString() + " " + this.ReconnectStartedAt.ToString() + " " + NegotiationResult.DisconnectTimeout.ToString());
                         Reconnect();
                     }
                     break;
@@ -1118,7 +1118,7 @@ namespace BestHTTP.SignalR
 
                     if (TransportConnectionStartedAt != null && DateTime.UtcNow - TransportConnectionStartedAt >= NegotiationResult.TransportConnectTimeout)
                     {
-                        HTTPManager.Logger.Warning("SignalR Connection", "OnHeartbeatUpdate - Transport failed to connect in the given time!");
+                        HttpManager.Logger.Warning("SignalR Connection", "OnHeartbeatUpdate - Transport failed to connect in the given time!");
 
                         // Using the Error function here instead of Close() will enable us to try to do a transport fallback.
                         (this as IConnection).Error("Transport failed to connect in the given time!");
@@ -1146,7 +1146,7 @@ namespace BestHTTP.SignalR
             LastPingSentAt = DateTime.UtcNow;
             LastMessageReceivedAt = DateTime.UtcNow;
 
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
         }
 
         /// <summary>
@@ -1186,11 +1186,11 @@ namespace BestHTTP.SignalR
 #if !BESTHTTP_DISABLE_SERVERSENT_EVENTS
                     case SupportedProtocols.ServerSentEvents:
                         Transport = new ServerSentEventsTransport(this);
-                        NextProtocolToTry = SupportedProtocols.HTTP;
+                        NextProtocolToTry = SupportedProtocols.Http;
                         break;
 #endif
 
-                    case SupportedProtocols.HTTP:
+                    case SupportedProtocols.Http:
                         Transport = new PollingTransport(this);
                         NextProtocolToTry = SupportedProtocols.Unknown;
                         break;
@@ -1229,9 +1229,9 @@ namespace BestHTTP.SignalR
         /// </summary>
         private void Ping()
         {
-            HTTPManager.Logger.Information("SignalR Connection", "Sending Ping request.");
+            HttpManager.Logger.Information("SignalR Connection", "Sending Ping request.");
 
-            PingRequest = new HTTPRequest((this as IConnection).BuildUri(RequestTypes.Ping), OnPingRequestFinished);
+            PingRequest = new HttpRequest((this as IConnection).BuildUri(RequestTypes.Ping), OnPingRequestFinished);
             PingRequest.ConnectTimeout = PingInterval;
 
             (this as IConnection).PrepareRequest(PingRequest, RequestTypes.Ping);
@@ -1244,7 +1244,7 @@ namespace BestHTTP.SignalR
         /// <summary>
         /// Called when the Ping request finished.
         /// </summary>
-        void OnPingRequestFinished(HTTPRequest req, HTTPResponse resp)
+        void OnPingRequestFinished(HttpRequest req, HttpResponse resp)
         {
             PingRequest = null;
 
@@ -1253,7 +1253,7 @@ namespace BestHTTP.SignalR
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
                         // Parse the response, and do nothing when we receive the "pong" response
@@ -1262,7 +1262,7 @@ namespace BestHTTP.SignalR
                         if (response != "pong")
                             reason = "Wrong answer for ping request: " + response;
                         else
-                            HTTPManager.Logger.Information("SignalR Connection", "Pong received.");
+                            HttpManager.Logger.Information("SignalR Connection", "Pong received.");
                     }
                     else
                         reason = string.Format("Ping - Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
@@ -1272,17 +1272,17 @@ namespace BestHTTP.SignalR
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Ping - Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Ping - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Ping - Processing the request Timed Out!";
                     break;
             }

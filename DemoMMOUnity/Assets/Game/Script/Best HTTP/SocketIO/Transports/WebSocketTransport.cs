@@ -15,11 +15,24 @@ namespace BestHTTP.SocketIO.Transports
     /// </summary>
     internal sealed class WebSocketTransport : ITransport
     {
-        public TransportTypes Type { get { return TransportTypes.WebSocket; } }
+        public TransportTypes Type
+        {
+            get { return TransportTypes.WebSocket; }
+        }
+
         public TransportStates State { get; private set; }
         public SocketManager Manager { get; private set; }
-        public bool IsRequestInProgress { get { return false; } }
-        public bool IsPollingInProgress { get { return false; } }
+
+        public bool IsRequestInProgress
+        {
+            get { return false; }
+        }
+
+        public bool IsPollingInProgress
+        {
+            get { return false; }
+        }
+
         public WebSocket Implementation { get; private set; }
 
         private Packet PacketWithAttachment;
@@ -39,21 +52,22 @@ namespace BestHTTP.SocketIO.Transports
                 return;
 
             Uri uri = null;
-            string baseUrl = new UriBuilder(HTTPProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
-                                                            Manager.Uri.Host,
-                                                            Manager.Uri.Port,
-                                                            Manager.Uri.GetRequestPathAndQueryURL()).Uri.ToString();
+            string baseUrl = new UriBuilder(HttpProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
+                Manager.Uri.Host,
+                Manager.Uri.Port,
+                Manager.Uri.GetRequestPathAndQueryURL()).Uri.ToString();
             string format = "{0}?EIO={1}&transport=websocket{3}";
             if (Manager.Handshake != null)
                 format += "&sid={2}";
 
-            bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake || (Manager.Options.QueryParamsOnlyForHandshake && Manager.Handshake == null);
+            bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake ||
+                                             (Manager.Options.QueryParamsOnlyForHandshake && Manager.Handshake == null);
 
             uri = new Uri(string.Format(format,
-                                        baseUrl,
-                                        Manager.ProtocolVersion,
-                                        Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
-                                        sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty));
+                baseUrl,
+                Manager.ProtocolVersion,
+                Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
+                sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty));
 
             Implementation = new WebSocket(uri);
 
@@ -61,7 +75,8 @@ namespace BestHTTP.SocketIO.Transports
             Implementation.StartPingThread = true;
 
             if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                Implementation.OnInternalRequestCreated = (ws, internalRequest) => this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, internalRequest);
+                Implementation.OnInternalRequestCreated = (ws, internalRequest) =>
+                    this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, internalRequest);
 #endif
 
             Implementation.OnOpen = OnOpen;
@@ -88,7 +103,7 @@ namespace BestHTTP.SocketIO.Transports
             if (Implementation != null)
                 Implementation.Close();
             else
-                HTTPManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!");
+                HttpManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!");
             Implementation = null;
         }
 
@@ -111,7 +126,7 @@ namespace BestHTTP.SocketIO.Transports
             if (ws != Implementation)
                 return;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "OnOpen");
+            HttpManager.Logger.Information("WebSocketTransport", "OnOpen");
 
             State = TransportStates.Opening;
 
@@ -128,8 +143,8 @@ namespace BestHTTP.SocketIO.Transports
             if (ws != Implementation)
                 return;
 
-            if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("WebSocketTransport", "OnMessage: " + message);
+            if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("WebSocketTransport", "OnMessage: " + message);
 
             Packet packet = null;
             try
@@ -138,18 +153,17 @@ namespace BestHTTP.SocketIO.Transports
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex);
+                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex);
             }
 
             if (packet == null)
             {
-                HTTPManager.Logger.Error("WebSocketTransport", "Message parsing failed. Message: " + message);
+                HttpManager.Logger.Error("WebSocketTransport", "Message parsing failed. Message: " + message);
                 return;
             }
 
             try
             {
-
                 if (packet.AttachmentCount == 0)
                     OnPacket(packet);
                 else
@@ -157,7 +171,7 @@ namespace BestHTTP.SocketIO.Transports
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocketTransport", "OnMessage OnPacket", ex);
+                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage OnPacket", ex);
             }
         }
 
@@ -169,17 +183,22 @@ namespace BestHTTP.SocketIO.Transports
             if (ws != Implementation)
                 return;
 
-            if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("WebSocketTransport", "OnBinary");
+            if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("WebSocketTransport", "OnBinary");
 
             if (PacketWithAttachment != null)
             {
-                switch(this.Manager.Options.ServerVersion)
+                switch (this.Manager.Options.ServerVersion)
                 {
-                    case SupportedSocketIOVersions.v2: PacketWithAttachment.AddAttachmentFromServer(data, false); break;
-                    case SupportedSocketIOVersions.v3: PacketWithAttachment.AddAttachmentFromServer(data, true); break;
+                    case SupportedSocketIOVersions.v2:
+                        PacketWithAttachment.AddAttachmentFromServer(data, false);
+                        break;
+                    case SupportedSocketIOVersions.v3:
+                        PacketWithAttachment.AddAttachmentFromServer(data, true);
+                        break;
                     default:
-                        HTTPManager.Logger.Warning("WebSocketTransport", "Binary packet received while the server's version is Unknown. Set SocketOption's ServerVersion to the correct value to avoid packet mishandling!");
+                        HttpManager.Logger.Warning("WebSocketTransport",
+                            "Binary packet received while the server's version is Unknown. Set SocketOption's ServerVersion to the correct value to avoid packet mishandling!");
 
                         // Fall back to V2 by default.
                         this.Manager.Options.ServerVersion = SupportedSocketIOVersions.v2;
@@ -194,7 +213,7 @@ namespace BestHTTP.SocketIO.Transports
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocketTransport", "OnBinary", ex);
+                        HttpManager.Logger.Exception("WebSocketTransport", "OnBinary", ex);
                     }
                     finally
                     {
@@ -222,33 +241,37 @@ namespace BestHTTP.SocketIO.Transports
                 switch (ws.InternalRequest.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         if (ws.InternalRequest.Response.IsSuccess || ws.InternalRequest.Response.StatusCode == 101)
-                            error = string.Format("Request finished. Status Code: {0} Message: {1}", ws.InternalRequest.Response.StatusCode.ToString(), ws.InternalRequest.Response.Message);
+                            error = string.Format("Request finished. Status Code: {0} Message: {1}",
+                                ws.InternalRequest.Response.StatusCode.ToString(), ws.InternalRequest.Response.Message);
                         else
-                            error = string.Format("Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                                            ws.InternalRequest.Response.StatusCode,
-                                                            ws.InternalRequest.Response.Message,
-                                                            ws.InternalRequest.Response.DataAsText);
+                            error = string.Format(
+                                "Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
+                                ws.InternalRequest.Response.StatusCode,
+                                ws.InternalRequest.Response.Message,
+                                ws.InternalRequest.Response.DataAsText);
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
-                        error = "Request Finished with Error! : " + ws.InternalRequest.Exception != null ? (ws.InternalRequest.Exception.Message + " " + ws.InternalRequest.Exception.StackTrace) : string.Empty;
+                    case HttpRequestStates.Error:
+                        error = "Request Finished with Error! : " + ws.InternalRequest.Exception != null
+                            ? (ws.InternalRequest.Exception.Message + " " + ws.InternalRequest.Exception.StackTrace)
+                            : string.Empty;
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         error = "Request Aborted!";
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         error = "Connection Timed Out!";
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         error = "Processing the request Timed Out!";
                         break;
                 }
@@ -267,9 +290,9 @@ namespace BestHTTP.SocketIO.Transports
         private void OnClosed(WebSocket ws, ushort code, string message)
         {
             if (ws != Implementation)
-              return;
+                return;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "OnClosed");
+            HttpManager.Logger.Information("WebSocketTransport", "OnClosed");
 
             Close();
 
@@ -279,9 +302,9 @@ namespace BestHTTP.SocketIO.Transports
                 Manager.UpgradingTransport = null;
         }
 
-#endregion
+        #endregion
 
-#region Packet Sending Implementation
+        #region Packet Sending Implementation
 
         /// <summary>
         /// A WebSocket implementation of the packet sending.
@@ -291,14 +314,15 @@ namespace BestHTTP.SocketIO.Transports
             if (State == TransportStates.Closed ||
                 State == TransportStates.Paused)
             {
-                HTTPManager.Logger.Information("WebSocketTransport", string.Format("Send - State == {0}, skipping packet sending!", State));
+                HttpManager.Logger.Information("WebSocketTransport",
+                    string.Format("Send - State == {0}, skipping packet sending!", State));
                 return;
             }
 
             string encoded = packet.Encode();
 
-            if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("WebSocketTransport", "Send: " + encoded);
+            if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("WebSocketTransport", "Send: " + encoded);
 
             if (packet.AttachmentCount != 0 || (packet.Attachments != null && packet.Attachments.Count != 0))
             {
@@ -306,7 +330,8 @@ namespace BestHTTP.SocketIO.Transports
                     throw new ArgumentException("packet.Attachments are null!");
 
                 if (packet.AttachmentCount != packet.Attachments.Count)
-                    throw new ArgumentException("packet.AttachmentCount != packet.Attachments.Count. Use the packet.AddAttachment function to add data to a packet!");
+                    throw new ArgumentException(
+                        "packet.AttachmentCount != packet.Attachments.Count. Use the packet.AddAttachment function to add data to a packet!");
             }
 
             Implementation.Send(encoded);
@@ -343,12 +368,12 @@ namespace BestHTTP.SocketIO.Transports
             packets.Clear();
         }
 
-#endregion
+        #endregion
 
-#region Packet Handling
+        #region Packet Handling
 
         /// <summary>
-        /// Will only process packets that need to upgrade. All other packets are passed to the Manager.
+        /// 将只处理需要升级的数据包。所有其他数据包都传递给Manager。
         /// </summary>
         private void OnPacket(Packet packet)
         {
@@ -356,9 +381,13 @@ namespace BestHTTP.SocketIO.Transports
             {
                 case TransportEventTypes.Open:
                     if (this.State != TransportStates.Opening)
-                        HTTPManager.Logger.Warning("WebSocketTransport", "Received 'Open' packet while state is '" + State.ToString() + "'");
+                    {
+                        HttpManager.Logger.Warning("WebSocketTransport",
+                            $"当状态为{State.ToString()}时，收到 打开 数据包");
+                    }
                     else
                         State = TransportStates.Open;
+
                     goto default;
 
                 case TransportEventTypes.Pong:
@@ -378,7 +407,7 @@ namespace BestHTTP.SocketIO.Transports
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

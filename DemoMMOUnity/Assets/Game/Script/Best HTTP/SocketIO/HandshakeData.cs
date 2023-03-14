@@ -54,7 +54,7 @@ namespace BestHTTP.SocketIO
             }
             catch (Exception ex)
             {
-                BestHTTP.HTTPManager.Logger.Exception("HandshakeData", "Parse", ex);
+                BestHTTP.HttpManager.Logger.Exception("HandshakeData", "Parse", ex);
                 return false;
             }
 

@@ -80,7 +80,7 @@ namespace BestHTTP.SocketIO
         /// </summary>
         void ISocket.Open()
         {
-            HTTPManager.Logger.Information("Socket", string.Format("Open - Manager.State = {0}", Manager.State));
+            HttpManager.Logger.Information("Socket", string.Format("Open - Manager.State = {0}", Manager.State));
 
             // The transport already established the connection
             if (Manager.State == SocketManager.States.Open)
@@ -438,7 +438,7 @@ namespace BestHTTP.SocketIO
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("Socket", "ackCallback", ex);
+                        HttpManager.Logger.Exception("Socket", "ackCallback", ex);
                     }
                 }
 
@@ -477,7 +477,7 @@ namespace BestHTTP.SocketIO
         /// </summary>
         internal void OnTransportOpen()
         {
-            HTTPManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen);
+            HttpManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen);
 
             if (this.IsOpen)
                 return;
@@ -494,7 +494,7 @@ namespace BestHTTP.SocketIO
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", "OnTransportOpen", ex);
+                    HttpManager.Logger.Exception("Socket", "OnTransportOpen", ex);
                 }
             }
             else

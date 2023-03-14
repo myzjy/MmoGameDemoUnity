@@ -13,7 +13,7 @@ using PlatformSupport.Collections.ObjectModel;
 
 namespace BestHTTP.SocketIO
 {
-    public delegate void HTTPRequestCallbackDelegate(SocketManager manager, HTTPRequest request);
+    public delegate void HTTPRequestCallbackDelegate(SocketManager manager, HttpRequest request);
 
     public enum SupportedSocketIOVersions
     {

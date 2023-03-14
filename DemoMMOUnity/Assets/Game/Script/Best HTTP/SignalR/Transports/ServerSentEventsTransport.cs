@@ -48,7 +48,7 @@ namespace BestHTTP.SignalR.Transports
         {
             if (EventSource != null)
             {
-                HTTPManager.Logger.Warning("ServerSentEventsTransport", "Start - EventSource already created!");
+                HttpManager.Logger.Warning("ServerSentEventsTransport", "Start - EventSource already created!");
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace BestHTTP.SignalR.Transports
 
         private void OnEventSourceOpen(EventSource eventSource)
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "OnEventSourceOpen");
+            HttpManager.Logger.Information("Transport - " + this.Name, "OnEventSourceOpen");
         }
 
         private void OnEventSourceMessage(EventSource eventSource, BestHTTP.ServerSentEvents.Message message)
@@ -136,7 +136,7 @@ namespace BestHTTP.SignalR.Transports
 
         private void OnEventSourceError(EventSource eventSource, string error)
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "OnEventSourceError");
+            HttpManager.Logger.Information("Transport - " + this.Name, "OnEventSourceError");
 
             // We are in a reconnecting phase, we have to connect now.
             if (this.State == TransportStates.Reconnecting)
@@ -158,7 +158,7 @@ namespace BestHTTP.SignalR.Transports
 
         private void OnEventSourceClosed(ServerSentEvents.EventSource eventSource)
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "OnEventSourceClosed");
+            HttpManager.Logger.Information("Transport - " + this.Name, "OnEventSourceClosed");
 
             OnEventSourceError(eventSource, "EventSource Closed!");
         }

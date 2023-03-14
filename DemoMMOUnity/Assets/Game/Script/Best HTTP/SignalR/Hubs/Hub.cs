@@ -216,7 +216,7 @@ namespace BestHTTP.SignalR.Hubs
                 }
                 catch(Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - OnMethodCall", ex);
+                    HttpManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - OnMethodCall", ex);
                 }
             }
 
@@ -229,11 +229,11 @@ namespace BestHTTP.SignalR.Hubs
                 }
                 catch(Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - callback", ex);
+                    HttpManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - callback", ex);
                 }
             }
             else if (OnMethodCall == null)
-                HTTPManager.Logger.Warning("Hub - " + this.Name, string.Format("[Client] {0}.{1} (args: {2})", this.Name, msg.Method, msg.Arguments.Length));
+                HttpManager.Logger.Warning("Hub - " + this.Name, string.Format("[Client] {0}.{1} (args: {2})", this.Name, msg.Method, msg.Arguments.Length));
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace BestHTTP.SignalR.Hubs
             {
                 // This can happen when a result message removes the ClientMessage from the SentMessages dictionary,
                 //  then a late come progress message tries to access it
-                HTTPManager.Logger.Warning("Hub - " + this.Name, "OnMessage - Sent message not found with id: " + id.ToString());
+                HttpManager.Logger.Warning("Hub - " + this.Name, "OnMessage - Sent message not found with id: " + id.ToString());
                 return;
             }
 
@@ -268,7 +268,7 @@ namespace BestHTTP.SignalR.Hubs
                         }
                         catch(Exception ex)
                         {
-                            HTTPManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultCallback", ex);
+                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultCallback", ex);
                         }
                     }
 
@@ -290,7 +290,7 @@ namespace BestHTTP.SignalR.Hubs
                         }
                         catch(Exception ex)
                         {
-                            HTTPManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultErrorCallback", ex);
+                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultErrorCallback", ex);
                         }
                     }
 
@@ -306,7 +306,7 @@ namespace BestHTTP.SignalR.Hubs
                         }
                         catch(Exception ex)
                         {
-                            HTTPManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ProgressCallback", ex);
+                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ProgressCallback", ex);
                         }
                     }
                     break;
@@ -373,7 +373,7 @@ namespace BestHTTP.SignalR.Hubs
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("Hub - " + this.Name, "Send", ex);
+                HttpManager.Logger.Exception("Hub - " + this.Name, "Send", ex);
 
                 return null;
             }

@@ -272,7 +272,7 @@ namespace BestHTTP.SocketIO
                 State != States.Reconnecting)
                 return;
 
-            HTTPManager.Logger.Information("SocketManager", "Opening");
+            HttpManager.Logger.Information("SocketManager", "Opening");
 
             ReconnectAt = DateTime.MinValue;
 
@@ -294,7 +294,7 @@ namespace BestHTTP.SocketIO
 
             ConnectionStarted = DateTime.UtcNow;
 
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
 
             // The root namespace will be opened by default
             GetSocket("/");
@@ -317,9 +317,9 @@ namespace BestHTTP.SocketIO
                 return;
             closing = true;
 
-            HTTPManager.Logger.Information("SocketManager", "Closing");
+            HttpManager.Logger.Information("SocketManager", "Closing");
 
-            HTTPManager.Heartbeats.Unsubscribe(this);
+            HttpManager.Heartbeats.Unsubscribe(this);
 
             // Disconnect the sockets. The Disconnect function will call the Remove function to remove it from the Sockets list.
             if (removeSockets)
@@ -365,7 +365,7 @@ namespace BestHTTP.SocketIO
                 State == States.Closed)
                 return;
 
-            if (!Options.Reconnection || HTTPManager.IsQuitting)
+            if (!Options.Reconnection || HttpManager.IsQuitting)
             {
                 Close();
 
@@ -397,9 +397,9 @@ namespace BestHTTP.SocketIO
                 (Sockets[i] as ISocket).Open();
 
             // In the Close() function we unregistered
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
 
-            HTTPManager.Logger.Information("SocketManager", "Reconnecting");
+            HttpManager.Logger.Information("SocketManager", "Reconnecting");
         }
 
         /// <summary>
@@ -407,7 +407,7 @@ namespace BestHTTP.SocketIO
         /// </summary>
         bool IManager.OnTransportConnected(ITransport trans)
         {
-            HTTPManager.Logger.Information("SocketManager", string.Format("OnTransportConnected State: {0}, PreviousState: {1}, Current Transport: {2}, Upgrading Transport: {3}", this.State, this.PreviousState, trans.Type, UpgradingTransport != null ? UpgradingTransport.Type.ToString() : "null"));
+            HttpManager.Logger.Information("SocketManager", string.Format("OnTransportConnected State: {0}, PreviousState: {1}, Current Transport: {2}, Upgrading Transport: {3}", this.State, this.PreviousState, trans.Type, UpgradingTransport != null ? UpgradingTransport.Type.ToString() : "null"));
 
             if (State != States.Opening)
                 return false;
@@ -455,7 +455,7 @@ namespace BestHTTP.SocketIO
 
         void IManager.OnTransportProbed(ITransport trans)
         {
-            HTTPManager.Logger.Information("SocketManager", "\"probe\" packet received");
+            HttpManager.Logger.Information("SocketManager", "\"probe\" packet received");
 
             // If we have to reconnect, we will go straight with the transport we were able to upgrade
             Options.ConnectWith = trans.Type;
@@ -502,7 +502,7 @@ namespace BestHTTP.SocketIO
         /// </summary>
         void IManager.SendPacket(Packet packet)
         {
-            HTTPManager.Logger.Information("SocketManager", "SendPacket " + packet.ToString());
+            HttpManager.Logger.Information("SocketManager", "SendPacket " + packet.ToString());
 
             ITransport trans = SelectTransport();
 
@@ -519,7 +519,7 @@ namespace BestHTTP.SocketIO
             }
             else
             {
-                HTTPManager.Logger.Information("SocketManager", "SendPacket - Offline stashing packet");
+                HttpManager.Logger.Information("SocketManager", "SendPacket - Offline stashing packet");
 
                 if (OfflinePackets == null)
                     OfflinePackets = new List<Packet>();
@@ -536,7 +536,7 @@ namespace BestHTTP.SocketIO
         {
             if (State == States.Closed)
             {
-                HTTPManager.Logger.Information("SocketManager", "OnPacket - State == States.Closed");
+                HttpManager.Logger.Information("SocketManager", "OnPacket - State == States.Closed");
                 return;
             }
 
@@ -547,20 +547,20 @@ namespace BestHTTP.SocketIO
                     {
                         Handshake = new HandshakeData();
                         if (!Handshake.Parse(packet.Payload))
-                            HTTPManager.Logger.Warning("SocketManager", "Expected handshake data, but wasn't able to parse. Payload: " + packet.Payload);
+                            HttpManager.Logger.Warning("SocketManager", "Expected handshake data, but wasn't able to parse. Payload: " + packet.Payload);
 
                         (this as IManager).OnTransportConnected(Transport);
 
                         return;
                     }
                     else
-                        HTTPManager.Logger.Information("SocketManager", "OnPacket - Already received handshake data!");
+                        HttpManager.Logger.Information("SocketManager", "OnPacket - Already received handshake data!");
                     break;
 
                 case TransportEventTypes.Ping:
                     if (this.Options.ServerVersion == SupportedSocketIOVersions.Unknown)
                     {
-                        HTTPManager.Logger.Information("SocketManager", "Received Ping packet from server, setting ServerVersion to v3!");
+                        HttpManager.Logger.Information("SocketManager", "Received Ping packet from server, setting ServerVersion to v3!");
                         this.Options.ServerVersion = SupportedSocketIOVersions.v3;
                     }
 
@@ -577,7 +577,7 @@ namespace BestHTTP.SocketIO
             if (Namespaces.TryGetValue(packet.Namespace, out socket))
                 (socket as ISocket).OnPacket(packet);
             else
-                HTTPManager.Logger.Warning("SocketManager", "Namespace \"" + packet.Namespace + "\" not found!");
+                HttpManager.Logger.Warning("SocketManager", "Namespace \"" + packet.Namespace + "\" not found!");
         }
 
         #endregion

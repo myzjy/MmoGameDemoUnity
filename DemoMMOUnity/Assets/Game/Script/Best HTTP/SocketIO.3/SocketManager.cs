@@ -291,7 +291,7 @@ namespace BestHTTP.SocketIO3
                 State != States.Reconnecting)
                 return;
 
-            HTTPManager.Logger.Information("SocketManager", "Opening", this.Context);
+            HttpManager.Logger.Information("SocketManager", "Opening", this.Context);
 
             ReconnectAt = DateTime.MinValue;
 
@@ -313,7 +313,7 @@ namespace BestHTTP.SocketIO3
 
             ConnectionStarted = DateTime.UtcNow;
 
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
 
             // The root namespace will be opened by default
             //GetSocket("/");
@@ -336,9 +336,9 @@ namespace BestHTTP.SocketIO3
                 return;
             closing = true;
 
-            HTTPManager.Logger.Information("SocketManager", "Closing", this.Context);
+            HttpManager.Logger.Information("SocketManager", "Closing", this.Context);
 
-            HTTPManager.Heartbeats.Unsubscribe(this);
+            HttpManager.Heartbeats.Unsubscribe(this);
 
             // Disconnect the sockets. The Disconnect function will call the Remove function to remove it from the Sockets list.
             if (removeSockets)
@@ -383,7 +383,7 @@ namespace BestHTTP.SocketIO3
                 State == States.Closed)
                 return;
 
-            if (!Options.Reconnection || HTTPManager.IsQuitting)
+            if (!Options.Reconnection || HttpManager.IsQuitting)
             {
                 Close();
 
@@ -415,9 +415,9 @@ namespace BestHTTP.SocketIO3
                 (Sockets[i] as ISocket).Open();
 
             // In the Close() function we unregistered
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
 
-            HTTPManager.Logger.Information("SocketManager", "Reconnecting", this.Context);
+            HttpManager.Logger.Information("SocketManager", "Reconnecting", this.Context);
         }
 
         /// <summary>
@@ -425,7 +425,7 @@ namespace BestHTTP.SocketIO3
         /// </summary>
         bool IManager.OnTransportConnected(ITransport trans)
         {
-            HTTPManager.Logger.Information("SocketManager", string.Format("OnTransportConnected State: {0}, PreviousState: {1}, Current Transport: {2}, Upgrading Transport: {3}", this.State, this.PreviousState, trans.Type, UpgradingTransport != null ? UpgradingTransport.Type.ToString() : "null"), this.Context);
+            HttpManager.Logger.Information("SocketManager", string.Format("OnTransportConnected State: {0}, PreviousState: {1}, Current Transport: {2}, Upgrading Transport: {3}", this.State, this.PreviousState, trans.Type, UpgradingTransport != null ? UpgradingTransport.Type.ToString() : "null"), this.Context);
 
             if (State != States.Opening)
                 return false;
@@ -476,7 +476,7 @@ namespace BestHTTP.SocketIO3
 
         void IManager.OnTransportProbed(ITransport trans)
         {
-            HTTPManager.Logger.Information("SocketManager", "\"probe\" packet received", this.Context);
+            HttpManager.Logger.Information("SocketManager", "\"probe\" packet received", this.Context);
 
             // If we have to reconnect, we will go straight with the transport we were able to upgrade
             Options.ConnectWith = trans.Type;
@@ -523,7 +523,7 @@ namespace BestHTTP.SocketIO3
         /// </summary>
         void IManager.SendPacket(OutgoingPacket packet)
         {
-            HTTPManager.Logger.Information("SocketManager", "SendPacket " + packet.ToString(), this.Context);
+            HttpManager.Logger.Information("SocketManager", "SendPacket " + packet.ToString(), this.Context);
 
             ITransport trans = SelectTransport();
 
@@ -543,7 +543,7 @@ namespace BestHTTP.SocketIO3
                 if (packet.IsVolatile)
                     return;
 
-                HTTPManager.Logger.Information("SocketManager", "SendPacket - Offline stashing packet", this.Context);
+                HttpManager.Logger.Information("SocketManager", "SendPacket - Offline stashing packet", this.Context);
 
                 if (OfflinePackets == null)
                     OfflinePackets = new List<OutgoingPacket>();
@@ -560,7 +560,7 @@ namespace BestHTTP.SocketIO3
         {
             if (State == States.Closed)
             {
-                HTTPManager.Logger.Information("SocketManager", "OnPacket - State == States.Closed", this.Context);
+                HttpManager.Logger.Information("SocketManager", "OnPacket - State == States.Closed", this.Context);
                 return;
             }
 
@@ -576,7 +576,7 @@ namespace BestHTTP.SocketIO3
                         return;
                     }
                     else
-                        HTTPManager.Logger.Information("SocketManager", "OnPacket - Already received handshake data!", this.Context);
+                        HttpManager.Logger.Information("SocketManager", "OnPacket - Already received handshake data!", this.Context);
                     break;
 
                 case TransportEventTypes.Ping:
@@ -593,7 +593,7 @@ namespace BestHTTP.SocketIO3
             if (Namespaces.TryGetValue(packet.Namespace, out socket))
                 (socket as ISocket).OnPacket(packet);
             else if (packet.TransportEvent == TransportEventTypes.Message)
-                HTTPManager.Logger.Warning("SocketManager", "Namespace \"" + packet.Namespace + "\" not found!", this.Context);
+                HttpManager.Logger.Warning("SocketManager", "Namespace \"" + packet.Namespace + "\" not found!", this.Context);
         }
 
         #endregion

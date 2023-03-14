@@ -1,4 +1,4 @@
-#if !BESTHTTP_DISABLE_SOCKETIO
+#if !BESTHttp_DISABLE_SOCKETIO
 using System;
 using System.Collections.Generic;
 
@@ -55,7 +55,8 @@ namespace BestHTTP.SocketIO3.Events
         /// <summary>
         /// This is where we store the methodname => callback mapping.
         /// </summary>
-        private Dictionary<string, Subscription> subscriptions = new Dictionary<string, Subscription>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, Subscription> subscriptions =
+            new Dictionary<string, Subscription>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Constructor to create an instance and bind it to a socket.
@@ -92,11 +93,13 @@ namespace BestHTTP.SocketIO3.Events
 
                     try
                     {
-                        callbackDesc.Callback.Invoke(args);                        
+                        callbackDesc.Callback.Invoke(args);
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("TypedEventTable", String.Format("Call('{0}', {1}) - Callback.Invoke", eventName, args != null ? args.Length : 0), ex, this.Socket.Context);
+                        HttpManager.Logger.Exception("TypedEventTable",
+                            $"Call('{eventName}', {args?.Length ?? 0}) - Callback.Invoke", ex,
+                            this.Socket.Context);
                     }
 
                     if (callbackDesc.Once)

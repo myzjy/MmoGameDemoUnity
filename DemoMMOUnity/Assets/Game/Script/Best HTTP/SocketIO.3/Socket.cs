@@ -128,7 +128,7 @@ namespace BestHTTP.SocketIO3
         /// </summary>
         void ISocket.Open()
         {
-            HTTPManager.Logger.Information("Socket", string.Format("Open - Manager.State = {0}", Manager.State), this.Context);
+            HttpManager.Logger.Information("Socket", $"Open - Manager.State = {Manager.State}", this.Context);
 
             // The transport already established the connection
             if (Manager.State == SocketManager.States.Open)
@@ -237,7 +237,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
                 }
 
                 callback(arg);
@@ -259,7 +259,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
                     return;
                 }
 
@@ -279,7 +279,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}, {1}>('{2}') - cast failed", typeof(T1).Name, typeof(T2).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}>('{2}') - cast failed", typeof(T1).Name, typeof(T2).Name, eventName), ex, this.Context);
                     return;
                 }
 
@@ -301,7 +301,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}>('{3}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}>('{3}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, eventName), ex, this.Context);
                     return;
                 }
 
@@ -325,7 +325,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}>('{4}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}>('{4}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, eventName), ex, this.Context);
                     return;
                 }
 
@@ -351,7 +351,7 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}, {4}>('{5}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}, {4}>('{5}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5).Name, eventName), ex, this.Context);
                     return;
                 }
 
@@ -502,7 +502,7 @@ namespace BestHTTP.SocketIO3
         /// </summary>
         internal void OnTransportOpen()
         {
-            HTTPManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen, this.Context);
+            HttpManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen, this.Context);
 
             if (this.IsOpen)
                 return;
@@ -514,7 +514,7 @@ namespace BestHTTP.SocketIO3
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("Socket", "OnTransportOpen - Options.Auth", ex, this.Context);
+                HttpManager.Logger.Exception("Socket", "OnTransportOpen - Options.Auth", ex, this.Context);
             }
 
             try
@@ -523,7 +523,7 @@ namespace BestHTTP.SocketIO3
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("Socket", "OnTransportOpen", ex, this.Context);
+                HttpManager.Logger.Exception("Socket", "OnTransportOpen", ex, this.Context);
             }
         }
 

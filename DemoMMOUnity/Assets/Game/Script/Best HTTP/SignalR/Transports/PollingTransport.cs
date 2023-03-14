@@ -36,7 +36,7 @@ namespace BestHTTP.SignalR.Transports
         /// <summary>
         /// Reference to the the current poll request.
         /// </summary>
-        private HTTPRequest pollRequest;
+        private HttpRequest pollRequest;
 
         #endregion
 
@@ -54,7 +54,7 @@ namespace BestHTTP.SignalR.Transports
         /// </summary>
         public override void Connect()
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "Sending Open Request");
+            HttpManager.Logger.Information("Transport - " + this.Name, "Sending Open Request");
 
             // Skip the Connecting state if we are reconnecting. If the connect succeeds, we will set the Started state directly
             if (this.State != TransportStates.Reconnecting)
@@ -62,7 +62,7 @@ namespace BestHTTP.SignalR.Transports
 
             RequestTypes requestType = this.State == TransportStates.Reconnecting ? RequestTypes.Reconnect : RequestTypes.Connect;
 
-            var request = new HTTPRequest(Connection.BuildUri(requestType, this), HTTPMethods.Get, true, true, OnConnectRequestFinished);
+            var request = new HttpRequest(Connection.BuildUri(requestType, this), HttpMethods.Get, true, true, OnConnectRequestFinished);
 
             Connection.PrepareRequest(request, requestType);
 
@@ -71,7 +71,7 @@ namespace BestHTTP.SignalR.Transports
 
         public override void Stop()
         {
-            HTTPManager.Heartbeats.Unsubscribe(this);
+            HttpManager.Heartbeats.Unsubscribe(this);
 
             if (pollRequest != null)
             {
@@ -85,19 +85,19 @@ namespace BestHTTP.SignalR.Transports
         protected override void Started()
         {
             LastPoll = DateTime.UtcNow;
-            HTTPManager.Heartbeats.Subscribe(this);
+            HttpManager.Heartbeats.Subscribe(this);
         }
 
         protected override void Aborted()
         {
-            HTTPManager.Heartbeats.Unsubscribe(this);
+            HttpManager.Heartbeats.Unsubscribe(this);
         }
 
         #endregion
 
         #region Request Handlers
 
-        void OnConnectRequestFinished(HTTPRequest req, HTTPResponse resp)
+        void OnConnectRequestFinished(HttpRequest req, HttpResponse resp)
         {
             // error reason if there is any. We will call the manager's Error function if it's not empty.
             string reason = string.Empty;
@@ -105,10 +105,10 @@ namespace BestHTTP.SignalR.Transports
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("Transport - " + this.Name, "Connect - Request Finished Successfully! " + resp.DataAsText);
+                        HttpManager.Logger.Information("Transport - " + this.Name, "Connect - Request Finished Successfully! " + resp.DataAsText);
 
                         OnConnected();
 
@@ -131,22 +131,22 @@ namespace BestHTTP.SignalR.Transports
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Connect - Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
                     break;
 
                 // The request aborted, initiated by the user.
-                case HTTPRequestStates.Aborted:
+                case HttpRequestStates.Aborted:
                     reason = "Connect - Request Aborted!";
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Connect - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Connect - Processing the request Timed Out!";
                     break;
             }
@@ -155,14 +155,14 @@ namespace BestHTTP.SignalR.Transports
                 Connection.Error(reason);
         }
 
-        void OnPollRequestFinished(HTTPRequest req, HTTPResponse resp)
+        void OnPollRequestFinished(HttpRequest req, HttpResponse resp)
         {
             // When Stop() called on the transport.
             // In Stop() we set the pollRequest to null, but a new poll request can be made after a quick reconnection, and there is a chanse that 
             // in this handler function we can null out the new request. So we return early here.
             if (req.IsCancellationRequested)
             {
-                HTTPManager.Logger.Warning("Transport - " + this.Name, "Poll - Request Aborted!");
+                HttpManager.Logger.Warning("Transport - " + this.Name, "Poll - Request Aborted!");
                 return;
             }
 
@@ -175,10 +175,10 @@ namespace BestHTTP.SignalR.Transports
             switch (req.State)
             {
                 // The request finished without any problem.
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("Transport - " + this.Name, "Poll - Request Finished Successfully! " + resp.DataAsText);
+                        HttpManager.Logger.Information("Transport - " + this.Name, "Poll - Request Finished Successfully! " + resp.DataAsText);
 
                         IServerMessage msg = TransportBase.Parse(Connection.JsonEncoder, resp.DataAsText);
 
@@ -201,17 +201,17 @@ namespace BestHTTP.SignalR.Transports
                     break;
 
                 // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     reason = "Poll - Request Finished with Error! " + (req.Exception != null ? (req.Exception.Message + "\n" + req.Exception.StackTrace) : "No Exception");
                     break;
 
                 // Connecting to the server is timed out.
-                case HTTPRequestStates.ConnectionTimedOut:
+                case HttpRequestStates.ConnectionTimedOut:
                     reason = "Poll - Connection Timed Out!";
                     break;
 
                 // The request didn't finished in the given time.
-                case HTTPRequestStates.TimedOut:
+                case HttpRequestStates.TimedOut:
                     reason = "Poll - Processing the request Timed Out!";
                     break;
             }
@@ -227,7 +227,7 @@ namespace BestHTTP.SignalR.Transports
         /// </summary>
         private void Poll()
         {
-            pollRequest = new HTTPRequest(Connection.BuildUri(RequestTypes.Poll, this), HTTPMethods.Get, true, true, OnPollRequestFinished);
+            pollRequest = new HttpRequest(Connection.BuildUri(RequestTypes.Poll, this), HttpMethods.Get, true, true, OnPollRequestFinished);
 
             Connection.PrepareRequest(pollRequest, RequestTypes.Poll);
 

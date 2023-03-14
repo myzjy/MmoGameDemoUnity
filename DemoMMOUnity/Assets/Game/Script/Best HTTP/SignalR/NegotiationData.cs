@@ -86,7 +86,7 @@ namespace BestHTTP.SignalR
 
         #region Private
 
-        private HTTPRequest NegotiationRequest;
+        private HttpRequest NegotiationRequest;
         private IConnection Connection;
 
         #endregion
@@ -101,11 +101,11 @@ namespace BestHTTP.SignalR
         /// </summary>
         public void Start()
         {
-            NegotiationRequest = new HTTPRequest(Connection.BuildUri(RequestTypes.Negotiate), HTTPMethods.Get, true, true, OnNegotiationRequestFinished);
+            NegotiationRequest = new HttpRequest(Connection.BuildUri(RequestTypes.Negotiate), HttpMethods.Get, true, true, OnNegotiationRequestFinished);
             Connection.PrepareRequest(NegotiationRequest, RequestTypes.Negotiate);
             NegotiationRequest.Send();
 
-            HTTPManager.Logger.Information("NegotiationData", "Negotiation request sent");
+            HttpManager.Logger.Information("NegotiationData", "Negotiation request sent");
         }
 
         /// <summary>
@@ -123,16 +123,16 @@ namespace BestHTTP.SignalR
 
         #region Request Event Handler
 
-        private void OnNegotiationRequestFinished(HTTPRequest req, HTTPResponse resp)
+        private void OnNegotiationRequestFinished(HttpRequest req, HttpResponse resp)
         {
             NegotiationRequest = null;
 
             switch (req.State)
             {
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("NegotiationData", "Negotiation data arrived: " + resp.DataAsText);
+                        HttpManager.Logger.Information("NegotiationData", "Negotiation data arrived: " + resp.DataAsText);
 
                         int idx = resp.DataAsText.IndexOf("{");
                         if (idx < 0)
@@ -163,7 +163,7 @@ namespace BestHTTP.SignalR
                                                                     req.CurrentUri));
                     break;
 
-                case HTTPRequestStates.Error:
+                case HttpRequestStates.Error:
                     RaiseOnError(req.Exception != null ? (req.Exception.Message + " " + req.Exception.StackTrace) : string.Empty);
                     break;
 
@@ -179,7 +179,7 @@ namespace BestHTTP.SignalR
 
         private void RaiseOnError(string err)
         {
-            HTTPManager.Logger.Error("NegotiationData", "Negotiation request failed with error: " + err);
+            HttpManager.Logger.Error("NegotiationData", "Negotiation request failed with error: " + err);
 
             if (OnError != null)
             {
@@ -224,7 +224,7 @@ namespace BestHTTP.SignalR
             }
             catch(Exception ex)
             {
-                HTTPManager.Logger.Exception("NegotiationData", "Parse", ex);
+                HttpManager.Logger.Exception("NegotiationData", "Parse", ex);
                 return null;
             }
 

@@ -37,7 +37,7 @@ namespace BestHTTP.SignalR.Transports
         {
             if (wSocket != null)
             {
-                HTTPManager.Logger.Warning("WebSocketTransport", "开始- WebSocket已经创建!");
+                HttpManager.Logger.Warning("WebSocketTransport", "开始- WebSocket已经创建!");
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace BestHTTP.SignalR.Transports
             if (webSocket != wSocket)
                 return;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "WSocket_OnOpen");
+            HttpManager.Logger.Information("WebSocketTransport", "WSocket_OnOpen");
 
             OnConnected();
         }
@@ -136,7 +136,7 @@ namespace BestHTTP.SignalR.Transports
 
             string reason = code.ToString() + " : " + message;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "WSocket_OnClosed " + reason);
+            HttpManager.Logger.Information("WebSocketTransport", "WSocket_OnClosed " + reason);
 
             if (this.State == TransportStates.Closing)
                 this.State = TransportStates.Closed;
@@ -158,8 +158,8 @@ namespace BestHTTP.SignalR.Transports
             }
             else
             {
-                if (HTTPManager.Logger.Level == Logger.Loglevels.All)
-                    HTTPManager.Logger.Error("WebSocketTransport", "WSocket_OnError " + reason);
+                if (HttpManager.Logger.Level == Logger.Loglevels.All)
+                    HttpManager.Logger.Error("WebSocketTransport", "WSocket_OnError " + reason);
 
                 this.State = TransportStates.Closed;
                 Connection.Error(reason);

@@ -30,7 +30,7 @@ namespace BestHTTP.SignalR.Authentication
         /// <summary>
         /// This function will be called for every request before sending it.
         /// </summary>
-        void PrepareRequest(HTTPRequest request, RequestTypes type);
+        void PrepareRequest(HttpRequest request, RequestTypes type);
     }
 }
 

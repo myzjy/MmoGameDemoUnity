@@ -37,7 +37,7 @@ namespace BestHTTP.SocketIO3.Transports
                 return;
 
             Uri uri = null;
-            string baseUrl = new UriBuilder(HTTPProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
+            string baseUrl = new UriBuilder(HttpProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
                                                             Manager.Uri.Host,
                                                             Manager.Uri.Port,
                                                             Manager.Uri.GetRequestPathAndQueryURL()).Uri.ToString();
@@ -86,7 +86,7 @@ namespace BestHTTP.SocketIO3.Transports
             if (Implementation != null)
                 Implementation.Close();
             else
-                HTTPManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!", this.Manager.Context);
+                HttpManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!", this.Manager.Context);
             Implementation = null;
         }
 
@@ -109,7 +109,7 @@ namespace BestHTTP.SocketIO3.Transports
             if (ws != Implementation)
                 return;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "OnOpen", this.Manager.Context);
+            HttpManager.Logger.Information("WebSocketTransport", "OnOpen", this.Manager.Context);
 
             State = TransportStates.Opening;
 
@@ -126,8 +126,8 @@ namespace BestHTTP.SocketIO3.Transports
             if (ws != Implementation)
                 return;
 
-            if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("WebSocketTransport", "OnMessage: " + message, this.Manager.Context);
+            if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("WebSocketTransport", "OnMessage: " + message, this.Manager.Context);
 
             IncomingPacket packet = IncomingPacket.Empty;
             try
@@ -141,7 +141,7 @@ namespace BestHTTP.SocketIO3.Transports
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex, this.Manager.Context);
+                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex, this.Manager.Context);
             }
 
             if (!packet.Equals(IncomingPacket.Empty))
@@ -152,7 +152,7 @@ namespace BestHTTP.SocketIO3.Transports
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("WebSocketTransport", "OnMessage OnPacket", ex, this.Manager.Context);
+                    HttpManager.Logger.Exception("WebSocketTransport", "OnMessage OnPacket", ex, this.Manager.Context);
                 }
             }
         }
@@ -165,8 +165,8 @@ namespace BestHTTP.SocketIO3.Transports
             if (ws != Implementation)
                 return;
 
-            if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                HTTPManager.Logger.Verbose("WebSocketTransport", "OnBinary", this.Manager.Context);
+            if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                HttpManager.Logger.Verbose("WebSocketTransport", "OnBinary", this.Manager.Context);
 
             IncomingPacket packet = IncomingPacket.Empty;
             try
@@ -175,7 +175,7 @@ namespace BestHTTP.SocketIO3.Transports
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocketTransport", "OnBinary Packet parsing", ex, this.Manager.Context);
+                HttpManager.Logger.Exception("WebSocketTransport", "OnBinary Packet parsing", ex, this.Manager.Context);
             }
 
             if (!packet.Equals(IncomingPacket.Empty))
@@ -186,7 +186,7 @@ namespace BestHTTP.SocketIO3.Transports
                 }
                 catch (Exception ex)
                 {
-                    HTTPManager.Logger.Exception("WebSocketTransport", "OnBinary OnPacket", ex, this.Manager.Context);
+                    HttpManager.Logger.Exception("WebSocketTransport", "OnBinary OnPacket", ex, this.Manager.Context);
                 }
             }
         }
@@ -205,7 +205,7 @@ namespace BestHTTP.SocketIO3.Transports
                 switch (ws.InternalRequest.State)
                 {
                     // The request finished without any problem.
-                    case HTTPRequestStates.Finished:
+                    case HttpRequestStates.Finished:
                         if (ws.InternalRequest.Response.IsSuccess || ws.InternalRequest.Response.StatusCode == 101)
                             error = string.Format("Request finished. Status Code: {0} Message: {1}", ws.InternalRequest.Response.StatusCode.ToString(), ws.InternalRequest.Response.Message);
                         else
@@ -216,22 +216,22 @@ namespace BestHTTP.SocketIO3.Transports
                         break;
 
                     // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
-                    case HTTPRequestStates.Error:
+                    case HttpRequestStates.Error:
                         error = "Request Finished with Error! : " + ws.InternalRequest.Exception != null ? (ws.InternalRequest.Exception.Message + " " + ws.InternalRequest.Exception.StackTrace) : string.Empty;
                         break;
 
                     // The request aborted, initiated by the user.
-                    case HTTPRequestStates.Aborted:
+                    case HttpRequestStates.Aborted:
                         error = "Request Aborted!";
                         break;
 
                     // Connecting to the server is timed out.
-                    case HTTPRequestStates.ConnectionTimedOut:
+                    case HttpRequestStates.ConnectionTimedOut:
                         error = "Connection Timed Out!";
                         break;
 
                     // The request didn't finished in the given time.
-                    case HTTPRequestStates.TimedOut:
+                    case HttpRequestStates.TimedOut:
                         error = "Processing the request Timed Out!";
                         break;
                 }
@@ -252,7 +252,7 @@ namespace BestHTTP.SocketIO3.Transports
             if (ws != Implementation)
               return;
 
-            HTTPManager.Logger.Information("WebSocketTransport", "OnClosed", this.Manager.Context);
+            HttpManager.Logger.Information("WebSocketTransport", "OnClosed", this.Manager.Context);
 
             Close();
 
@@ -274,7 +274,7 @@ namespace BestHTTP.SocketIO3.Transports
             if (State == TransportStates.Closed ||
                 State == TransportStates.Paused)
             {
-                HTTPManager.Logger.Information("WebSocketTransport", string.Format("Send - State == {0}, skipping packet sending!", State), this.Manager.Context);
+                HttpManager.Logger.Information("WebSocketTransport", string.Format("Send - State == {0}, skipping packet sending!", State), this.Manager.Context);
                 return;
             }
 
@@ -312,7 +312,7 @@ namespace BestHTTP.SocketIO3.Transports
             {
                 case TransportEventTypes.Open:
                     if (this.State != TransportStates.Opening)
-                        HTTPManager.Logger.Warning("WebSocketTransport", "Received 'Open' packet while state is '" + State.ToString() + "'", this.Manager.Context);
+                        HttpManager.Logger.Warning("WebSocketTransport", "Received 'Open' packet while state is '" + State.ToString() + "'", this.Manager.Context);
                     else
                         State = TransportStates.Open;
                     goto default;

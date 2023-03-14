@@ -124,13 +124,13 @@ namespace BestHTTP.SignalR.Transports
         /// </summary>
         protected void Start()
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "Sending Start Request");
+            HttpManager.Logger.Information("Transport - " + this.Name, "Sending Start Request");
 
             this.State = TransportStates.Starting;
 
             if (this.Connection.Protocol > ProtocolVersions.Protocol_2_0)
             {
-                var request = new HTTPRequest(Connection.BuildUri(RequestTypes.Start, this), HTTPMethods.Get, true, true, OnStartRequestFinished);
+                var request = new HttpRequest(Connection.BuildUri(RequestTypes.Start, this), HttpMethods.Get, true, true, OnStartRequestFinished);
 
                 request.Tag = 0;
                 request.MaxRetries = 0;
@@ -152,14 +152,14 @@ namespace BestHTTP.SignalR.Transports
             }
         }
 
-        private void OnStartRequestFinished(HTTPRequest req, HTTPResponse resp)
+        private void OnStartRequestFinished(HttpRequest req, HttpResponse resp)
         {
             switch (req.State)
             {
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("Transport - " + this.Name, "Start - Returned: " + resp.DataAsText);
+                        HttpManager.Logger.Information("Transport - " + this.Name, "Start - Returned: " + resp.DataAsText);
 
                         string response = Connection.ParseResponse(resp.DataAsText);
 
@@ -179,7 +179,7 @@ namespace BestHTTP.SignalR.Transports
                         return;
                     }
                     else
-                        HTTPManager.Logger.Warning("Transport - " + this.Name, string.Format("Start - request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2} Uri: {3}",
+                        HttpManager.Logger.Warning("Transport - " + this.Name, string.Format("Start - request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2} Uri: {3}",
                                                                     resp.StatusCode,
                                                                     resp.Message,
                                                                     resp.DataAsText,
@@ -187,7 +187,7 @@ namespace BestHTTP.SignalR.Transports
                     goto default;
 
                 default:
-                    HTTPManager.Logger.Information("Transport - " + this.Name, "Start request state: " + req.State.ToString());
+                    HttpManager.Logger.Information("Transport - " + this.Name, "Start request state: " + req.State.ToString());
 
                     // The request may not reached the server. Try it again.
                     int retryCount = (int)req.Tag;
@@ -217,7 +217,7 @@ namespace BestHTTP.SignalR.Transports
 
             this.State = TransportStates.Closing;
 
-            var request = new HTTPRequest(Connection.BuildUri(RequestTypes.Abort, this), HTTPMethods.Get, true, true, OnAbortRequestFinished);
+            var request = new HttpRequest(Connection.BuildUri(RequestTypes.Abort, this), HttpMethods.Get, true, true, OnAbortRequestFinished);
 
             // Retry counter
             request.Tag = 0;
@@ -237,21 +237,21 @@ namespace BestHTTP.SignalR.Transports
             this.Aborted();
         }
 
-        private void OnAbortRequestFinished(HTTPRequest req, HTTPResponse resp)
+        private void OnAbortRequestFinished(HttpRequest req, HttpResponse resp)
         {
             switch (req.State)
             {
-                case HTTPRequestStates.Finished:
+                case HttpRequestStates.Finished:
                     if (resp.IsSuccess)
                     {
-                        HTTPManager.Logger.Information("Transport - " + this.Name, "Abort - Returned: " + resp.DataAsText);
+                        HttpManager.Logger.Information("Transport - " + this.Name, "Abort - Returned: " + resp.DataAsText);
 
                         if (this.State == TransportStates.Closing)
                             AbortFinished();
                     }
                     else
                     {
-                        HTTPManager.Logger.Warning("Transport - " + this.Name, string.Format("Abort - Handshake request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2} Uri: {3}",
+                        HttpManager.Logger.Warning("Transport - " + this.Name, string.Format("Abort - Handshake request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2} Uri: {3}",
                                                                     resp.StatusCode,
                                                                     resp.Message,
                                                                     resp.DataAsText,
@@ -262,7 +262,7 @@ namespace BestHTTP.SignalR.Transports
                     }
                     break;
                 default:
-                    HTTPManager.Logger.Information("Transport - " + this.Name, "Abort request state: " + req.State.ToString());
+                    HttpManager.Logger.Information("Transport - " + this.Name, "Abort request state: " + req.State.ToString());
 
                     // The request may not reached the server. Try it again.
                     int retryCount = (int)req.Tag;
@@ -290,13 +290,13 @@ namespace BestHTTP.SignalR.Transports
         {
             try
             {
-                HTTPManager.Logger.Information("Transport - " + this.Name, "Sending: " + jsonStr);
+                HttpManager.Logger.Information("Transport - " + this.Name, "Sending: " + jsonStr);
 
                 SendImpl(jsonStr);
             }
             catch (Exception ex)
             {
-                HTTPManager.Logger.Exception("Transport - " + this.Name, "Send", ex);
+                HttpManager.Logger.Exception("Transport - " + this.Name, "Send", ex);
             }
         }
 
@@ -309,7 +309,7 @@ namespace BestHTTP.SignalR.Transports
         /// </summary>
         public void Reconnect()
         {
-            HTTPManager.Logger.Information("Transport - " + this.Name, "Reconnecting");
+            HttpManager.Logger.Information("Transport - " + this.Name, "Reconnecting");
 
             Stop();
 
@@ -326,7 +326,7 @@ namespace BestHTTP.SignalR.Transports
             // Nothing to parse?
             if (string.IsNullOrEmpty(json))
             {
-                HTTPManager.Logger.Error("MessageFactory", "Parse - called with empty or null string!");
+                HttpManager.Logger.Error("MessageFactory", "Parse - called with empty or null string!");
                 return null;
             }
 
@@ -343,13 +343,13 @@ namespace BestHTTP.SignalR.Transports
             }
             catch(Exception ex)
             {
-                HTTPManager.Logger.Exception("MessageFactory", "Parse - encoder.DecodeMessage", ex);
+                HttpManager.Logger.Exception("MessageFactory", "Parse - encoder.DecodeMessage", ex);
                 return null;
             }
 
             if (msg == null)
             {
-                HTTPManager.Logger.Error("MessageFactory", "Parse - Json Decode failed for json string: \"" + json + "\"");
+                HttpManager.Logger.Error("MessageFactory", "Parse - Json Decode failed for json string: \"" + json + "\"");
                 return null;
             }
 
@@ -372,7 +372,7 @@ namespace BestHTTP.SignalR.Transports
             }
             catch
             {
-                HTTPManager.Logger.Error("MessageFactory", "Can't parse msg: " + json);
+                HttpManager.Logger.Error("MessageFactory", "Can't parse msg: " + json);
                 throw;
             }
 

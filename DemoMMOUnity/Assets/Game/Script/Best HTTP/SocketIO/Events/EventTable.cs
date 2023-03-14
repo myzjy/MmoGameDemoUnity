@@ -78,16 +78,16 @@ namespace BestHTTP.SocketIO.Events
 
             if (Table.TryGetValue(eventName, out events))
             {
-                if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("EventTable", string.Format("Call - {0} ({1})", eventName, events.Count));
+                if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("EventTable", string.Format("Call - {0} ({1})", eventName, events.Count));
 
                 for (int i = 0; i < events.Count; ++i)
                     events[i].Call(Socket, packet, args);
             }
             else
             {
-                if (HTTPManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
-                    HTTPManager.Logger.Verbose("EventTable", string.Format("Call - {0} (0)", eventName));
+                if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+                    HttpManager.Logger.Verbose("EventTable", string.Format("Call - {0} (0)", eventName));
             }
         }
 
