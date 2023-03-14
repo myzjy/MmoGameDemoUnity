@@ -69,7 +69,7 @@ namespace AmplifyAnimationPack
 
 			if( canLand )
 			{
-				Debug.DrawLine( charRef.transf.position , charRef.transf.position - Vector3.up * 1.6f , Color.blue );
+				UnityEngine.Debug.DrawLine( charRef.transf.position , charRef.transf.position - Vector3.up * 1.6f , Color.blue );
 				if( Physics.Raycast( charRef.transf.position , -Vector3.up , 1.6f ) )
 				{
 					charRef.animBeh.anim.SetBool( "canLand" , true );
