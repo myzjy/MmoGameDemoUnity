@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -51,11 +52,8 @@ namespace BestHTTP
             new Connections.HTTP2.Http2PluginSettings();
 #endif
 
-        #region Manager variables
-
         private static bool _isSetupCalled;
 
-        #endregion
 
         // Static constructor. Setup default values
         static HttpManager()
@@ -96,8 +94,6 @@ namespace BestHTTP
             IOService = new PlatformSupport.FileSystem.DefaultIOService();
 #endif
         }
-
-        #region Global Options
 
         /// <summary>
         /// The maximum active TCP connections that the client will maintain to a server. Default value is 6. Minimum value is 1.
@@ -300,9 +296,6 @@ namespace BestHTTP
 
         private static volatile bool _isQuitting;
 
-        #endregion
-
-        #region Public Interface
 
         public static void Setup()
         {
@@ -347,19 +340,53 @@ namespace BestHTTP
         public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive, bool disableCache,
             OnRequestFinishedDelegate callback)
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var parameters = sf.GetMethod().GetParameters();
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var key in parameters)
+                {
+                    stringBuilder.Append($"{key.ParameterType.Name} {key.Name},");
+                }
+
+                Debug.Log(
+                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name}({stringBuilder.ToString()})");
+            }
+#endif
             return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
         }
 
         public static HttpRequest SendRequest(HttpRequest request)
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var parameters = sf.GetMethod().GetParameters();
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var key in parameters)
+                {
+                    stringBuilder.Append($"{key.ParameterType.Name} {key.Name},");
+                }
+
+                Debug.Log(
+                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name}({stringBuilder.ToString()})");
+            }
+#endif
             if (!_isSetupCalled)
+            {
                 Setup();
+            }
 
             if (request.IsCancellationRequested || IsQuitting)
+            {
                 return request;
+            }
 
 #if !BESTHTTP_DISABLE_CACHING
-            // If possible load the full response from cache.
+            // 如果可能的话，从缓存中加载完整的响应。
             if (HttpCacheService.IsCachedEntityExpiresInTheFuture(request))
             {
                 var started = DateTime.Now;
@@ -372,7 +399,7 @@ namespace BestHTTP
                     }
                     else
                     {
-                        // If for some reason it couldn't load we place back the request to the queue.
+                        // 如果由于某种原因它不能加载，我们将请求放回队列。
 
                         request.State = HttpRequestStates.Queued;
                         RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
@@ -389,15 +416,15 @@ namespace BestHTTP
             return request;
         }
 
-        #endregion
-
-        #region Internal Helper Functions
-
         /// <summary>
-        /// Will return where the various caches should be saved.
+        /// 将返回应该保存各种缓存的位置。
         /// </summary>
         public static string GetRootCacheFolder()
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:GetRootCacheFolder] 将返回应该保存各种缓存的位置。");
+#endif
             try
             {
                 if (RootCacheFolderProvider != null)
@@ -438,15 +465,15 @@ namespace BestHTTP
         }
 #endif
 
-        #endregion
-
-        #region MonoBehaviour Events (Called from HTTPUpdateDelegator)
-
         /// <summary>
-        /// Update function that should be called regularly from a Unity event(Update, LateUpdate). Callbacks are dispatched from this function.
+        /// 应该从Unity事件中定期调用的更新函数(Update, LateUpdate)。从这个函数分派回调函数。
         /// </summary>
         public static void OnUpdate()
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log(
+                $"[HTTPManager] [method:OnUpdate] OnUpdate");
+#endif
             RequestEventHelper.ProcessQueue();
             ConnectionEventHelper.ProcessQueue();
             ProtocolEventHelper.ProcessQueue();
@@ -490,7 +517,7 @@ namespace BestHTTP
             Debug.Log(
                 $"[HTTPManager] [method:AbortAll] [msg] AbortAll called!");
 #endif
-            // This is an immediate shutdown request!
+            // 这是一个立即关闭的请求!
 
             RequestEventHelper.Clear();
             ConnectionEventHelper.Clear();
@@ -501,7 +528,5 @@ namespace BestHTTP
 
             ProtocolEventHelper.CancelActiveProtocols();
         }
-
-        #endregion
     }
 }

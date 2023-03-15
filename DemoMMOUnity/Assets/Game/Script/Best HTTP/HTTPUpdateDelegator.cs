@@ -14,7 +14,6 @@ namespace BestHTTP
     [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     public sealed class HttpUpdateDelegator : MonoBehaviour
     {
-        #region HttpUpdateDelegator 公共属性
 
         /// <summary>
         /// HTTPUpdateDelegator的单例实例
@@ -50,7 +49,6 @@ namespace BestHTTP
 
         public static System.Action<bool> OnApplicationForegroundStateChanged;
 
-        #endregion
 
         private static bool _isSetupCalled;
         private int _isHttpManagerOnUpdateRunning;

@@ -34,9 +34,7 @@ namespace BestHTTP
         ///读取缓冲区的最小大小。
         /// </summary>
         private const int MinReadBufferSize = 16 * 1024;
-
-        #region 公共属性
-
+        
         public int VersionMajor { get; protected set; }
 
         public int VersionMinor { get; protected set; }
@@ -175,15 +173,7 @@ namespace BestHTTP
 #endif
         internal long UnprocessedFragments;
 
-        #endregion
-
-        #region 内部字段
-
         internal readonly HttpRequest BaseRequest;
-
-        #endregion
-
-        #region 受保护属性和字段
 
         protected Stream Stream;
 
@@ -194,7 +184,6 @@ namespace BestHTTP
 #endif
         private int _allFragmentSize;
 
-        #endregion
 
         protected HttpResponse(HttpRequest request, bool isFromCache)
         {

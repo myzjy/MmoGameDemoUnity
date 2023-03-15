@@ -28,19 +28,19 @@
         }
 
         /// <summary>
-        /// The first byte's position that the server sent.
+        /// 服务器发送的第一个字节的位置。
         /// </summary>
         public long FirstBytePos { get; private set; }
 
         /// <summary>
-        /// The last byte's position that the server sent.
+        /// 服务器发送的最后一个字节的位置。
         /// </summary>
         public long LastBytePos { get; private set; }
 
         /// <summary>
-        /// Indicates the total length of the full entity-body on the server, -1 if this length is unknown or difficult to determine.
+        /// 表示服务器上完整实体的总长度，如果该长度未知或难以确定，则为-1。
         /// </summary>
-        public long ContentLength { get; private set; }
+        private long ContentLength { get; set; }
 
         /// <summary>
         ///
@@ -49,7 +49,7 @@
 
         public override string ToString()
         {
-            return string.Format("{0}-{1}/{2} (valid: {3})", FirstBytePos, LastBytePos, ContentLength, IsValid);
+            return $"{FirstBytePos}-{LastBytePos}/{ContentLength} (valid: {IsValid})";
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using BestHTTP.Authentication;
 using BestHTTP.Connections;
@@ -91,10 +92,9 @@ namespace BestHTTP
     public delegate bool OnStreamingDataDelegate(HttpRequest request, HttpResponse response, byte[] dataFragment,
         int dataFragmentLength);
 
+    // ReSharper disable once RedundantExtendsListEntry
     public sealed class HttpRequest : IEnumerator, IEnumerator<HttpRequest>
     {
-        #region 静态属性
-
         public static readonly byte[] Eol = { HttpResponse.CR, HttpResponse.LF };
 
         /// <summary>
@@ -118,9 +118,6 @@ namespace BestHTTP
         /// </summary>
         public static readonly int UploadChunkSize = 4 * 1024;
 
-        #endregion
-
-        #region 属性
 
         /// <summary>
         /// 原始请求的Uri。
@@ -145,7 +142,7 @@ namespace BestHTTP
         /// <summary>
         /// 当设置为true(它的默认值)时，插件将在上传完数据后调用UploadStream的Dispose()函数。默认值为true
         /// </summary>
-        public bool DisposeUploadStream { get; set; }
+        private bool DisposeUploadStream { get; set; }
 
         /// <summary>
         /// 如果为真，插件将使用流的长度属性。否则插件将发送数据分块。默认值为true。
@@ -155,6 +152,7 @@ namespace BestHTTP
         /// <summary>
         /// 在数据发送到线路后调用。
         /// </summary>
+        // ReSharper disable once UnassignedField.Global
         public OnUploadProgressDelegate OnUploadProgress;
 
         /// <summary>
@@ -163,55 +161,61 @@ namespace BestHTTP
         /// </summary>
         public bool IsKeepAlive
         {
-            get { return _isKeepAlive; }
-            set
+            get => _isKeepAlive;
+            private set
             {
                 if (State == HttpRequestStates.Processing)
-                    throw new NotSupportedException(
-                        "Changing the IsKeepAlive property while processing the request is not supported.");
+                {
+                    throw new NotSupportedException("不支持在处理请求时更改IsKeepAlive属性。");
+                }
+
                 _isKeepAlive = value;
             }
         }
 
 #if !BESTHTTP_DISABLE_CACHING
         /// <summary>
-        /// With this property caching can be enabled/disabled on a per-request basis.
+        /// 使用此属性，可以在每个请求的基础上启用/禁用缓存。
         /// </summary>
         public bool DisableCache
         {
-            get { return _disableCache; }
+            get => _disableCache;
             set
             {
                 if (State == HttpRequestStates.Processing)
-                    throw new NotSupportedException(
-                        "Changing the DisableCache property while processing the request is not supported.");
+                {
+                    throw new NotSupportedException("不支持在处理请求时更改DisableCache属性。");
+                }
+
                 _disableCache = value;
             }
         }
 
         /// <summary>
-        /// It can be used with streaming. When set to true, no OnStreamingData event is called, the streamed content will be saved straight to the cache if all requirements are met(caching is enabled and there's a caching headers).
+        /// 它可以与流媒体一起使用。当设置为true时，没有调用OnStreamingData事件，如果满足所有要求(启用缓存并且有缓存头)，流内容将直接保存到缓存中。
         /// </summary>
         public bool CacheOnly
         {
-            get { return _cacheOnly; }
+            get => _cacheOnly;
             set
             {
                 if (State == HttpRequestStates.Processing)
-                    throw new NotSupportedException(
-                        "Changing the CacheOnly property while processing the request is not supported.");
+                {
+                    throw new NotSupportedException("不支持在处理请求时更改CacheOnly属性。");
+                }
+
                 _cacheOnly = value;
             }
         }
 #endif
 
         /// <summary>
-        /// Maximum size of a data chunk that we want to receive when streaming is set. Its default value is 1 MB.
+        /// 设置流时希望接收的数据块的最大大小。缺省值为1mb。
         /// </summary>
         public int StreamFragmentSize
         {
-            get { return _streamFragmentSize; }
-            set
+            get => _streamFragmentSize;
+            private set
             {
                 if (State == HttpRequestStates.Processing)
                 {
@@ -221,7 +225,7 @@ namespace BestHTTP
 
                 if (value < 1)
                 {
-                    throw new System.ArgumentException("StreamFragmentSize必须至少为1.");
+                    throw new ArgumentException("StreamFragmentSize必须至少为1.");
                 }
 
                 _streamFragmentSize = value;
@@ -253,8 +257,9 @@ namespace BestHTTP
         /// </summary>
         public DateTime QueuedAt { get; internal set; }
 
-        public bool IsConnectTimedOut =>
-            this.QueuedAt != DateTime.MinValue && DateTime.UtcNow - this.QueuedAt > this.ConnectTimeout;
+        private bool IsConnectTimedOut =>
+            this.QueuedAt != DateTime.MinValue
+            && DateTime.UtcNow - this.QueuedAt > this.ConnectTimeout;
 
         /// <summary>
         /// 当请求开始处理时
@@ -277,7 +282,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// 调用从服务器下载的每个数据片段。如果dataFrament被处理并且插件可以回收字节数组，则返回true。
+        /// 调用从服务器下载的每个数据片段。如果dataFragment被处理并且插件可以回收字节数组，则返回true。
         /// </summary>
         public OnStreamingDataDelegate OnStreamingData;
 
@@ -299,11 +304,11 @@ namespace BestHTTP
         /// <summary>
         /// 如果在此请求上调用Abort()则为True。
         /// </summary>
-        public bool IsCancellationRequested { get; internal set; }
+        public bool IsCancellationRequested { get; private set; }
 
         /// <summary>
         /// 当从服务器下载新数据时调用。
-        /// 第一个参数是原始HTTTPRequest对象本身，第二个参数是下载的字节，第三个参数是内容长度。
+        /// 第一个参数是原始HttpRequest对象本身，第二个参数是下载的字节，第三个参数是内容长度。
         /// <remarks>在某些下载模式中，我们无法计算出最终内容的确切长度。在这些情况下，我们只是保证第三个参数至少是第二个参数的大小.</remarks>
         /// </summary>
         public OnDownloadProgressDelegate OnDownloadProgress;
@@ -321,10 +326,7 @@ namespace BestHTTP
         /// <summary>
         /// 如果重定向，则包含RedirectUri。
         /// </summary>
-        public Uri CurrentUri
-        {
-            get { return IsRedirected ? RedirectUri : Uri; }
-        }
+        public Uri CurrentUri => IsRedirected ? RedirectUri : Uri;
 
         /// <summary>
         /// 对查询的响应。
@@ -352,16 +354,14 @@ namespace BestHTTP
         /// <summary>
         /// 用户名，密码对，插件将使用验证到远程服务器。
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public Credentials Credentials { get; set; }
 
 #if !BESTHTTP_DISABLE_PROXY
         /// <summary>
         /// 如果存在Proxy对象，则为True。
         /// </summary>
-        public bool HasProxy
-        {
-            get { return Proxy != null && Proxy.UseProxyForAddress(this.CurrentUri); }
-        }
+        public bool HasProxy => Proxy != null && Proxy.UseProxyForAddress(this.CurrentUri);
 
         /// <summary>
         /// 请求必须经过的web代理的属性。
@@ -386,13 +386,8 @@ namespace BestHTTP
         /// </summary>
         public List<Cookie> Cookies
         {
-            get
-            {
-                if (_customCookies == null)
-                    _customCookies = new List<Cookie>();
-                return _customCookies;
-            }
-            set { _customCookies = value; }
+            get { return _customCookies ??= new List<Cookie>(); }
+            set => _customCookies = value;
         }
 
         private List<Cookie> _customCookies;
@@ -408,7 +403,7 @@ namespace BestHTTP
         /// </summary>
         public HttpRequestStates State
         {
-            get { return this._state; }
+            get => this._state;
             internal set
             {
                 lock (this)
@@ -460,8 +455,8 @@ namespace BestHTTP
         /// </summary>
         public event OnBeforeRedirectionDelegate OnBeforeRedirection
         {
-            add { _onBeforeRedirection += value; }
-            remove { _onBeforeRedirection -= value; }
+            add => _onBeforeRedirection += value;
+            remove => _onBeforeRedirection -= value;
         }
 
         private OnBeforeRedirectionDelegate _onBeforeRedirection;
@@ -471,8 +466,8 @@ namespace BestHTTP
         /// </summary>
         public event OnBeforeHeaderSendDelegate OnBeforeHeaderSend
         {
-            add { _onBeforeHeaderSend += value; }
-            remove { _onBeforeHeaderSend -= value; }
+            add => _onBeforeHeaderSend += value;
+            remove => _onBeforeHeaderSend -= value;
         }
 
         private OnBeforeHeaderSendDelegate _onBeforeHeaderSend;
@@ -501,20 +496,16 @@ namespace BestHTTP
         internal OnRequestFinishedDelegate OnUpgraded;
 #endif
 
-        #region 进度报告支持的内部属性
 
         /// <summary>
         /// 如果它为真，每次如果我们可以发送至少一个片段，Callback将被调用。
         /// </summary>
-        internal bool UseStreaming
-        {
-            get { return this.OnStreamingData != null; }
-        }
+        internal bool UseStreaming => this.OnStreamingData != null;
 
         /// <summary>
         /// 将返回UploadStream的长度，如果不支持则返回-1。
         /// </summary>
-        internal long UploadStreamLength
+        private long UploadStreamLength
         {
             get
             {
@@ -541,11 +532,6 @@ namespace BestHTTP
         internal Action<HttpRequest> OnCancellationRequested;
 #endif
 
-        #endregion
-
-        #endregion
-
-        #region 私有属性
 
         private bool _isKeepAlive;
 #if !BESTHTTP_DISABLE_CACHING
@@ -567,11 +553,6 @@ namespace BestHTTP
         /// </summary>
         private HttpFormBase _formImpl;
 
-        #endregion
-
-        #region 构造函数
-
-        #region 默认Get构造函数
 
         public HttpRequest(Uri uri)
             : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
@@ -612,9 +593,8 @@ namespace BestHTTP
         {
         }
 
-        #endregion
-
-        public HttpRequest(Uri uri, HttpMethods methodType)
+        public
+            HttpRequest(Uri uri, HttpMethods methodType)
             : this(uri, methodType, HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
                 HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
@@ -636,8 +616,15 @@ namespace BestHTTP
         {
         }
 
-        public HttpRequest(Uri uri, HttpMethods methodType, bool isKeepAlive, OnRequestFinishedDelegate callback)
-            : this(uri, methodType, isKeepAlive,
+        public HttpRequest(
+            Uri uri,
+            HttpMethods methodType,
+            bool isKeepAlive,
+            OnRequestFinishedDelegate callback)
+            : this(
+                uri,
+                methodType,
+                isKeepAlive,
 #if !BESTHTTP_DISABLE_CACHING
                 HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
@@ -647,8 +634,13 @@ namespace BestHTTP
         {
         }
 
-        public HttpRequest(Uri uri, HttpMethods methodType, bool isKeepAlive, bool disableCache,
-            OnRequestFinishedDelegate callback)
+        public
+            HttpRequest(
+                Uri uri,
+                HttpMethods methodType,
+                bool isKeepAlive,
+                bool disableCache,
+                OnRequestFinishedDelegate callback)
         {
             this.Uri = uri;
             this.MethodType = methodType;
@@ -690,58 +682,63 @@ namespace BestHTTP
             this.Timing = new TimingCollector(this);
         }
 
-        #endregion
-
-        #region Public Field Functions
-
         /// <summary>
         /// 用给定的字符串值添加一个字段。
         /// </summary>
         public void AddField(string fieldName, string value)
         {
-            AddField(fieldName, value, System.Text.Encoding.UTF8);
+            AddField(fieldName, value, Encoding.UTF8);
         }
 
         /// <summary>
         /// 用给定的字符串值添加一个字段。
         /// </summary>
-        public void AddField(string fieldName, string value, System.Text.Encoding e)
+        private void AddField(string fieldName, string value, Encoding e)
         {
-            if (_fieldCollector == null)
-                _fieldCollector = new HttpFormBase();
+            _fieldCollector ??= new HttpFormBase();
 
             _fieldCollector.AddField(fieldName, value, e);
         }
 
         /// <summary>
-        /// Add a field with binary content to the form.
+        /// 向表单添加具有二进制内容的字段。
         /// </summary>
         public void AddBinaryData(string fieldName, byte[] content)
         {
-            AddBinaryData(fieldName, content, null, null);
+            AddBinaryData(fieldName, content, string.Empty, string.Empty);
         }
 
         /// <summary>
-        /// Add a field with binary content to the form.
+        /// 向表单添加具有二进制内容的字段。
         /// </summary>
-        public void AddBinaryData(string fieldName, byte[] content, string fileName)
+        public void AddBinaryData(
+            string fieldName,
+            byte[] content,
+            string fileName)
         {
-            AddBinaryData(fieldName, content, fileName, null);
+            AddBinaryData(
+                fieldName,
+                content,
+                fileName: fileName,
+                mimeType: string.Empty);
         }
 
         /// <summary>
-        /// Add a field with binary content to the form.
+        /// 向表单添加具有二进制内容的字段。
         /// </summary>
-        public void AddBinaryData(string fieldName, byte[] content, string fileName, string mimeType)
+        private void AddBinaryData(
+            string fieldName,
+            byte[] content,
+            string fileName,
+            string mimeType)
         {
-            if (_fieldCollector == null)
-                _fieldCollector = new HttpFormBase();
+            _fieldCollector ??= new HttpFormBase();
 
             _fieldCollector.AddBinaryData(fieldName, content, fileName, mimeType);
         }
 
         /// <summary>
-        /// Manually set a HTTP Form.
+        /// 手动设置HTTP表单。
         /// </summary>
         public void SetForm(HttpFormBase form)
         {
@@ -749,94 +746,97 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Returns with the added form-fields or null if no one added.
+        /// 返回添加的表单字段，如果没有添加则返回null。
         /// </summary>
         public List<HttpFieldData> GetFormFields()
         {
             if (this._fieldCollector == null || this._fieldCollector.IsEmpty)
+            {
                 return null;
+            }
 
             return new List<HttpFieldData>(this._fieldCollector.Fields);
         }
 
         /// <summary>
-        /// Clears all data from the form.
+        /// 清除表单中的所有数据。
         /// </summary>
-        public void ClearForm()
+        private void ClearForm()
         {
             _formImpl = null;
             _fieldCollector = null;
         }
 
         /// <summary>
-        /// Will create the form implementation based on the value of the FormUsage property.
+        /// 将根据FormUsage属性的值创建表单实现。
         /// </summary>
         private HttpFormBase SelectFormImplementation()
         {
-            // Our form already created with a previous
+            // 我们的表单已经创建了前一个
             if (_formImpl != null)
                 return _formImpl;
 
-            // No field added to this request yet
+            // 还没有向此请求添加字段
             if (_fieldCollector == null)
                 return null;
 
             switch (FormUsage)
             {
                 case HttpFormUsage.Automatic:
-                    // A really simple decision making: if there are at least one field with binary data, or a 'long' string value then we will choose a Multipart form.
-                    //  Otherwise Url Encoded form will be used.
+                    // 一个非常简单的决策:如果至少有一个字段带有二进制数据，或者一个“长”字符串值，那么我们将选择Multipart形式。
+                    //  否则Url编码的形式将被使用。
                     if (_fieldCollector.HasBinary || _fieldCollector.HasLongValue)
+                    {
                         goto case HttpFormUsage.Multipart;
+                    }
                     else
+                    {
                         goto case HttpFormUsage.UrlEncoded;
+                    }
 
                 case HttpFormUsage.UrlEncoded:
+                {
                     _formImpl = new HttpUrlEncodedForm();
+                }
                     break;
                 case HttpFormUsage.Multipart:
                     _formImpl = new HttpMultiPartForm();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            // Copy the fields, and other properties to the new implementation
-            _formImpl.CopyFrom(_fieldCollector);
+            // 将字段和其他属性复制到新的实现中
+            _formImpl?.CopyFrom(_fieldCollector);
 
             return _formImpl;
         }
 
-        #endregion
-
-        #region Header Management
-
-        #region General Management
 
         /// <summary>
-        /// Adds a header and value pair to the Headers. Use it to add custom headers to the request.
+        /// 将一个标头和值对添加到标头。使用它向请求添加自定义标头。
         /// </summary>
         /// <example>AddHeader("User-Agent', "FooBar 1.0")</example>
         public void AddHeader(string name, string value)
         {
-            if (Headers == null)
-                Headers = new Dictionary<string, List<string>>();
+            Headers ??= new Dictionary<string, List<string>>();
 
-            List<string> values;
-            if (!Headers.TryGetValue(name, out values))
+            if (!Headers.TryGetValue(name, out var values))
+            {
                 Headers.Add(name, values = new List<string>(1));
+            }
 
             values.Add(value);
         }
 
         /// <summary>
-        /// Removes any previously added values, and sets the given one.
+        /// 删除以前添加的任何值，并设置给定的值。
         /// </summary>
         public void SetHeader(string name, string value)
         {
-            if (Headers == null)
-                Headers = new Dictionary<string, List<string>>();
+            Headers ??= new Dictionary<string, List<string>>();
 
-            List<string> values;
-            if (!Headers.TryGetValue(name, out values))
+            if (!Headers.TryGetValue(name, out var values))
                 Headers.Add(name, values = new List<string>(1));
 
             values.Clear();
@@ -844,20 +844,17 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Removes the specified header. Returns true, if the header found and succesfully removed.
+        /// 删除指定的标头。如果找到并成功删除头文件，则返回true。
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public bool RemoveHeader(string name)
         {
-            if (Headers == null)
-                return false;
-
-            return Headers.Remove(name);
+            return Headers != null && Headers.Remove(name);
         }
 
         /// <summary>
-        /// Returns true if the given head name is already in the Headers.
+        /// 如果给定的头名已经在头中，则返回true。
         /// </summary>
         public bool HasHeader(string name)
         {
@@ -865,73 +862,72 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Returns the first header or null for the given header name.
+        /// 对于给定的头名，返回第一个头或null。
         /// </summary>
         public string GetFirstHeaderValue(string name)
         {
             if (Headers == null)
+            {
                 return null;
+            }
 
-            List<string> headers = null;
-            if (Headers.TryGetValue(name, out headers) && headers.Count > 0)
+            if (Headers.TryGetValue(name, out var headers) && headers.Count > 0)
+            {
                 return headers[0];
+            }
 
             return null;
         }
 
         /// <summary>
-        /// Returns all header values for the given header or null.
+        /// 返回给定报头的所有报头值或null。
         /// </summary>
         public List<string> GetHeaderValues(string name)
         {
             if (Headers == null)
+            {
                 return null;
+            }
 
-            List<string> headers = null;
-            if (Headers.TryGetValue(name, out headers) && headers.Count > 0)
+            if (Headers.TryGetValue(name, out var headers) && headers.Count > 0)
+            {
                 return headers;
+            }
 
             return null;
         }
 
         /// <summary>
-        /// Removes all headers.
+        /// 删除所有头文件。
         /// </summary>
-        public void RemoveHeaders()
+        private void RemoveHeaders()
         {
-            if (Headers == null)
-                return;
-
-            Headers.Clear();
+            Headers?.Clear();
         }
 
-        #endregion
-
-        #region Range Headers
 
         /// <summary>
-        /// Sets the Range header to download the content from the given byte position. See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
+        /// 设置Range标头以从给定的字节位置下载内容。 See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
         /// </summary>
         /// <param name="firstBytePos">Start position of the download.</param>
         public void SetRangeHeader(long firstBytePos)
         {
-            SetHeader("Range", string.Format("bytes={0}-", firstBytePos));
+            SetHeader("Range", $"bytes={firstBytePos}-");
         }
 
         /// <summary>
-        /// Sets the Range header to download the content from the given byte position to the given last position. See http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
+        ///设置Range标头以从给定的字节位置下载内容到给定的最后一个位置。看到 http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
         /// </summary>
-        /// <param name="firstBytePos">Start position of the download.</param>
-        /// <param name="lastBytePos">The end position of the download.</param>
+        /// <param name="firstBytePos">下载的起始位置.</param>
+        /// <param name="lastBytePos">下载的结束位置.</param>
         public void SetRangeHeader(long firstBytePos, long lastBytePos)
         {
-            SetHeader("Range", string.Format("bytes={0}-{1}", firstBytePos, lastBytePos));
+            SetHeader("Range", $"bytes={firstBytePos}-{lastBytePos}");
         }
-
-        #endregion
 
         public void EnumerateHeaders(OnHeaderEnumerationDelegate callback)
         {
+            // ReSharper disable once IntroduceOptionalParameters.Global
             EnumerateHeaders(callback, false);
         }
 
@@ -940,10 +936,7 @@ namespace BestHTTP
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (!HasHeader("Host"))
             {
-                if (CurrentUri.Port == 80 || CurrentUri.Port == 443)
-                    SetHeader("Host", CurrentUri.Host);
-                else
-                    SetHeader("Host", CurrentUri.Authority);
+                SetHeader("Host", CurrentUri.Port is 80 or 443 ? CurrentUri.Host : CurrentUri.Authority);
             }
 
             if (IsRedirected && !HasHeader("Referer"))
@@ -966,30 +959,41 @@ namespace BestHTTP
 
             if (IsKeepAlive && !HasHeader("Keep-Alive"))
             {
-                // Send the server a slightly larger value to make sure it's not going to close sooner than the client
+                // 向服务器发送稍微大一点的值，以确保它不会比客户端更快地关闭
                 int seconds = (int)Math.Ceiling(HttpManager.MaxConnectionIdleTime.TotalSeconds + 1);
 
                 AddHeader("Keep-Alive", "timeout=" + seconds);
             }
 
             if (!HasHeader("TE"))
+            {
                 AddHeader("TE", "identity");
+            }
 
             if (!string.IsNullOrEmpty(HttpManager.UserAgent) && !HasHeader("User-Agent"))
+            {
                 AddHeader("User-Agent", HttpManager.UserAgent);
+            }
 #endif
-            long contentLength = -1;
+            long contentLength;
 
             if (UploadStream == null)
             {
                 byte[] entityBody = GetEntityBody();
-                contentLength = entityBody != null ? entityBody.Length : 0;
+                contentLength = entityBody?.Length ?? 0;
 
-                if (RawData == null && (_formImpl != null || (_fieldCollector != null && !_fieldCollector.IsEmpty)))
+                if (RawData == null && (_formImpl != null || _fieldCollector is { IsEmpty: false }))
                 {
-                    SelectFormImplementation();
-                    if (_formImpl != null)
-                        _formImpl.PrepareRequest(this);
+                    var formData = SelectFormImplementation();
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("[HTTPRequest] ");
+                    sb.Append("[method: EnumerateHeaders] ");
+                    sb.Append("[msg|Exception] ");
+                    sb.Append($"{formData}");
+                    Debug.Log(sb.ToString());
+#endif
+                    _formImpl?.PrepareRequest(this);
                 }
             }
             else
@@ -997,16 +1001,20 @@ namespace BestHTTP
                 contentLength = UploadStreamLength;
 
                 if (contentLength == -1)
+                {
                     SetHeader("Transfer-Encoding", "Chunked");
+                }
 
                 if (!HasHeader("Content-Type"))
+                {
                     SetHeader("Content-Type", "application/octet-stream");
+                }
             }
 
-            // Always set the Content-Length header if possible
-            // http://tools.ietf.org/html/rfc2616#section-4.4 : For compatibility with HTTP/1.0 applications, HTTP/1.1 requests containing a message-body MUST include a valid Content-Length header field unless the server is known to be HTTP/1.1 compliant.
-            // 2018.06.03: Changed the condition so that content-length header will be included for zero length too.
-            // 2022.05.25: Don't send a Content-Length (: 0) header if there's an Upgrade header. Upgrade is set for websocket, and it might be not true that the client doesn't send any bytes.
+            // 如果可能，总是设置Content-Length头
+            // http://tools.ietf.org/html/rfc2616#section-4.4 : 为了与HTTP/1.0应用程序兼容，包含消息体的HTTP/1.1请求必须包含有效的Content-Length报头字段，除非已知服务器是HTTP/1.1兼容的。
+            // 2018.06.03: 改变条件，内容长度头将包括为零长度。
+            // 2022.05.25: 如果有Upgrade头，不要发送Content-Length(: 0)头。为websocket设置了升级，客户端不发送任何字节可能是错误的。
             if (
 #if !UNITY_WEBGL || UNITY_EDITOR
                 contentLength >= 0
@@ -1025,24 +1033,33 @@ namespace BestHTTP
                 switch (Proxy.Credentials.Type)
                 {
                     case AuthenticationTypes.Basic:
-                        // With Basic authentication we don't want to wait for a challenge, we will send the hash with the first request
+                    {
+                        // 使用基本身份验证，我们不希望等待挑战，我们将与第一个请求一起发送散列
                         SetHeader("Proxy-Authorization",
                             string.Concat("Basic ",
-                                Convert.ToBase64String(Encoding.UTF8.GetBytes(Proxy.Credentials.UserName + ":" +
-                                                                              Proxy.Credentials.Password))));
+                                Convert.ToBase64String(
+                                    Encoding.UTF8.GetBytes(
+                                        $"{Proxy.Credentials.UserName}:{Proxy.Credentials.Password}"))));
+                    }
                         break;
 
                     case AuthenticationTypes.Unknown:
                     case AuthenticationTypes.Digest:
+                    {
                         var digest = DigestStore.Get(Proxy.Address);
                         if (digest != null)
                         {
-                            string authentication = digest.GenerateResponseHeader(this, Proxy.Credentials);
+                            var authentication = digest.GenerateResponseHeader(this, Proxy.Credentials);
                             if (!string.IsNullOrEmpty(authentication))
+                            {
                                 SetHeader("Proxy-Authorization", authentication);
+                            }
                         }
+                    }
 
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 #endif
@@ -1055,83 +1072,105 @@ namespace BestHTTP
                 switch (Credentials.Type)
                 {
                     case AuthenticationTypes.Basic:
-                        // With Basic authentication we don't want to wait for a challenge, we will send the hash with the first request
+                    {
+                        // 使用基本身份验证，我们不希望等待挑战，我们将与第一个请求一起发送散列
                         SetHeader("Authorization",
                             string.Concat("Basic ",
                                 Convert.ToBase64String(
-                                    Encoding.UTF8.GetBytes(Credentials.UserName + ":" + Credentials.Password))));
+                                    Encoding.UTF8.GetBytes(
+                                        $"{Credentials.UserName}: {Credentials.Password}"))));
+                    }
                         break;
 
                     case AuthenticationTypes.Unknown:
                     case AuthenticationTypes.Digest:
+                    {
                         var digest = DigestStore.Get(this.CurrentUri);
                         if (digest != null)
                         {
-                            string authentication = digest.GenerateResponseHeader(this, Credentials);
+                            var authentication = digest.GenerateResponseHeader(this, Credentials);
                             if (!string.IsNullOrEmpty(authentication))
+                            {
                                 SetHeader("Authorization", authentication);
+                            }
                         }
+                    }
 
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
             // Cookies.
 #if !BESTHTTP_DISABLE_COOKIES
-            // User added cookies are sent even when IsCookiesEnabled is set to false
-            List<Cookie> cookies = IsCookiesEnabled ? CookieJar.Get(CurrentUri) : null;
+            // 即使IsCookiesEnabled设置为false，用户添加的cookie也会被发送
+            var cookies = IsCookiesEnabled ? CookieJar.Get(CurrentUri) : null;
 
-            // Merge server sent cookies with user-set cookies
+            // 合并服务器发送的cookie和用户设置的cookie
             if (cookies == null || cookies.Count == 0)
+            {
                 cookies = this._customCookies;
+            }
             else if (this._customCookies != null)
             {
                 // Merge
-                int idx = 0;
+                var idx = 0;
                 while (idx < this._customCookies.Count)
                 {
-                    Cookie customCookie = _customCookies[idx];
+                    var customCookie = _customCookies[idx];
 
-                    int foundIdx = cookies.FindIndex(c => c.Name.Equals(customCookie.Name));
+                    var foundIdx = cookies.FindIndex(c => c.Name.Equals(customCookie.Name));
                     if (foundIdx >= 0)
+                    {
                         cookies[foundIdx] = customCookie;
+                    }
                     else
+                    {
                         cookies.Add(customCookie);
+                    }
 
                     idx++;
                 }
             }
 
             // http://tools.ietf.org/html/rfc6265#section-5.4
-            //  -When the user agent generates an HTTP request, the user agent MUST NOT attach more than one Cookie header field.
-            if (cookies != null && cookies.Count > 0)
+            //  -当用户代理生成一个HTTP请求时，用户代理绝对不能附加多个Cookie报头字段。
+            if (cookies is { Count: > 0 })
             {
-                // Room for improvement:
-                //   2. The user agent SHOULD sort the cookie-list in the following order:
-                //      *  Cookies with longer paths are listed before cookies with shorter paths.
-                //      *  Among cookies that have equal-length path fields, cookies with earlier creation-times are listed before cookies with later creation-times.
+                //改进的余地:
+                //   2. 用户代理应该按照以下顺序对cookie列表进行排序:
+                //      *  路径较长的cookie会列在路径较短的cookie之前。
+                //      *  在具有等长路径字段的cookie中，创建时间较早的cookie列在创建时间较晚的cookie之前.
 
-                bool first = true;
-                string cookieStr = string.Empty;
+                var first = true;
+                var cookieStr = string.Empty;
 
-                bool isSecureProtocolInUse = HttpProtocolFactory.IsSecureProtocol(CurrentUri);
+                var isSecureProtocolInUse = HttpProtocolFactory.IsSecureProtocol(CurrentUri);
 
-                foreach (var cookie in cookies)
-                    if (!cookie.IsSecure || (cookie.IsSecure && isSecureProtocolInUse))
+                foreach (var cookie in cookies.Where(cookie =>
+                             !cookie.IsSecure ||
+                             (cookie.IsSecure && isSecureProtocolInUse)))
+                {
+                    if (!first)
                     {
-                        if (!first)
-                            cookieStr += "; ";
-                        else
-                            first = false;
-
-                        cookieStr += cookie.ToString();
-
-                        // 3. Update the last-access-time of each cookie in the cookie-list to the current date and time.
-                        cookie.LastAccess = DateTime.UtcNow;
+                        cookieStr += "; ";
+                    }
+                    else
+                    {
+                        first = false;
                     }
 
+                    cookieStr += cookie.ToString();
+
+                    // 3. 更新cookie-list中每个cookie的最后访问时间为当前日期和时间。
+                    cookie.LastAccess = DateTime.UtcNow;
+                }
+
                 if (!string.IsNullOrEmpty(cookieStr))
+                {
                     SetHeader("Cookie", cookieStr);
+                }
             }
 #endif
 
@@ -1153,18 +1192,16 @@ namespace BestHTTP
                 }
             }
 
-            // Write out the headers to the stream
-            if (callback != null && Headers != null)
+            // 将头写入流
+            if (callback == null || Headers == null) return;
+            foreach (var kvp in Headers)
             {
-                foreach (var kvp in Headers)
-                {
-                    callback(kvp.Key, kvp.Value);
-                }
+                callback(kvp.Key, kvp.Value);
             }
         }
 
         /// <summary>
-        /// Writes out the Headers to the stream.
+        /// 将头文件写入流。
         /// </summary>
         private void SendHeaders(Stream stream)
         {
@@ -1173,7 +1210,7 @@ namespace BestHTTP
                 if (string.IsNullOrEmpty(header) || values == null)
                     return;
 
-                byte[] headerName = string.Concat(header, ": ").GetASCIIBytes();
+                var headerName = string.Concat(header, ": ").GetASCIIBytes();
 
                 foreach (var t in values)
                 {
@@ -1192,7 +1229,6 @@ namespace BestHTTP
                         continue;
                     }
 
-                    // if (HttpManager.Logger.Level <= Logger.Loglevels.Information)
                     VerboseLogging($"Header - '{header}': '{t}'");
 
                     byte[] valueBytes = t.GetASCIIBytes();
@@ -1209,34 +1245,37 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Returns a string representation of the headers.
+        /// 返回报头的字符串表示形式。
         /// </summary>
         public string DumpHeaders()
         {
-            using (var ms = new BufferPoolMemoryStream(5 * 1024))
-            {
-                SendHeaders(ms);
-                return ms.ToArray().AsciiToString();
-            }
+            using var ms = new BufferPoolMemoryStream(5 * 1024);
+            SendHeaders(ms);
+            return ms.ToArray().AsciiToString();
         }
 
         /// <summary>
-        /// Returns with the bytes that will be sent to the server as the request's payload.
+        /// 返回将作为请求的有效负载发送到服务器的字节。
         /// </summary>
-        /// <remarks>Call this only after all form-fields are added!</remarks>
+        /// <remarks>只有在添加了所有表单字段之后才调用它!</remarks>
         public byte[] GetEntityBody()
         {
             if (RawData != null)
-                return RawData;
-
-            if (_formImpl != null || (_fieldCollector != null && !_fieldCollector.IsEmpty))
             {
-                SelectFormImplementation();
-                if (_formImpl != null)
-                    return _formImpl.GetData();
+                return RawData;
             }
 
-            return null;
+            if (_formImpl == null && _fieldCollector is not { IsEmpty: false }) return null;
+            var formData = SelectFormImplementation();
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            var sb = new StringBuilder();
+            sb.Append("[HTTPRequest] ");
+            sb.Append("[method: GetEntityBody] ");
+            sb.Append("[msg|Exception] ");
+            sb.Append($"{formData}");
+            Debug.Log(sb.ToString());
+#endif
+            return _formImpl?.GetData();
         }
 
         internal struct UploadStreamInfo
@@ -1253,45 +1292,43 @@ namespace BestHTTP
 
         internal UploadStreamInfo GetUpStream()
         {
-            byte[] data = RawData;
+            var data = RawData;
 
-            // We are sending forms? Then convert the form to a byte array
+            // 我们要发送表格吗?然后将表单转换为字节数组
             if (data == null && _formImpl != null)
-                data = _formImpl.GetData();
-
-            if (data != null || UploadStream != null)
             {
-                // Make a new reference, as we will check the UploadStream property in the HTTPManager
-                Stream uploadStream = UploadStream;
-
-                long uploadLength = 0;
-
-                if (uploadStream == null)
-                {
-                    // Make stream from the data. A BufferPoolMemoryStream could be used here,
-                    // but because data comes from outside, we don't have control on its lifetime
-                    // and might be gets reused without our knowledge.
-                    uploadStream = new MemoryStream(data, 0, data.Length);
-
-                    // Initialize progress report variable
-                    uploadLength = data.Length;
-                }
-                else
-                    uploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
-
-                return new UploadStreamInfo(uploadStream, uploadLength);
+                data = _formImpl.GetData();
             }
 
-            return new UploadStreamInfo(null, 0);
+            if (data == null && UploadStream == null) return new UploadStreamInfo(null, 0);
+            // 创建一个新的引用，因为我们将检查HTTPManager中的UploadStream属性
+            var uploadStream = UploadStream;
+
+            long uploadLength = 0;
+
+            if (uploadStream == null)
+            {
+                // 从数据中生成流。这里可以使用BufferPoolMemoryStream，
+                // 但是由于数据来自外部，我们无法控制它的生命周期
+                // 可能在我们不知情的情况下被重复使用。
+                if (data == null) return new UploadStreamInfo(uploadStream, uploadLength);
+                uploadStream = new MemoryStream(data, 0, data.Length);
+
+                // 初始化进度报告变量
+                uploadLength = data.Length;
+            }
+            else
+            {
+                uploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
+            }
+
+            return new UploadStreamInfo(uploadStream, uploadLength);
         }
 
-        #endregion
-
-        #region Internal Helper Functions
 
         internal void SendOutTo(Stream stream)
         {
-            // Under WEBGL EnumerateHeaders and GetEntityBody are used instead of this function.
+            // 在WEBGL中，使用EnumerateHeaders和GetEntityBody来代替这个函数。
 #if !UNITY_WEBGL || UNITY_EDITOR
             string requestPathAndQuery =
 #if !BESTHTTP_DISABLE_PROXY
@@ -1307,62 +1344,69 @@ namespace BestHTTP
                 $"[HTTPRequest] [method:SendOutTo] [msg] Sending request: '{requestLine}'");
 #endif
 
-            // Create a buffer stream that will not close 'stream' when disposed or closed.
-            // buffersize should be larger than UploadChunkSize as it might be used for uploading user data and
-            //  it should have enough room for UploadChunkSize data and additional chunk information.
+            // 创建一个缓冲区流，它在被释放或关闭时不会关闭'stream'。
+            //bufferSize应该大于UploadChunkSize，因为它可能用于上传用户数据和
+            //  它应该有足够的空间来存放UploadChunkSize数据和额外的块信息。
             using (var bufferStream =
                    new WriteOnlyBufferedStream(stream, (int)(UploadChunkSize * 1.5f)))
             {
-                byte[] requestLineBytes = requestLine.GetASCIIBytes();
+                var requestLineBytes = requestLine.GetASCIIBytes();
                 bufferStream.WriteArray(requestLineBytes);
                 bufferStream.WriteArray(Eol);
 
                 BufferPool.Release(requestLineBytes);
 
-                // Write headers to the buffer
+                // 将标头写入缓冲区
                 SendHeaders(bufferStream);
                 bufferStream.WriteArray(Eol);
 
-                // Send remaining data to the wire
+                // 将剩余数据发送到线路
                 bufferStream.Flush();
 
                 byte[] data = RawData;
 
-                // We are sending forms? Then convert the form to a byte array
+                // 我们要发送表格吗?然后将表单转换为字节数组
                 if (data == null && _formImpl != null)
+                {
                     data = _formImpl.GetData();
+                }
 
                 if (data != null || UploadStream != null)
                 {
-                    // Make a new reference, as we will check the UploadStream property in the HTTPManager
+                    // 创建一个新的引用，因为我们将检查HTTPManager中的UploadStream属性
                     Stream uploadStream = UploadStream;
 
                     long uploadLength = 0;
 
                     if (uploadStream == null)
                     {
-                        // Make stream from the data. A BufferPoolMemoryStream could be used here,
-                        // but because data comes from outside, we don't have control on it's lifetime
-                        // and might be gets reused without our knowledge.
-                        uploadStream = new MemoryStream(data, 0, data.Length);
+                        //从数据生成流这里可以使用BufferPoolMemoryStream，
+                        //但由于数据来自外部，我们无法控制它的生命周期
+                        //并且可能在我们不知情的情况下被重用。
+                        if (data != null)
+                        {
+                            uploadStream = new MemoryStream(data, 0, data.Length);
 
-                        // Initialize progress report variable
-                        uploadLength = data.Length;
+                            // 初始化进度报告变量
+                            uploadLength = data.Length;
+                        }
                     }
                     else
+                    {
                         uploadLength = UseUploadStreamLength ? UploadStreamLength : -1;
+                    }
 
-                    // Initialize the progress report variables
+                    // 初始化进度报告变量
                     long uploaded = 0;
 
-                    // Upload buffer. First we will read the data into this buffer from the UploadStream, then write this buffer to our outStream
-                    byte[] buffer = BufferPool.Get(UploadChunkSize, true);
+                    // 上传缓冲区。首先，我们将数据从UploadStream读入这个缓冲区，然后将这个缓冲区写入我们的outStream
+                    var buffer = BufferPool.Get(UploadChunkSize, true);
 
-                    // How many bytes was read from the UploadStream
-                    int count = 0;
+                    // 从UploadStream中读取了多少字节
+                    int count;
                     while ((count = uploadStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        // If we don't know the size, send as chunked
+                        // 如果我们不知道尺寸，就成块发送
                         if (!UseUploadStreamLength)
                         {
                             byte[] countBytes = count.ToString("X").GetASCIIBytes();
@@ -1372,17 +1416,17 @@ namespace BestHTTP
                             BufferPool.Release(countBytes);
                         }
 
-                        // write out the buffer to the wire
+                        // 将缓冲区写入线路
                         bufferStream.Write(buffer, 0, count);
 
                         // chunk trailing EOL
                         if (!UseUploadStreamLength)
                             bufferStream.WriteArray(Eol);
 
-                        // update how many bytes are uploaded
+                        // 更新上传的字节数
                         uploaded += count;
 
-                        // Write to the wire
+                        // 写入到线上
                         bufferStream.Flush();
 
                         if (this.OnUploadProgress != null)
@@ -1395,10 +1439,10 @@ namespace BestHTTP
 
                     BufferPool.Release(buffer);
 
-                    // All data from the stream are sent, write the 'end' chunk if necessary
+                    // 所有来自流的数据都被发送，如果需要，写入'end'块
                     if (!UseUploadStreamLength)
                     {
-                        byte[] noMoreChunkBytes = BufferPool.Get(1, true);
+                        var noMoreChunkBytes = BufferPool.Get(1, true);
                         noMoreChunkBytes[0] = (byte)'0';
                         bufferStream.Write(noMoreChunkBytes, 0, 1);
                         bufferStream.WriteArray(Eol);
@@ -1407,12 +1451,15 @@ namespace BestHTTP
                         BufferPool.Release(noMoreChunkBytes);
                     }
 
-                    // Make sure all remaining data will be on the wire
+                    // 确保所有剩余数据都在连接上
                     bufferStream.Flush();
 
-                    // Dispose the MemoryStream
+                    // 释放内存流
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (UploadStream == null && uploadStream != null)
+                    {
                         uploadStream.Dispose();
+                    }
                 }
                 else
                     bufferStream.Flush();
@@ -1460,16 +1507,15 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Called on Unity's main thread just before processing it.
+        /// 在处理它之前在Unity的主线程中调用。
         /// </summary>
         internal void Prepare()
         {
         }
 
-        #endregion
 
         /// <summary>
-        /// Starts processing the request.
+        /// 开始处理请求。
         /// </summary>
         public HttpRequest Send()
         {
@@ -1480,7 +1526,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Aborts an already established connection, so no further download or upload are done.
+        /// 终止已经建立的连接，因此不再进行进一步的下载或上传。
         /// </summary>
         public void Abort()
         {
@@ -1493,16 +1539,15 @@ namespace BestHTTP
 
                 this.IsCancellationRequested = true;
 
-                // If the response is an IProtocol implementation, call the protocol's cancellation.
-                IProtocol protocol = this.Response as IProtocol;
-                if (protocol != null)
+                //如果响应是一个IProtocol实现，调用协议的取消。
+                if (this.Response is IProtocol protocol)
                     protocol.CancellationRequested();
 
-                // There's a race-condition here, another thread might set it too.
+                // 这里有一个竞争条件，另一个线程也可以设置它。
                 this.Response = null;
 
-                // There's a race-condition here too, another thread might set it too.
-                //  In this case, both state going to be queued up that we have to handle in RequestEvents.cs.
+                //这里也有一个竞争条件，另一个线程也可以设置它。
+                //在这种情况下，两个状态都将被排队，我们必须在RequestEvents.cs中处理。
                 if (this.IsTimedOut)
                 {
                     this.State = this.IsConnectTimedOut
@@ -1521,6 +1566,7 @@ namespace BestHTTP
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
 #endif
@@ -1528,7 +1574,7 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Resets the request for a state where switching MethodType is possible.
+        /// 重置可以切换MethodType的状态的请求。
         /// </summary>
         public void Clear()
         {
@@ -1548,12 +1594,7 @@ namespace BestHTTP
 #endif
         }
 
-        #region System.Collections.IEnumerator implementation
-
-        public object Current
-        {
-            get { return null; }
-        }
+        public object Current => null;
 
         public bool MoveNext()
         {
@@ -1565,12 +1606,8 @@ namespace BestHTTP
             throw new NotImplementedException();
         }
 
-        #endregion
 
-        HttpRequest IEnumerator<HttpRequest>.Current
-        {
-            get { return this; }
-        }
+        HttpRequest IEnumerator<HttpRequest>.Current => this;
 
         public void Dispose()
         {
@@ -1580,8 +1617,7 @@ namespace BestHTTP
                 UploadStream = null;
             }
 
-            if (Response != null)
-                Response.Dispose();
+            Response?.Dispose();
         }
     }
 }
