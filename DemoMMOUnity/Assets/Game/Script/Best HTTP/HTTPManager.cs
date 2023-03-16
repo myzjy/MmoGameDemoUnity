@@ -32,10 +32,10 @@ namespace BestHTTP
         List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols);
 #endif
 
-    public delegate System.Security.Cryptography.X509Certificates.X509Certificate ClientCertificateSelector(
+    public delegate X509Certificate ClientCertificateSelector(
         HttpRequest request, string targetHost,
-        System.Security.Cryptography.X509Certificates.X509CertificateCollection localCertificates,
-        System.Security.Cryptography.X509Certificates.X509Certificate remoteCertificate, string[] acceptableIssuers);
+        X509CertificateCollection localCertificates,
+        X509Certificate remoteCertificate, string[] acceptableIssuers);
 
     /// <summary>
     ///
@@ -48,14 +48,18 @@ namespace BestHTTP
         /// HTTP/2 settings
         /// </summary>
         // ReSharper disable once UnusedMember.Local
-        public static readonly Connections.HTTP2.Http2PluginSettings Http2Settings =
-            new Connections.HTTP2.Http2PluginSettings();
+        public
+            static readonly
+            Connections.HTTP2.Http2PluginSettings Http2Settings =
+                new Connections.HTTP2.Http2PluginSettings();
 #endif
 
-        private static bool _isSetupCalled;
+        private
+            static
+            bool _isSetupCalled;
 
 
-        // Static constructor. Setup default values
+        // 静态构造函数。设置默认值
         static HttpManager()
         {
             MaxConnectionPerServer = 6;
@@ -65,8 +69,8 @@ namespace BestHTTP
 
 #if !BESTHTTP_DISABLE_COOKIES
 #if UNITY_WEBGL && !UNITY_EDITOR
-            // Under webgl when IsCookiesEnabled is true, it will set the withCredentials flag for the XmlHTTPRequest
-            //  and that's different from the default behavior.
+            // 在webgl下，当IsCookiesEnabled为true时，它将为XmlHTTPRequest设置withCredentials标志
+            //  这与默认行为不同。
             // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
             IsCookiesEnabled = false;
 #else
@@ -88,15 +92,13 @@ namespace BestHTTP
 
 #if NETFX_CORE
             IOService = new PlatformSupport.FileSystem.NETFXCOREIOService();
-//#elif UNITY_WEBGL && !UNITY_EDITOR
-//            IOService = new PlatformSupport.FileSystem.WebGLIOService();
 #else
             IOService = new PlatformSupport.FileSystem.DefaultIOService();
 #endif
         }
 
         /// <summary>
-        /// The maximum active TCP connections that the client will maintain to a server. Default value is 6. Minimum value is 1.
+        /// 客户端将维持到服务器的最大活动TCP连接。缺省值为6。最小值为1。
         /// </summary>
         public static byte MaxConnectionPerServer
         {
@@ -104,79 +106,95 @@ namespace BestHTTP
             private set
             {
                 if (value <= 0)
-                    throw new ArgumentOutOfRangeException($"MaxConnectionPerServer must be greater than 0!");
+                {
+                    throw new ArgumentOutOfRangeException($"MaxConnectionPerServer 必须大于0!");
+                }
 
                 var isGrowing = value > _maxConnectionPerServer;
                 _maxConnectionPerServer = value;
 
-                // If the allowed connections per server is growing, go through all hosts and try to send out queueud requests.
+                // 如果每台服务器允许的连接正在增长，则遍历所有主机并尝试发送排队的请求。
                 if (isGrowing)
+                {
                     HostManager.TryToSendQueuedRequests();
+                }
             }
         }
 
-        private static byte _maxConnectionPerServer;
+        private
+            static
+            byte _maxConnectionPerServer;
 
         /// <summary>
-        /// Default value of a HTTP request's IsKeepAlive value. Default value is true. If you make rare request to the server it should be changed to false.
+        /// HTTP请求的IsKeepAlive的缺省值。默认值为true。如果你很少向服务器请求，它应该被更改为false。
         /// </summary>
-        public static bool KeepAliveDefaultValue { get; set; }
+        public
+            static
+            bool KeepAliveDefaultValue { get; set; }
 
 #if !BESTHTTP_DISABLE_CACHING
         /// <summary>
-        /// Set to true, if caching is prohibited.
+        /// 如果禁止缓存，则设置为true。
         /// </summary>
-        public static bool IsCachingDisabled => false;
+        public
+            static
+            bool IsCachingDisabled => false;
 #endif
 
         /// <summary>
-        /// How many time must be passed to destroy that connection after a connection finished its last request. Its default value is 20 seconds.
+        /// 在连接完成最后一个请求后，必须传递多少时间来销毁该连接。缺省值为20秒。
         /// </summary>
-        public static TimeSpan MaxConnectionIdleTime { get; set; }
+        public
+            static
+            TimeSpan MaxConnectionIdleTime { get; set; }
 
 #if !BESTHTTP_DISABLE_COOKIES
         /// <summary>
-        /// Set to false to disable all Cookie. It's default value is true.
+        /// 设置为false禁用所有Cookie。它的默认值是true。
         /// </summary>
-        public static bool IsCookiesEnabled { get; set; }
+        public
+            static
+            bool IsCookiesEnabled { get; set; }
 #endif
 
         /// <summary>
-        /// Size of the Cookie Jar in bytes. It's default value is 10485760 (10 MB).
+        /// Cookie Jar的大小(以字节为单位)。默认值是10485760 (10 MB)。
         /// </summary>
-        public static uint CookieJarSize { get; set; }
+        public
+            static
+            uint CookieJarSize { get; set; }
 
         /// <summary>
-        /// If this property is set to true, then new cookies treated as session cookies and these cookies are not saved to disk. Its default value is false;
+        /// 如果此属性设置为true，则新的cookie将被视为会话cookie，并且这些cookie不会保存到磁盘。默认值为false;
         /// </summary>
         public static bool EnablePrivateBrowsing { get; set; }
 
         /// <summary>
-        /// Global, default value of the HTTPRequest's ConnectTimeout property. If set to TimeSpan.Zero or lower, no connect timeout logic is executed. Default value is 20 seconds.
+        /// 全局的，HTTPRequest的ConnectTimeout属性的默认值。如果设置为TimeSpan。0或更低，则不执行连接超时逻辑。缺省值是20秒。
         /// </summary>
         public static TimeSpan ConnectTimeout { get; set; }
 
         /// <summary>
-        /// Global, default value of the HTTPRequest's Timeout property. Default value is 60 seconds.
+        /// 全局的，HTTPRequest超时属性的默认值。缺省值为60秒。
         /// </summary>
         public static TimeSpan RequestTimeout { get; set; }
 
         /// <summary>
-        /// By default the plugin will save all cache and cookie data under the path returned by Application.persistentDataPath.
-        /// You can assign a function to this delegate to return a custom root path to define a new path.
-        /// <remarks>This delegate will be called on a non Unity thread!</remarks>
+        /// <p>默认情况下，插件会将所有缓存和cookie数据保存在Application.persistentDataPath返回的路径下。</p>
+        /// <p>你可以给这个委托分配一个函数来返回一个自定义的根路径来定义一个新的路径。</p>
+        /// <remarks>此委托将在非Unity线程上调用!</remarks>
         /// </summary>
         private static Func<string> RootCacheFolderProvider => null;
 
 #if !BESTHTTP_DISABLE_PROXY
         /// <summary>
-        /// The global, default proxy for all HTTPRequests. The HTTPRequest's Proxy still can be changed per-request. Default value is null.
+        /// 所有httpRequest的全局默认代理。HTTPRequest的代理仍然可以在每个请求中更改。默认值为空。
         /// </summary>
         public static Proxy Proxy => null;
 #endif
 
         /// <summary>
-        /// Heartbeat manager to use less threads in the plugin. The heartbeat updates are called from the OnUpdate function.
+        /// Heartbeat管理器在插件中使用更少的线程。从OnUpdate函数调用心跳更新。
         /// </summary>
         public static HeartbeatManager Heartbeats
         {
@@ -186,13 +204,13 @@ namespace BestHTTP
         private static HeartbeatManager _heartbeats;
 
         /// <summary>
-        /// A basic BestHTTP.Logger.ILogger implementation to be able to log intelligently additional informations about the plugin's internal mechanism.
+        ///一个基本的BestHTTP.Logger.ILogger实现，能够智能地记录插件内部机制的附加信息。
         /// </summary>
         public static ILogger Logger
         {
             get
             {
-                // Make sure that it has a valid logger instance.
+                // 确保它有一个有效的记录器实例。
                 if (_logger == null)
                 {
                     _logger = new ThreadedLogger();
@@ -210,26 +228,27 @@ namespace BestHTTP
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 
 #pragma warning disable CS0169
-        public static TlsClientFactoryDelegate TlsClientFactory { get; set; }
+        public
+            static
+            TlsClientFactoryDelegate TlsClientFactory { get; set; }
 #pragma warning restore CS0169
 
         public static Connections.TLS.AbstractTls13Client DefaultTlsClientFactory(HttpRequest request,
             List<SecureProtocol.Org.BouncyCastle.Tls.ProtocolName> protocols)
         {
             // http://tools.ietf.org/html/rfc3546#section-3.1
-            // -It is RECOMMENDED that clients include an extension of type "server_name" in the client hello whenever they locate a server by a supported name type.
-            // -Literal IPv4 and IPv6 addresses are not permitted in "HostName".
-
-            // User-defined list has a higher priority
+            // -当客户端通过支持的名称类型定位服务器时，建议客户端在客户端hello中包含类型为"server_name"的扩展名。
+            // -“HostName”中不允许输入IPv4和IPv6地址。
+            // 用户自定义列表优先级更高
             List<SecureProtocol.Org.BouncyCastle.Tls.ServerName> hostNames = null;
 
-            // If there's no user defined one and the host isn't an IP address, add the default one
+            // 如果没有用户自定义IP地址，且主机不是IP地址，则添加默认IP地址
             if (!request.CurrentUri.IsHostIsAnIPAddress())
             {
                 hostNames = new List<SecureProtocol.Org.BouncyCastle.Tls.ServerName>(1)
                 {
                     new SecureProtocol.Org.BouncyCastle.Tls.ServerName(0,
-                        System.Text.Encoding.UTF8.GetBytes(request.CurrentUri.Host))
+                        Encoding.UTF8.GetBytes(request.CurrentUri.Host))
                 };
             }
 
@@ -237,32 +256,45 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// The default value for the HTTPRequest's UseAlternateSSL property.
+        /// HTTPRequest的UseAlternateSSL属性的默认值。
         /// </summary>
-        public static bool UseAlternateSSLDefaultValue { get; set; }
+        public
+            static
+            bool UseAlternateSSLDefaultValue { get; set; }
 #endif
 
 #if !NETFX_CORE
 #pragma warning disable CS0169
 
-        public static Func<HttpRequest, X509Certificate, X509Chain, SslPolicyErrors, bool>
+        public
+            static
+            Func<HttpRequest,
+                X509Certificate,
+                X509Chain,
+                SslPolicyErrors,
+                bool>
             DefaultCertificationValidator => null;
 #pragma warning restore CS0169
 #pragma warning disable CS0169
-        public static ClientCertificateSelector ClientCertificationProvider { get; set; }
+        public
+            static
+            ClientCertificateSelector
+            // ReSharper disable once UnusedAutoPropertyAccessor.Global
+            ClientCertificationProvider { get; set; }
 #pragma warning restore CS0169
 #endif
 
         /// <summary>
-        /// TCP Client's send buffer size.
+        /// TCP客户端的发送缓冲区大小。
         /// </summary>
 #pragma warning disable CS0169
         // ReSharper disable once InconsistentNaming
+        // ReSharper disable once UnassignedField.Global
         public static int? SendBufferSize;
 #pragma warning restore CS0169
 
         /// <summary>
-        /// TCP Client's receive buffer size.
+        /// TCP客户端接收缓冲区大小。
         /// </summary>
 #pragma warning disable CS0169
         // ReSharper disable once UnassignedField.Global
@@ -270,23 +302,23 @@ namespace BestHTTP
 #pragma warning restore CS0169
 
         /// <summary>
-        /// An IIOService implementation to handle filesystem operations.
+        /// 处理文件系统操作的IIOService实现。
         /// </summary>
         public static readonly PlatformSupport.FileSystem.IIOService IOService;
 
         /// <summary>
-        /// On most systems the maximum length of a path is around 255 character. If a cache entity's path is longer than this value it doesn't get cached. There no platform independent API to query the exact value on the current system, but it's
-        /// exposed here and can be overridden. It's default value is 255.
+        /// 在大多数系统上，路径的最大长度大约是255个字符。如果缓存实体的路径比这个值长，它就不会被缓存。没有平台独立的API来查询当前系统上的确切值，但它是
+        /// 暴露在这里，可以覆盖。缺省值为255。
         /// </summary>
         internal static int MaxPathLength { get; set; }
 
         /// <summary>
-        /// User-agent string that will be sent with each requests.
+        /// 将随每个请求一起发送的用户代理字符串。
         /// </summary>
         public const string UserAgent = "BestHTTP/2 v2.6.3";
 
         /// <summary>
-        /// It's true if the application is quitting and the plugin is shutting down itself.
+        /// 如果应用程序正在退出，插件正在关闭自己，这是正确的。
         /// </summary>
         public static bool IsQuitting
         {
@@ -304,8 +336,17 @@ namespace BestHTTP
             _isSetupCalled = true;
             IsQuitting = false;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPManager] [method:Setup] [msg]Setup called! UserAgent: {UserAgent}");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                StringBuilder sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                sb.Append($"[msg]Setup called! UserAgent: {UserAgent}");
+                Debug.Log($"{sb.ToString()}");
+            }
 #endif
             HttpUpdateDelegator.CheckInstance();
 
@@ -334,6 +375,14 @@ namespace BestHTTP
         public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive,
             OnRequestFinishedDelegate callback)
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                Debug.Log(
+                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
+            }
+#endif
             return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, callback));
         }
 
@@ -344,15 +393,8 @@ namespace BestHTTP
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
-                var parameters = sf.GetMethod().GetParameters();
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var key in parameters)
-                {
-                    stringBuilder.Append($"{key.ParameterType.Name} {key.Name},");
-                }
-
                 Debug.Log(
-                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name}({stringBuilder.ToString()})");
+                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
             }
 #endif
             return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
@@ -364,15 +406,8 @@ namespace BestHTTP
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
-                var parameters = sf.GetMethod().GetParameters();
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var key in parameters)
-                {
-                    stringBuilder.Append($"{key.ParameterType.Name} {key.Name},");
-                }
-
                 Debug.Log(
-                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name}({stringBuilder.ToString()})");
+                    $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
             }
 #endif
             if (!_isSetupCalled)
@@ -392,6 +427,14 @@ namespace BestHTTP
                 var started = DateTime.Now;
                 PlatformSupport.Threading.ThreadedRunner.RunShortLiving((req) =>
                 {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        Debug.Log(
+                            $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
+                    }
+#endif
                     if (ConnectionHelper.TryLoadAllFromCache("HTTPManager", req, req.Context))
                     {
                         req.Timing.Add("Full Cache Load", DateTime.Now - started);

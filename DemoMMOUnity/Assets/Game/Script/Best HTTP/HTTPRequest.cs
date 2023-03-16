@@ -1421,7 +1421,9 @@ namespace BestHTTP
 
                         // chunk trailing EOL
                         if (!UseUploadStreamLength)
+                        {
                             bufferStream.WriteArray(Eol);
+                        }
 
                         // 更新上传的字节数
                         uploaded += count;
@@ -1430,11 +1432,15 @@ namespace BestHTTP
                         bufferStream.Flush();
 
                         if (this.OnUploadProgress != null)
+                        {
                             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this,
                                 RequestEvents.UploadProgress, uploaded, uploadLength));
+                        }
 
                         if (this.IsCancellationRequested)
+                        {
                             return;
+                        }
                     }
 
                     BufferPool.Release(buffer);

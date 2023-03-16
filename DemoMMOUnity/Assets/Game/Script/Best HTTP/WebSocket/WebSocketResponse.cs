@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -17,31 +18,39 @@ namespace BestHTTP.WebSocket
     public sealed class WebSocketResponse : HttpResponse, IProtocol
     {
         /// <summary>
-        /// Capacity of the RTT buffer where the latencies are kept.
+        /// 保留延迟的RTT缓冲区的容量。
         /// </summary>
         public static int RTTBufferCapacity = 5;
 
-        internal WebSocketResponse(HttpRequest request, Stream stream, bool isStreamed, bool isFromCache)
-            : base(request, stream, isStreamed, isFromCache)
+        internal WebSocketResponse(
+            HttpRequest request,
+            Stream stream,
+            bool isStreamed,
+            bool isFromCache)
+            : base(
+                request,
+                stream,
+                isStreamed,
+                isFromCache)
         {
             base.IsClosedManually = true;
-            this.ConnectionKey = new HostConnectionKey(this.BaseRequest.CurrentUri.Host,
-                HostDefinition.GetKeyForRequest(this.BaseRequest));
+            this.ConnectionKey = new HostConnectionKey(
+                host: this.BaseRequest.CurrentUri.Host,
+                connection: HostDefinition.GetKeyForRequest(this.BaseRequest));
 
             closed = false;
             MaxFragmentSize = WebSocket.MaxFragmentSize;
         }
 
-        #region Sending Out Events
 
         /// <summary>
-        /// Internal function to send out received messages.
+        /// 内部功能，发送收到的消息。
         /// </summary>
         void IProtocol.HandleEvents()
         {
             while (CompletedFrames.TryDequeue(out var frame))
             {
-                // Bugs in the clients shouldn't interrupt the code, so we need to try-catch and ignore any exception occurring here
+                // 客户机中的错误不应该中断代码，因此我们需要尝试捕获并忽略此处发生的任何异常
                 try
                 {
                     switch (frame.Type)
@@ -49,8 +58,18 @@ namespace BestHTTP.WebSocket
                         case WebSocketFrameTypes.Continuation:
                         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                            Debug.Log(
-                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnIncompleteFrame");
+                            {
+                                var st = new StackTrace(new StackFrame(true));
+                                var sf = st.GetFrame(0);
+                                var sb = new StringBuilder(6);
+                                sb.Append($"[{sf.GetFileName()}]");
+                                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                                sb.Append($"{sf.GetMethod().Name} ");
+                                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                                sb.Append($"[msg{sf.GetMethod().Name}]");
+                                sb.Append($"HandleEvents - OnIncompleteFrame");
+                                Debug.Log($"{sb}");
+                            }
 #endif
                             OnIncompleteFrame?.Invoke(this, frame);
                         }
@@ -64,8 +83,18 @@ namespace BestHTTP.WebSocket
                                 goto case WebSocketFrameTypes.Continuation;
                             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                            Debug.Log(
-                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnText");
+                            {
+                                var st = new StackTrace(new StackFrame(true));
+                                var sf = st.GetFrame(0);
+                                var sb = new StringBuilder(6);
+                                sb.Append($"[{sf.GetFileName()}]");
+                                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                                sb.Append($"{sf.GetMethod().Name} ");
+                                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                                sb.Append($"[msg{sf.GetMethod().Name}]");
+                                sb.Append($"HandleEvents - OnText");
+                                Debug.Log($"{sb}");
+                            }
 #endif
                             OnText?.Invoke(this, frame.DataAsText);
                         }
@@ -73,48 +102,83 @@ namespace BestHTTP.WebSocket
 
                         case WebSocketFrameTypes.Binary:
                         {
-                            // Any not Final frame is handled as a fragment
+                            // 任何非Final帧都被作为片段处理
                             if (!frame.IsFinal)
+                            {
                                 goto case WebSocketFrameTypes.Continuation;
+                            }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                            Debug.Log(
-                                $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnBinary");
+                            {
+                                var st = new StackTrace(new StackFrame(true));
+                                var sf = st.GetFrame(0);
+                                var sb = new StringBuilder(6);
+                                sb.Append($"[{sf.GetFileName()}]");
+                                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                                sb.Append($"{sf.GetMethod().Name} ");
+                                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                                sb.Append($"[msg{sf.GetMethod().Name}]");
+                                sb.Append($"HandleEvents - OnBinary");
+                                Debug.Log($"{sb}");
+                            }
 #endif
                             OnBinary?.Invoke(this, frame.Data);
                         }
                             break;
+                        case WebSocketFrameTypes.ConnectionClose:
+                            break;
+                        case WebSocketFrameTypes.Ping:
+                            break;
+                        case WebSocketFrameTypes.Pong:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
                 catch (Exception ex)
                 {
-                    {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                        var sb = new StringBuilder(3);
-                        sb.Append("[WebSocketResponse] ");
-                        sb.Append("[method:HandleEvents] ");
-                        sb.Append($"[msg|Exception] HandleEvents [Exception] {ex}");
-                        Debug.LogError(sb.ToString());
-#endif
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($"[Exception] {ex}");
+                        Debug.LogError($"{sb}");
                     }
+#endif
                 }
             }
 
             // 2015.05.09
-            // State checking added because if there is an error the OnClose called first, and then the OnError.
-            // Now, when there is an error only the OnError event will be called!
-            if (IsClosed && OnClosed != null && BaseRequest.State == HttpRequestStates.Processing)
+            //添加状态检查，因为如果有一个错误，OnClose首先被调用，然后OnError。
+            //现在，当有错误时，只有OnError事件将被调用!
+            if (!IsClosed || OnClosed == null || BaseRequest.State != HttpRequestStates.Processing) return;
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log(
-                    $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - Calling OnClosed");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"HandleEvents - Calling OnClosed");
+                    Debug.Log($"{sb}");
+                }
 #endif
                 try
                 {
                     UInt16 statusCode = 0;
                     string msg = string.Empty;
 
-                    // If we received any data, we will get the status code and the message from it
-                    if ( /*CloseFrame != null && */CloseFrame.Data != null && CloseFrame.Data.Length >= 2)
+                    // 如果我们接收到任何数据，我们将从中获取状态码和消息
+                    if ( /*CloseFrame != null && */CloseFrame.Data is { Length: >= 2 })
                     {
                         if (BitConverter.IsLittleEndian)
                         {
@@ -137,24 +201,36 @@ namespace BestHTTP.WebSocket
                 catch (Exception ex)
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.LogError(
-                        $"[WebSocketResponse] [method:HandleEvents] [msg] HandleEvents - OnClosed Exception--->>:{ex} ");
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($"HandleEvents - OnClosed Exception--->>:{ex}");
+                        Debug.LogError($"{sb}");
+                    }
 #endif
                 }
             }
         }
 
-        #endregion
-
         void IProtocol.CancellationRequested()
         {
-            CloseWithError(HttpRequestStates.Aborted, null);
+            CloseWithError(
+                state: HttpRequestStates.Aborted,
+                message: null);
         }
 
         internal void StartReceive()
         {
             if (IsUpgraded)
+            {
                 BestHTTP.PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ReceiveThreadFunc);
+            }
         }
 
         internal void CloseStream()
@@ -258,48 +334,43 @@ namespace BestHTTP.WebSocket
             unsentFrames.Clear();
         }
 
-        #region Public Interface
-
         /// <summary>
-        /// A reference to the original WebSocket instance. Used for accessing extensions.
+        /// 对原始WebSocket实例的引用。用于访问扩展。
         /// </summary>
         public WebSocket WebSocket { get; internal set; }
 
         /// <summary>
-        /// Called when a Text message received
+        /// 当收到文本消息时调用
         /// </summary>
         public Action<WebSocketResponse, string> OnText;
 
         /// <summary>
-        /// Called when a Binary message received
+        /// 当接收到二进制消息时调用
         /// </summary>
         public Action<WebSocketResponse, byte[]> OnBinary;
 
         /// <summary>
-        /// Called when an incomplete frame received. No attempt will be made to reassemble these fragments.
+        /// 当接收到不完整的帧时调用。我们不会试图重新组装这些碎片。
         /// </summary>
         public Action<WebSocketResponse, WebSocketFrameReader> OnIncompleteFrame;
 
         /// <summary>
-        /// Called when the connection closed.
+        /// 当连接关闭时调用。
         /// </summary>
         public Action<WebSocketResponse, UInt16, string> OnClosed;
 
         /// <summary>
-        /// IProtocol's ConnectionKey property.
+        /// IProtocol的ConnectionKey属性。
         /// </summary>
         public HostConnectionKey ConnectionKey { get; private set; }
 
         /// <summary>
-        /// Indicates whether the connection to the server is closed or not.
+        /// 指示到服务器的连接是否关闭。
         /// </summary>
-        public bool IsClosed
-        {
-            get { return closed; }
-        }
+        public bool IsClosed => closed;
 
         /// <summary>
-        /// IProtocol.LoggingContext implementation.
+        /// IProtocol。LoggingContext实现。
         /// </summary>
         LoggingContext IProtocol.LoggingContext
         {
@@ -307,36 +378,32 @@ namespace BestHTTP.WebSocket
         }
 
         /// <summary>
-        /// On what frequency we have to send a ping to the server.
+        /// 我们需要用什么频率向服务器发送ping信号。
         /// </summary>
-        public TimeSpan PingFrequnecy { get; private set; }
+        private TimeSpan PingFrequency { get; set; }
 
         /// <summary>
-        /// Maximum size of a fragment's payload data. Its default value is WebSocket.MaxFragmentSize's value.
+        /// 片段有效载荷数据的最大大小。缺省值为WebSocket.MaxFragmentSize价值。
         /// </summary>
-        public uint MaxFragmentSize { get; set; }
+        private uint MaxFragmentSize { get; set; }
 
         /// <summary>
-        /// Length of unsent, buffered up data in bytes.
+        /// 未发送、已缓冲数据的长度(以字节为单位)。
         /// </summary>
-        public int BufferedAmount
-        {
-            get { return this._bufferedAmount; }
-        }
+        public int BufferedAmount => this._bufferedAmount;
 
         private int _bufferedAmount;
 
         /// <summary>
-        /// Calculated latency from the Round-Trip Times we store in the rtts field.
+        /// 我们存储在rtts字段中的往返时间计算的延迟。
         /// </summary>
         public int Latency { get; private set; }
 
         /// <summary>
-        /// When we received the last frame.
+        /// 当我们收到最后一帧。
         /// </summary>
-        public DateTime lastMessage = DateTime.MinValue;
+        public DateTime LastMessage = DateTime.MinValue;
 
-        #endregion
 
         #region Private Fields
 
@@ -522,8 +589,8 @@ namespace BestHTTP.WebSocket
             if (frequency < 100)
                 throw new ArgumentException("frequency must be at least 100 milliseconds!");
 
-            PingFrequnecy = TimeSpan.FromMilliseconds(frequency);
-            lastMessage = DateTime.UtcNow;
+            PingFrequency = TimeSpan.FromMilliseconds(frequency);
+            LastMessage = DateTime.UtcNow;
 
             SendPing();
         }
@@ -544,20 +611,20 @@ namespace BestHTTP.WebSocket
 
                     TimeSpan waitTime = TimeSpan.FromMilliseconds(int.MaxValue);
 
-                    if (this.PingFrequnecy != TimeSpan.Zero)
+                    if (this.PingFrequency != TimeSpan.Zero)
                     {
                         DateTime now = DateTime.UtcNow;
-                        waitTime = lastMessage + PingFrequnecy - now;
+                        waitTime = LastMessage + PingFrequency - now;
 
                         if (waitTime <= TimeSpan.Zero)
                         {
-                            if (!waitingForPong && now - lastMessage >= PingFrequnecy)
+                            if (!waitingForPong && now - LastMessage >= PingFrequency)
                             {
                                 if (!SendPing())
                                     continue;
                             }
 
-                            waitTime = PingFrequnecy;
+                            waitTime = PingFrequency;
                         }
 
                         if (waitingForPong && now - lastPing > this.WebSocket.CloseAfterNoMessage)
@@ -570,7 +637,7 @@ namespace BestHTTP.WebSocket
                                 sb.Append("[msg|Exception] ");
                                 sb.Append($"No message received in the given time!");
                                 sb.Append($" Closing WebSocket. LastPing: {this.lastPing}");
-                                sb.Append($" , PingFrequency: {this.PingFrequnecy},");
+                                sb.Append($" , PingFrequency: {this.PingFrequency},");
                                 sb.Append($" Close After: {this.WebSocket.CloseAfterNoMessage},");
                                 sb.Append($" Now: {now}");
                                 Debug.Log(sb.ToString());
@@ -666,7 +733,7 @@ namespace BestHTTP.WebSocket
                         Debug.Log(
                             $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Frame received: {frame.Type}");
 #endif
-                        lastMessage = DateTime.UtcNow;
+                        LastMessage = DateTime.UtcNow;
 
                         // A server MUST NOT mask any frames that it sends to the client.  A client MUST close a connection if it detects a masked frame.
                         // In this case, it MAY use the status code 1002 (protocol error)
@@ -744,7 +811,7 @@ namespace BestHTTP.WebSocket
                                 try
                                 {
                                     // the difference between the current time and the time when the ping message is sent
-                                    TimeSpan diff = TimeSpan.FromTicks(this.lastMessage.Ticks - this.lastPing.Ticks);
+                                    TimeSpan diff = TimeSpan.FromTicks(this.LastMessage.Ticks - this.lastPing.Ticks);
 
                                     // add it to the buffer
                                     this.rtts.Add((int)diff.TotalMilliseconds);

@@ -19,12 +19,12 @@
 
         internal HttpRange(long firstBytePosition, long lastBytePosition, long contentLength)
         {
-            this.FirstBytePos = firstBytePosition;
-            this.LastBytePos = lastBytePosition;
+            this.FirstBytePos  = firstBytePosition;
+            this.LastBytePos   = lastBytePosition;
             this.ContentLength = contentLength;
 
-            // A byte-content-range-spec with a byte-range-resp-spec whose last-byte-pos value is less than its first-byte-pos value, or whose instance-length value is less than or equal to its last-byte-pos value, is invalid.
-            this.IsValid = this.FirstBytePos <= this.LastBytePos && this.ContentLength > this.LastBytePos;
+            // 如果一个text -content-range-spec中的text -range- esp-spec的last-byte-pos值小于其first-byte-pos值，或者instance-length值小于或等于其last-byte-pos值，则该text -content-range-spec无效
+            this.IsValid      = this.FirstBytePos <= this.LastBytePos && this.ContentLength > this.LastBytePos;
         }
 
         /// <summary>

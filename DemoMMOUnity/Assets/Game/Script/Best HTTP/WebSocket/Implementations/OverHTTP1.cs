@@ -37,7 +37,7 @@ namespace BestHTTP.WebSocket
         public override int BufferedAmount => webSocket.BufferedAmount;
 
         public override int Latency => this.webSocket.Latency;
-        public override DateTime LastMessageReceived => this.webSocket.lastMessage;
+        public override DateTime LastMessageReceived => this.webSocket.LastMessage;
 
         protected override void CreateInternalRequest()
         {

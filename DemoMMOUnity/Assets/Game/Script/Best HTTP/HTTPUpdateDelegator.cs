@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using UnityEngine;
 #if NETFX_CORE
@@ -14,7 +16,6 @@ namespace BestHTTP
     [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     public sealed class HttpUpdateDelegator : MonoBehaviour
     {
-
         /// <summary>
         /// HTTPUpdateDelegator的单例实例
         /// </summary>
@@ -81,54 +82,98 @@ namespace BestHTTP
         {
             try
             {
-                if (!IsCreated)
                 {
-                    GameObject go = GameObject.Find("HTTP Update Delegator");
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] 将创建HTTPUpdateDelegator实例并对其进行设置。IsCreated:{IsCreated}");
+                    Debug.Log($"{sb}");
+                }
+                if (IsCreated) return;
+                var go = GameObject.Find("HTTP Update Delegator");
 
-                    if (go != null)
-                        Instance = go.GetComponent<HttpUpdateDelegator>();
+                if (go != null)
+                {
+                    Instance = go.GetComponent<HttpUpdateDelegator>();
+                }
 
-                    if (Instance == null)
+                if (Instance == null)
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     {
-                        go = new GameObject("HTTP Update Delegator")
-                        {
-                            hideFlags = HideFlags.HideAndDontSave
-                        };
-
-                        Instance = go.AddComponent<HttpUpdateDelegator>();
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}]");
+                        sb.Append($"{sf.GetMethod().Name}");
+                        sb.Append($"Line:{sf.GetFileLineNumber()}");
+                        sb.Append($"[msg] Instance 为空，创建 HTTP Update Delegator 物体");
+                        Debug.Log($"{sb}");
                     }
+#endif
+                    go = new GameObject("HTTP Update Delegator")
+                    {
+                        hideFlags = HideFlags.HideAndDontSave
+                    };
 
-                    IsCreated = true;
+                    Instance = go.AddComponent<HttpUpdateDelegator>();
+                }
+
+                IsCreated = true;
 
 #if UNITY_EDITOR
-                    if (!UnityEditor.EditorApplication.isPlaying)
-                    {
-                        UnityEditor.EditorApplication.update -= Instance.Update;
-                        UnityEditor.EditorApplication.update += Instance.Update;
-                    }
+                if (!UnityEditor.EditorApplication.isPlaying)
+                {
+                    UnityEditor.EditorApplication.update -= Instance.Update;
+                    UnityEditor.EditorApplication.update += Instance.Update;
+                }
 
 #if UNITY_2017_2_OR_NEWER
-                    UnityEditor.EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
-                    UnityEditor.EditorApplication.playModeStateChanged += Instance.OnPlayModeStateChanged;
+                UnityEditor.EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
+                UnityEditor.EditorApplication.playModeStateChanged += Instance.OnPlayModeStateChanged;
 #else
                     UnityEditor.EditorApplication.playmodeStateChanged -= Instance.OnPlayModeStateChanged;
                     UnityEditor.EditorApplication.playmodeStateChanged += Instance.OnPlayModeStateChanged;
 #endif
 #endif
 
-                    // https://docs.unity3d.com/ScriptReference/Application-wantsToQuit.html
-                    Application.wantsToQuit -= UnityApplication_WantsToQuit;
-                    Application.wantsToQuit += UnityApplication_WantsToQuit;
+                // https://docs.unity3d.com/ScriptReference/Application-wantsToQuit.html
+                Application.wantsToQuit -= UnityApplication_WantsToQuit;
+                Application.wantsToQuit += UnityApplication_WantsToQuit;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.Log($"[HTTPUpdateDelegator] [msg:实例创建!]");
-#endif
-                    // HttpManager.Logger.Information("HTTPUpdateDelegator", "");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] 实例创建。");
+                    Debug.Log($"{sb}");
                 }
+#endif
+                // HttpManager.Logger.Information("HTTPUpdateDelegator", "");
             }
             catch
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"[HTTPUpdateDelegator] [msg:请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!]");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] 请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!");
+                    Debug.LogError($"{sb}");
+                }
 #endif
             }
         }
@@ -172,14 +217,34 @@ namespace BestHTTP
                 DontDestroyOnLoad(this.gameObject);
             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log($"[HTTPUpdateDelegator] [method:Setup] [msg] Setup done!");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                sb.Append($"[msg{sf.GetMethod().Name}] Setup done!");
+                Debug.LogError($"{sb}");
+            }
 #endif
         }
 
-        void ThreadFunc()
+        private void ThreadFunc()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log("[HTTPUpdateDelegator] [msg:更新线程已启动]");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}] 更新线程已启动");
+                Debug.Log($"{sb}");
+            }
 #endif
             try
             {
@@ -198,18 +263,32 @@ namespace BestHTTP
             finally
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log("[HTTPUpdateDelegator] [msg:更新线程结束]");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}] 更新线程结束");
+                    Debug.Log($"{sb}");
+                }
 #endif
             }
         }
 
-        void Update()
+        private void Update()
         {
             if (!_isSetupCalled)
+            {
                 Setup();
+            }
 
             if (!IsThreaded)
+            {
                 CallOnUpdate();
+            }
         }
 
         private void CallOnUpdate()
@@ -260,9 +339,18 @@ namespace BestHTTP
         void OnDisable()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log("[HTTPUpdateDelegator] [msg:OnDisable 调用!]");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}] OnDisable 调用!");
+                Debug.Log($"{sb}");
+            }
 #endif
-
 #if UNITY_EDITOR
             if (UnityEditor.EditorApplication.isPlaying)
 #endif
@@ -274,7 +362,17 @@ namespace BestHTTP
         void OnApplicationPause(bool isPaused)
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log($"[HTTPUpdateDelegator] [msg:OnApplicationPause 是否暂停-->[{isPaused}]]");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}] OnApplicationPause 是否暂停-->[{isPaused}]");
+                Debug.Log($"{sb}");
+            }
 #endif
             if (HttpUpdateDelegator.OnApplicationForegroundStateChanged != null)
             {
@@ -285,7 +383,17 @@ namespace BestHTTP
         private static bool UnityApplication_WantsToQuit()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log($"[HTTPUpdateDelegator] [msg:UnityApplication_WantsToQuit Called!!!]");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}] UnityApplication_WantsToQuit Called!!!");
+                Debug.Log($"{sb}");
+            }
 #endif
             if (_onBeforeApplicationQuit != null)
             {
@@ -294,7 +402,17 @@ namespace BestHTTP
                     if (!_onBeforeApplicationQuit())
                     {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                        Debug.Log($"[HTTPUpdateDelegator] [msg:OnBeforeApplicationQuit调用返回false，延迟插件和应用程序关闭。]");
+                        {
+                            var st = new StackTrace(new StackFrame(true));
+                            var sf = st.GetFrame(0);
+                            var sb = new StringBuilder(6);
+                            sb.Append($"[{sf.GetFileName()}]");
+                            sb.Append($"[method:{sf.GetMethod().Name}] ");
+                            sb.Append($"{sf.GetMethod().Name} ");
+                            sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                            sb.Append($"[msg{sf.GetMethod().Name}] OnBeforeApplicationQuit调用返回false，延迟插件和应用程序关闭。");
+                            Debug.Log($"{sb}");
+                        }
 #endif
                         return false;
                     }
@@ -302,7 +420,17 @@ namespace BestHTTP
                 catch (System.Exception ex)
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.Log($"[HTTPUpdateDelegator] [msg:{ex}]");
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}] {ex}");
+                        Debug.LogError($"{sb}");
+                    }
 #endif
                 }
             }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,7 @@ namespace BestHTTP
         ///读取缓冲区的最小大小。
         /// </summary>
         private const int MinReadBufferSize = 16 * 1024;
-        
+
         public int VersionMajor { get; protected set; }
 
         public int VersionMinor { get; protected set; }
@@ -47,7 +48,7 @@ namespace BestHTTP
         /// <summary>
         /// 如果状态码在[200..]范围内，返回true。300[或304(未经修改)
         /// </summary>
-        public bool IsSuccess => (this.StatusCode >= 200 && this.StatusCode < 300) || this.StatusCode == 304;
+        public bool IsSuccess => this.StatusCode is >= 200 and < 300 || this.StatusCode == 304;
 
         /// <summary>
         /// 与StatusCode一起从服务器发送的消息。您可以从服务器上检查它的错误。
@@ -75,7 +76,7 @@ namespace BestHTTP
 
         /// <summary>
         /// 确定此响应是否仅存储到缓存。
-        /// 如果IsCacheOnly和isstreaming都为true, OnStreamingData不会被调用。
+        /// 如果IsCacheOnly和isStreaming都为true, OnStreamingData不会被调用。
         /// </summary>
         private bool IsCacheOnly { get; set; }
 #endif
@@ -163,7 +164,7 @@ namespace BestHTTP
         /// <summary>
         /// IProtocol。LoggingContext实现。
         /// </summary>
-        public LoggingContext Context { get; private set; }
+        protected LoggingContext Context { get; private set; }
 
         /// <summary>
         /// HTTPManager请求事件队列中的流数据片段的计数。
@@ -196,7 +197,11 @@ namespace BestHTTP
             this.Context.Add("IsFromCache", isFromCache);
         }
 
-        public HttpResponse(HttpRequest request, Stream stream, bool isStreamed, bool isFromCache,
+        public HttpResponse(
+            HttpRequest request,
+            Stream stream,
+            bool isStreamed,
+            bool isFromCache,
             bool isProxyResponse = false)
         {
             this.BaseRequest = request;
@@ -218,27 +223,50 @@ namespace BestHTTP
             this.Context.Add("IsFromCache", isFromCache);
         }
 
-        public bool Receive(long forceReadRawContentLength = -1, bool readPayloadData = true,
+        public bool Receive(
+            long forceReadRawContentLength = -1,
+            bool readPayloadData = true,
             bool sendUpgradedEvent = true)
         {
+            /*
+             * 如果在此请求上调用Abort()则为True。
+             */
             if (this.BaseRequest.IsCancellationRequested)
+            {
                 return false;
+            }
 
             string statusLine;
-
-            if (HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging(
-                    $"Receive. forceReadRawContentLength: '{forceReadRawContentLength:N0}', readPayloadData: '{readPayloadData}'");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append(
+                    $"Receive.forceReadRawContentLength: '{forceReadRawContentLength:N0}', readPayloadData: '{readPayloadData}'");
+                Debug.Log($"{sb}");
+            }
+#endif
 
             // 在WP平台上，我们不能确定tcp连接是否关闭。
             //  因此，如果我们在这里得到一个异常，我们需要重新创建连接。
             try
             {
-                // Read out 'HTTP/1.1' from the "HTTP/1.1 {StatusCode} {Message}"
-                statusLine = ReadTo(Stream, (byte)' ');
+                // 从“HTTP/1.1 {StatusCode} {Message}”中读出“HTTP/1.1”
+                statusLine = ReadTo(
+                    stream: Stream,
+                    blocker: (byte)' ');
             }
             catch
             {
+                /*
+                 * 如果在此请求上调用Abort()则为True。
+                 */
                 if (BaseRequest.IsCancellationRequested)
                 {
                     return false;
@@ -247,31 +275,58 @@ namespace BestHTTP
                 if (BaseRequest.Retries >= BaseRequest.MaxRetries)
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.Log("[HTTPResponse] [msg:读取状态行失败!启用Retry，返回false.] []");
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($"读取状态行失败!启用Retry，返回false.");
+                        Debug.Log($"{sb}");
+                    }
 #endif
-                    // HttpManager.Logger.Warning("HTTPResponse",
-                    //     "读取状态行失败!启用Retry，返回false.", this.Context,
-                    //     this.BaseRequest.Context);
                     return false;
                 }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log("[HTTPResponse] [msg:取状态行失败!禁用重试，重新抛出异常。] []");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"取状态行失败!禁用重试，重新抛出异常。");
+                    Debug.LogError($"{sb}");
+                }
 #endif
-                // HttpManager.Logger.Warning("HTTPResponse",
-                //     "读取状态行失败!禁用重试，重新抛出异常。", this.Context,
-                //     this.BaseRequest.Context);
                 throw;
             }
-
-            if (HttpManager.Logger.Level == Loglevels.All)
-                VerboseLogging($"Status Line: '{statusLine}'");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"Status Line: '{statusLine}'");
+                Debug.Log($"{sb}");
+            }
+#endif
 
             if (string.IsNullOrEmpty(statusLine))
             {
                 if (BaseRequest.Retries >= BaseRequest.MaxRetries)
                     return false;
 
-                throw new Exception("Network error! TCP Connection got closed before receiving any data!");
+                throw new Exception("网络错误!TCP连接在收到任何数据之前被关闭!");
             }
 
             if (!this.IsProxyResponse)
@@ -280,24 +335,36 @@ namespace BestHTTP
             string[] versions = statusLine.Split(new char[] { '/', '.' });
             this.VersionMajor = int.Parse(versions[1]);
             this.VersionMinor = int.Parse(versions[2]);
-            {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                StringBuilder sb = new StringBuilder();
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
                 sb.Append($"HTTP Version: '{this.VersionMajor.ToString()}.{this.VersionMinor.ToString()}'");
-                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                Debug.Log($"{sb}");
             }
-
+#endif
             int statusCode;
             string statusCodeStr = NoTrimReadTo(Stream, (byte)' ', LF);
-            {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                StringBuilder sb = new StringBuilder();
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
                 sb.Append($"Status Code: '{statusCodeStr}'");
-                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                Debug.Log($"{sb}");
             }
-
+#endif
             if (BaseRequest.Retries >= BaseRequest.MaxRetries)
             {
                 statusCode = int.Parse(statusCodeStr);
@@ -309,31 +376,41 @@ namespace BestHTTP
 
             this.StatusCode = statusCode;
 
-            if (statusCodeStr.Length > 0 && (byte)statusCodeStr[statusCodeStr.Length - 1] != LF &&
-                (byte)statusCodeStr[statusCodeStr.Length - 1] != CR)
+            if (statusCodeStr.Length > 0 && (byte)statusCodeStr[^1] != LF &&
+                (byte)statusCodeStr[^1] != CR)
             {
                 this.Message = ReadTo(Stream, LF);
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
                     sb.Append($"Status Message: '{this.Message}'");
-                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                    Debug.Log($"{sb}");
                 }
+#endif
             }
             else
             {
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("[HTTPResponse] ");
-                    sb.Append("[method: Receive] ");
-                    sb.Append("[msg|Exception] ");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
                     sb.Append($"Skipping Status Message reading!");
-                    Debug.Log(sb.ToString());
-#endif
+                    Debug.Log($"{sb}");
                 }
-
+#endif
                 this.Message = string.Empty;
             }
 
@@ -342,30 +419,50 @@ namespace BestHTTP
 
             if (!this.IsProxyResponse)
             {
-                BaseRequest.Timing.Add(TimingEventNames.Headers);
+                BaseRequest.Timing.Add(name: TimingEventNames.Headers);
             }
 
-            IsUpgraded = StatusCode == 101 && (HasHeaderWithValue("connection", "upgrade") || HasHeader("upgrade"));
-
+            IsUpgraded = StatusCode == 101
+                         && (HasHeaderWithValue(
+                                 headerName: "connection",
+                                 value: "upgrade")
+                             || HasHeader(headerName: "upgrade"));
+            /*
+             * 正常HTTP协议升级为其他HTTP协议。
+             */
             if (IsUpgraded)
             {
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
                     sb.Append($"请求升级!");
-                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                    Debug.Log($"{sb}");
                 }
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, RequestEvents.Upgraded));
+#endif
+                var requestEvent = new RequestEventInfo(
+                    request: this.BaseRequest,
+                    @event: RequestEvents.Upgraded);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
             }
 
             if (!readPayloadData)
+            {
                 return true;
+            }
 
             if (this.StatusCode == 200 && this.IsProxyResponse)
+            {
                 return true;
+            }
 
-            return ReadPayload(forceReadRawContentLength);
+            return ReadPayload(forceReadRawContentLength: forceReadRawContentLength);
         }
 
         private bool ReadPayload(long forceReadRawContentLength)
@@ -374,21 +471,27 @@ namespace BestHTTP
             if (forceReadRawContentLength != -1)
             {
                 ReadRaw(Stream, forceReadRawContentLength);
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
                     sb.Append($"ReadPayload完成!");
-                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                    Debug.Log($"{sb}");
                 }
+#endif
                 return true;
             }
 
             //  http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
             // 1。任何“MUST NOT”包含消息体的响应消息(例如1xx、204和304响应以及对HEAD请求的任何响应)
             //总是以报头字段之后的第一个空行结束，而不管消息中出现的实体报头字段。
-            if ((StatusCode >= 100 &&
-                 StatusCode < 200) ||
+            if (StatusCode is >= 100 and < 200 ||
                 StatusCode == 204 ||
                 StatusCode == 304 ||
                 BaseRequest.MethodType == HttpMethods.Head)
@@ -397,83 +500,118 @@ namespace BestHTTP
             }
 
 #if (!UNITY_WEBGL || UNITY_EDITOR)
-            if (HasHeaderWithValue("transfer-encoding", "chunked"))
+            if (HasHeaderWithValue(
+                    headerName: "transfer-encoding",
+                    value: "chunked"))
             {
-                ReadChunked(Stream);
+                ReadChunked(stream: Stream);
             }
             else
 #endif
             {
                 //  http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.4
                 //      Case 3 in the above link.
-                var contentLengthHeaders = GetHeaderValues("content-length");
-                var contentRangeHeaders = GetHeaderValues("content-range");
+                var contentLengthHeaders = GetHeaderValues(name: "content-length");
+                var contentRangeHeaders = GetHeaderValues(name: "content-range");
                 if (contentLengthHeaders != null && contentRangeHeaders == null)
                 {
-                    ReadRaw(Stream, long.Parse(contentLengthHeaders[0]));
+                    ReadRaw(
+                        stream: Stream,
+                        contentLength: long.Parse(contentLengthHeaders[0]));
                 }
                 else if (contentRangeHeaders != null)
                 {
                     if (contentLengthHeaders != null)
                     {
-                        ReadRaw(Stream, long.Parse(contentLengthHeaders[0]));
+                        ReadRaw(
+                            stream: Stream,
+                            contentLength: long.Parse(contentLengthHeaders[0]));
                     }
                     else
                     {
                         var range = GetRange();
-                        ReadRaw(Stream, (range.LastBytePos - range.FirstBytePos) + 1);
+                        ReadRaw(
+                            stream: Stream,
+                            contentLength: (range.LastBytePos - range.FirstBytePos) + 1);
                     }
                 }
                 else
                 {
-                    ReadUnknownSize(Stream);
+                    ReadUnknownSize(stream: Stream);
                 }
             }
-
-            {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                StringBuilder sb = new StringBuilder();
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
                 sb.Append($"ReadPayload完成!");
-                Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                Debug.Log($"{sb}");
             }
+#endif
             return true;
         }
 
-        #region Header Management
 
         private void ReadHeaders(Stream stream)
         {
             var newHeaders = this.BaseRequest.OnHeadersReceived != null ? new Dictionary<string, List<string>>() : null;
 
-            string headerName = ReadTo(stream, (byte)':', LF) /*.Trim()*/;
+            var headerName = ReadTo(
+                stream: stream,
+                blocker1: (byte)':',
+                blocker2: LF) /*.Trim()*/;
             while (headerName != string.Empty)
             {
-                string value = ReadTo(stream, LF);
-                {
+                var value = ReadTo(
+                    stream: stream,
+                    blocker: LF);
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
                     sb.Append($"Header - '{headerName}': '{value}'");
-                    Debug.Log($"[HTTPResponse]  [message: {sb.ToString()}]");
-#endif
+                    Debug.Log($"{sb}");
                 }
+#endif
 
-                AddHeader(headerName, value);
+                AddHeader(
+                    name: headerName,
+                    value: value);
 
                 if (newHeaders != null)
                 {
                     if (!newHeaders.TryGetValue(headerName, out var values))
+                    {
                         newHeaders.Add(headerName, values = new List<string>(1));
+                    }
 
                     values.Add(value);
                 }
 
-                headerName = ReadTo(stream, (byte)':', LF);
+                headerName = ReadTo(
+                    stream: stream,
+                    blocker1: (byte)':',
+                    blocker2: LF);
             }
 
             if (this.BaseRequest.OnHeadersReceived != null)
             {
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, newHeaders));
+                var requestEvent = new RequestEventInfo(
+                    request: this.BaseRequest,
+                    headers: newHeaders);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
             }
         }
 
@@ -501,15 +639,17 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Returns the list of values that received from the server for the given header name.
-        /// <remarks>Remarks: All headers converted to lowercase while reading the response.</remarks>
+        /// 返回从服务器接收到的给定头名称的值列表。
+        /// <remarks>备注:读取响应时所有头转换为小写。</remarks>
         /// </summary>
-        /// <param name="name">Name of the header</param>
-        /// <returns>If no header found with the given name or there are no values in the list (eg. Count == 0) returns null.</returns>
+        /// <param name="name">标头名称</param>
+        /// <returns>如果没有找到带有给定名称的头文件，或者列表中没有值(例如。Count == 0)返回null</returns>
         public List<string> GetHeaderValues(string name)
         {
             if (Headers == null)
+            {
                 return null;
+            }
 
             name = name.ToLower();
 
@@ -522,10 +662,10 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Returns the first value in the header list or null if there are no header or value.
+        /// 返回头列表中的第一个值，如果没有头或值，则返回null。
         /// </summary>
-        /// <param name="name">Name of the header</param>
-        /// <returns>If no header found with the given name or there are no values in the list (eg. Count == 0) returns null.</returns>
+        /// <param name="name">标头名称</param>
+        /// <returns>如果没有找到带有给定名称的头文件，或者列表中没有值(例如。Count == 0)返回null。</returns>
         public string GetFirstHeaderValue(string name)
         {
             if (Headers == null)
@@ -544,42 +684,35 @@ namespace BestHTTP
         }
 
         /// <summary>
-        /// Checks if there is a header with the given name and value.
+        /// 检查是否存在具有给定名称和值的头文件。
         /// </summary>
-        /// <param name="headerName">Name of the header.</param>
+        /// <param name="headerName">标头名称.</param>
         /// <param name="value"></param>
-        /// <returns>Returns true if there is a header with the given name and value.</returns>
+        /// <returns>如果存在具有给定名称和值的头文件，则返回true</returns>
         public bool HasHeaderWithValue(string headerName, string value)
         {
             var values = GetHeaderValues(headerName);
-            if (values == null)
-            {
-                return false;
-            }
-
-            return values.Any(t => string.Compare(t, value, StringComparison.OrdinalIgnoreCase) == 0);
+            return values != null
+                   && values.Any(t => string.Compare(t, value, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
         /// <summary>
-        /// Checks if there is a header with the given name.
+        /// 检查是否有具有给定名称的头文件。
         /// </summary>
-        /// <param name="headerName">Name of the header.</param>
-        /// <returns>Returns true if there is a header with the given name.</returns>
+        /// <param name="headerName">标头名称.</param>
+        /// <returns>如果存在具有给定名称的头文件，则返回true.</returns>
         public bool HasHeader(string headerName)
         {
             var values = GetHeaderValues(headerName);
-            if (values == null)
-                return false;
-
-            return true;
+            return values != null;
         }
 
         /// <summary>
-        /// Parses the 'Content-Range' header's value and returns a HTTPRange object.
+        /// 解析“Content-Range”报头的值并返回一个HTTPRange对象。
         /// </summary>
-        /// <remarks>If the server ignores a byte-range-spec because it is syntactically invalid, the server SHOULD treat the request as if the invalid Range header field did not exist.
-        /// (Normally, this means return a 200 response containing the full entity). In this case because of there are no 'Content-Range' header, this function will return null!</remarks>
-        /// <returns>Returns null if no 'Content-Range' header found.</returns>
+        /// <remarks>如果服务器忽略了一个字节范围规格，因为它是语法无效的，服务器应该处理请求，如果无效的范围报头字段不存在。
+        /// (通常，这意味着返回一个包含完整实体的200响应)。在这种情况下，因为没有'Content-Range'头，这个函数将返回null!</remarks>
+        /// <returns>如果没有找到'Content-Range'头，则返回null.</returns>
         private HttpRange GetRange()
         {
             var rangeHeaders = GetHeaderValues("content-range");
@@ -588,62 +721,71 @@ namespace BestHTTP
                 return null;
             }
 
-            // A byte-content-range-spec with a byte-range-resp-spec whose last- byte-pos value is less than its first-byte-pos value,
-            //  or whose instance-length value is less than or equal to its last-byte-pos value, is invalid.
-            // The recipient of an invalid byte-content-range- spec MUST ignore it and any content transferred along with it.
+            //最后一个字节的pos值小于第一个字节的pos值的byte-content-range-spec
+            //实例长度小于或等于其last-byte-pos值的实例长度无效。
+            //接收到一个无效的byte-content-range- spec的人必须忽略它以及与它一起传输的任何内容。
 
-            // A valid content-range sample: "bytes 500-1233/1234"
+            // 一个有效的内容范围示例:"bytes 500-1233/1234"
             var ranges = rangeHeaders[0].Split(new[] { ' ', '-', '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // A server sending a response with status code 416 (Requested range not satisfiable) SHOULD include a Content-Range field with a byte-range-resp-spec of "*".
-            // The instance-length specifies the current length of the selected resource.
+            //服务器发送一个状态码为416的响应(请求的范围不能满足)，应该包含一个Content-Range字段，字节范围- respe -spec为"*"。
+            // instance-length指定当前资源的长度。
             // "bytes */1234"
             if (ranges[1] == "*")
             {
-                return new HttpRange(int.Parse(ranges[2]));
+                return new HttpRange(contentLength: int.Parse(ranges[2]));
             }
 
-            return new HttpRange(int.Parse(ranges[1]), int.Parse(ranges[2]),
-                ranges[3] != "*" ? int.Parse(ranges[3]) : -1);
+            return new HttpRange(
+                firstBytePosition: int.Parse(ranges[1]),
+                lastBytePosition: int.Parse(ranges[2]),
+                contentLength: ranges[3] != "*" ? int.Parse(ranges[3]) : -1);
         }
-
-        #endregion
-
-        #region Static Stream Management Helper Functions
 
         private static string ReadTo(Stream stream, byte blocker)
         {
-            byte[] readBuf = BufferPool.Get(1024, true);
+            var readBuf = BufferPool.Get(
+                size: 1024,
+                canBeLarger: true);
             try
             {
-                int bufpos = 0;
+                var buffoons = 0;
 
-                int ch = stream.ReadByte();
+                var ch = stream.ReadByte();
                 while (ch != blocker && ch != -1)
                 {
-                    if (ch > 0x7f) //replaces asciitostring
-                        ch = '?';
-
-                    //make buffer larger if too short
-                    if (readBuf.Length <= bufpos)
+                    if (ch > 0x7f) //replaces ostracising
                     {
-                        BufferPool.Resize(ref readBuf, readBuf.Length * 2, true, false);
+                        ch = '?';
                     }
 
-                    if (bufpos > 0 || !char.IsWhiteSpace((char)ch)) //trimstart
+                    //如果太短，请增大缓冲区
+                    if (readBuf.Length <= buffoons)
                     {
-                        readBuf[bufpos++] = (byte)ch;
+                        BufferPool.Resize(
+                            buffer: ref readBuf,
+                            newSize: readBuf.Length * 2,
+                            canBeLarger: true,
+                            clear: false);
+                    }
+
+                    if (buffoons > 0 || !char.IsWhiteSpace((char)ch)) //trims tart
+                    {
+                        readBuf[buffoons++] = (byte)ch;
                     }
 
                     ch = stream.ReadByte();
                 }
 
-                while (bufpos > 0 && char.IsWhiteSpace((char)readBuf[bufpos - 1]))
+                while (buffoons > 0 && char.IsWhiteSpace((char)readBuf[buffoons - 1]))
                 {
-                    bufpos--;
+                    buffoons--;
                 }
 
-                return Encoding.UTF8.GetString(readBuf, 0, bufpos);
+                return Encoding.UTF8.GetString(
+                    bytes: readBuf,
+                    index: 0,
+                    count: buffoons);
             }
             finally
             {
@@ -653,7 +795,9 @@ namespace BestHTTP
 
         private static string ReadTo(Stream stream, byte blocker1, byte blocker2)
         {
-            byte[] readBuf = BufferPool.Get(1024, true);
+            byte[] readBuf = BufferPool.Get(
+                size: 1024,
+                canBeLarger: true);
             try
             {
                 int buffoons = 0;
@@ -668,7 +812,7 @@ namespace BestHTTP
                         ch = '?';
                     }
 
-                    //make buffer larger if too short
+                    //如果太短，请增大缓冲区
                     if (readBuf.Length <= buffoons)
                     {
                         BufferPool.Resize(ref readBuf, readBuf.Length * 2, true, true);
@@ -685,24 +829,31 @@ namespace BestHTTP
                 }
 
                 while (buffoons > 0 && char.IsWhiteSpace((char)readBuf[buffoons - 1]))
+                {
                     buffoons--;
+                }
 
-                return Encoding.UTF8.GetString(readBuf, 0, buffoons);
+                return Encoding.UTF8.GetString(
+                    bytes: readBuf,
+                    index: 0,
+                    count: buffoons);
             }
             finally
             {
-                BufferPool.Release(readBuf);
+                BufferPool.Release(buffer: readBuf);
             }
         }
 
         private static string NoTrimReadTo(Stream stream, byte blocker1, byte blocker2)
         {
-            byte[] readBuf = BufferPool.Get(1024, true);
+            var readBuf = BufferPool.Get(
+                size: 1024,
+                canBeLarger: true);
             try
             {
                 int buffoons = 0;
 
-                int ch = stream.ReadByte();
+                var ch = stream.ReadByte();
                 while (ch != blocker1 && ch != blocker2 && ch != -1)
                 {
                     // ReSharper disable once CommentTypo
@@ -712,10 +863,14 @@ namespace BestHTTP
                         ch = '?';
                     }
 
-                    //make buffer larger if too short
+                    //如果太短，请增大缓冲区
                     if (readBuf.Length <= buffoons)
                     {
-                        BufferPool.Resize(ref readBuf, readBuf.Length * 2, true, true);
+                        BufferPool.Resize(
+                            buffer: ref readBuf,
+                            newSize: readBuf.Length * 2,
+                            canBeLarger: true,
+                            clear: true);
                     }
 
                     // ReSharper disable once CommentTypo
@@ -732,17 +887,14 @@ namespace BestHTTP
             }
             finally
             {
-                BufferPool.Release(readBuf);
+                BufferPool.Release(buffer: readBuf);
             }
         }
 
-        #endregion
-
-        #region Read Chunked Body
 
         private int ReadChunkLength(Stream stream)
         {
-            // Read until the end of line, then split the string so we will discard any optional chunk extensions
+            // 到行尾，然后分割字符串，这样我们将丢弃任何可选的块扩展
             string line = ReadTo(stream, LF);
             string[] splits = line.Split(';');
             string num = splits[0];
@@ -752,7 +904,7 @@ namespace BestHTTP
                 return result;
             }
 
-            throw new Exception($"Can't parse '{num}' as a hex number!");
+            throw new Exception($"无法将“{num}”解析为十六进制数!");
         }
 
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.6.1
@@ -767,21 +919,37 @@ namespace BestHTTP
             {
                 hasContentLengthHeader = int.TryParse(contentLengthHeader, out realLength);
             }
-
-            if (HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
-                VerboseLogging(string.Format(
-                    "ReadChunked - hasContentLengthHeader: {0}, contentLengthHeader: {1} realLength: {2:N0}",
-                    hasContentLengthHeader.ToString(), contentLengthHeader, realLength));
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"ReadChunked - hasContentLengthHeader: {hasContentLengthHeader.ToString()},");
+                sb.Append($"contentLengthHeader: {contentLengthHeader} realLength: {realLength:N0}");
+                Debug.Log($"{sb}");
             }
-
+#endif
             using var output = new BufferPoolMemoryStream();
             int chunkLength = ReadChunkLength(stream);
-
-            if (HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
-                VerboseLogging($"chunkLength: {chunkLength:N0}");
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"chunkLength: {chunkLength:N0}");
+                Debug.Log($"{sb}");
             }
+#endif
 
             byte[] buffer = BaseRequest.ReadBufferSizeOverride > 0
                 ? BufferPool.Get(BaseRequest.ReadBufferSizeOverride, false)
@@ -797,8 +965,14 @@ namespace BestHTTP
                 );
 
             if (sendProgressChanged)
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                    RequestEvents.DownloadProgress, downloaded, downloadLength));
+            {
+                var requestEvent = new RequestEventInfo(
+                    request: this.BaseRequest,
+                    @event: RequestEvents.DownloadProgress,
+                    progress: downloaded,
+                    progressLength: downloadLength);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
+            }
 
             string encoding =
 #if !BESTHTTP_DISABLE_CACHING
@@ -809,7 +983,7 @@ namespace BestHTTP
                     GetFirstHeaderValue("content-encoding");
             bool gzipped = !string.IsNullOrEmpty(encoding) && encoding == "gzip";
 
-            var decompressor = gzipped ? new Decompression.GZipDecompressor(256) : null;
+            var decompressor = gzipped ? new Decompression.GZipDecompressor(minLengthToDecompress: 256) : null;
 
             while (chunkLength != 0)
             {
@@ -824,14 +998,14 @@ namespace BestHTTP
                 {
                     var tryToReadCount = Math.Min(chunkLength - totalBytes, buffer.Length);
 
-                    var bytes = stream.Read(buffer, 0, tryToReadCount);
+                    var bytes = stream.Read(buffer: buffer, offset: 0, count: tryToReadCount);
                     if (bytes <= 0)
                     {
                         throw ExceptionHelper.ServerClosedTCPStream();
                     }
 
                     // Progress report:
-                    // Placing reporting inside this cycle will report progress much more frequent
+                    // 将报告放在这个周期内将更频繁地报告进度
                     downloaded += bytes;
 
                     if (sendProgressChanged)
@@ -847,37 +1021,55 @@ namespace BestHTTP
                             var decompressed = decompressor.Decompress(buffer, 0, bytes, false, true);
                             if (decompressed.Data != null)
                             {
-                                FeedStreamFragment(decompressed.Data, 0, decompressed.Length);
+                                FeedStreamFragment(
+                                    buffer: decompressed.Data,
+                                    pos: 0,
+                                    length: decompressed.Length);
                             }
                         }
                         else
                         {
-                            FeedStreamFragment(buffer, 0, bytes);
+                            FeedStreamFragment(
+                                buffer: buffer,
+                                pos: 0,
+                                length: bytes);
                         }
                     }
                     else
                     {
-                        output.Write(buffer, 0, bytes);
+                        output.Write(
+                            buffer: buffer,
+                            offset: 0,
+                            count: bytes);
                     }
 
                     totalBytes += bytes;
                 } while (totalBytes < chunkLength);
 
-                // Every chunk data has a trailing CRLF
-                ReadTo(stream, LF);
+                // 每个块数据都有一个尾随的CRLF
+                ReadTo(stream: stream, blocker: LF);
 
-                // read the next chunk's length
-                chunkLength = ReadChunkLength(stream);
+                // 读取下一个块的长度
+                chunkLength = ReadChunkLength(stream: stream);
 
                 if (!hasContentLengthHeader)
                 {
                     downloadLength += chunkLength;
                 }
-
-                if (HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 {
-                    VerboseLogging($"chunkLength: {chunkLength:N0}");
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"chunkLength: {chunkLength:N0}");
+                    Debug.Log($"{sb}");
                 }
+#endif
             }
 
             BufferPool.Release(buffer);
@@ -899,26 +1091,19 @@ namespace BestHTTP
             // Read the trailing headers or the CRLF
             ReadHeaders(stream);
 
-            // HTTP servers sometimes use compression (gzip) or deflate methods to optimize transmission.
-            // How both chunked and gzip encoding interact is dictated by the two-staged encoding of HTTP:
-            //  first the content stream is encoded as (Content-Encoding: gzip), after which the resulting byte stream is encoded for transfer using another encoder (Transfer-Encoding: chunked).
-            //  This means that in case both compression and chunked encoding are enabled, the chunk encoding itself is not compressed, and the data in each chunk should not be compressed individually.
-            //  The remote endpoint can decode the incoming stream by first decoding it with the Transfer-Encoding, followed by the specified Content-Encoding.
-            // It would be a better implementation when the chunk would be decododed on-the-fly. Becouse now the whole stream must be downloaded, and then decoded. It needs more memory.
+            // HTTP服务器有时会使用压缩(gzip)或deflate方法来优化传输。
+            // chunked和gzip编码的交互方式由HTTP的两阶段编码决定:
+            //首先将内容流编码为(content - encoding: gzip)，然后将产生的字节流编码为使用另一个编码器(transfer - encoding: chunked)传输。
+            //这意味着在同时启用压缩和分块编码的情况下，块编码本身不会被压缩，并且每个块中的数据不应该被单独压缩。
+            //远程终端可以解码传入流，首先使用Transfer-Encoding解码，然后使用指定的Content-Encoding解码。
+            //当数据块被实时解码时，这将是一个更好的实现。因为现在必须下载整个流，然后解码。它需要更多的内存。
             if (!BaseRequest.UseStreaming)
             {
                 this.Data = DecodeStream(output);
             }
 
-            if (decompressor != null)
-            {
-                decompressor.Dispose();
-            }
+            decompressor?.Dispose();
         }
-
-        #endregion
-
-        #region Read Raw Body
 
         // No transfer-encoding just raw bytes.
         internal void ReadRaw(Stream stream, long contentLength)
@@ -939,11 +1124,20 @@ namespace BestHTTP
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
                     RequestEvents.DownloadProgress, downloaded, downloadLength));
             }
-
-            if (HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
-                VerboseLogging($"ReadRaw - contentLength: {contentLength:N0}");
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"ReadRaw - contentLength: {contentLength:N0}");
+                Debug.Log($"{sb}");
             }
+#endif
 
             string encoding =
 #if !BESTHTTP_DISABLE_CACHING
@@ -962,8 +1156,8 @@ namespace BestHTTP
 
             using (var output = new BufferPoolMemoryStream(BaseRequest.UseStreaming ? 0 : (int)contentLength))
             {
-                // Because of the last parameter, buffer's size can be larger than the requested but there's no reason to use
-                //  an exact sized one if there's an larger one available in the pool. Later we will use the whole buffer.
+                //由于最后一个参数，缓冲区的大小可以比请求的大，但没有理由使用
+                //如果池中有一个更大的可用池，则返回一个精确的大小。稍后我们将使用整个缓冲区。
                 byte[] buffer = BaseRequest.ReadBufferSizeOverride > 0
                     ? BufferPool.Get(BaseRequest.ReadBufferSizeOverride, false)
                     : BufferPool.Get(MinReadBufferSize, true);
@@ -979,9 +1173,10 @@ namespace BestHTTP
 
                     do
                     {
-                        // tryToReadCount contain how much bytes we want to read in once. We try to read the buffer fully in once, 
-                        //  but with a limit of the remaining contentLength.
-                        int tryToReadCount = (int)Math.Min(Math.Min(int.MaxValue, contentLength),
+                        // tryToReadCount包含我们一次要读入多少字节。我们试着把缓冲区全部读入一次，
+                        //但是要限制剩余的contentLength。
+                        int tryToReadCount = (int)Math.Min(
+                            Math.Min(int.MaxValue, contentLength),
                             buffer.Length - readBytes);
 
                         int bytes = stream.Read(buffer, readBytes, tryToReadCount);
@@ -1048,24 +1243,23 @@ namespace BestHTTP
             decompressor?.Dispose();
         }
 
-        #endregion
-
-        #region Read Unknown Size
-
         private void ReadUnknownSize(Stream stream)
         {
             // Progress report:
             long downloaded = 0;
             long downloadLength = 0;
-            bool sendProgressChanged = this.BaseRequest.OnDownloadProgress != null && (this.IsSuccess
+            bool sendProgressChanged = this.BaseRequest.OnDownloadProgress != null
+                                       && (this.IsSuccess
 #if !BESTHTTP_DISABLE_CACHING
-                    || this.IsFromCache
+                                           || this.IsFromCache
 #endif
-                );
+                                       );
 
             if (sendProgressChanged)
+            {
                 RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
                     RequestEvents.DownloadProgress, downloaded, downloadLength));
+            }
 
             string encoding =
 #if !BESTHTTP_DISABLE_CACHING
@@ -1082,12 +1276,20 @@ namespace BestHTTP
                 byte[] buffer = BaseRequest.ReadBufferSizeOverride > 0
                     ? BufferPool.Get(BaseRequest.ReadBufferSizeOverride, false)
                     : BufferPool.Get(MinReadBufferSize, true);
-
-                if (HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 {
-                    VerboseLogging($"ReadUnknownSize - buffer size: {buffer.Length:N0}");
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"ReadUnknownSize - buffer size: {buffer.Length:N0}");
+                    Debug.Log($"{sb}");
                 }
-
+#endif
                 int bytes;
                 do
                 {
@@ -1096,27 +1298,32 @@ namespace BestHTTP
                     do
                     {
                         if (this.BaseRequest.IsCancellationRequested)
+                        {
                             return;
+                        }
 
                         bytes = 0;
 
 #if !NETFX_CORE || UNITY_EDITOR
-                        // If we have the good-old NetworkStream, than we can use the DataAvailable property. On WP8 platforms, these are omitted... :/
-                        if (stream is NetworkStream networkStream && BaseRequest.EnableSafeReadOnUnknownContentLength)
+                        // 如果我们有好的旧的NetworkStream，那么我们可以使用DataAvailable属性。在WP8平台上，这些都被省略了…… :/
+                        if (stream is NetworkStream networkStream
+                            && BaseRequest.EnableSafeReadOnUnknownContentLength)
                         {
-                            for (int i = readBytes; i < buffer.Length && networkStream.DataAvailable; ++i)
+                            for (var i = readBytes; i < buffer.Length && networkStream.DataAvailable; ++i)
                             {
-                                int read = stream.ReadByte();
+                                var read = stream.ReadByte();
                                 if (read >= 0)
                                 {
                                     buffer[i] = (byte)read;
                                     bytes++;
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                         }
-                        else // This will be good anyway, but a little slower.
+                        else // 不管怎样这都很好，只是有点慢。
 #endif
                         {
                             bytes = stream.Read(buffer, readBytes, buffer.Length - readBytes);
@@ -1129,56 +1336,89 @@ namespace BestHTTP
                         downloadLength = downloaded;
 
                         if (sendProgressChanged)
-                            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                                RequestEvents.DownloadProgress, downloaded, downloadLength));
+                        {
+                            var requestEvent = new RequestEventInfo(
+                                request: this.BaseRequest,
+                                @event: RequestEvents.DownloadProgress,
+                                progress: downloaded,
+                                progressLength: downloadLength);
+                            RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
+                        }
                     } while (readBytes < buffer.Length && bytes > 0);
 
                     if (BaseRequest.UseStreaming)
                     {
                         if (gzipped)
                         {
-                            var decompressed = decompressor.Decompress(buffer, 0, readBytes, false, true);
+                            var decompressed = decompressor.Decompress(
+                                data: buffer,
+                                offset: 0,
+                                count: readBytes,
+                                forceDecompress: false,
+                                dataCanBeLarger: true);
                             if (decompressed.Data != null)
-                                FeedStreamFragment(decompressed.Data, 0, decompressed.Length);
+                            {
+                                FeedStreamFragment(
+                                    buffer: decompressed.Data,
+                                    pos: 0,
+                                    length: decompressed.Length);
+                            }
                         }
                         else
-                            FeedStreamFragment(buffer, 0, readBytes);
+                        {
+                            FeedStreamFragment(
+                                buffer: buffer,
+                                pos: 0,
+                                length: readBytes);
+                        }
                     }
                     else if (readBytes > 0)
-                        output.Write(buffer, 0, readBytes);
+                    {
+                        output.Write(
+                            buffer: buffer,
+                            offset: 0,
+                            count: readBytes);
+                    }
                 } while (bytes > 0);
 
-                BufferPool.Release(buffer);
+                BufferPool.Release(buffer: buffer);
 
                 if (BaseRequest.UseStreaming)
                 {
                     if (gzipped)
                     {
-                        var decompressed = decompressor.Decompress(null, 0, 0, true, true);
+                        var decompressed = decompressor.Decompress(
+                            data: null,
+                            offset: 0,
+                            count: 0,
+                            forceDecompress: true,
+                            dataCanBeLarger: true);
                         if (decompressed.Data != null)
-                            FeedStreamFragment(decompressed.Data, 0, decompressed.Length);
+                        {
+                            FeedStreamFragment(
+                                buffer: decompressed.Data,
+                                pos: 0,
+                                length: decompressed.Length);
+                        }
                     }
 
                     FlushRemainingFragmentBuffer();
                 }
 
                 if (!BaseRequest.UseStreaming)
-                    this.Data = DecodeStream(output);
+                {
+                    this.Data = DecodeStream(streamToDecode: output);
+                }
             }
 
-            if (decompressor != null)
-                decompressor.Dispose();
+            decompressor?.Dispose();
         }
-
-        #endregion
-
-        #region Stream Decoding
 
         private byte[] DecodeStream(BufferPoolMemoryStream streamToDecode)
         {
             streamToDecode.Seek(0, SeekOrigin.Begin);
 
-            // The cache stores the decoded data
+            // 缓存存储解码后的数据
             var encoding =
 #if !BESTHTTP_DISABLE_CACHING
                 IsFromCache
@@ -1191,58 +1431,89 @@ namespace BestHTTP
             Stream decoderStream;
 #endif
 
-            // Return early if there are no encoding used.
+            // 如果没有使用编码，则提早返回。
             if (encoding == null)
+            {
                 return streamToDecode.ToArray();
+            }
             else
             {
                 switch (encoding[0])
                 {
 #if !UNITY_WEBGL || UNITY_EDITOR
                     case "gzip":
-                        decoderStream = new Decompression.Zlib.GZipStream(streamToDecode,
-                            Decompression.Zlib.CompressionMode.Decompress);
+                    {
+                        decoderStream = new Decompression.Zlib.GZipStream(
+                            stream: streamToDecode,
+                            mode: Decompression.Zlib.CompressionMode.Decompress);
+                    }
                         break;
                     case "deflate":
-                        decoderStream = new Decompression.Zlib.DeflateStream(streamToDecode,
-                            Decompression.Zlib.CompressionMode.Decompress);
+                    {
+                        decoderStream = new Decompression.Zlib.DeflateStream(
+                            stream: streamToDecode,
+                            mode: Decompression.Zlib.CompressionMode.Decompress);
+                    }
                         break;
 #endif
                     //identity, utf-8, etc.
                     default:
-                        // Do not copy from one stream to an other, just return with the raw bytes
+                    {
+                        // 不复制从一个流到另一个，只是返回与原始字节
                         return streamToDecode.ToArray();
+                    }
                 }
             }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-            using var ms = new BufferPoolMemoryStream((int)streamToDecode.Length);
-            var buf = BufferPool.Get(1024, true);
+            using var ms = new BufferPoolMemoryStream(capacity: (int)streamToDecode.Length);
+            var buf = BufferPool.Get(
+                size: 1024,
+                canBeLarger: true);
             int byteCount;
 
-            while ((byteCount = decoderStream.Read(buf, 0, buf.Length)) > 0)
-                ms.Write(buf, 0, byteCount);
+            while ((byteCount = decoderStream.Read(
+                       buffer: buf,
+                       offset: 0,
+                       count: buf.Length)) > 0)
+            {
+                ms.Write(
+                    buffer: buf,
+                    offset: 0,
+                    count: byteCount);
+            }
 
-            BufferPool.Release(buf);
+            BufferPool.Release(buffer: buf);
 
             decoderStream.Dispose();
             return ms.ToArray();
 #endif
         }
 
-        #endregion
-
-        #region 流片段支持
-
         protected void BeginReceiveStreamFragments()
         {
 #if !BESTHTTP_DISABLE_CACHING
-            if (!BaseRequest.DisableCache && BaseRequest.UseStreaming)
+            if (
+                /*
+                 * 使用此属性，可以在每个请求的基础上启用/禁用缓存。
+                 * !true 代表需要禁用
+                 * ！false 启用
+                 */
+                !BaseRequest.DisableCache
+                /*
+                * 如果它为真，每次如果我们可以发送至少一个片段，Callback将被调用。
+                */
+                && BaseRequest.UseStreaming)
             {
                 // 如果缓存被启用，并且响应不是来自缓存，它是可缓存的，我们将缓存下载的数据。
-                if (!IsFromCache && HttpCacheService.IsCacheable(BaseRequest.CurrentUri, BaseRequest.MethodType, this))
+                if (!IsFromCache && HttpCacheService.IsCacheable(
+                        uri: BaseRequest.CurrentUri,
+                        method: BaseRequest.MethodType,
+                        response: this))
                 {
-                    _cacheStream = HttpCacheService.PrepareStreamed(BaseRequest.CurrentUri, this);
+                    _cacheStream = HttpCacheService.PrepareStreamed(
+                        uri: BaseRequest.CurrentUri,
+                        response: this);
                 }
             }
 #endif
@@ -1257,8 +1528,13 @@ namespace BestHTTP
         /// <param name="length">我们要复制多少数据.</param>
         protected void FeedStreamFragment(byte[] buffer, int pos, int length)
         {
+            /*
+             * 发送过来的是否有数据
+             */
             if (buffer == null || length == 0)
+            {
                 return;
+            }
 
             // 如果从缓存中读取，我们不想读取太多的数据到内存中。因此，我们将等待加载的片段处理完毕。
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1271,7 +1547,20 @@ namespace BestHTTP
                    BaseRequest.UseStreaming &&
                    FragmentQueueIsFull())
             {
-                VerboseLogging("WaitWhileFragmentQueueIsFull");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"WaitWhileFragmentQueueIsFull");
+                    Debug.Log($"{sb}");
+                }
+#endif
 
 #if CSHARP_7_3_OR_NEWER
                 spinWait.SpinOnce();
@@ -1283,28 +1572,47 @@ namespace BestHTTP
 
             if (_fragmentBuffer == null)
             {
-                _fragmentBuffer = BufferPool.Get(BaseRequest.StreamFragmentSize, true);
+                _fragmentBuffer = BufferPool.Get(
+                    size: BaseRequest.StreamFragmentSize,
+                    canBeLarger: true);
                 _fragmentBufferDataLength = 0;
             }
 
             if (_fragmentBufferDataLength + length <= _fragmentBuffer.Length)
             {
-                Array.Copy(buffer, pos, _fragmentBuffer, _fragmentBufferDataLength, length);
+                Array.Copy(
+                    sourceArray: buffer,
+                    sourceIndex: pos,
+                    destinationArray: _fragmentBuffer,
+                    destinationIndex: _fragmentBufferDataLength,
+                    length: length);
                 _fragmentBufferDataLength += length;
 
-                if (_fragmentBufferDataLength == _fragmentBuffer.Length || BaseRequest.StreamChunksImmediately)
+                if (_fragmentBufferDataLength != _fragmentBuffer.Length
+                    && !BaseRequest.StreamChunksImmediately)
                 {
-                    AddStreamedFragment(_fragmentBuffer, _fragmentBufferDataLength);
-                    _fragmentBuffer = null;
-                    _fragmentBufferDataLength = 0;
+                    return;
                 }
+
+                AddStreamedFragment(
+                    buffer: _fragmentBuffer,
+                    bufferLength: _fragmentBufferDataLength);
+                _fragmentBuffer = null;
+                _fragmentBufferDataLength = 0;
             }
             else
             {
-                int remaining = _fragmentBuffer.Length - _fragmentBufferDataLength;
+                var remaining = _fragmentBuffer.Length - _fragmentBufferDataLength;
 
-                FeedStreamFragment(buffer, pos, remaining);
-                FeedStreamFragment(buffer, pos + remaining, length - remaining);
+                FeedStreamFragment(
+                    buffer: buffer,
+                    pos: pos,
+                    length: remaining);
+                // ReSharper disable once TailRecursiveCall
+                FeedStreamFragment(
+                    buffer: buffer,
+                    pos: (pos + remaining),
+                    length: (length - remaining));
             }
         }
 
@@ -1312,19 +1620,21 @@ namespace BestHTTP
         {
             if (_fragmentBuffer != null)
             {
-                AddStreamedFragment(_fragmentBuffer, _fragmentBufferDataLength);
+                AddStreamedFragment(
+                    buffer: _fragmentBuffer,
+                    bufferLength: _fragmentBufferDataLength);
                 _fragmentBuffer = null;
                 _fragmentBufferDataLength = 0;
             }
 
 #if !BESTHTTP_DISABLE_CACHING
-            if (_cacheStream != null)
-            {
-                _cacheStream.Dispose();
-                _cacheStream = null;
+            if (_cacheStream == null) return;
+            _cacheStream.Dispose();
+            _cacheStream = null;
 
-                HttpCacheService.SetBodyLength(BaseRequest.CurrentUri, _allFragmentSize);
-            }
+            HttpCacheService.SetBodyLength(
+                uri: BaseRequest.CurrentUri,
+                bodyLength: _allFragmentSize);
 #endif
         }
 
@@ -1337,30 +1647,45 @@ namespace BestHTTP
             if (!IsCacheOnly)
 #endif
             {
-                if (this.BaseRequest.UseStreaming && buffer != null && bufferLength > 0)
+                if (this.BaseRequest.UseStreaming
+                    && buffer != null
+                    && bufferLength > 0)
                 {
-                    RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, buffer,
-                        bufferLength));
+                    var requestEvent = new RequestEventInfo(
+                        request: this.BaseRequest,
+                        data: buffer,
+                        dataLength: bufferLength);
+                    RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                     Interlocked.Increment(ref this.UnprocessedFragments);
                 }
             }
-
-            if (HttpManager.Logger.Level == Loglevels.All && buffer != null)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
-                VerboseLogging(
-                    $"AddStreamedFragment缓冲区长度: {bufferLength:N0} UnprocessedFragments: {Interlocked.Read(ref this.UnprocessedFragments):N0}");
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"AddStreamedFragment缓冲区长度: {bufferLength:N0}");
+                sb.Append($" UnprocessedFragments: {Interlocked.Read(ref this.UnprocessedFragments):N0}");
+                Debug.Log($"{sb}");
             }
+#endif
 
 #if !BESTHTTP_DISABLE_CACHING
-            if (_cacheStream != null)
+            if (_cacheStream == null) return;
+            if (buffer != null)
             {
-                if (buffer != null)
-                {
-                    _cacheStream.Write(buffer, 0, bufferLength);
-                }
-
-                _allFragmentSize += bufferLength;
+                _cacheStream.Write(
+                    buffer: buffer,
+                    offset: 0,
+                    count: bufferLength);
             }
+
+            _allFragmentSize += bufferLength;
 #endif
         }
 
@@ -1373,24 +1698,25 @@ namespace BestHTTP
             var unprocessedFragments = Interlocked.Read(ref UnprocessedFragments);
 
             var result = unprocessedFragments >= BaseRequest.MaxFragmentQueueLength;
-
-            if (result && HttpManager.Logger.Level == Loglevels.All)
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
-                VerboseLogging($"FragmentQueueIsFull - {unprocessedFragments} / {BaseRequest.MaxFragmentQueueLength}");
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"FragmentQueueIsFull - {unprocessedFragments}");
+                sb.Append($" / {BaseRequest.MaxFragmentQueueLength}");
+                Debug.Log($"{sb}");
             }
+#endif
 
             return result;
 #else
             return false;
-#endif
-        }
-
-        #endregion
-
-        void VerboseLogging(string str)
-        {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log($"[HTTPResponse]  [message: {str}]");
 #endif
         }
 
@@ -1405,23 +1731,21 @@ namespace BestHTTP
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing) return;
+            // 释放资源，如果我们正在使用ReadOnlyBufferedStream，它将不会关闭它的内部流。
+            // 否则，关闭(内部)流是连接的责任
+            if (Stream is ReadOnlyBufferedStream _)
             {
-                // 释放资源，如果我们正在使用ReadOnlyBufferedStream，它将不会关闭它的内部流。
-                // 否则，关闭(内部)流是连接的责任
-                if (Stream is ReadOnlyBufferedStream _)
-                {
-                    ((IDisposable)Stream).Dispose();
-                }
+                ((IDisposable)Stream).Dispose();
+            }
 
-                Stream = null;
+            Stream = null;
 
 #if !BESTHTTP_DISABLE_CACHING
-                if (_cacheStream == null) return;
-                _cacheStream.Dispose();
-                _cacheStream = null;
+            if (_cacheStream == null) return;
+            _cacheStream.Dispose();
+            _cacheStream = null;
 #endif
-            }
         }
     }
 }
