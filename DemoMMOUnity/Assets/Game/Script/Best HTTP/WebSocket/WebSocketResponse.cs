@@ -20,7 +20,7 @@ namespace BestHTTP.WebSocket
         /// <summary>
         /// 保留延迟的RTT缓冲区的容量。
         /// </summary>
-        public static int RTTBufferCapacity = 5;
+        public static readonly int RTTBufferCapacity = 5;
 
         internal WebSocketResponse(
             HttpRequest request,
@@ -33,12 +33,12 @@ namespace BestHTTP.WebSocket
                 isStreamed,
                 isFromCache)
         {
-            base.IsClosedManually = true;
+            IsClosedManually = true;
             this.ConnectionKey = new HostConnectionKey(
                 host: this.BaseRequest.CurrentUri.Host,
                 connection: HostDefinition.GetKeyForRequest(this.BaseRequest));
 
-            closed = false;
+            _closed = false;
             MaxFragmentSize = WebSocket.MaxFragmentSize;
         }
 
@@ -48,7 +48,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         void IProtocol.HandleEvents()
         {
-            while (CompletedFrames.TryDequeue(out var frame))
+            while (_completedFrames.TryDequeue(out var frame))
             {
                 // 客户机中的错误不应该中断代码，因此我们需要尝试捕获并忽略此处发生的任何异常
                 try
@@ -178,21 +178,21 @@ namespace BestHTTP.WebSocket
                     string msg = string.Empty;
 
                     // 如果我们接收到任何数据，我们将从中获取状态码和消息
-                    if ( /*CloseFrame != null && */CloseFrame.Data is { Length: >= 2 })
+                    if ( /*CloseFrame != null && */_closeFrame.Data is { Length: >= 2 })
                     {
                         if (BitConverter.IsLittleEndian)
                         {
-                            Array.Reverse(CloseFrame.Data, 0, 2);
+                            Array.Reverse(_closeFrame.Data, 0, 2);
                         }
 
-                        statusCode = BitConverter.ToUInt16(CloseFrame.Data, 0);
+                        statusCode = BitConverter.ToUInt16(_closeFrame.Data, 0);
 
-                        if (CloseFrame.Data.Length > 2)
+                        if (_closeFrame.Data.Length > 2)
                         {
-                            msg = Encoding.UTF8.GetString(CloseFrame.Data, 2, CloseFrame.Data.Length - 2);
+                            msg = Encoding.UTF8.GetString(_closeFrame.Data, 2, _closeFrame.Data.Length - 2);
                         }
 
-                        CloseFrame.ReleaseData();
+                        _closeFrame.ReleaseData();
                     }
 
                     OnClosed(this, statusCode, msg);
@@ -229,34 +229,42 @@ namespace BestHTTP.WebSocket
         {
             if (IsUpgraded)
             {
-                BestHTTP.PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ReceiveThreadFunc);
+                PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ReceiveThreadFunc);
             }
         }
 
         internal void CloseStream()
         {
-            if (base.Stream != null)
+            if (Stream == null) return;
+            try
             {
-                try
-                {
-                    base.Stream.Dispose();
-                }
-                catch
-                {
-                }
+                Stream.Dispose();
+            }
+            catch
+            {
+                // ignored
             }
         }
 
         private bool SendPing()
         {
-            {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                StringBuilder sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
                 var str = "Sending Ping frame, waiting for a pong...";
-                Debug.Log($"[WebSocketResponse] [method:SendPing] [msg] {str}");
-#endif
+
+                sb.Append($"[msg] {str}");
+                Debug.Log($"{sb}");
             }
-            lastPing = DateTime.UtcNow;
-            waitingForPong = true;
+#endif
+            _lastPing = DateTime.UtcNow;
+            _waitingForPong = true;
 
             try
             {
@@ -267,8 +275,18 @@ namespace BestHTTP.WebSocket
             catch
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                var str = "Error while sending PING message! Closing WebSocket.";
-                Debug.Log($"[WebSocketResponse] [method:SendPing] [msg] {str}");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    var str = "Error while sending PING message! Closing WebSocket.";
+                    sb.Append($"[msg] {str}");
+                    Debug.LogError($"{sb}");
+                }
 #endif
                 CloseWithError(HttpRequestStates.Error, "Error while sending PING message!");
 
@@ -287,7 +305,7 @@ namespace BestHTTP.WebSocket
 
             this.BaseRequest.State = state;
 
-            this.closed = true;
+            this._closed = true;
 
             CloseStream();
             ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
@@ -295,27 +313,39 @@ namespace BestHTTP.WebSocket
 
         private int CalculateLatency()
         {
-            if (this.rtts.Count == 0)
+            if (this._rtts.Count == 0)
                 return 0;
 
             int sumLatency = 0;
-            for (int i = 0; i < this.rtts.Count; ++i)
-                sumLatency += this.rtts[i];
+            for (int i = 0; i < this._rtts.Count; ++i)
+            {
+                sumLatency += this._rtts[i];
+            }
 
-            return sumLatency / this.rtts.Count;
+            return sumLatency / this._rtts.Count;
         }
 
         private void TryToCleanup()
         {
-            if (Interlocked.Increment(ref this.closedThreads) == 2)
+            if (Interlocked.Increment(ref this._closedThreads) == 2)
             {
                 ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
-                (newFrameSignal as IDisposable).Dispose();
-                newFrameSignal = null;
+                (_newFrameSignal as IDisposable).Dispose();
+                _newFrameSignal = null;
 
                 CloseStream();
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"[WebSocketResponse] [method:TryToCleanup] [msg] TryToCleanup - finished!");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] TryToCleanup - finished!");
+                    Debug.Log($"{sb}");
+                }
 #endif
             }
         }
@@ -329,9 +359,9 @@ namespace BestHTTP.WebSocket
         {
             base.Dispose(disposing);
 
-            IncompleteFrames.Clear();
-            CompletedFrames.Clear();
-            unsentFrames.Clear();
+            _incompleteFrames.Clear();
+            _completedFrames.Clear();
+            _unsentFrames.Clear();
         }
 
         /// <summary>
@@ -367,15 +397,12 @@ namespace BestHTTP.WebSocket
         /// <summary>
         /// 指示到服务器的连接是否关闭。
         /// </summary>
-        public bool IsClosed => closed;
+        public bool IsClosed => _closed;
 
         /// <summary>
         /// IProtocol。LoggingContext实现。
         /// </summary>
-        LoggingContext IProtocol.LoggingContext
-        {
-            get => this.Context;
-        }
+        LoggingContext IProtocol.LoggingContext => this.Context;
 
         /// <summary>
         /// 我们需要用什么频率向服务器发送ping信号。
@@ -395,6 +422,7 @@ namespace BestHTTP.WebSocket
         private int _bufferedAmount;
 
         /// <summary>
+        /// ReSharper disable once CommentTypo
         /// 我们存储在rtts字段中的往返时间计算的延迟。
         /// </summary>
         public int Latency { get; private set; }
@@ -404,60 +432,67 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public DateTime LastMessage = DateTime.MinValue;
 
+        private readonly List<WebSocketFrameReader> _incompleteFrames = new List<WebSocketFrameReader>();
 
-        #region Private Fields
+        private readonly ConcurrentQueue<WebSocketFrameReader> _completedFrames =
+            new ConcurrentQueue<WebSocketFrameReader>();
 
-        private List<WebSocketFrameReader> IncompleteFrames = new List<WebSocketFrameReader>();
-        private ConcurrentQueue<WebSocketFrameReader> CompletedFrames = new ConcurrentQueue<WebSocketFrameReader>();
-        private WebSocketFrameReader CloseFrame;
+        private WebSocketFrameReader _closeFrame;
 
-        private ConcurrentQueue<WebSocketFrame> unsentFrames = new ConcurrentQueue<WebSocketFrame>();
-        private volatile AutoResetEvent newFrameSignal = new AutoResetEvent(false);
-        private int sendThreadCreated = 0;
-        private int closedThreads = 0;
+        private readonly ConcurrentQueue<WebSocketFrame> _unsentFrames = new ConcurrentQueue<WebSocketFrame>();
+        private volatile AutoResetEvent _newFrameSignal = new AutoResetEvent(false);
+        private int _sendThreadCreated;
+        private int _closedThreads;
 
         /// <summary>
-        /// True if we sent out a Close message to the server
+        /// 如果向服务器发送Close消息，则为True
         /// </summary>
-        private volatile bool closeSent;
+        private volatile bool _closeSent;
 
         /// <summary>
-        /// True if this WebSocket connection is closed
+        /// 如果WebSocket连接关闭，则为 true
         /// </summary>
-        private volatile bool closed;
+        private volatile bool _closed;
 
         /// <summary>
-        /// When we sent out the last ping.
+        /// 当我们发出最后一个信号时。
         /// </summary>
-        private DateTime lastPing = DateTime.MinValue;
+        private DateTime _lastPing = DateTime.MinValue;
 
         /// <summary>
-        /// True if waiting for an answer to our ping request. Ping timeout is used only why waitingForPong is true.
+        /// 如果等待ping请求的应答，则为True。Ping超时仅用于waitingForPong为true的原因。
         /// </summary>
-        private volatile bool waitingForPong = false;
+        private volatile bool _waitingForPong;
 
         /// <summary>
-        /// A circular buffer to store the last N rtt times calculated by the pong messages.
+        /// 一个循环缓冲区，用于存储pong消息计算的最后N个rtt时间。
         /// </summary>
-        private CircularBuffer<int> rtts = new CircularBuffer<int>(WebSocketResponse.RTTBufferCapacity);
+        // ReSharper disable once IdentifierTypo
+        private readonly CircularBuffer<int> _rtts = new CircularBuffer<int>(WebSocketResponse.RTTBufferCapacity);
 
-        #endregion
-
-        #region Public interface for interacting with the server
 
         /// <summary>
-        /// It will send the given message to the server in one frame.
+        ///它将在一帧内将给定的消息发送给服务器。
         /// </summary>
         public void Send(string message)
         {
             if (message == null)
-                throw new ArgumentNullException("message must not be null!");
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
 
-            int count = System.Text.Encoding.UTF8.GetByteCount(message);
+            int count = Encoding.UTF8.GetByteCount(message);
             byte[] data = BufferPool.Get(count, true);
-            System.Text.Encoding.UTF8.GetBytes(message, 0, message.Length, data, 0);
+            Encoding.UTF8.GetBytes(message, 0, message.Length, data, 0);
 
-            var frame = new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Text, data, 0, (ulong)count, true, true);
+            var frame = new WebSocketFrame(
+                webSocket: this.WebSocket,
+                type: WebSocketFrameTypes.Text,
+                data: data,
+                pos: 0,
+                length: (ulong)count,
+                isFinal: true,
+                useExtensions: true);
 
             if (frame.Data != null && frame.Data.Length > this.MaxFragmentSize)
             {
@@ -465,22 +500,28 @@ namespace BestHTTP.WebSocket
 
                 Send(frame);
                 if (additionalFrames != null)
-                    for (int i = 0; i < additionalFrames.Length; ++i)
-                        Send(additionalFrames[i]);
+                {
+                    foreach (var t in additionalFrames)
+                    {
+                        Send(t);
+                    }
+                }
             }
             else
+            {
                 Send(frame);
+            }
 
             BufferPool.Release(data);
         }
 
         /// <summary>
-        /// It will send the given data to the server in one frame.
+        /// 它将在一帧内将给定的数据发送给服务器。
         /// </summary>
         public void Send(byte[] data)
         {
             if (data == null)
-                throw new ArgumentNullException("data must not be null!");
+                throw new ArgumentNullException(nameof(data));
 
             WebSocketFrame frame = new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Binary, data);
 
@@ -491,103 +532,152 @@ namespace BestHTTP.WebSocket
                 Send(frame);
                 if (additionalFrames == null) return;
                 foreach (var t in additionalFrames)
+                {
                     Send(t);
+                }
             }
             else
+            {
                 Send(frame);
+            }
         }
 
         /// <summary>
-        /// Will send count bytes from a byte array, starting from offset.
+        /// 将从字节数组中发送count字节，从偏移量开始。
         /// </summary>
         public void Send(byte[] data, ulong offset, ulong count)
         {
             if (data == null)
-                throw new ArgumentNullException("data must not be null!");
-            if (offset + count > (ulong)data.Length)
-                throw new ArgumentOutOfRangeException("offset + count >= data.Length");
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
 
-            WebSocketFrame frame = new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Binary, data, offset, count,
-                true, true);
+            if (offset + count > (ulong)data.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(data));
+            }
+
+            WebSocketFrame frame = new WebSocketFrame(
+                webSocket: this.WebSocket,
+                type: WebSocketFrameTypes.Binary,
+                data: data,
+                pos: offset,
+                length: count,
+                isFinal: true,
+                useExtensions: true);
 
             if (frame.Data != null && frame.Data.Length > this.MaxFragmentSize)
             {
-                WebSocketFrame[] additionalFrames = frame.Fragment(this.MaxFragmentSize);
+                var additionalFrames = frame.Fragment(this.MaxFragmentSize);
 
                 Send(frame);
 
-                if (additionalFrames != null)
-                    for (int i = 0; i < additionalFrames.Length; ++i)
-                        Send(additionalFrames[i]);
+                if (additionalFrames == null) return;
+                foreach (var t in additionalFrames)
+                {
+                    Send(t);
+                }
             }
             else
+            {
                 Send(frame);
+            }
         }
 
         /// <summary>
-        /// It will send the given frame to the server.
+        /// 它将把给定的帧发送到服务器。
         /// </summary>
         public void Send(WebSocketFrame frame)
         {
             if (frame == null)
-                throw new ArgumentNullException("frame is null!");
+            {
+                throw new ArgumentNullException(nameof(frame));
+            }
 
-            if (closed || closeSent)
+            if (_closed || _closeSent)
+            {
                 return;
+            }
 
-            this.unsentFrames.Enqueue(frame);
+            this._unsentFrames.Enqueue(frame);
 
-            if (Interlocked.CompareExchange(ref this.sendThreadCreated, 1, 0) == 0)
+            if (Interlocked.CompareExchange(ref this._sendThreadCreated, 1, 0) == 0)
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"[WebSocketResponse] [method:Send] [msg] Send - Creating thread");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg]Send - Creating thread");
+                    Debug.Log($"{sb}");
+                }
 #endif
-                BestHTTP.PlatformSupport.Threading.ThreadedRunner.RunLongLiving(SendThreadFunc);
+                PlatformSupport.Threading.ThreadedRunner.RunLongLiving(SendThreadFunc);
             }
 
             Interlocked.Add(ref this._bufferedAmount, frame.Data != null ? frame.DataLength : 0);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                StringBuilder sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                sb.Append($"[msg]Signaling SendThread!");
+                Debug.Log($"{sb}");
+            }
+#endif
 
-            //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
-            //    HTTPManager.Logger.Information("WebSocketResponse", "Signaling SendThread!", this.Context);
-
-            newFrameSignal.Set();
+            _newFrameSignal.Set();
         }
 
         /// <summary>
-        /// It will initiate the closing of the connection to the server.
+        /// 它将启动到服务器的连接的关闭。
         /// </summary>
-        public void Close()
+        public void Close(UInt16 code = 1000, string msg = "Bye!")
         {
-            Close(1000, "Bye!");
-        }
-
-        /// <summary>
-        /// It will initiate the closing of the connection to the server.
-        /// </summary>
-        public void Close(UInt16 code, string msg)
-        {
-            if (closed)
+            if (_closed)
             {
                 return;
             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[WebSocketResponse] [method:Close] [msg] HandleEvents - Close({code}, \"{msg}\") ");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                StringBuilder sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                sb.Append($"[msg]HandleEvents - Close({code}, \"{msg}\")");
+                Debug.Log($"{sb}");
+            }
 #endif
-            while (this.unsentFrames.TryDequeue(out _))
-                ;
+            while (this._unsentFrames.TryDequeue(out _))
+            {
+            }
             //this.unsentFrames.Clear();
 
             Interlocked.Exchange(ref this._bufferedAmount, 0);
-
-            Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.ConnectionClose,
-                WebSocket.EncodeCloseData(code, msg)));
+            var webSocketFrame = new WebSocketFrame(
+                this.WebSocket,
+                WebSocketFrameTypes.ConnectionClose,
+                WebSocket.EncodeCloseData(code, msg));
+            Send(webSocketFrame);
         }
 
         public void StartPinging(int frequency)
         {
             if (frequency < 100)
-                throw new ArgumentException("frequency must be at least 100 milliseconds!");
+            {
+                throw new ArgumentException("频率必须至少为100毫秒!");
+            }
 
             PingFrequency = TimeSpan.FromMilliseconds(frequency);
             LastMessage = DateTime.UtcNow;
@@ -595,19 +685,26 @@ namespace BestHTTP.WebSocket
             SendPing();
         }
 
-        #endregion
-
-        #region Private Threading Functions
-
         private void SendThreadFunc()
         {
             try
             {
                 using WriteOnlyBufferedStream bufferedStream = new WriteOnlyBufferedStream(this.Stream, 16 * 1024);
-                while (!closed && !closeSent)
+                while (!_closed && !_closeSent)
                 {
-                    //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
-                    //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Waiting...", this.Context);
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        StringBuilder sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}]");
+                        sb.Append($"{sf.GetMethod().Name}");
+                        sb.Append($"Line:{sf.GetFileLineNumber()}");
+                        sb.Append($"[msg]SendThread - Waiting...");
+                        Debug.Log($"{sb}");
+                    }
+#endif
 
                     TimeSpan waitTime = TimeSpan.FromMilliseconds(int.MaxValue);
 
@@ -618,7 +715,7 @@ namespace BestHTTP.WebSocket
 
                         if (waitTime <= TimeSpan.Zero)
                         {
-                            if (!waitingForPong && now - LastMessage >= PingFrequency)
+                            if (!_waitingForPong && now - LastMessage >= PingFrequency)
                             {
                                 if (!SendPing())
                                     continue;
@@ -627,37 +724,54 @@ namespace BestHTTP.WebSocket
                             waitTime = PingFrequency;
                         }
 
-                        if (waitingForPong && now - lastPing > this.WebSocket.CloseAfterNoMessage)
+                        if (_waitingForPong && now - _lastPing > this.WebSocket.CloseAfterNoMessage)
                         {
                             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                                StringBuilder sb = new StringBuilder();
-                                sb.Append("[WebSocketResponse] ");
-                                sb.Append("[method: SendThreadFunc] ");
+                                var st = new StackTrace(new StackFrame(true));
+                                var sf = st.GetFrame(0);
+                                StringBuilder sb = new StringBuilder(6);
+                                sb.Append($"[{sf.GetFileName()}]");
+                                sb.Append($"[method:{sf.GetMethod().Name}]");
+                                sb.Append($"{sf.GetMethod().Name}");
+                                sb.Append($"Line:{sf.GetFileLineNumber()}");
                                 sb.Append("[msg|Exception] ");
-                                sb.Append($"No message received in the given time!");
-                                sb.Append($" Closing WebSocket. LastPing: {this.lastPing}");
+                                sb.Append($"在给定的时间内没有收到任何消息!");
+                                sb.Append($" Closing WebSocket. LastPing: {this._lastPing}");
                                 sb.Append($" , PingFrequency: {this.PingFrequency},");
                                 sb.Append($" Close After: {this.WebSocket.CloseAfterNoMessage},");
                                 sb.Append($" Now: {now}");
                                 Debug.Log(sb.ToString());
 #endif
                             }
-                            CloseWithError(HttpRequestStates.Error, "No message received in the given time!");
+                            CloseWithError(HttpRequestStates.Error, "在给定的时间内没有收到任何消息!");
                             continue;
                         }
                     }
 
-                    newFrameSignal.WaitOne(waitTime);
+                    _newFrameSignal.WaitOne(waitTime);
 
                     try
                     {
-                        //if (HTTPManager.Logger.Level <= Logger.Loglevels.All)
-                        //    HTTPManager.Logger.Information("WebSocketResponse", "SendThread - Wait is over, about " + this.unsentFrames.Count.ToString() + " new frames!", this.Context);
-
-                        while (this.unsentFrames.TryDequeue(out var frame))
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         {
-                            if (!closeSent)
+                            var st = new StackTrace(new StackFrame(true));
+                            var sf = st.GetFrame(0);
+                            StringBuilder sb = new StringBuilder(6);
+                            sb.Append($"[{sf.GetFileName()}]");
+                            sb.Append($"[method:{sf.GetMethod().Name}]");
+                            sb.Append($"{sf.GetMethod().Name}");
+                            sb.Append($"Line:{sf.GetFileLineNumber()}");
+                            sb.Append($"[msg]");
+                            sb.Append($"SendThread - Wait is over, about ");
+                            sb.Append($"{this._unsentFrames.Count.ToString()}");
+                            sb.Append($" new frames!");
+                            Debug.LogError($"{sb}");
+                        }
+#endif
+                        while (this._unsentFrames.TryDequeue(out var frame))
+                        {
+                            if (!_closeSent)
                             {
                                 using (var rawData = frame.Get())
                                     bufferedStream.Write(rawData.Data, 0, rawData.Length);
@@ -665,7 +779,9 @@ namespace BestHTTP.WebSocket
                                 BufferPool.Release(frame.Data);
 
                                 if (frame.Type == WebSocketFrameTypes.ConnectionClose)
-                                    closeSent = true;
+                                {
+                                    _closeSent = true;
+                                }
                             }
 
                             Interlocked.Add(ref this._bufferedAmount, -frame.DataLength);
@@ -681,39 +797,61 @@ namespace BestHTTP.WebSocket
                             this.BaseRequest.State = HttpRequestStates.Error;
                         }
                         else
+                        {
                             this.BaseRequest.State = HttpRequestStates.Aborted;
+                        }
 
-                        closed = true;
+                        _closed = true;
                     }
                 }
-
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder(3);
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg]");
                     sb.Append($"Ending Send thread. ");
-                    sb.Append($" Closed: {closed},");
-                    sb.Append($" closeSent: {closeSent}");
-                    Debug.Log($"[WebSocketResponse] [method:SendThreadFunc] [msg] {sb.ToString()}");
-#endif
+                    sb.Append($" Closed: {_closed},");
+                    sb.Append($" closeSent: {_closeSent}");
+                    Debug.LogError($"{sb}");
                 }
+#endif
             }
             catch (Exception ex)
             {
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    var sb = new StringBuilder(3);
-                    sb.Append("[WebSocketResponse] ");
-                    sb.Append("[method:SendThreadFunc] ");
-                    sb.Append($"[msg|Exception] SendThread [Exception] {ex}");
-                    Debug.LogError(sb.ToString());
-#endif
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] SendThread [Exception] {ex}");
+                    Debug.LogError($"{sb}");
                 }
+#endif
             }
             finally
             {
-                Interlocked.Exchange(ref sendThreadCreated, 0);
+                Interlocked.Exchange(ref _sendThreadCreated, 0);
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"[WebSocketResponse] [method:SendThreadFunc] [msg] SendThread - Closed!");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg]SendThread - Closed!");
+                    Debug.Log($"{sb}");
+                }
 #endif
                 TryToCleanup();
             }
@@ -723,28 +861,46 @@ namespace BestHTTP.WebSocket
         {
             try
             {
-                while (!closed)
+                while (!_closed)
                 {
                     try
                     {
                         WebSocketFrameReader frame = new WebSocketFrameReader();
                         frame.Read(this.Stream);
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                        Debug.Log(
-                            $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Frame received: {frame.Type}");
+                        {
+                            var st = new StackTrace(new StackFrame(true));
+                            var sf = st.GetFrame(0);
+                            StringBuilder sb = new StringBuilder(6);
+                            sb.Append($"[{sf.GetFileName()}]");
+                            sb.Append($"[method:{sf.GetMethod().Name}]");
+                            sb.Append($"{sf.GetMethod().Name}");
+                            sb.Append($"Line:{sf.GetFileLineNumber()}");
+                            sb.Append($"[msg]Frame received: {frame.Type}");
+                            Debug.Log($"{sb}");
+                        }
 #endif
                         LastMessage = DateTime.UtcNow;
 
-                        // A server MUST NOT mask any frames that it sends to the client.  A client MUST close a connection if it detects a masked frame.
-                        // In this case, it MAY use the status code 1002 (protocol error)
-                        // (These rules might be relaxed in a future specification.)
+                        //服务器不能屏蔽发送给客户端的任何帧。客户端在检测到屏蔽帧时必须关闭连接。
+                        //在这种情况下，它可能使用状态码1002(协议错误)
+                        //(这些规则在未来的规范中可能会被放宽。)
                         if (frame.HasMask)
                         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                            Debug.Log(
-                                $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Protocol Error: masked frame received from server!");
+                            {
+                                var st = new StackTrace(new StackFrame(true));
+                                var sf = st.GetFrame(0);
+                                StringBuilder sb = new StringBuilder(6);
+                                sb.Append($"[{sf.GetFileName()}]");
+                                sb.Append($"[method:{sf.GetMethod().Name}]");
+                                sb.Append($"{sf.GetMethod().Name}");
+                                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                                sb.Append($"[msg]协议错误:从服务器收到屏蔽帧!");
+                                Debug.Log($"{sb}");
+                            }
 #endif
-                            Close(1002, "Protocol Error: masked frame received from server!");
+                            Close(1002, "协议错误:从服务器收到屏蔽帧!");
                             continue;
                         }
 
@@ -752,11 +908,11 @@ namespace BestHTTP.WebSocket
                         {
                             if (OnIncompleteFrame == null)
                             {
-                                IncompleteFrames.Add(frame);
+                                _incompleteFrames.Add(frame);
                             }
                             else
                             {
-                                CompletedFrames.Enqueue(frame);
+                                _completedFrames.Enqueue(frame);
                             }
 
                             continue;
@@ -764,24 +920,24 @@ namespace BestHTTP.WebSocket
 
                         switch (frame.Type)
                         {
-                            // For a complete documentation and rules on fragmentation see http://tools.ietf.org/html/rfc6455#section-5.4
-                            // A fragmented Frame's last fragment's opcode is 0 (Continuation) and the FIN bit is set to 1.
+                            // 有关碎片的完整文档和规则，请参阅 http://tools.ietf.org/html/rfc6455#section-5.4
+                            // 一个碎片帧的最后一个片段的操作码是0(延续)，FIN位设置为1。
                             case WebSocketFrameTypes.Continuation:
                             {
-                                // Do an assemble pass only if OnFragment is not set. Otherwise put it in the CompletedFrames, we will handle it in the HandleEvent phase.
+                                // 只有在OnFragment未设置时才进行组装传递。否则，把它放在CompletedFrames中，我们将在HandleEvent阶段处理它。
                                 if (OnIncompleteFrame == null)
                                 {
-                                    frame.Assemble(IncompleteFrames);
+                                    frame.Assemble(_incompleteFrames);
 
-                                    // Remove all incomplete frames
-                                    IncompleteFrames.Clear();
+                                    //删除所有不完整的帧
+                                    _incompleteFrames.Clear();
 
-                                    // Control frames themselves MUST NOT be fragmented. So, its a normal text or binary frame. Go, handle it as usual.
+                                    // 控制帧本身一定不能碎片化。所以，它是一个正常的文本或二进制帧。去吧，像往常一样处理。
                                     goto case WebSocketFrameTypes.Binary;
                                 }
                                 else
                                 {
-                                    CompletedFrames.Enqueue(frame);
+                                    _completedFrames.Enqueue(frame);
                                     ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
                                 }
                             }
@@ -791,15 +947,15 @@ namespace BestHTTP.WebSocket
                             case WebSocketFrameTypes.Binary:
                             {
                                 frame.DecodeWithExtensions(WebSocket);
-                                CompletedFrames.Enqueue(frame);
+                                _completedFrames.Enqueue(frame);
                                 ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
                             }
                                 break;
 
-                            // Upon receipt of a Ping frame, an endpoint MUST send a Pong frame in response, unless it already received a Close frame.
+                            // 在接收到Ping帧后，端点必须发送一个Pong帧作为响应，除非它已经收到了一个Close帧。
                             case WebSocketFrameTypes.Ping:
                             {
-                                if (!closeSent && !closed)
+                                if (!_closeSent && !_closed)
                                 {
                                     Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Pong, frame.Data));
                                 }
@@ -810,42 +966,56 @@ namespace BestHTTP.WebSocket
                             {
                                 try
                                 {
-                                    // the difference between the current time and the time when the ping message is sent
-                                    TimeSpan diff = TimeSpan.FromTicks(this.LastMessage.Ticks - this.lastPing.Ticks);
+                                    // 当前时间与发送ping消息时的时间差
+                                    TimeSpan diff = TimeSpan.FromTicks(this.LastMessage.Ticks - this._lastPing.Ticks);
 
-                                    // add it to the buffer
-                                    this.rtts.Add((int)diff.TotalMilliseconds);
+                                    // 将其添加到缓冲区
+                                    this._rtts.Add((int)diff.TotalMilliseconds);
 
-                                    // and calculate the new latency
+                                    // 计算新的延迟
                                     this.Latency = CalculateLatency();
                                 }
                                 catch
                                 {
                                     // https://tools.ietf.org/html/rfc6455#section-5.5
-                                    // A Pong frame MAY be sent unsolicited.  This serves as a
-                                    // unidirectional heartbeat.  A response to an unsolicited Pong frame is
-                                    // not expected. 
+                                    //一个Pong帧可能被发送未经请求。这是一个
+                                    //单向心跳。对一个不请自来的Pong框架的回应是
+                                    //不期望。
                                 }
                                 finally
                                 {
-                                    waitingForPong = false;
+                                    _waitingForPong = false;
                                 }
                             }
                                 break;
 
-                            // If an endpoint receives a Close frame and did not previously send a Close frame, the endpoint MUST send a Close frame in response.
+                            // 如果一个端点接收到一个关闭帧，并且之前没有发送一个关闭帧，端点必须发送一个关闭帧作为响应。
                             case WebSocketFrameTypes.ConnectionClose:
                             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                                Debug.Log(
-                                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] ConnectionClose packet received!");
+                                {
+                                    var st = new StackTrace(new StackFrame(true));
+                                    var sf = st.GetFrame(0);
+                                    StringBuilder sb = new StringBuilder(6);
+                                    sb.Append($"[{sf.GetFileName()}]");
+                                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                                    sb.Append($"{sf.GetMethod().Name}");
+                                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                                    sb.Append($"[msg]ConnectionClose packet received!");
+                                    Debug.Log($"{sb}");
+                                }
 #endif
-                                CloseFrame = frame;
-                                if (!closeSent)
+                                _closeFrame = frame;
+                                if (!_closeSent)
+                                {
                                     Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.ConnectionClose, null));
-                                closed = true;
+                                }
+
+                                _closed = true;
                             }
                                 break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
                         }
                     }
                     catch (Exception e)
@@ -856,28 +1026,46 @@ namespace BestHTTP.WebSocket
                             this.BaseRequest.State = HttpRequestStates.Error;
                         }
                         else
+                        {
                             this.BaseRequest.State = HttpRequestStates.Aborted;
+                        }
 
-                        closed = true;
-                        newFrameSignal.Set();
+                        _closed = true;
+                        _newFrameSignal.Set();
                     }
                 }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log(
-                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] Ending Read thread! closed: {closed}");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg] Ending Read thread! closed: {_closed}");
+                    Debug.Log($"{sb}");
+                }
 #endif
             }
             finally
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log(
-                    $"[WebSocketResponse] [method:ReceiveThreadFunc] [msg] ReceiveThread - Closed!");
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    StringBuilder sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}]");
+                    sb.Append($"{sf.GetMethod().Name}");
+                    sb.Append($"Line:{sf.GetFileLineNumber()}");
+                    sb.Append($"[msg]ReceiveThread - Closed!");
+                    Debug.Log($"{sb}");
+                }
 #endif
                 TryToCleanup();
             }
         }
-
-        #endregion
     }
 }
 
