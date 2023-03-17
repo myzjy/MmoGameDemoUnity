@@ -32,14 +32,17 @@
         /// 使用用户名和密码设置身份验证凭据。类型将被设置为未知。
         /// </summary>
         public Credentials(string userName, string password)
-            : this(AuthenticationTypes.Unknown, userName, password)
+            : this(
+                type: AuthenticationTypes.Unknown,
+                userName: userName,
+                password: password)
         {
         }
 
         /// <summary>
         /// 使用给定的身份验证类型、用户名和密码设置身份验证凭据。
         /// </summary>
-        public Credentials(AuthenticationTypes type, string userName, string password)
+        private Credentials(AuthenticationTypes type, string userName, string password)
         {
             this.Type = type;
             this.UserName = userName;

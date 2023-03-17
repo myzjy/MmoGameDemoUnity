@@ -2,6 +2,7 @@
 
 #if !UNITY_WEBGL || UNITY_EDITOR
 using System;
+using System.Diagnostics;
 using System.Text;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
@@ -71,10 +72,10 @@ namespace BestHTTP.WebSocket
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_GZIP
             var perMessage = new PerMessageCompression(
                 level: Decompression.Zlib.CompressionLevel.Default,
-                clientNoContextTakeover:  false,
+                clientNoContextTakeover: false,
                 serverNoContextTakeover: false,
-                desiredClientMaxWindowBits:  Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax, 
+                desiredClientMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax,
                 minDataLengthToCompress: PerMessageCompression.MinDataLengthToCompressDefault);
             this.Extensions = new IExtension[]
             {
@@ -84,16 +85,31 @@ namespace BestHTTP.WebSocket
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
+        /// <summary>
+        /// 根据给定的uri，协议和origin创建一个WebSocket实例。
+        /// </summary>
+        /// <param name="uri">WebSocket服务器的uri</param>
+        /// <param name="origin">
+        ///<p>WebSocket服务器的uri不打算处理来自任何网页的输入，</p>
+        /// <p>但只用于某些网站应该验证|Origin|字段是他们期望的来源。</p>
+        /// <p>如果指定的原点对服务器来说是不可接受的，</p>
+        /// <p>那么它应该用包含HTTP 403禁止状态码的应答来响应WebSocket握手。</p>
+        /// </param>
+        /// <param name="protocol">客户端想要使用的应用程序级协议(例如。“聊天”、“排行榜”等等)。如果不使用，可以为null或空字符串吗.</param>
         private WebSocket(Uri uri, string origin, string protocol)
-            : this(uri, origin, protocol, null)
+            : this(
+                uri: uri,
+                origin: origin,
+                protocol: protocol,
+                extensions: null)
         {
 #if !BESTHTTP_DISABLE_GZIP
             var perMessage = new PerMessageCompression(
                 level: Decompression.Zlib.CompressionLevel.Default,
-                clientNoContextTakeover:  false,
+                clientNoContextTakeover: false,
                 serverNoContextTakeover: false,
-                desiredClientMaxWindowBits:  Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax, 
+                desiredClientMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax,
                 minDataLengthToCompress: PerMessageCompression.MinDataLengthToCompressDefault);
             this.Extensions = new IExtension[]
             {
@@ -104,13 +120,17 @@ namespace BestHTTP.WebSocket
 #endif
 
         /// <summary>
-        /// Creates a WebSocket instance from the given uri, protocol and origin.
+        /// 根据给定的uri，协议和origin创建一个WebSocket实例。
         /// </summary>
-        /// <param name="uri">The uri of the WebSocket server</param>
-        /// <param name="origin">Servers that are not intended to process input from any web page but only for certain sites SHOULD verify the |Origin| field is an origin they expect.
-        /// If the origin indicated is unacceptable to the server, then it SHOULD respond to the WebSocket handshake with a reply containing HTTP 403 Forbidden status code.</param>
-        /// <param name="protocol">The application-level protocol that the client want to use(eg. "chat", "leaderboard", etc.). Can be null or empty string if not used.</param>
-        /// <param name="extensions">Optional IExtensions implementations</param>
+        /// <param name="uri">WebSocket服务器的uri</param>
+        /// <param name="origin">
+        ///<p>WebSocket服务器的uri不打算处理来自任何网页的输入，</p>
+        /// <p>但只用于某些网站应该验证|Origin|字段是他们期望的来源。</p>
+        /// <p>如果指定的原点对服务器来说是不可接受的，</p>
+        /// <p>那么它应该用包含HTTP 403禁止状态码的应答来响应WebSocket握手。</p>
+        /// </param>
+        /// <param name="protocol">客户端想要使用的应用程序级协议(例如。“聊天”、“排行榜”等等)。如果不使用，可以为null或空字符串吗.</param>
+        /// <param name="extensions">可选的IExtensions实现</param>
         public WebSocket(Uri uri, string origin, string protocol
 #if !UNITY_WEBGL || UNITY_EDITOR
             , params IExtension[] extensions
@@ -118,81 +138,88 @@ namespace BestHTTP.WebSocket
         )
 
         {
-            this.Context = new LoggingContext(this);
+            this.Context = new LoggingContext(boundto: this);
 
 #if !UNITY_WEBGL || UNITY_EDITOR
             this.Extensions = extensions;
 
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
             if (HttpManager.Http2Settings.WebSocketOverHttp2Settings.EnableWebSocketOverHttp2 &&
-                HttpProtocolFactory.IsSecureProtocol(uri))
+                HttpProtocolFactory.IsSecureProtocol(uri: uri))
             {
-                // Try to find a HTTP/2 connection that supports the connect protocol.
-                var con = BestHTTP.Core.HostManager.GetHost(uri.Host).GetHostDefinition(Core.HostDefinition.GetKeyFor(
-                    new UriBuilder("https", uri.Host, uri.Port).Uri
+                var uriBuilder = new UriBuilder("https", uri.Host, uri.Port);
+                // 尝试找到一个支持连接协议的HTTP/2连接。
+                var con = BestHTTP.Core.HostManager.GetHost(uri.Host)
+                    .GetHostDefinition(Core.HostDefinition.GetKeyFor(uriBuilder.Uri
 #if !BESTHTTP_DISABLE_PROXY
-                    , GetProxy(uri)
+                        , GetProxy(uri)
 #endif
-                )).Find(c =>
-                {
-                    var httpConnection = c as HTTPConnection;
-                    var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
+                    )).Find(c =>
+                    {
+                        var httpConnection = c as HTTPConnection;
+                        var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
-                    return http2Handler != null &&
-                           http2Handler.Settings.RemoteSettings
-                               [Connections.HTTP2.Http2Settings.EnableConnectProtocol] != 0;
-                });
+                        return http2Handler != null &&
+                               http2Handler.Settings.RemoteSettings
+                                   [Connections.HTTP2.Http2Settings.EnableConnectProtocol] != 0;
+                    });
 
                 if (con != null)
                 {
-                    {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                        var str = "Connection with enabled Connect Protocol found!";
-                        Debug.Log($"[WebSocket] [method:WebSocket] [msg] {str}");
-#endif
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        StringBuilder sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}]");
+                        sb.Append($"{sf.GetMethod().Name}");
+                        sb.Append($"Line:{sf.GetFileLineNumber()}");
+                        sb.Append($"[msg]已找到启用连接协议的连接!");
+                        Debug.Log($"{sb}");
                     }
+#endif
 
                     var httpConnection = con as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
-                    this._implementation = new OverHTTP2(this, http2Handler, uri, origin, protocol);
+                    this._implementation = new OverHTTP2(
+                        parent: this,
+                        handler: http2Handler,
+                        uri: uri,
+                        origin: origin,
+                        protocol: protocol);
                 }
             }
 #endif
 
-            if (this._implementation == null)
-                this._implementation = new OverHTTP1(this, uri, origin, protocol);
+            this._implementation ??= new OverHTTP1(
+                parent: this,
+                uri: uri,
+                origin: origin,
+                protocol: protocol);
 #else
             this.implementation = new WebGLBrowser(this, uri, origin, protocol);
 #endif
 
-            // Under WebGL when only the WebSocket protocol is used Setup() isn't called, so we have to call it here.
+            // 在WebGL下，当只使用WebSocket协议时，不会调用Setup()，所以我们必须在这里调用它。
             HttpManager.Setup();
         }
 
-        public WebSocketStates State
-        {
-            get { return this._implementation.State; }
-        }
+        public WebSocketStates State => this._implementation.State;
 
         /// <summary>
-        /// The connection to the WebSocket server is open.
+        /// WebSocket服务器的连接是打开的。
         /// </summary>
-        public bool IsOpen
-        {
-            get { return this._implementation.IsOpen; }
-        }
+        public bool IsOpen => this._implementation.IsOpen;
 
         /// <summary>
-        /// Data waiting to be written to the wire.
+        ///等待写入线路的数据。
         /// </summary>
-        public int BufferedAmount
-        {
-            get { return this._implementation.BufferedAmount; }
-        }
+        public int BufferedAmount => this._implementation.BufferedAmount;
 
         /// <summary>
-        /// Logging context of this websocket instance.
+        /// 这个websocket实例的日志上下文。
         /// </summary>
         public LoggingContext Context { get; private set; }
 
@@ -200,16 +227,21 @@ namespace BestHTTP.WebSocket
         internal void FallbackToHTTP1()
         {
             if (this._implementation == null)
+            {
                 return;
+            }
 
-            this._implementation = new OverHTTP1(this, this._implementation.Uri, this._implementation.Origin,
-                this._implementation.Protocol);
+            this._implementation = new OverHTTP1(
+                parent: this,
+                uri: this._implementation.Uri,
+                origin: this._implementation.Origin,
+                protocol: this._implementation.Protocol);
             this._implementation.StartOpen();
         }
 #endif
 
         /// <summary>
-        /// Start the opening process.
+        /// 启动打开流程。
         /// </summary>
         public void Open()
         {
@@ -217,34 +249,40 @@ namespace BestHTTP.WebSocket
         }
 
         /// <summary>
-        /// It will send the given message to the server in one frame.
+        /// 它将在一帧内将给定的消息发送给服务器.
         /// </summary>
         public void Send(string message)
         {
             if (!IsOpen)
+            {
                 return;
+            }
 
             this._implementation.Send(message);
         }
 
         /// <summary>
-        /// It will send the given data to the server in one frame.
+        /// 它将在一帧内将给定的数据发送给服务器。
         /// </summary>
         public void Send(byte[] buffer)
         {
             if (!IsOpen)
+            {
                 return;
+            }
 
             this._implementation.Send(buffer);
         }
 
         /// <summary>
-        /// Will send count bytes from a byte array, starting from offset.
+        /// 将从字节数组中发送count字节，从偏移量开始。
         /// </summary>
         public void Send(byte[] buffer, ulong offset, ulong count)
         {
             if (!IsOpen)
+            {
                 return;
+            }
 
             this._implementation.Send(buffer, offset, count);
         }
