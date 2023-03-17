@@ -16,80 +16,88 @@ namespace BestHTTP.WebSocket
     public sealed class WebSocket
     {
         /// <summary>
-        /// Maximum payload size of a websocket frame. Its default value is 32 KiB.
+        /// websocket帧的最大有效负载大小。默认值为32kib。
         /// </summary>
-        public static uint MaxFragmentSize = UInt16.MaxValue / 2;
+        public const uint MaxFragmentSize = ushort.MaxValue / 2;
 
         /// <summary>
-        /// The underlying, real implementation.
+        /// 底层的、真正的实现。
         /// </summary>
-        private WebSocketBaseImplementation implementation;
+        private WebSocketBaseImplementation _implementation;
 
         /// <summary>
-        /// Called when a new binary message is received from the server.
+        /// 当从服务器接收到新的二进制消息时调用。
         /// </summary>
         public OnWebSocketBinaryDelegate OnBinary;
 
         /// <summary>
-        /// Called when the WebSocket connection is closed.
+        /// 当WebSocket连接关闭时调用。
         /// </summary>
         public OnWebSocketClosedDelegate OnClosed;
 
         /// <summary>
-        /// Called when an error is encountered. The parameter will be the description of the error.
+        /// 当遇到错误时调用。参数将是错误的描述。
         /// </summary>
         public OnWebSocketErrorDelegate OnError;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         /// <summary>
-        /// Called when an incomplete frame received. No attempt will be made to reassemble these fragments internally, and no reference are stored after this event to this frame.
+        /// 当接收到不完整的帧时调用。不会尝试在内部重新组装这些片段，并且在此事件之后不会存储对该框架的引用。
         /// </summary>
+        // ReSharper disable once UnassignedField.Global
         public OnWebSocketIncompleteFrameDelegate OnIncompleteFrame;
 #endif
 
         /// <summary>
-        /// Called when a new textual message is received from the server.
+        /// 当从服务器接收到新的文本消息时调用。
         /// </summary>
         public OnWebSocketMessageDelegate OnMessage;
 
         /// <summary>
-        /// Called when the connection to the WebSocket server is established.
+        /// 当与WebSocket服务器建立连接时调用。
         /// </summary>
         public OnWebSocketOpenDelegate OnOpen;
 
         /// <summary>
-        /// Creates a WebSocket instance from the given uri.
+        /// 从给定uri创建一个WebSocket实例。
         /// </summary>
-        /// <param name="uri">The uri of the WebSocket server</param>
+        /// <param name="uri">WebSocket服务器的uri</param>
         public WebSocket(Uri uri)
-            : this(uri, string.Empty, string.Empty)
+            : this(
+                uri: uri,
+                origin: string.Empty,
+                protocol: string.Empty)
         {
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_GZIP
+            var perMessage = new PerMessageCompression(
+                level: Decompression.Zlib.CompressionLevel.Default,
+                clientNoContextTakeover:  false,
+                serverNoContextTakeover: false,
+                desiredClientMaxWindowBits:  Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax, 
+                minDataLengthToCompress: PerMessageCompression.MinDataLengthToCompressDefault);
             this.Extensions = new IExtension[]
             {
-                new PerMessageCompression( /*compression level: */ Decompression.Zlib.CompressionLevel.Default,
-                    /*clientNoContextTakeover: */ false,
-                    /*serverNoContextTakeover: */ false,
-                    /*clientMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                    /*desiredServerMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                    /*minDatalengthToCompress: */ PerMessageCompression.MinDataLengthToCompressDefault)
+                perMessage
             };
 #endif
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-        public WebSocket(Uri uri, string origin, string protocol)
+        private WebSocket(Uri uri, string origin, string protocol)
             : this(uri, origin, protocol, null)
         {
 #if !BESTHTTP_DISABLE_GZIP
+            var perMessage = new PerMessageCompression(
+                level: Decompression.Zlib.CompressionLevel.Default,
+                clientNoContextTakeover:  false,
+                serverNoContextTakeover: false,
+                desiredClientMaxWindowBits:  Decompression.Zlib.ZlibConstants.WindowBitsMax,
+                desiredServerMaxWindowBits: Decompression.Zlib.ZlibConstants.WindowBitsMax, 
+                minDataLengthToCompress: PerMessageCompression.MinDataLengthToCompressDefault);
             this.Extensions = new IExtension[]
             {
-                new PerMessageCompression( /*compression level: */ Decompression.Zlib.CompressionLevel.Default,
-                    /*clientNoContextTakeover: */ false,
-                    /*serverNoContextTakeover: */ false,
-                    /*clientMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                    /*desiredServerMaxWindowBits: */ Decompression.Zlib.ZlibConstants.WindowBitsMax,
-                    /*minDatalengthToCompress: */ PerMessageCompression.MinDataLengthToCompressDefault)
+                perMessage
             };
 #endif
         }
@@ -147,13 +155,13 @@ namespace BestHTTP.WebSocket
                     var httpConnection = con as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
-                    this.implementation = new OverHTTP2(this, http2Handler, uri, origin, protocol);
+                    this._implementation = new OverHTTP2(this, http2Handler, uri, origin, protocol);
                 }
             }
 #endif
 
-            if (this.implementation == null)
-                this.implementation = new OverHTTP1(this, uri, origin, protocol);
+            if (this._implementation == null)
+                this._implementation = new OverHTTP1(this, uri, origin, protocol);
 #else
             this.implementation = new WebGLBrowser(this, uri, origin, protocol);
 #endif
@@ -164,7 +172,7 @@ namespace BestHTTP.WebSocket
 
         public WebSocketStates State
         {
-            get { return this.implementation.State; }
+            get { return this._implementation.State; }
         }
 
         /// <summary>
@@ -172,7 +180,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public bool IsOpen
         {
-            get { return this.implementation.IsOpen; }
+            get { return this._implementation.IsOpen; }
         }
 
         /// <summary>
@@ -180,7 +188,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public int BufferedAmount
         {
-            get { return this.implementation.BufferedAmount; }
+            get { return this._implementation.BufferedAmount; }
         }
 
         /// <summary>
@@ -191,12 +199,12 @@ namespace BestHTTP.WebSocket
 #if !UNITY_WEBGL || UNITY_EDITOR
         internal void FallbackToHTTP1()
         {
-            if (this.implementation == null)
+            if (this._implementation == null)
                 return;
 
-            this.implementation = new OverHTTP1(this, this.implementation.Uri, this.implementation.Origin,
-                this.implementation.Protocol);
-            this.implementation.StartOpen();
+            this._implementation = new OverHTTP1(this, this._implementation.Uri, this._implementation.Origin,
+                this._implementation.Protocol);
+            this._implementation.StartOpen();
         }
 #endif
 
@@ -205,7 +213,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public void Open()
         {
-            this.implementation.StartOpen();
+            this._implementation.StartOpen();
         }
 
         /// <summary>
@@ -216,7 +224,7 @@ namespace BestHTTP.WebSocket
             if (!IsOpen)
                 return;
 
-            this.implementation.Send(message);
+            this._implementation.Send(message);
         }
 
         /// <summary>
@@ -227,7 +235,7 @@ namespace BestHTTP.WebSocket
             if (!IsOpen)
                 return;
 
-            this.implementation.Send(buffer);
+            this._implementation.Send(buffer);
         }
 
         /// <summary>
@@ -238,7 +246,7 @@ namespace BestHTTP.WebSocket
             if (!IsOpen)
                 return;
 
-            this.implementation.Send(buffer, offset, count);
+            this._implementation.Send(buffer, offset, count);
         }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -250,7 +258,7 @@ namespace BestHTTP.WebSocket
             if (!IsOpen)
                 return;
 
-            this.implementation.Send(frame);
+            this._implementation.Send(frame);
         }
 #endif
 
@@ -262,7 +270,7 @@ namespace BestHTTP.WebSocket
             if (State >= WebSocketStates.Closing)
                 return;
 
-            this.implementation.StartClose(1000, "Bye!");
+            this._implementation.StartClose(1000, "Bye!");
         }
 
         /// <summary>
@@ -273,7 +281,7 @@ namespace BestHTTP.WebSocket
             if (!IsOpen)
                 return;
 
-            this.implementation.StartClose(code, message);
+            this._implementation.StartClose(code, message);
         }
 
 #if !BESTHTTP_DISABLE_PROXY
@@ -315,7 +323,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public HttpRequest InternalRequest
         {
-            get { return this.implementation.InternalRequest; }
+            get { return this._implementation.InternalRequest; }
         }
 
         /// <summary>
@@ -328,7 +336,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public int Latency
         {
-            get { return this.implementation.Latency; }
+            get { return this._implementation.Latency; }
         }
 
         /// <summary>
@@ -336,7 +344,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         public DateTime LastMessageReceived
         {
-            get { return this.implementation.LastMessageReceived; }
+            get { return this._implementation.LastMessageReceived; }
         }
 
         /// <summary>

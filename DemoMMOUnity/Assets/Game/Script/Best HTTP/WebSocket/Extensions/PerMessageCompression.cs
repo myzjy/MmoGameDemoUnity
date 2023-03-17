@@ -30,14 +30,14 @@ namespace BestHTTP.WebSocket.Extensions
             bool serverNoContextTakeover,
             int desiredClientMaxWindowBits,
             int desiredServerMaxWindowBits,
-            int minDatalengthToCompress)
+            int minDataLengthToCompress)
         {
             this.Level = level;
             this.ClientNoContextTakeover = clientNoContextTakeover;
             this.ServerNoContextTakeover = serverNoContextTakeover;
             this.ClientMaxWindowBits = desiredClientMaxWindowBits;
             this.ServerMaxWindowBits = desiredServerMaxWindowBits;
-            this.MinimumDataLegthToCompress = minDatalengthToCompress;
+            this.MinimumDataLegthToCompress = minDataLengthToCompress;
         }
 
         #region Public Properties

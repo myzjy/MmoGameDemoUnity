@@ -243,14 +243,18 @@ namespace BestHTTP
             List<SecureProtocol.Org.BouncyCastle.Tls.ServerName> hostNames = null;
 
             // 如果没有用户自定义IP地址，且主机不是IP地址，则添加默认IP地址
-            if (!request.CurrentUri.IsHostIsAnIPAddress())
+            if (request.CurrentUri.IsHostIsAnIPAddress())
             {
-                hostNames = new List<SecureProtocol.Org.BouncyCastle.Tls.ServerName>(1)
-                {
-                    new SecureProtocol.Org.BouncyCastle.Tls.ServerName(0,
-                        Encoding.UTF8.GetBytes(request.CurrentUri.Host))
-                };
+                return new Connections.TLS.DefaultTls13Client(request, null, protocols);
             }
+
+            var serverName = new SecureProtocol.Org.BouncyCastle.Tls.ServerName(
+                nameType: 0,
+                nameData: Encoding.UTF8.GetBytes(request.CurrentUri.Host));
+            hostNames = new List<SecureProtocol.Org.BouncyCastle.Tls.ServerName>(1)
+            {
+                serverName
+            };
 
             return new Connections.TLS.DefaultTls13Client(request, hostNames, protocols);
         }
@@ -332,7 +336,10 @@ namespace BestHTTP
         public static void Setup()
         {
             if (_isSetupCalled)
+            {
                 return;
+            }
+
             _isSetupCalled = true;
             IsQuitting = false;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
@@ -345,7 +352,7 @@ namespace BestHTTP
                 sb.Append($"{sf.GetMethod().Name}");
                 sb.Append($"Line:{sf.GetFileLineNumber()}");
                 sb.Append($"[msg]Setup called! UserAgent: {UserAgent}");
-                Debug.Log($"{sb.ToString()}");
+                Debug.Log($"{sb}");
             }
 #endif
             HttpUpdateDelegator.CheckInstance();
@@ -362,18 +369,32 @@ namespace BestHTTP
             HostManager.Load();
         }
 
-        public static HttpRequest SendRequest(string url, OnRequestFinishedDelegate callback)
+        public
+            static
+            HttpRequest SendRequest(string url, OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HttpRequest(new Uri(url), HttpMethods.Get, callback));
+            var urlData = new Uri(url);
+            var httpRequest = new HttpRequest(
+                uri: urlData,
+                methodType: HttpMethods.Get,
+                callback: callback);
+            return SendRequest(httpRequest);
         }
 
         public static HttpRequest SendRequest(string url, HttpMethods methodType, OnRequestFinishedDelegate callback)
         {
-            return SendRequest(new HttpRequest(new Uri(url), methodType, callback));
+            var urlData = new Uri(url);
+            var httpRequest = new HttpRequest(
+                uri: urlData,
+                methodType: methodType,
+                callback: callback);
+            return SendRequest(httpRequest);
         }
 
-        public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive,
-            OnRequestFinishedDelegate callback)
+        public
+            static
+            HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive,
+                OnRequestFinishedDelegate callback)
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
@@ -383,11 +404,23 @@ namespace BestHTTP
                     $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
             }
 #endif
-            return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, callback));
+            var urlData = new Uri(url);
+            var httpRequest = new HttpRequest(
+                uri: urlData,
+                methodType: methodType,
+                isKeepAlive: isKeepAlive,
+                callback: callback);
+            return SendRequest(httpRequest);
         }
 
-        public static HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive, bool disableCache,
-            OnRequestFinishedDelegate callback)
+        public
+            static
+            HttpRequest SendRequest(
+                string url,
+                HttpMethods methodType,
+                bool isKeepAlive,
+                bool disableCache,
+                OnRequestFinishedDelegate callback)
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
@@ -397,7 +430,14 @@ namespace BestHTTP
                     $"[{sf.GetFileName()}] [method:{sf.GetMethod().Name}] {sf.GetMethod().Name} Line:{sf.GetFileLineNumber()}");
             }
 #endif
-            return SendRequest(new HttpRequest(new Uri(url), methodType, isKeepAlive, disableCache, callback));
+            var urlData = new Uri(url);
+            var httpRequest = new HttpRequest(
+                uri: urlData,
+                methodType: methodType,
+                isKeepAlive: isKeepAlive,
+                disableCache: disableCache,
+                callback: callback);
+            return SendRequest(httpRequest);
         }
 
         public static HttpRequest SendRequest(HttpRequest request)
@@ -445,7 +485,10 @@ namespace BestHTTP
                         // 如果由于某种原因它不能加载，我们将请求放回队列。
 
                         request.State = HttpRequestStates.Queued;
-                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
+                        var requestEvent = new RequestEventInfo(
+                            request: request,
+                            @event: RequestEvents.Resend);
+                        RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                     }
                 }, request);
             }
@@ -453,7 +496,10 @@ namespace BestHTTP
 #endif
             {
                 request.State = HttpRequestStates.Queued;
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
+                var requestEvent = new RequestEventInfo(
+                    request: request,
+                    @event: RequestEvents.Resend);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
             }
 
             return request;
@@ -465,8 +511,18 @@ namespace BestHTTP
         public static string GetRootCacheFolder()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPManager] [method:GetRootCacheFolder] 将返回应该保存各种缓存的位置。");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"将返回应该保存各种缓存的位置。");
+                Debug.Log($"{sb}");
+            }
 #endif
             try
             {
@@ -475,15 +531,20 @@ namespace BestHTTP
             }
             catch (Exception ex)
             {
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    var sb = new StringBuilder(3);
-                    sb.Append("[HTTPRequest] ");
-                    sb.Append("[method:GetRootCacheFolder] ");
-                    sb.Append($"[msg|Exception] GetRootCacheFolder [Exception] {ex}");
-                    Debug.LogError(sb.ToString());
-#endif
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($"[Exception] {ex}");
+                    Debug.LogError($"{sb}");
                 }
+#endif
             }
 
 #if NETFX_CORE
@@ -514,8 +575,18 @@ namespace BestHTTP
         public static void OnUpdate()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPManager] [method:OnUpdate] OnUpdate");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"OnUpdate");
+                Debug.Log($"{sb}");
+            }
 #endif
             RequestEventHelper.ProcessQueue();
             ConnectionEventHelper.ProcessQueue();
@@ -532,8 +603,18 @@ namespace BestHTTP
         public static void OnQuit()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPManager] [method:OnQuit] [msg] OnQuit called!");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($" OnQuit called!");
+                Debug.Log($"{sb}");
+            }
 #endif
             IsQuitting = true;
 
@@ -557,8 +638,18 @@ namespace BestHTTP
         private static void AbortAll()
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPManager] [method:AbortAll] [msg] AbortAll called!");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"AbortAll called!");
+                Debug.Log($"{sb}");
+            }
 #endif
             // 这是一个立即关闭的请求!
 

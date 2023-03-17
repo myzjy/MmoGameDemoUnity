@@ -938,7 +938,9 @@ namespace BestHTTP.WebSocket
                                 else
                                 {
                                     _completedFrames.Enqueue(frame);
-                                    ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
+                                    var protocolEventInfo = new ProtocolEventInfo(source: this);
+                                    ProtocolEventHelper.EnqueueProtocolEvent(@event: protocolEventInfo);
+
                                 }
                             }
                                 break;
@@ -946,9 +948,10 @@ namespace BestHTTP.WebSocket
                             case WebSocketFrameTypes.Text:
                             case WebSocketFrameTypes.Binary:
                             {
-                                frame.DecodeWithExtensions(WebSocket);
+                                frame.DecodeWithExtensions(webSocket: WebSocket);
                                 _completedFrames.Enqueue(frame);
-                                ProtocolEventHelper.EnqueueProtocolEvent(new ProtocolEventInfo(this));
+                                var protocolEventInfo = new ProtocolEventInfo(source: this);
+                                ProtocolEventHelper.EnqueueProtocolEvent(@event: protocolEventInfo);
                             }
                                 break;
 
@@ -957,7 +960,11 @@ namespace BestHTTP.WebSocket
                             {
                                 if (!_closeSent && !_closed)
                                 {
-                                    Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.Pong, frame.Data));
+                                    var webSocketFrame = new WebSocketFrame(
+                                        webSocket: this.WebSocket,
+                                        type: WebSocketFrameTypes.Pong,
+                                        data: frame.Data);
+                                    Send(webSocketFrame);
                                 }
                             }
                                 break;
@@ -967,7 +974,8 @@ namespace BestHTTP.WebSocket
                                 try
                                 {
                                     // 当前时间与发送ping消息时的时间差
-                                    TimeSpan diff = TimeSpan.FromTicks(this.LastMessage.Ticks - this._lastPing.Ticks);
+                                    var diff = TimeSpan.FromTicks(
+                                        value: this.LastMessage.Ticks - this._lastPing.Ticks);
 
                                     // 将其添加到缓冲区
                                     this._rtts.Add((int)diff.TotalMilliseconds);
@@ -1008,7 +1016,11 @@ namespace BestHTTP.WebSocket
                                 _closeFrame = frame;
                                 if (!_closeSent)
                                 {
-                                    Send(new WebSocketFrame(this.WebSocket, WebSocketFrameTypes.ConnectionClose, null));
+                                    var webSocketFrame = new WebSocketFrame(
+                                        webSocket: this.WebSocket,
+                                        type: WebSocketFrameTypes.ConnectionClose,
+                                        data: null);
+                                    Send(webSocketFrame);
                                 }
 
                                 _closed = true;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -66,21 +67,51 @@ namespace BestHTTP
         TimedOut
     }
 
-    public delegate void OnRequestFinishedDelegate(HttpRequest originalRequest, HttpResponse response);
+    public
+        delegate
+        void OnRequestFinishedDelegate(
+            HttpRequest originalRequest,
+            HttpResponse response);
 
-    public delegate void OnDownloadProgressDelegate(HttpRequest originalRequest, long downloaded, long downloadLength);
+    public
+        delegate
+        void
+        OnDownloadProgressDelegate(
+            HttpRequest originalRequest,
+            long downloaded,
+            long downloadLength);
 
-    public delegate void OnUploadProgressDelegate(HttpRequest originalRequest, long uploaded, long uploadLength);
+    public
+        delegate
+        void OnUploadProgressDelegate(
+            HttpRequest originalRequest,
+            long uploaded,
+            long uploadLength);
 
-    public delegate bool OnBeforeRedirectionDelegate(HttpRequest originalRequest, HttpResponse response,
-        Uri redirectUri);
+    public
+        delegate
+        bool OnBeforeRedirectionDelegate(
+            HttpRequest originalRequest,
+            HttpResponse response,
+            Uri redirectUri);
 
-    public delegate void OnHeaderEnumerationDelegate(string header, List<string> values);
+    public
+        delegate
+        void OnHeaderEnumerationDelegate(
+            string header,
+            List<string> values);
 
-    public delegate void OnBeforeHeaderSendDelegate(HttpRequest req);
+    public
+        delegate
+        void OnBeforeHeaderSendDelegate(
+            HttpRequest req);
 
-    public delegate void OnHeadersReceivedDelegate(HttpRequest originalRequest, HttpResponse response,
-        Dictionary<string, List<string>> headers);
+    public
+        delegate
+        void OnHeadersReceivedDelegate(
+            HttpRequest originalRequest,
+            HttpResponse response,
+            Dictionary<string, List<string>> headers);
 
     /// <summary>
     /// 调用从服务器下载的每个数据片段。它的返回值表示插件是否可以重用dataFragment数组。
@@ -89,34 +120,54 @@ namespace BestHTTP
     /// <param name="response">HTTPResponse对象.</param>
     /// <param name="dataFragment">下载的数据。字节[]可以比实际负载更大!它可以使用的有效长度在dataFragmentLength参数中.</param>
     /// <param name="dataFragmentLength">下载数据的长度。</param>
-    public delegate bool OnStreamingDataDelegate(HttpRequest request, HttpResponse response, byte[] dataFragment,
-        int dataFragmentLength);
+    public
+        delegate
+        bool OnStreamingDataDelegate(
+            HttpRequest request,
+            HttpResponse response,
+            byte[] dataFragment,
+            int dataFragmentLength);
 
     // ReSharper disable once RedundantExtendsListEntry
-    public sealed class HttpRequest : IEnumerator, IEnumerator<HttpRequest>
+    public
+        sealed
+        class HttpRequest :
+            IEnumerator, IEnumerator<HttpRequest>
     {
-        public static readonly byte[] Eol = { HttpResponse.CR, HttpResponse.LF };
+        public
+            static
+            readonly byte[] Eol =
+            {
+                HttpResponse.CR,
+                HttpResponse.LF
+            };
 
         /// <summary>
         /// 缓存大写值以节省cpu周期和每个请求的GC分配。
         /// </summary>
-        public static readonly string[] MethodNames =
-        {
-            HttpMethods.Get.ToString().ToUpper(),
-            HttpMethods.Head.ToString().ToUpper(),
-            HttpMethods.Post.ToString().ToUpper(),
-            HttpMethods.Put.ToString().ToUpper(),
-            HttpMethods.Delete.ToString().ToUpper(),
-            HttpMethods.Patch.ToString().ToUpper(),
-            HttpMethods.Merge.ToString().ToUpper(),
-            HttpMethods.Options.ToString().ToUpper(),
-            HttpMethods.Connect.ToString().ToUpper(),
-        };
+        public
+            static
+            readonly
+            string[] MethodNames =
+            {
+                HttpMethods.Get.ToString().ToUpper(),
+                HttpMethods.Head.ToString().ToUpper(),
+                HttpMethods.Post.ToString().ToUpper(),
+                HttpMethods.Put.ToString().ToUpper(),
+                HttpMethods.Delete.ToString().ToUpper(),
+                HttpMethods.Patch.ToString().ToUpper(),
+                HttpMethods.Merge.ToString().ToUpper(),
+                HttpMethods.Options.ToString().ToUpper(),
+                HttpMethods.Connect.ToString().ToUpper(),
+            };
 
         /// <summary>
         /// 内部缓冲区大小，上传过程中会触发此大小的数据发送到线路。默认值为4kib。
         /// </summary>
-        public static readonly int UploadChunkSize = 4 * 1024;
+        public
+            static
+            readonly
+            int UploadChunkSize = 4 * 1024;
 
 
         /// <summary>
@@ -219,8 +270,7 @@ namespace BestHTTP
             {
                 if (State == HttpRequestStates.Processing)
                 {
-                    throw new NotSupportedException(
-                        "不支持在处理请求时更改StreamFragmentSize属性.");
+                    throw new NotSupportedException("不支持在处理请求时更改StreamFragmentSize属性.");
                 }
 
                 if (value < 1)
@@ -275,8 +325,10 @@ namespace BestHTTP
             {
                 var now = DateTimeUtil.GetCurrEntTimeMilliseconds(DateTimeUtil.Now());
 
-                return (!this.UseStreaming || (this.UseStreaming && this.EnableTimoutForStreaming)) &&
-                       ((this.ProcessingStarted != DateTime.MinValue && now - this.ProcessingStarted > this.Timeout) ||
+                return (!this.UseStreaming
+                        || (this.UseStreaming && this.EnableTimoutForStreaming)) &&
+                       ((this.ProcessingStarted != DateTime.MinValue &&
+                         now - this.ProcessingStarted > this.Timeout) ||
                         this.IsConnectTimedOut);
             }
         }
@@ -414,14 +466,18 @@ namespace BestHTTP
                         //    return;
 
                         this._state = value;
-
-                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this, this._state));
+                        var requestEvent = new RequestEventInfo(
+                            request: this,
+                            newState: this._state);
+                        RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                     }
                 }
             }
         }
 
-        private volatile HttpRequestStates _state;
+        private
+            volatile
+            HttpRequestStates _state;
 
         /// <summary>
         /// 多少次重定向。
@@ -510,7 +566,9 @@ namespace BestHTTP
             get
             {
                 if (UploadStream == null || !UseUploadStreamLength)
+                {
                     return -1;
+                }
 
                 try
                 {
@@ -555,64 +613,96 @@ namespace BestHTTP
 
 
         public HttpRequest(Uri uri)
-            : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
+            : this(
+                uri: uri,
+                methodType: HttpMethods.Get,
+                isKeepAlive: HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled
+                disableCache: HttpManager.IsCachingDisabled
 #else
-            true
+           disableCache:  true
 #endif
-                , null)
-        {
-        }
-
-        public HttpRequest(Uri uri, OnRequestFinishedDelegate callback)
-            : this(uri, HttpMethods.Get, HttpManager.KeepAliveDefaultValue,
-#if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled
-#else
-            true
-#endif
-                , callback)
-        {
-        }
-
-        public HttpRequest(Uri uri, bool isKeepAlive, OnRequestFinishedDelegate callback)
-            : this(uri, HttpMethods.Get, isKeepAlive,
-#if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled
-#else
-            true
-#endif
-
-                , callback)
-        {
-        }
-
-        public HttpRequest(Uri uri, bool isKeepAlive, bool disableCache, OnRequestFinishedDelegate callback)
-            : this(uri, HttpMethods.Get, isKeepAlive, disableCache, callback)
+                ,
+                callback: null)
         {
         }
 
         public
-            HttpRequest(Uri uri, HttpMethods methodType)
-            : this(uri, methodType, HttpManager.KeepAliveDefaultValue,
+            HttpRequest(
+                Uri uri,
+                OnRequestFinishedDelegate callback)
+            : this(
+                uri: uri,
+                methodType: HttpMethods.Get,
+                isKeepAlive: HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
+                disableCache: HttpManager.IsCachingDisabled
 #else
-            true
+          disableCache:  true
 #endif
-                , null)
+                , callback: callback)
+        {
+        }
+
+        public HttpRequest(
+            Uri uri,
+            bool isKeepAlive,
+            OnRequestFinishedDelegate callback)
+            : this(
+                uri: uri,
+                methodType: HttpMethods.Get,
+                isKeepAlive: isKeepAlive,
+#if !BESTHTTP_DISABLE_CACHING
+                disableCache: HttpManager.IsCachingDisabled
+#else
+             disableCache:true
+#endif
+
+                , callback: callback)
+        {
+        }
+
+        public HttpRequest(
+            Uri uri,
+            bool isKeepAlive,
+            bool disableCache,
+            OnRequestFinishedDelegate callback)
+            : this(
+                uri: uri,
+                methodType: HttpMethods.Get,
+                isKeepAlive: isKeepAlive,
+                disableCache: disableCache,
+                callback: callback)
+        {
+        }
+
+        public HttpRequest(
+            Uri uri,
+            HttpMethods methodType)
+            : this(
+                uri: uri,
+                methodType: methodType,
+                isKeepAlive: HttpManager.KeepAliveDefaultValue,
+#if !BESTHTTP_DISABLE_CACHING
+                disableCache: HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
+#else
+            disableCache:true
+#endif
+                , callback: null)
         {
         }
 
         public HttpRequest(Uri uri, HttpMethods methodType, OnRequestFinishedDelegate callback)
-            : this(uri, methodType, HttpManager.KeepAliveDefaultValue,
+            : this(
+                uri: uri,
+                methodType: methodType,
+                isKeepAlive: HttpManager.KeepAliveDefaultValue,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
+                disableCache: HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
-            true
+            disableCache:true
 #endif
-                , callback)
+                , callback: callback)
         {
         }
 
@@ -622,15 +712,15 @@ namespace BestHTTP
             bool isKeepAlive,
             OnRequestFinishedDelegate callback)
             : this(
-                uri,
-                methodType,
-                isKeepAlive,
+                uri: uri,
+                methodType: methodType,
+                isKeepAlive: isKeepAlive,
 #if !BESTHTTP_DISABLE_CACHING
-                HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
+                disableCache: HttpManager.IsCachingDisabled || methodType != HttpMethods.Get
 #else
-            true
+             disableCache: true
 #endif
-                , callback)
+                , callback: callback)
         {
         }
 
@@ -687,7 +777,10 @@ namespace BestHTTP
         /// </summary>
         public void AddField(string fieldName, string value)
         {
-            AddField(fieldName, value, Encoding.UTF8);
+            AddField(
+                fieldName: fieldName,
+                value: value,
+                e: Encoding.UTF8);
         }
 
         /// <summary>
@@ -705,7 +798,11 @@ namespace BestHTTP
         /// </summary>
         public void AddBinaryData(string fieldName, byte[] content)
         {
-            AddBinaryData(fieldName, content, string.Empty, string.Empty);
+            AddBinaryData(
+                fieldName: fieldName,
+                content: content,
+                fileName: string.Empty,
+                mimeType: string.Empty);
         }
 
         /// <summary>
@@ -717,8 +814,8 @@ namespace BestHTTP
             string fileName)
         {
             AddBinaryData(
-                fieldName,
-                content,
+                fieldName: fieldName,
+                content: content,
                 fileName: fileName,
                 mimeType: string.Empty);
         }
@@ -734,7 +831,11 @@ namespace BestHTTP
         {
             _fieldCollector ??= new HttpFormBase();
 
-            _fieldCollector.AddBinaryData(fieldName, content, fileName, mimeType);
+            _fieldCollector.AddBinaryData(
+                fieldName: fieldName,
+                content: content,
+                fileName: fileName,
+                mimeType: mimeType);
         }
 
         /// <summary>
@@ -774,15 +875,20 @@ namespace BestHTTP
         {
             // 我们的表单已经创建了前一个
             if (_formImpl != null)
+            {
                 return _formImpl;
+            }
 
             // 还没有向此请求添加字段
             if (_fieldCollector == null)
+            {
                 return null;
+            }
 
             switch (FormUsage)
             {
                 case HttpFormUsage.Automatic:
+                {
                     // 一个非常简单的决策:如果至少有一个字段带有二进制数据，或者一个“长”字符串值，那么我们将选择Multipart形式。
                     //  否则Url编码的形式将被使用。
                     if (_fieldCollector.HasBinary || _fieldCollector.HasLongValue)
@@ -793,6 +899,7 @@ namespace BestHTTP
                     {
                         goto case HttpFormUsage.UrlEncoded;
                     }
+                }
 
                 case HttpFormUsage.UrlEncoded:
                 {
@@ -837,7 +944,9 @@ namespace BestHTTP
             Headers ??= new Dictionary<string, List<string>>();
 
             if (!Headers.TryGetValue(name, out var values))
+            {
                 Headers.Add(name, values = new List<string>(1));
+            }
 
             values.Clear();
             values.Add(value);
@@ -912,7 +1021,9 @@ namespace BestHTTP
         /// <param name="firstBytePos">Start position of the download.</param>
         public void SetRangeHeader(long firstBytePos)
         {
-            SetHeader("Range", $"bytes={firstBytePos}-");
+            SetHeader(
+                name: "Range",
+                value: $"bytes={firstBytePos}-");
         }
 
         /// <summary>
@@ -922,13 +1033,17 @@ namespace BestHTTP
         /// <param name="lastBytePos">下载的结束位置.</param>
         public void SetRangeHeader(long firstBytePos, long lastBytePos)
         {
-            SetHeader("Range", $"bytes={firstBytePos}-{lastBytePos}");
+            SetHeader(
+                name: "Range",
+                value: $"bytes={firstBytePos}-{lastBytePos}");
         }
 
         public void EnumerateHeaders(OnHeaderEnumerationDelegate callback)
         {
             // ReSharper disable once IntroduceOptionalParameters.Global
-            EnumerateHeaders(callback, false);
+            EnumerateHeaders(
+                callback: callback,
+                callBeforeSendCallback: false);
         }
 
         public void EnumerateHeaders(OnHeaderEnumerationDelegate callback, bool callBeforeSendCallback)
@@ -936,43 +1051,72 @@ namespace BestHTTP
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (!HasHeader("Host"))
             {
-                SetHeader("Host", CurrentUri.Port is 80 or 443 ? CurrentUri.Host : CurrentUri.Authority);
+                SetHeader(
+                    name: "Host",
+                    value: CurrentUri.Port is 80 or 443 ? CurrentUri.Host : CurrentUri.Authority);
             }
 
             if (IsRedirected && !HasHeader("Referer"))
-                AddHeader("Referer", Uri.ToString());
+            {
+                AddHeader(
+                    name: "Referer",
+                    value: Uri.ToString());
+            }
 
             if (!HasHeader("Accept-Encoding"))
 #if BESTHTTP_DISABLE_GZIP
-              AddHeader("Accept-Encoding", "identity");
+            {
+                AddHeader(
+                    name: "Accept-Encoding",
+                    value: "identity");
+            }
 #else
-                AddHeader("Accept-Encoding", "gzip, identity");
+            {
+                AddHeader(
+                    name: "Accept-Encoding",
+                    value: "gzip, identity");
+            }
 #endif
 
 #if !BESTHTTP_DISABLE_PROXY
             if (!HttpProtocolFactory.IsSecureProtocol(this.CurrentUri) && HasProxy && !HasHeader("Proxy-Connection"))
-                AddHeader("Proxy-Connection", IsKeepAlive ? "Keep-Alive" : "Close");
+            {
+                AddHeader(
+                    name: "Proxy-Connection",
+                    value: (IsKeepAlive ? "Keep-Alive" : "Close"));
+            }
 #endif
 
             if (!HasHeader("Connection"))
-                AddHeader("Connection", IsKeepAlive ? "Keep-Alive, TE" : "Close, TE");
+            {
+                AddHeader(
+                    name: "Connection",
+                    value: (IsKeepAlive ? "Keep-Alive, TE" : "Close, TE"));
+            }
 
             if (IsKeepAlive && !HasHeader("Keep-Alive"))
             {
                 // 向服务器发送稍微大一点的值，以确保它不会比客户端更快地关闭
                 int seconds = (int)Math.Ceiling(HttpManager.MaxConnectionIdleTime.TotalSeconds + 1);
 
-                AddHeader("Keep-Alive", "timeout=" + seconds);
+                AddHeader(
+                    name: "Keep-Alive",
+                    value: $"timeout={seconds}");
             }
 
             if (!HasHeader("TE"))
             {
-                AddHeader("TE", "identity");
+                AddHeader(
+                    name: "TE",
+                    value: "identity");
             }
 
-            if (!string.IsNullOrEmpty(HttpManager.UserAgent) && !HasHeader("User-Agent"))
+            if (!string.IsNullOrEmpty(HttpManager.UserAgent) && !
+                    HasHeader(name: "User-Agent"))
             {
-                AddHeader("User-Agent", HttpManager.UserAgent);
+                AddHeader(
+                    name: "User-Agent",
+                    value: HttpManager.UserAgent);
             }
 #endif
             long contentLength;
@@ -986,12 +1130,18 @@ namespace BestHTTP
                 {
                     var formData = SelectFormImplementation();
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("[HTTPRequest] ");
-                    sb.Append("[method: EnumerateHeaders] ");
-                    sb.Append("[msg|Exception] ");
-                    sb.Append($"{formData}");
-                    Debug.Log(sb.ToString());
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($"{formData}");
+                        Debug.LogError($"{sb}");
+                    }
 #endif
                     _formImpl?.PrepareRequest(this);
                 }
@@ -1002,17 +1152,22 @@ namespace BestHTTP
 
                 if (contentLength == -1)
                 {
-                    SetHeader("Transfer-Encoding", "Chunked");
+                    SetHeader(
+                        name: "Transfer-Encoding",
+                        value: "Chunked");
                 }
 
                 if (!HasHeader("Content-Type"))
                 {
-                    SetHeader("Content-Type", "application/octet-stream");
+                    SetHeader(
+                        name: "Content-Type",
+                        value: "application/octet-stream");
                 }
             }
 
             // 如果可能，总是设置Content-Length头
-            // http://tools.ietf.org/html/rfc2616#section-4.4 : 为了与HTTP/1.0应用程序兼容，包含消息体的HTTP/1.1请求必须包含有效的Content-Length报头字段，除非已知服务器是HTTP/1.1兼容的。
+            // http://tools.ietf.org/html/rfc2616#section-4.4 :
+            // 为了与HTTP/1.0应用程序兼容，包含消息体的HTTP/1.1请求必须包含有效的Content-Length报头字段，除非已知服务器是HTTP/1.1兼容的。
             // 2018.06.03: 改变条件，内容长度头将包括为零长度。
             // 2022.05.25: 如果有Upgrade头，不要发送Content-Length(: 0)头。为websocket设置了升级，客户端不发送任何字节可能是错误的。
             if (
@@ -1021,9 +1176,13 @@ namespace BestHTTP
 #else
                 contentLength != -1
 #endif
-                && !HasHeader("Content-Length")
-                && !HasHeader("Upgrade"))
-                SetHeader("Content-Length", contentLength.ToString());
+                && !HasHeader(name: "Content-Length")
+                && !HasHeader(name: "Upgrade"))
+            {
+                SetHeader(
+                    name: "Content-Length",
+                    value: contentLength.ToString());
+            }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
 #if !BESTHTTP_DISABLE_PROXY
@@ -1035,11 +1194,13 @@ namespace BestHTTP
                     case AuthenticationTypes.Basic:
                     {
                         // 使用基本身份验证，我们不希望等待挑战，我们将与第一个请求一起发送散列
-                        SetHeader("Proxy-Authorization",
-                            string.Concat("Basic ",
-                                Convert.ToBase64String(
-                                    Encoding.UTF8.GetBytes(
-                                        $"{Proxy.Credentials.UserName}:{Proxy.Credentials.Password}"))));
+                        SetHeader(
+                            name: "Proxy-Authorization",
+                            value: string.Concat(
+                                str0: "Basic ",
+                                str1: Convert.ToBase64String(
+                                    inArray: Encoding.UTF8.GetBytes(
+                                        s: $"{Proxy.Credentials.UserName}:{Proxy.Credentials.Password}"))));
                     }
                         break;
 
@@ -1052,7 +1213,9 @@ namespace BestHTTP
                             var authentication = digest.GenerateResponseHeader(this, Proxy.Credentials);
                             if (!string.IsNullOrEmpty(authentication))
                             {
-                                SetHeader("Proxy-Authorization", authentication);
+                                SetHeader(
+                                    name: "Proxy-Authorization",
+                                    value: authentication);
                             }
                         }
                     }
@@ -1074,24 +1237,29 @@ namespace BestHTTP
                     case AuthenticationTypes.Basic:
                     {
                         // 使用基本身份验证，我们不希望等待挑战，我们将与第一个请求一起发送散列
-                        SetHeader("Authorization",
-                            string.Concat("Basic ",
+                        SetHeader(
+                            name: "Authorization",
+                            value: string.Concat("Basic ",
                                 Convert.ToBase64String(
-                                    Encoding.UTF8.GetBytes(
-                                        $"{Credentials.UserName}: {Credentials.Password}"))));
+                                    inArray: Encoding.UTF8.GetBytes(
+                                        s: $"{Credentials.UserName}: {Credentials.Password}"))));
                     }
                         break;
 
                     case AuthenticationTypes.Unknown:
                     case AuthenticationTypes.Digest:
                     {
-                        var digest = DigestStore.Get(this.CurrentUri);
+                        var digest = DigestStore.Get(uri: this.CurrentUri);
                         if (digest != null)
                         {
-                            var authentication = digest.GenerateResponseHeader(this, Credentials);
+                            var authentication = digest.GenerateResponseHeader(
+                                request: this,
+                                credentials: Credentials);
                             if (!string.IsNullOrEmpty(authentication))
                             {
-                                SetHeader("Authorization", authentication);
+                                SetHeader(
+                                    name: "Authorization",
+                                    value: authentication);
                             }
                         }
                     }
@@ -1183,11 +1351,18 @@ namespace BestHTTP
                 catch (Exception ex)
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    var sb = new StringBuilder(3);
-                    sb.Append("[HTTPRequest] ");
-                    sb.Append("[method:EnumerateHeaders] ");
-                    sb.Append($"[msg|Exception]OnBeforeHeaderSend [Exception] {ex}");
-                    Debug.LogError(sb.ToString());
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($" [Exception] {ex}");
+                        Debug.LogError($"{sb}");
+                    }
 #endif
                 }
             }
@@ -1216,20 +1391,36 @@ namespace BestHTTP
                 {
                     if (string.IsNullOrEmpty(t))
                     {
-                        {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                            StringBuilder sb = new StringBuilder();
-                            sb.Append("[HTTPRequest] ");
-                            sb.Append("[method: SendHeaders] ");
-                            sb.Append("[msg|Exception] ");
+                        {
+                            var st = new StackTrace(new StackFrame(true));
+                            var sf = st.GetFrame(0);
+                            var sb = new StringBuilder(6);
+                            sb.Append($"[{sf.GetFileName()}]");
+                            sb.Append($"[method:{sf.GetMethod().Name}] ");
+                            sb.Append($"{sf.GetMethod().Name} ");
+                            sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                            sb.Append($"[msg{sf.GetMethod().Name}]");
                             sb.Append($"Null/empty value for header: {header}");
-                            Debug.Log(sb.ToString());
-#endif
+                            Debug.Log($"{sb}");
                         }
+#endif
                         continue;
                     }
-
-                    VerboseLogging($"Header - '{header}': '{t}'");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    {
+                        var st = new StackTrace(new StackFrame(true));
+                        var sf = st.GetFrame(0);
+                        var sb = new StringBuilder(6);
+                        sb.Append($"[{sf.GetFileName()}]");
+                        sb.Append($"[method:{sf.GetMethod().Name}] ");
+                        sb.Append($"{sf.GetMethod().Name} ");
+                        sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                        sb.Append($"[msg{sf.GetMethod().Name}]");
+                        sb.Append($"Header - '{header}': '{t}'");
+                        Debug.Log($"{sb}");
+                    }
+#endif
 
                     byte[] valueBytes = t.GetASCIIBytes();
 
@@ -1433,8 +1624,12 @@ namespace BestHTTP
 
                         if (this.OnUploadProgress != null)
                         {
-                            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this,
-                                RequestEvents.UploadProgress, uploaded, uploadLength));
+                            var requestEvent = new RequestEventInfo(
+                                request: this,
+                                @event: RequestEvents.UploadProgress,
+                                progress: uploaded,
+                                progressLength: uploadLength);
+                            RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                         }
 
                         if (this.IsCancellationRequested)
@@ -1470,10 +1665,19 @@ namespace BestHTTP
                 else
                     bufferStream.Flush();
             } // bufferStream.Dispose
-
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPRequest] [method:SendOutTo] [msg] '{requestLine}' sent out");
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"'{requestLine}' sent out");
+                Debug.Log($"{sb}");
+            }
 #endif
 #endif
         }
@@ -1492,11 +1696,18 @@ namespace BestHTTP
             catch (Exception ex)
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                var sb = new StringBuilder(3);
-                sb.Append("[HTTPRequest] ");
-                sb.Append("[method:ThreadFunc] ");
-                sb.Append($"[msg|Exception]UpgradeCallback [Exception] {ex}");
-                Debug.LogError(sb.ToString());
+                {
+                    var st = new StackTrace(new StackFrame(true));
+                    var sf = st.GetFrame(0);
+                    var sb = new StringBuilder(6);
+                    sb.Append($"[{sf.GetFileName()}]");
+                    sb.Append($"[method:{sf.GetMethod().Name}] ");
+                    sb.Append($"{sf.GetMethod().Name} ");
+                    sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                    sb.Append($"[msg{sf.GetMethod().Name}]");
+                    sb.Append($" [Exception]  {ex}");
+                    Debug.LogError($"{sb}");
+                }
 #endif
             }
         }
@@ -1536,18 +1747,35 @@ namespace BestHTTP
         /// </summary>
         public void Abort()
         {
-            VerboseLogging("Abort request!");
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                var sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}] ");
+                sb.Append($"{sf.GetMethod().Name} ");
+                sb.Append($"Line:{sf.GetFileLineNumber()} ");
+                sb.Append($"[msg{sf.GetMethod().Name}]");
+                sb.Append($"Abort request!");
+                Debug.Log($"{sb}");
+            }
+#endif
 
             lock (this)
             {
                 if (this.State >= HttpRequestStates.Finished)
+                {
                     return;
+                }
 
                 this.IsCancellationRequested = true;
 
                 //如果响应是一个IProtocol实现，调用协议的取消。
                 if (this.Response is IProtocol protocol)
+                {
                     protocol.CancellationRequested();
+                }
 
                 // 这里有一个竞争条件，另一个线程也可以设置它。
                 this.Response = null;
@@ -1590,14 +1818,6 @@ namespace BestHTTP
             this.IsRedirected = false;
             this.RedirectCount = 0;
             this.Exception = null;
-        }
-
-        private void VerboseLogging(string str)
-        {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log(
-                $"[HTTPRequest] [method:VerboseLogging] [msg] {str}");
-#endif
         }
 
         public object Current => null;

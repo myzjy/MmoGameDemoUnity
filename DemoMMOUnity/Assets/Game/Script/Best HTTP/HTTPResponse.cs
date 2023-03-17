@@ -1010,8 +1010,12 @@ namespace BestHTTP
 
                     if (sendProgressChanged)
                     {
-                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                            RequestEvents.DownloadProgress, downloaded, downloadLength));
+                        var requestEvent = new RequestEventInfo(
+                            request: this.BaseRequest,
+                            @event: RequestEvents.DownloadProgress,
+                            progress: downloaded,
+                            progressLength: downloadLength);
+                        RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                     }
 
                     if (BaseRequest.UseStreaming)
@@ -1121,8 +1125,13 @@ namespace BestHTTP
 
             if (sendProgressChanged)
             {
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                    RequestEvents.DownloadProgress, downloaded, downloadLength));
+                var requestEvent = new RequestEventInfo(
+                    request: this.BaseRequest,
+                    @event: RequestEvents.DownloadProgress,
+                    progress: downloaded,
+                    progressLength: downloadLength);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
+                
             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             {
@@ -1192,8 +1201,13 @@ namespace BestHTTP
                         // Progress report:
                         if (!sendProgressChanged) continue;
                         downloaded += bytes;
-                        RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                            RequestEvents.DownloadProgress, downloaded, downloadLength));
+                        var requestEvent = new RequestEventInfo(
+                            request: this.BaseRequest,
+                            @event: RequestEvents.DownloadProgress,
+                            progress: downloaded,
+                            progressLength: downloadLength);
+                        RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
+                        
                     } while (readBytes < buffer.Length && contentLength > 0);
 
                     if (BaseRequest.UseStreaming)
@@ -1257,8 +1271,12 @@ namespace BestHTTP
 
             if (sendProgressChanged)
             {
-                RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest,
-                    RequestEvents.DownloadProgress, downloaded, downloadLength));
+                var requestEvent = new RequestEventInfo(
+                    request: this.BaseRequest,
+                    @event: RequestEvents.DownloadProgress,
+                    progress: downloaded,
+                    progressLength: downloadLength);
+                RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
             }
 
             string encoding =
