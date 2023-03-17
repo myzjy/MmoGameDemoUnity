@@ -183,7 +183,7 @@ namespace BestHTTP.WebSocket
                     var httpConnection = con as HTTPConnection;
                     var http2Handler = httpConnection?.requestHandler as Connections.HTTP2.Http2Handler;
 
-                    this._implementation = new OverHTTP2(
+                    this._implementation = new OverHttp2(
                         parent: this,
                         handler: http2Handler,
                         uri: uri,

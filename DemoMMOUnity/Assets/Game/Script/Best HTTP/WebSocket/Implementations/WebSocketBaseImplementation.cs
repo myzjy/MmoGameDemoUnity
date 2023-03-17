@@ -8,7 +8,7 @@ using BestHTTP.WebSocket.Frames;
 namespace BestHTTP.WebSocket
 {
     /// <summary>
-    /// States of the underlying implementation's state.
+    /// 底层实现的状态。
     /// </summary>
     public enum WebSocketStates : byte
     {

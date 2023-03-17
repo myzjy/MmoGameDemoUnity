@@ -11,16 +11,16 @@ using BestHTTP.WebSocket.Implementations.Utils;
 namespace BestHTTP.WebSocket
 {
     /// <summary>
-    /// Implements RFC 8441 (https://tools.ietf.org/html/rfc8441) to use Websocket over HTTP/2
+    /// 实现RFC 8441 (https://tools.ietf.org/html/rfc8441)在HTTP/2上使用Websocket
     /// </summary>
-    public sealed class OverHTTP2 : WebSocketBaseImplementation, IHeartbeat
+    public sealed class OverHttp2 : WebSocketBaseImplementation, IHeartbeat
     {
         /// <summary>
         /// True if we sent out a Close message to the server
         /// </summary>
-        private volatile bool closeSent;
+        private volatile bool _closeSent;
 
-        private Http2Handler http2Handler;
+        private readonly Http2Handler _http2Handler;
 
         private PeekableIncomingSegmentStream incomingSegmentStream = new PeekableIncomingSegmentStream();
 
@@ -40,10 +40,10 @@ namespace BestHTTP.WebSocket
 
         private bool waitingForPong = false;
 
-        public OverHTTP2(WebSocket parent, Http2Handler handler, Uri uri, string origin, string protocol) : base(parent,
+        public OverHttp2(WebSocket parent, Http2Handler handler, Uri uri, string origin, string protocol) : base(parent,
             uri, origin, protocol)
         {
-            this.http2Handler = handler;
+            this._http2Handler = handler;
 
             string scheme = "https";
             int port = uri.Port != -1 ? uri.Port : 443;
@@ -60,7 +60,7 @@ namespace BestHTTP.WebSocket
 
         public override int Latency
         {
-            get { return this.Parent.StartPingThread ? base.Latency : (int)this.http2Handler.Latency; }
+            get { return this.Parent.StartPingThread ? base.Latency : (int)this._http2Handler.Latency; }
         }
 
         public void OnHeartbeatUpdate(TimeSpan dif)
@@ -404,7 +404,7 @@ namespace BestHTTP.WebSocket
 
                     // Upon receipt of a Ping frame, an endpoint MUST send a Pong frame in response, unless it already received a Close frame.
                     case WebSocketFrameTypes.Ping:
-                        if (!closeSent && !this.upStream.IsClosed)
+                        if (!_closeSent && !this.upStream.IsClosed)
                             Send(new WebSocketFrame(this.Parent, WebSocketFrameTypes.Pong, frame.Data));
                         break;
 
@@ -442,7 +442,7 @@ namespace BestHTTP.WebSocket
                         Debug.Log($"[OverHTTP2] [method:OnFrame] [msg] ConnectionClose packet received!");
 #endif
                         //CloseFrame = frame;
-                        if (!closeSent)
+                        if (!_closeSent)
                             Send(new WebSocketFrame(this.Parent, WebSocketFrameTypes.ConnectionClose, null));
                         this.upStream.Close();
 
@@ -669,7 +669,7 @@ namespace BestHTTP.WebSocket
 
             var frame = new WebSocketFrame(this.Parent, WebSocketFrameTypes.Text, data, 0, (ulong)count, true, true);
 
-            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
+            var maxFrameSize = this._http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
@@ -692,7 +692,7 @@ namespace BestHTTP.WebSocket
 
             WebSocketFrame frame = new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, buffer);
 
-            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
+            var maxFrameSize = this._http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
@@ -716,7 +716,7 @@ namespace BestHTTP.WebSocket
             WebSocketFrame frame =
                 new WebSocketFrame(this.Parent, WebSocketFrameTypes.Binary, data, offset, count, true, true);
 
-            var maxFrameSize = this.http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
+            var maxFrameSize = this._http2Handler.Settings.RemoteSettings[Http2Settings.MaxFrameSize];
             if (frame.Data != null && frame.Data.Length > maxFrameSize)
             {
                 WebSocketFrame[] additionalFrames = frame.Fragment(maxFrameSize);
@@ -736,17 +736,17 @@ namespace BestHTTP.WebSocket
             if (frame == null)
                 throw new ArgumentNullException("frame is null!");
 
-            if (this.upStream.IsClosed || closeSent)
+            if (this.upStream.IsClosed || _closeSent)
                 return;
 
             var frameData = frame.Get();
             this.upStream.Write(new BufferSegment(frameData.Data, 0, frameData.Length));
-            this.http2Handler.SignalRunnerThread();
+            this._http2Handler.SignalRunnerThread();
 
             frameData.Data = null;
 
             if (frame.Type == WebSocketFrameTypes.ConnectionClose)
-                this.closeSent = true;
+                this._closeSent = true;
         }
 
         private int CalculateLatency()
