@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.FileSystem;
 
@@ -14,16 +15,13 @@ namespace BestHTTP.Caching
     /// </summary>
     public class HttpCacheFileInfo : IComparable<HttpCacheFileInfo>
     {
-        #region IComparable<HTTPCacheFileInfo>
-
-        public int CompareTo(HttpCacheFileInfo other)
+        public
+            int CompareTo(HttpCacheFileInfo other)
         {
-            return this.LastAccess.CompareTo(other.LastAccess);
+            var compareTo = this.LastAccess.CompareTo(other.LastAccess);
+            return compareTo;
         }
 
-        #endregion
-
-        #region HttpCacheFileInfo 定义 属性
 
         /// <summary>
         /// 这个 HttpCacheFileInfo 所属的uri。
@@ -43,78 +41,81 @@ namespace BestHTTP.Caching
         /// <summary>
         /// 实体的ETag。
         /// </summary>
-        public string ETag { get; private set; }
+        private string ETag { get; set; }
 
         /// <summary>
         /// 实体的LastModified日期。
         /// </summary>
-        public string LastModified { get; private set; }
+        private string LastModified { get; set; }
 
         /// <summary>
         /// 缓存何时过期。
         /// </summary>
-        public DateTime Expires { get; private set; }
+        private DateTime Expires { get; set; }
 
         /// <summary>
         /// 这个age带来了回应
         /// </summary>
-        public long Age { get; private set; }
+        private long Age { get; set; }
 
         /// <summary>
         ///在不重新验证的情况下，该条目应从缓存中使用的最长时间。
         /// </summary>
-        public long MaxAge { get; private set; }
+        private long MaxAge { get; set; }
 
         /// <summary>
         /// 回复的日期。
         /// </summary>
-        public DateTime Date { get; private set; }
+        private DateTime Date { get; set; }
 
         /// <summary>
         /// 指示是否必须使用服务器重新验证实体，或者当内容被认为过时时，是否可以直接从缓存发送实体而不接触服务器。
         /// </summary>
-        public bool MustRevalidate { get; private set; }
+        private bool MustRevalidate { get; set; }
 
         /// <summary>
         /// 如果是真的，客户端总是必须在缓存内容过期时重新验证它。
         /// </summary>
-        public bool NoCache { get; private set; }
+        private bool NoCache { get; set; }
 
         /// <summary>
         /// 这是一个宽限期，不需要重新验证就可以提供过时的内容。
         /// </summary>
-        public long StaleWhileRevalidate { get; private set; }
+        private long StaleWhileRevalidate { get; set; }
 
         /// <summary>
         /// 如果服务器响应5xx错误，则允许客户端提供过时的内容。
         /// </summary>
-        public long StaleIfError { get; private set; }
+        private long StaleIfError { get; set; }
 
         /// <summary>
         ///接收HTTPResponse的日期和时间。
         /// </summary>
-        public DateTime Received { get; private set; }
+        private DateTime Received { get; set; }
 
         /// <summary>
         /// Cached path.
         /// </summary>
-        public string ConstructedPath { get; private set; }
+        private string ConstructedPath { get; set; }
 
         /// <summary>
         /// 这是实体的索引。文件名由该值生成。
         /// </summary>
         internal UInt64 MappedNameIdx { get; private set; }
 
-        #endregion
-
-        #region HttpCacheFileInfo定义的  构造函数
 
         internal HttpCacheFileInfo(Uri uri)
-            : this(uri, DateTime.UtcNow, -1)
+            : this(
+                uri,
+                DateTime.UtcNow,
+                -1)
         {
         }
 
-        internal HttpCacheFileInfo(Uri uri, DateTime lastAccess, int bodyLength)
+        internal HttpCacheFileInfo(
+            Uri uri,
+            DateTime lastAccess,
+            int bodyLength)
         {
             this.Uri = uri;
             this.LastAccess = lastAccess;
@@ -124,7 +125,10 @@ namespace BestHTTP.Caching
             this.MappedNameIdx = HttpCacheService.GetNameIdx();
         }
 
-        internal HttpCacheFileInfo(Uri uri, BinaryReader reader, int version)
+        internal HttpCacheFileInfo(
+            Uri uri,
+            BinaryReader reader,
+            int version)
         {
             this.Uri = uri;
             this.LastAccess = DateTime.FromBinary(reader.ReadInt64());
@@ -133,14 +137,17 @@ namespace BestHTTP.Caching
             switch (version)
             {
                 case 3:
+                {
                     this.NoCache = reader.ReadBoolean();
                     this.StaleWhileRevalidate = reader.ReadInt64();
                     this.StaleIfError = reader.ReadInt64();
                     goto case 2;
-
+                }
                 case 2:
+                {
                     this.MappedNameIdx = reader.ReadUInt64();
                     goto case 1;
+                }
 
                 case 1:
                 {
@@ -157,9 +164,6 @@ namespace BestHTTP.Caching
             }
         }
 
-        #endregion
-
-        #region HttpCacheFileInfo 定义的 辅助函数
 
         internal void SaveTo(BinaryWriter writer)
         {
@@ -186,28 +190,33 @@ namespace BestHTTP.Caching
             writer.Write(this.Received.ToBinary());
         }
 
-        public string GetPath()
+        private string GetPath()
         {
             if (ConstructedPath != null)
+            {
                 return ConstructedPath;
+            }
 
-            return ConstructedPath = Path.Combine(HttpCacheService.CacheFolder, MappedNameIdx.ToString("X"));
+            ConstructedPath = Path.Combine(HttpCacheService.CacheFolder, MappedNameIdx.ToString("X"));
+            return ConstructedPath;
         }
 
         public bool IsExists()
         {
-            if (!HttpCacheService.IsSupported)
-                return false;
-
-            return HttpManager.IOService.FileExists(GetPath());
+            var isSupported = HttpCacheService.IsSupported;
+            var path = GetPath();
+            var exists = HttpManager.IOService.FileExists(path);
+            return isSupported && exists;
         }
 
         internal void Delete()
         {
             if (!HttpCacheService.IsSupported)
+            {
                 return;
+            }
 
-            string path = GetPath();
+            var path = GetPath();
             try
             {
                 HttpManager.IOService.FileDelete(path);
@@ -239,9 +248,6 @@ namespace BestHTTP.Caching
             this.StaleIfError = 0;
         }
 
-        #endregion
-
-        #region Caching
 
         internal void SetUpCachingValues(HttpResponse response)
         {
@@ -256,7 +262,7 @@ namespace BestHTTP.Caching
             this.Date = response.GetFirstHeaderValue("Date").ToDateTime(this.Date);
 
             List<string> cacheControls = response.GetHeaderValues("cache-control");
-            if (cacheControls != null && cacheControls.Count > 0)
+            if (cacheControls is { Count: > 0 })
             {
                 // Merge all Cache-Control header values into one
                 string cacheControl = cacheControls[0];
@@ -269,18 +275,15 @@ namespace BestHTTP.Caching
 
                     if (parser.Values != null)
                     {
-                        for (int i = 0; i < parser.Values.Count; ++i)
+                        foreach (var kvp in parser.Values)
                         {
-                            var kvp = parser.Values[i];
-
                             switch (kvp.Key.ToLowerInvariant())
                             {
                                 case "max-age":
                                     if (kvp.HasValue)
                                     {
                                         // Some cache proxies will return float values
-                                        double maxAge;
-                                        if (double.TryParse(kvp.Value, out maxAge))
+                                        if (double.TryParse(kvp.Value, out var maxAge))
                                             this.MaxAge = (int)maxAge;
                                         else
                                             this.MaxAge = 0;
@@ -432,25 +435,27 @@ namespace BestHTTP.Caching
             if (!HttpCacheService.IsSupported)
                 return;
 
-            string path = GetPath();
+            var path = GetPath();
 
             // 路径名太长，我们不想得到异常
             if (path.Length > HttpManager.MaxPathLength)
+            {
                 return;
+            }
 
             if (HttpManager.IOService.FileExists(path))
+            {
                 Delete();
+            }
 
             using (var writer = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
-                writer.WriteLine("HTTP/{0}.{1} {2} {3}", response.VersionMajor, response.VersionMinor,
-                    response.StatusCode, response.Message);
-                foreach (var kvp in response.Headers)
+                var headerLineString =
+                    $"HTTP/{response.VersionMajor}.{response.VersionMinor} {response.StatusCode} {response.Message}";
+                writer.WriteLine(headerLineString);
+                foreach (var str in response.Headers.SelectMany(kvp => kvp.Value.Select(t => $"{kvp.Key}: {t}")))
                 {
-                    foreach (var t in kvp.Value)
-                    {
-                        writer.WriteLine("{0}: {1}", kvp.Key, t);
-                    }
+                    writer.WriteLine(str);
                 }
 
                 writer.WriteLine();
@@ -468,7 +473,9 @@ namespace BestHTTP.Caching
         internal Stream GetSaveStream(HttpResponse response)
         {
             if (!HttpCacheService.IsSupported)
+            {
                 return null;
+            }
 
             LastAccess = DateTime.UtcNow;
 
@@ -481,32 +488,45 @@ namespace BestHTTP.Caching
 
             // 路径名太长，我们不想得到异常
             if (path.Length > HttpManager.MaxPathLength)
+            {
                 return null;
+            }
 
             // 首先写出报头
             using (var writer = HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Create))
             {
-                writer.WriteLine("HTTP/1.1 {0} {1}", response.StatusCode, response.Message);
-                foreach (var kvp in response.Headers)
+                var headerLineString = $"HTTP/1.1 {response.StatusCode} {response.Message}";
+                writer.WriteLine(headerLineString);
+                foreach (var lineString in
+                         response.Headers.SelectMany(
+                             kvp =>
+                                 kvp.Value.Select(
+                                     t => $"{kvp.Key}: {t}")))
                 {
-                    for (int i = 0; i < kvp.Value.Count; ++i)
-                        writer.WriteLine("{0}: {1}", kvp.Key, kvp.Value[i]);
+                    writer.WriteLine(lineString);
                 }
 
                 writer.WriteLine();
             }
 
             // 如果启用了缓存，并且响应来自缓存，并且没有设置内容长度报头，那么我们将设置一个为响应。
-            if (response.IsFromCache && !response.HasHeader("content-length"))
-                response.AddHeader("content-length", BodyLength.ToString());
+            if (response.IsFromCache &&
+                !response.HasHeader("content-length"))
+            {
+                response.AddHeader(
+                    name: "content-length",
+                    value: BodyLength.ToString());
+            }
 
             SetUpCachingValues(response);
 
             // 然后使用Append FileMode创建流
-            return HttpManager.IOService.CreateFileStream(GetPath(), FileStreamModes.Append);
+            var getPath = GetPath();
+            var fileStream = HttpManager.IOService.CreateFileStream(
+                path: getPath,
+                mode: FileStreamModes.Append);
+            return fileStream;
         }
-
-        #endregion
     }
 }
 
