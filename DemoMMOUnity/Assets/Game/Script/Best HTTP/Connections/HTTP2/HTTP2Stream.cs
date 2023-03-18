@@ -151,7 +151,7 @@ namespace BestHTTP.Connections.HTTP2
         public void Assign(HttpRequest request)
         {
             request.Timing.Add(request.IsRedirected
-                ? TimingEventNames.Queued_For_Redirection
+                ? TimingEventNames.QueuedForRedirection
                 : TimingEventNames.Queued);
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             StringBuilder sb = new StringBuilder(3);
@@ -295,7 +295,7 @@ namespace BestHTTP.Connections.HTTP2
 
                         if (this._headerView == null)
                         {
-                            this.AssignedRequest.Timing.Add(TimingEventNames.Waiting_TTFB);
+                            this.AssignedRequest.Timing.Add(TimingEventNames.WaitingTTFB);
                             this._headerView = new FramesAsStreamView(new HeaderFrameView());
                         }
 
@@ -564,7 +564,7 @@ namespace BestHTTP.Connections.HTTP2
                     if (this.uploadStreamInfo.Stream == null)
                     {
                         this.State = Http2StreamStates.HalfClosedLocal;
-                        this.AssignedRequest.Timing.Add(TimingEventNames.Request_Sent);
+                        this.AssignedRequest.Timing.Add(TimingEventNames.RequestSent);
                     }
                     else
                     {
@@ -630,7 +630,7 @@ namespace BestHTTP.Connections.HTTP2
 
                         this.State = Http2StreamStates.HalfClosedLocal;
 
-                        this.AssignedRequest.Timing.Add(TimingEventNames.Request_Sent);
+                        this.AssignedRequest.Timing.Add(TimingEventNames.RequestSent);
                     }
 
                     this.outgoing.Enqueue(frame);
@@ -710,7 +710,7 @@ namespace BestHTTP.Connections.HTTP2
                 }
             }
 
-            stream.AssignedRequest.Timing.Add(TimingEventNames.Response_Received);
+            stream.AssignedRequest.Timing.Add(TimingEventNames.ResponseReceived);
 
             KeepAliveHeader keepAliveHeader = null; // ignored
 

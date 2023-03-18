@@ -168,7 +168,7 @@ namespace BestHTTP.Connections
                         if (ConnectionHelper.LoadFromCache(context, request, loggingContext1, loggingContext2,
                                 loggingContext3))
                         {
-                            request.Timing.Add(TimingEventNames.Loading_From_Cache);
+                            request.Timing.Add(TimingEventNames.LoadingFromCache);
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                             Debug.Log(
                                 $"[HTTPConnection][method:HandleResponse] [msg] [{context}] - HandleResponse - 成功从缓存加载!");
@@ -406,7 +406,7 @@ namespace BestHTTP.Connections
                     HttpCacheService.Store(request.CurrentUri, request.MethodType, request.Response);
                 }
 
-                request.Timing.Add(TimingEventNames.Writing_To_Cache);
+                request.Timing.Add(TimingEventNames.WritingToCache);
 
                 PluginEventHelper.EnqueuePluginEvent(new PluginEventInfo(PluginEvents.SaveCacheLibrary));
             }

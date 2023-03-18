@@ -109,7 +109,7 @@ namespace BestHTTP.Connections
         protected override void ThreadFunc()
         {
             if (this.CurrentRequest.IsRedirected)
-                this.CurrentRequest.Timing.Add(TimingEventNames.Queued_For_Redirection);
+                this.CurrentRequest.Timing.Add(TimingEventNames.QueuedForRedirection);
             else
                 this.CurrentRequest.Timing.Add(TimingEventNames.Queued);
 

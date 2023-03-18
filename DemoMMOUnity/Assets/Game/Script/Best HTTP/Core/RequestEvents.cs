@@ -542,7 +542,7 @@ namespace BestHTTP.Core
                     }
 #endif
 
-                    source.Timing.AddEvent(TimingEventNames.Queued_For_Disptach, DateTime.Now, TimeSpan.Zero);
+                    source.Timing.AddEvent(TimingEventNames.QueuedForDispatch, DateTime.Now, TimeSpan.Zero);
                     source.Timing.AddEvent(TimingEventNames.Finished, DateTime.Now, DateTime.Now - source.Timing.Start);
 
                     if (source.Callback != null)

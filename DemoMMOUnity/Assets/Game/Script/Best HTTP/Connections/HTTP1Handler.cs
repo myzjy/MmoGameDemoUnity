@@ -73,7 +73,7 @@ namespace BestHTTP.Connections
                 this.conn.CurrentRequest.QueuedAt = DateTime.MinValue;
                 this.conn.CurrentRequest.ProcessingStarted = DateTime.UtcNow;
                 this.conn.CurrentRequest.SendOutTo(this.conn.connector.Stream);
-                this.conn.CurrentRequest.Timing.Add(TimingEventNames.Request_Sent);
+                this.conn.CurrentRequest.Timing.Add(TimingEventNames.RequestSent);
 
                 if (this.conn.CurrentRequest.IsCancellationRequested)
                 {
@@ -85,7 +85,7 @@ namespace BestHTTP.Connections
                 // 从服务器接收响应
                 bool received = Receive(this.conn.CurrentRequest);
 
-                this.conn.CurrentRequest.Timing.Add(TimingEventNames.Response_Received);
+                this.conn.CurrentRequest.Timing.Add(TimingEventNames.ResponseReceived);
 
                 if (this.conn.CurrentRequest.IsCancellationRequested)
                 {

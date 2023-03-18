@@ -330,7 +330,7 @@ namespace BestHTTP
             }
 
             if (!this.IsProxyResponse)
-                BaseRequest.Timing.Add(TimingEventNames.Waiting_TTFB);
+                BaseRequest.Timing.Add(TimingEventNames.WaitingTTFB);
 
             string[] versions = statusLine.Split(new char[] { '/', '.' });
             this.VersionMajor = int.Parse(versions[1]);

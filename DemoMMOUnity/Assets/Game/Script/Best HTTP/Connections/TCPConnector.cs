@@ -176,7 +176,7 @@ namespace BestHTTP.Connections
                 }
                 finally
                 {
-                    request.Timing.Add(TimingEventNames.DNS_Lookup);
+                    request.Timing.Add(TimingEventNames.DnsLookup);
                 }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log(
@@ -198,7 +198,7 @@ namespace BestHTTP.Connections
                 }
                 finally
                 {
-                    request.Timing.Add(TimingEventNames.TCP_Connection);
+                    request.Timing.Add(TimingEventNames.TcpConnection);
                 }
 
                 if (request.IsCancellationRequested)
@@ -244,7 +244,7 @@ namespace BestHTTP.Connections
                     }
                     finally
                     {
-                        request.Timing.Add(TimingEventNames.Proxy_Negotiation);
+                        request.Timing.Add(TimingEventNames.ProxyNegotiation);
                     }
                 }
 
@@ -358,7 +358,7 @@ namespace BestHTTP.Connections
 
                     #endregion
 
-                    request.Timing.Add(TimingEventNames.TLS_Negotiation, DateTime.Now - tlsNegotiationStartedAt);
+                    request.Timing.Add(TimingEventNames.TlsNegotiation, DateTime.Now - tlsNegotiationStartedAt);
                 }
             }
 
