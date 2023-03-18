@@ -10,18 +10,34 @@ using BestHTTP.WebSocket.Frames;
 namespace BestHTTP.WebSocket.Extensions
 {
     /// <summary>
-    /// Compression Extensions for WebSocket implementation.
+    /// WebSocket实现的压缩扩展。
     /// http://tools.ietf.org/html/rfc7692
     /// </summary>
     public sealed class PerMessageCompression : IExtension
     {
-        public const int MinDataLengthToCompressDefault = 256;
+        public
+            const
+            int MinDataLengthToCompressDefault = 256;
 
-        private static readonly byte[] Trailer = new byte[] { 0x00, 0x00, 0xFF, 0xFF };
+        private
+            static
+            readonly
+            byte[] Trailer = new byte[]
+            {
+                0x00,
+                0x00,
+                0xFF,
+                0xFF
+            };
 
         public PerMessageCompression()
-            : this(CompressionLevel.Default, false, false, ZlibConstants.WindowBitsMax, ZlibConstants.WindowBitsMax,
-                MinDataLengthToCompressDefault)
+            : this(
+                level: CompressionLevel.Default,
+                clientNoContextTakeover: false,
+                serverNoContextTakeover: false,
+                desiredClientMaxWindowBits: ZlibConstants.WindowBitsMax,
+                desiredServerMaxWindowBits: ZlibConstants.WindowBitsMax,
+                minDataLengthToCompress: MinDataLengthToCompressDefault)
         {
         }
 
@@ -37,177 +53,191 @@ namespace BestHTTP.WebSocket.Extensions
             this.ServerNoContextTakeover = serverNoContextTakeover;
             this.ClientMaxWindowBits = desiredClientMaxWindowBits;
             this.ServerMaxWindowBits = desiredServerMaxWindowBits;
-            this.MinimumDataLegthToCompress = minDataLengthToCompress;
+            this.MinimumDataLengthToCompress = minDataLengthToCompress;
         }
 
-        #region Public Properties
-
         /// <summary>
-        /// By including this extension parameter in an extension negotiation offer, a client informs the peer server
-        /// of a hint that even if the server doesn't include the "client_no_context_takeover" extension parameter in
-        /// the corresponding extension negotiation response to the offer, the client is not going to use context takeover.
+        /// <code>
+        /// 通过在扩展协商提议中包含此扩展参数，客户端通知对端服务器
+        /// 提示即使服务器不包含"client_no_context_takeover"扩展参数
+        /// 对应扩展协商响应offer，客户端不打算使用上下文接管。
+        /// </code>
         /// </summary>
-        public bool ClientNoContextTakeover { get; private set; }
+        private bool ClientNoContextTakeover { get; set; }
 
         /// <summary>
-        /// By including this extension parameter in an extension negotiation offer, a client prevents the peer server from using context takeover.
+        /// 通过在扩展协商要约中包含此扩展参数，客户端可以防止对端服务器使用上下文接管。
         /// </summary>
-        public bool ServerNoContextTakeover { get; private set; }
+        private bool ServerNoContextTakeover { get; set; }
 
         /// <summary>
-        /// This parameter indicates the base-2 logarithm of the LZ77 sliding window size of the client context.
+        /// 该参数表示客户端上下文的LZ77滑动窗口大小的以2为底的对数。
         /// </summary>
-        public int ClientMaxWindowBits { get; private set; }
+        private int ClientMaxWindowBits { get; set; }
 
         /// <summary>
-        /// This parameter indicates the base-2 logarithm of the LZ77 sliding window size of the server context.
+        /// 该参数表示服务器上下文的LZ77滑动窗口大小的以2为底的对数。
         /// </summary>
-        public int ServerMaxWindowBits { get; private set; }
+        private int ServerMaxWindowBits { get; set; }
 
         /// <summary>
-        /// The compression level that the client will use to compress the frames.
+        /// 客户端将用于压缩帧的压缩级别。
         /// </summary>
-        public CompressionLevel Level { get; private set; }
+        private CompressionLevel Level { get; set; }
 
         /// <summary>
-        /// What minimum data length will trigger the compression.
+        /// 触发压缩的最小数据长度。
         /// </summary>
-        public int MinimumDataLegthToCompress { get; set; }
-
-        #endregion
-
-        #region Private fields
+        private int MinimumDataLengthToCompress { get; set; }
 
         /// <summary>
-        /// Cached object to support context takeover.
+        /// 缓存对象以支持上下文接管。
         /// </summary>
-        private BufferPoolMemoryStream compressorOutputStream;
+        private BufferPoolMemoryStream _compressorOutputStream;
 
-        private DeflateStream compressorDeflateStream;
+        private DeflateStream _compressorDeflateStream;
 
         /// <summary>
-        /// Cached object to support context takeover.
+        ///缓存对象以支持上下文接管。
         /// </summary>
-        private BufferPoolMemoryStream decompressorInputStream;
+        private BufferPoolMemoryStream _decompressorInputStream;
 
-        private BufferPoolMemoryStream decompressorOutputStream;
-        private DeflateStream decompressorDeflateStream;
-
-        #endregion
-
-        #region IExtension Implementation
+        private BufferPoolMemoryStream _decompressorOutputStream;
+        private DeflateStream _decompressorDeflateStream;
 
         /// <summary>
-        /// This will start the permessage-deflate negotiation process.
+        /// ReSharper disable once CommentTypo
+        /// 这将启动permessage-deflate协商过程。
         /// <seealso href="http://tools.ietf.org/html/rfc7692#section-5.1"/>
         /// </summary>
         public void AddNegotiation(HttpRequest request)
         {
             // The default header value that we will send out minimum.
-            string headerValue = "permessage-deflate";
-
-
-            // http://tools.ietf.org/html/rfc7692#section-7.1.1.1
-            // A client MAY include the "server_no_context_takeover" extension parameter in an extension negotiation offer.  This extension parameter has no value.
-            // By including this extension parameter in an extension negotiation offer, a client prevents the peer server from using context takeover.
-            // If the peer server doesn't use context takeover, the client doesn't need to reserve memory to retain the LZ77 sliding window between messages.
+            var sb = new StringBuilder();
+            // ReSharper disable once StringLiteralTypo
+            sb.Append("permessage-deflate");
+            /*
+             * http://tools.ietf.org/html/rfc7692#section-7.1.1.1
+             * 客户端可以在扩展协商要约中包含"server_no_context_takeover"扩展参数。
+             * 此扩展参数没有值。
+             * 通过在扩展协商要约中包含此扩展参数，客户端可以防止对端服务器使用上下文接管。
+             * 如果对等服务器不使用上下文接管，客户端不需要预留内存来保留消息之间的LZ77滑动窗口。
+             */
             if (this.ServerNoContextTakeover)
-                headerValue += "; server_no_context_takeover";
+            {
+                sb.Append("; server_no_context_takeover");
+            }
 
 
             // http://tools.ietf.org/html/rfc7692#section-7.1.1.2
-            // A client MAY include the "client_no_context_takeover" extension parameter in an extension negotiation offer.
-            // This extension parameter has no value.  By including this extension parameter in an extension negotiation offer,
-            // a client informs the peer server of a hint that even if the server doesn't include the "client_no_context_takeover"
-            // extension parameter in the corresponding extension negotiation response to the offer, the client is not going to use context takeover.
+            /*
+             * 客户端可以在扩展协商要约中包含"client_no_context_takeover"扩展参数。
+             * 此扩展参数没有值。
+             * 通过在扩展协商提议中包含这个扩展参数，客户端通知对等服务器一个提示，
+             * 即使服务器在对该提议的相应扩展协商响应中不包含“client_no_context_takeover”扩展参数，
+             * 客户端也不会使用上下文接管。
+             */
             if (this.ClientNoContextTakeover)
-                headerValue += "; client_no_context_takeover";
+            {
+                sb.Append("; client_no_context_takeover");
+            }
 
             // http://tools.ietf.org/html/rfc7692#section-7.1.2.1
-            // By including this parameter in an extension negotiation offer, a client limits the LZ77 sliding window size that the server
-            // will use to compress messages.If the peer server uses a small LZ77 sliding window to compress messages, the client can reduce the memory needed for the LZ77 sliding window.
+            //通过在扩展协商报价中包含此参数，客户端限制了服务器端所提供的LZ77滑动窗口大小
+            //将用于压缩消息。如果对端服务器使用LZ77小滑动窗口压缩消息，客户端可以减少LZ77滑动窗口所需的内存。
             if (this.ServerMaxWindowBits != ZlibConstants.WindowBitsMax)
-                headerValue += "; server_max_window_bits=" + this.ServerMaxWindowBits.ToString();
-            else
-                // Absence of this parameter in an extension negotiation offer indicates that the client can receive messages compressed using an LZ77 sliding window of up to 32,768 bytes.
-                this.ServerMaxWindowBits = ZlibConstants.WindowBitsMax;
-
-            // http://tools.ietf.org/html/rfc7692#section-7.1.2.2
-            // By including this parameter in an offer, a client informs the peer server that the client supports the "client_max_window_bits"
-            // extension parameter in an extension negotiation response and, optionally, a hint by attaching a value to the parameter.
-            if (this.ClientMaxWindowBits != ZlibConstants.WindowBitsMax)
-                headerValue += "; client_max_window_bits=" + this.ClientMaxWindowBits.ToString();
+            {
+                sb.Append($"; server_max_window_bits={this.ServerMaxWindowBits}");
+            }
             else
             {
-                headerValue += "; client_max_window_bits";
+                /*
+                 * 在扩展协商报价中没有此参数表示客户端可以接收使用LZ77滑动窗口压缩的最多32,768字节的消息。
+                 */
+                this.ServerMaxWindowBits = ZlibConstants.WindowBitsMax;
+            }
 
-                // If the "client_max_window_bits" extension parameter in an extension negotiation offer has a value, the parameter also informs the
-                // peer server of a hint that even if the server doesn't include the "client_max_window_bits" extension parameter in the corresponding
-                // extension negotiation response with a value greater than the one in the extension negotiation offer or if the server doesn't include
-                // the extension parameter at all, the client is not going to use an LZ77 sliding window size greater than the size specified
-                // by the value in the extension negotiation offer to compress messages.
+            // http://tools.ietf.org/html/rfc7692#section-7.1.2.2
+            //通过在offer中包含此参数，客户端通知对端服务器客户端支持"client_max_window_bits"
+            //扩展协商响应中的扩展参数，可选地，通过将值附加到参数的提示。
+            if (this.ClientMaxWindowBits != ZlibConstants.WindowBitsMax)
+            {
+                sb.Append($"; client_max_window_bits= {this.ClientMaxWindowBits}");
+            }
+            else
+            {
+                sb.Append($"; client_max_window_bits");
+
+                /*
+                 * 如果扩展协商offer中的"client_max_window_bits"扩展参数有值，该参数也会通知
+                 * 对端服务器的一个提示，即使服务器不包含“client_max_window_bits”扩展参数在相应的
+                 * 扩展协商响应的值大于扩展协商offer中的值，或者如果服务器不包含
+                 * 扩展参数，客户端不会使用大于指定大小的LZ77滑动窗口
+                 * 通过扩展协商提供压缩消息的值。
+                 */
                 this.ClientMaxWindowBits = ZlibConstants.WindowBitsMax;
             }
 
-            // Add the new header to the request.
-            request.AddHeader("Sec-WebSocket-Extensions", headerValue);
+            // 将新标头添加到请求。
+            request.AddHeader("Sec-WebSocket-Extensions", sb.ToString());
         }
 
         public bool ParseNegotiation(WebSocketResponse resp)
         {
-            // Search for any returned neogitation offer
+            // 搜索任何退回的新报价
             var headerValues = resp.GetHeaderValues("Sec-WebSocket-Extensions");
             if (headerValues == null)
+            {
                 return false;
+            }
 
-            for (int i = 0; i < headerValues.Count; ++i)
+            foreach (var t1 in headerValues)
             {
                 // If found, tokenize it
-                HeaderParser parser = new HeaderParser(headerValues[i]);
+                var parser = new HeaderParser(t1);
 
-                for (int cv = 0; cv < parser.Values.Count; ++cv)
+                foreach (var t in parser.Values)
                 {
-                    HeaderValue value = parser.Values[i];
-
-                    if (!string.IsNullOrEmpty(value.Key) &&
-                        value.Key.StartsWith("permessage-deflate", StringComparison.OrdinalIgnoreCase))
-                    {
+                    if (string.IsNullOrEmpty(t.Key) ||
+                        // ReSharper disable once StringLiteralTypo
+                        !t.Key.StartsWith("permessage-deflate", StringComparison.OrdinalIgnoreCase)) continue;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                        var sb = new StringBuilder(3);
-                        sb.Append($"Enabled with header:{headerValues[i]}");
-                        sb.Append($" Message: {resp.Message}");
-                        Debug.Log($"[PerMessageCompression] [method:ParseNegotiation] [msg] {sb.ToString()}");
+                    var sb = new StringBuilder(3);
+                    sb.Append($"Enabled with header:{t1}");
+                    sb.Append($" Message: {resp.Message}");
+                    Debug.Log($"[PerMessageCompression] [method:ParseNegotiation] [msg] {sb}");
 #endif
-                        if (value.TryGetOption("client_no_context_takeover", out var option))
-                            this.ClientNoContextTakeover = true;
-
-                        if (value.TryGetOption("server_no_context_takeover", out option))
-                            this.ServerNoContextTakeover = true;
-
-                        if (value.TryGetOption("client_max_window_bits", out option))
-                        {
-                            if (option.HasValue)
-                            {
-                                if (int.TryParse(option.Value, out var windowBits))
-                                {
-                                    this.ClientMaxWindowBits = windowBits;
-                                }
-                            }
-                        }
-
-                        if (value.TryGetOption("server_max_window_bits", out option))
-                        {
-                            if (option.HasValue)
-                            {
-                                if (int.TryParse(option.Value, out var windowBits))
-                                {
-                                    this.ServerMaxWindowBits = windowBits;
-                                }
-                            }
-                        }
-
-                        return true;
+                    if (t.TryGetOption("client_no_context_takeover", out var option))
+                    {
+                        this.ClientNoContextTakeover = true;
                     }
+
+                    if (t.TryGetOption("server_no_context_takeover", out option))
+                    {
+                        this.ServerNoContextTakeover = true;
+                    }
+
+                    if (t.TryGetOption("client_max_window_bits", out option))
+                    {
+                        if (option.HasValue)
+                        {
+                            if (int.TryParse(option.Value, out var windowBits))
+                            {
+                                this.ClientMaxWindowBits = windowBits;
+                            }
+                        }
+                    }
+
+                    if (!t.TryGetOption("server_max_window_bits", out option)) return true;
+                    {
+                        if (!option.HasValue) return true;
+                        if (int.TryParse(option.Value, out var windowBits))
+                        {
+                            this.ServerMaxWindowBits = windowBits;
+                        }
+                    }
+
+                    return true;
                 }
             }
 
@@ -215,87 +245,95 @@ namespace BestHTTP.WebSocket.Extensions
         }
 
         /// <summary>
-        /// IExtension implementation to set the Rsv1 flag in the header if we are we will want to compress the data
-        /// in the writer.
+        /// 如果我们想要压缩写入器中的数据，IExtension实现可以在头中设置Rsv1标志。
         /// </summary>
         public byte GetFrameHeader(WebSocketFrame writer, byte inFlag)
         {
             // http://tools.ietf.org/html/rfc7692#section-7.2.3.1
-            //  the RSV1 bit is set only on the first frame.
-            if ((writer.Type == WebSocketFrameTypes.Binary || writer.Type == WebSocketFrameTypes.Text) &&
-                writer.Data != null && writer.DataLength >= this.MinimumDataLegthToCompress)
+            //  RSV1位仅在第一帧上设置。
+            if (writer.Type is WebSocketFrameTypes.Binary or WebSocketFrameTypes.Text &&
+                writer.Data != null &&
+                writer.DataLength >= this.MinimumDataLengthToCompress)
+            {
                 return (byte)(inFlag | 0x40);
+            }
             else
+            {
                 return inFlag;
+            }
         }
 
         /// <summary>
-        /// IExtension implementation to be able to compress the data hold in the writer.
+        /// IExtension实现能够压缩写入器中的数据。
         /// </summary>
         public byte[] Encode(WebSocketFrame writer)
         {
             if (writer.Data == null)
+            {
                 return BufferPool.NoData;
+            }
 
-            // Is compressing enabled for this frame? If so, compress it.
-            if ((writer.Header & 0x40) != 0)
-                return Compress(writer.Data, writer.DataLength);
-            else
-                return writer.Data;
+            // 该帧是否启用压缩?如果是，压缩它。
+            return (writer.Header & 0x40) != 0
+                ? Compress(
+                    data: writer.Data,
+                    length: writer.DataLength)
+                : writer.Data;
         }
 
         /// <summary>
-        /// IExtension implementation to possible decompress the data.
+        /// IExtension实现来可能地解压数据。
         /// </summary>
         public byte[] Decode(byte header, byte[] data, int length)
         {
-            // Is the server compressed the data? If so, decompress it.
-            if ((header & 0x40) != 0)
-                return Decompress(data, length);
-            else
-                return data;
+            // 服务器是否对数据进行了压缩?如果存在，请解压。
+            return (header & 0x40) != 0
+                ? Decompress(
+                    data: data,
+                    length: length)
+                : data;
         }
 
-        #endregion
-
-        #region Private Helper Functions
-
         /// <summary>
-        /// A function to compress and return the data parameter with possible context takeover support (reusing the DeflateStream).
+        /// 一个压缩并返回数据参数的函数，可能支持上下文接管(重用DeflateStream)。
         /// </summary>
-        private byte[] Compress(byte[] data, int length)
+        private
+            byte[] Compress(byte[] data, int length)
         {
-            if (compressorOutputStream == null)
-                compressorOutputStream = new BufferPoolMemoryStream();
-            compressorOutputStream.SetLength(0);
+            _compressorOutputStream ??= new BufferPoolMemoryStream();
+            _compressorOutputStream.SetLength(0);
 
-            if (compressorDeflateStream == null)
+            if (_compressorDeflateStream == null)
             {
-                compressorDeflateStream = new DeflateStream(compressorOutputStream, CompressionMode.Compress,
-                    this.Level, true, this.ClientMaxWindowBits);
-                compressorDeflateStream.FlushMode = FlushType.Sync;
+                _compressorDeflateStream = new DeflateStream(
+                    stream: _compressorOutputStream,
+                    mode: CompressionMode.Compress,
+                    level: this.Level,
+                    leaveOpen: true,
+                    windowBits: this.ClientMaxWindowBits);
+                _compressorDeflateStream.FlushMode = FlushType.Sync;
             }
 
-            byte[] result = null;
+            byte[] result;
             try
             {
-                compressorDeflateStream.Write(data, 0, length);
-                compressorDeflateStream.Flush();
+                _compressorDeflateStream.Write(data, 0, length);
+                _compressorDeflateStream.Flush();
 
-                compressorOutputStream.Position = 0;
+                _compressorOutputStream.Position = 0;
 
                 // http://tools.ietf.org/html/rfc7692#section-7.2.1
-                // Remove 4 octets (that are 0x00 0x00 0xff 0xff) from the tail end. After this step, the last octet of the compressed data contains (possibly part of) the DEFLATE header bits with the "BTYPE" bits set to 00.
-                compressorOutputStream.SetLength(compressorOutputStream.Length - 4);
+                // 从尾部删除4个字节(即0x00 0x00 0xff 0xff)。在这一步之后，压缩数据的最后八位包含(可能是部分)DEFLATE头位，“byte”位设置为00。
+                _compressorOutputStream.SetLength(_compressorOutputStream.Length - 4);
 
-                result = compressorOutputStream.ToArray();
+                result = _compressorOutputStream.ToArray();
             }
             finally
             {
                 if (this.ClientNoContextTakeover)
                 {
-                    compressorDeflateStream.Dispose();
-                    compressorDeflateStream = null;
+                    _compressorDeflateStream.Dispose();
+                    _compressorDeflateStream = null;
                 }
             }
 
@@ -303,53 +341,67 @@ namespace BestHTTP.WebSocket.Extensions
         }
 
         /// <summary>
-        /// A function to decompress and return the data parameter with possible context takeover support (reusing the DeflateStream).
+        /// 一个解压缩并返回数据参数的函数，可能支持上下文接管(重用DeflateStream)。
         /// </summary>
         private byte[] Decompress(byte[] data, int length)
         {
-            if (decompressorInputStream == null)
-                decompressorInputStream = new BufferPoolMemoryStream(length + 4);
+            _decompressorInputStream ??= new BufferPoolMemoryStream(length + 4);
 
-            decompressorInputStream.Write(data, 0, length);
+            _decompressorInputStream.Write(
+                buffer: data,
+                offset: 0,
+                count: length);
 
             // http://tools.ietf.org/html/rfc7692#section-7.2.2
-            // Append 4 octets of 0x00 0x00 0xff 0xff to the tail end of the payload of the message.
-            decompressorInputStream.Write(PerMessageCompression.Trailer, 0, PerMessageCompression.Trailer.Length);
+            // 在消息有效负载的尾部追加4个字节的0x00 0x00 0xff 0xff。
+            _decompressorInputStream.Write(
+                buffer: PerMessageCompression.Trailer,
+                offset: 0,
+                count: PerMessageCompression.Trailer.Length);
 
-            decompressorInputStream.Position = 0;
+            _decompressorInputStream.Position = 0;
 
-            if (decompressorDeflateStream == null)
+            if (_decompressorDeflateStream == null)
             {
-                decompressorDeflateStream = new DeflateStream(decompressorInputStream, CompressionMode.Decompress,
-                    CompressionLevel.Default, true, this.ServerMaxWindowBits);
-                decompressorDeflateStream.FlushMode = FlushType.Sync;
+                _decompressorDeflateStream = new DeflateStream(
+                    stream: _decompressorInputStream,
+                    mode: CompressionMode.Decompress,
+                    level: CompressionLevel.Default,
+                    leaveOpen: true,
+                    windowBits: this.ServerMaxWindowBits);
+                _decompressorDeflateStream.FlushMode = FlushType.Sync;
             }
 
-            if (decompressorOutputStream == null)
-                decompressorOutputStream = new BufferPoolMemoryStream();
-            decompressorOutputStream.SetLength(0);
+            _decompressorOutputStream ??= new BufferPoolMemoryStream();
+
+            _decompressorOutputStream.SetLength(0);
 
             byte[] copyBuffer = BufferPool.Get(1024, true);
             int readCount;
-            while ((readCount = decompressorDeflateStream.Read(copyBuffer, 0, copyBuffer.Length)) != 0)
-                decompressorOutputStream.Write(copyBuffer, 0, readCount);
+            while ((readCount =
+                       _decompressorDeflateStream.Read(
+                           buffer: copyBuffer,
+                           offset: 0,
+                           count: copyBuffer.Length)) != 0)
+            {
+                _decompressorOutputStream.Write(
+                    buffer: copyBuffer,
+                    offset: 0,
+                    count: readCount);
+            }
 
             BufferPool.Release(copyBuffer);
 
-            decompressorDeflateStream.SetLength(0);
+            _decompressorDeflateStream.SetLength(0);
 
-            byte[] result = decompressorOutputStream.ToArray();
+            var result = _decompressorOutputStream.ToArray();
 
-            if (this.ServerNoContextTakeover)
-            {
-                decompressorDeflateStream.Dispose();
-                decompressorDeflateStream = null;
-            }
+            if (!this.ServerNoContextTakeover) return result;
+            _decompressorDeflateStream.Dispose();
+            _decompressorDeflateStream = null;
 
             return result;
         }
-
-        #endregion
     }
 }
 

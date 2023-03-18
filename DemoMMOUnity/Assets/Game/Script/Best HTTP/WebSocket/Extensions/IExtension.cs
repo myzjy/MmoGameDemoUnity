@@ -7,32 +7,30 @@ namespace BestHTTP.WebSocket.Extensions
     public interface IExtension
     {
         /// <summary>
-        /// This is the first pass: here we can add headers to the request to initiate an extension negotiation.
+        /// 这是第一步:在这里，我们可以向请求添加头以发起扩展协商。
         /// </summary>
         /// <param name="request"></param>
         void AddNegotiation(HttpRequest request);
 
         /// <summary>
-        /// If the websocket upgrade succeded it will call this function to be able to parse the server's negotiation
-        /// response. Inside this function the IsEnabled should be set.
+        /// 如果websocket升级成功，它将调用这个函数来解析服务器的协商响应。在这个函数中，应该设置IsEnabled。
         /// </summary>
         bool ParseNegotiation(WebSocketResponse resp);
 
         /// <summary>
-        /// This function should return a new header flag based on the inFlag parameter. The extension should set only the
-        /// Rsv1-3 bits in the header.
+        /// 这个函数应该根据inFlag参数返回一个新的头标志。扩展应该只设置头中的Rsv1-3位。
         /// </summary>
         byte GetFrameHeader(WebSocketFrame writer, byte inFlag);
 
         /// <summary>
-        /// This function will be called to be able to transform the data that will be sent to the server.
+        /// 该函数将被调用，以便能够转换将发送到服务器的数据。
         /// </summary>
         /// <param name="writer"></param>
         /// <returns></returns>
         byte[] Encode(WebSocketFrame writer);
 
         /// <summary>
-        /// This function can be used the decode the server-sent data.
+        /// 这个函数可以用来解码服务器发送的数据。
         /// </summary>
         byte[] Decode(byte header, byte[] data, int length);
     }
