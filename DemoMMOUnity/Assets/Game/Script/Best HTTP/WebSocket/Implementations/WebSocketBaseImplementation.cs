@@ -2,6 +2,8 @@
 
 #if !UNITY_WEBGL || UNITY_EDITOR
 using System;
+using System.Diagnostics;
+using System.Text;
 using BestHTTP.WebSocket.Frames;
 #endif
 
@@ -35,15 +37,32 @@ namespace BestHTTP.WebSocket
 
     public abstract class WebSocketBaseImplementation
     {
-        public WebSocketBaseImplementation(WebSocket parent, Uri uri, string origin, string protocol)
+        protected WebSocketBaseImplementation(
+            WebSocket parent,
+            Uri uri,
+            string origin,
+            string protocol)
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            {
+                var st = new StackTrace(new StackFrame(true));
+                var sf = st.GetFrame(0);
+                StringBuilder sb = new StringBuilder(6);
+                sb.Append($"[{sf.GetFileName()}]");
+                sb.Append($"[method:{sf.GetMethod().Name}]");
+                sb.Append($"{sf.GetMethod().Name}");
+                sb.Append($"Line:{sf.GetFileLineNumber()}");
+                sb.Append($"[msg]初始化WebSocketBaseImplementation uri:  {uri.LocalPath}:{uri.Host}");
+                sb.Append($"  origin:  {origin}");
+                Debug.Log($"{sb}");
+            }
+#endif
             this.Parent = parent;
             this.Uri = uri;
             this.Origin = origin;
             this.Protocol = protocol;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-            this.LastMessageReceived = DateTime.MinValue;
 
             // Set up some default values.
             this.Parent.PingFrequency = 1000;
@@ -52,10 +71,14 @@ namespace BestHTTP.WebSocket
         }
 
         public virtual WebSocketStates State { get; protected set; }
-        public virtual bool IsOpen { get; protected set; }
-        public virtual int BufferedAmount { get; protected set; }
 
-        public WebSocket Parent { get; }
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public virtual bool IsOpen { get; set; } = default;
+
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        public virtual int BufferedAmount { get; set; } = default;
+
+        protected WebSocket Parent { get; }
         public Uri Uri { get; protected set; }
         public string Origin { get; }
         public string Protocol { get; }
@@ -72,24 +95,24 @@ namespace BestHTTP.WebSocket
         {
             get
             {
-                if (this._internalRequest == null)
+                if (this.SetInternalRequest == null)
                     CreateInternalRequest();
 
-                return this._internalRequest;
+                return this.SetInternalRequest;
             }
         }
 
-        protected HttpRequest _internalRequest;
+        protected HttpRequest SetInternalRequest;
 
         public virtual int Latency { get; protected set; }
-        public virtual DateTime LastMessageReceived { get; protected set; }
+        public virtual DateTime LastMessageReceived { get; protected set; } = DateTime.MinValue;
 #endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         protected abstract void CreateInternalRequest();
 
         /// <summary>
-        /// It will send the given frame to the server.
+        /// 它将把给定的帧发送到服务器。
         /// </summary>
         public abstract void Send(WebSocketFrame frame);
 #endif

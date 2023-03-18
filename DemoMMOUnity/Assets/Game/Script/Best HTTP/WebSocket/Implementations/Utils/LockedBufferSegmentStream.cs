@@ -1,25 +1,24 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2 && !BESTHTTP_DISABLE_WEBSOCKET
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 
 namespace BestHTTP.WebSocket.Implementations.Utils
 {
-    public sealed class LockedBufferSegmenStream : BufferSegmentStream
+    public sealed class LockedBufferSegmentStream : BufferSegmentStream
     {
         public bool IsClosed { get; private set; }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            lock (base.bufferList)
+            lock (bufferList)
             {
-                if (this.IsClosed && base.bufferList.Count == 0)
+                if (this.IsClosed &&
+                    bufferList.Count == 0)
+                {
                     return 0;
+                }
 
-                int sumReadCount = base.Read(buffer, offset, count);
+                var sumReadCount = base.Read(buffer, offset, count);
 
                 return sumReadCount == 0 ? -1 : sumReadCount;
             }
@@ -27,10 +26,12 @@ namespace BestHTTP.WebSocket.Implementations.Utils
 
         public override void Write(BufferSegment bufferSegment)
         {
-            lock (base.bufferList)
+            lock (bufferList)
             {
                 if (this.IsClosed)
+                {
                     return;
+                }
 
                 base.Write(bufferSegment);
             }
@@ -38,7 +39,7 @@ namespace BestHTTP.WebSocket.Implementations.Utils
 
         public override void Reset()
         {
-            lock (base.bufferList)
+            lock (bufferList)
             {
                 base.Reset();
             }

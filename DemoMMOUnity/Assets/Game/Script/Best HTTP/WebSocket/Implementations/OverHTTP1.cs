@@ -41,58 +41,58 @@ namespace BestHTTP.WebSocket
 
         protected override void CreateInternalRequest()
         {
-            if (this._internalRequest != null)
+            if (this.SetInternalRequest != null)
                 return;
 
-            this._internalRequest = new HttpRequest(base.Uri, OnInternalRequestCallback);
+            this.SetInternalRequest = new HttpRequest(base.Uri, OnInternalRequestCallback);
 
-            this._internalRequest.Context.Add("WebSocket", this.Parent.Context);
+            this.SetInternalRequest.Context.Add("WebSocket", this.Parent.Context);
 
             // Called when the regular GET request is successfully upgraded to WebSocket
-            this._internalRequest.OnUpgraded = OnInternalRequestUpgraded;
+            this.SetInternalRequest.OnUpgraded = OnInternalRequestUpgraded;
 
             //http://tools.ietf.org/html/rfc6455#section-4
 
             // The request MUST contain an |Upgrade| header field whose value MUST include the "websocket" keyword.
-            this._internalRequest.SetHeader("Upgrade", "websocket");
+            this.SetInternalRequest.SetHeader("Upgrade", "websocket");
 
             // The request MUST contain a |Connection| header field whose value MUST include the "Upgrade" token.
-            this._internalRequest.SetHeader("Connection", "Upgrade");
+            this.SetInternalRequest.SetHeader("Connection", "Upgrade");
 
             // The request MUST include a header field with the name |Sec-WebSocket-Key|.  The value of this header field MUST be a nonce consisting of a
             // randomly selected 16-byte value that has been base64-encoded (see Section 4 of [RFC4648]).  The nonce MUST be selected randomly for each connection.
-            this._internalRequest.SetHeader("Sec-WebSocket-Key",
+            this.SetInternalRequest.SetHeader("Sec-WebSocket-Key",
                 WebSocket.GetSecKey(new object[] { this, InternalRequest, base.Uri, new object() }));
 
             // The request MUST include a header field with the name |Origin| [RFC6454] if the request is coming from a browser client.
             // If the connection is from a non-browser client, the request MAY include this header field if the semantics of that client match the use-case described here for browser clients.
             // More on Origin Considerations: http://tools.ietf.org/html/rfc6455#section-10.2
             if (!string.IsNullOrEmpty(Origin))
-                this._internalRequest.SetHeader("Origin", Origin);
+                this.SetInternalRequest.SetHeader("Origin", Origin);
 
             // The request MUST include a header field with the name |Sec-WebSocket-Version|.  The value of this header field MUST be 13.
-            this._internalRequest.SetHeader("Sec-WebSocket-Version", "13");
+            this.SetInternalRequest.SetHeader("Sec-WebSocket-Version", "13");
 
             if (!string.IsNullOrEmpty(Protocol))
-                this._internalRequest.SetHeader("Sec-WebSocket-Protocol", Protocol);
+                this.SetInternalRequest.SetHeader("Sec-WebSocket-Protocol", Protocol);
 
             // Disable caching
-            this._internalRequest.SetHeader("Cache-Control", "no-cache");
-            this._internalRequest.SetHeader("Pragma", "no-cache");
+            this.SetInternalRequest.SetHeader("Cache-Control", "no-cache");
+            this.SetInternalRequest.SetHeader("Pragma", "no-cache");
 
 #if !BESTHTTP_DISABLE_CACHING
-            this._internalRequest.DisableCache = true;
+            this.SetInternalRequest.DisableCache = true;
 #endif
 
 #if !BESTHTTP_DISABLE_PROXY
-            this._internalRequest.Proxy = this.Parent.GetProxy(this.Uri);
+            this.SetInternalRequest.Proxy = this.Parent.GetProxy(this.Uri);
 #endif
 
             if (this.Parent.OnInternalRequestCreated != null)
             {
                 try
                 {
-                    this.Parent.OnInternalRequestCreated(this.Parent, this._internalRequest);
+                    this.Parent.OnInternalRequestCreated(this.Parent, this.SetInternalRequest);
                 }
                 catch (Exception ex)
                 {

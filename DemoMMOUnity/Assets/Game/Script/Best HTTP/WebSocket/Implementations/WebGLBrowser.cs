@@ -1,4 +1,4 @@
-#if (UNITY_WEBGL && !UNITY_EDITOR) && !BESTHTTP_DISABLE_WEBSOCKET
+ #if (UNITY_WEBGL && !UNITY_EDITOR) && !BESTHTTP_DISABLE_WEBSOCKET
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -37,7 +37,7 @@ namespace BestHTTP.WebSocket
             }
             catch(Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocket", "Open", ex, this.Parent.Context);
+                HttpManager.Logger.Exception("WebSocket", "Open", ex, this.Parent.Context);
             }
         }
 
@@ -103,12 +103,12 @@ namespace BestHTTP.WebSocket
                     }
                     catch(Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocket", "OnOpen", ex, ws.Context);
+                        HttpManager.Logger.Exception("WebSocket", "OnOpen", ex, ws.Context);
                     }
                 }
             }
             else
-                HTTPManager.Logger.Warning("WebSocket", "OnOpenCallback - No WebSocket found for id: " + id.ToString(), ws.Context);
+                HttpManager.Logger.Warning("WebSocket", "OnOpenCallback - No WebSocket found for id: " + id.ToString(), ws.Context);
         }
 
         [AOT.MonoPInvokeCallback(typeof(OnWebGLWebSocketTextDelegate))]
@@ -125,12 +125,12 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocket", "OnMessage", ex, ws.Context);
+                        HttpManager.Logger.Exception("WebSocket", "OnMessage", ex, ws.Context);
                     }
                 }
             }
             else
-                HTTPManager.Logger.Warning("WebSocket", "OnTextCallback - No WebSocket found for id: " + id.ToString());
+                HttpManager.Logger.Warning("WebSocket", "OnTextCallback - No WebSocket found for id: " + id.ToString());
         }
 
         [AOT.MonoPInvokeCallback(typeof(OnWebGLWebSocketBinaryDelegate))]
@@ -152,12 +152,12 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocket", "OnBinary", ex, ws.Context);
+                        HttpManager.Logger.Exception("WebSocket", "OnBinary", ex, ws.Context);
                     }
                 }
             }
             else
-                HTTPManager.Logger.Warning("WebSocket", "OnBinaryCallback - No WebSocket found for id: " + id.ToString());
+                HttpManager.Logger.Warning("WebSocket", "OnBinaryCallback - No WebSocket found for id: " + id.ToString());
         }
 
         [AOT.MonoPInvokeCallback(typeof(OnWebGLWebSocketErrorDelegate))]
@@ -176,12 +176,12 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocket", "OnError", ex, ws.Context);
+                        HttpManager.Logger.Exception("WebSocket", "OnError", ex, ws.Context);
                     }
                 }
             }
             else
-                HTTPManager.Logger.Warning("WebSocket", "OnErrorCallback - No WebSocket found for id: " + id.ToString());
+                HttpManager.Logger.Warning("WebSocket", "OnErrorCallback - No WebSocket found for id: " + id.ToString());
 
             try
             {
@@ -189,7 +189,7 @@ namespace BestHTTP.WebSocket
             }
             catch(Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocket", "WS_Release", ex);
+                HttpManager.Logger.Exception("WebSocket", "WS_Release", ex);
             }
         }
 
@@ -216,12 +216,12 @@ namespace BestHTTP.WebSocket
                     }
                     catch (Exception ex)
                     {
-                        HTTPManager.Logger.Exception("WebSocket", "OnClosed", ex, ws.Context);
+                        HttpManager.Logger.Exception("WebSocket", "OnClosed", ex, ws.Context);
                     }
                 }
             }
             else
-                HTTPManager.Logger.Warning("WebSocket", "OnCloseCallback - No WebSocket found for id: " + id.ToString());
+                HttpManager.Logger.Warning("WebSocket", "OnCloseCallback - No WebSocket found for id: " + id.ToString());
 
             try
             {
@@ -229,7 +229,7 @@ namespace BestHTTP.WebSocket
             }
             catch(Exception ex)
             {
-                HTTPManager.Logger.Exception("WebSocket", "WS_Release", ex);
+                HttpManager.Logger.Exception("WebSocket", "WS_Release", ex);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace BestHTTP.WebSocket
         /// </summary>
         private readonly CircularBuffer<int> _rtt = new CircularBuffer<int>(WebSocketResponse.RTTBufferCapacity);
 
-        private LockedBufferSegmenStream _upStream;
+        private LockedBufferSegmentStream _upStream;
 
         private bool _waitingForPong;
 
@@ -136,14 +136,14 @@ namespace BestHTTP.WebSocket
 
         protected override void CreateInternalRequest()
         {
-            _internalRequest = new HttpRequest(Uri, HttpMethods.Connect, OnInternalRequestCallback);
-            _internalRequest.Context.Add("WebSocket", this.Parent.Context);
+            SetInternalRequest = new HttpRequest(Uri, HttpMethods.Connect, OnInternalRequestCallback);
+            SetInternalRequest.Context.Add("WebSocket", this.Parent.Context);
 
-            _internalRequest.SetHeader(":protocol", "websocket");
+            SetInternalRequest.SetHeader(":protocol", "websocket");
 
             //请求必须包含一个头字段，名称为|Sec-WebSocket-Key|。这个报头字段的值必须是一个由
             //随机选择的base64编码的16字节值(参见[RFC4648]的第4节)。nonce必须为每个连接随机选择。
-            _internalRequest.SetHeader("sec-webSocket-key",
+            SetInternalRequest.SetHeader("sec-webSocket-key",
                 WebSocket.GetSecKey(new[] { this, InternalRequest, Uri, new object() }));
 
             //如果请求来自浏览器客户端，请求必须包含一个头字段|Origin| [RFC6454]
@@ -151,38 +151,38 @@ namespace BestHTTP.WebSocket
             //更多关于产地的考虑: http://tools.ietf.org/html/rfc6455#section-10.2
             if (!string.IsNullOrEmpty(Origin))
             {
-                _internalRequest.SetHeader("origin", Origin);
+                SetInternalRequest.SetHeader("origin", Origin);
             }
 
             // 请求必须包含一个名为|Sec-WebSocket-Version|的报头字段。这个报头字段的值必须是13。
-            _internalRequest.SetHeader("sec-webSocket-version", "13");
+            SetInternalRequest.SetHeader("sec-webSocket-version", "13");
 
             if (!string.IsNullOrEmpty(Protocol))
             {
-                _internalRequest.SetHeader("sec-webSocket-protocol", Protocol);
+                SetInternalRequest.SetHeader("sec-webSocket-protocol", Protocol);
             }
 
             // Disable caching
-            _internalRequest.SetHeader("cache-control", "no-cache");
-            _internalRequest.SetHeader("pragma", "no-cache");
+            SetInternalRequest.SetHeader("cache-control", "no-cache");
+            SetInternalRequest.SetHeader("pragma", "no-cache");
 
 #if !BESTHTTP_DISABLE_CACHING
-            _internalRequest.DisableCache = true;
+            SetInternalRequest.DisableCache = true;
 #endif
 
-            _internalRequest.OnHeadersReceived += OnHeadersReceived;
+            SetInternalRequest.OnHeadersReceived += OnHeadersReceived;
 
-            _internalRequest.OnStreamingData += OnFrame;
-            _internalRequest.StreamChunksImmediately = true;
+            SetInternalRequest.OnStreamingData += OnFrame;
+            SetInternalRequest.StreamChunksImmediately = true;
 
-            _internalRequest.UploadStream = this._upStream = new LockedBufferSegmenStream();
+            SetInternalRequest.UploadStream = this._upStream = new LockedBufferSegmentStream();
 
-            _internalRequest.UseUploadStreamLength = false;
+            SetInternalRequest.UseUploadStreamLength = false;
 
             if (this.Parent.OnInternalRequestCreated == null) return;
             try
             {
-                this.Parent.OnInternalRequestCreated(this.Parent, _internalRequest);
+                this.Parent.OnInternalRequestCreated(this.Parent, SetInternalRequest);
             }
             catch (Exception ex)
             {
