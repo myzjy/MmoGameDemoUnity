@@ -7,7 +7,7 @@ namespace BestHTTP.SocketIO3
     using BestHTTP.SocketIO3.Transports;
 
     /// <summary>
-    /// Interface to hide internal functions from the user by implementing it as an explicit interface.
+    /// 接口，通过将其实现为显式接口来对用户隐藏内部函数。
     /// </summary>
     public interface IManager
     {
@@ -27,7 +27,7 @@ namespace BestHTTP.SocketIO3
     }
 
     /// <summary>
-    /// Interface to hide internal functions from the user by implementing it as an explicit interface.
+    /// 接口，通过将其实现为显式接口来对用户隐藏内部函数。
     /// </summary>
     public interface ISocket
     {

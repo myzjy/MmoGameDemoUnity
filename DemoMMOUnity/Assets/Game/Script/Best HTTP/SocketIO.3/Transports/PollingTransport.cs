@@ -62,7 +62,7 @@ namespace BestHTTP.SocketIO3.Transports
             HttpRequest request = new HttpRequest(new Uri(string.Format(format,
                     Manager.Uri.ToString(),
                     Manager.ProtocolVersion,
-                    Manager.Timestamp.ToString(),
+                    SocketManager.Timestamp.ToString(),
                     Manager.RequestCounter++.ToString(),
                     Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
                     sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty)),
@@ -75,8 +75,8 @@ namespace BestHTTP.SocketIO3.Transports
 
             request.MaxRetries = 0;
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, request);
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
+                this.Manager.Options.httpRequestCustomizationCallback(this.Manager, request);
 
             request.Send();
 
@@ -124,7 +124,7 @@ namespace BestHTTP.SocketIO3.Transports
             LastRequest = new HttpRequest(new Uri(string.Format("{0}?EIO={1}&transport=polling&t={2}-{3}&sid={4}{5}",
                     Manager.Uri.ToString(),
                     Manager.ProtocolVersion,
-                    Manager.Timestamp.ToString(),
+                    SocketManager.Timestamp.ToString(),
                     Manager.RequestCounter++.ToString(),
                     Manager.Handshake.Sid,
                     !Manager.Options.QueryParamsOnlyForHandshake ? Manager.Options.BuildQueryParams() : string.Empty)),
@@ -138,8 +138,8 @@ namespace BestHTTP.SocketIO3.Transports
 #endif
             EncodePackets(packets, LastRequest);
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, LastRequest);
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
+                this.Manager.Options.httpRequestCustomizationCallback(this.Manager, LastRequest);
 
             LastRequest.Send();
         }
@@ -265,7 +265,7 @@ namespace BestHTTP.SocketIO3.Transports
                 return;
 
             PollRequest = new HttpRequest(new Uri(
-                    $"{Manager.Uri.ToString()}?EIO={Manager.ProtocolVersion}&transport=polling&t={Manager.Timestamp.ToString()}-{Manager.RequestCounter++.ToString()}&sid={Manager.Handshake.Sid}{(!Manager.Options.QueryParamsOnlyForHandshake ? Manager.Options.BuildQueryParams() : string.Empty)}"),
+                    $"{Manager.Uri.ToString()}?EIO={Manager.ProtocolVersion}&transport=polling&t={SocketManager.Timestamp.ToString()}-{Manager.RequestCounter++.ToString()}&sid={Manager.Handshake.Sid}{(!Manager.Options.QueryParamsOnlyForHandshake ? Manager.Options.BuildQueryParams() : string.Empty)}"),
                 HttpMethods.Get,
                 OnPollRequestFinished);
 
@@ -276,8 +276,8 @@ namespace BestHTTP.SocketIO3.Transports
 
             PollRequest.MaxRetries = 0;
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, PollRequest);
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
+                this.Manager.Options.httpRequestCustomizationCallback(this.Manager, PollRequest);
 
             PollRequest.Send();
         }

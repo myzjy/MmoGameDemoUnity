@@ -2,115 +2,121 @@
 
 using System;
 using System.Text;
-
 using PlatformSupport.Collections.ObjectModel;
 
 #if !NETFX_CORE
-    using PlatformSupport.Collections.Specialized;
+using PlatformSupport.Collections.Specialized;
+
 #else
     using System.Collections.Specialized;
 #endif
 
 namespace BestHTTP.SocketIO3
 {
-    public delegate void HTTPRequestCallbackDelegate(SocketManager manager, HttpRequest request);
+    public delegate void HttpRequestCallbackDelegate(SocketManager manager, HttpRequest request);
 
     public sealed class SocketOptions
     {
-        #region Properties
-
         /// <summary>
-        /// The SocketManager will try to connect with this transport.
+        /// SocketManager将尝试连接此传输。
         /// </summary>
         public Transports.TransportTypes ConnectWith { get; set; }
 
         /// <summary>
-        /// Whether to reconnect automatically after a disconnect (default true)
+        /// 断开连接后是否自动重新连接(默认为true)
         /// </summary>
         public bool Reconnection { get; set; }
 
         /// <summary>
-        /// Number of attempts before giving up (default Int.MaxValue)
+        /// 放弃前的尝试次数(默认Int.MaxValue)
         /// </summary>
         public int ReconnectionAttempts { get; set; }
 
         /// <summary>
-        /// How long to initially wait before attempting a new reconnection (default 1000ms).
-        /// Affected by +/- RandomizationFactor, for example the default initial delay will be between 500ms to 1500ms.
+        /// 尝试重新连接之前的初始等待时间(默认1000ms)。
+        /// 受+/- RandomizationFactor影响，例如默认初始延迟将在500ms到1500ms之间。
         /// </summary>
         public TimeSpan ReconnectionDelay { get; set; }
 
         /// <summary>
-        /// Maximum amount of time to wait between reconnections (default 5000ms).
-        /// Each attempt increases the reconnection delay along with a randomization as above.
+        /// 重连接之间的最大等待时间(默认为5000ms)。
+        /// 每次尝试都会增加重连接延迟以及如上所述的随机化。
         /// </summary>
         public TimeSpan ReconnectionDelayMax { get; set; }
 
         /// <summary>
         /// (default 0.5`), [0..1]
         /// </summary>
-        public float RandomizationFactor { get { return randomizationFactor; } set { randomizationFactor = Math.Min(1.0f, Math.Max(0.0f, value)); } }
-        private float randomizationFactor;
+        public float RandomizationFactor
+        {
+            get => _randomizationFactor;
+            private set => _randomizationFactor = Math.Min(1.0f, Math.Max(0.0f, value));
+        }
+
+        private float _randomizationFactor;
 
         /// <summary>
-        /// Connection timeout before a connect_error and connect_timeout events are emitted (default 20000ms)
+        /// 在触发connect_error和connect_timeout事件之前的连接超时(默认为20000ms)
         /// </summary>
         public TimeSpan Timeout { get; set; }
 
         /// <summary>
-        /// By setting this false, you have to call SocketManager's Open() whenever you decide it's appropriate.
+        /// 通过将此设置为false，您必须在您认为合适的时候调用SocketManager的Open()。
         /// </summary>
         public bool AutoConnect { get; set; }
 
         /// <summary>
-        /// Additional query parameters that will be passed for accessed uris. If the value is null, or an empty string it will be not appended to the query only the key.
-        /// <remarks>The keys and values must be escaped properly, as the plugin will not escape these. </remarks>
+        /// 将为访问的uri传递的其他查询参数。如果值为null或空字符串，它将不会被添加到查询中，只会被添加到键。
+        /// <remarks>键和值必须正确转义，因为插件不会转义它们。 </remarks>
         /// </summary>
         public ObservableDictionary<string, string> AdditionalQueryParams
         {
-            get { return additionalQueryParams; }
+            get => _additionalQueryParams;
             set
             {
                 // Unsubscribe from previous dictionary's events
-                if (additionalQueryParams != null)
-                    additionalQueryParams.CollectionChanged -= AdditionalQueryParams_CollectionChanged;
+                if (_additionalQueryParams != null)
+                {
+                    _additionalQueryParams.CollectionChanged -= AdditionalQueryParams_CollectionChanged;
+                }
 
-                additionalQueryParams = value;
+                _additionalQueryParams = value;
 
-                // Clear out the cached value
+                // 清除缓存的值
                 BuiltQueryParams = null;
 
-                // Subscribe to the collection changed event
+                // 订阅集合更改事件
                 if (value != null)
+                {
                     value.CollectionChanged += AdditionalQueryParams_CollectionChanged;
+                }
             }
         }
-        private ObservableDictionary<string, string> additionalQueryParams;
+
+        private ObservableDictionary<string, string> _additionalQueryParams;
 
         /// <summary>
-        /// If it's false, the parameters in the AdditionalQueryParams will be passed for all HTTP requests. Its default value is true.
+        /// 如果为false, AdditionalQueryParams中的参数将被传递给所有HTTP请求。默认值为true。
         /// </summary>
         public bool QueryParamsOnlyForHandshake { get; set; }
 
         /// <summary>
-        /// A callback that called for every HTTPRequest the socket.io protocol sends out. It can be used to further customize (add additional request for example) requests.
+        /// 调用套接字的每个HTTPRequest的回调。IO协议发送出去。它可以用于进一步定制(例如添加额外的请求)请求。
         /// </summary>
-        public HTTPRequestCallbackDelegate HTTPRequestCustomizationCallback { get; set; }
+        public HttpRequestCallbackDelegate httpRequestCustomizationCallback { get; set; }
 
         /// <summary>
-        /// Starting with Socket.IO v3, connecting to a namespace a client can send payload data. When the Auth callback function is set, the plugin going to call it when connecting to a namespace. Its return value must be a json string!
+        /// 从Socket开始。IO v3，连接到一个命名空间，客户端可以发送有效负载数据。当设置了Auth回调函数时，插件将在连接到命名空间时调用它。它的返回值必须是json字符串!
         /// </summary>
-        public Func<SocketManager, Socket, object> Auth;
-
-        #endregion
+        public readonly Func<SocketManager, Socket, object> Auth;
 
         /// <summary>
-        /// The cached value of the result of the BuildQueryParams() call.
+        /// BuildQueryParams()调用结果的缓存值。
         /// </summary>
         private string BuiltQueryParams;
 
         /// <summary>
-        /// Constructor, setting the default option values.
+        /// 构造函数，设置默认选项值。
         /// </summary>
         public SocketOptions()
         {
@@ -123,47 +129,47 @@ namespace BestHTTP.SocketIO3
             Timeout = TimeSpan.FromMilliseconds(20000);
             AutoConnect = true;
             QueryParamsOnlyForHandshake = true;
+            Auth = null;
         }
 
-        #region Helper Functions
-
         /// <summary>
-        /// Builds the keys and values from the AdditionalQueryParams to an key=value form. If AdditionalQueryParams is null or empty, it will return an empty string.
+        /// 将AdditionalQueryParams中的键和值构建为键=值表单。如果AdditionalQueryParams为空或空，它将返回一个空字符串。
         /// </summary>
         internal string BuildQueryParams()
         {
             if (AdditionalQueryParams == null || AdditionalQueryParams.Count == 0)
+            {
                 return string.Empty;
+            }
 
             if (!string.IsNullOrEmpty(BuiltQueryParams))
+            {
                 return BuiltQueryParams;
+            }
 
             StringBuilder sb = new StringBuilder(AdditionalQueryParams.Count * 4);
 
-            foreach(var kvp in AdditionalQueryParams)
+            foreach (var kvp in AdditionalQueryParams)
             {
                 sb.Append("&");
                 sb.Append(kvp.Key);
 
-                if (!string.IsNullOrEmpty(kvp.Value))
-                {
-                    sb.Append("=");
-                    sb.Append(kvp.Value);
-                }
+                if (string.IsNullOrEmpty(kvp.Value)) continue;
+                sb.Append("=");
+                sb.Append(kvp.Value);
             }
 
             return BuiltQueryParams = sb.ToString();
         }
 
         /// <summary>
-        /// This event will be called when the AdditonalQueryPrams dictionary changed. We have to reset the cached values.
+        /// 当AdditionalQueryPrams字典改变时，此事件将被调用。我们必须重置缓存的值。
         /// </summary>
         private void AdditionalQueryParams_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             BuiltQueryParams = null;
         }
 
-        #endregion
     }
 }
 

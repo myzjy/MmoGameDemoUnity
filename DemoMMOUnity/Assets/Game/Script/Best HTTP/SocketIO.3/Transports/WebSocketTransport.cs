@@ -12,15 +12,28 @@ namespace BestHTTP.SocketIO3.Transports
     using Extensions;
 
     /// <summary>
-    /// A transport implementation that can communicate with a SocketIO server.
+    /// 可以与SocketIO服务器通信的传输实现。
     /// </summary>
     internal sealed class WebSocketTransport : ITransport
     {
-        public TransportTypes Type { get { return TransportTypes.WebSocket; } }
+        public TransportTypes Type
+        {
+            get { return TransportTypes.WebSocket; }
+        }
+
         public TransportStates State { get; private set; }
         public SocketManager Manager { get; private set; }
-        public bool IsRequestInProgress { get { return false; } }
-        public bool IsPollingInProgress { get { return false; } }
+
+        public bool IsRequestInProgress
+        {
+            get { return false; }
+        }
+
+        public bool IsPollingInProgress
+        {
+            get { return false; }
+        }
+
         public WebSocket Implementation { get; private set; }
 
         public WebSocketTransport(SocketManager manager)
@@ -29,7 +42,6 @@ namespace BestHTTP.SocketIO3.Transports
             Manager = manager;
         }
 
-        #region Some ITransport Implementation
 
         public void Open()
         {
@@ -37,29 +49,38 @@ namespace BestHTTP.SocketIO3.Transports
                 return;
 
             Uri uri = null;
-            string baseUrl = new UriBuilder(HttpProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
-                                                            Manager.Uri.Host,
-                                                            Manager.Uri.Port,
-                                                            Manager.Uri.GetRequestPathAndQueryURL()).Uri.ToString();
+            var scheme = HttpProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws";
+            var uriBuilder = new UriBuilder(scheme: (scheme),
+                host: Manager.Uri.Host,
+                port: Manager.Uri.Port,
+                pathValue: Manager.Uri.GetRequestPathAndQueryURL());
+            string baseUrl = uriBuilder.Uri.ToString();
             string format = "{0}?EIO={1}&transport=websocket{3}";
             if (Manager.Handshake != null)
+            {
                 format += "&sid={2}";
+            }
 
-            bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake || (Manager.Options.QueryParamsOnlyForHandshake && Manager.Handshake == null);
+            bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake ||
+                                             (Manager.Options.QueryParamsOnlyForHandshake
+                                              && Manager.Handshake == null);
 
             uri = new Uri(string.Format(format,
-                                        baseUrl,
-                                        Manager.ProtocolVersion,
-                                        Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
-                                        sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty));
+                baseUrl,
+                Manager.ProtocolVersion,
+                Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
+                sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty));
 
             Implementation = new WebSocket(uri);
 
 #if !UNITY_WEBGL || UNITY_EDITOR
             Implementation.StartPingThread = true;
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                Implementation.OnInternalRequestCreated = (ws, internalRequest) => this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, internalRequest);
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
+            {
+                Implementation.OnInternalRequestCreated = (ws, internalRequest) =>
+                    this.Manager.Options.httpRequestCustomizationCallback(this.Manager, internalRequest);
+            }
 #endif
 
             Implementation.OnOpen = OnOpen;
@@ -74,7 +95,7 @@ namespace BestHTTP.SocketIO3.Transports
         }
 
         /// <summary>
-        /// Closes the transport and cleans up resources.
+        /// 关闭传输并清理资源。
         /// </summary>
         public void Close()
         {
@@ -84,42 +105,50 @@ namespace BestHTTP.SocketIO3.Transports
             State = TransportStates.Closed;
 
             if (Implementation != null)
+            {
                 Implementation.Close();
+            }
             else
-                HttpManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!", this.Manager.Context);
+            {
+                HttpManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!",
+                    this.Manager.Context);
+            }
+
             Implementation = null;
         }
 
         /// <summary>
-        /// Polling implementation. With WebSocket it's just a skeleton.
+        /// 轮询的实现。而WebSocket只是一个骨架。
         /// </summary>
         public void Poll()
         {
         }
 
-        #endregion
-
-        #region WebSocket Events
 
         /// <summary>
-        /// WebSocket implementation OnOpen event handler.
+        /// WebSocket实现OnOpen事件处理程序。
         /// </summary>
         private void OnOpen(WebSocket ws)
         {
             if (ws != Implementation)
+            {
                 return;
+            }
 
             HttpManager.Logger.Information("WebSocketTransport", "OnOpen", this.Manager.Context);
 
             State = TransportStates.Opening;
 
-            // Send a Probe packet to test the transport. If we receive back a pong with the same payload we can upgrade
-            if (Manager.UpgradingTransport == this)
-                Send(this.Manager.Parser.CreateOutgoing(TransportEventTypes.Ping, "probe"));
+            // 发送一个探测包来测试传输。如果我们收到一架载荷相同的飞船，我们就可以升级
+            if (Manager.UpgradingTransport != this) return;
+            var packet = this.Manager.Parser.CreateOutgoing(
+                transportEvent: TransportEventTypes.Ping,
+                payload: "probe");
+            Send(packet);
         }
 
         /// <summary>
-        /// WebSocket implementation OnMessage event handler.
+        /// WebSocket实现OnMessage事件处理程序。
         /// </summary>
         private void OnMessage(WebSocket ws, string message)
         {
@@ -127,21 +156,25 @@ namespace BestHTTP.SocketIO3.Transports
                 return;
 
             if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+            {
                 HttpManager.Logger.Verbose("WebSocketTransport", "OnMessage: " + message, this.Manager.Context);
+            }
 
-            IncomingPacket packet = IncomingPacket.Empty;
+            var packet = IncomingPacket.Empty;
             try
             {
                 packet = this.Manager.Parser.Parse(this.Manager, message);
 
                 if (packet.TransportEvent == TransportEventTypes.Open)
                 {
-                    packet.DecodedArg = BestHTTP.JSON.LitJson.JsonMapper.ToObject<HandshakeData>(packet.DecodedArg as string);
+                    packet.DecodedArg =
+                        BestHTTP.JSON.LitJson.JsonMapper.ToObject<HandshakeData>(packet.DecodedArg as string);
                 }
             }
             catch (Exception ex)
             {
-                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex, this.Manager.Context);
+                HttpManager.Logger.Exception("WebSocketTransport", "OnMessage Packet parsing", ex,
+                    this.Manager.Context);
             }
 
             if (!packet.Equals(IncomingPacket.Empty))
@@ -158,7 +191,7 @@ namespace BestHTTP.SocketIO3.Transports
         }
 
         /// <summary>
-        /// WebSocket implementation OnBinary event handler.
+        /// WebSocket实现OnBinary事件处理程序。
         /// </summary>
         private void OnBinary(WebSocket ws, byte[] data)
         {
@@ -166,7 +199,9 @@ namespace BestHTTP.SocketIO3.Transports
                 return;
 
             if (HttpManager.Logger.Level <= BestHTTP.Logger.Loglevels.All)
+            {
                 HttpManager.Logger.Verbose("WebSocketTransport", "OnBinary", this.Manager.Context);
+            }
 
             IncomingPacket packet = IncomingPacket.Empty;
             try
@@ -192,7 +227,7 @@ namespace BestHTTP.SocketIO3.Transports
         }
 
         /// <summary>
-        /// WebSocket implementation OnError event handler.
+        /// WebSocket实现OnError事件处理程序。
         /// </summary>
         private void OnError(WebSocket ws, string error)
         {
@@ -207,25 +242,31 @@ namespace BestHTTP.SocketIO3.Transports
                     // The request finished without any problem.
                     case HttpRequestStates.Finished:
                         if (ws.InternalRequest.Response.IsSuccess || ws.InternalRequest.Response.StatusCode == 101)
-                            error = string.Format("Request finished. Status Code: {0} Message: {1}", ws.InternalRequest.Response.StatusCode.ToString(), ws.InternalRequest.Response.Message);
+                        {
+                            error =
+                                $"请求完成。状态码: {ws.InternalRequest.Response.StatusCode.ToString()} Message: {ws.InternalRequest.Response.Message}";
+                        }
                         else
-                            error = string.Format("Request Finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                                            ws.InternalRequest.Response.StatusCode,
-                                                            ws.InternalRequest.Response.Message,
-                                                            ws.InternalRequest.Response.DataAsText);
+                            error =
+                                $"请求完成成功，但是服务器发送了一个错误。状态码: {ws.InternalRequest.Response.StatusCode}-{ws.InternalRequest.Response.Message} Message: {ws.InternalRequest.Response.DataAsText}";
+
                         break;
 
-                    // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                    // 请求结束时出现意外错误。请求的Exception属性可能包含有关错误的更多信息。
                     case HttpRequestStates.Error:
-                        error = "Request Finished with Error! : " + ws.InternalRequest.Exception != null ? (ws.InternalRequest.Exception.Message + " " + ws.InternalRequest.Exception.StackTrace) : string.Empty;
+                    {
+                        var str = $"{ws.InternalRequest.Exception.Message} {ws.InternalRequest.Exception.StackTrace}";
+                        error =
+                            $"Request Finished with Error! : {(ws.InternalRequest.Exception != null ? str : string.Empty)}";
+                    }
                         break;
 
-                    // The request aborted, initiated by the user.
+                    // 由用户发起的请求中止。
                     case HttpRequestStates.Aborted:
                         error = "Request Aborted!";
                         break;
 
-                    // Connecting to the server is timed out.
+                    // 连接服务器超时。处理步骤
                     case HttpRequestStates.ConnectionTimedOut:
                         error = "Connection Timed Out!";
                         break;
@@ -250,7 +291,7 @@ namespace BestHTTP.SocketIO3.Transports
         private void OnClosed(WebSocket ws, ushort code, string message)
         {
             if (ws != Implementation)
-              return;
+                return;
 
             HttpManager.Logger.Information("WebSocketTransport", "OnClosed", this.Manager.Context);
 
@@ -262,9 +303,6 @@ namespace BestHTTP.SocketIO3.Transports
                 Manager.UpgradingTransport = null;
         }
 
-#endregion
-
-#region Packet Sending Implementation
 
         /// <summary>
         /// A WebSocket implementation of the packet sending.
@@ -274,12 +312,14 @@ namespace BestHTTP.SocketIO3.Transports
             if (State == TransportStates.Closed ||
                 State == TransportStates.Paused)
             {
-                HttpManager.Logger.Information("WebSocketTransport", string.Format("Send - State == {0}, skipping packet sending!", State), this.Manager.Context);
+                HttpManager.Logger.Information("WebSocketTransport",
+                    string.Format("Send - State == {0}, skipping packet sending!", State), this.Manager.Context);
                 return;
             }
 
             if (packet.IsBinary)
-                Implementation.Send(packet.PayloadData.Data, (ulong)packet.PayloadData.Offset, (ulong)packet.PayloadData.Count);
+                Implementation.Send(packet.PayloadData.Data, (ulong)packet.PayloadData.Offset,
+                    (ulong)packet.PayloadData.Count);
             else
                 Implementation.Send(packet.Payload);
 
@@ -299,10 +339,6 @@ namespace BestHTTP.SocketIO3.Transports
             packets.Clear();
         }
 
-#endregion
-
-#region Packet Handling
-
         /// <summary>
         /// Will only process packets that need to upgrade. All other packets are passed to the Manager.
         /// </summary>
@@ -312,7 +348,8 @@ namespace BestHTTP.SocketIO3.Transports
             {
                 case TransportEventTypes.Open:
                     if (this.State != TransportStates.Opening)
-                        HttpManager.Logger.Warning("WebSocketTransport", "Received 'Open' packet while state is '" + State.ToString() + "'", this.Manager.Context);
+                        HttpManager.Logger.Warning("WebSocketTransport",
+                            "Received 'Open' packet while state is '" + State.ToString() + "'", this.Manager.Context);
                     else
                         State = TransportStates.Open;
                     goto default;
@@ -334,7 +371,6 @@ namespace BestHTTP.SocketIO3.Transports
             }
         }
 
-#endregion
     }
 }
 

@@ -3,71 +3,77 @@
 namespace BestHTTP.SocketIO3
 {
     using System.Collections.Generic;
-
-    using BestHTTP.PlatformSupport.Memory;
-    using BestHTTP.SocketIO3.Events;
+    using PlatformSupport.Memory;
+    using Events;
 
     public struct OutgoingPacket
     {
-        public bool IsBinary { get { return string.IsNullOrEmpty(this.Payload); } }
+        public bool IsBinary => string.IsNullOrEmpty(this.Payload);
 
         public string Payload { get; set; }
+
+        // ReSharper disable once IdentifierTypo
         public List<byte[]> Attachements { get; set; }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public BufferSegment PayloadData { get; set; }
 
         public bool IsVolatile { get; set; }
 
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(this.Payload))
-                return this.Payload;
-            else
-                return this.PayloadData.ToString();
+            return !string.IsNullOrEmpty(this.Payload) ? this.Payload : this.PayloadData.ToString();
         }
     }
 
     public struct IncomingPacket
     {
-        public static readonly IncomingPacket Empty = new IncomingPacket(TransportEventTypes.Unknown, SocketIOEventTypes.Unknown, null, -1);
+        public static readonly IncomingPacket Empty =
+            new IncomingPacket(
+                transportEvent: TransportEventTypes.Unknown,
+                packetType: SocketIOEventTypes.Unknown,
+                nsp: null,
+                id: -1);
 
         /// <summary>
-        /// Event type of this packet on the transport layer.
+        /// 传输层报文的事件类型。
         /// </summary>
         public TransportEventTypes TransportEvent { get; private set; }
 
         /// <summary>
-        /// The packet's type in the Socket.IO protocol.
+        /// 数据包在Socket中的类型。IO协议。
         /// </summary>
         public SocketIOEventTypes SocketIOEvent { get; private set; }
 
         /// <summary>
-        /// The internal ack-id of this packet.
+        /// 报文内部的ack-id。
         /// </summary>
         public int Id { get; private set; }
 
         /// <summary>
-        /// The sender namespace's name.
+        /// 广播公司的姓名
         /// </summary>
         public string Namespace { get; private set; }
 
         /// <summary>
-        /// Count of binary data expected after the current packet.
+        /// 当前包后期望的二进制数据计数。
         /// </summary>
+        // ReSharper disable once IdentifierTypo
         public int AttachementCount { get; set; }
 
         /// <summary>
         /// list of binary data received.
         /// </summary>
+        // ReSharper disable once IdentifierTypo
         public List<BufferSegment> Attachements { get; set; }
 
         /// <summary>
-        /// The decoded event name from the payload string.
+        /// 从有效负载字符串解码的事件名称。
         /// </summary>
         public string EventName { get; set; }
 
         /// <summary>
-        /// The decoded arguments by the parser.
+        /// 解析器解码的参数。
         /// </summary>
         public object[] DecodedArgs { get; set; }
 
@@ -81,42 +87,37 @@ namespace BestHTTP.SocketIO3
             this.Id = id;
 
             this.AttachementCount = 0;
-            //this.ReceivedAttachements = 0;
             this.Attachements = null;
 
-            if (this.SocketIOEvent != SocketIOEventTypes.Unknown)
-                this.EventName = EventNames.GetNameFor(this.SocketIOEvent);
-            else
-                this.EventName = EventNames.GetNameFor(this.TransportEvent);
+            this.EventName = this.SocketIOEvent != SocketIOEventTypes.Unknown
+                ? EventNames.GetNameFor(this.SocketIOEvent)
+                : EventNames.GetNameFor(this.TransportEvent);
 
             this.DecodedArg = this.DecodedArgs = null;
         }
 
         /// <summary>
-        /// Returns with the Payload of this packet.
+        /// 返回此包的有效负载。
         /// </summary>
         public override string ToString()
         {
-            return string.Format("[Packet {0}{1}/{2},{3}[{4}]]", this.TransportEvent, this.SocketIOEvent, this.Namespace, this.Id, this.EventName);
+            return $"[Packet {this.TransportEvent}{this.SocketIOEvent}/{this.Namespace},{this.Id}[{this.EventName}]]";
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is IncomingPacket)
-                return Equals((IncomingPacket)obj);
-
-            return false;
+            return obj is IncomingPacket packet && Equals(packet);
         }
 
         public bool Equals(IncomingPacket packet)
         {
             return this.TransportEvent == packet.TransportEvent &&
-                this.SocketIOEvent == packet.SocketIOEvent &&
-                this.Id == packet.Id &&
-                this.Namespace == packet.Namespace &&
-                this.EventName == packet.EventName &&
-                this.DecodedArg == packet.DecodedArg &&
-                this.DecodedArgs == packet.DecodedArgs;
+                   this.SocketIOEvent == packet.SocketIOEvent &&
+                   this.Id == packet.Id &&
+                   this.Namespace == packet.Namespace &&
+                   this.EventName == packet.EventName &&
+                   this.DecodedArg == packet.DecodedArg &&
+                   this.DecodedArgs == packet.DecodedArgs;
         }
 
         public override int GetHashCode()
@@ -127,16 +128,24 @@ namespace BestHTTP.SocketIO3
             hashCode = hashCode * -1521134295 + Id.GetHashCode();
 
             if (Namespace != null)
+            {
                 hashCode = hashCode * -1521134295 + Namespace.GetHashCode();
+            }
 
             if (EventName != null)
+            {
                 hashCode = hashCode * -1521134295 + EventName.GetHashCode();
+            }
 
             if (DecodedArgs != null)
+            {
                 hashCode = hashCode * -1521134295 + DecodedArgs.GetHashCode();
+            }
 
             if (DecodedArg != null)
+            {
                 hashCode = hashCode * -1521134295 + DecodedArg.GetHashCode();
+            }
 
             return hashCode;
         }

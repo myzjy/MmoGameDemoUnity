@@ -4,18 +4,18 @@ namespace BestHTTP.SocketIO3
 {
     public class Error
     {
-        public string message;
+        private readonly string _message;
 
         public Error() { }
 
         public Error(string msg)
         {
-            this.message = msg;
+            this._message = msg;
         }
 
         public override string ToString()
         {
-            return this.message;
+            return this._message;
         }
     }
 }

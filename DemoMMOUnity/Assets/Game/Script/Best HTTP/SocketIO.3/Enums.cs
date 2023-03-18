@@ -3,7 +3,7 @@
 namespace BestHTTP.SocketIO3
 {
     /// <summary>
-    /// Possible event types on the transport level.
+    /// 传输级别上可能的事件类型。
     /// </summary>
     public enum TransportEventTypes : int
     {
@@ -18,44 +18,44 @@ namespace BestHTTP.SocketIO3
     }
 
     /// <summary>
-    /// Event types of the SocketIO protocol.
+    /// SocketIO协议事件类型。
     /// </summary>
     public enum SocketIOEventTypes : int
     {
         Unknown = -1,
 
         /// <summary>
-        /// Connect to a namespace, or we connected to a namespace
+        /// 连接到名称空间，或者我们连接到名称空间
         /// </summary>
         Connect = 0,
 
         /// <summary>
-        /// Disconnect a namespace, or we disconnected from a namespace.
+        /// 断开命名空间，或者断开与命名空间的连接。
         /// </summary>
         Disconnect = 1,
 
         /// <summary>
-        /// A general event. The event's name is in the payload.
+        /// 一般事件。事件的名称在有效负载中。
         /// </summary>
         Event = 2,
 
         /// <summary>
-        /// Acknowledgment of an event.
+        /// 事件的确认。
         /// </summary>
         Ack = 3,
 
         /// <summary>
-        /// Error sent by the server, or by the plugin
+        /// 由服务器或插件发送的错误
         /// </summary>
         Error = 4,
 
         /// <summary>
-        /// A general event with binary attached to the packet. The event's name is in the payload.
+        /// 一个附加在包上的二进制的一般事件。事件的名称在有效负载中。
         /// </summary>
         BinaryEvent = 5,
 
         /// <summary>
-        /// Acknowledgment of a binary event.
+        /// 二进制事件的确认。
         /// </summary>
         BinaryAck = 6
     }

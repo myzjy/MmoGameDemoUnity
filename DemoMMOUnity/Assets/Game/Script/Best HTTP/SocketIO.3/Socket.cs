@@ -5,47 +5,48 @@ using System;
 namespace BestHTTP.SocketIO3
 {
     using BestHTTP;
-    using BestHTTP.Logger;
-    using BestHTTP.SocketIO3.Events;
+    using Logger;
+    using Events;
 
     public delegate void SocketIOCallback(Socket socket, IncomingPacket packet, params object[] args);
+
     public delegate void SocketIOAckCallback(Socket socket, IncomingPacket packet, params object[] args);
 
     public struct EmitBuilder
     {
-        private Socket socket;
-        internal bool isVolatile;
-        internal int id;
+        private readonly Socket _socket;
+        internal bool IsVolatile;
+        private int _id;
 
         internal EmitBuilder(Socket s)
         {
-            this.socket = s;
-            this.isVolatile = false;
-            this.id = -1;
+            this._socket = s;
+            this.IsVolatile = false;
+            this._id = -1;
         }
 
         public EmitBuilder ExpectAcknowledgement(Action callback)
         {
-            this.id = this.socket.Manager.NextAckId;
-            string name = IncomingPacket.GenerateAcknowledgementNameFromId(this.id);
+            this._id = this._socket.Manager.NextAckId;
+            string name = IncomingPacket.GenerateAcknowledgementNameFromId(this._id);
 
-            this.socket.TypedEventTable.Register(name, null, _ => callback(), true);
+            this._socket.TypedEventTable.Register(name, null, _ => callback(), true);
             return this;
         }
 
         public EmitBuilder ExpectAcknowledgement<T>(Action<T> callback)
         {
-            this.id = this.socket.Manager.NextAckId;
-            string name = IncomingPacket.GenerateAcknowledgementNameFromId(this.id);
+            this._id = this._socket.Manager.NextAckId;
+            string name = IncomingPacket.GenerateAcknowledgementNameFromId(this._id);
 
-            this.socket.TypedEventTable.Register(name, new Type[] { typeof(T) }, (args) => callback((T)args[0]), true);
+            this._socket.TypedEventTable.Register(name, new[] { typeof(T) }, (args) => callback((T)args[0]), true);
 
             return this;
         }
 
         public EmitBuilder Volatile()
         {
-            this.isVolatile = true;
+            this.IsVolatile = true;
             return this;
         }
 
@@ -55,11 +56,12 @@ namespace BestHTTP.SocketIO3
             if (blackListed)
                 throw new ArgumentException("Blacklisted event: " + eventName);
 
-            var packet = this.socket.Manager.Parser.CreateOutgoing(this.socket, SocketIOEventTypes.Event, this.id, eventName, args);
-            packet.IsVolatile = this.isVolatile;
-            (this.socket.Manager as IManager).SendPacket(packet);
+            var packet = this._socket.Manager.Parser.CreateOutgoing(this._socket, SocketIOEventTypes.Event, this._id,
+                eventName, args);
+            packet.IsVolatile = this.IsVolatile;
+            (this._socket.Manager as IManager).SendPacket(packet);
 
-            return this.socket;
+            return this._socket;
         }
     }
 
@@ -83,21 +85,22 @@ namespace BestHTTP.SocketIO3
         /// <summary>
         /// Unique Id of the socket.
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; private set; }
 
         /// <summary>
         /// True if the socket is connected and open to the server. False otherwise.
         /// </summary>
-        public bool IsOpen { get; private set; }
+        private bool IsOpen { get; set; }
 
-        public IncomingPacket CurrentPacket { get { return this.currentPacket; } }
+        public IncomingPacket CurrentPacket => this._currentPacket;
 
         public LoggingContext Context { get; private set; }
 
         #endregion
 
-        internal TypedEventTable TypedEventTable;
-        private IncomingPacket currentPacket = IncomingPacket.Empty;
+        internal readonly TypedEventTable TypedEventTable;
+        private IncomingPacket _currentPacket = IncomingPacket.Empty;
 
         /// <summary>
         /// Internal constructor.
@@ -121,64 +124,68 @@ namespace BestHTTP.SocketIO3
             this.IsOpen = true;
         }
 
-        #region Socket Handling
 
         /// <summary>
-        /// Internal function to start opening the socket.
+        /// 内部函数开始打开套接字。
         /// </summary>
         void ISocket.Open()
         {
             HttpManager.Logger.Information("Socket", $"Open - Manager.State = {Manager.State}", this.Context);
 
             // The transport already established the connection
+            // 服务器已经建立了连接
             if (Manager.State == SocketManager.States.Open)
+            {
                 OnTransportOpen();
-            else if (Manager.Options.AutoConnect && Manager.State == SocketManager.States.Initial)
-                    Manager.Open();
+            }
+            else if (Manager.Options.AutoConnect &&
+                     Manager.State == SocketManager.States.Initial)
+            {
+                Manager.Open();
+            }
         }
 
         /// <summary>
-        /// Disconnects this socket/namespace.
+        /// 断开该套接字/命名空间。
         /// </summary>
-        public void Disconnect()
+        private void Disconnect()
         {
             (this as ISocket).Disconnect(true);
         }
 
         /// <summary>
-        /// Disconnects this socket/namespace.
+        /// 断开连接 this socket/namespace.
         /// </summary>
         void ISocket.Disconnect(bool remove)
         {
-            // Send a disconnect packet to the server
+            // 向服务器发送断开连接报文
             if (IsOpen)
             {
                 var packet = this.Manager.Parser.CreateOutgoing(this, SocketIOEventTypes.Disconnect, -1, null, null);
                 (Manager as IManager).SendPacket(packet);
 
-                // IsOpen must be false, because in the OnPacket preprocessing the packet would call this function again
+                // IsOpen必须为false，因为在OnPacket预处理中，数据包将再次调用此函数
                 IsOpen = false;
-                (this as ISocket).OnPacket(new IncomingPacket(TransportEventTypes.Message, SocketIOEventTypes.Disconnect, this.Namespace, -1));
+                var inComingPacket = new IncomingPacket(
+                    transportEvent: TransportEventTypes.Message,
+                    packetType: SocketIOEventTypes.Disconnect,
+                    nsp: this.Namespace,
+                    id: -1);
+                (this as ISocket).OnPacket(inComingPacket);
             }
 
-            if (remove)
-            {
-                this.TypedEventTable.Clear();
-                
-                (Manager as IManager).Remove(this);
-            }
+            if (!remove) return;
+            this.TypedEventTable.Clear();
+
+            (Manager as IManager).Remove(this);
         }
 
-        #endregion
-
-        #region Emit Implementations
-
         /// <summary>
-        /// By emitting a volatile event, if the transport isn't ready the event is going to be discarded.
+        /// 通过释放volatile事件，如果传输还没有准备好，则该事件将被丢弃。
         /// </summary>
         public EmitBuilder Volatile()
         {
-            return new EmitBuilder(this) { isVolatile = true };
+            return new EmitBuilder(this) { IsVolatile = true };
         }
 
         public EmitBuilder ExpectAcknowledgement(Action callback)
@@ -188,7 +195,7 @@ namespace BestHTTP.SocketIO3
 
         public EmitBuilder ExpectAcknowledgement<T>(Action<T> callback)
         {
-            return new EmitBuilder(this).ExpectAcknowledgement<T>(callback);
+            return new EmitBuilder(this).ExpectAcknowledgement(callback);
         }
 
         public Socket Emit(string eventName, params object[] args)
@@ -198,50 +205,78 @@ namespace BestHTTP.SocketIO3
 
         public Socket EmitAck(params object[] args)
         {
-            return EmitAck(this.currentPacket, args);
+            return EmitAck(this._currentPacket, args);
         }
 
-        public Socket EmitAck(IncomingPacket packet, params object[] args)
+        private Socket EmitAck(IncomingPacket packet, params object[] args)
         {
             if (packet.Equals(IncomingPacket.Empty))
-                throw new ArgumentNullException("currentPacket");
+            {
+                throw new ArgumentNullException(nameof(packet));
+            }
 
-            if (packet.Id < 0 || (packet.SocketIOEvent != SocketIOEventTypes.Event && packet.SocketIOEvent != SocketIOEventTypes.BinaryEvent))
-                throw new ArgumentException("Wrong packet - you can't send an Ack for a packet with id < 0 or SocketIOEvent != Event or SocketIOEvent != BinaryEvent!");
+            if (packet.Id < 0 || (packet.SocketIOEvent != SocketIOEventTypes.Event &&
+                                  packet.SocketIOEvent != SocketIOEventTypes.BinaryEvent))
+            {
+                throw new ArgumentException(
+                    "错误的数据包-你不能发送一个带有id &lt的数据包的Ack;0或SocketIOEvent != Event或SocketIOEvent != BinaryEvent!");
+            }
 
-            var eventType = packet.SocketIOEvent == SocketIOEventTypes.Event ? SocketIOEventTypes.Ack : SocketIOEventTypes.BinaryAck;
+            var eventType = packet.SocketIOEvent == SocketIOEventTypes.Event
+                ? SocketIOEventTypes.Ack
+                : SocketIOEventTypes.BinaryAck;
 
-            (Manager as IManager).SendPacket(this.Manager.Parser.CreateOutgoing(this, eventType, packet.Id, null, args));
+            var createOutGoing = this.Manager.Parser.CreateOutgoing(
+                socket: this,
+                socketIOEvent: eventType,
+                id: packet.Id,
+                name: null,
+                args: args);
+            (Manager as IManager).SendPacket(createOutGoing);
 
             return this;
         }
 
-        #endregion
-
-        #region On Implementations
 
         public void On(SocketIOEventTypes eventType, Action callback)
         {
-            this.TypedEventTable.Register(EventNames.GetNameFor(eventType), null, _ => callback());
+            string eventName = EventNames.GetNameFor(eventType);
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: null,
+                callback: _ => callback());
         }
 
         public void On<T>(SocketIOEventTypes eventType, Action<T> callback)
         {
             string eventName = EventNames.GetNameFor(eventType);
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T) }, (args) =>
+            var paramTypes = new[]
             {
-                T arg = default(T);
+                typeof(T),
+            };
+
+            void CallBack(object[] args)
+            {
+                T arg1;
                 try
                 {
-                    arg = (T)args[0];
+                    arg1 = (T)args[0];
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
+                    return;
                 }
 
-                callback(arg);
-            });
+                callback(arg1);
+            }
+
+            this.TypedEventTable.Register(
+                eventName,
+                paramTypes,
+                CallBack);
         }
 
         public void On(string eventName, Action callback)
@@ -249,29 +284,47 @@ namespace BestHTTP.SocketIO3
             this.TypedEventTable.Register(eventName, null, _ => callback());
         }
 
-        public void On<T>(string eventName, Action<T> callback)
+        private void On<T>(string eventName, Action<T> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T) }, (args) => {
-                T arg = default(T);
+            var paramTypes = new[]
+            {
+                typeof(T),
+            };
+
+            void CallBack(object[] args)
+            {
+                T arg1;
                 try
                 {
-                    arg = (T)args[0];
+                    arg1 = (T)args[0];
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}>('{1}') - cast failed", typeof(T).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
                     return;
                 }
 
-                callback(arg);
-            });
+                callback(arg1);
+            }
+
+            this.TypedEventTable.Register(eventName,
+                paramTypes, CallBack);
         }
 
         public void On<T1, T2>(string eventName, Action<T1, T2> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2) }, (args) => {
-                T1 arg1 = default(T1);
-                T2 arg2 = default(T2);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+            };
+
+            void CallBack(object[] args)
+            {
+                T1 arg1;
+                T2 arg2;
                 try
                 {
                     arg1 = (T1)args[0];
@@ -279,20 +332,33 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}>('{2}') - cast failed", typeof(T1).Name, typeof(T2).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T1).Name}, {typeof(T2).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
                     return;
                 }
 
                 callback(arg1, arg2);
-            });
+            }
+
+            this.TypedEventTable.Register(eventName,
+                paramTypes, CallBack);
         }
 
         public void On<T1, T2, T3>(string eventName, Action<T1, T2, T3> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3) }, (args) => {
-                T1 arg1 = default(T1);
-                T2 arg2 = default(T2);
-                T3 arg3 = default(T3);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+            };
+
+            void CallBack(object[] args)
+            {
+                T1 arg1;
+                T2 arg2;
+                T3 arg3;
                 try
                 {
                     arg1 = (T1)args[0];
@@ -301,21 +367,35 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}>('{3}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
                     return;
                 }
 
                 callback(arg1, arg2, arg3);
-            });
+            }
+
+            this.TypedEventTable.Register(eventName,
+                paramTypes, CallBack);
         }
 
         public void On<T1, T2, T3, T4>(string eventName, Action<T1, T2, T3, T4> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, (args) => {
-                T1 arg1 = default(T1);
-                T2 arg2 = default(T2);
-                T3 arg3 = default(T3);
-                T4 arg4 = default(T4);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+                typeof(T4),
+            };
+
+            void CallBack(object[] args)
+            {
+                T1 arg1;
+                T2 arg2;
+                T3 arg3;
+                T4 arg4;
                 try
                 {
                     arg1 = (T1)args[0];
@@ -325,22 +405,37 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}>('{4}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}, {typeof(T4).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
                     return;
                 }
 
                 callback(arg1, arg2, arg3, arg4);
-            });
+            }
+
+            this.TypedEventTable.Register(eventName,
+                paramTypes, CallBack);
         }
 
         public void On<T1, T2, T3, T4, T5>(string eventName, Action<T1, T2, T3, T4, T5> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) }, (args) => {
-                T1 arg1 = default(T1);
-                T2 arg2 = default(T2);
-                T3 arg3 = default(T3);
-                T4 arg4 = default(T4);
-                T5 arg5 = default(T5);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+                typeof(T4),
+                typeof(T5)
+            };
+
+            void CallBack(object[] args)
+            {
+                T1 arg1;
+                T2 arg2;
+                T3 arg3;
+                T4 arg4;
+                T5 arg5;
                 try
                 {
                     arg1 = (T1)args[0];
@@ -351,54 +446,155 @@ namespace BestHTTP.SocketIO3
                 }
                 catch (Exception ex)
                 {
-                    HttpManager.Logger.Exception("Socket", String.Format("On<{0}, {1}, {2}, {3}, {4}>('{5}') - cast failed", typeof(T1).Name, typeof(T2).Name, typeof(T3).Name, typeof(T4).Name, typeof(T5).Name, eventName), ex, this.Context);
+                    HttpManager.Logger.Exception("Socket",
+                        $"On<{typeof(T1).Name}, {typeof(T2).Name}, {typeof(T3).Name}, {typeof(T4).Name}, {typeof(T5).Name}>('{eventName}') - cast failed",
+                        ex, this.Context);
                     return;
                 }
 
                 callback(arg1, arg2, arg3, arg4, arg5);
-            });
+            }
+
+            this.TypedEventTable.Register(eventName,
+                paramTypes, CallBack);
         }
-
-        #endregion
-
-        #region Once Implementations
 
         public void Once(string eventName, Action callback)
         {
-            this.TypedEventTable.Register(eventName, null, _ => callback(), true);
+            void CallBack(object[] args)
+            {
+                callback();
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: null,
+                callback: CallBack,
+                once: true);
         }
 
         public void Once<T>(string eventName, Action<T> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T) }, (args) => callback((T)args[0]), true);
+            var paramTypes = new[]
+            {
+                typeof(T),
+            };
+
+            void CallBack(object[] args)
+            {
+                callback(
+                    obj: (T)args[0]);
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: paramTypes,
+                callback: CallBack,
+                once: true);
         }
 
         public void Once<T1, T2>(string eventName, Action<T1, T2> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2) }, (args) => callback((T1)args[0], (T2)args[1]), true);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+            };
+
+            void CallBack(object[] args)
+            {
+                callback(
+                    arg1: (T1)args[0],
+                    arg2: (T2)args[1]);
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: paramTypes,
+                callback: CallBack,
+                once: true);
         }
 
         public void Once<T1, T2, T3>(string eventName, Action<T1, T2, T3> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3) }, (args) => callback((T1)args[0], (T2)args[1], (T3)args[2]), true);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+            };
+
+            void CallBack(object[] args)
+            {
+                callback(
+                    arg1: (T1)args[0],
+                    arg2: (T2)args[1],
+                    arg3: (T3)args[2]);
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: paramTypes,
+                callback: CallBack,
+                once: true);
         }
 
         public void Once<T1, T2, T3, T4>(string eventName, Action<T1, T2, T3, T4> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, (args) => callback((T1)args[0], (T2)args[1], (T3)args[2], (T4)args[3]), true);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+                typeof(T4),
+            };
+
+            void CallBack(object[] args)
+            {
+                callback(
+                    arg1: (T1)args[0],
+                    arg2: (T2)args[1],
+                    arg3: (T3)args[2],
+                    arg4: (T4)args[3]);
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: paramTypes,
+                callback: CallBack,
+                once: true);
         }
 
         public void Once<T1, T2, T3, T4, T5>(string eventName, Action<T1, T2, T3, T4, T5> callback)
         {
-            this.TypedEventTable.Register(eventName, new Type[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(T5) }, (args) => callback((T1)args[0], (T2)args[1], (T3)args[2], (T4)args[3], (T5)args[4]), true);
+            var paramTypes = new[]
+            {
+                typeof(T1),
+                typeof(T2),
+                typeof(T3),
+                typeof(T4),
+                typeof(T5)
+            };
+
+            void CallBack(object[] args)
+            {
+                callback(
+                    arg1: (T1)args[0],
+                    arg2: (T2)args[1],
+                    arg3: (T3)args[2],
+                    arg4: (T4)args[3],
+                    arg5: (T5)args[4]);
+            }
+
+            this.TypedEventTable.Register(
+                methodName: eventName,
+                paramTypes: paramTypes,
+                callback: CallBack,
+                once: true);
         }
 
-        #endregion
-
-        #region Off Implementations
-
         /// <summary>
-        /// Remove all callbacks for all events.
+        /// 移除对给定事件的所有回调。
         /// </summary>
         public void Off()
         {
@@ -406,60 +602,73 @@ namespace BestHTTP.SocketIO3
         }
 
         /// <summary>
-        /// Removes all callbacks to the given event.
+        /// 移除对给定事件的所有回调。
         /// </summary>
-        public void Off(string eventName)
+        private void Off(string eventName)
         {
             this.TypedEventTable.Unregister(eventName);
         }
 
         /// <summary>
-        /// Removes all callbacks to the given event.
+        /// 移除对给定事件的所有回调。
         /// </summary>
         public void Off(SocketIOEventTypes type)
         {
-            Off(EventNames.GetNameFor(type));
+            var nameFor = EventNames.GetNameFor(type: type);
+            Off(nameFor);
         }
 
-        #endregion
-
-        #region Packet Handling
 
         /// <summary>
-        /// Last call of the OnPacket chain(Transport -> Manager -> Socket), we will dispatch the event if there is any callback
+        /// OnPacket链的最后一次调用(Transport ->Manager→Socket)，如果有任何回调，我们将分派事件
         /// </summary>
         void ISocket.OnPacket(IncomingPacket packet)
         {
             // Some preprocessing of the packet
-            switch(packet.SocketIOEvent)
+            switch (packet.SocketIOEvent)
             {
                 case SocketIOEventTypes.Connect:
                     break;
 
                 case SocketIOEventTypes.Disconnect:
+                {
                     if (IsOpen)
                     {
                         IsOpen = false;
                         this.TypedEventTable.Call(packet);
                         Disconnect();
                     }
+                }
                     break;
+                case SocketIOEventTypes.Unknown:
+                    break;
+                case SocketIOEventTypes.Event:
+                    break;
+                case SocketIOEventTypes.Ack:
+                    break;
+                case SocketIOEventTypes.Error:
+                    break;
+                case SocketIOEventTypes.BinaryEvent:
+                    break;
+                case SocketIOEventTypes.BinaryAck:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             try
             {
-                this.currentPacket = packet;
+                this._currentPacket = packet;
 
                 // Dispatch the event to all subscriber
                 this.TypedEventTable.Call(packet);
             }
             finally
             {
-                this.currentPacket = IncomingPacket.Empty;
+                this._currentPacket = IncomingPacket.Empty;
             }
         }
 
-        #endregion
 
         public Subscription GetSubscription(string name)
         {
@@ -467,7 +676,7 @@ namespace BestHTTP.SocketIO3
         }
 
         /// <summary>
-        /// Emits an internal packet-less event to the user level.
+        /// 向用户级发出内部无包事件。
         /// </summary>
         void ISocket.EmitEvent(SocketIOEventTypes type, params object[] args)
         {
@@ -475,42 +684,45 @@ namespace BestHTTP.SocketIO3
         }
 
         /// <summary>
-        /// Emits an internal packet-less event to the user level.
+        /// 向用户级发出内部无包事件。
         /// </summary>
         void ISocket.EmitEvent(string eventName, params object[] args)
         {
             if (!string.IsNullOrEmpty(eventName))
+            {
                 this.TypedEventTable.Call(eventName, args);
+            }
         }
 
         void ISocket.EmitError(string msg)
         {
-            var outcoming = this.Manager.Parser.CreateOutgoing(this, SocketIOEventTypes.Error, -1, null, new Error(msg));
-            IncomingPacket packet = IncomingPacket.Empty;
-            if (outcoming.IsBinary)
-                packet = this.Manager.Parser.Parse(this.Manager, outcoming.PayloadData);
-            else
-                packet = this.Manager.Parser.Parse(this.Manager, outcoming.Payload);
+            // ReSharper disable once IdentifierTypo
+            var outcoming =
+                this.Manager.Parser.CreateOutgoing(this, SocketIOEventTypes.Error, -1, null, new Error(msg));
+            var packet = outcoming.IsBinary
+                ? this.Manager.Parser.Parse(this.Manager, outcoming.PayloadData)
+                : this.Manager.Parser.Parse(this.Manager, outcoming.Payload);
 
             (this as ISocket).EmitEvent(SocketIOEventTypes.Error, packet.DecodedArg ?? packet.DecodedArgs);
         }
 
-        #region Private Helper Functions
 
         /// <summary>
-        /// Called when the underlying transport is connected
+        /// 在连接底层传输时调用
         /// </summary>
         internal void OnTransportOpen()
         {
             HttpManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen, this.Context);
 
             if (this.IsOpen)
+            {
                 return;
+            }
 
             object authData = null;
             try
             {
-                authData = this.Manager.Options.Auth != null ? this.Manager.Options.Auth(this.Manager, this) : null;
+                authData = this.Manager.Options.Auth?.Invoke(this.Manager, this);
             }
             catch (Exception ex)
             {
@@ -519,15 +731,14 @@ namespace BestHTTP.SocketIO3
 
             try
             {
-                (Manager as IManager).SendPacket(this.Manager.Parser.CreateOutgoing(this, SocketIOEventTypes.Connect, -1, null, authData));
+                (Manager as IManager).SendPacket(
+                    this.Manager.Parser.CreateOutgoing(this, SocketIOEventTypes.Connect, -1, null, authData));
             }
             catch (Exception ex)
             {
                 HttpManager.Logger.Exception("Socket", "OnTransportOpen", ex, this.Context);
             }
         }
-
-        #endregion
     }
 }
 

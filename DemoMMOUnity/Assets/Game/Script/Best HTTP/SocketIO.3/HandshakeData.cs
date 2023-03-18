@@ -5,31 +5,32 @@ using System.Collections.Generic;
 namespace BestHTTP.SocketIO3
 {
     /// <summary>
-    /// Helper class to parse and hold handshake information.
+    /// Helper类来解析和保存握手信息。
     /// </summary>
     [PlatformSupport.IL2CPP.Preserve]
-    public sealed class HandshakeData
+    public abstract  class HandshakeData
     {
         /// <summary>
-        /// Session ID of this connection.
+        /// 该连接的会话ID。
         /// </summary>
         [PlatformSupport.IL2CPP.Preserve]
         public string Sid { get; private set; }
 
         /// <summary>
-        /// List of possible upgrades.
+        /// 可能升级的列表。
         /// </summary>
         [PlatformSupport.IL2CPP.Preserve]
+        // ReSharper disable once CollectionNeverUpdated.Global
         public List<string> Upgrades { get; private set; }
 
         /// <summary>
-        /// What interval we have to set a ping message.
+        /// 我们必须设置一个ping消息的时间间隔。
         /// </summary>
         [PlatformSupport.IL2CPP.Preserve]
         public int PingInterval { get; private set; }
 
         /// <summary>
-        /// What time have to pass without an answer to our ping request when we can consider the connection disconnected.
+        /// 当我们可以认为连接断开时，需要经过多长时间才能得到ping请求的应答。
         /// </summary>
         [PlatformSupport.IL2CPP.Preserve]
         public int PingTimeout { get; private set; }
