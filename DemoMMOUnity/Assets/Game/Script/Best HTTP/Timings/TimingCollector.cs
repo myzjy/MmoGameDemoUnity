@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BestHTTP.Core;
 
 namespace BestHTTP.Timings
@@ -12,28 +13,30 @@ namespace BestHTTP.Timings
             this.Start = DateTime.Now;
         }
 
-        public HttpRequest ParentRequest { get; }
+        private HttpRequest ParentRequest { get; }
 
         /// <summary>
-        /// When the TimingCollector instance created.
+        /// 创建TimingCollector实例时。
         /// </summary>
         public DateTime Start { get; private set; }
 
         /// <summary>
-        /// List of added events.
+        /// 已添加事件的列表。
         /// </summary>
-        public List<TimingEvent> Events { get; private set; }
+        private List<TimingEvent> Events { get; set; }
 
         internal void AddEvent(string name, DateTime when, TimeSpan duration)
         {
-            if (this.Events == null)
-                this.Events = new List<TimingEvent>();
+            this.Events ??= new List<TimingEvent>();
 
             if (duration == TimeSpan.Zero)
             {
                 DateTime prevEventAt = this.Start;
                 if (this.Events.Count > 0)
-                    prevEventAt = this.Events[this.Events.Count - 1].When;
+                {
+                    prevEventAt = this.Events[^1].When;
+                }
+
                 duration = when - prevEventAt;
             }
 
@@ -41,7 +44,7 @@ namespace BestHTTP.Timings
         }
 
         /// <summary>
-        /// Add an event. Duration is calculated from the previous event or start of the collector.
+        /// 添加事件。持续时间是从收集器的前一个事件或开始计算的。
         /// </summary>
         public void Add(string name)
         {
@@ -49,11 +52,15 @@ namespace BestHTTP.Timings
         }
 
         /// <summary>
-        /// Add an event with a known duration.
+        /// 添加一个已知持续时间的事件。
         /// </summary>
         public void Add(string name, TimeSpan duration)
         {
-            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.ParentRequest, name, duration));
+            var eventInfo = new RequestEventInfo(
+                request: this.ParentRequest,
+                name: name,
+                duration: duration);
+            RequestEventHelper.EnqueueRequestEvent(@event: eventInfo);
         }
 
         public TimingEvent FindFirst(string name)
@@ -64,7 +71,9 @@ namespace BestHTTP.Timings
             for (int i = 0; i < this.Events.Count; ++i)
             {
                 if (this.Events[i].Name == name)
+                {
                     return this.Events[i];
+                }
             }
 
             return TimingEvent.Empty;
@@ -73,12 +82,16 @@ namespace BestHTTP.Timings
         public TimingEvent FindLast(string name)
         {
             if (this.Events == null)
+            {
                 return TimingEvent.Empty;
+            }
 
-            for (int i = this.Events.Count - 1; i >= 0; --i)
+            for (var i = this.Events.Count - 1; i >= 0; --i)
             {
                 if (this.Events[i].Name == name)
+                {
                     return this.Events[i];
+                }
             }
 
             return TimingEvent.Empty;
@@ -86,11 +99,12 @@ namespace BestHTTP.Timings
 
         public override string ToString()
         {
-            string result = string.Format("[TimingCollector Start: '{0}' ", this.Start.ToLongTimeString());
+            string result = $"[TimingCollector Start: '{this.Start.ToLongTimeString()}' ";
 
             if (this.Events != null)
-                foreach (var @event in this.Events)
-                    result += '\n' + @event.ToString();
+            {
+                result = this.Events.Aggregate(result, (current, @event) => $"{current}\n{@event.ToString()}");
+            }
 
             result += "]";
 
