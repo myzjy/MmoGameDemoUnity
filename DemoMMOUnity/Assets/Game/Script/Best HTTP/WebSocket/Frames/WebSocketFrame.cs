@@ -3,7 +3,6 @@
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 using System;
-using System.IO;
 
 namespace BestHTTP.WebSocket.Frames
 {
@@ -24,44 +23,70 @@ namespace BestHTTP.WebSocket.Frames
             Data = null;
         }
     }
+
     /// <summary>
-    /// Denotes a binary frame. The "Payload data" is arbitrary binary data whose interpretation is solely up to the application layer.
-    /// This is the base class of all other frame writers, as all frame can be represented as a byte array.
+    ///表示二进制帧。“有效负载数据”是任意二进制数据，其解释完全取决于应用层。
+    /// 这是所有其他帧写入器的基类，因为所有帧都可以表示为字节数组。
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
     public sealed class WebSocketFrame
     {
         public WebSocketFrameTypes Type { get; private set; }
-        public bool IsFinal { get; private set; }
+        private bool IsFinal { get; set; }
         public byte Header { get; private set; }
 
         public byte[] Data { get; private set; }
         public int DataLength { get; private set; }
-        public bool UseExtensions { get; private set; }
+        private bool UseExtensions { get; set; }
 
         public override string ToString()
         {
-            return string.Format("[WebSocketFrame Type: {0}, IsFinal: {1}, Header: {2:X2}, DataLength: {3}, UseExtensions: {4}]",
-                this.Type, this.IsFinal, this.Header, this.DataLength, this.UseExtensions);
+            return
+                $"[WebSocketFrame Type: {this.Type}, I" +
+                $"sFinal: {this.IsFinal}, " +
+                $"Header: {this.Header:X2}," +
+                $" DataLength: {this.DataLength}," +
+                $" UseExtensions: {this.UseExtensions}]";
         }
 
-        #region Constructors
 
-        public WebSocketFrame(WebSocket webSocket, WebSocketFrameTypes type, byte[] data)
-            :this(webSocket, type, data, true)
-        { }
-
-        public WebSocketFrame(WebSocket webSocket, WebSocketFrameTypes type, byte[] data, bool useExtensions)
-            : this(webSocket, type, data, 0, data != null ? (UInt64)data.Length : 0, true, useExtensions)
+        public WebSocketFrame(WebSocket webSocket, WebSocketFrameTypes type, byte[] data, bool useExtensions = true)
+            : this(
+                webSocket: webSocket,
+                type: type,
+                data: data,
+                pos: 0,
+                length: data != null ? (ulong)data.Length : 0,
+                isFinal: true,
+                useExtensions: useExtensions)
         {
         }
 
-        public WebSocketFrame(WebSocket webSocket, WebSocketFrameTypes type, byte[] data, bool isFinal, bool useExtensions)
-            : this(webSocket, type, data, 0, data != null ? (UInt64)data.Length : 0, isFinal, useExtensions)
+        public WebSocketFrame(
+            WebSocket webSocket,
+            WebSocketFrameTypes type,
+            byte[] data,
+            bool isFinal,
+            bool useExtensions)
+            : this(
+                webSocket: webSocket,
+                type: type,
+                data: data,
+                pos: 0,
+                length: data != null ? (ulong)data.Length : 0,
+                isFinal: isFinal,
+                useExtensions: useExtensions)
         {
         }
 
-        public WebSocketFrame(WebSocket webSocket, WebSocketFrameTypes type, byte[] data, UInt64 pos, UInt64 length, bool isFinal, bool useExtensions)
+        public WebSocketFrame(
+            WebSocket webSocket,
+            WebSocketFrameTypes type,
+            byte[] data,
+            UInt64 pos,
+            UInt64 length,
+            bool isFinal,
+            bool useExtensions)
         {
             this.Type = type;
             this.IsFinal = isFinal;
@@ -74,120 +99,127 @@ namespace BestHTTP.WebSocket.Frames
                 Array.Copy(data, (int)pos, this.Data, 0, this.DataLength);
             }
             else
+            {
+                // ReSharper disable once RedundantAssignment
                 data = BufferPool.NoData;
+            }
 
             // First byte: Final Bit + Rsv flags + OpCode
             byte finalBit = (byte)(IsFinal ? 0x80 : 0x0);
             this.Header = (byte)(finalBit | (byte)Type);
 
-            if (this.UseExtensions && webSocket != null && webSocket.Extensions != null)
+            if (!this.UseExtensions || webSocket?.Extensions == null) return;
+            foreach (var ext in webSocket.Extensions)
             {
-                for (int i = 0; i < webSocket.Extensions.Length; ++i)
-                {
-                    var ext = webSocket.Extensions[i];
-                    if (ext != null)
-                    {
-                        this.Header |= ext.GetFrameHeader(this, this.Header);
-                        byte[] newData = ext.Encode(this);
+                if (ext == null) continue;
+                this.Header |= ext.GetFrameHeader(this, this.Header);
+                byte[] newData = ext.Encode(this);
 
-                        if (newData != this.Data)
-                        {
-                            BufferPool.Release(this.Data);
+                if (newData == this.Data) continue;
+                BufferPool.Release(this.Data);
 
-                            this.Data = newData;
-                            this.DataLength = newData.Length;
-                        }
-                    }
-                }
+                this.Data = newData;
+                this.DataLength = newData.Length;
             }
         }
 
-        #endregion
-
-        #region Public Functions
-
         public unsafe RawFrameData Get()
         {
-            if (Data == null)
-                Data = BufferPool.NoData;
+            Data ??= BufferPool.NoData;
 
-            using (var ms = new BufferPoolMemoryStream(this.DataLength + 9))
+            using var ms = new BufferPoolMemoryStream(this.DataLength + 9);
+            // For the complete documentation for this section see:
+            // http://tools.ietf.org/html/rfc6455#section-5.2
+
+            // Write the header
+            ms.WriteByte(this.Header);
+            /*
+                 * “Payload data”的长度，以字节为单位:如果0-125，就是Payload长度。
+                 * 如果是126，下面2个被解释为16位无符号整数的字节就是有效负载长度。
+                 * 如果是127，则以下8个字节解释为64位无符号整数(最高位必须为0)是有效负载长度。
+                 * 多字节长度量以网络字节顺序表示。                 * 
+                 */
+            switch (this.DataLength)
             {
-                // For the complete documentation for this section see:
-                // http://tools.ietf.org/html/rfc6455#section-5.2
-
-                // Write the header
-                ms.WriteByte(this.Header);
-
-                // The length of the "Payload data", in bytes: if 0-125, that is the payload length.  If 126, the following 2 bytes interpreted as a
-                // 16-bit unsigned integer are the payload length.  If 127, the following 8 bytes interpreted as a 64-bit unsigned integer (the
-                // most significant bit MUST be 0) are the payload length.  Multibyte length quantities are expressed in network byte order.
-                if (this.DataLength < 126)
+                case < 126:
+                {
                     ms.WriteByte((byte)(0x80 | (byte)this.DataLength));
-                else if (this.DataLength < UInt16.MaxValue)
+                }
+                    break;
+                case < ushort.MaxValue:
                 {
-                    ms.WriteByte((byte)(0x80 | 126));
-                    byte[] len = BitConverter.GetBytes((UInt16)this.DataLength);
+                    ms.WriteByte(0x80 | 126);
+                    var len = BitConverter.GetBytes((UInt16)this.DataLength);
                     if (BitConverter.IsLittleEndian)
                         Array.Reverse(len, 0, len.Length);
 
                     ms.Write(len, 0, len.Length);
+                    break;
                 }
-                else
+                default:
                 {
-                    ms.WriteByte((byte)(0x80 | 127));
-                    byte[] len = BitConverter.GetBytes((UInt64)this.DataLength);
+                    ms.WriteByte(0x80 | 127);
+                    var len = BitConverter.GetBytes((ulong)this.DataLength);
                     if (BitConverter.IsLittleEndian)
-                        Array.Reverse(len, 0, len.Length);
-
-                    ms.Write(len, 0, len.Length);
-                }
-
-                // All frames sent from the client to the server are masked by a 32-bit value that is contained within the frame.  This field is
-                // present if the mask bit is set to 1 and is absent if the mask bit is set to 0.
-                // If the data is being sent by the client, the frame(s) MUST be masked.
-                byte[] mask = BufferPool.Get(4, true);
-
-                int hash = this.GetHashCode();
-
-                mask[0] = (byte)((hash >> 24) & 0xFF);
-                mask[1] = (byte)((hash >> 16) & 0xFF);
-                mask[2] = (byte)((hash >> 8) & 0xFF);
-                mask[3] = (byte)(hash & 0xFF);
-
-                ms.Write(mask, 0, 4);
-
-                // Do the masking.
-                fixed (byte* pData = Data, pmask = mask)
-                {
-                    // Here, instead of byte by byte, we reinterpret cast the data as uints and apply the masking so.
-                    // This way, we can mask 4 bytes in one cycle, instead of just 1
-                    int localLength = this.DataLength / 4;
-                    if (localLength > 0)
                     {
-                        uint* upData = (uint*)pData;
-                        uint umask = *(uint*)pmask;
-
-                        unchecked
-                        {
-                            for (int i = 0; i < localLength; ++i)
-                                upData[i] = upData[i] ^ umask;
-                        }
+                        Array.Reverse(len, 0, len.Length);
                     }
 
-                    // Because data might not be exactly dividable by 4, we have to mask the remaining 0..3 too.
-                    int from = localLength * 4;
-                    localLength = from + this.DataLength % 4;
-                    for (int i = from; i < localLength; ++i)
-                        pData[i] = (byte)(pData[i] ^ pmask[i % 4]);
+                    ms.Write(len, 0, len.Length);
+                    break;
+                }
+            }
+
+            /*
+             * 所有从客户端发送到服务器端的帧都被包含在帧中的32位值屏蔽。
+             * 如果掩码位设置为1，则该字段存在;如果掩码位设置为0，则该字段不存在。
+             * 如果数据是由客户端发送，帧必须被屏蔽。
+             */
+            byte[] mask = BufferPool.Get(4, true);
+
+            int hash = this.GetHashCode();
+
+            mask[0] = (byte)((hash >> 24) & 0xFF);
+            mask[1] = (byte)((hash >> 16) & 0xFF);
+            mask[2] = (byte)((hash >> 8) & 0xFF);
+            mask[3] = (byte)(hash & 0xFF);
+
+            ms.Write(mask, 0, 4);
+
+            // Do the masking.
+            fixed (byte* pData = Data, pMask = mask)
+            {
+                /*
+                 * 在这里，我们不是一个字节一个字节地解释，而是将数据重新解释为单位，并应用屏蔽so。
+                 * 这样，我们可以在一个周期中屏蔽4个字节，而不是1个
+                 */
+                int localLength = this.DataLength / 4;
+                if (localLength > 0)
+                {
+                    uint* upData = (uint*)pData;
+                    uint umask = *(uint*)pMask;
+
+                    unchecked
+                    {
+                        for (var i = 0; i < localLength; ++i)
+                        {
+                            upData[i] = upData[i] ^ umask;
+                        }
+                    }
                 }
 
-                BufferPool.Release(mask);
-
-                ms.Write(Data, 0, DataLength);
-
-                return new RawFrameData(ms.ToArray(true), (int)ms.Length);
+                // Because data might not be exactly dividable by 4, we have to mask the remaining 0..3 too.
+                int from = localLength * 4;
+                localLength = from + this.DataLength % 4;
+                for (int i = from; i < localLength; ++i)
+                    pData[i] = (byte)(pData[i] ^ pMask[i % 4]);
             }
+
+            BufferPool.Release(mask);
+
+            ms.Write(Data, 0, DataLength);
+
+            return new RawFrameData(ms.ToArray(true), (int)ms.Length);
         }
 
 
@@ -196,7 +228,7 @@ namespace BestHTTP.WebSocket.Frames
             if (this.Data == null)
                 return null;
 
-            // All control frames MUST have a payload length of 125 bytes or less and MUST NOT be fragmented.
+            // 所有控制帧的有效载荷长度必须小于等于125字节，并且不能被分割。
             if (this.Type != WebSocketFrameTypes.Binary && this.Type != WebSocketFrameTypes.Text)
                 return null;
 
@@ -205,21 +237,28 @@ namespace BestHTTP.WebSocket.Frames
 
             this.IsFinal = false;
 
-            // Clear final bit from the header flags
+            // 清除标题标志中的最后一位
             this.Header &= 0x7F;
 
-            // One chunk will remain in this fragment, so we have to allocate one less
+            // 一个块将保留在这个片段中，所以我们必须少分配一个
             int count = (int)((this.DataLength / maxFragmentSize) + (this.DataLength % maxFragmentSize == 0 ? -1 : 0));
 
             WebSocketFrame[] fragments = new WebSocketFrame[count];
 
-            // Skip one chunk, for the current one
+            // 跳过当前的一部分
             UInt64 pos = maxFragmentSize;
-            while (pos < (UInt64)this.DataLength)
+            while (pos < (ulong)this.DataLength)
             {
-                UInt64 chunkLength = Math.Min(maxFragmentSize, (UInt64)this.DataLength - pos);
+                var chunkLength = Math.Min(maxFragmentSize, (ulong)this.DataLength - pos);
 
-                fragments[fragments.Length - count--] = new WebSocketFrame(null, WebSocketFrameTypes.Continuation, this.Data, pos, chunkLength, pos + chunkLength >= (UInt64)this.DataLength, false);
+                fragments[^count--] = new WebSocketFrame(
+                    webSocket: null,
+                    type: WebSocketFrameTypes.Continuation,
+                    data: this.Data,
+                    pos: pos,
+                    length: chunkLength,
+                    isFinal: pos + chunkLength >= (ulong)this.DataLength,
+                    useExtensions: false);
 
                 pos += chunkLength;
             }
@@ -233,8 +272,6 @@ namespace BestHTTP.WebSocket.Frames
 
             return fragments;
         }
-
-        #endregion
     }
 }
 
