@@ -14,88 +14,88 @@ namespace BestHTTP.SocketIO3.Transports
     }
 
     /// <summary>
-    /// Possible states of an ITransport implementation.
+    /// ITransport实现的可能状态。
     /// </summary>
     public enum TransportStates : int
     {
         /// <summary>
-        /// The transport is connecting to the server.
+        /// 传输正在连接到服务器。
         /// </summary>
         Connecting = 0,
 
         /// <summary>
-        /// The transport is connected, and started the opening process.
+        /// Transport连接，并开始了开放进程。
         /// </summary>
         Opening = 1,
 
         /// <summary>
-        /// The transport is open, can send and receive packets.
+        /// 传输是开放的，可以发送和接收数据包。
         /// </summary>
         Open = 2,
 
         /// <summary>
-        /// The transport is closed.
+        /// 传输通道关闭了。
         /// </summary>
         Closed = 3,
 
         /// <summary>
-        /// The transport is paused.
+        /// 传输暂停。
         /// </summary>
         Paused = 4
     }
 
     /// <summary>
-    /// An interface that a Socket.IO transport must implement.
+    /// 一个具有套接字的接口。IO传输必须实现。
     /// </summary>
     public interface ITransport
     {
         /// <summary>
-        /// Type of this transport.
+        /// 传输的类型。
         /// </summary>
         TransportTypes Type { get; }
 
         /// <summary>
-        /// Current state of the transport
+        /// 传输的当前状态
         /// </summary>
         TransportStates State { get; }
 
         /// <summary>
-        /// SocketManager instance that this transport is bound to.
+        /// 此传输绑定到的SocketManager实例。
         /// </summary>
         SocketManager Manager { get; }
 
         /// <summary>
-        /// True if the transport is busy with sending messages.
+        /// 如果传输忙于发送消息，则为true。
         /// </summary>
         bool IsRequestInProgress { get; }
 
         /// <summary>
-        /// True if the transport is busy with a poll request.
+        /// 如果传输忙于处理轮询请求，则为true。
         /// </summary>
         bool IsPollingInProgress { get; }
 
         /// <summary>
-        /// Start open/upgrade the transport.
+        /// 启动打开/升级传输。
         /// </summary>
         void Open();
 
         /// <summary>
-        /// Do a poll for available messages on the server.
+        /// 对服务器上的可用消息进行轮询。
         /// </summary>
         void Poll();
 
         /// <summary>
-        /// Send a single packet to the server.
+        /// 向服务器发送单个数据包。
         /// </summary>
         void Send(OutgoingPacket packet);
 
         /// <summary>
-        /// Send a list of packets to the server.
+        /// 向服务器发送数据包列表。
         /// </summary>
         void Send(List<OutgoingPacket> packets);
 
         /// <summary>
-        /// Close this transport.
+        /// 关闭这个传输。
         /// </summary>
         void Close();
     }

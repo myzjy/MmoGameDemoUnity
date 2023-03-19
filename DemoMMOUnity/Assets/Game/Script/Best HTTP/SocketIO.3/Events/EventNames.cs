@@ -1,11 +1,12 @@
 ﻿#if !BESTHTTP_DISABLE_SOCKETIO
 
 using System;
+using System.Linq;
 
 namespace BestHTTP.SocketIO3.Events
 {
     /// <summary>
-    /// Helper class to provide functions to an easy Enum->string conversation of the transport and SocketIO evenet types.
+    /// Helper类，为传输和SocketIO事件类型的简单Enum->string会话提供函数。
     /// </summary>
     public static class EventNames
     {
@@ -17,10 +18,45 @@ namespace BestHTTP.SocketIO3.Events
         public const string BinaryEvent = "binaryevent";
         public const string BinaryAck = "binaryack";
 
-        private static string[] SocketIONames = new string[] { "unknown", "connect", "disconnect", "event", "ack", "error", "binaryevent", "binaryack" };
-        private static string[] TransportNames = new string[] { "unknown", "open", "close", "ping", "pong", "message", "upgrade", "noop" };
-        private static string[] BlacklistedEvents = new string[] { "connect", "connect_error", "connect_timeout", "disconnect", "error", "reconnect", 
-                                                                   "reconnect_attempt", "reconnect_failed", "reconnect_error", "reconnecting" };
+        private static readonly string[] SocketIONames = new string[]
+        {
+            "unknown",
+            "connect",
+            "disconnect",
+            "event",
+            "ack",
+            "error",
+            // ReSharper disable once StringLiteralTypo
+            "binaryevent",
+            // ReSharper disable once StringLiteralTypo
+            "binaryack"
+        };
+
+        private static readonly string[] TransportNames = new string[]
+        {
+            "unknown",
+            "open",
+            "close",
+            "ping",
+            "pong",
+            "message",
+            "upgrade",
+            "noop"
+        };
+
+        private static readonly string[] BlacklistedEvents = new string[]
+        {
+            "connect",
+            "connect_error",
+            "connect_timeout",
+            "disconnect",
+            "error",
+            "reconnect",
+            "reconnect_attempt",
+            "reconnect_failed",
+            "reconnect_error",
+            "reconnecting"
+        };
 
         public static string GetNameFor(SocketIOEventTypes type)
         {
@@ -33,14 +69,11 @@ namespace BestHTTP.SocketIO3.Events
         }
 
         /// <summary>
-        /// Checks an event name whether it's blacklisted or not.
+        ///检查事件名称是否列入黑名单。
         /// </summary>
         public static bool IsBlacklisted(string eventName)
         {
-            for (int i = 0; i < BlacklistedEvents.Length; ++i)
-                if (string.Compare(BlacklistedEvents[i], eventName, StringComparison.OrdinalIgnoreCase) == 0)
-                    return true;
-            return false;
+            return BlacklistedEvents.Any(t => string.Compare(t, eventName, StringComparison.OrdinalIgnoreCase) == 0);
         }
     }
 }

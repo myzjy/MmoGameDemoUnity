@@ -120,7 +120,7 @@ namespace BestHTTP.SocketIO3
 
         private void OnConnected(ConnectResponse resp)
         {
-            this.Id = resp.sid;
+            this.Id = resp.Sid;
             this.IsOpen = true;
         }
 

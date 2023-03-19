@@ -5,9 +5,10 @@ using System.Collections.Generic;
 namespace BestHTTP.SocketIO3.Events
 {
     [PlatformSupport.IL2CPP.Preserve]
-    public sealed class ConnectResponse
+    public abstract class ConnectResponse
     {
-        [PlatformSupport.IL2CPP.Preserve] public string sid;
+        // ReSharper disable once UnassignedField.Global
+        [PlatformSupport.IL2CPP.Preserve] public string Sid;
     }
 
     public struct CallbackDescriptor
@@ -26,40 +27,46 @@ namespace BestHTTP.SocketIO3.Events
 
     public sealed class Subscription
     {
-        public List<CallbackDescriptor> callbacks = new List<CallbackDescriptor>(1);
+        public readonly List<CallbackDescriptor> Callbacks = new List<CallbackDescriptor>(1);
 
         public void Add(Type[] paramTypes, Action<object[]> callback, bool once)
         {
-            this.callbacks.Add(new CallbackDescriptor(paramTypes, callback, once));
+            this.Callbacks.Add(new CallbackDescriptor(paramTypes, callback, once));
         }
 
         public void Remove(Action<object[]> callback)
         {
             int idx = -1;
-            for (int i = 0; i < this.callbacks.Count && idx == -1; ++i)
-                if (this.callbacks[i].Callback == callback)
+            for (int i = 0; i < this.Callbacks.Count && idx == -1; ++i)
+            {
+                if (this.Callbacks[i].Callback == callback)
+                {
                     idx = i;
+                }
+            }
 
             if (idx != -1)
-                this.callbacks.RemoveAt(idx);
+            {
+                this.Callbacks.RemoveAt(idx);
+            }
         }
     }
 
     public sealed class TypedEventTable
     {
         /// <summary>
-        /// The Socket that this EventTable is bound to.
+        /// 事件表绑定到的套接字。
         /// </summary>
         private Socket Socket { get; set; }
 
         /// <summary>
-        /// This is where we store the methodname => callback mapping.
+        /// 这是我们存储methodName =>回调函数的映射。
         /// </summary>
-        private Dictionary<string, Subscription> subscriptions =
+        private readonly Dictionary<string, Subscription> _subscriptions =
             new Dictionary<string, Subscription>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Constructor to create an instance and bind it to a socket.
+        /// 构造函数来创建实例并将其绑定到套接字。
         /// </summary>
         public TypedEventTable(Socket socket)
         {
@@ -68,28 +75,31 @@ namespace BestHTTP.SocketIO3.Events
 
         public Subscription GetSubscription(string name)
         {
-            Subscription subscription = null;
-            this.subscriptions.TryGetValue(name, out subscription);
+            this._subscriptions.TryGetValue(name, out var subscription);
             return subscription;
         }
 
-        public void Register(string methodName, Type[] paramTypes, Action<object[]> callback, bool once = false)
+        public void Register(
+            string methodName,
+            Type[] paramTypes,
+            Action<object[]> callback,
+            bool once = false)
         {
-            Subscription subscription = null;
-            if (!this.subscriptions.TryGetValue(methodName, out subscription))
-                this.subscriptions.Add(methodName, subscription = new Subscription());
+            if (!this._subscriptions.TryGetValue(methodName, out var subscription))
+            {
+                this._subscriptions.Add(methodName, subscription = new Subscription());
+            }
 
             subscription.Add(paramTypes, callback, once);
         }
 
         public void Call(string eventName, object[] args)
         {
-            Subscription subscription = null;
-            if (this.subscriptions.TryGetValue(eventName, out subscription))
+            if (this._subscriptions.TryGetValue(eventName, out var subscription))
             {
-                for (int i = 0; i < subscription.callbacks.Count; ++i)
+                for (int i = 0; i < subscription.Callbacks.Count; ++i)
                 {
-                    var callbackDesc = subscription.callbacks[i];
+                    var callbackDesc = subscription.Callbacks[i];
 
                     try
                     {
@@ -103,7 +113,9 @@ namespace BestHTTP.SocketIO3.Events
                     }
 
                     if (callbackDesc.Once)
-                        subscription.callbacks.RemoveAt(i--);
+                    {
+                        subscription.Callbacks.RemoveAt(i--);
+                    }
                 }
             }
         }
@@ -114,19 +126,19 @@ namespace BestHTTP.SocketIO3.Events
                 return;
 
             string name = packet.EventName;
-            object[] args = packet.DecodedArg != null ? new object[] { packet.DecodedArg } : packet.DecodedArgs;
+            object[] args = packet.DecodedArg != null ? new[] { packet.DecodedArg } : packet.DecodedArgs;
 
             Call(name, args);
         }
 
         public void Unregister(string name)
         {
-            this.subscriptions.Remove(name);
+            this._subscriptions.Remove(name);
         }
 
         public void Clear()
         {
-            this.subscriptions.Clear();
+            this._subscriptions.Clear();
         }
     }
 }

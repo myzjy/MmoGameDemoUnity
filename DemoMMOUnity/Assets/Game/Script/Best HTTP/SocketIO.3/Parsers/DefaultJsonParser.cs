@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SocketIO3.Events;
 
@@ -11,8 +10,9 @@ namespace BestHTTP.SocketIO3.Parsers
 {
     public sealed class Placeholder
     {
+        // ReSharper disable once InconsistentNaming
         public bool _placeholder;
-        public int num;
+        public int Num;
     }
 
     [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
@@ -20,10 +20,10 @@ namespace BestHTTP.SocketIO3.Parsers
     {
         static DefaultJsonParser()
         {
-            BestHTTP.JSON.LitJson.JsonMapper.RegisterImporter<string, byte[]>(str => Convert.FromBase64String(str));
+            JSON.LitJson.JsonMapper.RegisterImporter<string, byte[]>(Convert.FromBase64String);
         }
 
-        private IncomingPacket PacketWithAttachment = IncomingPacket.Empty;
+        private IncomingPacket _packetWithAttachment = IncomingPacket.Empty;
 
         private int ToInt(char ch)
         {
@@ -39,10 +39,9 @@ namespace BestHTTP.SocketIO3.Parsers
         {
             int idx = 0;
             var transportEvent = (TransportEventTypes)ToInt(from[idx++]);
-            var socketIOEvent = SocketIOEventTypes.Unknown;
-            var nsp = string.Empty;
+            SocketIOEventTypes socketIOEvent;
+            string nsp;
             var id = -1;
-            var payload = string.Empty;
             int attachments = 0;
 
             if (from.Length > idx && ToInt(from[idx]) >= 0)
@@ -86,13 +85,12 @@ namespace BestHTTP.SocketIO3.Parsers
             }
 
             // What left is the payload data
-            if (from.Length > idx)
-                payload = from.Substring(idx);
-            else
-                payload = string.Empty;
+            var payload = from.Length > idx ? from.Substring(idx) : string.Empty;
 
-            var packet = new IncomingPacket(transportEvent, socketIOEvent, nsp, id);
-            packet.AttachementCount = attachments;
+            var packet = new IncomingPacket(transportEvent, socketIOEvent, nsp, id)
+            {
+                AttachementCount = attachments
+            };
 
             string eventName = packet.EventName;
             object[] args = null;
@@ -128,7 +126,7 @@ namespace BestHTTP.SocketIO3.Parsers
             }
 
             packet.EventName = eventName;
-            
+
             if (args != null)
             {
                 if (args.Length == 1)
@@ -139,13 +137,14 @@ namespace BestHTTP.SocketIO3.Parsers
 
             if (packet.AttachementCount > 0)
             {
-                PacketWithAttachment = packet;
+                _packetWithAttachment = packet;
                 return IncomingPacket.Empty;
             }
 
             return packet;
         }
 
+        // ReSharper disable once IdentifierTypo
         public IncomingPacket MergeAttachements(SocketManager manager, IncomingPacket packet)
         {
             string payload = packet.DecodedArg as string;
@@ -158,25 +157,40 @@ namespace BestHTTP.SocketIO3.Parsers
                 string placeholder = string.Format(placeholderFormat, i);
                 BufferSegment data = packet.Attachements[i];
 
-                payload = payload.Replace(placeholder, "\"" + Convert.ToBase64String(data.Data, data.Offset, data.Count) + "\"");
+                if (payload != null)
+                {
+                    var baseString = Convert.ToBase64String(
+                        inArray: data.Data,
+                        offset: data.Offset,
+                        length: data.Count);
+                    var newString = $"\"{baseString}\"";
+                    payload = payload.Replace(
+                        oldValue: placeholder,
+                        newValue: newString);
+                }
             }
 
-            (string eventName, object[] args) = ReadData(manager, packet, payload);
+            var (eventName, args) = ReadData(manager, packet, payload);
 
             packet.EventName = eventName;
-            
-            if (args != null)
+
+            if (args == null) return packet;
+            if (args.Length == 1)
             {
-                if (args.Length == 1)
-                    packet.DecodedArg = args[0];
-                else
-                    packet.DecodedArgs = args;
+                packet.DecodedArg = args[0];
+            }
+            else
+            {
+                packet.DecodedArgs = args;
             }
 
             return packet;
         }
 
-        private (string, object[]) ReadData(SocketManager manager, IncomingPacket packet, string payload)
+        private (string, object[]) ReadData(
+            SocketManager manager,
+            IncomingPacket packet,
+            string payload)
         {
             Socket socket = manager.GetSocket(packet.Namespace);
 
@@ -202,35 +216,50 @@ namespace BestHTTP.SocketIO3.Parsers
                     break;
 
                 case SocketIOEventTypes.Error:
+                {
                     // String | Object
                     switch (payload[0])
                     {
                         case '{':
                             using (var strReader = new System.IO.StringReader(payload))
+                            {
                                 args = ReadParameters(socket, subscription, strReader);
+                            }
+
                             break;
 
                         default:
                             args = new object[] { new Error(payload) };
                             break;
-
                     }
+                }
+
                     break;
 
                 case SocketIOEventTypes.Ack:
+                {
                     eventName = IncomingPacket.GenerateAcknowledgementNameFromId(packet.Id);
                     subscription = socket.GetSubscription(eventName);
+                    var jsonMap = JSON.LitJson.JsonMapper.ToObject<List<object>>(payload);
+                    args = ReadParameters(
+                        socket: socket,
+                        subscription: subscription,
+                        array: jsonMap,
+                        startIdx: 0);
+                }
 
-                    args = ReadParameters(socket, subscription, JSON.LitJson.JsonMapper.ToObject<List<object>>(payload), 0);
-                    
                     break;
 
                 default:
+                {
                     // Array
 
-                    List<object> array = null;
+                    List<object> array;
                     using (var reader = new System.IO.StringReader(payload))
-                        array = JSON.LitJson.JsonMapper.ToObject<List<object>>(new JSON.LitJson.JsonReader(reader));
+                    {
+                        var jsonReader = new JSON.LitJson.JsonReader(reader);
+                        array = JSON.LitJson.JsonMapper.ToObject<List<object>>(jsonReader);
+                    }
 
                     if (array.Count > 0)
                     {
@@ -242,14 +271,19 @@ namespace BestHTTP.SocketIO3.Parsers
                     {
                         try
                         {
-                            args = ReadParameters(socket, subscription, array, 1);
+                            args = ReadParameters(
+                                socket: socket,
+                                subscription: subscription,
+                                array: array,
+                                startIdx: 1);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             HttpManager.Logger.Exception("DefaultJsonParser",
-                                $"ReadParameters with eventName: {eventName}", ex);
+                                $"带eventName的ReadParameters: {eventName}", ex);
                         }
                     }
+                }
 
                     break;
             }
@@ -259,38 +293,41 @@ namespace BestHTTP.SocketIO3.Parsers
 
         private object[] ReadParameters(Socket socket, Subscription subscription, List<object> array, int startIdx)
         {
-            object[] args = null;
+            if (array.Count <= startIdx) return null;
+            var desc = subscription != null ? subscription.Callbacks.FirstOrDefault() : default(CallbackDescriptor);
+            int paramCount = desc.ParamTypes?.Length ?? 0;
 
-            if (array.Count > startIdx)
+            int arrayIdx = startIdx;
+            if (paramCount <= 0) return null;
+            var args = new object[paramCount];
+
+            if (desc.ParamTypes == null) return args;
+            for (var i = 0; i < desc.ParamTypes.Length; ++i)
             {
-                var desc = subscription != null ? subscription.callbacks.FirstOrDefault() : default(CallbackDescriptor);
-                int paramCount = desc.ParamTypes != null ? desc.ParamTypes.Length : 0;
+                var type = desc.ParamTypes[i];
 
-                int arrayIdx = startIdx;
-                if (paramCount > 0)
+                if (type == typeof(Socket))
                 {
-                    args = new object[paramCount];
-
-                    for (int i = 0; i < desc.ParamTypes.Length; ++i)
-                    {
-                        Type type = desc.ParamTypes[i];
-
-                        if (type == typeof(Socket))
-                            args[i] = socket;
-                        else if (type == typeof(SocketManager))
-                            args[i] = socket.Manager;
-                        else if (type == typeof(Placeholder))
-                            args[i] = new Placeholder();
-                        else
-                            args[i] = ConvertTo(desc.ParamTypes[i], array[arrayIdx++]);
-                    }
+                    args[i] = socket;
+                }
+                else if (type == typeof(SocketManager))
+                {
+                    args[i] = socket.Manager;
+                }
+                else if (type == typeof(Placeholder))
+                {
+                    args[i] = new Placeholder();
+                }
+                else
+                {
+                    args[i] = ConvertTo(desc.ParamTypes[i], array[arrayIdx++]);
                 }
             }
 
             return args;
         }
 
-        public object ConvertTo(Type toType, object obj)
+        private object ConvertTo(Type toType, object obj)
         {
             if (obj == null)
                 return null;
@@ -333,7 +370,7 @@ namespace BestHTTP.SocketIO3.Parsers
 #if NETFX_CORE
             if (objType.Equals(typeInfo))
 #else
-            if (objType.Equals(toType))
+            if (objType == toType)
 #endif
                 return obj;
 
@@ -345,26 +382,34 @@ namespace BestHTTP.SocketIO3.Parsers
 
         private object[] ReadParameters(Socket socket, Subscription subscription, System.IO.TextReader reader)
         {
-            var desc = subscription != null ? subscription.callbacks.FirstOrDefault() : default(CallbackDescriptor);
-            int paramCount = desc.ParamTypes != null ? desc.ParamTypes.Length : 0;
+            var desc = subscription != null ? subscription.Callbacks.FirstOrDefault() : default(CallbackDescriptor);
+            int paramCount = desc.ParamTypes?.Length ?? 0;
             object[] args = null;
 
             if (paramCount > 0)
             {
                 args = new object[paramCount];
 
-                for (int i = 0; i < desc.ParamTypes.Length; ++i)
+                if (desc.ParamTypes != null)
                 {
-                    Type type = desc.ParamTypes[i];
+                    for (var i = 0; i < desc.ParamTypes.Length; ++i)
+                    {
+                        Type type = desc.ParamTypes[i];
 
-                    if (type == typeof(Socket))
-                        args[i] = socket;
-                    else if (type == typeof(SocketManager))
-                        args[i] = socket.Manager;
-                    else {
-                        BestHTTP.JSON.LitJson.JsonReader jr = new JSON.LitJson.JsonReader(reader);
-                        args[i] = JSON.LitJson.JsonMapper.ToObject(desc.ParamTypes[i], jr);
-                        reader.Read();
+                        if (type == typeof(Socket))
+                        {
+                            args[i] = socket;
+                        }
+                        else if (type == typeof(SocketManager))
+                        {
+                            args[i] = socket.Manager;
+                        }
+                        else
+                        {
+                            var jr = new JSON.LitJson.JsonReader(reader);
+                            args[i] = JSON.LitJson.JsonMapper.ToObject(desc.ParamTypes[i], jr);
+                            reader.Read();
+                        }
                     }
                 }
             }
@@ -372,19 +417,17 @@ namespace BestHTTP.SocketIO3.Parsers
             return args;
         }
 
-        public IncomingPacket Parse(SocketManager manager, BufferSegment data, TransportEventTypes transportEvent = TransportEventTypes.Unknown)
+        public IncomingPacket Parse(SocketManager manager, BufferSegment data,
+            TransportEventTypes transportEvent = TransportEventTypes.Unknown)
         {
             IncomingPacket packet = IncomingPacket.Empty;
 
-            if (PacketWithAttachment.Attachements == null)
-                PacketWithAttachment.Attachements = new List<BufferSegment>(PacketWithAttachment.AttachementCount);
-            PacketWithAttachment.Attachements.Add(data);
-            
-            if (PacketWithAttachment.Attachements.Count == PacketWithAttachment.AttachementCount)
-            {
-                packet = manager.Parser.MergeAttachements(manager, PacketWithAttachment);
-                PacketWithAttachment = IncomingPacket.Empty;
-            }
+            _packetWithAttachment.Attachements ??= new List<BufferSegment>(_packetWithAttachment.AttachementCount);
+            _packetWithAttachment.Attachements.Add(data);
+
+            if (_packetWithAttachment.Attachements.Count != _packetWithAttachment.AttachementCount) return packet;
+            packet = manager.Parser.MergeAttachements(manager, _packetWithAttachment);
+            _packetWithAttachment = IncomingPacket.Empty;
 
             return packet;
         }
@@ -394,63 +437,101 @@ namespace BestHTTP.SocketIO3.Parsers
             return new OutgoingPacket { Payload = "" + (char)('0' + (byte)transportEvent) + payload };
         }
 
-        private StringBuilder builder = new StringBuilder();
-        public OutgoingPacket CreateOutgoing(Socket socket, SocketIOEventTypes socketIOEvent, int id, string name, object arg)
+        private readonly StringBuilder _builder = new StringBuilder();
+
+        public OutgoingPacket CreateOutgoing(
+            Socket socket,
+            SocketIOEventTypes socketIOEvent,
+            int id,
+            string name,
+            object arg)
         {
-            return CreateOutgoing(socket, socketIOEvent, id, name, arg != null ? new object[] { arg } : null);
+            return CreateOutgoing(
+                socket: socket,
+                socketIOEvent: socketIOEvent,
+                id: id,
+                name: name,
+                arg: arg != null ? new[] { arg } : null);
         }
 
-        private int GetBinaryCount(object[] args)
+        private static int GetBinaryCount(IReadOnlyCollection<object> args)
         {
-            if (args == null || args.Length == 0)
+            if (args == null || args.Count == 0)
                 return 0;
 
-            int count = 0;
-            for (int i = 0; i < args.Length; ++i)
-                if (args[i] is byte[])
-                    count++;
-
-            return count;
+            return args.OfType<byte[]>().Count();
         }
-        public OutgoingPacket CreateOutgoing(Socket socket, SocketIOEventTypes socketIOEvent, int id, string name, object[] args)
+
+        public OutgoingPacket CreateOutgoing(
+            Socket socket,
+            SocketIOEventTypes socketIOEvent,
+            int id,
+            string name,
+            object[] args)
         {
-            builder.Length = 0;
+            _builder.Length = 0;
+            // ReSharper disable once IdentifierTypo
             List<byte[]> attachements = null;
 
-            switch(socketIOEvent)
+            switch (socketIOEvent)
             {
                 case SocketIOEventTypes.Ack:
+                {
                     if (GetBinaryCount(args) > 0)
                     {
                         attachements = CreatePlaceholders(args);
                         socketIOEvent = SocketIOEventTypes.BinaryAck;
                     }
+                }
+
                     break;
 
                 case SocketIOEventTypes.Event:
+                {
                     if (GetBinaryCount(args) > 0)
                     {
                         attachements = CreatePlaceholders(args);
                         socketIOEvent = SocketIOEventTypes.BinaryEvent;
                     }
+                }
                     break;
+                case SocketIOEventTypes.Unknown:
+                    break;
+                case SocketIOEventTypes.Connect:
+                    break;
+                case SocketIOEventTypes.Disconnect:
+                    break;
+                case SocketIOEventTypes.Error:
+                    break;
+                case SocketIOEventTypes.BinaryEvent:
+                    break;
+                case SocketIOEventTypes.BinaryAck:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(socketIOEvent), socketIOEvent, null);
             }
 
-            builder.Append(((int)TransportEventTypes.Message).ToString());
-            builder.Append(((int)socketIOEvent).ToString());
+            _builder.Append(((int)TransportEventTypes.Message).ToString());
+            _builder.Append(((int)socketIOEvent).ToString());
 
-            if (socketIOEvent == SocketIOEventTypes.BinaryEvent || socketIOEvent == SocketIOEventTypes.BinaryAck)
+            if (socketIOEvent is SocketIOEventTypes.BinaryEvent or SocketIOEventTypes.BinaryAck)
             {
-                builder.Append(attachements.Count.ToString());
-                builder.Append('-');
+                if (attachements != null)
+                {
+                    _builder.Append(attachements.Count.ToString());
+                }
+
+                _builder.Append('-');
             }
 
-            // Add the namespace. If there is any other then the root nsp ("/")
-            // then we have to add a trailing "," if we have more data.
+            /*
+             * 添加命名空间如果有其他的，那么根nsp ("/")
+             * 如果我们有更多的数据，那么我们必须在后面添加一个"，"。
+             */
             bool nspAdded = false;
             if (socket.Namespace != "/")
             {
-                builder.Append(socket.Namespace);
+                _builder.Append(socket.Namespace);
                 nspAdded = true;
             }
 
@@ -459,24 +540,27 @@ namespace BestHTTP.SocketIO3.Parsers
             {
                 if (nspAdded)
                 {
-                    builder.Append(',');
+                    _builder.Append(',');
                     nspAdded = false;
                 }
 
-                builder.Append(id.ToString());
+                _builder.Append(id.ToString());
             }
 
             // payload
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (socketIOEvent)
             {
                 case SocketIOEventTypes.Connect:
+                {
                     // No Data | Object
-                    if (args != null && args.Length > 0)
+                    if (args is { Length: > 0 })
                     {
-                        if (nspAdded) builder.Append(',');
+                        if (nspAdded) _builder.Append(',');
 
-                        builder.Append(BestHTTP.JSON.LitJson.JsonMapper.ToJson(args[0]));
+                        _builder.Append(JSON.LitJson.JsonMapper.ToJson(args[0]));
                     }
+                }
                     break;
 
                 case SocketIOEventTypes.Disconnect:
@@ -484,69 +568,74 @@ namespace BestHTTP.SocketIO3.Parsers
                     break;
 
                 case SocketIOEventTypes.Error:
+                {
                     // String | Object
-                    if (args != null && args.Length > 0)
+                    if (args is { Length: > 0 })
                     {
-                        if (nspAdded) builder.Append(',');
+                        if (nspAdded) _builder.Append(',');
 
-                        builder.Append(BestHTTP.JSON.LitJson.JsonMapper.ToJson(args[0]));
+                        _builder.Append(JSON.LitJson.JsonMapper.ToJson(args[0]));
                     }
+                }
                     break;
 
                 case SocketIOEventTypes.Ack:
                 case SocketIOEventTypes.BinaryAck:
-                    if (nspAdded) builder.Append(',');
+                {
+                    if (nspAdded) _builder.Append(',');
 
-                    if (args != null && args.Length > 0)
+                    if (args is { Length: > 0 })
                     {
                         var argsJson = JSON.LitJson.JsonMapper.ToJson(args);
-                        builder.Append(argsJson);
+                        _builder.Append(argsJson);
                     }
                     else
-                        builder.Append("[]");
+                    {
+                        _builder.Append("[]");
+                    }
+                }
                     break;
-
                 default:
-                    if (nspAdded) builder.Append(',');
+                {
+                    if (nspAdded) _builder.Append(',');
 
                     // Array
-                    builder.Append('[');
+                    _builder.Append('[');
                     if (!string.IsNullOrEmpty(name))
                     {
-                        builder.Append('\"');
-                        builder.Append(name);
-                        builder.Append('\"');
+                        _builder.Append('\"');
+                        _builder.Append(name);
+                        _builder.Append('\"');
                     }
 
-                    if (args != null && args.Length > 0)
+                    if (args is { Length: > 0 })
                     {
-                        builder.Append(',');
+                        _builder.Append(',');
                         var argsJson = JSON.LitJson.JsonMapper.ToJson(args);
-                        builder.Append(argsJson, 1, argsJson.Length - 2);                        
+                        _builder.Append(argsJson, 1, argsJson.Length - 2);
                     }
 
-                    builder.Append(']');
+                    _builder.Append(']');
+                }
                     break;
             }
 
-            return new OutgoingPacket { Payload = builder.ToString(), Attachements = attachements };
+            return new OutgoingPacket { Payload = _builder.ToString(), Attachements = attachements };
         }
 
-        private List<byte[]> CreatePlaceholders(object[] args)
+        // ReSharper disable once MemberCanBeMadeStatic.Local
+        private List<byte[]> CreatePlaceholders(IList<object> args)
         {
+            // ReSharper disable once IdentifierTypo
             List<byte[]> attachements = null;
 
-            for (int i = 0; i < args.Length; ++i)
+            for (var i = 0; i < args.Count; ++i)
             {
-                var binary = args[i] as byte[];
-                if (binary != null)
-                {
-                    if (attachements == null)
-                        attachements = new List<byte[]>();
-                    attachements.Add(binary);
+                if (args[i] is not byte[] binary) continue;
+                attachements ??= new List<byte[]>();
+                attachements.Add(binary);
 
-                    args[i] = new Placeholder { _placeholder = true, num = attachements.Count - 1 };
-                }
+                args[i] = new Placeholder { _placeholder = true, Num = attachements.Count - 1 };
             }
 
             return attachements;
