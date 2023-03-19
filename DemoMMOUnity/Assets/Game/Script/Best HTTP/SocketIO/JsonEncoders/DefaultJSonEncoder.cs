@@ -6,7 +6,7 @@ using BestHTTP.JSON;
 namespace BestHTTP.SocketIO.JsonEncoders
 {
     /// <summary>
-    /// The default IJsonEncoder implementation. It's uses the Json class from the BestHTTP.JSON namespace to encode and decode.
+    /// 默认的IJsonEncoder实现。它使用了来自 BestHTTP 的Json类。JSON命名空间来编码和解码。
     /// </summary>
     public sealed class DefaultJSonEncoder : IJsonEncoder
     {

@@ -384,10 +384,6 @@ namespace BestHTTP.SocketIO3.Transports
             }
         }
 
-        #endregion
-
-        #region Packet Parsing and Handling
-
         /// <summary>
         /// 预处理数据包并将数据包发送给管理器。
         /// </summary>
@@ -401,6 +397,7 @@ namespace BestHTTP.SocketIO3.Transports
                     {
                         HttpManager.Logger.Warning("PollingTransport",
                             $"当状态为{State.ToString()}时收到“打开”数据包", this.Manager.Context);
+                        
                     }
                     else
                     {

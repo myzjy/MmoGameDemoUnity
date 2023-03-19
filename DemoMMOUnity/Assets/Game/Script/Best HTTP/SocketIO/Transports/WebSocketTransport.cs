@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace BestHTTP.SocketIO.Transports
 {
@@ -11,7 +12,7 @@ namespace BestHTTP.SocketIO.Transports
     using Extensions;
 
     /// <summary>
-    /// A transport implementation that can communicate with a SocketIO server.
+    /// 可以与SocketIO服务器通信的传输实现。
     /// </summary>
     internal sealed class WebSocketTransport : ITransport
     {
@@ -44,30 +45,38 @@ namespace BestHTTP.SocketIO.Transports
             Manager = manager;
         }
 
-        #region Some ITransport Implementation
-
         public void Open()
         {
             if (State != TransportStates.Closed)
+            {
                 return;
+            }
 
             Uri uri = null;
-            string baseUrl = new UriBuilder(HttpProtocolFactory.IsSecureProtocol(Manager.Uri) ? "wss" : "ws",
-                Manager.Uri.Host,
-                Manager.Uri.Port,
-                Manager.Uri.GetRequestPathAndQueryURL()).Uri.ToString();
-            string format = "{0}?EIO={1}&transport=websocket{3}";
+            var isSecureProtocol = HttpProtocolFactory.IsSecureProtocol(Manager.Uri);
+            var wsOrWssString = isSecureProtocol ? "wss" : "ws";
+            var urlBuilder = new UriBuilder(
+                scheme: wsOrWssString,
+                host: Manager.Uri.Host,
+                port: Manager.Uri.Port,
+                pathValue: Manager.Uri.GetRequestPathAndQueryURL());
+            string baseUrl = urlBuilder.Uri.ToString();
+            var format = new StringBuilder(10);
+            format.Append($"{baseUrl}?");
+            format.Append($"EIO={Manager.ProtocolVersion}&");
+            var sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake ||
+                                            (Manager.Options.QueryParamsOnlyForHandshake &&
+                                             Manager.Handshake == null);
+
+            var webString = sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty;
+            format.Append($"transport=websocket{webString}");
             if (Manager.Handshake != null)
-                format += "&sid={2}";
+            {
+                var sid = Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty;
+                format.Append($"&sid={sid}");
+            }
 
-            bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake ||
-                                             (Manager.Options.QueryParamsOnlyForHandshake && Manager.Handshake == null);
-
-            uri = new Uri(string.Format(format,
-                baseUrl,
-                Manager.ProtocolVersion,
-                Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
-                sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty));
+            uri = new Uri(format.ToString());
 
             Implementation = new WebSocket(uri);
 
@@ -75,8 +84,14 @@ namespace BestHTTP.SocketIO.Transports
             Implementation.StartPingThread = true;
 
             if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                Implementation.OnInternalRequestCreated = (ws, internalRequest) =>
+            {
+                void DelegateHttpRequestCustomization(WebSocket ws, HttpRequest internalRequest)
+                {
                     this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, internalRequest);
+                }
+
+                Implementation.OnInternalRequestCreated = DelegateHttpRequestCustomization;
+            }
 #endif
 
             Implementation.OnOpen = OnOpen;
@@ -91,32 +106,35 @@ namespace BestHTTP.SocketIO.Transports
         }
 
         /// <summary>
-        /// Closes the transport and cleans up resources.
+        /// 关闭传输并清理资源。
         /// </summary>
         public void Close()
         {
             if (State == TransportStates.Closed)
+            {
                 return;
+            }
 
             State = TransportStates.Closed;
 
             if (Implementation != null)
+            {
                 Implementation.Close();
+            }
             else
-                HttpManager.Logger.Warning("WebSocketTransport", "Close - WebSocket Implementation already null!");
+            {
+                HttpManager.Logger.Warning("WebSocketTransport", "关闭- WebSocket实现已经为空!");
+            }
+
             Implementation = null;
         }
 
         /// <summary>
-        /// Polling implementation. With WebSocket it's just a skeleton.
+        /// 轮询的实现。而WebSocket只是一个骨架。
         /// </summary>
         public void Poll()
         {
         }
-
-        #endregion
-
-        #region WebSocket Events
 
         /// <summary>
         /// WebSocket implementation OnOpen event handler.
@@ -302,10 +320,6 @@ namespace BestHTTP.SocketIO.Transports
                 Manager.UpgradingTransport = null;
         }
 
-        #endregion
-
-        #region Packet Sending Implementation
-
         /// <summary>
         /// A WebSocket implementation of the packet sending.
         /// </summary>
@@ -368,9 +382,6 @@ namespace BestHTTP.SocketIO.Transports
             packets.Clear();
         }
 
-        #endregion
-
-        #region Packet Handling
 
         /// <summary>
         /// 将只处理需要升级的数据包。所有其他数据包都传递给Manager。
@@ -391,6 +402,7 @@ namespace BestHTTP.SocketIO.Transports
                     goto default;
 
                 case TransportEventTypes.Pong:
+                {
                     // Answer for a Ping Probe.
                     if (packet.Payload == "probe")
                     {
@@ -399,15 +411,24 @@ namespace BestHTTP.SocketIO.Transports
                     }
 
                     goto default;
+                }
 
+                case TransportEventTypes.Unknown:
+                case TransportEventTypes.Close:
+                case TransportEventTypes.Ping:
+                case TransportEventTypes.Message:
+                case TransportEventTypes.Upgrade:
+                case TransportEventTypes.Noop:
                 default:
+                {
                     if (Manager.UpgradingTransport != this)
+                    {
                         (Manager as IManager).OnPacket(packet);
+                    }
+                }
                     break;
             }
         }
-
-        #endregion
     }
 }
 

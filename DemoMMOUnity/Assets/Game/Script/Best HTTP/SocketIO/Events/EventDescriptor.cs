@@ -5,40 +5,41 @@ using System.Collections.Generic;
 
 namespace BestHTTP.SocketIO.Events
 {
-    public delegate void SocketIOCallback(Socket socket, Packet packet, params object[] args);
-    public delegate void SocketIOAckCallback(Socket socket, Packet packet, params object[] args);
+    public
+        delegate
+        void SocketIOCallback(Socket socket, Packet packet, params object[] args);
+
+    public
+        delegate
+        void SocketIOAckCallback(Socket socket, Packet packet, params object[] args);
 
     /// <summary>
-    /// A class to describe an event, and its metadatas.
+    /// 描述事件及其元数据的类。
     /// </summary>
     internal sealed class EventDescriptor
     {
-        #region Public Properties
-
         /// <summary>
-        /// List of callback delegates.
+        /// 回调委托的列表。
         /// </summary>
         public List<SocketIOCallback> Callbacks { get; private set; }
 
         /// <summary>
-        /// If this property is true, callbacks are removed automatically after the event dispatch.
+        /// 如果此属性为true，回调将在事件分派后自动移除。
         /// </summary>
         public bool OnlyOnce { get; private set; }
 
         /// <summary>
-        /// If this property is true, the dispatching packet's Payload will be decoded using the Manager's Encoder.
+        /// 如果此属性为true，调度包的Payload将使用Manager's Encoder进行解码。
         /// </summary>
         public bool AutoDecodePayload { get; private set; }
 
-        #endregion
-
         /// <summary>
-        /// Cache an array on a hot-path.
+        /// 在热路径上缓存一个数组。
         /// </summary>
-        private SocketIOCallback[] CallbackArray;
+        private SocketIOCallback[] _callbackArray;
 
         /// <summary>
-        /// Constructor to create an EventDescriptor instance and set the meta-datas.
+        /// 构造函数来创建EventDescriptor实例并设置元数据。
         /// </summary>
         public EventDescriptor(bool onlyOnce, bool autoDecodePayload, SocketIOCallback callback)
         {
@@ -47,48 +48,53 @@ namespace BestHTTP.SocketIO.Events
             this.Callbacks = new List<SocketIOCallback>(1);
 
             if (callback != null)
+            {
                 Callbacks.Add(callback);
+            }
         }
 
         /// <summary>
-        /// Will call the callback delegates with the given parameters and remove the callbacks if this descriptor marked with a true OnlyOnce property.
+        /// 如果此描述符标记为true OnlyOnce属性，将使用给定参数调用回调委托并删除回调。
         /// </summary>
         public void Call(Socket socket, Packet packet, params object[] args)
         {
             int callbackCount = Callbacks.Count;
-            if (CallbackArray == null || CallbackArray.Length < callbackCount)
-                Array.Resize(ref CallbackArray, callbackCount);
+            if (_callbackArray == null || _callbackArray.Length < callbackCount)
+            {
+                Array.Resize(ref _callbackArray, callbackCount);
+            }
 
-            // Copy the callback delegates to an array, because in one of the callbacks we can modify the list(by calling On/Once/Off in an event handler)
-            // This way we can prevent some strange bug
-            Callbacks.CopyTo(CallbackArray);
+            //将回调委托复制到一个数组，因为在其中一个回调中我们可以修改列表(通过在事件处理程序中调用On/Once/Off)
+            //这样我们可以防止一些奇怪的 bug
+            Callbacks.CopyTo(_callbackArray);
 
             // Go through the delegates and call them
+            //检查一下代表，给他们进行回调
             for (int i = 0; i < callbackCount; ++i)
             {
                 try
                 {
-                    // Call the delegate.
-                    SocketIOCallback callback = CallbackArray[i];
-                    if (callback!= null)
-                        callback(socket, packet, args);
+                    // 调用委托。
+                    SocketIOCallback callback = _callbackArray[i];
+                    callback?.Invoke(socket, packet, args);
                 }
                 catch (Exception ex)
                 {
-                    // Do not try to emit a new Error when we already tried to deliver an Error, possible causing a
-                    //  stack overflow
+                    // 当我们已经尝试传递一个错误时，不要尝试发出一个新的错误，可能会导致堆栈溢出
                     if (args == null || args.Length == 0 || !(args[0] is Error))
+                    {
                         (socket as ISocket).EmitError(SocketIOErrors.User, ex.Message + " " + ex.StackTrace);
+                    }
 
                     HttpManager.Logger.Exception("EventDescriptor", "Call", ex);
                 }
 
-                // If these callbacks has to be called only once, remove them from the main list
+                // 如果这些回调函数只能被调用一次，请将它们从主列表中移除
                 if (this.OnlyOnce)
-                    Callbacks.Remove(CallbackArray[i]);
+                    Callbacks.Remove(_callbackArray[i]);
 
-                // Don't keep any reference avoiding memory leaks
-                CallbackArray[i] = null;
+                // 不要保留任何引用以避免内存泄漏
+                _callbackArray[i] = null;
             }
         }
     }
