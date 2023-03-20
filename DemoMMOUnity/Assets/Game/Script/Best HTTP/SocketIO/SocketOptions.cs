@@ -115,6 +115,7 @@ namespace BestHTTP.SocketIO
         /// <summary>
         /// 从Socket开始。IO v3，连接到一个命名空间，客户端可以发送有效负载数据。当设置了Auth回调函数时，插件将在连接到命名空间时调用它。它的返回值必须是json字符串!
         /// </summary>
+        // ReSharper disable once UnassignedReadonlyField
         public readonly Func<SocketManager, Socket, string> Auth;
 
 
@@ -126,9 +127,8 @@ namespace BestHTTP.SocketIO
         /// <summary>
         /// 构造函数，设置默认选项值。
         /// </summary>
-        public SocketOptions(Func<SocketManager, Socket, string> auth)
+        public SocketOptions()
         {
-            Auth = auth;
             ConnectWith = Transports.TransportTypes.Polling;
             Reconnection = true;
             ReconnectionAttempts = int.MaxValue;
