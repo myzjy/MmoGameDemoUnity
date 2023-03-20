@@ -282,8 +282,6 @@ namespace BestHTTP.SocketIO3
                 Close();
         }
 
-        #region Connection to the server, and upgrading
-
         /// <summary>
         ///该函数将开始打开Socket。IO连接通过发送握手请求。
         ///如果Options的AutoConnect为true，它将被自动调用。
@@ -532,10 +530,6 @@ namespace BestHTTP.SocketIO3
             State = States.Paused;
         }
 
-        #endregion
-
-        #region Packet Handling
-
         /// <summary>
         /// 选择发送数据包的最佳传输方式。
         /// </summary>
@@ -664,15 +658,15 @@ namespace BestHTTP.SocketIO3
             }
         }
 
-        #endregion
-
         /// <summary>
         /// 向所有可用的名称空间发送一个事件。
         /// </summary>
         public void EmitAll(string eventName, params object[] args)
         {
-            for (int i = 0; i < _sockets.Count; ++i)
-                _sockets[i].Emit(eventName, args);
+            foreach (var t in _sockets)
+            {
+                t.Emit(eventName, args);
+            }
         }
 
         /// <summary>

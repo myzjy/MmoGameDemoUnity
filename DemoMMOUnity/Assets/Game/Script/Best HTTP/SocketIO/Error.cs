@@ -4,8 +4,8 @@ namespace BestHTTP.SocketIO
 {
     public sealed class Error
     {
-        public SocketIOErrors Code { get; private set; }
-        public string Message { get; private set; }
+        private SocketIOErrors Code { get; set; }
+        private string Message { get; set; }
 
         public Error(SocketIOErrors code, string msg)
         {
@@ -15,7 +15,7 @@ namespace BestHTTP.SocketIO
 
         public override string ToString()
         {
-            return string.Format("Code: {0} Message: \"{1}\"", this.Code.ToString(), this.Message);
+            return $"Code: {this.Code.ToString()} Message: \"{this.Message}\"";
         }
     }
 }

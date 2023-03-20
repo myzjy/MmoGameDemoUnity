@@ -6,63 +6,57 @@ using System.Collections.Generic;
 namespace BestHTTP.SocketIO
 {
     using BestHTTP;
-    using BestHTTP.SocketIO.Events;
+    using Events;
 
     /// <summary>
-    /// This class represents a Socket.IO namespace.
+    /// 这个类表示一个套接字。IO命名空间。
     /// </summary>
     public sealed class Socket : ISocket
     {
-        #region Public Properties
-
         /// <summary>
-        /// The SocketManager instance that created this socket.
+        /// 创建此套接字的SocketManager实例。
         /// </summary>
         public SocketManager Manager { get; private set; }
 
         /// <summary>
-        /// The namespace that this socket is bound to.
+        /// 该套接字所绑定的名称空间。
         /// </summary>
         public string Namespace { get; private set; }
 
         /// <summary>
         /// Unique Id of the socket.
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; private set; }
 
         /// <summary>
-        /// True if the socket is connected and open to the server. False otherwise.
+        /// 如果套接字已连接并向服务器打开，则为True。否则错误。
         /// </summary>
-        public bool IsOpen { get; private set; }
+        private bool IsOpen { get; set; }
 
         /// <summary>
-        /// While this property is True, the socket will decode the Packet's Payload data using the parent SocketManager's Encoder. You must set this property before any event subscription! Its default value is True;
+        /// 当此属性为True时，套接字将使用父SocketManager's Encoder解码数据包的有效负载数据。
+        /// 您必须在订阅任何事件之前设置此属性!默认值为True;
         /// </summary>
-        public bool AutoDecodePayload { get; set; }
-
-        #endregion
-
-        #region Privates
+        private bool AutoDecodePayload { get; set; }
 
         /// <summary>
-        /// A table to store acknowledgment callbacks associated to the given ids.
+        /// 用于存储与给定id关联的确认回调的表。
         /// </summary>
-        private Dictionary<int, SocketIOAckCallback> AckCallbacks;
+        private Dictionary<int, SocketIOAckCallback> _ackCallbacks;
 
         /// <summary>
-        /// Tha callback table that helps this class to manage event subscription and dispatching events.
+        /// 帮助该类管理事件订阅和分派事件的回调表。
         /// </summary>
-        private EventTable EventCallbacks;
+        private readonly EventTable _eventCallbacks;
 
         /// <summary>
-        /// Cached list to spare some GC alloc.
+        /// 缓存列表以节省一些GC分配。
         /// </summary>
-        private List<object> arguments = new List<object>();
-
-        #endregion
+        private readonly List<object> _arguments = new List<object>();
 
         /// <summary>
-        /// Internal constructor.
+        /// 内部构造函数。
         /// </summary>
         internal Socket(string nsp, SocketManager manager)
         {
@@ -70,29 +64,27 @@ namespace BestHTTP.SocketIO
             this.Manager = manager;
             this.IsOpen = false;
             this.AutoDecodePayload = true;
-            this.EventCallbacks = new EventTable(this);
+            this._eventCallbacks = new EventTable(this);
         }
 
-        #region Socket Handling
-
         /// <summary>
-        /// Internal function to start opening the socket.
+        /// 内部函数开始打开套接字。
         /// </summary>
         void ISocket.Open()
         {
-            HttpManager.Logger.Information("Socket", string.Format("Open - Manager.State = {0}", Manager.State));
+            HttpManager.Logger.Information("Socket", $"Open - Manager.State = {Manager.State}");
 
-            // The transport already established the connection
+            // 运输车已经建立了连接
             if (Manager.State == SocketManager.States.Open)
                 OnTransportOpen();
             else if (Manager.Options.AutoConnect && Manager.State == SocketManager.States.Initial)
-                    Manager.Open();
+                Manager.Open();
         }
 
         /// <summary>
         /// Disconnects this socket/namespace.
         /// </summary>
-        public void Disconnect()
+        private void Disconnect()
         {
             (this as ISocket).Disconnect(true);
         }
@@ -102,91 +94,97 @@ namespace BestHTTP.SocketIO
         /// </summary>
         void ISocket.Disconnect(bool remove)
         {
-            // Send a disconnect packet to the server
+            // 向服务器发送断开连接报文
             if (IsOpen)
             {
-                Packet packet = new Packet(TransportEventTypes.Message, SocketIOEventTypes.Disconnect, this.Namespace, string.Empty);
+                Packet packet = new Packet(
+                    transportEvent: TransportEventTypes.Message,
+                    packetType: SocketIOEventTypes.Disconnect,
+                    nsp: this.Namespace,
+                    payload: string.Empty);
                 (Manager as IManager).SendPacket(packet);
 
-                // IsOpen must be false, because in the OnPacket preprocessing the packet would call this function again
+                // IsOpen必须为false，因为在OnPacket预处理中，数据包将再次调用此函数
                 IsOpen = false;
                 (this as ISocket).OnPacket(packet);
             }
 
-            if (AckCallbacks != null)
-                AckCallbacks.Clear();
+            if (_ackCallbacks != null)
+                _ackCallbacks.Clear();
 
             if (remove)
             {
-                EventCallbacks.Clear();
+                _eventCallbacks.Clear();
 
                 (Manager as IManager).Remove(this);
             }
         }
-
-        #endregion
-
-        #region Emit Implementations
 
         public Socket Emit(string eventName, params object[] args)
         {
             return Emit(eventName, null, args);
         }
 
-        public Socket Emit(string eventName, SocketIOAckCallback callback, params object[] args)
+        private Socket Emit(string eventName, SocketIOAckCallback callback, params object[] args)
         {
             bool blackListed = EventNames.IsBlacklisted(eventName);
             if (blackListed)
+            {
                 throw new ArgumentException("Blacklisted event: " + eventName);
+            }
 
-            arguments.Clear();
-            arguments.Add(eventName);
+            _arguments.Clear();
+            _arguments.Add(eventName);
 
-            // Find and swap any binary data(byte[]) to a placeholder string.
-            // Server side these will be swapped back.
+            //查找并交换任何二进制数据(byte[])到一个占位符字符串。
+            //服务器端这些将被交换回来。
             List<byte[]> attachments = null;
-            if (args != null && args.Length > 0)
+            if (args is { Length: > 0 })
             {
                 int idx = 0;
-                for (int i = 0; i < args.Length; ++i)
+                foreach (var t in args)
                 {
-                    byte[] binData = args[i] as byte[];
-                    if (binData != null)
+                    if (t is byte[] binData)
                     {
-                        if (attachments == null)
-                            attachments = new List<byte[]>();
+                        attachments ??= new List<byte[]>();
 
-                        Dictionary<string, object> placeholderObj = new Dictionary<string, object>(2);
-                        placeholderObj.Add(Packet.Placeholder, true);
-                        placeholderObj.Add("num", idx++);
+                        Dictionary<string, object> placeholderObj = new Dictionary<string, object>(2)
+                        {
+                            { Packet.Placeholder, true },
+                            { "num", idx++ }
+                        };
 
-                        arguments.Add(placeholderObj);
+                        _arguments.Add(placeholderObj);
 
                         attachments.Add(binData);
                     }
                     else
-                        arguments.Add(args[i]);
+                    {
+                        _arguments.Add(t);
+                    }
                 }
             }
 
-            string payload = null;
+            string payload;
 
             try
             {
-                payload = Manager.Encoder.Encode(arguments);
+                payload = Manager.Encoder.Encode(_arguments);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                (this as ISocket).EmitError(SocketIOErrors.Internal, "Error while encoding payload: " + ex.Message + " " + ex.StackTrace);
+                (this as ISocket).EmitError(
+                    errCode: SocketIOErrors.Internal,
+                    msg: $"编码有效负载时出错:{ex.Message}  {ex.StackTrace}");
 
                 return this;
             }
 
-            // We don't use it further in this function, so we can clear it to not hold any unwanted reference.
-            arguments.Clear();
+            // 在此函数中不再进一步使用它，因此可以将其清除为不包含任何不需要的引用。
+            _arguments.Clear();
 
             if (payload == null)
-                throw new ArgumentException("Encoding the arguments to JSON failed!");
+                throw new ArgumentException("将参数编码为JSON失败!");
 
             int id = 0;
 
@@ -194,18 +192,18 @@ namespace BestHTTP.SocketIO
             {
                 id = Manager.NextAckId;
 
-                if (AckCallbacks == null)
-                    AckCallbacks = new Dictionary<int, SocketIOAckCallback>();
+                _ackCallbacks ??= new Dictionary<int, SocketIOAckCallback>();
 
-                AckCallbacks[id] = callback;
+                _ackCallbacks[id] = callback;
             }
 
-            Packet packet = new Packet(TransportEventTypes.Message,
-                                       attachments == null ? SocketIOEventTypes.Event : SocketIOEventTypes.BinaryEvent,
-                                       this.Namespace,
-                                       payload,
-                                       0,
-                                       id);
+            Packet packet = new Packet(
+                transportEvent: TransportEventTypes.Message,
+                packetType: attachments == null ? SocketIOEventTypes.Event : SocketIOEventTypes.BinaryEvent,
+                nsp: this.Namespace,
+                payload: payload,
+                attachment: 0,
+                id: id);
 
             if (attachments != null)
                 packet.Attachments = attachments; // This will set the AttachmentCount property too.
@@ -218,120 +216,124 @@ namespace BestHTTP.SocketIO
         public Socket EmitAck(Packet originalPacket, params object[] args)
         {
             if (originalPacket == null)
-                throw new ArgumentNullException("originalPacket == null!");
+            {
+                throw new ArgumentNullException(nameof(originalPacket));
+            }
 
-            if (/*originalPacket.Id == 0 ||*/
-                (originalPacket.SocketIOEvent != SocketIOEventTypes.Event && originalPacket.SocketIOEvent != SocketIOEventTypes.BinaryEvent))
-                throw new ArgumentException("Wrong packet - you can't send an Ack for a packet with id == 0 and SocketIOEvent != Event or SocketIOEvent != BinaryEvent!");
+            if ( /*originalPacket.Id == 0 ||*/
+                (originalPacket.SocketIOEvent != SocketIOEventTypes.Event &&
+                 originalPacket.SocketIOEvent != SocketIOEventTypes.BinaryEvent))
+            {
+                throw new ArgumentException(
+                    "错误的数据包-你不能发送一个Ack的数据包 id == 0 and SocketIOEvent != Event or SocketIOEvent != BinaryEvent!");
+            }
 
-            arguments.Clear();
-            if (args != null && args.Length > 0)
-                arguments.AddRange(args);
+            _arguments.Clear();
+            if (args is { Length: > 0 })
+            {
+                _arguments.AddRange(args);
+            }
 
-            string payload = null;
+            string payload;
             try
             {
-                payload = Manager.Encoder.Encode(arguments);
+                payload = Manager.Encoder.Encode(_arguments);
             }
             catch (Exception ex)
             {
-                (this as ISocket).EmitError(SocketIOErrors.Internal, "Error while encoding payload: " + ex.Message + " " + ex.StackTrace);
+                (this as ISocket).EmitError(
+                    errCode: SocketIOErrors.Internal,
+                    msg: $"编码有效负载时出错:{ex.Message}  {ex.StackTrace}");
 
                 return this;
             }
 
             if (payload == null)
-                throw new ArgumentException("Encoding the arguments to JSON failed!");
+            {
+                throw new ArgumentException("将参数编码为JSON失败!");
+            }
 
-            Packet packet = new Packet(TransportEventTypes.Message,
-                                       originalPacket.SocketIOEvent == SocketIOEventTypes.Event ? SocketIOEventTypes.Ack : SocketIOEventTypes.BinaryAck,
-                                       this.Namespace,
-                                       payload,
-                                       0,
-                                       originalPacket.Id);
+            Packet packet = new Packet(
+                transportEvent: TransportEventTypes.Message,
+                packetType: originalPacket.SocketIOEvent == SocketIOEventTypes.Event
+                    ? SocketIOEventTypes.Ack
+                    : SocketIOEventTypes.BinaryAck,
+                nsp: this.Namespace,
+                payload: payload,
+                attachment: 0,
+                id: originalPacket.Id);
 
             (Manager as IManager).SendPacket(packet);
 
             return this;
         }
 
-        #endregion
-
-        #region On Implementations
-
         /// <summary>
-        /// Register a callback for a given name
+        /// 为给定的名称注册一个回调
         /// </summary>
         public void On(string eventName, SocketIOCallback callback)
         {
-            EventCallbacks.Register(eventName, callback, false, this.AutoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, false, this.AutoDecodePayload);
         }
 
         public void On(SocketIOEventTypes type, SocketIOCallback callback)
         {
             string eventName = EventNames.GetNameFor(type);
 
-            EventCallbacks.Register(eventName, callback, false, this.AutoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, false, this.AutoDecodePayload);
         }
 
         public void On(string eventName, SocketIOCallback callback, bool autoDecodePayload)
         {
-            EventCallbacks.Register(eventName, callback, false, autoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, false, autoDecodePayload);
         }
 
         public void On(SocketIOEventTypes type, SocketIOCallback callback, bool autoDecodePayload)
         {
-            string eventName = EventNames.GetNameFor(type);
+            var eventName = EventNames.GetNameFor(type);
 
-            EventCallbacks.Register(eventName, callback, false, autoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, false, autoDecodePayload);
         }
-
-        #endregion
-
-        #region Once Implementations
 
         public void Once(string eventName, SocketIOCallback callback)
         {
-            EventCallbacks.Register(eventName, callback, true, this.AutoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, true, this.AutoDecodePayload);
         }
 
         public void Once(SocketIOEventTypes type, SocketIOCallback callback)
         {
-            EventCallbacks.Register(EventNames.GetNameFor(type), callback, true, this.AutoDecodePayload);
+            _eventCallbacks.Register(EventNames.GetNameFor(type), callback, true, this.AutoDecodePayload);
         }
 
         public void Once(string eventName, SocketIOCallback callback, bool autoDecodePayload)
         {
-            EventCallbacks.Register(eventName, callback, true, autoDecodePayload);
+            _eventCallbacks.Register(eventName, callback, true, autoDecodePayload);
         }
 
         public void Once(SocketIOEventTypes type, SocketIOCallback callback, bool autoDecodePayload)
         {
-            EventCallbacks.Register(EventNames.GetNameFor(type), callback, true, autoDecodePayload);
+            _eventCallbacks.Register(EventNames.GetNameFor(type), callback, true, autoDecodePayload);
         }
 
-        #endregion
-
-        #region Off Implementations
 
         /// <summary>
-        /// Remove all callbacks for all events.
+        /// 删除所有事件的所有回调。
         /// </summary>
         public void Off()
         {
-            EventCallbacks.Clear();
+            _eventCallbacks.Clear();
         }
 
         /// <summary>
-        /// Removes all callbacks to the given event.
+        /// 移除对给定事件的所有回调。
         /// </summary>
-        public void Off(string eventName)
+        private void Off(string eventName)
         {
-            EventCallbacks.Unregister(eventName);
+            _eventCallbacks.Unregister(eventName);
         }
 
         /// <summary>
-        /// Removes all callbacks to the given event.
+        /// 移除对给定事件的所有回调。
         /// </summary>
         public void Off(SocketIOEventTypes type)
         {
@@ -339,57 +341,64 @@ namespace BestHTTP.SocketIO
         }
 
         /// <summary>
-        /// Remove the specified callback.
+        /// 删除指定的回调。
         /// </summary>
         public void Off(string eventName, SocketIOCallback callback)
         {
-            EventCallbacks.Unregister(eventName, callback);
+            _eventCallbacks.Unregister(eventName, callback);
         }
 
         /// <summary>
-        /// Remove the specified callback.
+        /// 删除指定的回调。
         /// </summary>
         public void Off(SocketIOEventTypes type, SocketIOCallback callback)
         {
-            EventCallbacks.Unregister(EventNames.GetNameFor(type), callback);
+            _eventCallbacks.Unregister(EventNames.GetNameFor(type), callback);
         }
 
-        #endregion
-
-        #region Packet Handling
 
         /// <summary>
-        /// Last call of the OnPacket chain(Transport -> Manager -> Socket), we will dispatch the event if there is any callback
+        /// OnPacket链的最后一次调用(Transport -> Manager -> Socket),如果有任何回调，我们将分派事件
         /// </summary>
         void ISocket.OnPacket(Packet packet)
         {
             // Some preprocessing of the packet
-            switch(packet.SocketIOEvent)
+            switch (packet.SocketIOEvent)
             {
                 case SocketIOEventTypes.Connect:
+                {
                     if (this.Manager.Options.ServerVersion != SupportedSocketIOVersions.v3)
                     {
-                        this.Id = this.Namespace != "/" ? this.Namespace + "#" + this.Manager.Handshake.Sid : this.Manager.Handshake.Sid;
+                        this.Id = this.Namespace != "/"
+                            ? $"{this.Namespace}#{this.Manager.Handshake.Sid}"
+                            : this.Manager.Handshake.Sid;
                     }
                     else
                     {
-                        var data = JSON.Json.Decode(packet.Payload) as Dictionary<string, object>;
-                        this.Id = data["sid"].ToString();
+                        if (JSON.Json.Decode(packet.Payload) is Dictionary<string, object> data)
+                        {
+                            this.Id = data["sid"].ToString();
+                        }
                     }
+
                     this.IsOpen = true;
+                }
                     break;
 
                 case SocketIOEventTypes.Disconnect:
+                {
                     if (IsOpen)
                     {
                         IsOpen = false;
-                        EventCallbacks.Call(EventNames.GetNameFor(SocketIOEventTypes.Disconnect), packet);
+                        _eventCallbacks.Call(EventNames.GetNameFor(SocketIOEventTypes.Disconnect), packet);
                         Disconnect();
                     }
+                }
                     break;
 
-                // Create an Error object from the server-sent json string
+                // 从服务器发送的json字符串创建一个Error对象
                 case SocketIOEventTypes.Error:
+                {
                     bool success = false;
                     object result = JSON.Json.Decode(packet.Payload, ref success);
                     if (success)
@@ -399,57 +408,56 @@ namespace BestHTTP.SocketIO
 
                         if (errDict != null)
                         {
-                            object tmpObject = null;
                             string code = null;
-                            if (errDict.TryGetValue("code", out tmpObject))
+                            if (errDict.TryGetValue("code", out var tmpObject))
                                 code = tmpObject.ToString();
 
-                            int errorCode;
-                            if (code != null && int.TryParse(code, out errorCode) && errorCode >= 0 && errorCode <= 7)
+                            if (code != null &&
+                                int.TryParse(code, out var errorCode) &&
+                                errorCode is >= 0 and <= 7)
                             {
                                 errDict.TryGetValue("message", out tmpObject);
-                                err = new Error((SocketIOErrors)errorCode, tmpObject != null ? tmpObject.ToString() : string.Empty);
+                                err = new Error(
+                                    code: (SocketIOErrors)errorCode,
+                                    msg: tmpObject != null ? tmpObject.ToString() : string.Empty);
                             }
                         }
 
-                        if (err == null)
-                            err = new Error(SocketIOErrors.Custom, packet.Payload);
+                        err ??= new Error(SocketIOErrors.Custom, packet.Payload);
 
-                        EventCallbacks.Call(EventNames.GetNameFor(SocketIOEventTypes.Error), packet, err);
+                        _eventCallbacks.Call(EventNames.GetNameFor(SocketIOEventTypes.Error), packet, err);
 
                         return;
                     }
+                }
                     break;
             }
 
-            // Dispatch the event to all subscriber
-            EventCallbacks.Call(packet);
+            // 将事件分派给所有订阅者
+            _eventCallbacks.Call(packet);
 
             // call Ack callbacks
-            if ((packet.SocketIOEvent == SocketIOEventTypes.Ack || packet.SocketIOEvent == SocketIOEventTypes.BinaryAck) && AckCallbacks != null)
+            if (packet.SocketIOEvent is not (SocketIOEventTypes.Ack or SocketIOEventTypes.BinaryAck)
+                || _ackCallbacks == null) return;
+            if (_ackCallbacks.TryGetValue(packet.Id, out var ackCallback) &&
+                ackCallback != null)
             {
-                SocketIOAckCallback ackCallback = null;
-                if (AckCallbacks.TryGetValue(packet.Id, out ackCallback) &&
-                    ackCallback != null)
+                try
                 {
-                    try
-                    {
-                        ackCallback(this, packet, this.AutoDecodePayload ? packet.Decode(Manager.Encoder) : null);
-                    }
-                    catch (Exception ex)
-                    {
-                        HttpManager.Logger.Exception("Socket", "ackCallback", ex);
-                    }
+                    ackCallback(this, packet, this.AutoDecodePayload ? packet.Decode(Manager.Encoder) : null);
                 }
-
-                AckCallbacks.Remove(packet.Id);
+                catch (Exception ex)
+                {
+                    HttpManager.Logger.Exception("Socket", "ackCallback", ex);
+                }
             }
+
+            _ackCallbacks.Remove(packet.Id);
         }
 
-        #endregion
 
         /// <summary>
-        /// Emits an internal packet-less event to the user level.
+        /// 向用户级发出内部无包事件。
         /// </summary>
         void ISocket.EmitEvent(SocketIOEventTypes type, params object[] args)
         {
@@ -457,40 +465,54 @@ namespace BestHTTP.SocketIO
         }
 
         /// <summary>
-        /// Emits an internal packet-less event to the user level.
+        /// 向用户级发出内部无包事件。
         /// </summary>
         void ISocket.EmitEvent(string eventName, params object[] args)
         {
             if (!string.IsNullOrEmpty(eventName))
-                EventCallbacks.Call(eventName, null, args);
+            {
+                _eventCallbacks.Call(eventName, null, args);
+            }
         }
 
         void ISocket.EmitError(SocketIOErrors errCode, string msg)
         {
-            (this as ISocket).EmitEvent(SocketIOEventTypes.Error, new Error(errCode, msg));
+            (this as ISocket).EmitEvent(
+                type: SocketIOEventTypes.Error,
+                args: new Error(errCode, msg));
         }
 
-        #region Private Helper Functions
-
         /// <summary>
-        /// Called when the underlying transport is connected
+        /// 在连接底层传输时调用
         /// </summary>
         internal void OnTransportOpen()
         {
             HttpManager.Logger.Information("Socket", "OnTransportOpen - IsOpen: " + this.IsOpen);
 
             if (this.IsOpen)
+            {
                 return;
+            }
 
-            if (this.Namespace != "/" || this.Manager.Options.ServerVersion == SupportedSocketIOVersions.v3)
+            if (this.Namespace != "/" ||
+                this.Manager.Options.ServerVersion == SupportedSocketIOVersions.v3)
             {
                 try
                 {
                     string authData = null;
                     if (this.Manager.Options.ServerVersion == SupportedSocketIOVersions.v3)
-                        authData = this.Manager.Options.Auth != null ? this.Manager.Options.Auth(this.Manager, this) : "{}";
+                    {
+                        authData = this.Manager.Options.Auth != null
+                            ? this.Manager.Options.Auth(this.Manager, this)
+                            : "{}";
+                    }
 
-                    (Manager as IManager).SendPacket(new Packet(TransportEventTypes.Message, SocketIOEventTypes.Connect, this.Namespace, authData));
+                    var packetData = new Packet(
+                        transportEvent: TransportEventTypes.Message,
+                        packetType: SocketIOEventTypes.Connect,
+                        nsp: this.Namespace,
+                        payload: authData);
+                    (Manager as IManager).SendPacket(packetData);
                 }
                 catch (Exception ex)
                 {
@@ -498,10 +520,10 @@ namespace BestHTTP.SocketIO
                 }
             }
             else
+            {
                 this.IsOpen = true;
+            }
         }
-
-        #endregion
     }
 }
 

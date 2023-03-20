@@ -83,7 +83,7 @@ namespace BestHTTP.SocketIO3
                 _additionalQueryParams = value;
 
                 // 清除缓存的值
-                BuiltQueryParams = null;
+                _builtQueryParams = null;
 
                 // 订阅集合更改事件
                 if (value != null)
@@ -103,6 +103,7 @@ namespace BestHTTP.SocketIO3
         /// <summary>
         /// 调用套接字的每个HTTPRequest的回调。IO协议发送出去。它可以用于进一步定制(例如添加额外的请求)请求。
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public HttpRequestCallbackDelegate httpRequestCustomizationCallback { get; set; }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace BestHTTP.SocketIO3
         /// <summary>
         /// BuildQueryParams()调用结果的缓存值。
         /// </summary>
-        private string BuiltQueryParams;
+        private string _builtQueryParams;
 
         /// <summary>
         /// 构造函数，设置默认选项值。
@@ -142,9 +143,9 @@ namespace BestHTTP.SocketIO3
                 return string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(BuiltQueryParams))
+            if (!string.IsNullOrEmpty(_builtQueryParams))
             {
-                return BuiltQueryParams;
+                return _builtQueryParams;
             }
 
             StringBuilder sb = new StringBuilder(AdditionalQueryParams.Count * 4);
@@ -159,7 +160,7 @@ namespace BestHTTP.SocketIO3
                 sb.Append(kvp.Value);
             }
 
-            return BuiltQueryParams = sb.ToString();
+            return _builtQueryParams = sb.ToString();
         }
 
         /// <summary>
@@ -167,7 +168,7 @@ namespace BestHTTP.SocketIO3
         /// </summary>
         private void AdditionalQueryParams_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            BuiltQueryParams = null;
+            _builtQueryParams = null;
         }
 
     }

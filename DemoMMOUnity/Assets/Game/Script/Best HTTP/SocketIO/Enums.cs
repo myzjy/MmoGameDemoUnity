@@ -18,50 +18,50 @@ namespace BestHTTP.SocketIO
     }
 
     /// <summary>
-    /// Event types of the SocketIO protocol.
+    /// SocketIO协议事件类型。
     /// </summary>
     public enum SocketIOEventTypes : int
     {
         Unknown = -1,
 
         /// <summary>
-        /// Connect to a namespace, or we connected to a namespace
+        /// 连接到名称空间，或者我们连接到名称空间
         /// </summary>
         Connect = 0,
 
         /// <summary>
-        /// Disconnect a namespace, or we disconnected from a namespace.
+        /// 断开Socket命名空间，或者断开与Socket命名空间的连接。
         /// </summary>
         Disconnect = 1,
 
         /// <summary>
-        /// A general event. The event's name is in the payload.
+        /// 一般事件。事件的名称在有效负载中。
         /// </summary>
         Event = 2,
 
         /// <summary>
-        /// Acknowledgment of an event.
+        /// 对事件的承认。
         /// </summary>
         Ack = 3,
 
         /// <summary>
-        /// Error sent by the server, or by the plugin
+        /// 由服务器或插件发送的错误
         /// </summary>
         Error = 4,
 
         /// <summary>
-        /// A general event with binary attached to the packet. The event's name is in the payload.
+        /// 一个附加在包上的二进制的一般事件。事件的名称在有效负载中。
         /// </summary>
         BinaryEvent = 5,
 
         /// <summary>
-        /// Acknowledgment of a binary event.
+        /// 进制事件的确认。
         /// </summary>
         BinaryAck = 6
     }
 
     /// <summary>
-    /// Possible error codes that the SocketIO server can send.
+    /// SocketIO服务器可能发送的错误代码。
     /// </summary>
     public enum SocketIOErrors
     {
@@ -76,32 +76,32 @@ namespace BestHTTP.SocketIO
         UnknownSid = 1,
 
         /// <summary>
-        /// Bad handshake method
+        /// 糟糕的握手方式
         /// </summary>
         BadHandshakeMethod = 2,
 
         /// <summary>
-        /// Bad request
+        /// 坏的请求
         /// </summary>
         BadRequest = 3,
 
         /// <summary>
-        /// Tried to access a forbidden resource
+        /// 试图访问禁止的资源
         /// </summary>
         Forbidden = 4,
 
         /// <summary>
-        /// Plugin internal error!
+        /// 插件内部错误!
         /// </summary>
         Internal = 5,
 
         /// <summary>
-        /// Exceptions that caught by the plugin but raised in a user code.
+        /// 由插件捕获但在用户代码中引发的异常。
         /// </summary>
         User = 6,
 
         /// <summary>
-        /// A custom, server sent error, most probably from a Socket.IO middleware.
+        /// 一个自定义的，服务器发送的错误，很可能来自Socket。IO中间件。
         /// </summary>
         Custom = 7,
     }

@@ -5,38 +5,33 @@ using System.Collections.Generic;
 
 namespace BestHTTP.SocketIO
 {
-    using BestHTTP.JSON;
+    using JSON;
 
     /// <summary>
-    /// Helper class to parse and hold handshake information.
+    /// Helper类来解析和保存握手信息。
     /// </summary>
     public sealed class HandshakeData
     {
-        #region Public Handshake Data
-
         /// <summary>
-        /// Session ID of this connection.
+        /// 该连接的会话ID。
         /// </summary>
         public string Sid { get; private set; }
 
         /// <summary>
-        /// List of possible upgrades.
+        /// 可能升级的列表。
         /// </summary>
         public List<string> Upgrades { get; private set; }
 
         /// <summary>
-        /// What interval we have to set a ping message.
+        /// 我们必须设置一个ping消息的时间间隔。
         /// </summary>
         public TimeSpan PingInterval { get; private set; }
 
         /// <summary>
-        /// What time have to pass without an answer to our ping request when we can consider the connection disconnected.
+        /// 当我们可以认为连接断开时，需要经过多长时间才能得到ping请求的应答。
         /// </summary>
         public TimeSpan PingTimeout { get; private set; }
 
-        #endregion
-
-        #region Helper Methods
 
         public bool Parse(string str)
         {
@@ -54,7 +49,7 @@ namespace BestHTTP.SocketIO
             }
             catch (Exception ex)
             {
-                BestHTTP.HttpManager.Logger.Exception("HandshakeData", "Parse", ex);
+                HttpManager.Logger.Exception("HandshakeData", "Parse", ex);
                 return false;
             }
 
@@ -63,9 +58,11 @@ namespace BestHTTP.SocketIO
 
         private static object Get(Dictionary<string, object> from, string key)
         {
-            object value;
-            if (!from.TryGetValue(key, out value))
-                throw new System.Exception(string.Format("Can't get {0} from Handshake data!", key));
+            if (!from.TryGetValue(key, out var value))
+            {
+                throw new Exception($"Can't get {key} from Handshake data!");
+            }
+
             return value;
         }
 
@@ -76,17 +73,21 @@ namespace BestHTTP.SocketIO
 
         private static List<string> GetStringList(Dictionary<string, object> from, string key)
         {
-            List<object> value = Get(from, key) as List<object>;
-
-            List<string> result = new List<string>(value.Count);
-            for (int i = 0; i < value.Count; ++i)
+            if (Get(from, key) is List<object> value)
             {
-                string str = value[i] as string;
-                if (str != null)
-                    result.Add(str);
+                List<string> result = new List<string>(value.Count);
+                for (int i = 0; i < value.Count; ++i)
+                {
+                    if (value[i] is string str)
+                    {
+                        result.Add(str);
+                    }
+                }
+
+                return result;
             }
 
-            return result;
+            return null;
         }
 
         private static int GetInt(Dictionary<string, object> from, string key)
@@ -94,7 +95,6 @@ namespace BestHTTP.SocketIO
             return (int)(double)Get(from, key);
         }
 
-        #endregion
     }
 }
 

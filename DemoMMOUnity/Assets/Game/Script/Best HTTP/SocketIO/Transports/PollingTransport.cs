@@ -47,25 +47,26 @@ namespace BestHTTP.SocketIO.Transports
 
         public void Open()
         {
-            string format = "{0}?EIO={1}&transport=polling&t={2}-{3}{5}";
             var sb = new StringBuilder(10);
-            if (Manager.Handshake != null)
-            {
-                format += "&sid={4}";
-            }
-
+            sb.Append($"{Manager.Uri}");
+            sb.Append($"?EIO={Manager.ProtocolVersion}&");
+            sb.Append($"transport=polling&t={Manager.Timestamp.ToString()}");
+            sb.Append($"-{Manager.RequestCounter++.ToString()}");
             bool sendAdditionalQueryParams = !Manager.Options.QueryParamsOnlyForHandshake ||
                                              (Manager.Options.QueryParamsOnlyForHandshake &&
                                               Manager.Handshake == null);
+            var queryParams = sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty;
+            sb.Append($"{queryParams}");
+            if (Manager.Handshake != null)
+            {
+                var format = Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty;
+                sb.Append($"&sid={format}");
+            }
 
-            HttpRequest request = new HttpRequest(new Uri(string.Format(format,
-                    Manager.Uri,
-                    Manager.ProtocolVersion,
-                    Manager.Timestamp.ToString(),
-                    Manager.RequestCounter++.ToString(),
-                    Manager.Handshake != null ? Manager.Handshake.Sid : string.Empty,
-                    sendAdditionalQueryParams ? Manager.Options.BuildQueryParams() : string.Empty)),
-                OnRequestFinished);
+            var requestUrl = new Uri(sb.ToString());
+            HttpRequest request = new HttpRequest(
+                uri: requestUrl,
+                callback: OnRequestFinished);
 
 #if !BESTHTTP_DISABLE_CACHING
             // Don't even try to cache it
@@ -74,7 +75,7 @@ namespace BestHTTP.SocketIO.Transports
 
             request.MaxRetries = 0;
 
-            this.Manager.Options.HTTPRequestCustomizationCallback?.Invoke(
+            this.Manager.Options.httpRequestCustomizationCallback?.Invoke(
                 manager: this.Manager,
                 request: request);
 
@@ -158,9 +159,9 @@ namespace BestHTTP.SocketIO.Transports
                 SendV3(packets, _lastRequest);
             }
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
             {
-                this.Manager.Options.HTTPRequestCustomizationCallback(
+                this.Manager.Options.httpRequestCustomizationCallback(
                     manager: this.Manager,
                     request: _lastRequest);
             }
@@ -183,7 +184,10 @@ namespace BestHTTP.SocketIO.Transports
                     var packet = packets[i];
 
                     if (i > 0)
+                    {
                         _sendBuilder.Append((char)0x1E);
+                    }
+
                     _sendBuilder.Append(packet.Encode());
 
                     if (packet.Attachments is not { Count: > 0 }) continue;
@@ -325,8 +329,8 @@ namespace BestHTTP.SocketIO.Transports
 
             _pollRequest.MaxRetries = 0;
 
-            if (this.Manager.Options.HTTPRequestCustomizationCallback != null)
-                this.Manager.Options.HTTPRequestCustomizationCallback(this.Manager, _pollRequest);
+            if (this.Manager.Options.httpRequestCustomizationCallback != null)
+                this.Manager.Options.httpRequestCustomizationCallback(this.Manager, _pollRequest);
 
             _pollRequest.Send();
         }
