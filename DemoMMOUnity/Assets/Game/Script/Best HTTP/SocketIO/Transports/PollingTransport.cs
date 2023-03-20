@@ -48,6 +48,7 @@ namespace BestHTTP.SocketIO.Transports
         public void Open()
         {
             string format = "{0}?EIO={1}&transport=polling&t={2}-{3}{5}";
+            var sb = new StringBuilder(10);
             if (Manager.Handshake != null)
             {
                 format += "&sid={4}";
