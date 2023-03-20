@@ -170,37 +170,37 @@ namespace BestHTTP.SignalRCore
     {
         public static void UploadParam<TResult, P1>(this UpStreamItemController<TResult> controller, P1 item)
         {
-            controller.UploadParam<P1>(controller.streamingIds[0], item);
+            controller.UploadParam<P1>(controller.StreamingIds[0], item);
         }
 
         public static void UploadParam<TResult, P1, P2>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2)
         {
-            controller.UploadParam<P1>(controller.streamingIds[0], param1);
-            controller.UploadParam<P2>(controller.streamingIds[1], param2);
+            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
+            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
         }
 
         public static void UploadParam<TResult, P1, P2, P3>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3)
         {
-            controller.UploadParam<P1>(controller.streamingIds[0], param1);
-            controller.UploadParam<P2>(controller.streamingIds[1], param2);
-            controller.UploadParam<P3>(controller.streamingIds[2], param3);
+            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
+            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
+            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
         }
 
         public static void UploadParam<TResult, P1, P2, P3, P4>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3, P4 param4)
         {
-            controller.UploadParam<P1>(controller.streamingIds[0], param1);
-            controller.UploadParam<P2>(controller.streamingIds[1], param2);
-            controller.UploadParam<P3>(controller.streamingIds[2], param3);
-            controller.UploadParam<P4>(controller.streamingIds[3], param4);
+            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
+            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
+            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
+            controller.UploadParam<P4>(controller.StreamingIds[3], param4);
         }
 
         public static void UploadParam<TResult, P1, P2, P3, P4, P5>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3, P4 param4, P5 param5)
         {
-            controller.UploadParam<P1>(controller.streamingIds[0], param1);
-            controller.UploadParam<P2>(controller.streamingIds[1], param2);
-            controller.UploadParam<P3>(controller.streamingIds[2], param3);
-            controller.UploadParam<P4>(controller.streamingIds[3], param4);
-            controller.UploadParam<P5>(controller.streamingIds[4], param5);
+            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
+            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
+            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
+            controller.UploadParam<P4>(controller.StreamingIds[3], param4);
+            controller.UploadParam<P5>(controller.StreamingIds[4], param5);
         }
     }
 }
