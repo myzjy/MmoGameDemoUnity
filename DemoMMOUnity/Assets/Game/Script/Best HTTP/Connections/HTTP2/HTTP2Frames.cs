@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 
@@ -86,19 +87,27 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return
-                $"[HTTP2FrameHeaderAndPayload Length: {this.PayloadLength}, Type: {this.Type}, Flags: {this.Flags.ToBinaryStr()}, StreamId: {this.StreamId}, PayloadOffset: {this.PayloadOffset}, DontUseMemPool: {this.DontUseMemPool}]";
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2FrameHeaderAndPayload Length: {this.PayloadLength}, ");
+            sb.Append($"Type: {this.Type}, ");
+            sb.Append($"Flags: {this.Flags.ToBinaryStr()}, ");
+            sb.Append($"StreamId: {this.StreamId}, ");
+            sb.Append($"PayloadOffset: {this.PayloadOffset}, ");
+            sb.Append($"DontUseMemPool: {this.DontUseMemPool}]");
+            return $"{sb}";
         }
 
         public string PayloadAsHex()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder("[", (int)this.PayloadLength + 1);
+            var sb = new StringBuilder("[", (int)this.PayloadLength + 1);
             if (this.Payload != null && this.PayloadLength > 0)
             {
                 uint idx = this.PayloadOffset;
                 sb.Append(this.Payload[idx++]);
                 for (int i = 1; i < this.PayloadLength; i++)
+                {
                     sb.AppendFormat(", {0:X2}", this.Payload[idx++]);
+                }
             }
 
             sb.Append("]");
@@ -126,16 +135,19 @@ namespace BestHTTP.Connections.HTTP2
             string settings = null;
             if (this.Settings != null)
             {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder("[");
+                var sb = new StringBuilder("[");
                 foreach (var kvp in this.Settings)
                     sb.AppendFormat("[{0}: {1}]", kvp.Key, kvp.Value);
                 sb.Append("]");
 
                 settings = sb.ToString();
             }
-
-            return string.Format("[HTTP2SettingsFrame Header: {0}, Flags: {1}, Settings: {2}]", this._header.ToString(),
-                this.Flags, settings ?? "Empty");
+            var stringBuilder = new StringBuilder(10);
+            stringBuilder.Append($"[HTTP2SettingsFrame Header: {this._header.ToString()}, ");
+            stringBuilder.Append($"Flags: {this.Flags}, ");
+            stringBuilder.Append($"Settings: {settings ?? "Empty"}]");
+            
+            return $"{stringBuilder}";
         }
     }
 
@@ -161,11 +173,8 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format("[HTTP2DataFrame Header: {0}, Flags: {1}, PadLength: {2}, DataLength: {3}]",
-                this._header.ToString(),
-                this.Flags,
-                this.PadLength == null ? ":Empty" : this.PadLength.Value.ToString(),
-                this.DataLength);
+            return
+                $"[HTTP2DataFrame Header: {this._header.ToString()}, Flags: {this.Flags}, PadLength: {(this.PadLength == null ? ":Empty" : this.PadLength.Value.ToString())}, DataLength: {this.DataLength}]";
         }
     }
 
@@ -197,15 +206,16 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format(
-                "[HTTP2HeadersFrame Header: {0}, Flags: {1}, PadLength: {2}, IsExclusive: {3}, StreamDependency: {4}, Weight: {5}, HeaderBlockFragmentLength: {6}]",
-                this._header.ToString(),
-                this.Flags,
-                this.PadLength == null ? ":Empty" : this.PadLength.Value.ToString(),
-                this.IsExclusive == null ? "Empty" : this.IsExclusive.Value.ToString(),
-                this.StreamDependency == null ? "Empty" : this.StreamDependency.Value.ToString(),
-                this.Weight == null ? "Empty" : this.Weight.Value.ToString(),
-                this.HeaderBlockFragmentLength);
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2HeadersFrame Header: {this._header.ToString()},");
+            sb.Append($" Flags: {this.Flags}, ");
+            sb.Append($"PadLength: {(this.PadLength == null ? ":Empty" : this.PadLength.Value.ToString())}, ");
+            sb.Append($"IsExclusive: {(this.IsExclusive == null ? "Empty" : this.IsExclusive.Value.ToString())}, ");
+            sb.Append(
+                $"StreamDependency: {(this.StreamDependency == null ? "Empty" : this.StreamDependency.Value.ToString())}, ");
+            sb.Append($"Weight: {(this.Weight == null ? "Empty" : this.Weight.Value.ToString())}, ");
+            sb.Append($"HeaderBlockFragmentLength: {this.HeaderBlockFragmentLength}]");
+            return sb.ToString();
         }
     }
 
@@ -227,9 +237,12 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format(
-                "[HTTP2PriorityFrame Header: {0}, IsExclusive: {1}, StreamDependency: {2}, Weight: {3}]",
-                this._header.ToString(), this.IsExclusive, this.StreamDependency, this.Weight);
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2PriorityFrame Header: {this._header.ToString()}, ");
+            sb.Append($"IsExclusive: {this.IsExclusive}, ");
+            sb.Append($"StreamDependency: {this.StreamDependency}, ");
+            sb.Append($"Weight: {this.Weight}]");
+            return sb.ToString();
         }
     }
 
@@ -249,7 +262,10 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return $"[HTTP2RST_StreamFrame Header: {this._header.ToString()}, Error: {this.Error}({this.ErrorCode})]";
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2RST_StreamFrame Header: {this._header.ToString()}, ");
+            sb.Append($"Error: {this.Error}({this.ErrorCode})]");
+            return $"{sb}";
         }
     }
 
@@ -279,14 +295,15 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format(
-                "[HTTP2Push_PromiseFrame Header: {0}, Flags: {1}, PadLength: {2}, ReservedBit: {3}, PromisedStreamId: {4}, HeaderBlockFragmentLength: {5}]",
-                this._header.ToString(),
-                this.Flags,
-                this.PadLength == null ? "Empty" : this.PadLength.Value.ToString(),
-                this.ReservedBit,
-                this.PromisedStreamId,
-                this.HeaderBlockFragmentLength);
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2Push_PromiseFrame Header: {this._header.ToString()}, ");
+            sb.Append($"Flags: {this.Flags}, ");
+            sb.Append($"PadLength: {(this.PadLength == null ? "Empty" : this.PadLength.Value.ToString())}, ");
+            sb.Append($"ReservedBit: {this.ReservedBit}, ");
+            sb.Append($"PromisedStreamId: {this.PromisedStreamId}, ");
+            sb.Append($"HeaderBlockFragmentLength: {this.HeaderBlockFragmentLength}]");
+
+            return $"{sb}";
         }
     }
 
@@ -308,11 +325,16 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format("[HTTP2PingFrame Header: {0}, Flags: {1}, OpaqueData: {2}]",
-                this._header.ToString(),
-                this.Flags,
-                SecureProtocol.Org.BouncyCastle.Utilities.Encoders.Hex.ToHexString(this.OpaqueData, 0,
-                    this.OpaqueDataLength));
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2PingFrame Header: {this._header.ToString()}, ");
+            sb.Append($"Flags: {this.Flags}, ");
+            var hexString = SecureProtocol.Org.BouncyCastle.Utilities.Encoders.Hex.ToHexString(
+                data: this.OpaqueData,
+                off: 0,
+                length: this.OpaqueDataLength);
+            sb.Append($"OpaqueData: {hexString}]");
+
+            return $"{sb}";
         }
     }
 
@@ -340,18 +362,19 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format(
-                "[HTTP2GoAwayFrame Header: {0}, ReservedBit: {1}, LastStreamId: {2}, Error: {3}({4}), AdditionalDebugData({5}): {6}]",
-                this._header.ToString(),
-                this.ReservedBit,
-                this.LastStreamId,
-                this.Error,
-                this.ErrorCode,
-                this.AdditionalDebugDataLength,
-                this.AdditionalDebugData == null
-                    ? "Empty"
-                    : SecureProtocol.Org.BouncyCastle.Utilities.Encoders.Hex.ToHexString(this.AdditionalDebugData, 0,
-                        (int)this.AdditionalDebugDataLength));
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2GoAwayFrame Header: {this._header.ToString()}, ");
+            sb.Append($"ReservedBit: {this.ReservedBit}, ");
+            sb.Append($"LastStreamId: {this.LastStreamId}, ");
+            sb.Append($"Error: {this.Error}({this.ErrorCode}), ");
+            sb.Append($"AdditionalDebugData({this.AdditionalDebugDataLength}): ");
+            var hexString = SecureProtocol.Org.BouncyCastle.Utilities.Encoders.Hex.ToHexString(
+                data: this.AdditionalDebugData,
+                off: 0,
+                length: (int)this.AdditionalDebugDataLength);
+            sb.Append($"{(this.AdditionalDebugData == null ? "Empty" : hexString)}]");
+
+            return $"{sb}";
         }
     }
 
@@ -371,8 +394,11 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return string.Format("[HTTP2WindowUpdateFrame Header: {0}, ReservedBit: {1}, WindowSizeIncrement: {2}]",
-                this._header.ToString(), this.ReservedBit, this.WindowSizeIncrement);
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2WindowUpdateFrame Header: {this._header.ToString()}, ");
+            sb.Append($"ReservedBit: {this.ReservedBit}, ");
+            sb.Append($"WindowSizeIncrement: {this.WindowSizeIncrement}]");
+            return $"{sb}";
         }
     }
 
@@ -394,8 +420,12 @@ namespace BestHTTP.Connections.HTTP2
 
         public override string ToString()
         {
-            return
-                $"[HTTP2ContinuationFrame Header: {this._header.ToString()}, Flags: {this.Flags}, HeaderBlockFragmentLength: {this.HeaderBlockFragmentLength}]";
+            var sb = new StringBuilder(10);
+            sb.Append($"[HTTP2ContinuationFrame Header: {this._header.ToString()}, ");
+            sb.Append($"Flags: {this.Flags}, ");
+            sb.Append($"HeaderBlockFragmentLength: {this.HeaderBlockFragmentLength}]");
+
+            return $"{sb}";
         }
     }
 

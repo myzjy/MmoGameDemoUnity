@@ -176,7 +176,7 @@ namespace BestHTTP.Connections.HTTP2
 
                 this.outgoing.Clear();
                 if (this.State != Http2StreamStates.Idle)
-                    this.outgoing.Enqueue(Http2FrameHelper.CreateRSTFrame(this.Id, Http2ErrorCodes.Cancel));
+                    this.outgoing.Enqueue(Http2FrameHelper.CreateRstFrame(this.Id, Http2ErrorCodes.Cancel));
 
                 // We can close the stream if already received headers, or not even sent one
                 if (this.State == Http2StreamStates.HalfClosedRemote || this.State == Http2StreamStates.Idle)

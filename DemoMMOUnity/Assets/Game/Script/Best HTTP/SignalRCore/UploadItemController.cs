@@ -5,9 +5,7 @@ using BestHTTP.SignalRCore.Messages;
 
 namespace BestHTTP.SignalRCore
 {
-    // ReSharper disable once IdentifierTypo
-    // ReSharper disable once UnusedTypeParameter
-    public interface IUPoladItemController<TResult> : IDisposable
+    public interface IUploadItemController : IDisposable
     {
         string[] StreamingIDs { get; }
         HubConnection Hub { get; }
@@ -38,11 +36,13 @@ namespace BestHTTP.SignalRCore
         private void Cancel()
         {
             if (this.IsCanceled)
+            {
                 return;
+            }
 
             this.IsCanceled = true;
 
-            Message message = new Message
+            var message = new Message
             {
                 type = MessageTypes.CancelInvocation,
                 invocationId = this._invocationId.ToString()
@@ -79,7 +79,7 @@ namespace BestHTTP.SignalRCore
         }
     }
 
-    public sealed class UpStreamItemController<TResult> : IUPoladItemController<TResult>, IFuture<TResult>
+    public sealed class UpStreamItemController<TResult> : IUploadItemController, IFuture<TResult>
     {
         private readonly long _invocationId;
         public readonly string[] StreamingIds;
@@ -111,9 +111,10 @@ namespace BestHTTP.SignalRCore
 
         public UploadChannel<TResult, T> GetUploadChannel<T>(int paramIdx)
         {
-            var stream = this._streams[paramIdx] as UploadChannel<TResult, T>;
-            if (stream == null)
+            if (this._streams[paramIdx] is not UploadChannel<TResult, T> stream)
+            {
                 this._streams[paramIdx] = stream = new UploadChannel<TResult, T>(this, paramIdx);
+            }
 
             return stream;
         }
@@ -135,46 +136,46 @@ namespace BestHTTP.SignalRCore
 
         private void Finish()
         {
-            if (!this.IsFinished)
+            if (this.IsFinished) return;
+            this.IsFinished = true;
+
+            foreach (var t in this.StreamingIds)
             {
-                this.IsFinished = true;
-
-                foreach (var t in this.StreamingIds)
+                if (t == null) continue;
+                var message = new Message
                 {
-                    if (t != null)
-                    {
-                        var message = new Message
-                        {
-                            type = MessageTypes.Completion,
-                            invocationId = t
-                        };
+                    type = MessageTypes.Completion,
+                    invocationId = t
+                };
 
-                        this._hubConnection.SendMessage(message);
-                    }
-                }
+                this._hubConnection.SendMessage(message);
             }
         }
 
         public void Cancel()
         {
-            if (!this.IsFinished && !this.IsCanceled)
+            if (this.IsFinished || this.IsCanceled) return;
+            this.IsCanceled = true;
+
+            var message = new Message
             {
-                this.IsCanceled = true;
+                type = MessageTypes.CancelInvocation,
+                invocationId = this._invocationId.ToString(),
+            };
 
-                var message = new Message
-                {
-                    type = MessageTypes.CancelInvocation,
-                    invocationId = this._invocationId.ToString(),
-                };
+            this._hubConnection.SendMessage(message);
 
-                this._hubConnection.SendMessage(message);
+            // 将流id归零，禁用任何未来的消息发送
+            Array.Clear(
+                array: this.StreamingIds,
+                index: 0,
+                length: this.StreamingIds.Length);
 
-                // Zero out the streaming ids, disabling any future message sending
-                Array.Clear(this.StreamingIds, 0, this.StreamingIds.Length);
-
-                // If it's also a down-stream, set it canceled.
-                if (this._future.value is StreamItemContainer<TResult> itemContainer)
-                    itemContainer.IsCanceled = true;
+            // 如果是下游，就取消。
+            if (this._future.value is
+                StreamItemContainer<TResult> itemContainer)
+            {
+                itemContainer.IsCanceled = true;
             }
         }
 
@@ -208,24 +209,26 @@ namespace BestHTTP.SignalRCore
     }
 
     /// <summary>
-    /// ReSharper disable once CommentTypo
-    /// An upload channel that represents one prameter of a client callable function. It implements the IDisposable
-    /// interface and calls Finish from the Dispose method.
+    /// ReSharper禁用一次CommentTypo
+    ///一个上传通道，表示客户端可调用函数的一个参数。它实现了IDisposable
+    ///从Dispose方法调用Finish。
     /// </summary>
     public sealed class UploadChannel<TResult, T> : IDisposable
     {
-        /// <summary>
-        /// The associated upload controller
-        /// </summary>
-        private IUPoladItemController<TResult> Controller { get; set; }
+        private TResult _result;
 
         /// <summary>
-        /// What parameter is bound to.
+        /// 相关的上传控制器
+        /// </summary>
+        private IUploadItemController Controller { get; set; }
+
+        /// <summary>
+        /// 参数被绑定到什么。
         /// </summary>
         private int ParamIdx { get; set; }
 
         /// <summary>
-        /// Returns true if Finish() or Cancel() is already called.
+        /// 如果已经调用了Finish()或Cancel()，则返回true。
         /// </summary>
         private bool IsFinished
         {
@@ -233,72 +236,74 @@ namespace BestHTTP.SignalRCore
             set
             {
                 if (value)
+                {
                     this.Controller.StreamingIDs[this.ParamIdx] = null;
+                }
             }
         }
 
         /// <summary>
-        /// The unique generated id of this parameter channel.
+        /// 此参数channel的唯一生成id。
         /// </summary>
         private string StreamingId => this.Controller.StreamingIDs[this.ParamIdx];
 
-        internal UploadChannel(IUPoladItemController<TResult> ctrl, int paramIdx)
+        internal UploadChannel(IUploadItemController ctrl, int paramIdx)
         {
             this.Controller = ctrl;
             this.ParamIdx = paramIdx;
         }
 
         /// <summary>
-        /// Uploads a parameter value to the server.
+        /// 向服务器上传参数值。
         /// </summary>
         public void Upload(T item)
         {
             string streamId = this.StreamingId;
             if (streamId != null)
+            {
                 this.Controller.UploadParam(streamId, item);
+            }
         }
 
         /// <summary>
-        /// Calling this function cancels the call itself, not just a parameter upload channel.
+        /// 调用此函数将取消调用本身，而不仅仅是参数上传通道。
         /// </summary>
         public void Cancel()
         {
             if (!this.IsFinished)
             {
-                // Cancel all upload stream, cancel will also set streaming ids to 0.
+                // 取消所有上传流，取消也将流id设置为0。
                 this.Controller.Cancel();
             }
         }
 
         /// <summary>
-        /// ReSharper disable once CommentTypo
-        /// Finishes the channel by telling the server that no more uplode items will follow.
+        ///通过告诉服务器没有更多的上传项来结束通道。
         /// </summary>
         private void Finish()
         {
-            if (!this.IsFinished)
+            if (this.IsFinished) return;
+            string streamId = this.StreamingId;
+            if (streamId == null) return;
+            // 这将把流id设置为0
+            this.IsFinished = true;
+
+            var message = new Message
             {
-                string streamId = this.StreamingId;
-                if (streamId != null)
-                {
-                    // this will set the streaming id to 0
-                    this.IsFinished = true;
+                type = MessageTypes.Completion,
+                invocationId = streamId
+            };
 
-                    var message = new Message
-                    {
-                        type = MessageTypes.Completion,
-                        invocationId = streamId
-                    };
-
-                    this.Controller.Hub.SendMessage(message);
-                }
-            }
+            this.Controller.Hub.SendMessage(message);
         }
 
         void IDisposable.Dispose()
         {
             if (!this.IsFinished)
+            {
                 Finish();
+            }
+
             // ReSharper disable once GCSuppressFinalizeForTypeWithoutDestructor
             GC.SuppressFinalize(this);
         }

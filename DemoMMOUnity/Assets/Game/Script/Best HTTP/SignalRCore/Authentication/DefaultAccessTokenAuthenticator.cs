@@ -93,7 +93,7 @@ namespace BestHTTP.SignalRCore.Authentication
         /// <summary>
         /// Not used event as IsPreAuthRequired is false
         /// </summary>
-        public event OnAuthenticationSuccededDelegate OnAuthenticationSucceded;
+        public event OnAuthenticationSucceedDelegate OnAuthenticationSucceed;
 
         /// <summary>
         /// Not used event as IsPreAuthRequired is false

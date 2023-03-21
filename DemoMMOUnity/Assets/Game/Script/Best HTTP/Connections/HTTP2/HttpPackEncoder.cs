@@ -13,6 +13,7 @@ namespace BestHTTP.Connections.HTTP2
 {
     public sealed class HttpPackEncoder
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly Http2Handler _parent;
 
         // https://http2.github.io/http2-spec/compression.html#encoding.context
@@ -89,7 +90,7 @@ namespace BestHTTP.Connections.HTTP2
                     sb.Append("- Encode - Header");
                     sb.Append($"({i + 1}/{values.Count}):");
                     sb.Append($" '{header}': '{values[i]}'");
-                    Debug.Log($"[HPACKEncoder] [method: Encode] [msg|Exception]{sb.ToString()}");
+                    Debug.Log($"[HttPACKEncoder] [method: Encode] [msg|Exception]{sb}");
 #endif
                 }
             }, true);
@@ -118,7 +119,7 @@ namespace BestHTTP.Connections.HTTP2
                     sb.Append($"[{context.Id}] ");
                     sb.Append(" Decode - IndexedHeader：");
                     sb.Append($" {header.ToString()}");
-                    Debug.Log($"[HPACKEncoder] [method: Encode] [msg|Exception]{sb.ToString()}");
+                    Debug.Log($"[HttPACKEncoder] [method: Encode] [msg|Exception]{sb}");
 #endif
                     to.Add(header);
                 }
@@ -138,7 +139,7 @@ namespace BestHTTP.Connections.HTTP2
                         sb.Append("Decode - LiteralHeaderFieldWithIncrementalIndexing_NewName:");
                         sb.Append($"{header.ToString()}");
                         // ReSharper disable once StringLiteralTypo
-                        Debug.Log($"[HPACKEncoder] [method:Decode] [msg] {sb.ToString()}");
+                        Debug.Log($"[HPACKEncoder] [method:Decode] [msg] {sb}");
 #endif
                         this._responseTable.Add(header);
                         to.Add(header);
@@ -167,7 +168,7 @@ namespace BestHTTP.Connections.HTTP2
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         // ReSharper disable once StringLiteralTypo
                         Debug.Log(
-                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_NewName: {header.ToString()}");
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldWithoutIndexing_NewName: {header.ToString()}");
 #endif
                         to.Add(header);
                     }
@@ -178,7 +179,7 @@ namespace BestHTTP.Connections.HTTP2
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         // ReSharper disable once StringLiteralTypo
                         Debug.Log(
-                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldwithoutIndexing_IndexedName: {header.ToString()}");
+                            $"[HPACKEncoder] [method:Decode] [msg] [{context.Id}] Decode - LiteralHeaderFieldWithoutIndexing_IndexedName: {header.ToString()}");
 #endif
                         to.Add(header);
                     }
@@ -327,7 +328,7 @@ namespace BestHTTP.Connections.HTTP2
 
                 BufferPool.Release(buffer);
 
-                return System.Text.Encoding.UTF8.GetString(buffer, 0, (int)stringLength);
+                return Encoding.UTF8.GetString(buffer, 0, (int)stringLength);
             }
             else
             {
@@ -355,7 +356,7 @@ namespace BestHTTP.Connections.HTTP2
 
                     if (node.Value != 0)
                     {
-                        if (node.Value != HuffmanEncoder.EOS)
+                        if (node.Value != HuffmanEncoder.Eos)
                             bufferStream.WriteByte((byte)node.Value);
 
                         node = HuffmanEncoder.GetRoot();
@@ -364,7 +365,7 @@ namespace BestHTTP.Connections.HTTP2
 
                 byte[] buffer = bufferStream.ToArray(true);
 
-                string result = System.Text.Encoding.UTF8.GetString(buffer, 0, (int)bufferStream.Length);
+                string result = Encoding.UTF8.GetString(buffer, 0, (int)bufferStream.Length);
 
                 BufferPool.Release(buffer);
 
@@ -446,7 +447,7 @@ namespace BestHTTP.Connections.HTTP2
 
             KeyValuePair<UInt32, UInt32> index = this._requestTable.GetIndex(header, value);
 
-            if (index.Key == 0 && index.Value == 0)
+            if (index is { Key: 0, Value: 0 })
             {
                 WriteLiteralHeaderFieldWithIncrementalIndexing_NewName(stream, header, value);
                 this._requestTable.Add(new KeyValuePair<string, string>(header, value));
@@ -639,10 +640,10 @@ namespace BestHTTP.Connections.HTTP2
         // 这个函数只计算压缩字符串的长度，额外的头长度必须使用这个函数返回的值来计算
         private static uint RequiredBytesToEncodeStringWithHuffman(string str)
         {
-            int requiredBytesForStr = System.Text.Encoding.UTF8.GetByteCount(str);
+            int requiredBytesForStr = Encoding.UTF8.GetByteCount(str);
             byte[] strBytes = BufferPool.Get(requiredBytesForStr, true);
 
-            System.Text.Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
+            Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
 
             uint requiredBits = 0;
 
@@ -658,10 +659,10 @@ namespace BestHTTP.Connections.HTTP2
 
         private static void EncodeStringWithHuffman(string str, UInt32 encodedLength, byte[] buffer, ref UInt32 offset)
         {
-            int requiredBytesForStr = System.Text.Encoding.UTF8.GetByteCount(str);
+            int requiredBytesForStr = Encoding.UTF8.GetByteCount(str);
             byte[] strBytes = BufferPool.Get(requiredBytesForStr, true);
 
-            System.Text.Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
+            Encoding.UTF8.GetBytes(str, 0, str.Length, strBytes, 0);
 
             // 0. bit: huffman flag
             buffer[offset] = 0x80;
@@ -672,22 +673,39 @@ namespace BestHTTP.Connections.HTTP2
             byte bufferBitIdx = 0;
 
             for (int i = 0; i < requiredBytesForStr; ++i)
-                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(strBytes[i]), buffer, ref offset,
-                    ref bufferBitIdx);
+            {
+                AddCodePointToBuffer(
+                    code: HuffmanEncoder.GetEntryForCodePoint(strBytes[i]),
+                    buffer: buffer,
+                    offset: ref offset,
+                    bufferBitIdx: ref bufferBitIdx);
+            }
 
             // https://http2.github.io/http2-spec/compression.html#string.literal.representation
-            // As the Huffman-encoded data doesn't always end at an octet boundary, some padding is inserted after it,
-            // up to the next octet boundary. To prevent this padding from being misinterpreted as part of the string literal,
-            // the most significant bits of the code corresponding to the EOS (end-of-string) symbol are used.
+            //由于huffman编码的数据并不总是在八位元边界结束，因此在它之后插入一些填充，
+            //到下一个八字节边界。为了防止这个填充被误解为字符串字面量的一部分，
+            //使用对应于EOS(字符串结束符)符号的代码中最有效的位。
             if (bufferBitIdx != 0)
-                AddCodePointToBuffer(HuffmanEncoder.GetEntryForCodePoint(256), buffer, ref offset, ref bufferBitIdx,
-                    true);
+            {
+                AddCodePointToBuffer(
+                    code: HuffmanEncoder.GetEntryForCodePoint(256),
+                    buffer: buffer,
+                    offset: ref offset,
+                    bufferBitIdx: ref bufferBitIdx,
+                    finishOnBoundary: true);
+            }
 
             BufferPool.Release(strBytes);
         }
 
-        private static void AddCodePointToBuffer(HuffmanEncoder.TableEntry code, byte[] buffer, ref UInt32 offset,
-            ref byte bufferBitIdx, bool finishOnBoundary = false)
+        private
+            static
+            void AddCodePointToBuffer(
+                HuffmanEncoder.TableEntry code,
+                byte[] buffer,
+                ref UInt32 offset,
+                ref byte bufferBitIdx,
+                bool finishOnBoundary = false)
         {
             for (byte codeBitIdx = 1; codeBitIdx <= code.Bits; ++codeBitIdx)
             {
@@ -710,16 +728,16 @@ namespace BestHTTP.Connections.HTTP2
 
         private static UInt32 RequiredBytesToEncodeRawString(string str)
         {
-            int requiredBytesForStr = System.Text.Encoding.UTF8.GetByteCount(str);
+            int requiredBytesForStr = Encoding.UTF8.GetByteCount(str);
             int requiredBytesForLengthPrefix = RequiredBytesToEncodeInteger((UInt32)requiredBytesForStr, 7);
 
             return (UInt32)(requiredBytesForStr + requiredBytesForLengthPrefix);
         }
 
-        // This method encodes a string without huffman encoding
+        // 此方法不使用霍夫曼编码方式对字符串进行编码
         private static void EncodeRawStringTo(string str, byte[] buffer, ref UInt32 offset)
         {
-            uint requiredBytesForStr = (uint)System.Text.Encoding.UTF8.GetByteCount(str);
+            uint requiredBytesForStr = (uint)Encoding.UTF8.GetByteCount(str);
             int requiredBytesForLengthPrefix = RequiredBytesToEncodeInteger(requiredBytesForStr, 7);
 
             UInt32 originalOffset = offset;
@@ -730,10 +748,12 @@ namespace BestHTTP.Connections.HTTP2
             buffer[originalOffset] = BufferHelper.SetBit(buffer[originalOffset], 0, false);
 
             if (offset != originalOffset + requiredBytesForLengthPrefix)
+            {
                 throw new Exception(string.Format(
                     "offset({0}) != originalOffset({1}) + requiredBytesForLengthPrefix({1})", offset, originalOffset));
+            }
 
-            System.Text.Encoding.UTF8.GetBytes(str, 0, str.Length, buffer, (int)offset);
+            Encoding.UTF8.GetBytes(str, 0, str.Length, buffer, (int)offset);
             offset += requiredBytesForStr;
         }
 
@@ -742,20 +762,20 @@ namespace BestHTTP.Connections.HTTP2
             UInt32 maxValue = (1u << n) - 1;
             byte count = 0;
 
-            // If the integer value is small enough, i.e., strictly less than 2^N-1, it is encoded within the N-bit prefix.
+            // 如果整数值足够小，即严格小于2^N-1，则在n位前缀中进行编码。
             if (value < maxValue)
             {
                 count++;
             }
             else
             {
-                // Otherwise, all the bits of the prefix are set to 1, and the value, decreased by 2^N-1
+                // 否则，前缀的所有位都被设置为1，值减少2^N-1
                 count++;
                 value -= maxValue;
 
                 while (value >= 0x80)
                 {
-                    // The most significant bit of each octet is used as a continuation flag: its value is set to 1 except for the last octet in the list.
+                    // 每个八位的最高位用作延续标志:除列表中的最后八位外，它的值都设置为1。
                     count++;
                     value = value / 0x80;
                 }
@@ -772,20 +792,20 @@ namespace BestHTTP.Connections.HTTP2
             // 2^N - 1
             UInt32 maxValue = (1u << n) - 1;
 
-            // If the integer value is small enough, i.e., strictly less than 2^N-1, it is encoded within the N-bit prefix.
+            // 如果整数值足够小，即严格小于2^N-1，则在n位前缀中进行编码。
             if (value < maxValue)
             {
                 buffer[offset++] |= (byte)value;
             }
             else
             {
-                // Otherwise, all the bits of the prefix are set to 1, and the value, decreased by 2^N-1
+                // 否则，前缀的所有位都被设置为1，值减少2^N-1
                 buffer[offset++] |= (byte)(0xFF >> (8 - n));
                 value -= maxValue;
 
                 while (value >= 0x80)
                 {
-                    // The most significant bit of each octet is used as a continuation flag: its value is set to 1 except for the last octet in the list.
+                    // 每个八位的最高位用作延续标志:除列表中的最后八位外，它的值都设置为1。
                     buffer[offset++] = (byte)(0x80 | (0x7F & value));
                     value = value / 0x80;
                 }
@@ -798,17 +818,17 @@ namespace BestHTTP.Connections.HTTP2
         // ReSharper disable once UnusedMember.Local
         private static UInt32 DecodeInteger(byte n, byte[] buffer, ref UInt32 offset)
         {
-            // The starting value is the value behind the mask of the N bits
+            // 起始值是N位掩码后面的值
             UInt32 value = (UInt32)(buffer[offset++] & (byte)(0xFF >> (8 - n)));
 
-            // All N bits are 1s ? If so, we have at least one another byte to decode
+            // 所有N位都是1s ?如果是这样，我们至少还有一个字节要解码
             if (value == (1u << n) - 1)
             {
                 byte shift = 0;
 
                 do
                 {
-                    // The most significant bit is a continuation flag, so we have to mask it out
+                    // 最重要的位是一个延续标志，所以我们必须屏蔽它
                     value += (UInt32)((buffer[offset] & 0x7F) << shift);
                     shift += 7;
                 } while ((buffer[offset++] & 0x80) == 0x80);
@@ -820,10 +840,10 @@ namespace BestHTTP.Connections.HTTP2
         // https://http2.github.io/http2-spec/compression.html#integer.representation
         private static UInt32 DecodeInteger(byte n, byte data, Stream stream)
         {
-            // The starting value is the value behind the mask of the N bits
+            // 起始值是N位掩码后面的值
             UInt32 value = (UInt32)(data & (byte)(0xFF >> (8 - n)));
 
-            // All N bits are 1s ? If so, we have at least one another byte to decode
+            // 所有N位都是1s ?如果是这样，我们至少还有一个字节要解码
             if (value == (1u << n) - 1)
             {
                 byte shift = 0;
@@ -832,7 +852,7 @@ namespace BestHTTP.Connections.HTTP2
                 {
                     data = (byte)stream.ReadByte();
 
-                    // The most significant bit is a continuation flag, so we have to mask it out
+                    // 最重要的位是一个延续标志，所以我们必须屏蔽它
                     value += (UInt32)((data & 0x7F) << shift);
                     shift += 7;
                 } while ((data & 0x80) == 0x80);

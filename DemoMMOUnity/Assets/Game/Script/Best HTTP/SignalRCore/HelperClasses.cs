@@ -30,7 +30,7 @@ namespace BestHTTP.SignalRCore
     }
 
     /// <summary>
-    /// Possible states of a HubConnection
+    /// HubConnection的可能状态
     /// </summary>
     public enum ConnectionStates
     {
@@ -45,32 +45,32 @@ namespace BestHTTP.SignalRCore
     }
 
     /// <summary>
-    /// States that a transport can goes trough as seen from 'outside'.
+    /// 说明从“外面”看，Transport可以走槽。
     /// </summary>
     public enum TransportEvents
     {
         /// <summary>
-        /// Transport is selected to try to connect to the server
+        /// 选择传输以尝试连接到服务器
         /// </summary>
         SelectedToConnect,
 
         /// <summary>
-        /// Transport failed to connect to the server. This event can occur after SelectedToConnect, when already connected and an error occurs it will be a ClosedWithError one.
+        ///传输连接到服务器失败。此事件可以发生在SelectedToConnect之后，当已经连接并且发生错误时，它将是一个ClosedWithError。
         /// </summary>
         FailedToConnect,
 
         /// <summary>
-        /// The transport successfully connected to the server.
+        /// 传输成功连接到服务器。
         /// </summary>
         Connected,
 
         /// <summary>
-        /// Transport gracefully terminated.
+        /// 传输优雅地结束。
         /// </summary>
         Closed,
 
         /// <summary>
-        /// Unexpected error occured and the transport can't recover from it.
+        /// 发生意外错误，传输无法恢复。
         /// </summary>
         ClosedWithError
     }
@@ -100,25 +100,27 @@ namespace BestHTTP.SignalRCore
         object ConvertTo(Type toType, object obj);
     }
 
-    public sealed class StreamItemContainer<T>
+    public abstract class StreamItemContainer<T>
     {
-        public readonly long id;
+        public readonly long ID;
 
-        public List<T> Items { get; private set; }
+        // ReSharper disable once CollectionNeverQueried.Local
+        private List<T> Items { get; set; }
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public T LastAdded { get; private set; }
 
         public bool IsCanceled;
 
-        public StreamItemContainer(long _id)
+        protected StreamItemContainer(long id)
         {
-            this.id = _id;
+            this.ID = id;
             this.Items = new List<T>();
         }
 
         public void AddItem(T item)
         {
-            if (this.Items == null)
-                this.Items = new List<T>();
+            this.Items ??= new List<T>();
 
             this.Items.Add(item);
             this.LastAdded = item;
@@ -129,6 +131,7 @@ namespace BestHTTP.SignalRCore
     {
         public readonly Type[] ParamTypes;
         public readonly Action<object[]> Callback;
+
         public CallbackDescriptor(Type[] paramTypes, Action<object[]> callback)
         {
             this.ParamTypes = paramTypes;
@@ -138,60 +141,64 @@ namespace BestHTTP.SignalRCore
 
     internal struct InvocationDefinition
     {
-        public Action<Messages.Message> callback;
-        public Type returnType;
+        public Action<Messages.Message> Callback;
+        public Type ReturnType;
     }
 
     internal sealed class Subscription
     {
-        public List<CallbackDescriptor> callbacks = new List<CallbackDescriptor>(1);
+        public readonly List<CallbackDescriptor> Callbacks = new List<CallbackDescriptor>(1);
 
         public void Add(Type[] paramTypes, Action<object[]> callback)
         {
-            this.callbacks.Add(new CallbackDescriptor(paramTypes, callback));
+            this.Callbacks.Add(new CallbackDescriptor(paramTypes, callback));
         }
 
         public void Remove(Action<object[]> callback)
         {
             int idx = -1;
-            for (int i = 0; i < this.callbacks.Count && idx == -1; ++i)
-                if (this.callbacks[i].Callback == callback)
+            for (int i = 0; i < this.Callbacks.Count && idx == -1; ++i)
+            {
+                if (this.Callbacks[i].Callback == callback)
+                {
                     idx = i;
+                }
+            }
 
             if (idx != -1)
-                this.callbacks.RemoveAt(idx);
+                this.Callbacks.RemoveAt(idx);
         }
     }
 
     public sealed class HubOptions
     {
         /// <summary>
-        /// When this is set to true, the plugin will skip the negotiation request if the PreferedTransport is WebSocket. Its default value is false.
+        ///当这个设置为true时，如果PreferTransport是WebSocket，插件将跳过协商请求。默认值为false。
         /// </summary>
         public bool SkipNegotiation { get; set; }
 
         /// <summary>
-        /// The preferred transport to choose when more than one available. Its default value is TransportTypes.WebSocket.
+        /// 当有多个可用的传输方式时，选择首选的传输方式。它的默认值是TransportTypes.WebSocket。
         /// </summary>
-        public TransportTypes PreferedTransport { get; set; }
+        public TransportTypes PreferTransport { get; set; }
 
         /// <summary>
-        /// A ping message is only sent if the interval has elapsed without a message being sent. Its default value is 15 seconds.
+        /// ping消息只有在间隔时间过去后没有发送消息时才会发送。缺省值为15秒。
         /// </summary>
         public TimeSpan PingInterval { get; set; }
 
         /// <summary>
-        /// If the client doesn't see any message in this interval, considers the connection broken. Its default value is 30 seconds.
+        /// 如果客户端在此间隔内没有看到任何消息，则认为连接已断开。缺省值为30秒。
         /// </summary>
         public TimeSpan PingTimeoutInterval { get; set; }
 
         /// <summary>
-        /// The maximum count of redirect negotiation result that the plugin will follow. Its default value is 100.
+        /// 插件将遵循的重定向协商结果的最大计数。缺省值为100。
         /// </summary>
         public int MaxRedirects { get; set; }
 
         /// <summary>
-        /// The maximum time that the plugin allowed to spend trying to connect. Its default value is 1 minute.
+        /// 插件允许花在尝试连接上的最大时间。默认值为1分钟。
         /// </summary>
         public TimeSpan ConnectTimeout { get; set; }
 
@@ -199,7 +206,7 @@ namespace BestHTTP.SignalRCore
         {
             this.SkipNegotiation = false;
 #if !BESTHTTP_DISABLE_WEBSOCKET
-            this.PreferedTransport = TransportTypes.WebSocket;
+            this.PreferTransport = TransportTypes.WebSocket;
 #else
             this.PreferedTransport = TransportTypes.LongPolling;
 #endif
@@ -213,7 +220,7 @@ namespace BestHTTP.SignalRCore
     public interface IRetryPolicy
     {
         /// <summary>
-        /// This function must return with a delay time to wait until a new connection attempt, or null to do not do another one.
+        ///此函数必须返回一个延迟时间以等待新的连接尝试，或者返回null以不执行另一个连接尝试。
         /// </summary>
         TimeSpan? GetNextRetryDelay(RetryContext context);
     }
@@ -221,24 +228,24 @@ namespace BestHTTP.SignalRCore
     public struct RetryContext
     {
         /// <summary>
-        /// Previous reconnect attempts. A successful connection sets it back to zero.
+        /// 以前的重新连接尝试。一个成功的连接会将其置零。
         /// </summary>
         public uint PreviousRetryCount;
 
         /// <summary>
-        /// Elapsed time since the original connection error.
+        /// 从最初的连接错误开始经过的时间。
         /// </summary>
         public TimeSpan ElapsedTime;
 
         /// <summary>
-        /// String representation of the connection error.
+        /// 连接错误的字符串表示形式。
         /// </summary>
         public string RetryReason;
     }
 
     public sealed class DefaultRetryPolicy : IRetryPolicy
     {
-        private static TimeSpan?[] DefaultBackoffTimes = new TimeSpan?[]
+        private static readonly TimeSpan?[] DefaultBackoffTimes = new TimeSpan?[]
         {
             TimeSpan.Zero,
             TimeSpan.FromSeconds(2),
@@ -247,24 +254,23 @@ namespace BestHTTP.SignalRCore
             null
         };
 
-        TimeSpan?[] backoffTimes;
+        private readonly TimeSpan?[] _backoffTimes;
 
         public DefaultRetryPolicy()
         {
-            this.backoffTimes = DefaultBackoffTimes;
+            this._backoffTimes = DefaultBackoffTimes;
         }
 
         public DefaultRetryPolicy(TimeSpan?[] customBackoffTimes)
         {
-            this.backoffTimes = customBackoffTimes;
+            this._backoffTimes = customBackoffTimes;
         }
 
         public TimeSpan? GetNextRetryDelay(RetryContext context)
         {
-            if (context.PreviousRetryCount >= this.backoffTimes.Length)
-                return null;
-
-            return this.backoffTimes[context.PreviousRetryCount];
+            return context.PreviousRetryCount >= this._backoffTimes.Length
+                ? null
+                : this._backoffTimes[context.PreviousRetryCount];
         }
     }
 }

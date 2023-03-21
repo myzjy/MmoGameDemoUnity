@@ -1,206 +1,387 @@
 #if !BESTHTTP_DISABLE_SIGNALR_CORE
-using System;
-
 namespace BestHTTP.SignalRCore
 {
     public static class HubConnectionExtensions
     {
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(this HubConnection hub, string target)
+        public
+            static
+            // ReSharper disable once UnusedTypeParameter
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 1, true, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 1,
+                    downStream: true,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            // ReSharper disable once UnusedTypeParameter
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 1, true, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 1,
+                    downStream: true,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(this HubConnection hub, string target)
+        public
+            static
+            // ReSharper disable once UnusedTypeParameter
+            // ReSharper disable once UnusedTypeParameter
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 2, true, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 2,
+                    downStream: true,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            // ReSharper disable once UnusedTypeParameter
+            // ReSharper disable once UnusedTypeParameter
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(
+                this HubConnection hub, string target, params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 2, true, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 2,
+                    downStream: true,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 3, true, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 3,
+                    downStream: true,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 3, true, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 3,
+                    downStream: true,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 4, true, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 4,
+                    downStream: true,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 4, true, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 4,
+                    downStream: true,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 5, true, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 5,
+                    downStream: true,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 5, true, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 5,
+                    downStream: true,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 1, false, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 1,
+                    downStream: false,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 1, false, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 1,
+                    downStream: false,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 2, false, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 2,
+                    downStream: false,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 2, false, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 2,
+                    downStream: false,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 3, false, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 3,
+                    downStream: false,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 3, false, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 3,
+                    downStream: false,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 4, false, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 4,
+                    downStream: false,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 4, false, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 4,
+                    downStream: false,
+                    args: args);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(this HubConnection hub, string target)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(
+                this HubConnection hub,
+                string target)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 5, false, HubConnection.EmptyArgs);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 5,
+                    downStream: false,
+                    args: HubConnection.EmptyArgs);
         }
 
-        public static UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(this HubConnection hub, string target, params object[] args)
+        public
+            static
+            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(
+                this HubConnection hub,
+                string target,
+                params object[] args)
         {
-            if (hub.State != ConnectionStates.Connected)
-                return null;
-
-            return hub.GetUpStreamController<TResult>(target, 5, false, args);
+            return hub.State != ConnectionStates.Connected
+                ? null
+                : hub.GetUpStreamController<TResult>(
+                    target: target,
+                    paramCount: 5,
+                    downStream: false,
+                    args: args);
         }
     }
 
     public static class UploadItemControllerExtensions
     {
-        public static void UploadParam<TResult, P1>(this UpStreamItemController<TResult> controller, P1 item)
+        public
+            static
+            void UploadParam<TResult, P1>(
+                this UpStreamItemController<TResult> controller,
+                P1 item)
         {
-            controller.UploadParam<P1>(controller.StreamingIds[0], item);
+            controller.UploadParam(controller.StreamingIds[0], item);
         }
 
-        public static void UploadParam<TResult, P1, P2>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2)
+        public
+            static
+            void UploadParam<TResult, P1, P2>(
+                this UpStreamItemController<TResult> controller,
+                P1 param1,
+                P2 param2)
         {
-            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
-            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
+            controller.UploadParam(controller.StreamingIds[0], param1);
+            controller.UploadParam(controller.StreamingIds[1], param2);
         }
 
-        public static void UploadParam<TResult, P1, P2, P3>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3)
+        public
+            static
+            void UploadParam<TResult, P1, P2, P3>(
+                this UpStreamItemController<TResult> controller,
+                P1 param1,
+                P2 param2,
+                P3 param3)
         {
-            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
-            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
-            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
+            controller.UploadParam(controller.StreamingIds[0], param1);
+            controller.UploadParam(controller.StreamingIds[1], param2);
+            controller.UploadParam(controller.StreamingIds[2], param3);
         }
 
-        public static void UploadParam<TResult, P1, P2, P3, P4>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3, P4 param4)
+        public
+            static
+            void UploadParam<TResult, P1, P2, P3, P4>(
+                this UpStreamItemController<TResult> controller,
+                P1 param1,
+                P2 param2,
+                P3 param3,
+                P4 param4)
         {
-            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
-            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
-            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
-            controller.UploadParam<P4>(controller.StreamingIds[3], param4);
+            controller.UploadParam(controller.StreamingIds[0], param1);
+            controller.UploadParam(controller.StreamingIds[1], param2);
+            controller.UploadParam(controller.StreamingIds[2], param3);
+            controller.UploadParam(controller.StreamingIds[3], param4);
         }
 
-        public static void UploadParam<TResult, P1, P2, P3, P4, P5>(this UpStreamItemController<TResult> controller, P1 param1, P2 param2, P3 param3, P4 param4, P5 param5)
+        public
+            static
+            void UploadParam<TResult, P1, P2, P3, P4, P5>(
+                this UpStreamItemController<TResult> controller,
+                P1 param1,
+                P2 param2,
+                P3 param3,
+                P4 param4,
+                P5 param5)
         {
-            controller.UploadParam<P1>(controller.StreamingIds[0], param1);
-            controller.UploadParam<P2>(controller.StreamingIds[1], param2);
-            controller.UploadParam<P3>(controller.StreamingIds[2], param3);
-            controller.UploadParam<P4>(controller.StreamingIds[3], param4);
-            controller.UploadParam<P5>(controller.StreamingIds[4], param5);
+            controller.UploadParam(controller.StreamingIds[0], param1);
+            controller.UploadParam(controller.StreamingIds[1], param2);
+            controller.UploadParam(controller.StreamingIds[2], param3);
+            controller.UploadParam(controller.StreamingIds[3], param4);
+            controller.UploadParam(controller.StreamingIds[4], param5);
         }
     }
 }

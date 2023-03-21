@@ -20,8 +20,30 @@ namespace BestHTTP.Connections.HTTP2
         // Connection preface starts with the string PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n).
         private static readonly byte[] Magic = new byte[]
         {
-            0x50, 0x52, 0x49, 0x20, 0x2a, 0x20, 0x48, 0x54, 0x54, 0x50, 0x2f, 0x32, 0x2e, 0x30, 0x0d, 0x0a, 0x0d, 0x0a,
-            0x53, 0x4d, 0x0d, 0x0a, 0x0d, 0x0a
+            0x50,
+            0x52,
+            0x49,
+            0x20,
+            0x2a,
+            0x20,
+            0x48,
+            0x54,
+            0x54,
+            0x50,
+            0x2f,
+            0x32,
+            0x2e,
+            0x30,
+            0x0d,
+            0x0a,
+            0x0d,
+            0x0a,
+            0x53,
+            0x4d,
+            0x0d,
+            0x0a,
+            0x0d,
+            0x0a
         };
 
         private static readonly int RTTBufferCapacity = 5;
@@ -30,10 +52,14 @@ namespace BestHTTP.Connections.HTTP2
 
         private readonly HTTPConnection _conn;
 
-        private readonly ConcurrentQueue<Http2FrameHeaderAndPayload> _newFrames =
-            new ConcurrentQueue<Http2FrameHeaderAndPayload>();
+        private
+            readonly
+            ConcurrentQueue<Http2FrameHeaderAndPayload> _newFrames =
+                new ConcurrentQueue<Http2FrameHeaderAndPayload>();
 
-        private readonly List<Http2FrameHeaderAndPayload> _outgoingFrames = new List<Http2FrameHeaderAndPayload>();
+        private
+            readonly
+            List<Http2FrameHeaderAndPayload> _outgoingFrames = new List<Http2FrameHeaderAndPayload>();
 
         private readonly ConcurrentQueue<HttpRequest> _requestQueue = new ConcurrentQueue<HttpRequest>();
 
@@ -103,7 +129,9 @@ namespace BestHTTP.Connections.HTTP2
             // 当ConnectionEventHelper处理关闭状态更改事件时，队列中的请求将被重新发送。
             // (我们现在应该避免重新发送请求，因为它仍然可能选择这个连接/处理程序，从而导致无限循环。)
             if (Volatile.Read(ref this._threadExitCount) == 0)
+            {
                 this._newFrameSignal.Set();
+            }
         }
 
         public void RunHandler()
@@ -132,9 +160,16 @@ namespace BestHTTP.Connections.HTTP2
                 // 另一方面，如果缓冲区很小(1-2)，这意味着对于较大的数据，我们必须进行大量的系统调用，在这种情况下，较大的缓冲区可能更好。不过，如果我们不受cpu限制，
                 // 一个饱和的网络可能会更好地为我们服务。
                 using var bufferedStream =
-                    new WriteOnlyBufferedStream(this._conn.connector.Stream, 1024 * 1024 /*1500 - 20 - 20*/);
+                    new WriteOnlyBufferedStream(
+                        stream: this._conn.connector.Stream,
+                        bufferSize: 1024 * 1024 /*1500 - 20 - 20*/);
                 // 客户端连接序言以一个24字节的序列开始
-                bufferedStream.Write(Magic, 0, Magic.Length);
+                {
+                    bufferedStream.Write(
+                        bufferFrom: Magic,
+                        offset: 0,
+                        count: Magic.Length);
+                }
 
                 // 列后面必须有一个设置帧(Section 6.5)，设置帧可以是空的。
                 // 客户端在收到101(交换协议)响应(表示升级成功)或作为TLS连接的第一个应用程序数据字节时立即发送客户端连接序言
@@ -258,13 +293,17 @@ namespace BestHTTP.Connections.HTTP2
                                 case Http2FrameTypes.Settings:
                                 {
                                     this.Settings.Process(header, this._outgoingFrames);
-
-                                    PluginEventHelper.EnqueuePluginEvent(
-                                        new PluginEventInfo(PluginEvents.Http2ConnectProtocol,
-                                            new Http2ConnectProtocolInfo(this._conn.LastProcessedUri.Host,
-                                                this.Settings.MySettings[Http2Settings.EnableConnectProtocol] ==
-                                                1 && this.Settings.RemoteSettings[
-                                                    Http2Settings.EnableConnectProtocol] == 1)));
+                                    var http2ConnectEnabled =
+                                        this.Settings.MySettings[Http2Settings.EnableConnectProtocol] ==
+                                        1 &&
+                                        this.Settings.RemoteSettings[Http2Settings.EnableConnectProtocol] == 1;
+                                    var http2Connect = new Http2ConnectProtocolInfo(
+                                        host: this._conn.LastProcessedUri.Host,
+                                        enabled: http2ConnectEnabled);
+                                    var pluginEventInfo = new PluginEventInfo(
+                                        @event: PluginEvents.Http2ConnectProtocol,
+                                        payload: http2Connect);
+                                    PluginEventHelper.EnqueuePluginEvent(pluginEventInfo);
                                 }
                                     break;
 
@@ -277,8 +316,12 @@ namespace BestHTTP.Connections.HTTP2
                                     if ((pingFrame.Flags & Http2PingFlags.Ack) == 0)
                                     {
                                         var frame = Http2FrameHelper.CreatePingFrame(Http2PingFlags.Ack);
-                                        Array.Copy(pingFrame.OpaqueData, 0, frame.Payload, 0,
-                                            pingFrame.OpaqueDataLength);
+                                        Array.Copy(
+                                            sourceArray: pingFrame.OpaqueData,
+                                            sourceIndex: 0,
+                                            destinationArray: frame.Payload,
+                                            destinationIndex: 0,
+                                            length: pingFrame.OpaqueDataLength);
 
                                         this._outgoingFrames.Add(frame);
                                     }
@@ -292,6 +335,7 @@ namespace BestHTTP.Connections.HTTP2
                                     break;
 
                                 case Http2FrameTypes.Goaway:
+                                {
                                     //解析框架，这样我们就可以打印出详细的信息
                                     Http2GoAwayFrame goAwayFrame = Http2FrameHelper.ReadGoAwayFrame(header);
 
@@ -299,8 +343,7 @@ namespace BestHTTP.Connections.HTTP2
                                     Debug.Log(
                                         $"[HTTP2Handler] [method:RunHandler()] Received GOAWAY frame: {goAwayFrame.ToString()}");
 #endif
-                                    var msg =
-                                        $"Server closing the connection! Error code: {goAwayFrame.Error} ({goAwayFrame.ErrorCode})";
+                                    var msg = $"服务器关闭连接!错误代码: {goAwayFrame.Error} ({goAwayFrame.ErrorCode})";
                                     foreach (var t in this._clientInitiatedStreams)
                                     {
                                         t.Abort(msg);
@@ -312,6 +355,7 @@ namespace BestHTTP.Connections.HTTP2
                                     this._isRunning = false;
 
                                     this._conn.State = HttpConnectionStates.Closed;
+                                }
                                     break;
 
                                 case Http2FrameTypes.AltSvc:
@@ -323,11 +367,14 @@ namespace BestHTTP.Connections.HTTP2
                             }
 
                             if (header.Payload != null)
+                            {
                                 BufferPool.Release(header.Payload);
+                            }
                         }
                     }
 
-                    UInt32 maxConcurrentStreams = Math.Min(HttpManager.Http2Settings.MaxConcurrentStreams,
+                    UInt32 maxConcurrentStreams = Math.Min(
+                        HttpManager.Http2Settings.MaxConcurrentStreams,
                         this.Settings.RemoteSettings[Http2Settings.MaxConcurrentStreams]);
 
                     // 预测试流计数仅在真正需要时才锁定。
@@ -420,8 +467,7 @@ namespace BestHTTP.Connections.HTTP2
                     {
                         var frame = this._outgoingFrames[i];
 
-                        if ( /*HttpManager.Logger.Level <= Loglevels.All &&*/
-                            frame.Type != Http2FrameTypes.Data /*&& frame.Type != HTTP2FrameTypes.PING*/)
+                        if (frame.Type != Http2FrameTypes.Data /*&& frame.Type != HTTP2FrameTypes.PING*/)
                         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                             Debug.Log($"[HTTP2Handler] [method:RunHandler()] Sending frame: {frame.ToString()}");
@@ -585,7 +631,9 @@ namespace BestHTTP.Connections.HTTP2
                     request.State = HttpRequestStates.Aborted;
                 }
                 else
+                {
                     RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(request, RequestEvents.Resend));
+                }
             }
         }
 
@@ -619,8 +667,7 @@ namespace BestHTTP.Connections.HTTP2
                 {
                     Http2FrameHeaderAndPayload header = Http2FrameHelper.ReadHeader(this._conn.connector.Stream);
 
-                    if ( /*HttpManager.Logger.Level <= Loglevels.Information &&*/
-                        header.Type != Http2FrameTypes.Data /*&& header.Type != HTTP2FrameTypes.PING*/)
+                    if (header.Type != Http2FrameTypes.Data /*&& header.Type != HTTP2FrameTypes.PING*/)
                     {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         Debug.Log(

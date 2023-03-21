@@ -21,47 +21,38 @@ namespace BestHTTP.SignalRCore
         HubConnection Connection { get; set; }
 
         /// <summary>
-        /// This function must parse binary representation of the messages into the list of Messages.
+        /// 此函数必须将消息的二进制表示解析为消息列表。
         /// </summary>
         void ParseMessages(BufferSegment segment, ref List<Message> messages);
 
         /// <summary>
-        /// This function must return the encoded representation of the given message.
+        /// 此函数必须返回给定消息的编码表示。
         /// </summary>
         BufferSegment EncodeMessage(Message message);
 
         /// <summary>
-        /// This function must convert all element in the arguments array to the corresponding type from the argTypes array.
+        /// 该函数必须将arguments数组中的所有元素从argTypes数组转换为相应的类型。
         /// </summary>
         object[] GetRealArguments(Type[] argTypes, object[] arguments);
 
         /// <summary>
-        /// Convert a value to the given type.
+        /// 将值转换为给定类型。
         /// </summary>
         object ConvertTo(Type toType, object obj);
     }
 
-    public sealed class JsonProtocol : IProtocol
+    public abstract class JsonProtocol : IProtocol
     {
         public const char Separator = (char)0x1E;
 
-        public JsonProtocol(IEncoder encoder)
+        protected JsonProtocol(IEncoder encoder)
         {
-            if (encoder == null)
-                throw new ArgumentNullException("encoder");
-
-            this.Encoder = encoder;
+            this.Encoder = encoder ?? throw new ArgumentNullException(nameof(encoder));
         }
 
-        public string Name
-        {
-            get { return "json"; }
-        }
+        public string Name => "json";
 
-        public TransferModes Type
-        {
-            get { return TransferModes.Binary; }
-        }
+        public TransferModes Type => TransferModes.Binary;
 
         public IEncoder Encoder { get; private set; }
 
@@ -73,28 +64,31 @@ namespace BestHTTP.SignalRCore
                 return;
 
             int from = segment.Offset;
-            int separatorIdx = Array.IndexOf<byte>(segment.Data, (byte)JsonProtocol.Separator, from);
+            int separatorIdx = Array.IndexOf(segment.Data, (byte)JsonProtocol.Separator, from);
             if (separatorIdx == -1)
             {
-                throw new Exception("Missing separator in data! Segment: " + segment.ToString());
+                throw new Exception($"数据中缺少分隔符!段: {segment.ToString()}");
             }
 
             while (separatorIdx != -1)
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 var sb = new StringBuilder(3);
-                var encodingString = System.Text.Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from);
+                var encodingString = Encoding.UTF8.GetString(segment.Data, from, separatorIdx - from);
                 sb.Append($"ParseMessages - {encodingString}");
                 Debug.Log(
-                    $"[JsonProtocol] [method:ParseMessages] [msg]{sb.ToString()}");
+                    $"[JsonProtocol] [method:ParseMessages] [msg]{sb}");
 #endif
-                var message =
-                    this.Encoder.DecodeAs<Message>(new BufferSegment(segment.Data, from, separatorIdx - from));
+                var bufferSegment = new BufferSegment(
+                    data: segment.Data,
+                    from,
+                    separatorIdx - from);
+                var message = this.Encoder.DecodeAs<Message>(bufferSegment);
 
                 messages.Add(message);
 
                 from = separatorIdx + 1;
-                separatorIdx = Array.IndexOf<byte>(segment.Data, (byte)JsonProtocol.Separator, from);
+                separatorIdx = Array.IndexOf(segment.Data, (byte)JsonProtocol.Separator, from);
             }
         }
 
@@ -107,12 +101,13 @@ namespace BestHTTP.SignalRCore
             {
                 case MessageTypes.StreamItem:
                 {
-                    result = this.Encoder.Encode<StreamItemMessage>(new StreamItemMessage()
+                    var streamItem = new StreamItemMessage()
                     {
                         type = message.type,
                         invocationId = message.invocationId,
                         item = message.item
-                    });
+                    };
+                    result = this.Encoder.Encode(streamItem);
                 }
                     break;
 
@@ -120,29 +115,32 @@ namespace BestHTTP.SignalRCore
                 {
                     if (!string.IsNullOrEmpty(message.error))
                     {
-                        result = this.Encoder.Encode<CompletionWithError>(new CompletionWithError()
+                        var completionWith = new CompletionWithError()
                         {
                             type = MessageTypes.Completion,
                             invocationId = message.invocationId,
                             error = message.error
-                        });
+                        };
+                        result = this.Encoder.Encode(completionWith);
                     }
                     else if (message.result != null)
                     {
-                        result = this.Encoder.Encode<CompletionWithResult>(new CompletionWithResult()
+                        var completionWith = new CompletionWithResult()
                         {
                             type = MessageTypes.Completion,
                             invocationId = message.invocationId,
                             result = message.result
-                        });
+                        };
+                        result = this.Encoder.Encode(completionWith);
                     }
                     else
                     {
-                        result = this.Encoder.Encode<Completion>(new Completion()
+                        var completion = new Completion()
                         {
                             type = MessageTypes.Completion,
                             invocationId = message.invocationId
-                        });
+                        };
+                        result = this.Encoder.Encode(completion);
                     }
                 }
                     break;
@@ -152,7 +150,7 @@ namespace BestHTTP.SignalRCore
                 {
                     if (message.streamIds != null)
                     {
-                        result = this.Encoder.Encode<UploadInvocationMessage>(new UploadInvocationMessage()
+                        var uploadMessage = new UploadInvocationMessage()
                         {
                             type = message.type,
                             invocationId = message.invocationId,
@@ -160,34 +158,37 @@ namespace BestHTTP.SignalRCore
                             target = message.target,
                             arguments = message.arguments,
                             streamIds = message.streamIds
-                        });
+                        };
+                        result = this.Encoder.Encode(uploadMessage);
                     }
                     else
                     {
-                        result = this.Encoder.Encode<InvocationMessage>(new InvocationMessage()
+                        var invocationMessage = new InvocationMessage()
                         {
                             type = message.type,
                             invocationId = message.invocationId,
                             nonblocking = message.nonblocking,
                             target = message.target,
                             arguments = message.arguments
-                        });
+                        };
+                        result = this.Encoder.Encode(invocationMessage);
                     }
                 }
                     break;
 
                 case MessageTypes.CancelInvocation:
                 {
-                    result = this.Encoder.Encode<CancelInvocationMessage>(new CancelInvocationMessage()
+                    var cancelInvocation = new CancelInvocationMessage()
                     {
                         invocationId = message.invocationId
-                    });
+                    };
+                    result = this.Encoder.Encode(cancelInvocation);
                 }
                     break;
 
                 case MessageTypes.Ping:
                 {
-                    result = this.Encoder.Encode<PingMessage>(new PingMessage());
+                    result = this.Encoder.Encode(new PingMessage());
                 }
                     break;
 
@@ -195,22 +196,24 @@ namespace BestHTTP.SignalRCore
                 {
                     if (!string.IsNullOrEmpty(message.error))
                     {
-                        result = this.Encoder.Encode<CloseWithErrorMessage>(new CloseWithErrorMessage()
-                            { error = message.error });
+                        var closeWithError = new CloseWithErrorMessage()
+                        {
+                            error = message.error
+                        };
+                        result = this.Encoder.Encode(closeWithError);
                     }
                     else
                     {
-                        result = this.Encoder.Encode<CloseMessage>(new CloseMessage());
+                        result = this.Encoder.Encode(new CloseMessage());
                     }
                 }
                     break;
             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             var sb = new StringBuilder(3);
-            var encodingString = System.Text.Encoding.UTF8.GetString(result.Data, 0, result.Count - 1);
+            var encodingString = Encoding.UTF8.GetString(result.Data, 0, result.Count - 1);
             sb.Append($"EncodeMessage - json: {encodingString}");
-            Debug.Log(
-                $"[JsonProtocol] [method:EncodeMessage] [msg]{sb.ToString()}");
+            Debug.Log($"[JsonProtocol] [method:EncodeMessage] [msg]{sb}");
 #endif
 
             return result;
@@ -222,13 +225,16 @@ namespace BestHTTP.SignalRCore
                 return null;
 
             if (argTypes.Length > arguments.Length)
-                throw new Exception(string.Format("argType.Length({0}) < arguments.length({1})", argTypes.Length,
-                    arguments.Length));
+            {
+                throw new Exception($"argType.Length({argTypes.Length}) < arguments.length({arguments.Length})");
+            }
 
             object[] realArgs = new object[arguments.Length];
 
             for (int i = 0; i < arguments.Length; ++i)
+            {
                 realArgs[i] = ConvertTo(argTypes[i], arguments[i]);
+            }
 
             return realArgs;
         }
@@ -236,7 +242,9 @@ namespace BestHTTP.SignalRCore
         public object ConvertTo(Type toType, object obj)
         {
             if (obj == null)
+            {
                 return null;
+            }
 
 #if NETFX_CORE
             TypeInfo typeInfo = toType.GetTypeInfo();
@@ -247,39 +255,47 @@ namespace BestHTTP.SignalRCore
 #else
             if (toType.IsEnum)
 #endif
+            {
                 return Enum.Parse(toType, obj.ToString(), true);
+            }
 
 #if NETFX_CORE
             if (typeInfo.IsPrimitive)
 #else
             if (toType.IsPrimitive)
 #endif
+            {
                 return Convert.ChangeType(obj, toType);
+            }
 
             if (toType == typeof(string))
+            {
                 return obj.ToString();
+            }
 
 #if NETFX_CORE
             if (typeInfo.IsGenericType && toType.Name == "Nullable`1")
                 return Convert.ChangeType(obj, toType.GenericTypeArguments[0]);
 #else
             if (toType.IsGenericType && toType.Name == "Nullable`1")
+            {
                 return Convert.ChangeType(obj, toType.GetGenericArguments()[0]);
+            }
 #endif
 
             return this.Encoder.ConvertTo(toType, obj);
         }
 
         /// <summary>
-        /// Returns the given string parameter's bytes with the added separator(0x1E).
+        /// 返回给定字符串参数的字节和添加的分隔符(0x1E)。
         /// </summary>
         public static BufferSegment WithSeparator(string str)
         {
-            int len = System.Text.Encoding.UTF8.GetByteCount(str);
+            int len = Encoding.UTF8.GetByteCount(str);
 
             byte[] buffer = BufferPool.Get(len + 1, true);
 
-            System.Text.Encoding.UTF8.GetBytes(str, 0, str.Length, buffer, 0);
+            Encoding.UTF8.GetBytes(str, 0, str.Length, buffer, 0);
 
             buffer[len] = 0x1e;
 

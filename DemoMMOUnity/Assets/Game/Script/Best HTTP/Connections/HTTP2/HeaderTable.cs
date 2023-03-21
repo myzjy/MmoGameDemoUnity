@@ -12,8 +12,23 @@ namespace BestHTTP.Connections.HTTP2
         // 有效索引从1开始，所以有一个空条目。
         private static readonly string[] StaticTableValues = new string[]
         {
-            string.Empty, string.Empty, "GET", "POST", "/", "/index.html", "http", "https", "200", "204", "206", "304",
-            "400", "404", "500", string.Empty, "gzip, deflate"
+            string.Empty,
+            string.Empty,
+            "GET",
+            "POST", 
+            "/",
+            "/index.html", 
+            "http",
+            "https", 
+            "200", 
+            "204",
+            "206",
+            "304",
+            "400", 
+            "404",
+            "500",
+            string.Empty,
+            "gzip, deflate"
         };
 
         // https://http2.github.io/http2-spec/compression.html#static.table.definition
@@ -190,7 +205,7 @@ namespace BestHTTP.Connections.HTTP2
             // 在向动态表添加新条目之前，将从动态表的末尾删除条目，直到动态表的大小小于或等于(最大大小-新条目大小)或直到表为空
             while (this.DynamicTableSize + newHeaderSize > this.MaxDynamicTableSize && this._dynamicTable.Count > 0)
             {
-                var entry = this._dynamicTable[this._dynamicTable.Count - 1];
+                var entry = this._dynamicTable[^1];
                 this._dynamicTable.RemoveAt(this._dynamicTable.Count - 1);
                 this.DynamicTableSize -= CalculateEntrySize(entry);
             }

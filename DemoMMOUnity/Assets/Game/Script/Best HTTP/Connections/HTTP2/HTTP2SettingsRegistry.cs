@@ -98,6 +98,7 @@ namespace BestHTTP.Connections.HTTP2
     public sealed class Http2SettingsRegistry
     {
         private readonly bool[] _changeFlags;
+        // ReSharper disable once NotAccessedField.Local
         private readonly Http2SettingsManager _parent;
 
         private UInt32[] _values;
@@ -253,6 +254,7 @@ namespace BestHTTP.Connections.HTTP2
 
         private DateTime SettingsChangesSentAt { get; set; }
 
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public Http2Handler Parent { get; private set; }
 
         internal void Process(Http2FrameHeaderAndPayload frame, List<Http2FrameHeaderAndPayload> outgoingFrames)
