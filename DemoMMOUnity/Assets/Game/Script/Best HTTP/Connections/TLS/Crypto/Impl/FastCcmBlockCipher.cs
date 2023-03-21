@@ -2,7 +2,6 @@
 #pragma warning disable
 using System;
 using System.IO;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes;
@@ -11,14 +10,14 @@ using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
 {
-    public class FastSicBlockCipher
+    public sealed class FastSicBlockCipher
         : IBlockCipher
     {
-        private readonly IBlockCipher cipher;
-        private readonly int blockSize;
-        private readonly byte[] counter;
-        private readonly byte[] counterOut;
-        private byte[] IV;
+        private readonly IBlockCipher _cipher;
+        private readonly int _blockSize;
+        private readonly byte[] _counter;
+        private readonly byte[] _counterOut;
+        private byte[] _iv;
 
         /**
         * Basic constructor.
@@ -27,11 +26,11 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         */
         public FastSicBlockCipher(IBlockCipher cipher)
         {
-            this.cipher = cipher;
-            this.blockSize = cipher.GetBlockSize();
-            this.counter = new byte[blockSize];
-            this.counterOut = new byte[blockSize];
-            this.IV = new byte[blockSize];
+            this._cipher = cipher;
+            this._blockSize = cipher.GetBlockSize();
+            this._counter = new byte[_blockSize];
+            this._counterOut = new byte[_blockSize];
+            this._iv = new byte[_blockSize];
         }
 
         /**
@@ -39,206 +38,204 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         *
         * @return the underlying block cipher that we are wrapping.
         */
-        public virtual IBlockCipher GetUnderlyingCipher()
+        public IBlockCipher GetUnderlyingCipher()
         {
-            return cipher;
+            return _cipher;
         }
 
-        public virtual void Init(
+        public void Init(
             bool forEncryption, //ignored by this CTR mode
             ICipherParameters parameters)
         {
-            FastParametersWithIV ivParam = parameters as FastParametersWithIV;
-            if (ivParam == null)
-                throw new ArgumentException("CTR/SIC mode requires ParametersWithIV", "parameters");
+            if (parameters is not FastParametersWithIV ivParam)
+            {
+                throw new ArgumentException("CTR/SIC模式需要ParametersWithIV", nameof(parameters));
+            }
 
-            this.IV = ivParam.GetIV();
+            this._iv = ivParam.GetIV();
 
-            if (blockSize < IV.Length)
-                throw new ArgumentException("CTR/SIC mode requires IV no greater than: " + blockSize + " bytes.");
+            if (_blockSize < _iv.Length)
+            {
+                throw new ArgumentException($"CTR/SIC模式要求IV不大于: {_blockSize} bytes.");
+            }
 
-            int maxCounterSize = System.Math.Min(8, blockSize / 2);
-            if (blockSize - IV.Length > maxCounterSize)
-                throw new ArgumentException("CTR/SIC mode requires IV of at least: " + (blockSize - maxCounterSize) + " bytes.");
+            int maxCounterSize = Math.Min(8, _blockSize / 2);
+            if (_blockSize - _iv.Length > maxCounterSize)
+            {
+                throw new ArgumentException($"CTR/SIC模式要求IV至少:{(_blockSize - maxCounterSize)}bytes.");
+            }
 
             // if null it's an IV changed only.
             if (ivParam.Parameters != null)
             {
-                cipher.Init(true, ivParam.Parameters);
+                _cipher.Init(true, ivParam.Parameters);
             }
 
             Reset();
         }
 
-        public virtual string AlgorithmName
+        public string AlgorithmName => _cipher.AlgorithmName + "/SIC";
+
+        public bool IsPartialBlockOkay => true;
+
+        public int GetBlockSize()
         {
-            get { return cipher.AlgorithmName + "/SIC"; }
+            return _cipher.GetBlockSize();
         }
 
-        public virtual bool IsPartialBlockOkay
-        {
-            get { return true; }
-        }
-
-        public virtual int GetBlockSize()
-        {
-            return cipher.GetBlockSize();
-        }
-
-        public virtual int ProcessBlock(
+        public int ProcessBlock(
             byte[] input,
             int inOff,
             byte[] output,
             int outOff)
         {
-            cipher.ProcessBlock(counter, 0, counterOut, 0);
+            _cipher.ProcessBlock(_counter, 0, _counterOut, 0);
 
             //
-            // XOR the counterOut with the plaintext producing the cipher text
+            // 用明文异或反输出产生密文
             //
-            for (int i = 0; i < counterOut.Length; i++)
+            for (int i = 0; i < _counterOut.Length; i++)
             {
-                output[outOff + i] = (byte)(counterOut[i] ^ input[inOff + i]);
+                output[outOff + i] = (byte)(_counterOut[i] ^ input[inOff + i]);
             }
 
             // Increment the counter
-            int j = counter.Length;
-            while (--j >= 0 && ++counter[j] == 0)
+            int j = _counter.Length;
+            while (--j >= 0 && ++_counter[j] == 0)
             {
             }
 
-            return counter.Length;
+            return _counter.Length;
         }
 
-        public virtual void Reset()
+        public void Reset()
         {
-            Arrays.Fill(counter, (byte)0);
-            Array.Copy(IV, 0, counter, 0, IV.Length);
-            cipher.Reset();
+            Arrays.Fill(_counter, 0);
+            Array.Copy(_iv, 0, _counter, 0, _iv.Length);
+            _cipher.Reset();
         }
     }
 
     /**
-    * Implements the Counter with Cipher Block Chaining mode (CCM) detailed in
+    * 实现了密码块链模式(CCM)的计数器
     * NIST Special Publication 800-38C.
     * <p>
-    * <b>Note</b>: this mode is a packet mode - it needs all the data up front.
+    * <b>Note</b>: 这种模式是一种分组模式——它需要预先准备所有的数据。
     * </p>
     */
-    public class FastCcmBlockCipher
+    public sealed class FastCcmBlockCipher
         : IAeadBlockCipher
     {
         private static readonly int BlockSize = 16;
 
-        private readonly IBlockCipher cipher;
-        private readonly byte[] macBlock;
-        private bool forEncryption;
-        private byte[] nonce;
-        private byte[] initialAssociatedText;
-        private int macSize;
-        private ICipherParameters keyParam;
-        private readonly MemoryStream associatedText = new MemoryStream();
-        private readonly MemoryStream data = new MemoryStream();
+        private readonly IBlockCipher _cipher;
+        private readonly byte[] _macBlock;
+        private bool _forEncryption;
+        private byte[] _nonce;
+        private byte[] _initialAssociatedText;
+        private int _macSize;
+        private ICipherParameters _keyParam;
+        private readonly MemoryStream _associatedText = new MemoryStream();
+        private readonly MemoryStream _data = new MemoryStream();
 
         /**
-        * Basic constructor.
-        *
-        * @param cipher the block cipher to be used.
+        * 基本的构造函数。
+        * <param name="cipher">对要使用的分组密码进行加密。</param>
         */
         public FastCcmBlockCipher(
             IBlockCipher cipher)
         {
-            this.cipher = cipher;
-            this.macBlock = new byte[BlockSize];
+            this._cipher = cipher;
+            this._macBlock = new byte[BlockSize];
 
             if (cipher.GetBlockSize() != BlockSize)
-                throw new ArgumentException("cipher required with a block size of " + BlockSize + ".");
+            {
+                throw new ArgumentException($"{BlockSize}块大小为的密码.");
+            }
         }
 
         /**
-        * return the underlying block cipher that we are wrapping.
-        *
-        * @return the underlying block cipher that we are wrapping.
+        * 返回正在换行的底层分组密码。
+        * <returns>返回正在换行的底层分组密码。</returns>
         */
-        public virtual IBlockCipher GetUnderlyingCipher()
+        public IBlockCipher GetUnderlyingCipher()
         {
-            return cipher;
+            return _cipher;
         }
 
-        public virtual void Init(
+        public void Init(
             bool forEncryption,
             ICipherParameters parameters)
         {
-            this.forEncryption = forEncryption;
+            this._forEncryption = forEncryption;
 
             ICipherParameters cipherParameters;
             if (parameters is FastAeadParameters)
             {
-                AeadParameters param = (AeadParameters)parameters;
+                // ReSharper disable once ExpressionIsAlwaysNull
+                AeadParameters param = parameters as AeadParameters;
 
-                nonce = param.GetNonce();
-                initialAssociatedText = param.GetAssociatedText();
-                macSize = GetMacSize(forEncryption, param.MacSize);
+                // ReSharper disable once PossibleNullReferenceException
+                _nonce = param.GetNonce();
+                _initialAssociatedText = param.GetAssociatedText();
+                _macSize = GetMacSize(forEncryption, param.MacSize);
                 cipherParameters = param.Key;
             }
-            else if (parameters is FastParametersWithIV)
+            else if (parameters is FastParametersWithIV iv)
             {
-                FastParametersWithIV param = (FastParametersWithIV)parameters;
-
-                nonce = param.GetIV();
-                initialAssociatedText = null;
-                macSize = GetMacSize(forEncryption, 64);
-                cipherParameters = param.Parameters;
+                _nonce = iv.GetIV();
+                _initialAssociatedText = null;
+                _macSize = GetMacSize(forEncryption, 64);
+                cipherParameters = iv.Parameters;
             }
             else
             {
-                throw new ArgumentException("invalid parameters passed to CCM");
+                throw new ArgumentException("传递给CCM的参数无效");
             }
 
-            // NOTE: Very basic support for key re-use, but no performance gain from it
+            // NOTE: 非常基本的键重用支持，但没有性能提升
             if (cipherParameters != null)
             {
-                keyParam = cipherParameters;
+                _keyParam = cipherParameters;
             }
 
-            if (nonce == null || nonce.Length < 7 || nonce.Length > 13)
-                throw new ArgumentException("nonce must have length from 7 to 13 octets");
+            if (_nonce == null || _nonce.Length < 7 || _nonce.Length > 13)
+            {
+                throw new ArgumentException("Nonce的长度必须在7到13个字节之间");
+            }
 
             Reset();
         }
 
-        public virtual string AlgorithmName
+        public string AlgorithmName => _cipher.AlgorithmName + "/CCM";
+
+        public int GetBlockSize()
         {
-            get { return cipher.AlgorithmName + "/CCM"; }
+            return _cipher.GetBlockSize();
         }
 
-        public virtual int GetBlockSize()
+        public void ProcessAadByte(byte input)
         {
-            return cipher.GetBlockSize();
+            _associatedText.WriteByte(input);
         }
 
-        public virtual void ProcessAadByte(byte input)
-        {
-            associatedText.WriteByte(input);
-        }
-
-        public virtual void ProcessAadBytes(byte[] inBytes, int inOff, int len)
+        public void ProcessAadBytes(byte[] inBytes, int inOff, int len)
         {
             // TODO: Process AAD online
-            associatedText.Write(inBytes, inOff, len);
+            _associatedText.Write(inBytes, inOff, len);
         }
 
-        public virtual int ProcessByte(
+        public int ProcessByte(
             byte input,
             byte[] outBytes,
             int outOff)
         {
-            data.WriteByte(input);
+            _data.WriteByte(input);
 
             return 0;
         }
 
-        public virtual int ProcessBytes(
+        public int ProcessBytes(
             byte[] inBytes,
             int inOff,
             int inLen,
@@ -247,12 +244,12 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             Check.DataLength(inBytes, inOff, inLen, "Input buffer too short");
 
-            data.Write(inBytes, inOff, inLen);
+            _data.Write(inBytes, inOff, inLen);
 
             return 0;
         }
 
-        public virtual int DoFinal(
+        public int DoFinal(
             byte[] outBytes,
             int outOff)
         {
@@ -260,8 +257,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] input = data.ToArray();
             int inLen = input.Length;
 #else
-            byte[] input = data.GetBuffer();
-            int inLen = (int)data.Position;
+            byte[] input = _data.GetBuffer();
+            int inLen = (int)_data.Position;
 #endif
 
             int len = ProcessPacket(input, 0, inLen, outBytes, outOff);
@@ -271,11 +268,11 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             return len;
         }
 
-        public virtual void Reset()
+        public void Reset()
         {
-            cipher.Reset();
-            associatedText.SetLength(0);
-            data.SetLength(0);
+            _cipher.Reset();
+            _associatedText.SetLength(0);
+            _data.SetLength(0);
         }
 
         /**
@@ -284,28 +281,28 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         *
         * @return the last mac calculated.
         */
-        public virtual byte[] GetMac()
+        public byte[] GetMac()
         {
-            return Arrays.CopyOfRange(macBlock, 0, macSize);
+            return Arrays.CopyOfRange(_macBlock, 0, _macSize);
         }
 
-        public virtual int GetUpdateOutputSize(
+        public int GetUpdateOutputSize(
             int len)
         {
             return 0;
         }
 
-        public virtual int GetOutputSize(
+        public int GetOutputSize(
             int len)
         {
-            int totalData = (int)data.Length + len;
+            int totalData = (int)_data.Length + len;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                return totalData + macSize;
+                return totalData + _macSize;
             }
 
-            return totalData < macSize ? 0 : totalData - macSize;
+            return totalData < _macSize ? 0 : totalData - _macSize;
         }
 
         /**
@@ -318,20 +315,20 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
          * @throws IllegalStateException if the cipher is not appropriately set up.
          * @throws InvalidCipherTextException if the input data is truncated or the mac check fails.
          */
-        public virtual byte[] ProcessPacket(byte[] input, int inOff, int inLen)
+        public byte[] ProcessPacket(byte[] input, int inOff, int inLen)
         {
             byte[] output;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                output = new byte[inLen + macSize];
+                output = new byte[inLen + _macSize];
             }
             else
             {
-                if (inLen < macSize)
+                if (inLen < _macSize)
                     throw new InvalidCipherTextException("data too short");
 
-                output = new byte[inLen - macSize];
+                output = new byte[inLen - _macSize];
             }
 
             ProcessPacket(input, inOff, inLen, output, 0);
@@ -352,44 +349,48 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
          * @throws InvalidCipherTextException if the input data is truncated or the mac check fails.
          * @throws DataLengthException if output buffer too short.
          */
-        public virtual int ProcessPacket(byte[] input, int inOff, int inLen, byte[] output, int outOff)
+        private int ProcessPacket(byte[] input, int inOff, int inLen, byte[] output, int outOff)
         {
             // TODO: handle null keyParam (e.g. via RepeatedKeySpec)
-            // Need to keep the CTR and CBC Mac parts around and reset
-            if (keyParam == null)
-                throw new InvalidOperationException("CCM cipher unitialized.");
+            // 需要保持CTR和CBC Mac部件周围和重置
+            if (_keyParam == null)
+            {
+                throw new InvalidOperationException("CCM cipher initialized.");
+            }
 
-            int n = nonce.Length;
+            int n = _nonce.Length;
             int q = 15 - n;
             if (q < 4)
             {
                 int limitLen = 1 << (8 * q);
                 if (inLen >= limitLen)
-                    throw new InvalidOperationException("CCM packet too large for choice of q.");
+                {
+                    throw new InvalidOperationException("CCM包太大，不能选择q.");
+                }
             }
 
             byte[] iv = new byte[BlockSize];
             iv[0] = (byte)((q - 1) & 0x7);
-            nonce.CopyTo(iv, 1);
+            _nonce.CopyTo(iv, 1);
 
-            IBlockCipher ctrCipher = new FastSicBlockCipher(cipher);
-            ctrCipher.Init(forEncryption, new FastParametersWithIV(keyParam, iv));
+            IBlockCipher ctrCipher = new FastSicBlockCipher(_cipher);
+            ctrCipher.Init(_forEncryption, new FastParametersWithIV(_keyParam, iv));
 
             int outputLen;
             int inIndex = inOff;
             int outIndex = outOff;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                outputLen = inLen + macSize;
+                outputLen = inLen + _macSize;
                 Check.OutputLength(output, outOff, outputLen, "Output buffer too short.");
 
-                CalculateMac(input, inOff, inLen, macBlock);
+                CalculateMac(input, inOff, inLen, _macBlock);
 
                 byte[] encMac = new byte[BlockSize];
-                ctrCipher.ProcessBlock(macBlock, 0, encMac, 0);   // S0
+                ctrCipher.ProcessBlock(_macBlock, 0, encMac, 0); // S0
 
-                while (inIndex < (inOff + inLen - BlockSize))                 // S1...
+                while (inIndex < (inOff + inLen - BlockSize)) // S1...
                 {
                     ctrCipher.ProcessBlock(input, inIndex, output, outIndex);
                     outIndex += BlockSize;
@@ -404,23 +405,23 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                 Array.Copy(block, 0, output, outIndex, inLen + inOff - inIndex);
 
-                Array.Copy(encMac, 0, output, outOff + inLen, macSize);
+                Array.Copy(encMac, 0, output, outOff + inLen, _macSize);
             }
             else
             {
-                if (inLen < macSize)
+                if (inLen < _macSize)
                     throw new InvalidCipherTextException("data too short");
 
-                outputLen = inLen - macSize;
+                outputLen = inLen - _macSize;
                 Check.OutputLength(output, outOff, outputLen, "Output buffer too short.");
 
-                Array.Copy(input, inOff + outputLen, macBlock, 0, macSize);
+                Array.Copy(input, inOff + outputLen, _macBlock, 0, _macSize);
 
-                ctrCipher.ProcessBlock(macBlock, 0, macBlock, 0);
+                ctrCipher.ProcessBlock(_macBlock, 0, _macBlock, 0);
 
-                for (int i = macSize; i != macBlock.Length; i++)
+                for (int i = _macSize; i != _macBlock.Length; i++)
                 {
-                    macBlock[i] = 0;
+                    _macBlock[i] = 0;
                 }
 
                 while (inIndex < (inOff + outputLen - BlockSize))
@@ -442,18 +443,18 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                 CalculateMac(output, outOff, outputLen, calculatedMacBlock);
 
-                if (!Arrays.ConstantTimeAreEqual(macBlock, calculatedMacBlock))
+                if (!Arrays.ConstantTimeAreEqual(_macBlock, calculatedMacBlock))
                     throw new InvalidCipherTextException("mac check in CCM failed");
             }
 
             return outputLen;
         }
 
-        private int CalculateMac(byte[] data, int dataOff, int dataLen, byte[] macBlock)
+        private void CalculateMac(byte[] data, int dataOff, int dataLen, byte[] macBlock)
         {
-            IMac cMac = new CbcBlockCipherMac(cipher, macSize * 8);
+            IMac cMac = new CbcBlockCipherMac(_cipher, _macSize * 8);
 
-            cMac.Init(keyParam);
+            cMac.Init(_keyParam);
 
             //
             // build b0
@@ -467,15 +468,15 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             b0[0] |= (byte)((((cMac.GetMacSize() - 2) / 2) & 0x7) << 3);
 
-            b0[0] |= (byte)(((15 - nonce.Length) - 1) & 0x7);
+            b0[0] |= (byte)(((15 - _nonce.Length) - 1) & 0x7);
 
-            Array.Copy(nonce, 0, b0, 1, nonce.Length);
+            Array.Copy(_nonce, 0, b0, 1, _nonce.Length);
 
             int q = dataLen;
             int count = 1;
             while (q > 0)
             {
-                b0[b0.Length - count] = (byte)(q & 0xff);
+                b0[^count] = (byte)(q & 0xff);
                 q >>= 8;
                 count++;
             }
@@ -499,28 +500,30 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 }
                 else // can't go any higher than 2^32
                 {
-                    cMac.Update((byte)0xff);
-                    cMac.Update((byte)0xfe);
+                    cMac.Update(0xff);
+                    cMac.Update(0xfe);
                     cMac.Update((byte)(textLength >> 24));
                     cMac.Update((byte)(textLength >> 16));
                     cMac.Update((byte)(textLength >> 8));
-                    cMac.Update((byte)textLength);
+                    // ReSharper disable once IntVariableOverflowInUncheckedContext
+                    cMac.Update(input: (byte)textLength);
 
                     extra = 6;
                 }
 
-                if (initialAssociatedText != null)
+                if (_initialAssociatedText != null)
                 {
-                    cMac.BlockUpdate(initialAssociatedText, 0, initialAssociatedText.Length);
+                    cMac.BlockUpdate(_initialAssociatedText, 0, _initialAssociatedText.Length);
                 }
-                if (associatedText.Position > 0)
+
+                if (_associatedText.Position > 0)
                 {
 #if PORTABLE || NETFX_CORE
                     byte[] input = associatedText.ToArray();
                     int len = input.Length;
 #else
-                    byte[] input = associatedText.GetBuffer();
-                    int len = (int)associatedText.Position;
+                    byte[] input = _associatedText.GetBuffer();
+                    int len = (int)_associatedText.Position;
 #endif
 
                     cMac.BlockUpdate(input, 0, len);
@@ -531,7 +534,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 {
                     for (int i = extra; i < 16; ++i)
                     {
-                        cMac.Update((byte)0x00);
+                        cMac.Update(0x00);
                     }
                 }
             }
@@ -541,20 +544,23 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             //
             cMac.BlockUpdate(data, dataOff, dataLen);
 
-            return cMac.DoFinal(macBlock, 0);
+            cMac.DoFinal(macBlock, 0);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private int GetMacSize(bool forEncryption, int requestedMacBits)
         {
             if (forEncryption && (requestedMacBits < 32 || requestedMacBits > 128 || 0 != (requestedMacBits & 15)))
-                throw new ArgumentException("tag length in octets must be one of {4,6,8,10,12,14,16}");
+            {
+                throw new ArgumentException("tAg的八字节长度必须为{4,6,8,10,12,14,16}之一");
+            }
 
             return requestedMacBits >> 3;
         }
 
         private int GetAssociatedTextLength()
         {
-            return (int)associatedText.Length + ((initialAssociatedText == null) ? 0 : initialAssociatedText.Length);
+            return (int)_associatedText.Length + (_initialAssociatedText?.Length ?? 0);
         }
 
         private bool HasAssociatedText()

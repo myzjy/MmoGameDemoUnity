@@ -1,10 +1,8 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-using System.Diagnostics;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
@@ -15,34 +13,32 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
     * <p>
     * For further details see: <a href="http://csrc.nist.gov/encryption/aes/">http://csrc.nist.gov/encryption/aes/</a>.
     *
-    * This implementation is based on optimizations from Dr. Brian Gladman's paper and C code at
+    * 该实现基于Brian GladMan博士的论文和C代码的优化
     * <a href="http://fp.gladman.plus.com/cryptography_technology/rijndael/">http://fp.gladman.plus.com/cryptography_technology/rijndael/</a>
     *
-    * There are three levels of tradeoff of speed vs memory
-    * Because java has no preprocessor), they are written as three separate classes from which to choose
+    * 在速度和内存之间有三个层次的权衡
+    * 因为java没有预处理器)，所以它们被写成三个可供选择的独立类
     *
-    * The fastest uses 8Kbytes of static tables to precompute round calculations), 4 256 word tables for encryption
-    * and 4 for decryption.
+    * 最快的使用8KBytes的静态表来预计算圆形计算)，4个256字的表用于加密，4个用于解密。
     *
-    * The middle performance version uses only one 256 word table for each), for a total of 2Kbytes),
-    * adding 12 rotate operations per round to compute the values contained in the other tables from
-    * the contents of the first
+    * 中等性能版本只使用一个256字的表)，总共2KBytes)，
+    * 每轮加上12个旋转操作来计算其他表中包含的值
+    * 内容第一
     *
-    * The slowest version uses no static tables at all and computes the values in each round
+    * 最慢的版本根本不使用静态表，而是在每一轮中计算值
     * </p>
     * <p>
-    * This file contains the fast version with 8Kbytes of static tables for round precomputation
+    * 该文件包含用于循环预计算的8KBytes静态表的快速版本
     * </p>
     */
     /// <remarks>
-    /// Unfortunately this class has a few side channel issues.
-    /// In an environment where encryption/decryption may be closely observed it should not be used.
+    /// 不幸的是，这个类有一些侧通道问题。
+    /// 在加密/解密可能被严密观察的环境中，不应该使用它。
     /// </remarks>
-
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
     public sealed class FastAesEngine
         : IBlockCipher
     {
@@ -50,84 +46,85 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private static readonly byte[] S =
         {
             99, 124, 119, 123, 242, 107, 111, 197,
-            48,   1, 103,  43, 254, 215, 171, 118,
-            202, 130, 201, 125, 250,  89,  71, 240,
+            48, 1, 103, 43, 254, 215, 171, 118,
+            202, 130, 201, 125, 250, 89, 71, 240,
             173, 212, 162, 175, 156, 164, 114, 192,
-            183, 253, 147,  38,  54,  63, 247, 204,
-            52, 165, 229, 241, 113, 216,  49,  21,
-            4, 199,  35, 195,  24, 150,   5, 154,
-            7,  18, 128, 226, 235,  39, 178, 117,
-            9, 131,  44,  26,  27, 110,  90, 160,
-            82,  59, 214, 179,  41, 227,  47, 132,
-            83, 209,   0, 237,  32, 252, 177,  91,
-            106, 203, 190,  57,  74,  76,  88, 207,
-            208, 239, 170, 251,  67,  77,  51, 133,
-            69, 249,   2, 127,  80,  60, 159, 168,
-            81, 163,  64, 143, 146, 157,  56, 245,
-            188, 182, 218,  33,  16, 255, 243, 210,
-            205,  12,  19, 236,  95, 151,  68,  23,
-            196, 167, 126,  61, 100,  93,  25, 115,
-            96, 129,  79, 220,  34,  42, 144, 136,
-            70, 238, 184,  20, 222,  94,  11, 219,
-            224,  50,  58,  10,  73,   6,  36,  92,
-            194, 211, 172,  98, 145, 149, 228, 121,
-            231, 200,  55, 109, 141, 213,  78, 169,
-            108,  86, 244, 234, 101, 122, 174,   8,
-            186, 120,  37,  46,  28, 166, 180, 198,
-            232, 221, 116,  31,  75, 189, 139, 138,
-            112,  62, 181, 102,  72,   3, 246,  14,
-            97,  53,  87, 185, 134, 193,  29, 158,
-            225, 248, 152,  17, 105, 217, 142, 148,
-            155,  30, 135, 233, 206,  85,  40, 223,
-            140, 161, 137,  13, 191, 230,  66, 104,
-            65, 153,  45,  15, 176,  84, 187,  22,
+            183, 253, 147, 38, 54, 63, 247, 204,
+            52, 165, 229, 241, 113, 216, 49, 21,
+            4, 199, 35, 195, 24, 150, 5, 154,
+            7, 18, 128, 226, 235, 39, 178, 117,
+            9, 131, 44, 26, 27, 110, 90, 160,
+            82, 59, 214, 179, 41, 227, 47, 132,
+            83, 209, 0, 237, 32, 252, 177, 91,
+            106, 203, 190, 57, 74, 76, 88, 207,
+            208, 239, 170, 251, 67, 77, 51, 133,
+            69, 249, 2, 127, 80, 60, 159, 168,
+            81, 163, 64, 143, 146, 157, 56, 245,
+            188, 182, 218, 33, 16, 255, 243, 210,
+            205, 12, 19, 236, 95, 151, 68, 23,
+            196, 167, 126, 61, 100, 93, 25, 115,
+            96, 129, 79, 220, 34, 42, 144, 136,
+            70, 238, 184, 20, 222, 94, 11, 219,
+            224, 50, 58, 10, 73, 6, 36, 92,
+            194, 211, 172, 98, 145, 149, 228, 121,
+            231, 200, 55, 109, 141, 213, 78, 169,
+            108, 86, 244, 234, 101, 122, 174, 8,
+            186, 120, 37, 46, 28, 166, 180, 198,
+            232, 221, 116, 31, 75, 189, 139, 138,
+            112, 62, 181, 102, 72, 3, 246, 14,
+            97, 53, 87, 185, 134, 193, 29, 158,
+            225, 248, 152, 17, 105, 217, 142, 148,
+            155, 30, 135, 233, 206, 85, 40, 223,
+            140, 161, 137, 13, 191, 230, 66, 104,
+            65, 153, 45, 15, 176, 84, 187, 22,
         };
 
         // The inverse S-box
         private static readonly byte[] Si =
         {
-            82,   9, 106, 213,  48,  54, 165,  56,
-            191,  64, 163, 158, 129, 243, 215, 251,
-            124, 227,  57, 130, 155,  47, 255, 135,
-            52, 142,  67,  68, 196, 222, 233, 203,
-            84, 123, 148,  50, 166, 194,  35,  61,
-            238,  76, 149,  11,  66, 250, 195,  78,
-            8,  46, 161, 102,  40, 217,  36, 178,
-            118,  91, 162,  73, 109, 139, 209,  37,
-            114, 248, 246, 100, 134, 104, 152,  22,
-            212, 164,  92, 204,  93, 101, 182, 146,
-            108, 112,  72,  80, 253, 237, 185, 218,
-            94,  21,  70,  87, 167, 141, 157, 132,
-            144, 216, 171,   0, 140, 188, 211,  10,
-            247, 228,  88,   5, 184, 179,  69,   6,
-            208,  44,  30, 143, 202,  63,  15,   2,
-            193, 175, 189,   3,   1,  19, 138, 107,
-            58, 145,  17,  65,  79, 103, 220, 234,
+            82, 9, 106, 213, 48, 54, 165, 56,
+            191, 64, 163, 158, 129, 243, 215, 251,
+            124, 227, 57, 130, 155, 47, 255, 135,
+            52, 142, 67, 68, 196, 222, 233, 203,
+            84, 123, 148, 50, 166, 194, 35, 61,
+            238, 76, 149, 11, 66, 250, 195, 78,
+            8, 46, 161, 102, 40, 217, 36, 178,
+            118, 91, 162, 73, 109, 139, 209, 37,
+            114, 248, 246, 100, 134, 104, 152, 22,
+            212, 164, 92, 204, 93, 101, 182, 146,
+            108, 112, 72, 80, 253, 237, 185, 218,
+            94, 21, 70, 87, 167, 141, 157, 132,
+            144, 216, 171, 0, 140, 188, 211, 10,
+            247, 228, 88, 5, 184, 179, 69, 6,
+            208, 44, 30, 143, 202, 63, 15, 2,
+            193, 175, 189, 3, 1, 19, 138, 107,
+            58, 145, 17, 65, 79, 103, 220, 234,
             151, 242, 207, 206, 240, 180, 230, 115,
-            150, 172, 116,  34, 231, 173,  53, 133,
-            226, 249,  55, 232,  28, 117, 223, 110,
-            71, 241,  26, 113,  29,  41, 197, 137,
-            111, 183,  98,  14, 170,  24, 190,  27,
-            252,  86,  62,  75, 198, 210, 121,  32,
-            154, 219, 192, 254, 120, 205,  90, 244,
-            31, 221, 168,  51, 136,   7, 199,  49,
-            177,  18,  16,  89,  39, 128, 236,  95,
-            96,  81, 127, 169,  25, 181,  74,  13,
+            150, 172, 116, 34, 231, 173, 53, 133,
+            226, 249, 55, 232, 28, 117, 223, 110,
+            71, 241, 26, 113, 29, 41, 197, 137,
+            111, 183, 98, 14, 170, 24, 190, 27,
+            252, 86, 62, 75, 198, 210, 121, 32,
+            154, 219, 192, 254, 120, 205, 90, 244,
+            31, 221, 168, 51, 136, 7, 199, 49,
+            177, 18, 16, 89, 39, 128, 236, 95,
+            96, 81, 127, 169, 25, 181, 74, 13,
             45, 229, 122, 159, 147, 201, 156, 239,
-            160, 224,  59,  77, 174,  42, 245, 176,
-            200, 235, 187,  60, 131,  83, 153,  97,
-            23,  43,   4, 126, 186, 119, 214,  38,
-            225, 105,  20,  99,  85,  33,  12, 125,
+            160, 224, 59, 77, 174, 42, 245, 176,
+            200, 235, 187, 60, 131, 83, 153, 97,
+            23, 43, 4, 126, 186, 119, 214, 38,
+            225, 105, 20, 99, 85, 33, 12, 125,
         };
 
-        // vector used in calculating key schedule (powers of x in GF(256))
-        private static readonly byte[] rcon =
+        // 用于计算键调度的向量 (powers of x in GF(256))
+        // ReSharper disable once IdentifierTypo
+        private static readonly byte[] Rcon =
         {
             0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a,
             0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91
         };
 
-        // precomputation tables of calculations for rounds
+        // 预算表的计算轮
         private static readonly uint[] T0 =
         {
             0xa56363c6, 0x847c7cf8, 0x997777ee, 0x8d7b7bf6, 0x0df2f2ff,
@@ -352,6 +349,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             0x2c3a1616
         };
 
+        // ReSharper disable once IdentifierTypo
         private static readonly uint[] Tinv0 =
         {
             0x50a7f451, 0x5365417e, 0xc3a4171a, 0x965e273a, 0xcb6bab3b,
@@ -408,6 +406,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             0x4257b8d0
         };
 
+        // ReSharper disable once IdentifierTypo
         private static readonly uint[] Tinv1 =
         {
             0xa7f45150, 0x65417e53, 0xa4171ac3, 0x5e273a96, 0x6bab3bcb,
@@ -464,6 +463,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             0x57b8d042
         };
 
+        // ReSharper disable once IdentifierTypo
         private static readonly uint[] Tinv2 =
         {
             0xf45150a7, 0x417e5365, 0x171ac3a4, 0x273a965e, 0xab3bcb6b,
@@ -520,6 +520,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             0xb8d04257
         };
 
+        // ReSharper disable once IdentifierTypo
         private static readonly uint[] Tinv3 =
         {
             0x5150a7f4, 0x7e536541, 0x1ac3a417, 0x3a965e27, 0x3bcb6bab,
@@ -583,40 +584,41 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         /* multiply four bytes in GF(2^8) by 'x' {02} in parallel */
 
-        private const uint m1 = 0x80808080;
-        private const uint m2 = 0x7f7f7f7f;
-        private const uint m3 = 0x0000001b;
-        private const uint m4 = 0xC0C0C0C0;
-        private const uint m5 = 0x3f3f3f3f;
+        private const uint M1 = 0x80808080;
+        private const uint M2 = 0x7f7f7f7f;
+        private const uint M3 = 0x0000001b;
+        private const uint M4 = 0xC0C0C0C0;
+        private const uint M5 = 0x3f3f3f3f;
 
+        // ReSharper disable once IdentifierTypo
         private static uint FFmulX(uint x)
         {
-            return ((x & m2) << 1) ^ (((x & m1) >> 7) * m3);
+            return ((x & M2) << 1) ^ (((x & M1) >> 7) * M3);
         }
 
+        // ReSharper disable once IdentifierTypo
         private static uint FFmulX2(uint x)
         {
-            uint t0 = (x & m5) << 2;
-            uint t1 = (x & m4);
+            uint t0 = (x & M5) << 2;
+            uint t1 = (x & M4);
             t1 ^= (t1 >> 1);
             return t0 ^ (t1 >> 2) ^ (t1 >> 5);
         }
 
         /*
-        The following defines provide alternative definitions of FFmulX that might
+        The following defines provide alternative definitions of FFMulX that might
         give improved performance if a fast 32-bit multiply is not available.
 
-        private int FFmulX(int x) { int u = x & m1; u |= (u >> 1); return ((x & m2) << 1) ^ ((u >>> 3) | (u >>> 6)); }
+        private int FFMulX(int x) { int u = x & m1; u |= (u >> 1); return ((x & m2) << 1) ^ ((u >>> 3) | (u >>> 6)); }
         private static final int  m4 = 0x1b1b1b1b;
-        private int FFmulX(int x) { int u = x & m1; return ((x & m2) << 1) ^ ((u - (u >>> 7)) & m4); }
+        private int FFMulX(int x) { int u = x & m1; return ((x & m2) << 1) ^ ((u - (u >>> 7)) & m4); }
 
         */
 
-        private static uint Inv_Mcol(uint x)
+        private static uint Inv_MCol(uint x)
         {
-            uint t0, t1;
-            t0 = x;
-            t1 = t0 ^ Shift(t0, 8);
+            var t0 = x;
+            var t1 = t0 ^ Shift(t0, 8);
             t0 ^= FFmulX(t1);
             t1 ^= FFmulX2(t0);
             t0 ^= t1 ^ Shift(t1, 16);
@@ -625,169 +627,230 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         private static uint SubWord(uint x)
         {
-            return (uint)S[x & 255]
-                | (((uint)S[(x >> 8) & 255]) << 8)
-                | (((uint)S[(x >> 16) & 255]) << 16)
-                | (((uint)S[(x >> 24) & 255]) << 24);
+            return S[x & 255]
+                   | (((uint)S[(x >> 8) & 255]) << 8)
+                   | (((uint)S[(x >> 16) & 255]) << 16)
+                   | (((uint)S[(x >> 24) & 255]) << 24);
         }
 
-        uint[][] W = null;
+        uint[][] _w;
 
         /**
-        * Calculate the necessary round keys
-        * The number of calculations depends on key size and block size
-        * AES specified a fixed block size of 128 bits and key sizes 128/192/256 bits
-        * This code is written assuming those are the only possible values
+        *计算所需的圆键
+        *计算次数取决于键大小和块大小
+        * AES指定固定的块大小为128位，密钥大小为128/192/256位
+        *这段代码是假设这些是唯一可能的值
         */
+        // ReSharper disable once ParameterHidesMember
         private uint[][] GenerateWorkingKey(byte[] key, bool forEncryption)
         {
             int keyLen = key.Length;
             if (keyLen < 16 || keyLen > 32 || (keyLen & 7) != 0)
                 throw new ArgumentException("Key length not 128/192/256 bits.");
 
-            int KC = keyLen >> 2;
-            this.ROUNDS = KC + 6;  // This is not always true for the generalized Rijndael that allows larger block sizes
+            int kc = keyLen >> 2;
+            _rounds = kc + 6; // 对于允许较大块大小的广义Rijndael来说，这并不总是正确的
 
-            if (W == null || W.Length < ROUNDS + 1)
+            if (_w == null || _w.Length < _rounds + 1)
             {
-                W = new uint[ROUNDS + 1][]; // 4 words in a block
-                for (int i = 0; i <= ROUNDS; ++i)
+                _w = new uint[_rounds + 1][]; // 4 words in a block
+                for (int i = 0; i <= _rounds; ++i)
                 {
-                    W[i] = new uint[4];
+                    _w[i] = new uint[4];
                 }
             }
             else
             {
-                for (int i = 0; i < W.Length; ++i)
-                    Array.Clear(W[i], 0, W[i].Length);
+                foreach (var t in _w)
+                    Array.Clear(t, 0, t.Length);
             }
 
-            switch (KC)
+            switch (kc)
             {
                 case 4:
+                {
+                    uint t0 = Pack.LE_To_UInt32(key, 0);
+                    _w[0][0] = t0;
+                    uint t1 = Pack.LE_To_UInt32(key, 4);
+                    _w[0][1] = t1;
+                    uint t2 = Pack.LE_To_UInt32(key, 8);
+                    _w[0][2] = t2;
+                    uint t3 = Pack.LE_To_UInt32(key, 12);
+                    _w[0][3] = t3;
+
+                    for (int i = 1; i <= 10; ++i)
                     {
-                        uint t0 = Pack.LE_To_UInt32(key, 0); W[0][0] = t0;
-                        uint t1 = Pack.LE_To_UInt32(key, 4); W[0][1] = t1;
-                        uint t2 = Pack.LE_To_UInt32(key, 8); W[0][2] = t2;
-                        uint t3 = Pack.LE_To_UInt32(key, 12); W[0][3] = t3;
-
-                        for (int i = 1; i <= 10; ++i)
-                        {
-                            uint u = SubWord(Shift(t3, 8)) ^ rcon[i - 1];
-                            t0 ^= u; W[i][0] = t0;
-                            t1 ^= t0; W[i][1] = t1;
-                            t2 ^= t1; W[i][2] = t2;
-                            t3 ^= t2; W[i][3] = t3;
-                        }
-
-                        break;
+                        uint u = SubWord(Shift(t3, 8)) ^ Rcon[i - 1];
+                        t0 ^= u;
+                        _w[i][0] = t0;
+                        t1 ^= t0;
+                        _w[i][1] = t1;
+                        t2 ^= t1;
+                        _w[i][2] = t2;
+                        t3 ^= t2;
+                        _w[i][3] = t3;
                     }
+
+                    break;
+                }
                 case 6:
+                {
+                    uint t0 = Pack.LE_To_UInt32(key, 0);
+                    _w[0][0] = t0;
+                    uint t1 = Pack.LE_To_UInt32(key, 4);
+                    _w[0][1] = t1;
+                    uint t2 = Pack.LE_To_UInt32(key, 8);
+                    _w[0][2] = t2;
+                    uint t3 = Pack.LE_To_UInt32(key, 12);
+                    _w[0][3] = t3;
+                    uint t4 = Pack.LE_To_UInt32(key, 16);
+                    _w[1][0] = t4;
+                    uint t5 = Pack.LE_To_UInt32(key, 20);
+                    _w[1][1] = t5;
+
+                    uint recon = 1;
+                    uint u = SubWord(Shift(t5, 8)) ^ recon;
+                    recon <<= 1;
+                    t0 ^= u;
+                    _w[1][2] = t0;
+                    t1 ^= t0;
+                    _w[1][3] = t1;
+                    t2 ^= t1;
+                    _w[2][0] = t2;
+                    t3 ^= t2;
+                    _w[2][1] = t3;
+                    t4 ^= t3;
+                    _w[2][2] = t4;
+                    t5 ^= t4;
+                    _w[2][3] = t5;
+
+                    for (int i = 3; i < 12; i += 3)
                     {
-                        uint t0 = Pack.LE_To_UInt32(key, 0); W[0][0] = t0;
-                        uint t1 = Pack.LE_To_UInt32(key, 4); W[0][1] = t1;
-                        uint t2 = Pack.LE_To_UInt32(key, 8); W[0][2] = t2;
-                        uint t3 = Pack.LE_To_UInt32(key, 12); W[0][3] = t3;
-                        uint t4 = Pack.LE_To_UInt32(key, 16); W[1][0] = t4;
-                        uint t5 = Pack.LE_To_UInt32(key, 20); W[1][1] = t5;
-
-                        uint rcon = 1;
-                        uint u = SubWord(Shift(t5, 8)) ^ rcon; rcon <<= 1;
-                        t0 ^= u; W[1][2] = t0;
-                        t1 ^= t0; W[1][3] = t1;
-                        t2 ^= t1; W[2][0] = t2;
-                        t3 ^= t2; W[2][1] = t3;
-                        t4 ^= t3; W[2][2] = t4;
-                        t5 ^= t4; W[2][3] = t5;
-
-                        for (int i = 3; i < 12; i += 3)
-                        {
-                            u = SubWord(Shift(t5, 8)) ^ rcon; rcon <<= 1;
-                            t0 ^= u; W[i][0] = t0;
-                            t1 ^= t0; W[i][1] = t1;
-                            t2 ^= t1; W[i][2] = t2;
-                            t3 ^= t2; W[i][3] = t3;
-                            t4 ^= t3; W[i + 1][0] = t4;
-                            t5 ^= t4; W[i + 1][1] = t5;
-                            u = SubWord(Shift(t5, 8)) ^ rcon; rcon <<= 1;
-                            t0 ^= u; W[i + 1][2] = t0;
-                            t1 ^= t0; W[i + 1][3] = t1;
-                            t2 ^= t1; W[i + 2][0] = t2;
-                            t3 ^= t2; W[i + 2][1] = t3;
-                            t4 ^= t3; W[i + 2][2] = t4;
-                            t5 ^= t4; W[i + 2][3] = t5;
-                        }
-
-                        u = SubWord(Shift(t5, 8)) ^ rcon;
-                        t0 ^= u; W[12][0] = t0;
-                        t1 ^= t0; W[12][1] = t1;
-                        t2 ^= t1; W[12][2] = t2;
-                        t3 ^= t2; W[12][3] = t3;
-
-                        break;
+                        u = SubWord(Shift(t5, 8)) ^ recon;
+                        recon <<= 1;
+                        t0 ^= u;
+                        _w[i][0] = t0;
+                        t1 ^= t0;
+                        _w[i][1] = t1;
+                        t2 ^= t1;
+                        _w[i][2] = t2;
+                        t3 ^= t2;
+                        _w[i][3] = t3;
+                        t4 ^= t3;
+                        _w[i + 1][0] = t4;
+                        t5 ^= t4;
+                        _w[i + 1][1] = t5;
+                        u = SubWord(Shift(t5, 8)) ^ recon;
+                        recon <<= 1;
+                        t0 ^= u;
+                        _w[i + 1][2] = t0;
+                        t1 ^= t0;
+                        _w[i + 1][3] = t1;
+                        t2 ^= t1;
+                        _w[i + 2][0] = t2;
+                        t3 ^= t2;
+                        _w[i + 2][1] = t3;
+                        t4 ^= t3;
+                        _w[i + 2][2] = t4;
+                        t5 ^= t4;
+                        _w[i + 2][3] = t5;
                     }
+
+                    u = SubWord(Shift(t5, 8)) ^ recon;
+                    t0 ^= u;
+                    _w[12][0] = t0;
+                    t1 ^= t0;
+                    _w[12][1] = t1;
+                    t2 ^= t1;
+                    _w[12][2] = t2;
+                    t3 ^= t2;
+                    _w[12][3] = t3;
+
+                    break;
+                }
                 case 8:
+                {
+                    uint t0 = Pack.LE_To_UInt32(key, 0);
+                    _w[0][0] = t0;
+                    uint t1 = Pack.LE_To_UInt32(key, 4);
+                    _w[0][1] = t1;
+                    uint t2 = Pack.LE_To_UInt32(key, 8);
+                    _w[0][2] = t2;
+                    uint t3 = Pack.LE_To_UInt32(key, 12);
+                    _w[0][3] = t3;
+                    uint t4 = Pack.LE_To_UInt32(key, 16);
+                    _w[1][0] = t4;
+                    uint t5 = Pack.LE_To_UInt32(key, 20);
+                    _w[1][1] = t5;
+                    uint t6 = Pack.LE_To_UInt32(key, 24);
+                    _w[1][2] = t6;
+                    uint t7 = Pack.LE_To_UInt32(key, 28);
+                    _w[1][3] = t7;
+
+                    uint u, recon = 1;
+
+                    for (int i = 2; i < 14; i += 2)
                     {
-                        uint t0 = Pack.LE_To_UInt32(key, 0); W[0][0] = t0;
-                        uint t1 = Pack.LE_To_UInt32(key, 4); W[0][1] = t1;
-                        uint t2 = Pack.LE_To_UInt32(key, 8); W[0][2] = t2;
-                        uint t3 = Pack.LE_To_UInt32(key, 12); W[0][3] = t3;
-                        uint t4 = Pack.LE_To_UInt32(key, 16); W[1][0] = t4;
-                        uint t5 = Pack.LE_To_UInt32(key, 20); W[1][1] = t5;
-                        uint t6 = Pack.LE_To_UInt32(key, 24); W[1][2] = t6;
-                        uint t7 = Pack.LE_To_UInt32(key, 28); W[1][3] = t7;
-
-                        uint u, rcon = 1;
-
-                        for (int i = 2; i < 14; i += 2)
-                        {
-                            u = SubWord(Shift(t7, 8)) ^ rcon; rcon <<= 1;
-                            t0 ^= u; W[i][0] = t0;
-                            t1 ^= t0; W[i][1] = t1;
-                            t2 ^= t1; W[i][2] = t2;
-                            t3 ^= t2; W[i][3] = t3;
-                            u = SubWord(t3);
-                            t4 ^= u; W[i + 1][0] = t4;
-                            t5 ^= t4; W[i + 1][1] = t5;
-                            t6 ^= t5; W[i + 1][2] = t6;
-                            t7 ^= t6; W[i + 1][3] = t7;
-                        }
-
-                        u = SubWord(Shift(t7, 8)) ^ rcon;
-                        t0 ^= u; W[14][0] = t0;
-                        t1 ^= t0; W[14][1] = t1;
-                        t2 ^= t1; W[14][2] = t2;
-                        t3 ^= t2; W[14][3] = t3;
-
-                        break;
+                        u = SubWord(Shift(t7, 8)) ^ recon;
+                        recon <<= 1;
+                        t0 ^= u;
+                        _w[i][0] = t0;
+                        t1 ^= t0;
+                        _w[i][1] = t1;
+                        t2 ^= t1;
+                        _w[i][2] = t2;
+                        t3 ^= t2;
+                        _w[i][3] = t3;
+                        u = SubWord(t3);
+                        t4 ^= u;
+                        _w[i + 1][0] = t4;
+                        t5 ^= t4;
+                        _w[i + 1][1] = t5;
+                        t6 ^= t5;
+                        _w[i + 1][2] = t6;
+                        t7 ^= t6;
+                        _w[i + 1][3] = t7;
                     }
+
+                    u = SubWord(Shift(t7, 8)) ^ recon;
+                    t0 ^= u;
+                    _w[14][0] = t0;
+                    t1 ^= t0;
+                    _w[14][1] = t1;
+                    t2 ^= t1;
+                    _w[14][2] = t2;
+                    t3 ^= t2;
+                    _w[14][3] = t3;
+
+                    break;
+                }
                 default:
-                    {
-                        throw new InvalidOperationException("Should never get here");
-                    }
+                {
+                    throw new InvalidOperationException("Should never get here");
+                }
             }
 
             if (!forEncryption)
             {
-                for (int j = 1; j < ROUNDS; j++)
+                for (int j = 1; j < _rounds; j++)
                 {
-                    uint[] w = W[j];
+                    uint[] w = _w[j];
                     for (int i = 0; i < 4; i++)
                     {
-                        w[i] = Inv_Mcol(w[i]);
+                        w[i] = Inv_MCol(w[i]);
                     }
                 }
             }
 
-            return W;
+            return _w;
         }
 
-        private int ROUNDS;
-        private uint[][] WorkingKey;
-        private uint C0, C1, C2, C3;
-        private bool forEncryption;
+        private int _rounds;
+        private uint[][] _workingKey;
+        private uint _c0, _c1, _c2, _c3;
+        private bool _forEncryption;
 
-        private const int BLOCK_SIZE = 16;
+        private const int BlockSize = 16;
 
         /**
         * default constructor - 128 bit block size.
@@ -797,10 +860,10 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /**
-        * initialise an AES cipher.
+        * 初始化AES密码。
         *
-        * @param forEncryption whether or not we are for encryption.
-        * @param parameters the parameters required to set up the cipher.
+        * @param forEncryption 我们是否支持加密。
+        * @param parameters 设置密码所需的参数。
         * @exception ArgumentException if the parameters argument is
         * inappropriate.
         */
@@ -811,27 +874,24 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             NoCopyKeyParameter keyParameter = parameters as NoCopyKeyParameter;
 
             if (keyParameter == null)
+            {
                 throw new ArgumentException("invalid parameter passed to AES init - "
-                    + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(parameters));
+                                            + Platform.GetTypeName(
+                                                parameters));
+            }
 
-            WorkingKey = GenerateWorkingKey(keyParameter.GetKey(), forEncryption);
+            _workingKey = GenerateWorkingKey(keyParameter.GetKey(), forEncryption);
 
-            this.forEncryption = forEncryption;
+            this._forEncryption = forEncryption;
         }
 
-        public string AlgorithmName
-        {
-            get { return "AES"; }
-        }
+        public string AlgorithmName => "AES";
 
-        public bool IsPartialBlockOkay
-        {
-            get { return false; }
-        }
+        public bool IsPartialBlockOkay => false;
 
         public int GetBlockSize()
         {
-            return BLOCK_SIZE;
+            return BlockSize;
         }
 
         public unsafe int ProcessBlock(
@@ -840,33 +900,37 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] output,
             int outOff)
         {
-            fixed (byte* pinput = input)
+            fixed (byte* pInput = input)
             {
-                uint* puintinput = (uint*)&pinput[inOff];
+                uint* puIntInput = (uint*)&pInput[inOff];
 
-                C0 = puintinput[0];
-                C1 = puintinput[1];
-                C2 = puintinput[2];
-                C3 = puintinput[3];
+                _c0 = puIntInput[0];
+                _c1 = puIntInput[1];
+                _c2 = puIntInput[2];
+                _c3 = puIntInput[3];
 
+                // ReSharper disable once RedundantAssignment
                 inOff += 16;
             }
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                uint[][] KW = WorkingKey;
-                uint[] kw = KW[0];
-                uint t0 = this.C0 ^ kw[0];
-                uint t1 = this.C1 ^ kw[1];
-                uint t2 = this.C2 ^ kw[2];
+                uint[][] key = _workingKey;
+                uint[] kw = key[0];
+                uint t0 = _c0 ^ kw[0];
+                uint t1 = _c1 ^ kw[1];
+                uint t2 = _c2 ^ kw[2];
 
-                uint r0, r1, r2, r3 = this.C3 ^ kw[3];
+                var r3 = _c3 ^ kw[3];
                 int r = 1;
                 fixed (uint* pT0 = T0, pT1 = T1, pT2 = T2, pT3 = T3)
                 {
-                    while (r < ROUNDS - 1)
+                    uint r0;
+                    uint r1;
+                    uint r2;
+                    while (r < _rounds - 1)
                     {
-                        kw = KW[r++];
+                        kw = key[r++];
                         fixed (uint* pkw = kw)
                         {
                             r0 = pT0[t0 & 255] ^ pT1[(t1 >> 8) & 255] ^ pT2[(t2 >> 16) & 255] ^ pT3[r3 >> 24] ^ pkw[0];
@@ -875,7 +939,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                             r3 = pT0[r3 & 255] ^ pT1[(t0 >> 8) & 255] ^ pT2[(t1 >> 16) & 255] ^ pT3[t2 >> 24] ^ pkw[3];
                         }
 
-                        kw = KW[r++];
+                        kw = key[r++];
                         fixed (uint* pkw = kw)
                         {
                             t0 = pT0[r0 & 255] ^ pT1[(r1 >> 8) & 255] ^ pT2[(r2 >> 16) & 255] ^ pT3[r3 >> 24] ^ pkw[0];
@@ -885,7 +949,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                         }
                     }
 
-                    kw = KW[r++];
+                    kw = key[r++];
                     fixed (uint* pkw = kw)
                     {
                         r0 = pT0[t0 & 255] ^ pT1[(t1 >> 8) & 255] ^ pT2[(t2 >> 16) & 255] ^ pT3[r3 >> 24] ^ pkw[0];
@@ -896,84 +960,107 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                     // the final round's table is a simple function of S so we don't use a whole other four tables for it
 
-                    kw = KW[r];
+                    kw = key[r];
                     fixed (uint* pkw = kw)
                     fixed (byte* pS = S)
                     {
-                        this.C0 = (uint)pS[r0 & 255] ^ (((uint)pS[(r1 >> 8) & 255]) << 8) ^ (((uint)pS[(r2 >> 16) & 255]) << 16) ^ (((uint)pS[r3 >> 24]) << 24) ^ pkw[0];
-                        this.C1 = (uint)pS[r1 & 255] ^ (((uint)pS[(r2 >> 8) & 255]) << 8) ^ (((uint)pS[(r3 >> 16) & 255]) << 16) ^ (((uint)pS[r0 >> 24]) << 24) ^ pkw[1];
-                        this.C2 = (uint)pS[r2 & 255] ^ (((uint)pS[(r3 >> 8) & 255]) << 8) ^ (((uint)pS[(r0 >> 16) & 255]) << 16) ^ (((uint)pS[r1 >> 24]) << 24) ^ pkw[2];
-                        this.C3 = (uint)pS[r3 & 255] ^ (((uint)pS[(r0 >> 8) & 255]) << 8) ^ (((uint)pS[(r1 >> 16) & 255]) << 16) ^ (((uint)pS[r2 >> 24]) << 24) ^ pkw[3];
+                        _c0 = pS[r0 & 255] ^ (((uint)pS[(r1 >> 8) & 255]) << 8) ^
+                              (((uint)pS[(r2 >> 16) & 255]) << 16) ^ (((uint)pS[r3 >> 24]) << 24) ^ pkw[0];
+                        _c1 = pS[r1 & 255] ^ (((uint)pS[(r2 >> 8) & 255]) << 8) ^
+                              (((uint)pS[(r3 >> 16) & 255]) << 16) ^ (((uint)pS[r0 >> 24]) << 24) ^ pkw[1];
+                        _c2 = pS[r2 & 255] ^ (((uint)pS[(r3 >> 8) & 255]) << 8) ^
+                              (((uint)pS[(r0 >> 16) & 255]) << 16) ^ (((uint)pS[r1 >> 24]) << 24) ^ pkw[2];
+                        _c3 = pS[r3 & 255] ^ (((uint)pS[(r0 >> 8) & 255]) << 8) ^
+                              (((uint)pS[(r1 >> 16) & 255]) << 16) ^ (((uint)pS[r2 >> 24]) << 24) ^ pkw[3];
                     }
                 }
             }
             else
             {
-                uint[][] KW = WorkingKey;
-                uint[] kw = KW[ROUNDS];
-                uint t0 = this.C0 ^ kw[0];
-                uint t1 = this.C1 ^ kw[1];
-                uint t2 = this.C2 ^ kw[2];
+                uint[][] workingKey = _workingKey;
+                uint[] kw = workingKey[_rounds];
+                uint t0 = _c0 ^ kw[0];
+                uint t1 = _c1 ^ kw[1];
+                uint t2 = _c2 ^ kw[2];
 
-                uint r0, r1, r2, r3 = this.C3 ^ kw[3];
-                int r = ROUNDS - 1;
-                fixed (uint* pTinv0 = Tinv0, pTinv1 = Tinv1, pTinv2 = Tinv2, pTinv3 = Tinv3)
+                var r3 = _c3 ^ kw[3];
+                int r = _rounds - 1;
+                fixed (uint* pTInv0 = Tinv0, pTInv1 = Tinv1, pTInv2 = Tinv2, pTInv3 = Tinv3)
                 {
+                    uint r0;
+                    uint r1;
+                    uint r2;
                     while (r > 1)
                     {
-                        kw = KW[r--];
+                        kw = workingKey[r--];
                         fixed (uint* pkw = kw)
                         {
-                            r0 = pTinv0[t0 & 255] ^ pTinv1[(r3 >> 8) & 255] ^ pTinv2[(t2 >> 16) & 255] ^ pTinv3[t1 >> 24] ^ pkw[0];
-                            r1 = pTinv0[t1 & 255] ^ pTinv1[(t0 >> 8) & 255] ^ pTinv2[(r3 >> 16) & 255] ^ pTinv3[t2 >> 24] ^ pkw[1];
-                            r2 = pTinv0[t2 & 255] ^ pTinv1[(t1 >> 8) & 255] ^ pTinv2[(t0 >> 16) & 255] ^ pTinv3[r3 >> 24] ^ pkw[2];
-                            r3 = pTinv0[r3 & 255] ^ pTinv1[(t2 >> 8) & 255] ^ pTinv2[(t1 >> 16) & 255] ^ pTinv3[t0 >> 24] ^ pkw[3];
+                            r0 = pTInv0[t0 & 255] ^ pTInv1[(r3 >> 8) & 255] ^ pTInv2[(t2 >> 16) & 255] ^
+                                 pTInv3[t1 >> 24] ^ pkw[0];
+                            r1 = pTInv0[t1 & 255] ^ pTInv1[(t0 >> 8) & 255] ^ pTInv2[(r3 >> 16) & 255] ^
+                                 pTInv3[t2 >> 24] ^ pkw[1];
+                            r2 = pTInv0[t2 & 255] ^ pTInv1[(t1 >> 8) & 255] ^ pTInv2[(t0 >> 16) & 255] ^
+                                 pTInv3[r3 >> 24] ^ pkw[2];
+                            r3 = pTInv0[r3 & 255] ^ pTInv1[(t2 >> 8) & 255] ^ pTInv2[(t1 >> 16) & 255] ^
+                                 pTInv3[t0 >> 24] ^ pkw[3];
                         }
 
-                        kw = KW[r--];
+                        kw = workingKey[r--];
                         fixed (uint* pkw = kw)
                         {
-                            t0 = pTinv0[r0 & 255] ^ pTinv1[(r3 >> 8) & 255] ^ pTinv2[(r2 >> 16) & 255] ^ pTinv3[r1 >> 24] ^ pkw[0];
-                            t1 = pTinv0[r1 & 255] ^ pTinv1[(r0 >> 8) & 255] ^ pTinv2[(r3 >> 16) & 255] ^ pTinv3[r2 >> 24] ^ pkw[1];
-                            t2 = pTinv0[r2 & 255] ^ pTinv1[(r1 >> 8) & 255] ^ pTinv2[(r0 >> 16) & 255] ^ pTinv3[r3 >> 24] ^ pkw[2];
-                            r3 = pTinv0[r3 & 255] ^ pTinv1[(r2 >> 8) & 255] ^ pTinv2[(r1 >> 16) & 255] ^ pTinv3[r0 >> 24] ^ pkw[3];
+                            t0 = pTInv0[r0 & 255] ^ pTInv1[(r3 >> 8) & 255] ^ pTInv2[(r2 >> 16) & 255] ^
+                                 pTInv3[r1 >> 24] ^ pkw[0];
+                            t1 = pTInv0[r1 & 255] ^ pTInv1[(r0 >> 8) & 255] ^ pTInv2[(r3 >> 16) & 255] ^
+                                 pTInv3[r2 >> 24] ^ pkw[1];
+                            t2 = pTInv0[r2 & 255] ^ pTInv1[(r1 >> 8) & 255] ^ pTInv2[(r0 >> 16) & 255] ^
+                                 pTInv3[r3 >> 24] ^ pkw[2];
+                            r3 = pTInv0[r3 & 255] ^ pTInv1[(r2 >> 8) & 255] ^ pTInv2[(r1 >> 16) & 255] ^
+                                 pTInv3[r0 >> 24] ^ pkw[3];
                         }
                     }
 
-                    kw = KW[1];
+                    kw = workingKey[1];
                     fixed (uint* pkw = kw)
                     {
-                        r0 = pTinv0[t0 & 255] ^ pTinv1[(r3 >> 8) & 255] ^ pTinv2[(t2 >> 16) & 255] ^ pTinv3[t1 >> 24] ^ pkw[0];
-                        r1 = pTinv0[t1 & 255] ^ pTinv1[(t0 >> 8) & 255] ^ pTinv2[(r3 >> 16) & 255] ^ pTinv3[t2 >> 24] ^ pkw[1];
-                        r2 = pTinv0[t2 & 255] ^ pTinv1[(t1 >> 8) & 255] ^ pTinv2[(t0 >> 16) & 255] ^ pTinv3[r3 >> 24] ^ pkw[2];
-                        r3 = pTinv0[r3 & 255] ^ pTinv1[(t2 >> 8) & 255] ^ pTinv2[(t1 >> 16) & 255] ^ pTinv3[t0 >> 24] ^ pkw[3];
+                        r0 = pTInv0[t0 & 255] ^ pTInv1[(r3 >> 8) & 255] ^ pTInv2[(t2 >> 16) & 255] ^ pTInv3[t1 >> 24] ^
+                             pkw[0];
+                        r1 = pTInv0[t1 & 255] ^ pTInv1[(t0 >> 8) & 255] ^ pTInv2[(r3 >> 16) & 255] ^ pTInv3[t2 >> 24] ^
+                             pkw[1];
+                        r2 = pTInv0[t2 & 255] ^ pTInv1[(t1 >> 8) & 255] ^ pTInv2[(t0 >> 16) & 255] ^ pTInv3[r3 >> 24] ^
+                             pkw[2];
+                        r3 = pTInv0[r3 & 255] ^ pTInv1[(t2 >> 8) & 255] ^ pTInv2[(t1 >> 16) & 255] ^ pTInv3[t0 >> 24] ^
+                             pkw[3];
                     }
 
                     // the final round's table is a simple function of Si so we don't use a whole other four tables for it
 
-                    kw = KW[0];
+                    kw = workingKey[0];
                     fixed (uint* pkw = kw)
                     fixed (byte* pSi = Si)
                     {
-                        this.C0 = (uint)pSi[r0 & 255] ^ (((uint)pSi[(r3 >> 8) & 255]) << 8) ^ (((uint)pSi[(r2 >> 16) & 255]) << 16) ^ (((uint)pSi[r1 >> 24]) << 24) ^ pkw[0];
-                        this.C1 = (uint)pSi[r1 & 255] ^ (((uint)pSi[(r0 >> 8) & 255]) << 8) ^ (((uint)pSi[(r3 >> 16) & 255]) << 16) ^ (((uint)pSi[r2 >> 24]) << 24) ^ pkw[1];
-                        this.C2 = (uint)pSi[r2 & 255] ^ (((uint)pSi[(r1 >> 8) & 255]) << 8) ^ (((uint)pSi[(r0 >> 16) & 255]) << 16) ^ (((uint)pSi[r3 >> 24]) << 24) ^ pkw[2];
-                        this.C3 = (uint)pSi[r3 & 255] ^ (((uint)pSi[(r2 >> 8) & 255]) << 8) ^ (((uint)pSi[(r1 >> 16) & 255]) << 16) ^ (((uint)pSi[r0 >> 24]) << 24) ^ pkw[3];
+                        _c0 = pSi[r0 & 255] ^ (((uint)pSi[(r3 >> 8) & 255]) << 8) ^
+                              (((uint)pSi[(r2 >> 16) & 255]) << 16) ^ (((uint)pSi[r1 >> 24]) << 24) ^ pkw[0];
+                        _c1 = pSi[r1 & 255] ^ (((uint)pSi[(r0 >> 8) & 255]) << 8) ^
+                              (((uint)pSi[(r3 >> 16) & 255]) << 16) ^ (((uint)pSi[r2 >> 24]) << 24) ^ pkw[1];
+                        _c2 = pSi[r2 & 255] ^ (((uint)pSi[(r1 >> 8) & 255]) << 8) ^
+                              (((uint)pSi[(r0 >> 16) & 255]) << 16) ^ (((uint)pSi[r3 >> 24]) << 24) ^ pkw[2];
+                        _c3 = pSi[r3 & 255] ^ (((uint)pSi[(r2 >> 8) & 255]) << 8) ^
+                              (((uint)pSi[(r1 >> 16) & 255]) << 16) ^ (((uint)pSi[r0 >> 24]) << 24) ^ pkw[3];
                     }
                 }
             }
 
-            fixed (byte* poutput = output)
+            fixed (byte* poutPut = output)
             {
-                uint* puintOutput = (uint*)&poutput[outOff];
+                uint* puIntOutput = (uint*)&poutPut[outOff];
 
-                puintOutput[0] = C0;
-                puintOutput[1] = C1;
-                puintOutput[2] = C2;
-                puintOutput[3] = C3;
+                puIntOutput[0] = _c0;
+                puIntOutput[1] = _c1;
+                puIntOutput[2] = _c2;
+                puIntOutput[3] = _c3;
             }
 
-            return BLOCK_SIZE;
+            return BlockSize;
         }
 
         public void Reset()
@@ -984,15 +1071,16 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] input,
             int inOff)
         {
-            fixed (byte* poutput = input)
+            fixed (byte* poutPut = input)
             {
-                uint* puintoutput = (uint*)&poutput[inOff];
+                uint* puIntOutPut = (uint*)&poutPut[inOff];
 
-                C0 = puintoutput[0];
-                C1 = puintoutput[1];
-                C2 = puintoutput[2];
-                C3 = puintoutput[3];
+                _c0 = puIntOutPut[0];
+                _c1 = puIntOutPut[1];
+                _c2 = puIntOutPut[2];
+                _c3 = puIntOutPut[3];
 
+                // ReSharper disable once RedundantAssignment
                 inOff += 16;
             }
         }
@@ -1001,15 +1089,16 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] output,
             int outOff)
         {
-            fixed (byte* poutput = output)
+            fixed (byte* poutPut = output)
             {
-                uint* puintOutput = (uint*)&poutput[outOff];
+                uint* puIntOutput = (uint*)&poutPut[outOff];
 
-                puintOutput[0] = C0;
-                puintOutput[1] = C1;
-                puintOutput[2] = C2;
-                puintOutput[3] = C3;
+                puIntOutput[0] = _c0;
+                puIntOutput[1] = _c1;
+                puIntOutput[2] = _c2;
+                puIntOutput[3] = _c3;
 
+                // ReSharper disable once RedundantAssignment
                 outOff += 16;
             }
         }

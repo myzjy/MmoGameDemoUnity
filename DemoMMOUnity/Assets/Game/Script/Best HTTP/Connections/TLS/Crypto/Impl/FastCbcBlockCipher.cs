@@ -1,27 +1,27 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.Connections.TLS.Crypto.Impl;
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 
 namespace BestHTTP.Connections.TLS.Crypto
 {
     /**
     * implements Cipher-Block-Chaining (CBC) mode on top of a simple cipher.
     */
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
     public class FastCbcBlockCipher
         : IBlockCipher
     {
-        private byte[] IV, cbcV, cbcNextV;
-        private int blockSize;
-        private IBlockCipher cipher;
-        private bool encrypting;
+        private readonly byte[] _iv;
+        private byte[] _cbcV, _cbcNextV;
+        private readonly int _blockSize;
+        private readonly IBlockCipher _cipher;
+        private bool _encrypting;
 
         /**
         * Basic constructor.
@@ -31,12 +31,12 @@ namespace BestHTTP.Connections.TLS.Crypto
         public FastCbcBlockCipher(
             IBlockCipher cipher)
         {
-            this.cipher = cipher;
-            this.blockSize = cipher.GetBlockSize();
+            _cipher = cipher;
+            _blockSize = cipher.GetBlockSize();
 
-            this.IV = new byte[blockSize];
-            this.cbcV = new byte[blockSize];
-            this.cbcNextV = new byte[blockSize];
+            _iv = new byte[_blockSize];
+            _cbcV = new byte[_blockSize];
+            _cbcNextV = new byte[_blockSize];
         }
 
         /**
@@ -46,7 +46,7 @@ namespace BestHTTP.Connections.TLS.Crypto
         */
         public IBlockCipher GetUnderlyingCipher()
         {
-            return cipher;
+            return _cipher;
         }
 
         /**
@@ -63,75 +63,66 @@ namespace BestHTTP.Connections.TLS.Crypto
             bool forEncryption,
             ICipherParameters parameters)
         {
-            bool oldEncrypting = this.encrypting;
+            bool oldEncrypting = _encrypting;
 
-            this.encrypting = forEncryption;
+            _encrypting = forEncryption;
 
-            if (parameters is FastParametersWithIV)
+            if (parameters is FastParametersWithIV ivParam)
             {
-                FastParametersWithIV ivParam = (FastParametersWithIV)parameters;
                 byte[] iv = ivParam.GetIV();
 
-                if (iv.Length != blockSize)
+                if (iv.Length != _blockSize)
                 {
-                    throw new ArgumentException("initialisation vector must be the same length as block size");
+                    throw new ArgumentException("初始化向量的长度必须与块大小相同");
                 }
 
-                Array.Copy(iv, 0, IV, 0, iv.Length);
+                Array.Copy(iv, 0, _iv, 0, iv.Length);
 
                 parameters = ivParam.Parameters;
             }
 
             Reset();
 
-            // if null it's an IV changed only.
+            // 如果为空，它只是静脉改变。
             if (parameters != null)
             {
-                cipher.Init(encrypting, parameters);
+                _cipher.Init(_encrypting, parameters);
             }
-            else if (oldEncrypting != encrypting)
+            else if (oldEncrypting != _encrypting)
             {
-                throw new ArgumentException("cannot change encrypting state without providing key.");
+                throw new ArgumentException("在不提供密钥的情况下无法更改加密状态.");
             }
         }
 
         /**
-        * return the algorithm name and mode.
+        * 返回算法名称和模式。
         *
-        * @return the name of the underlying algorithm followed by "/CBC".
+        * @return 基础算法的名称，后跟 "/CBC".
         */
-        public string AlgorithmName
-        {
-            get { return cipher.AlgorithmName + "/CBC"; }
-        }
+        public string AlgorithmName => _cipher.AlgorithmName + "/CBC";
 
-        public bool IsPartialBlockOkay
-        {
-            get { return false; }
-        }
+        public bool IsPartialBlockOkay => false;
 
         /**
-        * return the block size of the underlying cipher.
+        * 返回底层密码的块大小。
         *
-        * @return the block size of the underlying cipher.
+        * @return 底层密码的块大小。
         */
         public int GetBlockSize()
         {
-            return cipher.GetBlockSize();
+            return _cipher.GetBlockSize();
         }
 
         /**
-        * Process one block of input from the array in and write it to
-        * the out array.
+        * 处理来自in数组的一个输入块，并将其写入out数组。
         *
-        * @param in the array containing the input data.
-        * @param inOff offset into the in array the data starts at.
+        * @param 在包含输入数据的数组中。
+        * @param inOff 偏移到数据起始位置的in数组中。
         * @param out the array the output data will be copied into.
         * @param outOff the offset into the out array the output will start at.
-        * @exception DataLengthException if there isn't enough data in in, or
-        * space in out.
-        * @exception InvalidOperationException if the cipher isn't initialised.
-        * @return the number of bytes processed and produced.
+        * @exception DataLengthException 如果里面没有足够的数据，或者里面没有足够的空间。
+        * @exception InvalidOperationException 如果密码没有初始化。
+        * @return 处理和产生的字节数。
         */
         public int ProcessBlock(
             byte[] input,
@@ -139,34 +130,33 @@ namespace BestHTTP.Connections.TLS.Crypto
             byte[] output,
             int outOff)
         {
-            return (encrypting)
+            return (_encrypting)
                 ? EncryptBlock(input, inOff, output, outOff)
                 : DecryptBlock(input, inOff, output, outOff);
         }
 
         /**
-        * reset the chaining vector back to the IV and reset the underlying
-        * cipher.
+        *将链向量重置回IV并重置底层密码。
         */
         public void Reset()
         {
-            Array.Copy(IV, 0, cbcV, 0, IV.Length);
-            Array.Clear(cbcNextV, 0, cbcNextV.Length);
+            Array.Copy(_iv, 0, _cbcV, 0, _iv.Length);
+            Array.Clear(_cbcNextV, 0, _cbcNextV.Length);
 
-            cipher.Reset();
+            _cipher.Reset();
         }
 
         /**
-        * Do the appropriate chaining step for CBC mode encryption.
+        * 为CBC模式加密执行适当的链接步骤。
         *
-        * @param in the array containing the data to be encrypted.
-        * @param inOff offset into the in array the data starts at.
-        * @param out the array the encrypted data will be copied into.
-        * @param outOff the offset into the out array the output will start at.
-        * @exception DataLengthException if there isn't enough data in in, or
-        * space in out.
-        * @exception InvalidOperationException if the cipher isn't initialised.
-        * @return the number of bytes processed and produced.
+        * <param name="input">in the array containing the data to be encrypted.</param>
+        * <param name="inOff">
+          偏移到数据起始位置的in数组中。
+          将加密的数据复制到数组之外。
+          </param>
+        * <param name="outOff"> 输出开始位置的out数组的偏移量.</param>
+        * <exception cref="DataLengthException">  如果里面没有足够的数据，或者里面没有足够的空间.</exception>
+        * <returns>返回处理和产生的字节数。</returns>
         */
         private unsafe int EncryptBlock(
             byte[] input,
@@ -174,9 +164,9 @@ namespace BestHTTP.Connections.TLS.Crypto
             byte[] outBytes,
             int outOff)
         {
-            if ((inOff + blockSize) > input.Length)
+            if ((inOff + _blockSize) > input.Length)
             {
-                throw new DataLengthException("input buffer too short");
+                throw new DataLengthException("输入缓冲区过短");
             }
 
             /*
@@ -187,50 +177,55 @@ namespace BestHTTP.Connections.TLS.Crypto
             //{
             //    cbcV[i] ^= input[inOff + i];
             //}
-            fixed (byte* pinput = input, pcbcV = cbcV)
+            fixed (byte* pInput = input, pCbcV = _cbcV)
             {
-                ulong* pulongInput = (ulong*)&pinput[inOff], pulongcbcV = (ulong*)pcbcV;
+                ulong* puLongInput = (ulong*)&pInput[inOff], puLongCbcV = (ulong*)pCbcV;
 
-                for (int i = 0; i < blockSize / 8; i++)
-                    pulongcbcV[i] ^= pulongInput[i];
+                for (int i = 0; i < _blockSize / 8; i++)
+                {
+                    puLongCbcV[i] ^= puLongInput[i];
+                }
             }
 
-            int length = cipher.ProcessBlock(cbcV, 0, outBytes, outOff);
+            int length = _cipher.ProcessBlock(_cbcV, 0, outBytes, outOff);
 
             /*
             * copy ciphertext to cbcV
             */
-            Array.Copy(outBytes, outOff, cbcV, 0, cbcV.Length);
+            Array.Copy(outBytes, outOff, _cbcV, 0, _cbcV.Length);
 
             return length;
         }
 
         /**
-        * Do the appropriate chaining step for CBC mode decryption.
-        *
-        * @param in the array containing the data to be decrypted.
-        * @param inOff offset into the in array the data starts at.
-        * @param out the array the decrypted data will be copied into.
-        * @param outOff the offset into the out array the output will start at.
-        * @exception DataLengthException if there isn't enough data in in, or
-        * space in out.
-        * @exception InvalidOperationException if the cipher isn't initialised.
-        * @return the number of bytes processed and produced.
-        */
+         * 为CBC模式解密执行适当的链接步骤。
+         *
+         * <param name="input"> 在包含待解密数据的数组中。</param>
+         * <param name="inOff">  偏移到数据起始位置的in数组中.</param>
+         * <param name="outBytes">将解密的数据复制到数组之外.</param>
+         * <param name="outOff">输出到输出数组的偏移量。</param>
+         * <exception cref="DataLengthException">
+         * 如果里面没有足够的数据，或者里面没有足够的空间。
+         * </exception>
+         * <exception cref="InvalidOperationException">
+         *  如果密码没有初始化。
+         * </exception>
+         *  <returns>返回处理和产生的字节数.</returns>
+         */
         private unsafe int DecryptBlock(
             byte[] input,
             int inOff,
             byte[] outBytes,
             int outOff)
         {
-            if ((inOff + blockSize) > input.Length)
+            if ((inOff + _blockSize) > input.Length)
             {
-                throw new DataLengthException("input buffer too short");
+                throw new DataLengthException("输入缓冲区过短");
             }
 
-            Array.Copy(input, inOff, cbcNextV, 0, blockSize);
+            Array.Copy(input, inOff, _cbcNextV, 0, _blockSize);
 
-            int length = cipher.ProcessBlock(input, inOff, outBytes, outOff);
+            int length = _cipher.ProcessBlock(input, inOff, outBytes, outOff);
 
             /*
             * XOR the cbcV and the output
@@ -239,27 +234,25 @@ namespace BestHTTP.Connections.TLS.Crypto
             //{
             //    outBytes[outOff + i] ^= cbcV[i];
             //}
-            fixed (byte* poutBytes = outBytes, pcbcV = cbcV)
+            fixed (byte* poutBytes = outBytes, pCbcV = _cbcV)
             {
-                ulong* pulongBytes = (ulong*)&poutBytes[outOff], pulongcbcV = (ulong*)pcbcV;
+                ulong* puLongBytes = (ulong*)&poutBytes[outOff], puLongCbcV = (ulong*)pCbcV;
 
-                for (int i = 0; i < blockSize / 8; i++)
-                    pulongBytes[i] ^= pulongcbcV[i];
+                for (int i = 0; i < _blockSize / 8; i++)
+                {
+                    puLongBytes[i] ^= puLongCbcV[i];
+                }
             }
 
             /*
-            * swap the back up buffer into next position
+            * 将备份缓冲区交换到下一个位置
             */
-            byte[] tmp;
 
-            tmp = cbcV;
-            cbcV = cbcNextV;
-            cbcNextV = tmp;
+            (_cbcV, _cbcNextV) = (_cbcNextV, _cbcV);
 
             return length;
         }
     }
-
 }
 #pragma warning restore
 #endif
