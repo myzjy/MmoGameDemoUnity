@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ffafda347a6cfd2418c57361614c0169
+guid: 519abfbf006cd264d81f5f62924c03f2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -63,7 +63,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -105,7 +105,7 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: 48
+    textureFormat: 47
     textureCompression: 1
     compressionQuality: 100
     crunchedCompression: 0
@@ -143,5 +143,5 @@ TextureImporter:
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: 
+  assetBundleName: uihomapfloat_spriteatlas.assetbundle
   assetBundleVariant: 

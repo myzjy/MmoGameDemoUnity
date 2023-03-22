@@ -652,6 +652,7 @@ GameObject:
   - component: {fileID: 7441202998659945390}
   - component: {fileID: 1227642123106808428}
   - component: {fileID: 1007890696556406811}
+  - component: {fileID: 1003772822015568461}
   m_Layer: 5
   m_Name: 'bg '
   m_TagString: Untagged
@@ -717,6 +718,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1003772822015568461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717352572031472487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: bg _Image
+    UI_Serializable_Obj: {fileID: 1007890696556406811}
+    Path: 'LoginPanel/bg '
+  maskIndex: 4
 --- !u!1 &735880570030313312
 GameObject:
   m_ObjectHideFlags: 0
@@ -2317,6 +2335,7 @@ MonoBehaviour:
   - {fileID: 5194155295844259383}
   - {fileID: 6157225092508190709}
   - {fileID: 2887286817253044829}
+  - {fileID: 1003772822015568461}
   mSelfObj: {fileID: 1899562274783211712}
   MTransform: {fileID: 7960560374260678589}
   MObjCanvasGroup: {fileID: 5635103283465375700}
@@ -5984,7 +6003,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1005835883573863339
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8323,7 +8342,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u767B\u9646"
+  m_Text: "\u5F00\u59CB\u6E38\u620F"
 --- !u!1 &7533692730572484790
 GameObject:
   m_ObjectHideFlags: 0

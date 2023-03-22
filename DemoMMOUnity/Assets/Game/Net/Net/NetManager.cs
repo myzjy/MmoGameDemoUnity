@@ -1,7 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using ZJYFrameWork.Base.Model;
+using ZJYFrameWork.Event;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.Core.Websocket;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Net.Dispatcher;
@@ -53,7 +55,7 @@ namespace ZJYFrameWork.Net
                 if (!sendSuccess)
                 {
                     Close();
-                    // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
+                     // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
                 }
             }
             catch (Exception e)
