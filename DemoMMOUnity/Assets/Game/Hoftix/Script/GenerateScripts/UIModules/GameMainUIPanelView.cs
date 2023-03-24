@@ -9,7 +9,7 @@ namespace ZJYFrameWork.UISerializable
         public ZJYFrameWork.UISerializable.UISerializableKeyObject GemsTim_UISerializableKeyObject=null;
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject Gem_UISerializableKeyObject=null;
 		public UnityEngine.GameObject top_head=null;
-		public UnityEngine.UI.Image headIcon=null;
+		public UnityEngine.UI.Image LvBgIcon=null;
 		public UnityEngine.UI.Image beadFrame=null;
 		public UnityEngine.UI.Button headImgClick=null;
 		public UnityEngine.UI.Text top_head_Name_Text=null;
@@ -32,6 +32,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button BagButton=null;
 		public UnityEngine.UI.Button settingBtn=null;
 		public ZJYFrameWork.Hotfix.UI.GameMain.GameMainUIController GMUIController=null;
+		public ZJYFrameWork.UISerializable.UISerializableKeyObject glod_UISerializableKeyObject=null;
 		
 
 
@@ -40,7 +41,7 @@ namespace ZJYFrameWork.UISerializable
             GemsTim_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("GemsTim_UISerializableKeyObject");
 			Gem_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("Gem_UISerializableKeyObject");
 			top_head=_view.GetObjType<UnityEngine.GameObject>("top_head");
-			headIcon=_view.GetObjType<UnityEngine.UI.Image>("headIcon");
+			LvBgIcon=_view.GetObjType<UnityEngine.UI.Image>("LvBgIcon");
 			beadFrame=_view.GetObjType<UnityEngine.UI.Image>("beadFrame");
 			headImgClick=_view.GetObjType<UnityEngine.UI.Button>("headImgClick");
 			top_head_Name_Text=_view.GetObjType<UnityEngine.UI.Text>("top_head_Name_Text");
@@ -63,6 +64,7 @@ namespace ZJYFrameWork.UISerializable
 			BagButton=_view.GetObjType<UnityEngine.UI.Button>("BagButton");
 			settingBtn=_view.GetObjType<UnityEngine.UI.Button>("settingBtn");
 			GMUIController=_view.GetObjType<ZJYFrameWork.Hotfix.UI.GameMain.GameMainUIController>("GMUIController");
+			glod_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("glod_UISerializableKeyObject");
 			
         }
     }

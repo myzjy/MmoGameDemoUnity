@@ -14,6 +14,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.GameObject tips=null;
 		public UnityEngine.UI.Text UserNameText=null;
 		public UnityEngine.UI.Button Gonggao_Button=null;
+		public UnityEngine.UI.Image bg_Image=null;
 		
 
 
@@ -27,6 +28,7 @@ namespace ZJYFrameWork.UISerializable
 			tips=_view.GetObjType<UnityEngine.GameObject>("tips");
 			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
 			Gonggao_Button=_view.GetObjType<UnityEngine.UI.Button>("Gonggao_Button");
+			bg_Image=_view.GetObjType<UnityEngine.UI.Image>("bg_Image");
 			
         }
     }

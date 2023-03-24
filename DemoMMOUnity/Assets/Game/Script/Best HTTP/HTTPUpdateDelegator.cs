@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -290,6 +291,8 @@ namespace BestHTTP
                 CallOnUpdate();
             }
         }
+
+    
 
         private void CallOnUpdate()
         {

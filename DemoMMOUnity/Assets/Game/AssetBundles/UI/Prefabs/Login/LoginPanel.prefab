@@ -731,7 +731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: bg _Image
+  - UI_Serializable_Key: bg_Image
     UI_Serializable_Obj: {fileID: 1007890696556406811}
     Path: 'LoginPanel/bg '
   maskIndex: 4
