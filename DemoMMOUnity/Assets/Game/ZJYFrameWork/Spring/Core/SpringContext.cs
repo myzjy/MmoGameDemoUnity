@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZJYFrameWork.Contexts;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Spring.Core
@@ -10,6 +11,8 @@ namespace ZJYFrameWork.Spring.Core
     /// </summary>
     public sealed class SpringContext
     {
+        private static ApplicationContext _context;
+
         /// <summary>
         /// bean标签 容器
         /// </summary>
@@ -29,6 +32,17 @@ namespace ZJYFrameWork.Spring.Core
 
         private SpringContext()
         {
+            _context = Context.GetApplicationContext();
+        }
+
+        public static ApplicationContext GetApplicationContext()
+        {
+            if (_context == null)
+            {
+                _context = Context.GetApplicationContext();
+            }
+
+            return _context;
         }
 
         public static bool GetScanFlag()
@@ -162,6 +176,7 @@ namespace ZJYFrameWork.Spring.Core
                     method.Invoke(bean, null);
                 }
             }
+
             // 调用被AfterPostConstruct注解标注的方法
             foreach (var pair in beanMap)
             {

@@ -111,18 +111,19 @@ namespace ZJYFrameWork.Event
             // 如果是webgl则直接执行，因为webgl不支持线程操作
             action();
 #else
+            SpringContext.GetApplicationContext().GetMainLoopExcutor().RunOnMainThread(action);
             //SpringContext.GetBean<NetSendManager>().Add(action);
-            ThreadPool.QueueUserWorkItem((param) =>
-            {
-                try
-                {
-                    action();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-            });
+            // ThreadPool.QueueUserWorkItem((param) =>
+            // {
+            //     try
+            //     {
+            //         action();
+            //     }
+            //     catch (Exception e)
+            //     {
+            //         Debug.LogError(e);
+            //     }
+            // });
 #endif
         }
 
