@@ -1,10 +1,8 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-using System.Text;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
@@ -13,71 +11,71 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
     /// <summary>
     /// Implementation of Daniel J. Bernstein's Salsa20 stream cipher, Snuffle 2005
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
     public class FastSalsa20Engine
         : IStreamCipher
     {
-        public static readonly int DEFAULT_ROUNDS = 20;
+        private const int DefaultRounds = 20;
 
         /** Constants */
         private const int StateSize = 16; // 16, 32 bit ints = 64 bytes
 
-        private readonly static uint[] TAU_SIGMA = Pack.LE_To_UInt32(Strings.ToAsciiByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
+        private static readonly uint[] TauSigma =
+            Pack.LE_To_UInt32(Strings.ToAsciiByteArray("expand 16-byte k expand 32-byte k"), 0, 8);
 
-        internal void PackTauOrSigma(int keyLength, uint[] state, int stateOffset)
+        internal static void PackTauOrSigma(int keyLength, uint[] state, int stateOffset)
         {
             int tsOff = (keyLength - 16) / 4;
-            state[stateOffset] = TAU_SIGMA[tsOff];
-            state[stateOffset + 1] = TAU_SIGMA[tsOff + 1];
-            state[stateOffset + 2] = TAU_SIGMA[tsOff + 2];
-            state[stateOffset + 3] = TAU_SIGMA[tsOff + 3];
+            state[stateOffset] = TauSigma[tsOff];
+            state[stateOffset + 1] = TauSigma[tsOff + 1];
+            state[stateOffset + 2] = TauSigma[tsOff + 2];
+            state[stateOffset + 3] = TauSigma[tsOff + 3];
         }
 
-        [Obsolete]
-        protected readonly static byte[]
-            sigma = Strings.ToAsciiByteArray("expand 32-byte k"),
-            tau = Strings.ToAsciiByteArray("expand 16-byte k");
+        [Obsolete] protected static readonly byte[]
+            Sigma = Strings.ToAsciiByteArray("expand 32-byte k"),
+            Tau = Strings.ToAsciiByteArray("expand 16-byte k");
 
-        protected int rounds;
+        protected readonly int Rounds;
 
         /*
-		 * variables to hold the state of the engine
-		 * during encryption and decryption
+		 * 变量来保存引擎的状态
+		 * 在加密和解密期间
 		 */
-        private int index = 0;
-        internal uint[] engineState = new uint[StateSize]; // state
-        internal uint[] x = new uint[StateSize]; // internal buffer
-        private byte[] keyStream = new byte[StateSize * 4]; // expanded state, 64 bytes
-        private bool initialised = false;
+        private int _index;
+        internal readonly uint[] EngineState = new uint[StateSize]; // state
+        internal readonly uint[] X = new uint[StateSize]; // internal buffer
+        private readonly byte[] _keyStream = new byte[StateSize * 4]; // expanded state, 64 bytes
+        private bool _initialised;
 
         /*
 		 * internal counter
 		 */
-        private uint cW0, cW1, cW2;
+        private uint _cW0, _cW1, _cW2;
 
         /// <summary>
-        /// Creates a 20 round Salsa20 engine.
+        /// 创建一个20轮Salsa20引擎。
         /// </summary>
-        public FastSalsa20Engine()
-            : this(DEFAULT_ROUNDS)
+        protected FastSalsa20Engine()
+            : this(DefaultRounds)
         {
         }
 
         /// <summary>
-        /// Creates a Salsa20 engine with a specific number of rounds.
+        /// 创建一个具有特定轮数的Salsa20引擎。
         /// </summary>
-        /// <param name="rounds">the number of rounds (must be an even number).</param>
-        public FastSalsa20Engine(int rounds)
+        /// <param name="rounds">回合数 (must be an even number).</param>
+        protected FastSalsa20Engine(int rounds)
         {
             if (rounds <= 0 || (rounds & 1) != 0)
             {
-                throw new ArgumentException("'rounds' must be a positive, even number");
+                throw new ArgumentException("'rounds'必须是正数，偶数");
             }
 
-            this.rounds = rounds;
+            this.Rounds = rounds;
         }
 
         public virtual void Init(
@@ -85,54 +83,54 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             ICipherParameters parameters)
         {
             /* 
-			 * Salsa20 encryption and decryption is completely
-			 * symmetrical, so the 'forEncryption' is 
-			 * irrelevant. (Like 90% of stream ciphers)
+             * Salsa20加密和解密是完全的
+             *对称，所以'forEncryption'是
+             *无关紧要。(像90%的流密码)
 			 */
 
             FastParametersWithIV ivParams = parameters as FastParametersWithIV;
             if (ivParams == null)
-                throw new ArgumentException(AlgorithmName + " Init requires an IV", "parameters");
+                throw new ArgumentException($"{AlgorithmName} 初始化需要一个 IV", nameof(parameters));
 
             byte[] iv = ivParams.GetIV();
             if (iv == null || iv.Length != NonceSize)
-                throw new ArgumentException(AlgorithmName + " requires exactly " + NonceSize + " bytes of IV");
+            {
+                throw new ArgumentException($"{AlgorithmName} 需要准确 {NonceSize} bytes of IV");
+            }
 
             ICipherParameters keyParam = ivParams.Parameters;
             if (keyParam == null)
             {
-                if (!initialised)
-                    throw new InvalidOperationException(AlgorithmName + " KeyParameter can not be null for first initialisation");
+                if (!_initialised)
+                    throw new InvalidOperationException($"{AlgorithmName} 第一次初始化时，KeyParameter不能为空");
 
                 SetKey(null, iv);
             }
-            else if (keyParam is NoCopyKeyParameter)
+            else if (keyParam is NoCopyKeyParameter parameter)
             {
-                SetKey(((NoCopyKeyParameter)keyParam).GetKey(), iv);
+                SetKey(parameter.GetKey(), iv);
             }
             else
             {
-                throw new ArgumentException(AlgorithmName + " Init parameters must contain a KeyParameter (or null for re-init)");
+                throw new ArgumentException($"{AlgorithmName} 初始化参数必须包含一个KeyParameter(重新初始化时为空)");
             }
 
             Reset();
-            initialised = true;
+            _initialised = true;
         }
 
-        protected virtual int NonceSize
-        {
-            get { return 8; }
-        }
+        protected virtual int NonceSize => 8;
 
         public virtual string AlgorithmName
         {
             get
             {
                 string name = "Salsa20";
-                if (rounds != DEFAULT_ROUNDS)
+                if (Rounds != DefaultRounds)
                 {
-                    name += "/" + rounds;
+                    name += "/" + Rounds;
                 }
+
                 return name;
             }
         }
@@ -142,26 +140,26 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             if (LimitExceeded())
             {
-                throw new MaxBytesExceededException("2^70 byte limit per IV; Change IV");
+                throw new MaxBytesExceededException("2^70字节限制每IV;改变IV");
             }
 
-            if (index == 0)
+            if (_index == 0)
             {
-                GenerateKeyStream(keyStream);
+                GenerateKeyStream(_keyStream);
                 AdvanceCounter();
             }
 
-            byte output = (byte)(keyStream[index] ^ input);
-            index = (index + 1) & 63;
+            byte output = (byte)(_keyStream[_index] ^ input);
+            _index = (_index + 1) & 63;
 
             return output;
         }
 
         protected virtual void AdvanceCounter()
         {
-            if (++engineState[8] == 0)
+            if (++EngineState[8] == 0)
             {
-                ++engineState[9];
+                ++EngineState[9];
             }
         }
 
@@ -172,37 +170,38 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] outBytes,
             int outOff)
         {
-            if (!initialised)
-                throw new InvalidOperationException(AlgorithmName + " not initialised");
+            if (!_initialised)
+                throw new InvalidOperationException($"{AlgorithmName} 没有初始化");
 
-            Check.DataLength(inBytes, inOff, len, "input buffer too short");
-            Check.OutputLength(outBytes, outOff, len, "output buffer too short");
+            Check.DataLength(inBytes, inOff, len, "输入缓冲区过短");
+            Check.OutputLength(outBytes, outOff, len, "输出缓冲区过短");
 
             if (LimitExceeded((uint)len))
-                throw new MaxBytesExceededException("2^70 byte limit per IV would be exceeded; Change IV");
+                throw new MaxBytesExceededException("每个IV将超过2^70字节限制;改变IV");
 
             for (int i = 0; i < len; i++)
             {
-                if (index == 0)
+                if (_index == 0)
                 {
-                    GenerateKeyStream(keyStream);
+                    GenerateKeyStream(_keyStream);
                     AdvanceCounter();
                 }
-                outBytes[i + outOff] = (byte)(keyStream[index] ^ inBytes[i + inOff]);
-                index = (index + 1) & 63;
+
+                outBytes[i + outOff] = (byte)(_keyStream[_index] ^ inBytes[i + inOff]);
+                _index = (_index + 1) & 63;
             }
         }
 
         public virtual void Reset()
         {
-            index = 0;
+            _index = 0;
             ResetLimitCounter();
             ResetCounter();
         }
 
         protected virtual void ResetCounter()
         {
-            engineState[8] = engineState[9] = 0;
+            EngineState[8] = EngineState[9] = 0;
         }
 
         protected virtual void SetKey(byte[] keyBytes, byte[] ivBytes)
@@ -210,37 +209,37 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (keyBytes != null)
             {
                 if ((keyBytes.Length != 16) && (keyBytes.Length != 32))
-                    throw new ArgumentException(AlgorithmName + " requires 128 bit or 256 bit key");
+                    throw new ArgumentException( $"{AlgorithmName} 需要128位或256位密钥");
 
                 int tsOff = (keyBytes.Length - 16) / 4;
-                engineState[0] = TAU_SIGMA[tsOff];
-                engineState[5] = TAU_SIGMA[tsOff + 1];
-                engineState[10] = TAU_SIGMA[tsOff + 2];
-                engineState[15] = TAU_SIGMA[tsOff + 3];
+                EngineState[0] = TauSigma[tsOff];
+                EngineState[5] = TauSigma[tsOff + 1];
+                EngineState[10] = TauSigma[tsOff + 2];
+                EngineState[15] = TauSigma[tsOff + 3];
 
                 // Key
-                Pack.LE_To_UInt32(keyBytes, 0, engineState, 1, 4);
-                Pack.LE_To_UInt32(keyBytes, keyBytes.Length - 16, engineState, 11, 4);
+                Pack.LE_To_UInt32(keyBytes, 0, EngineState, 1, 4);
+                Pack.LE_To_UInt32(keyBytes, keyBytes.Length - 16, EngineState, 11, 4);
             }
 
             // IV
-            Pack.LE_To_UInt32(ivBytes, 0, engineState, 6, 2);
+            Pack.LE_To_UInt32(ivBytes, 0, EngineState, 6, 2);
         }
 
         protected virtual void GenerateKeyStream(byte[] output)
         {
-            SalsaCore(rounds, engineState, x);
-            Pack.UInt32_To_LE(x, output, 0);
+            SalsaCore(Rounds, EngineState, X);
+            Pack.UInt32_To_LE(X, output, 0);
         }
 
-        internal static void SalsaCore(int rounds, uint[] input, uint[] x)
+        private static void SalsaCore(int rounds, uint[] input, uint[] x)
         {
             if (input.Length != 16)
                 throw new ArgumentException();
             if (x.Length != 16)
                 throw new ArgumentException();
             if (rounds % 2 != 0)
-                throw new ArgumentException("Number of rounds must be even");
+                throw new ArgumentException("回合数必须为偶数");
 
             uint x00 = input[0];
             uint x01 = input[1];
@@ -316,18 +315,18 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         private void ResetLimitCounter()
         {
-            cW0 = 0;
-            cW1 = 0;
-            cW2 = 0;
+            _cW0 = 0;
+            _cW1 = 0;
+            _cW2 = 0;
         }
 
         private bool LimitExceeded()
         {
-            if (++cW0 == 0)
+            if (++_cW0 == 0)
             {
-                if (++cW1 == 0)
+                if (++_cW1 == 0)
                 {
-                    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+                    return (++_cW2 & 0x20) != 0; // 2^(32 + 32 + 6)
                 }
             }
 
@@ -335,18 +334,18 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /*
-		 * this relies on the fact len will always be positive.
+		 * 这依赖于len总是正的事实。
 		 */
         private bool LimitExceeded(
             uint len)
         {
-            uint old = cW0;
-            cW0 += len;
-            if (cW0 < old)
+            uint old = _cW0;
+            _cW0 += len;
+            if (_cW0 < old)
             {
-                if (++cW1 == 0)
+                if (++_cW1 == 0)
                 {
-                    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+                    return (++_cW2 & 0x20) != 0; // 2^(32 + 32 + 6)
                 }
             }
 

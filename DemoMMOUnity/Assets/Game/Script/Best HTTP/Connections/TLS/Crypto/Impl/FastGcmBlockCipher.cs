@@ -23,44 +23,38 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         : IAeadBlockCipher
     {
         private const int BlockSize = 16;
-        byte[] ctrBlock = new byte[BlockSize];
+        private readonly byte[] _ctrBlock = new byte[BlockSize];
 
-        private readonly IBlockCipher cipher;
-        private IGcmExponentiator exp;
+        private readonly IBlockCipher _cipher;
+        private IGcmExponentiator _exp;
 
         // 这些字段由Init设置，不被processing修改
-        private bool forEncryption;
-        private bool initialised;
-        private int macSize;
-        private byte[] lastKey;
-        private byte[] nonce;
-        private byte[] initialAssociatedText;
-        private byte[] H;
-        private byte[] J0;
+        private bool _forEncryption;
+        private bool _initialised;
+        private int _macSize;
+        private byte[] _lastKey;
+        private byte[] _nonce;
+        private byte[] _initialAssociatedText;
+        private byte[] _h;
+        private byte[] _j0;
 
         // 这些字段在处理过程中被修改
-        private int bufLength;
-        private byte[] bufBlock;
-        private byte[] macBlock;
-        private byte[] S, S_at, S_atPre;
-        private byte[] counter;
-        private uint blocksRemaining;
-        private int bufOff;
-        private ulong totalLength;
-        private byte[] atBlock;
-        private int atBlockPos;
-        private ulong atLength;
-        private ulong atLengthPre;
-
-        public FastGcmBlockCipher(
-            IBlockCipher c)
-            : this(c, null)
-        {
-        }
+        private int _bufLength;
+        private byte[] _bufBlock;
+        private byte[] _macBlock;
+        private byte[] _s, _sAt, _sAtPre;
+        private byte[] _counter;
+        private uint _blocksRemaining;
+        private int _bufOff;
+        private ulong _totalLength;
+        private byte[] _atBlock;
+        private int _atBlockPos;
+        private ulong _atLength;
+        private ulong _atLengthPre;
 
         public FastGcmBlockCipher(
             IBlockCipher c,
-            IGcmMultiplier m)
+            IGcmMultiplier m = null)
         {
             if (c.GetBlockSize() != BlockSize)
             {
@@ -72,17 +66,14 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 throw new NotImplementedException("IGcmMultiplier");
             }
 
-            cipher = c;
+            _cipher = c;
         }
 
-        public string AlgorithmName
-        {
-            get { return $"{cipher.AlgorithmName}/GCM"; }
-        }
+        public string AlgorithmName => $"{_cipher.AlgorithmName}/GCM";
 
         public IBlockCipher GetUnderlyingCipher()
         {
-            return cipher;
+            return _cipher;
         }
 
         public int GetBlockSize()
@@ -98,48 +89,44 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             bool forEncryption,
             ICipherParameters parameters)
         {
-            this.forEncryption = forEncryption;
+            _forEncryption = forEncryption;
             //this.macBlock = null;
-            if (macBlock != null)
-                Array.Clear(macBlock, 0, macBlock.Length);
-            initialised = true;
+            if (_macBlock != null)
+                Array.Clear(_macBlock, 0, _macBlock.Length);
+            _initialised = true;
 
             NoCopyKeyParameter keyParam;
-            byte[] newNonce = null;
+            byte[] newNonce;
 
-            if (parameters is FastAeadParameters)
+            if (parameters is FastAeadParameters fastAeAdParameters)
             {
-                FastAeadParameters param = (FastAeadParameters)parameters;
+                newNonce = fastAeAdParameters.GetNonce();
+                _initialAssociatedText = fastAeAdParameters.GetAssociatedText();
 
-                newNonce = param.GetNonce();
-                initialAssociatedText = param.GetAssociatedText();
-
-                int macSizeBits = param.MacSize;
+                int macSizeBits = fastAeAdParameters.MacSize;
                 if (macSizeBits < 32 || macSizeBits > 128 || macSizeBits % 8 != 0)
                 {
                     throw new ArgumentException($"MAC大小无效值: {macSizeBits}");
                 }
 
-                macSize = macSizeBits / 8;
-                keyParam = param.Key;
+                _macSize = macSizeBits / 8;
+                keyParam = fastAeAdParameters.Key;
             }
-            else if (parameters is FastParametersWithIV)
+            else if (parameters is FastParametersWithIV iv)
             {
-                FastParametersWithIV param = (FastParametersWithIV)parameters;
-
-                newNonce = param.GetIV();
-                initialAssociatedText = null;
-                macSize = 16;
-                keyParam = (NoCopyKeyParameter)param.Parameters;
+                newNonce = iv.GetIV();
+                _initialAssociatedText = null;
+                _macSize = 16;
+                keyParam = (NoCopyKeyParameter)iv.Parameters;
             }
             else
             {
                 throw new ArgumentException("无效参数传递给GCM");
             }
 
-            bufLength = forEncryption ? BlockSize : (BlockSize + macSize);
-            if (bufBlock == null || bufLength < bufBlock.Length)
-                BufferPool.Resize(ref bufBlock, bufLength, true, true);
+            _bufLength = forEncryption ? BlockSize : (BlockSize + _macSize);
+            if (_bufBlock == null || _bufLength < _bufBlock.Length)
+                BufferPool.Resize(ref _bufBlock, _bufLength, true, true);
 
             if (newNonce == null || newNonce.Length < 1)
             {
@@ -148,24 +135,24 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             if (forEncryption)
             {
-                if (nonce != null && Arrays.AreEqual(nonce, newNonce))
+                if (_nonce != null && Arrays.AreEqual(_nonce, newNonce))
                 {
                     if (keyParam == null)
                     {
                         throw new ArgumentException("不能重用nonce进行GCM加密");
                     }
 
-                    if (lastKey != null && Arrays.AreEqual(lastKey, keyParam.GetKey()))
+                    if (_lastKey != null && Arrays.AreEqual(_lastKey, keyParam.GetKey()))
                     {
                         throw new ArgumentException("不能重用nonce进行GCM加密");
                     }
                 }
             }
 
-            nonce = newNonce;
+            _nonce = newNonce;
             if (keyParam != null)
             {
-                lastKey = keyParam.GetKey();
+                _lastKey = keyParam.GetKey();
             }
 
             // TODO Restrict macSize to 16 if nonce length not 12?
@@ -174,121 +161,121 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             //如果keyParam为空，我们将重用最后一个键。
             if (keyParam != null)
             {
-                cipher.Init(true, keyParam);
+                _cipher.Init(true, keyParam);
 
-                if (H == null)
-                    H = new byte[BlockSize];
+                if (_h == null)
+                    _h = new byte[BlockSize];
                 else
-                    Array.Clear(H, 0, BlockSize);
-                cipher.ProcessBlock(H, 0, H, 0);
+                    Array.Clear(_h, 0, BlockSize);
+                _cipher.ProcessBlock(_h, 0, _h, 0);
 
                 // 如果keyParam为null，我们将重用最后一个键，乘数不需要重新初始化
-                Tables8kGcmMultiplier_Init(H);
-                exp = null;
+                Tables8kGcmMultiplier_Init(_h);
+                _exp = null;
             }
-            else if (H == null)
+            else if (_h == null)
             {
                 throw new ArgumentException("Key必须在initial init中指定");
             }
 
-            if (J0 == null)
-                J0 = new byte[BlockSize];
+            if (_j0 == null)
+                _j0 = new byte[BlockSize];
             else
-                Array.Clear(J0, 0, BlockSize);
+                Array.Clear(_j0, 0, BlockSize);
 
-            if (nonce.Length == 12)
+            if (_nonce.Length == 12)
             {
-                Array.Copy(nonce, 0, J0, 0, nonce.Length);
-                J0[BlockSize - 1] = 0x01;
+                Array.Copy(_nonce, 0, _j0, 0, _nonce.Length);
+                _j0[BlockSize - 1] = 0x01;
             }
             else
             {
-                gHASH(J0, nonce, nonce.Length);
-                byte[] X = BufferPool.Get(BlockSize, false);
-                Pack.UInt64_To_BE((ulong)nonce.Length * 8UL, X, 8);
-                gHASHBlock(J0, X);
-                BufferPool.Release(X);
+                GHash(_j0, _nonce, _nonce.Length);
+                byte[] x = BufferPool.Get(BlockSize, false);
+                Pack.UInt64_To_BE((ulong)_nonce.Length * 8UL, x, 8);
+                GHashBlock(_j0, x);
+                BufferPool.Release(x);
             }
 
             //BufferPool.Resize(ref this.S, BlockSize, false, true);
             //BufferPool.Resize(ref this.S_at, BlockSize, false, true);
             //BufferPool.Resize(ref this.S_atPre, BlockSize, false, true);
             //BufferPool.Resize(ref this.atBlock, BlockSize, false, true);
-            if (S == null)
-                S = new byte[BlockSize];
+            if (_s == null)
+                _s = new byte[BlockSize];
             else
-                Array.Clear(S, 0, S.Length);
+                Array.Clear(_s, 0, _s.Length);
 
-            if (S_at == null)
-                S_at = new byte[BlockSize];
+            if (_sAt == null)
+                _sAt = new byte[BlockSize];
             else
-                Array.Clear(S_at, 0, S_at.Length);
+                Array.Clear(_sAt, 0, _sAt.Length);
 
-            if (S_atPre == null)
-                S_atPre = new byte[BlockSize];
+            if (_sAtPre == null)
+                _sAtPre = new byte[BlockSize];
             else
-                Array.Clear(S_atPre, 0, S_atPre.Length);
+                Array.Clear(_sAtPre, 0, _sAtPre.Length);
 
-            if (atBlock == null)
-                atBlock = new byte[BlockSize];
+            if (_atBlock == null)
+                _atBlock = new byte[BlockSize];
             else
-                Array.Clear(atBlock, 0, atBlock.Length);
+                Array.Clear(_atBlock, 0, _atBlock.Length);
 
-            atBlockPos = 0;
-            atLength = 0;
-            atLengthPre = 0;
+            _atBlockPos = 0;
+            _atLength = 0;
+            _atLengthPre = 0;
 
             //this.counter = Arrays.Clone(J0);
             //BufferPool.Resize(ref this.counter, BlockSize, false, true);
-            if (counter == null)
-                counter = new byte[BlockSize];
+            if (_counter == null)
+                _counter = new byte[BlockSize];
             else
-                Array.Clear(counter, 0, counter.Length);
+                Array.Clear(_counter, 0, _counter.Length);
 
-            Array.Copy(J0, 0, counter, 0, BlockSize);
+            Array.Copy(_j0, 0, _counter, 0, BlockSize);
 
-            blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
-            bufOff = 0;
-            totalLength = 0;
+            _blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
+            _bufOff = 0;
+            _totalLength = 0;
 
-            if (initialAssociatedText != null)
+            if (_initialAssociatedText != null)
             {
-                ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
+                ProcessAadBytes(_initialAssociatedText, 0, _initialAssociatedText.Length);
             }
         }
 
         public byte[] GetMac()
         {
-            return macBlock == null
-                ? new byte[macSize]
-                : Arrays.Clone(macBlock);
+            return _macBlock == null
+                ? new byte[_macSize]
+                : Arrays.Clone(_macBlock);
         }
 
         public int GetOutputSize(
             int len)
         {
-            int totalData = len + bufOff;
+            int totalData = len + _bufOff;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                return totalData + macSize;
+                return totalData + _macSize;
             }
 
-            return totalData < macSize ? 0 : totalData - macSize;
+            return totalData < _macSize ? 0 : totalData - _macSize;
         }
 
         public int GetUpdateOutputSize(
             int len)
         {
-            int totalData = len + bufOff;
-            if (!forEncryption)
+            int totalData = len + _bufOff;
+            if (!_forEncryption)
             {
-                if (totalData < macSize)
+                if (totalData < _macSize)
                 {
                     return 0;
                 }
 
-                totalData -= macSize;
+                totalData -= _macSize;
             }
 
             return totalData - totalData % BlockSize;
@@ -298,13 +285,13 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             CheckStatus();
 
-            atBlock[atBlockPos] = input;
-            if (++atBlockPos == BlockSize)
+            _atBlock[_atBlockPos] = input;
+            if (++_atBlockPos == BlockSize)
             {
                 // Hash each block as it fills
-                gHASHBlock(S_at, atBlock);
-                atBlockPos = 0;
-                atLength += BlockSize;
+                GHashBlock(_sAt, _atBlock);
+                _atBlockPos = 0;
+                _atLength += BlockSize;
             }
         }
 
@@ -314,35 +301,35 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             for (int i = 0; i < len; ++i)
             {
-                atBlock[atBlockPos] = inBytes[inOff + i];
-                if (++atBlockPos == BlockSize)
+                _atBlock[_atBlockPos] = inBytes[inOff + i];
+                if (++_atBlockPos == BlockSize)
                 {
                     // 当每个块填满时散列
-                    gHASHBlock(S_at, atBlock);
-                    atBlockPos = 0;
-                    atLength += BlockSize;
+                    GHashBlock(_sAt, _atBlock);
+                    _atBlockPos = 0;
+                    _atLength += BlockSize;
                 }
             }
         }
 
         private void InitCipher()
         {
-            if (atLength > 0)
+            if (_atLength > 0)
             {
-                Array.Copy(S_at, 0, S_atPre, 0, BlockSize);
-                atLengthPre = atLength;
+                Array.Copy(_sAt, 0, _sAtPre, 0, BlockSize);
+                _atLengthPre = _atLength;
             }
 
             // 完成部分AAD块的散列
-            if (atBlockPos > 0)
+            if (_atBlockPos > 0)
             {
-                gHASHPartial(S_atPre, atBlock, 0, atBlockPos);
-                atLengthPre += (uint)atBlockPos;
+                GHashPartial(_sAtPre, _atBlock, 0, _atBlockPos);
+                _atLengthPre += (uint)_atBlockPos;
             }
 
-            if (atLengthPre > 0)
+            if (_atLengthPre > 0)
             {
-                Array.Copy(S_atPre, 0, S, 0, BlockSize);
+                Array.Copy(_sAtPre, 0, _s, 0, BlockSize);
             }
         }
 
@@ -353,18 +340,23 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             CheckStatus();
 
-            bufBlock[bufOff] = input;
-            if (++bufOff == bufLength)
+            _bufBlock[_bufOff] = input;
+            if (++_bufOff == _bufLength)
             {
-                ProcessBlock(bufBlock, 0, output, outOff);
-                if (forEncryption)
+                ProcessBlock(_bufBlock, 0, output, outOff);
+                if (_forEncryption)
                 {
-                    bufOff = 0;
+                    _bufOff = 0;
                 }
                 else
                 {
-                    Array.Copy(bufBlock, BlockSize, bufBlock, 0, macSize);
-                    bufOff = macSize;
+                    Array.Copy(
+                        sourceArray: _bufBlock,
+                        sourceIndex: BlockSize,
+                        destinationArray: _bufBlock,
+                        destinationIndex: 0,
+                        length: _macSize);
+                    _bufOff = _macSize;
                 }
 
                 return BlockSize;
@@ -382,29 +374,27 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             CheckStatus();
 
-            Check.DataLength(input, inOff, len, "input buffer too short");
+            Check.DataLength(input, inOff, len, "输入缓冲区过短");
 
-            int resultLen = 0;
+            var resultLen = 0;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                if (bufOff != 0)
+                if (_bufOff != 0)
                 {
                     while (len > 0)
                     {
                         --len;
-                        bufBlock[bufOff] = input[inOff++];
-                        if (++bufOff == BlockSize)
-                        {
-                            ProcessBlock(bufBlock, 0, output, outOff);
-                            bufOff = 0;
-                            resultLen += BlockSize;
-                            break;
-                        }
+                        _bufBlock[_bufOff] = input[inOff++];
+                        if (++_bufOff != BlockSize) continue;
+                        ProcessBlock(_bufBlock, 0, output, outOff);
+                        _bufOff = 0;
+                        resultLen += BlockSize;
+                        break;
                     }
                 }
 
-                fixed (byte* pctrBlock = ctrBlock, pbuf = input, pS = S, poutput = output)
+                fixed (byte* pCtrBlock = _ctrBlock, pBuf = input, pS = _s, poutPut = output)
                 {
                     while (len >= BlockSize)
                     {
@@ -412,46 +402,46 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                         #region ProcessBlock(buf: input, bufOff: inOff, output: output, outOff: outOff + resultLen);
 
-                        if (totalLength == 0)
+                        if (_totalLength == 0)
                             InitCipher();
 
                         #region GetNextCtrBlock(ctrBlock);
 
-                        blocksRemaining--;
+                        _blocksRemaining--;
 
                         uint c = 1;
-                        c += counter[15];
-                        counter[15] = (byte)c;
+                        c += _counter[15];
+                        _counter[15] = (byte)c;
                         c >>= 8;
-                        c += counter[14];
-                        counter[14] = (byte)c;
+                        c += _counter[14];
+                        _counter[14] = (byte)c;
                         c >>= 8;
-                        c += counter[13];
-                        counter[13] = (byte)c;
+                        c += _counter[13];
+                        _counter[13] = (byte)c;
                         c >>= 8;
-                        c += counter[12];
-                        counter[12] = (byte)c;
+                        c += _counter[12];
+                        _counter[12] = (byte)c;
 
-                        cipher.ProcessBlock(counter, 0, ctrBlock, 0);
+                        _cipher.ProcessBlock(_counter, 0, _ctrBlock, 0);
 
                         #endregion
 
-                        ulong* pulongBuf = (ulong*)&pbuf[inOff];
-                        ulong* pulongctrBlock = (ulong*)pctrBlock;
-                        pulongctrBlock[0] ^= pulongBuf[0];
-                        pulongctrBlock[1] ^= pulongBuf[1];
+                        ulong* pUlongBuf = (ulong*)&pBuf[inOff];
+                        ulong* pUlongCtrBlock = (ulong*)pCtrBlock;
+                        pUlongCtrBlock[0] ^= pUlongBuf[0];
+                        pUlongCtrBlock[1] ^= pUlongBuf[1];
 
-                        ulong* pulongS = (ulong*)pS;
-                        pulongS[0] ^= pulongctrBlock[0];
-                        pulongS[1] ^= pulongctrBlock[1];
+                        ulong* pUlongS = (ulong*)pS;
+                        pUlongS[0] ^= pUlongCtrBlock[0];
+                        pUlongS[1] ^= pUlongCtrBlock[1];
 
-                        Tables8kGcmMultiplier_MultiplyH(S);
+                        Tables8kGcmMultiplier_MultiplyH(_s);
 
-                        ulong* pulongoutput = (ulong*)&poutput[outOff + resultLen];
-                        pulongoutput[0] = pulongctrBlock[0];
-                        pulongoutput[1] = pulongctrBlock[1];
+                        ulong* pUlongOutput = (ulong*)&poutPut[outOff + resultLen];
+                        pUlongOutput[0] = pUlongCtrBlock[0];
+                        pUlongOutput[1] = pUlongCtrBlock[1];
 
-                        totalLength += BlockSize;
+                        _totalLength += BlockSize;
 
                         #endregion
 
@@ -463,118 +453,113 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                 if (len > 0)
                 {
-                    Array.Copy(input, inOff, bufBlock, 0, len);
-                    bufOff = len;
+                    Array.Copy(input, inOff, _bufBlock, 0, len);
+                    _bufOff = len;
                 }
             }
             else
             {
-                fixed (byte* pinput = input, pbufBlock = bufBlock, pctrBlock = ctrBlock, pS = S, poutput = output)
+                fixed (byte* pInput = input, pBufBlock = _bufBlock, pCtrBlock = _ctrBlock, pS = _s, pOutput = output)
                 {
-                    ulong* pulongbufBlock = (ulong*)pbufBlock;
+                    ulong* pUlongBufBlock = (ulong*)pBufBlock;
 
                     // adjust bufOff to be on a 8 byte boundary
                     int adjustCount = 0;
-                    for (int i = 0; i < len && (bufOff % 8) != 0; ++i)
+                    for (int i = 0; i < len && (_bufOff % 8) != 0; ++i)
                     {
-                        pbufBlock[bufOff++] = pinput[inOff++ + i];
+                        pBufBlock[_bufOff++] = pInput[inOff++ + i];
                         adjustCount++;
 
-                        if (bufOff == bufLength)
-                        {
-                            ProcessBlock(bufBlock, 0, output, outOff + resultLen);
+                        if (_bufOff != _bufLength) continue;
+                        ProcessBlock(_bufBlock, 0, output, outOff + resultLen);
 
-                            pulongbufBlock[0] = pulongbufBlock[2];
-                            pulongbufBlock[1] = pulongbufBlock[3];
+                        pUlongBufBlock[0] = pUlongBufBlock[2];
+                        pUlongBufBlock[1] = pUlongBufBlock[3];
 
-                            bufOff = macSize;
-                            resultLen += BlockSize;
-                        }
+                        _bufOff = _macSize;
+                        resultLen += BlockSize;
                     }
 
                     int longLen = (len - adjustCount) / 8;
                     if (longLen > 0)
                     {
-                        ulong* pulonginput = (ulong*)&pinput[inOff];
+                        ulong* pUlongInput = (ulong*)&pInput[inOff];
 
-                        int bufLongOff = bufOff / 8;
+                        int bufLongOff = _bufOff / 8;
 
                         // copy 8 bytes per cycle instead of just 1
-                        for (int i = 0; i < longLen; ++i)
+                        for (var i = 0; i < longLen; ++i)
                         {
-                            pulongbufBlock[bufLongOff++] = pulonginput[i];
-                            bufOff += 8;
+                            pUlongBufBlock[bufLongOff++] = pUlongInput[i];
+                            _bufOff += 8;
 
-                            if (bufOff == bufLength)
-                            {
-                                #region ProcessBlock(buf: bufBlock, bufOff: 0, output: output, outOff: outOff + resultLen);
+                            if (_bufOff != _bufLength) continue;
 
-                                if (totalLength == 0)
-                                    InitCipher();
+                            #region ProcessBlock(buf: bufBlock, bufOff: 0, output: output, outOff: outOff + resultLen);
 
-                                #region GetNextCtrBlock(ctrBlock);
+                            if (_totalLength == 0)
+                                InitCipher();
 
-                                blocksRemaining--;
+                            #region GetNextCtrBlock(ctrBlock);
 
-                                uint c = 1;
-                                c += counter[15];
-                                counter[15] = (byte)c;
-                                c >>= 8;
-                                c += counter[14];
-                                counter[14] = (byte)c;
-                                c >>= 8;
-                                c += counter[13];
-                                counter[13] = (byte)c;
-                                c >>= 8;
-                                c += counter[12];
-                                counter[12] = (byte)c;
+                            _blocksRemaining--;
 
-                                cipher.ProcessBlock(counter, 0, ctrBlock, 0);
+                            uint c = 1;
+                            c += _counter[15];
+                            _counter[15] = (byte)c;
+                            c >>= 8;
+                            c += _counter[14];
+                            _counter[14] = (byte)c;
+                            c >>= 8;
+                            c += _counter[13];
+                            _counter[13] = (byte)c;
+                            c >>= 8;
+                            c += _counter[12];
+                            _counter[12] = (byte)c;
 
-                                #endregion
+                            _cipher.ProcessBlock(_counter, 0, _ctrBlock, 0);
 
-                                ulong* pulongS = (ulong*)pS;
+                            #endregion
 
-                                pulongS[0] ^= pulongbufBlock[0];
-                                pulongS[1] ^= pulongbufBlock[1];
+                            ulong* pUlongS = (ulong*)pS;
 
-                                Tables8kGcmMultiplier_MultiplyH(S);
+                            pUlongS[0] ^= pUlongBufBlock[0];
+                            pUlongS[1] ^= pUlongBufBlock[1];
 
-                                ulong* pulongOutput = (ulong*)&poutput[outOff + resultLen];
-                                ulong* pulongctrBlock = (ulong*)pctrBlock;
+                            Tables8kGcmMultiplier_MultiplyH(_s);
 
-                                pulongOutput[0] = pulongctrBlock[0] ^ pulongbufBlock[0];
-                                pulongOutput[1] = pulongctrBlock[1] ^ pulongbufBlock[1];
+                            ulong* pUlongOutput = (ulong*)&pOutput[outOff + resultLen];
+                            ulong* pUlongCtrBlock = (ulong*)pCtrBlock;
 
-                                totalLength += BlockSize;
+                            pUlongOutput[0] = pUlongCtrBlock[0] ^ pUlongBufBlock[0];
+                            pUlongOutput[1] = pUlongCtrBlock[1] ^ pUlongBufBlock[1];
 
-                                #endregion
+                            _totalLength += BlockSize;
 
-                                pulongbufBlock[0] = pulongbufBlock[2];
-                                pulongbufBlock[1] = pulongbufBlock[3];
+                            #endregion
 
-                                bufOff = macSize;
-                                resultLen += BlockSize;
+                            pUlongBufBlock[0] = pUlongBufBlock[2];
+                            pUlongBufBlock[1] = pUlongBufBlock[3];
 
-                                bufLongOff = bufOff / 8;
-                            }
+                            _bufOff = _macSize;
+                            resultLen += BlockSize;
+
+                            bufLongOff = _bufOff / 8;
                         }
                     }
 
                     for (int i = longLen * 8; i < len; i++)
                     {
-                        pbufBlock[bufOff++] = pinput[inOff + i];
+                        pBufBlock[_bufOff++] = pInput[inOff + i];
 
-                        if (bufOff == bufLength)
-                        {
-                            ProcessBlock(bufBlock, 0, output, outOff + resultLen);
+                        if (_bufOff != _bufLength) continue;
+                        ProcessBlock(_bufBlock, 0, output, outOff + resultLen);
 
-                            pulongbufBlock[0] = pulongbufBlock[2];
-                            pulongbufBlock[1] = pulongbufBlock[3];
+                        pUlongBufBlock[0] = pUlongBufBlock[2];
+                        pUlongBufBlock[1] = pUlongBufBlock[3];
 
-                            bufOff = macSize;
-                            resultLen += BlockSize;
-                        }
+                        _bufOff = _macSize;
+                        resultLen += BlockSize;
                     }
                 }
             }
@@ -582,172 +567,175 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             return resultLen;
         }
 
-        private unsafe void ProcessBlock(byte[] buf, int bufOff, byte[] output, int outOff)
+        private unsafe void ProcessBlock(byte[] buf, int bufferOff, byte[] output, int outOff)
         {
-            if (totalLength == 0)
+            if (_totalLength == 0)
                 InitCipher();
 
-            GetNextCtrBlock(ctrBlock);
+            GetNextCtrBlock(_ctrBlock);
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                fixed (byte* pctrBlock = ctrBlock, pbuf = buf, pS = S)
+                fixed (byte* pCtrBlock = _ctrBlock, pBuf = buf, pS = _s)
                 {
-                    ulong* pulongBuf = (ulong*)&pbuf[bufOff];
-                    ulong* pulongctrBlock = (ulong*)pctrBlock;
-                    pulongctrBlock[0] ^= pulongBuf[0];
-                    pulongctrBlock[1] ^= pulongBuf[1];
+                    ulong* pUlongBuf = (ulong*)&pBuf[bufferOff];
+                    ulong* pUlongCtrBlock = (ulong*)pCtrBlock;
+                    pUlongCtrBlock[0] ^= pUlongBuf[0];
+                    pUlongCtrBlock[1] ^= pUlongBuf[1];
 
-                    ulong* pulongS = (ulong*)pS;
-                    pulongS[0] ^= pulongctrBlock[0];
-                    pulongS[1] ^= pulongctrBlock[1];
+                    ulong* pUlongS = (ulong*)pS;
+                    pUlongS[0] ^= pUlongCtrBlock[0];
+                    pUlongS[1] ^= pUlongCtrBlock[1];
 
-                    Tables8kGcmMultiplier_MultiplyH(S);
+                    Tables8kGcmMultiplier_MultiplyH(_s);
 
-                    fixed (byte* poutput = output)
+                    fixed (byte* pOutput = output)
                     {
-                        ulong* pulongoutput = (ulong*)&poutput[outOff];
-                        pulongoutput[0] = pulongctrBlock[0];
-                        pulongoutput[1] = pulongctrBlock[1];
+                        ulong* pUlongOutput = (ulong*)&pOutput[outOff];
+                        pUlongOutput[0] = pUlongCtrBlock[0];
+                        pUlongOutput[1] = pUlongCtrBlock[1];
                     }
                 }
             }
             else
             {
-                // moved this part to ProcessBytes's main part 
-                fixed (byte* pctrBlock = ctrBlock, pbuf = buf, pS = S, poutput = output)
+                //将此部分移动到Process Bytes是主要部分
+                fixed (byte* pCtrBlock = _ctrBlock, pBuf = buf, pS = _s, pOutput = output)
                 {
-                    ulong* pulongS = (ulong*)pS;
-                    ulong* pulongBuf = (ulong*)&pbuf[bufOff];
+                    ulong* pUlongS = (ulong*)pS;
+                    ulong* pUlongBuf = (ulong*)&pBuf[bufferOff];
 
-                    pulongS[0] ^= pulongBuf[0];
-                    pulongS[1] ^= pulongBuf[1];
+                    pUlongS[0] ^= pUlongBuf[0];
+                    pUlongS[1] ^= pUlongBuf[1];
 
-                    Tables8kGcmMultiplier_MultiplyH(S);
+                    Tables8kGcmMultiplier_MultiplyH(_s);
 
-                    ulong* pulongOutput = (ulong*)&poutput[outOff];
-                    ulong* pulongctrBlock = (ulong*)pctrBlock;
+                    ulong* pUlongOutput = (ulong*)&pOutput[outOff];
+                    ulong* pUlongCtrBlock = (ulong*)pCtrBlock;
 
-                    pulongOutput[0] = pulongctrBlock[0] ^ pulongBuf[0];
-                    pulongOutput[1] = pulongctrBlock[1] ^ pulongBuf[1];
+                    pUlongOutput[0] = pUlongCtrBlock[0] ^ pUlongBuf[0];
+                    pUlongOutput[1] = pUlongCtrBlock[1] ^ pUlongBuf[1];
                 }
             }
 
-            totalLength += BlockSize;
+            _totalLength += BlockSize;
         }
 
         public int DoFinal(byte[] output, int outOff)
         {
             CheckStatus();
 
-            if (totalLength == 0)
+            if (_totalLength == 0)
             {
                 InitCipher();
             }
 
-            int extra = bufOff;
+            int extra = _bufOff;
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                Check.OutputLength(output, outOff, extra + macSize, "Output buffer too short");
+                Check.OutputLength(output, outOff, extra + _macSize, "输出缓冲区过短");
             }
             else
             {
-                if (extra < macSize)
-                    throw new InvalidCipherTextException("data too short");
+                if (extra < _macSize)
+                {
+                    throw new InvalidCipherTextException("数据太短");
+                }
 
-                extra -= macSize;
+                extra -= _macSize;
 
-                Check.OutputLength(output, outOff, extra, "Output buffer too short");
+                Check.OutputLength(output, outOff, extra, "输出缓冲区过短");
             }
 
             if (extra > 0)
             {
-                ProcessPartial(bufBlock, 0, extra, output, outOff);
+                ProcessPartial(_bufBlock, 0, extra, output, outOff);
             }
 
-            atLength += (uint)atBlockPos;
+            _atLength += (uint)_atBlockPos;
 
-            if (atLength > atLengthPre)
+            if (_atLength > _atLengthPre)
             {
                 /*
-                 *  Some AAD was sent after the cipher started. We determine the difference b/w the hash value
-                 *  we actually used when the cipher started (S_atPre) and the final hash value calculated (S_at).
-                 *  Then we carry this difference forward by multiplying by H^c, where c is the number of (full or
-                 *  partial) cipher-text blocks produced, and adjust the current hash.
+                 * 在密码开始后发送了一些AAD。我们确定b/w哈希值的差值
+                 * 我们实际使用的密码开始时(S_atPre)和最终哈希值计算(S_at)。
+                 * 然后我们通过乘以H^c向前携带这个差值，其中c是产生的(全部或部分)密文块的数量，并调整当前哈希
                  */
 
                 // Finish hash for partial AAD block
-                if (atBlockPos > 0)
+                if (_atBlockPos > 0)
                 {
-                    gHASHPartial(S_at, atBlock, 0, atBlockPos);
+                    GHashPartial(_sAt, _atBlock, 0, _atBlockPos);
                 }
 
-                // Find the difference between the AAD hashes
-                if (atLengthPre > 0)
+                // 找出AAD哈希值之间的差异
+                if (_atLengthPre > 0)
                 {
-                    GcmUtilities.Xor(S_at, S_atPre);
+                    GcmUtilities.Xor(_sAt, _sAtPre);
                 }
 
-                // Number of cipher-text blocks produced
-                long c = (long)(((totalLength * 8) + 127) >> 7);
+                // 产生的密文块数
+                long c = (long)(((_totalLength * 8) + 127) >> 7);
 
-                // Calculate the adjustment factor
-                byte[] H_c = BufferPool.Get(16, true);
-                if (exp == null)
+                // 计算调整因子
+                byte[] hC = BufferPool.Get(16, true);
+                if (_exp == null)
                 {
-                    exp = new Tables1kGcmExponentiator();
-                    exp.Init(H);
+                    _exp = new Tables1kGcmExponentiator();
+                    _exp.Init(_h);
                 }
 
-                exp.ExponentiateX(c, H_c);
+                _exp.ExponentiateX(c, hC);
 
-                // Carry the difference forward
-                GcmUtilities.Multiply(S_at, H_c);
+                // 把差异发扬光大
+                GcmUtilities.Multiply(_sAt, hC);
 
-                // Adjust the current hash
-                GcmUtilities.Xor(S, S_at);
+                // 调整当前哈希
+                GcmUtilities.Xor(_s, _sAt);
 
-                BufferPool.Release(H_c);
+                BufferPool.Release(hC);
             }
 
             // Final gHASH
-            byte[] X = BufferPool.Get(BlockSize, false);
-            Pack.UInt64_To_BE(atLength * 8UL, X, 0);
-            Pack.UInt64_To_BE(totalLength * 8UL, X, 8);
+            byte[] x = BufferPool.Get(BlockSize, false);
+            Pack.UInt64_To_BE(_atLength * 8UL, x, 0);
+            Pack.UInt64_To_BE(_totalLength * 8UL, x, 8);
 
-            gHASHBlock(S, X);
+            GHashBlock(_s, x);
 
-            BufferPool.Release(X);
+            BufferPool.Release(x);
 
             // T = MSBt(GCTRk(J0,S))
             byte[] tag = BufferPool.Get(BlockSize, false);
-            cipher.ProcessBlock(J0, 0, tag, 0);
-            GcmUtilities.Xor(tag, S);
+            _cipher.ProcessBlock(_j0, 0, tag, 0);
+            GcmUtilities.Xor(tag, _s);
 
             int resultLen = extra;
 
-            // We place into macBlock our calculated value for T
+            // 我们将T的计算值放入macBlock中
 
-            if (macBlock == null || macBlock.Length < macSize)
-                macBlock = BufferPool.Resize(ref macBlock, macSize, false, false);
+            if (_macBlock == null || _macBlock.Length < _macSize)
+            {
+                _macBlock = BufferPool.Resize(ref _macBlock, _macSize, false, false);
+            }
 
-            Array.Copy(tag, 0, macBlock, 0, macSize);
+            Array.Copy(tag, 0, _macBlock, 0, _macSize);
 
             BufferPool.Release(tag);
 
-            if (forEncryption)
+            if (_forEncryption)
             {
                 // Append T to the message
-                Array.Copy(macBlock, 0, output, outOff + bufOff, macSize);
-                resultLen += macSize;
+                Array.Copy(_macBlock, 0, output, outOff + _bufOff, _macSize);
+                resultLen += _macSize;
             }
             else
             {
-                // Retrieve the T value from the message and compare to calculated one
-                byte[] msgMac = BufferPool.Get(macSize, false);
-                Array.Copy(bufBlock, extra, msgMac, 0, macSize);
-                if (!Arrays.ConstantTimeAreEqual(macBlock, msgMac))
+                // 从消息中检索T值并与计算的T值进行比较
+                byte[] msgMac = BufferPool.Get(_macSize, false);
+                Array.Copy(_bufBlock, extra, msgMac, 0, _macSize);
+                if (!Arrays.ConstantTimeAreEqual(_macBlock, msgMac))
                     throw new InvalidCipherTextException("mac check in GCM failed");
                 BufferPool.Release(msgMac);
             }
@@ -765,7 +753,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private unsafe void Reset(
             bool clearMac)
         {
-            cipher.Reset();
+            _cipher.Reset();
 
             // note: we do not reset the nonce.
 
@@ -773,26 +761,26 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             //BufferPool.Resize(ref this.S_at, BlockSize, false, true);
             //BufferPool.Resize(ref this.S_atPre, BlockSize, false, true);
             //BufferPool.Resize(ref this.atBlock, BlockSize, false, true);
-            fixed (byte* pS = S, pS_at = S_at, pS_atPre = S_atPre, patBlock = atBlock)
+            fixed (byte* pS = _s, pSAt = _sAt, pSAtPre = _sAtPre, patBlock = _atBlock)
             {
                 for (int i = 0; i < BlockSize; ++i)
                 {
-                    pS[i] = pS_at[i] = pS_atPre[i] = patBlock[i] = 0;
+                    pS[i] = pSAt[i] = pSAtPre[i] = patBlock[i] = 0;
                 }
             }
 
-            atBlockPos = 0;
-            atLength = 0;
-            atLengthPre = 0;
+            _atBlockPos = 0;
+            _atLength = 0;
+            _atLengthPre = 0;
 
             //BufferPool.Resize(ref this.counter, BlockSize, false, false);
-            Array.Copy(J0, 0, counter, 0, BlockSize);
+            Array.Copy(_j0, 0, _counter, 0, BlockSize);
 
-            blocksRemaining = uint.MaxValue - 1;
-            bufOff = 0;
-            totalLength = 0;
+            _blocksRemaining = uint.MaxValue - 1;
+            _bufOff = 0;
+            _totalLength = 0;
 
-            if (bufBlock != null)
+            if (_bufBlock != null)
             {
                 //Arrays.Fill(bufBlock, 0);
             }
@@ -800,18 +788,18 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (clearMac)
             {
                 //macBlock = null;
-                Array.Clear(macBlock, 0, macSize);
+                Array.Clear(_macBlock, 0, _macSize);
             }
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                initialised = false;
+                _initialised = false;
             }
             else
             {
-                if (initialAssociatedText != null)
+                if (_initialAssociatedText != null)
                 {
-                    ProcessAadBytes(initialAssociatedText, 0, initialAssociatedText.Length);
+                    ProcessAadBytes(_initialAssociatedText, 0, _initialAssociatedText.Length);
                 }
             }
         }
@@ -819,128 +807,128 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private void ProcessPartial(byte[] buf, int off, int len, byte[] output, int outOff)
         {
             //byte[] ctrBlock = new byte[BlockSize];
-            GetNextCtrBlock(ctrBlock);
+            GetNextCtrBlock(_ctrBlock);
 
-            if (forEncryption)
+            if (_forEncryption)
             {
-                GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
-                gHASHPartial(S, buf, off, len);
+                GcmUtilities.Xor(buf, off, _ctrBlock, 0, len);
+                GHashPartial(_s, buf, off, len);
             }
             else
             {
-                gHASHPartial(S, buf, off, len);
-                GcmUtilities.Xor(buf, off, ctrBlock, 0, len);
+                GHashPartial(_s, buf, off, len);
+                GcmUtilities.Xor(buf, off, _ctrBlock, 0, len);
             }
 
             Array.Copy(buf, off, output, outOff, len);
-            totalLength += (uint)len;
+            _totalLength += (uint)len;
         }
 
-        private void gHASH(byte[] Y, byte[] b, int len)
+        private void GHash(byte[] y, byte[] b, int len)
         {
             for (int pos = 0; pos < len; pos += BlockSize)
             {
                 int num = Math.Min(len - pos, BlockSize);
-                gHASHPartial(Y, b, pos, num);
+                GHashPartial(y, b, pos, num);
             }
         }
 
-        private void gHASHBlock(byte[] Y, byte[] b)
+        private void GHashBlock(byte[] y, byte[] b)
         {
-            GcmUtilities.Xor(Y, b);
-            Tables8kGcmMultiplier_MultiplyH(Y);
+            GcmUtilities.Xor(y, b);
+            Tables8kGcmMultiplier_MultiplyH(y);
         }
 
-        private void gHASHBlock(byte[] Y, byte[] b, int off)
+        private void GHashBlock(byte[] y, byte[] b, int off)
         {
-            GcmUtilities.Xor(Y, b, off);
-            Tables8kGcmMultiplier_MultiplyH(Y);
+            GcmUtilities.Xor(y, b, off);
+            Tables8kGcmMultiplier_MultiplyH(y);
         }
 
-        private void gHASHPartial(byte[] Y, byte[] b, int off, int len)
+        private void GHashPartial(byte[] y, byte[] b, int off, int len)
         {
-            GcmUtilities.Xor(Y, b, off, len);
-            Tables8kGcmMultiplier_MultiplyH(Y);
+            GcmUtilities.Xor(y, b, off, len);
+            Tables8kGcmMultiplier_MultiplyH(y);
         }
 
         private void GetNextCtrBlock(byte[] block)
         {
-            if (blocksRemaining == 0)
-                throw new InvalidOperationException("Attempt to process too many blocks");
+            if (_blocksRemaining == 0)
+                throw new InvalidOperationException("尝试处理过多的块");
 
-            blocksRemaining--;
+            _blocksRemaining--;
 
             uint c = 1;
-            c += counter[15];
-            counter[15] = (byte)c;
+            c += _counter[15];
+            _counter[15] = (byte)c;
             c >>= 8;
-            c += counter[14];
-            counter[14] = (byte)c;
+            c += _counter[14];
+            _counter[14] = (byte)c;
             c >>= 8;
-            c += counter[13];
-            counter[13] = (byte)c;
+            c += _counter[13];
+            _counter[13] = (byte)c;
             c >>= 8;
-            c += counter[12];
-            counter[12] = (byte)c;
+            c += _counter[12];
+            _counter[12] = (byte)c;
 
-            cipher.ProcessBlock(counter, 0, block, 0);
+            _cipher.ProcessBlock(_counter, 0, block, 0);
         }
 
         private void CheckStatus()
         {
-            if (!initialised)
+            if (!_initialised)
             {
-                if (forEncryption)
+                if (_forEncryption)
                 {
-                    throw new InvalidOperationException("GCM cipher cannot be reused for encryption");
+                    throw new InvalidOperationException("GCM密码不能用于加密");
                 }
 
-                throw new InvalidOperationException("GCM cipher needs to be initialised");
+                throw new InvalidOperationException("GCM密码需要初始化");
             }
         }
 
         #region Tables8kGcmMultiplier
 
-        private byte[] Tables8kGcmMultiplier_H;
-        private uint[][][] Tables8kGcmMultiplier_M;
+        private byte[] _tables8KGcmMultiplierH;
+        private uint[][][] _tables8KGcmMultiplierM;
 
-        public void Tables8kGcmMultiplier_Init(byte[] H)
+        private void Tables8kGcmMultiplier_Init(byte[] h)
         {
-            if (Tables8kGcmMultiplier_M == null)
+            if (_tables8KGcmMultiplierM == null)
             {
-                Tables8kGcmMultiplier_M = new uint[32][][];
+                _tables8KGcmMultiplierM = new uint[32][][];
             }
-            else if (Arrays.AreEqual(Tables8kGcmMultiplier_H, H))
+            else if (Arrays.AreEqual(_tables8KGcmMultiplierH, h))
             {
                 return;
             }
 
-            Tables8kGcmMultiplier_H = Arrays.Clone(H);
+            _tables8KGcmMultiplierH = Arrays.Clone(h);
 
-            Tables8kGcmMultiplier_M[0] = new uint[16][];
-            Tables8kGcmMultiplier_M[1] = new uint[16][];
-            Tables8kGcmMultiplier_M[0][0] = new uint[4];
-            Tables8kGcmMultiplier_M[1][0] = new uint[4];
-            Tables8kGcmMultiplier_M[1][8] = GcmUtilities.AsUints(H);
-
-            for (int j = 4; j >= 1; j >>= 1)
-            {
-                uint[] tmp = (uint[])Tables8kGcmMultiplier_M[1][j + j].Clone();
-                GcmUtilities.MultiplyP(tmp);
-                Tables8kGcmMultiplier_M[1][j] = tmp;
-            }
-
-            {
-                uint[] tmp = (uint[])Tables8kGcmMultiplier_M[1][1].Clone();
-                GcmUtilities.MultiplyP(tmp);
-                Tables8kGcmMultiplier_M[0][8] = tmp;
-            }
+            _tables8KGcmMultiplierM[0] = new uint[16][];
+            _tables8KGcmMultiplierM[1] = new uint[16][];
+            _tables8KGcmMultiplierM[0][0] = new uint[4];
+            _tables8KGcmMultiplierM[1][0] = new uint[4];
+            _tables8KGcmMultiplierM[1][8] = GcmUtilities.AsUints(h);
 
             for (int j = 4; j >= 1; j >>= 1)
             {
-                uint[] tmp = (uint[])Tables8kGcmMultiplier_M[0][j + j].Clone();
+                uint[] tmp = (uint[])_tables8KGcmMultiplierM[1][j + j].Clone();
                 GcmUtilities.MultiplyP(tmp);
-                Tables8kGcmMultiplier_M[0][j] = tmp;
+                _tables8KGcmMultiplierM[1][j] = tmp;
+            }
+
+            {
+                uint[] tmp = (uint[])_tables8KGcmMultiplierM[1][1].Clone();
+                GcmUtilities.MultiplyP(tmp);
+                _tables8KGcmMultiplierM[0][8] = tmp;
+            }
+
+            for (int j = 4; j >= 1; j >>= 1)
+            {
+                uint[] tmp = (uint[])_tables8KGcmMultiplierM[0][j + j].Clone();
+                GcmUtilities.MultiplyP(tmp);
+                _tables8KGcmMultiplierM[0][j] = tmp;
             }
 
             for (int i = 0;;)
@@ -949,9 +937,9 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 {
                     for (int k = 1; k < j; ++k)
                     {
-                        uint[] tmp = (uint[])Tables8kGcmMultiplier_M[i][j].Clone();
-                        GcmUtilities.Xor(tmp, Tables8kGcmMultiplier_M[i][k]);
-                        Tables8kGcmMultiplier_M[i][j + k] = tmp;
+                        uint[] tmp = (uint[])_tables8KGcmMultiplierM[i][j].Clone();
+                        GcmUtilities.Xor(tmp, _tables8KGcmMultiplierM[i][k]);
+                        _tables8KGcmMultiplierM[i][j + k] = tmp;
                     }
                 }
 
@@ -959,70 +947,70 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
                 if (i > 1)
                 {
-                    Tables8kGcmMultiplier_M[i] = new uint[16][];
-                    Tables8kGcmMultiplier_M[i][0] = new uint[4];
+                    _tables8KGcmMultiplierM[i] = new uint[16][];
+                    _tables8KGcmMultiplierM[i][0] = new uint[4];
                     for (int j = 8; j > 0; j >>= 1)
                     {
-                        uint[] tmp = (uint[])Tables8kGcmMultiplier_M[i - 2][j].Clone();
+                        uint[] tmp = (uint[])_tables8KGcmMultiplierM[i - 2][j].Clone();
                         GcmUtilities.MultiplyP8(tmp);
-                        Tables8kGcmMultiplier_M[i][j] = tmp;
+                        _tables8KGcmMultiplierM[i][j] = tmp;
                     }
                 }
             }
         }
 
-        uint[] Tables8kGcmMultiplier_z = new uint[4];
+        private readonly uint[] _tables8KGcmMultiplierZ = new uint[4];
 
-        public unsafe void Tables8kGcmMultiplier_MultiplyH(byte[] x)
+        private unsafe void Tables8kGcmMultiplier_MultiplyH(byte[] x)
         {
             fixed (byte* px = x)
-            fixed (uint* pz = Tables8kGcmMultiplier_z)
+            fixed (uint* pz = _tables8KGcmMultiplierZ)
             {
-                ulong* pulongZ = (ulong*)pz;
-                pulongZ[0] = 0;
-                pulongZ[1] = 0;
+                ulong* pUlongZ = (ulong*)pz;
+                pUlongZ[0] = 0;
+                pUlongZ[1] = 0;
 
                 for (int i = 15; i >= 0; --i)
                 {
-                    uint[] m = Tables8kGcmMultiplier_M[i + i][px[i] & 0x0f];
+                    uint[] m = _tables8KGcmMultiplierM[i + i][px[i] & 0x0f];
                     fixed (uint* pm = m)
                     {
-                        ulong* pulongm = (ulong*)pm;
+                        ulong* pUlongM = (ulong*)pm;
 
-                        pulongZ[0] ^= pulongm[0];
-                        pulongZ[1] ^= pulongm[1];
+                        pUlongZ[0] ^= pUlongM[0];
+                        pUlongZ[1] ^= pUlongM[1];
                     }
 
-                    m = Tables8kGcmMultiplier_M[i + i + 1][(px[i] & 0xf0) >> 4];
+                    m = _tables8KGcmMultiplierM[i + i + 1][(px[i] & 0xf0) >> 4];
                     fixed (uint* pm = m)
                     {
-                        ulong* pulongm = (ulong*)pm;
+                        ulong* pUlongM = (ulong*)pm;
 
-                        pulongZ[0] ^= pulongm[0];
-                        pulongZ[1] ^= pulongm[1];
+                        pUlongZ[0] ^= pUlongM[0];
+                        pUlongZ[1] ^= pUlongM[1];
                     }
                 }
 
-                byte* pbyteZ = (byte*)pz;
-                px[0] = pbyteZ[3];
-                px[1] = pbyteZ[2];
-                px[2] = pbyteZ[1];
-                px[3] = pbyteZ[0];
+                byte* pByteZ = (byte*)pz;
+                px[0] = pByteZ[3];
+                px[1] = pByteZ[2];
+                px[2] = pByteZ[1];
+                px[3] = pByteZ[0];
 
-                px[4] = pbyteZ[7];
-                px[5] = pbyteZ[6];
-                px[6] = pbyteZ[5];
-                px[7] = pbyteZ[4];
+                px[4] = pByteZ[7];
+                px[5] = pByteZ[6];
+                px[6] = pByteZ[5];
+                px[7] = pByteZ[4];
 
-                px[8] = pbyteZ[11];
-                px[9] = pbyteZ[10];
-                px[10] = pbyteZ[9];
-                px[11] = pbyteZ[8];
+                px[8] = pByteZ[11];
+                px[9] = pByteZ[10];
+                px[10] = pByteZ[9];
+                px[11] = pByteZ[8];
 
-                px[12] = pbyteZ[15];
-                px[13] = pbyteZ[14];
-                px[14] = pbyteZ[13];
-                px[15] = pbyteZ[12];
+                px[12] = pByteZ[15];
+                px[13] = pByteZ[14];
+                px[14] = pByteZ[13];
+                px[15] = pByteZ[12];
             }
         }
 

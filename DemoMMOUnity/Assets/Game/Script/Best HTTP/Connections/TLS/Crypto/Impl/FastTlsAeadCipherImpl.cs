@@ -1,11 +1,8 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
-using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
@@ -149,8 +146,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         internal FastTlsAeadCipherImpl(IAeadBlockCipher cipher, bool isEncrypting)
         {
-            this.m_cipher = cipher;
-            this.m_isEncrypting = isEncrypting;
+            m_cipher = cipher;
+            m_isEncrypting = isEncrypting;
         }
 
         public void SetKey(byte[] key, int keyOff, int keyLen)

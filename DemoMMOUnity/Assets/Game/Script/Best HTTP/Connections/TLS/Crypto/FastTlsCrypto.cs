@@ -33,7 +33,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastBcChaCha20Poly1305 encrypt = new FastBcChaCha20Poly1305(true);
                     FastBcChaCha20Poly1305 decrypt = new FastBcChaCha20Poly1305(false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 32, 16,
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 32, 16,
                         TlsAeadCipher.AEAD_CHACHA20_POLY1305);
                 }
 
@@ -78,7 +78,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 16, 16, TlsAeadCipher.AEAD_CCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 16, 16, TlsAeadCipher.AEAD_CCM);
                 }
                 case EncryptionAlgorithm.AES_128_CCM_8:
                 {
@@ -87,7 +87,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 16, 8, TlsAeadCipher.AEAD_CCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 16, 8, TlsAeadCipher.AEAD_CCM);
                 }
                 case EncryptionAlgorithm.AES_256_CCM:
                 {
@@ -96,7 +96,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 32, 16, TlsAeadCipher.AEAD_CCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 32, 16, TlsAeadCipher.AEAD_CCM);
                 }
                 case EncryptionAlgorithm.AES_256_CCM_8:
                 {
@@ -105,7 +105,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Ccm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 32, 8, TlsAeadCipher.AEAD_CCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 32, 8, TlsAeadCipher.AEAD_CCM);
                 }
 
                 case EncryptionAlgorithm.AES_128_GCM:
@@ -115,7 +115,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Gcm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Gcm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 16, 16, TlsAeadCipher.AEAD_GCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 16, 16, TlsAeadCipher.AEAD_GCM);
                 }
 
                 case EncryptionAlgorithm.AES_256_GCM:
@@ -125,7 +125,7 @@ namespace BestHTTP.Connections.TLS.Crypto
                     FastTlsAeadCipherImpl encrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Gcm(), true);
                     FastTlsAeadCipherImpl decrypt = new FastTlsAeadCipherImpl(CreateAeadBlockCipher_Aes_Gcm(), false);
 
-                    return new FastTlsAeadCipher(cryptoParams, encrypt, decrypt, 32, 16, TlsAeadCipher.AEAD_GCM);
+                    return new FastTlsAeAdCipher(cryptoParams, encrypt, decrypt, 32, 16, TlsAeadCipher.AEAD_GCM);
                 }
 
                 default:

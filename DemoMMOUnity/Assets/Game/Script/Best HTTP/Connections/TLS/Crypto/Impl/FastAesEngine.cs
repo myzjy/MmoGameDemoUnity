@@ -882,7 +882,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             _workingKey = GenerateWorkingKey(keyParameter.GetKey(), forEncryption);
 
-            this._forEncryption = forEncryption;
+            _forEncryption = forEncryption;
         }
 
         public string AlgorithmName => "AES";

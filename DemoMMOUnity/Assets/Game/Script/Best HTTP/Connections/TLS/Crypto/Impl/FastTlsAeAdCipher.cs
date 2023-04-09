@@ -1,23 +1,23 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 using System;
 using System.IO;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
 {
     /// <summary>A generic TLS 1.2 AEAD cipher.</summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
-    public sealed class FastTlsAeadCipher
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
+    public sealed class FastTlsAeAdCipher
         : TlsCipher
     {
-        public const int AEAD_CCM = 1;
-        public const int AEAD_CHACHA20_POLY1305 = 2;
+        public const int AeAdCcm = 1;
+        public const int AeAdChaCha20Poly1305 = 2;
         public const int AEAD_GCM = 3;
 
         private const int NONCE_RFC5288 = 1;
@@ -36,7 +36,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private readonly int m_nonceMode;
 
         /// <exception cref="IOException"/>
-        public FastTlsAeadCipher(TlsCryptoParameters cryptoParams, TlsAeadCipherImpl encryptCipher,
+        public FastTlsAeAdCipher(TlsCryptoParameters cryptoParams, TlsAeadCipherImpl encryptCipher,
             TlsAeadCipherImpl decryptCipher, int keySize, int macSize, int aeadType)
         {
             SecurityParameters securityParameters = cryptoParams.SecurityParameters;
@@ -45,32 +45,32 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (!TlsImplUtilities.IsTlsV12(negotiatedVersion))
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
-            this.m_isTlsV13 = TlsImplUtilities.IsTlsV13(negotiatedVersion);
-            this.m_nonceMode = GetNonceMode(m_isTlsV13, aeadType);
+            m_isTlsV13 = TlsImplUtilities.IsTlsV13(negotiatedVersion);
+            m_nonceMode = GetNonceMode(m_isTlsV13, aeadType);
 
             switch (m_nonceMode)
             {
                 case NONCE_RFC5288:
-                    this.m_fixed_iv_length = 4;
-                    this.m_record_iv_length = 8;
+                    m_fixed_iv_length = 4;
+                    m_record_iv_length = 8;
                     break;
                 case NONCE_RFC7905:
-                    this.m_fixed_iv_length = 12;
-                    this.m_record_iv_length = 0;
+                    m_fixed_iv_length = 12;
+                    m_record_iv_length = 0;
                     break;
                 default:
                     throw new TlsFatalAlert(AlertDescription.internal_error);
             }
 
-            this.m_cryptoParams = cryptoParams;
-            this.m_keySize = keySize;
-            this.m_macSize = macSize;
+            m_cryptoParams = cryptoParams;
+            m_keySize = keySize;
+            m_macSize = macSize;
 
-            this.m_decryptCipher = decryptCipher;
-            this.m_encryptCipher = encryptCipher;
+            m_decryptCipher = decryptCipher;
+            m_encryptCipher = encryptCipher;
 
-            this.m_decryptNonce = new byte[m_fixed_iv_length];
-            this.m_encryptNonce = new byte[m_fixed_iv_length];
+            m_decryptNonce = new byte[m_fixed_iv_length];
+            m_encryptNonce = new byte[m_fixed_iv_length];
 
             bool isServer = cryptoParams.IsServer;
             if (m_isTlsV13)
@@ -128,7 +128,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 // TODO[tls13] Add support for padding
                 int maxPadding = 0;
 
-                innerPlaintextLimit = 1 + System.Math.Min(plaintextLimit, plaintextLength + maxPadding);
+                innerPlaintextLimit = 1 + Math.Min(plaintextLimit, plaintextLength + maxPadding);
             }
 
             return innerPlaintextLimit + m_macSize + m_record_iv_length;
@@ -213,7 +213,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             return new TlsEncodeResult(output, 0, output.Length, recordType);
         }
 
-        byte[] decode_nonce = null;
+        byte[] decode_nonce;
         public TlsDecodeResult DecodeCiphertext(long seqNo, short recordType, ProtocolVersion recordVersion,
             byte[] ciphertext, int ciphertextOffset, int ciphertextLength)
         {
@@ -310,7 +310,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             get { return m_isTlsV13; }
         }
 
-        byte[] additional_data = null;
+        byte[] additional_data;
         private byte[] GetAdditionalData(long seqNo, short recordType, ProtocolVersion recordVersion,
             int ciphertextLength, int plaintextLength)
         {
@@ -329,22 +329,20 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 TlsUtilities.WriteUint16(ciphertextLength, additional_data, 3);
                 return additional_data;
             }
-            else
-            {
-                /*
+
+            /*
                  * seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length
                  */
-                if (additional_data == null || additional_data.Length != 13)
-                    additional_data = new byte[13];
-                else
-                    Array.Clear(additional_data, 0, additional_data.Length);
+            if (additional_data == null || additional_data.Length != 13)
+                additional_data = new byte[13];
+            else
+                Array.Clear(additional_data, 0, additional_data.Length);
 
-                TlsUtilities.WriteUint64(seqNo, additional_data, 0);
-                TlsUtilities.WriteUint8(recordType, additional_data, 8);
-                TlsUtilities.WriteVersion(recordVersion, additional_data, 9);
-                TlsUtilities.WriteUint16(plaintextLength, additional_data, 11);
-                return additional_data;
-            }
+            TlsUtilities.WriteUint64(seqNo, additional_data, 0);
+            TlsUtilities.WriteUint8(recordType, additional_data, 8);
+            TlsUtilities.WriteVersion(recordVersion, additional_data, 9);
+            TlsUtilities.WriteUint16(plaintextLength, additional_data, 11);
+            return additional_data;
         }
 
         private void RekeyCipher(SecurityParameters securityParameters, TlsAeadCipherImpl cipher,
@@ -384,11 +382,11 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             switch (aeadType)
             {
-                case AEAD_CCM:
+                case AeAdCcm:
                 case AEAD_GCM:
                     return isTLSv13 ? NONCE_RFC7905 : NONCE_RFC5288;
 
-                case AEAD_CHACHA20_POLY1305:
+                case AeAdChaCha20Poly1305:
                     return NONCE_RFC7905;
 
                 default:

@@ -1,9 +1,9 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 using System;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.PlatformSupport.Memory;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
+using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
 {
@@ -21,7 +21,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         public FastBcChaCha20Poly1305(bool isEncrypting)
         {
-            this._mIsEncrypting = isEncrypting;
+            _mIsEncrypting = isEncrypting;
         }
 
         public int DoFinal(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
@@ -91,11 +91,11 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             InitMac();
             if (additionalData == null)
             {
-                this._mAdditionalDataLength = 0;
+                _mAdditionalDataLength = 0;
             }
             else
             {
-                this._mAdditionalDataLength = additionalData.Length;
+                _mAdditionalDataLength = additionalData.Length;
                 UpdateMac(additionalData, 0, additionalData.Length);
             }
         }

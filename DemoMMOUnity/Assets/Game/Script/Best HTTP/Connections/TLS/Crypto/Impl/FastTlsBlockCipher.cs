@@ -2,7 +2,6 @@
 #pragma warning disable
 using System;
 using System.IO;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto;
@@ -35,13 +34,13 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (TlsImplUtilities.IsTlsV13(negotiatedVersion))
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
-            this.m_cryptoParams = cryptoParams;
-            this.m_randomData = cryptoParams.NonceGenerator.GenerateNonce(256);
+            m_cryptoParams = cryptoParams;
+            m_randomData = cryptoParams.NonceGenerator.GenerateNonce(256);
 
-            this.m_encryptThenMac = securityParameters.IsEncryptThenMac;
-            this.m_useExplicitIV = TlsImplUtilities.IsTlsV11(negotiatedVersion);
+            m_encryptThenMac = securityParameters.IsEncryptThenMac;
+            m_useExplicitIV = TlsImplUtilities.IsTlsV11(negotiatedVersion);
 
-            this.m_acceptExtraPadding = !negotiatedVersion.IsSsl;
+            m_acceptExtraPadding = !negotiatedVersion.IsSsl;
 
             /*
              * Don't use variable-length padding with truncated MACs.
@@ -51,12 +50,12 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
              *
              * TODO[DTLS] Consider supporting in DTLS (without exceeding send limit though)
              */
-            this.m_useExtraPadding = securityParameters.IsExtendedPadding
+            m_useExtraPadding = securityParameters.IsExtendedPadding
                 && ProtocolVersion.TLSv10.IsEqualOrEarlierVersionOf(negotiatedVersion)
                 && (m_encryptThenMac || !securityParameters.IsTruncatedHmac);
 
-            this.m_encryptCipher = encryptCipher;
-            this.m_decryptCipher = decryptCipher;
+            m_encryptCipher = encryptCipher;
+            m_decryptCipher = decryptCipher;
 
             TlsBlockCipherImpl clientCipher, serverCipher;
             if (cryptoParams.IsServer)
@@ -113,13 +112,13 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             if (cryptoParams.IsServer)
             {
-                this.m_writeMac = new TlsSuiteHmac(cryptoParams, serverMac);
-                this.m_readMac = new TlsSuiteHmac(cryptoParams, clientMac);
+                m_writeMac = new TlsSuiteHmac(cryptoParams, serverMac);
+                m_readMac = new TlsSuiteHmac(cryptoParams, clientMac);
             }
             else
             {
-                this.m_writeMac = new TlsSuiteHmac(cryptoParams, clientMac);
-                this.m_readMac = new TlsSuiteHmac(cryptoParams, serverMac);
+                m_writeMac = new TlsSuiteHmac(cryptoParams, clientMac);
+                m_readMac = new TlsSuiteHmac(cryptoParams, serverMac);
             }
         }
 
@@ -255,7 +254,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             }
             else
             {
-                minLen = System.Math.Max(minLen, macSize + 1);
+                minLen = Math.Max(minLen, macSize + 1);
             }
 
             if (m_useExplicitIV)
@@ -352,7 +351,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             int dummyIndex = 0;
             byte padDiff = 0;
 
-            int totalPadLimit = System.Math.Min(m_acceptExtraPadding ? 256 : blockSize, len - macSize);
+            int totalPadLimit = Math.Min(m_acceptExtraPadding ? 256 : blockSize, len - macSize);
 
             if (totalPad > totalPadLimit)
             {
@@ -394,7 +393,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             byte[] random = m_cryptoParams.NonceGenerator.GenerateNonce(4);
             int x = (int)Pack.LE_To_UInt32(random, 0);
             int n = Integers.NumberOfTrailingZeros(x);
-            return System.Math.Min(n, max);
+            return Math.Min(n, max);
         }
 
         protected virtual int GetCiphertextLength(int blockSize, int macSize, int maxPadding, int plaintextLength)

@@ -35,20 +35,20 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         public override string AlgorithmName
         {
-            get { return $"ChaCha{rounds}"; }
+            get { return $"ChaCha{Rounds}"; }
         }
 
         protected override void AdvanceCounter()
         {
-            if (++engineState[12] == 0)
+            if (++EngineState[12] == 0)
             {
-                ++engineState[13];
+                ++EngineState[13];
             }
         }
 
         protected override void ResetCounter()
         {
-            engineState[12] = engineState[13] = 0;
+            EngineState[12] = EngineState[13] = 0;
         }
 
         protected override void SetKey(byte[] keyBytes, byte[] ivBytes)
@@ -60,21 +60,21 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                     throw new ArgumentException($"{AlgorithmName} 需要128位或256位密钥");
                 }
 
-                PackTauOrSigma(keyBytes.Length, engineState, 0);
+                PackTauOrSigma(keyBytes.Length, EngineState, 0);
 
                 // Key
-                Pack.LE_To_UInt32(keyBytes, 0, engineState, 4, 4);
-                Pack.LE_To_UInt32(keyBytes, keyBytes.Length - 16, engineState, 8, 4);
+                Pack.LE_To_UInt32(keyBytes, 0, EngineState, 4, 4);
+                Pack.LE_To_UInt32(keyBytes, keyBytes.Length - 16, EngineState, 8, 4);
             }
 
             // IV
-            Pack.LE_To_UInt32(ivBytes, 0, engineState, 14, 2);
+            Pack.LE_To_UInt32(ivBytes, 0, EngineState, 14, 2);
         }
 
         protected override void GenerateKeyStream(byte[] output)
         {
-            ChaChaCore(rounds, engineState, x);
-            Pack.UInt32_To_LE(x, output, 0);
+            ChaChaCore(Rounds, EngineState, X);
+            Pack.UInt32_To_LE(X, output, 0);
         }
 
         /// <summary>

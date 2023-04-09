@@ -26,11 +26,11 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         */
         public FastSicBlockCipher(IBlockCipher cipher)
         {
-            this._cipher = cipher;
-            this._blockSize = cipher.GetBlockSize();
-            this._counter = new byte[_blockSize];
-            this._counterOut = new byte[_blockSize];
-            this._iv = new byte[_blockSize];
+            _cipher = cipher;
+            _blockSize = cipher.GetBlockSize();
+            _counter = new byte[_blockSize];
+            _counterOut = new byte[_blockSize];
+            _iv = new byte[_blockSize];
         }
 
         /**
@@ -52,7 +52,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 throw new ArgumentException("CTR/SIC模式需要ParametersWithIV", nameof(parameters));
             }
 
-            this._iv = ivParam.GetIV();
+            _iv = ivParam.GetIV();
 
             if (_blockSize < _iv.Length)
             {
@@ -145,8 +145,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         public FastCcmBlockCipher(
             IBlockCipher cipher)
         {
-            this._cipher = cipher;
-            this._macBlock = new byte[BlockSize];
+            _cipher = cipher;
+            _macBlock = new byte[BlockSize];
 
             if (cipher.GetBlockSize() != BlockSize)
             {
@@ -167,7 +167,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             bool forEncryption,
             ICipherParameters parameters)
         {
-            this._forEncryption = forEncryption;
+            _forEncryption = forEncryption;
 
             ICipherParameters cipherParameters;
             if (parameters is FastAeadParameters)
