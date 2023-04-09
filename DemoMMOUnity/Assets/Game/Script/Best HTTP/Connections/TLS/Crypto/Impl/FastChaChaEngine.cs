@@ -1,33 +1,33 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
 {
     /// <summary>
-    /// Implementation of Daniel J. Bernstein's ChaCha stream cipher.
+    /// 实现 of Daniel J. Bernstein's ChaCha stream cipher.
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
-    public sealed class FastChaChaEngine
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
+    public abstract class FastChaChaEngine
         : FastSalsa20Engine
     {
         /// <summary>
-        /// Creates a 20 rounds ChaCha engine.
+        /// 创建一个20轮的ChaCha引擎。
         /// </summary>
         public FastChaChaEngine()
         {
         }
 
         /// <summary>
-        /// Creates a ChaCha engine with a specific number of rounds.
+        /// 创建一个具有特定回合数的ChaCha引擎。
         /// </summary>
-        /// <param name="rounds">the number of rounds (must be an even number).</param>
+        /// <param name="rounds">回合数(必须是偶数)。</param>
         public FastChaChaEngine(int rounds)
             : base(rounds)
         {
@@ -35,7 +35,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         public override string AlgorithmName
         {
-            get { return "ChaCha" + rounds; }
+            get { return $"ChaCha{rounds}"; }
         }
 
         protected override void AdvanceCounter()
@@ -56,7 +56,9 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (keyBytes != null)
             {
                 if ((keyBytes.Length != 16) && (keyBytes.Length != 32))
-                    throw new ArgumentException(AlgorithmName + " requires 128 bit or 256 bit key");
+                {
+                    throw new ArgumentException($"{AlgorithmName} 需要128位或256位密钥");
+                }
 
                 PackTauOrSigma(keyBytes.Length, engineState, 0);
 
@@ -71,76 +73,110 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         protected override void GenerateKeyStream(byte[] output)
         {
-            ChachaCore(rounds, engineState, x);
+            ChaChaCore(rounds, engineState, x);
             Pack.UInt32_To_LE(x, output, 0);
         }
 
         /// <summary>
         /// ChaCha function.
         /// </summary>
-        /// <param name="rounds">The number of ChaCha rounds to execute</param>
-        /// <param name="input">The input words.</param>
-        /// <param name="x">The ChaCha state to modify.</param>
-        internal static void ChachaCore(int rounds, uint[] input, uint[] x)
+        /// <param name="rounds">要执行的ChaCha回合数</param>
+        /// <param name="input">输入单词.</param>
+        /// <param name="x">要修改的ChaCha状态.</param>
+        internal static void ChaChaCore(int rounds, uint[] input, uint[] x)
         {
             if (input.Length != 16)
                 throw new ArgumentException();
             if (x.Length != 16)
                 throw new ArgumentException();
             if (rounds % 2 != 0)
-                throw new ArgumentException("Number of rounds must be even");
+            {
+                throw new ArgumentException("回合数必须为偶数");
+            }
 
-            uint x00 = input[0];
-            uint x01 = input[1];
-            uint x02 = input[2];
-            uint x03 = input[3];
-            uint x04 = input[4];
-            uint x05 = input[5];
-            uint x06 = input[6];
-            uint x07 = input[7];
-            uint x08 = input[8];
-            uint x09 = input[9];
-            uint x10 = input[10];
-            uint x11 = input[11];
-            uint x12 = input[12];
-            uint x13 = input[13];
-            uint x14 = input[14];
-            uint x15 = input[15];
+            var x00 = input[0];
+            var x01 = input[1];
+            var x02 = input[2];
+            var x03 = input[3];
+            var x04 = input[4];
+            var x05 = input[5];
+            var x06 = input[6];
+            var x07 = input[7];
+            var x08 = input[8];
+            var x09 = input[9];
+            var x10 = input[10];
+            var x11 = input[11];
+            var x12 = input[12];
+            var x13 = input[13];
+            var x14 = input[14];
+            var x15 = input[15];
 
             for (int i = rounds; i > 0; i -= 2)
             {
-                x00 += x04; x12 = Integers.RotateLeft(x12 ^ x00, 16);
-                x08 += x12; x04 = Integers.RotateLeft(x04 ^ x08, 12);
-                x00 += x04; x12 = Integers.RotateLeft(x12 ^ x00, 8);
-                x08 += x12; x04 = Integers.RotateLeft(x04 ^ x08, 7);
-                x01 += x05; x13 = Integers.RotateLeft(x13 ^ x01, 16);
-                x09 += x13; x05 = Integers.RotateLeft(x05 ^ x09, 12);
-                x01 += x05; x13 = Integers.RotateLeft(x13 ^ x01, 8);
-                x09 += x13; x05 = Integers.RotateLeft(x05 ^ x09, 7);
-                x02 += x06; x14 = Integers.RotateLeft(x14 ^ x02, 16);
-                x10 += x14; x06 = Integers.RotateLeft(x06 ^ x10, 12);
-                x02 += x06; x14 = Integers.RotateLeft(x14 ^ x02, 8);
-                x10 += x14; x06 = Integers.RotateLeft(x06 ^ x10, 7);
-                x03 += x07; x15 = Integers.RotateLeft(x15 ^ x03, 16);
-                x11 += x15; x07 = Integers.RotateLeft(x07 ^ x11, 12);
-                x03 += x07; x15 = Integers.RotateLeft(x15 ^ x03, 8);
-                x11 += x15; x07 = Integers.RotateLeft(x07 ^ x11, 7);
-                x00 += x05; x15 = Integers.RotateLeft(x15 ^ x00, 16);
-                x10 += x15; x05 = Integers.RotateLeft(x05 ^ x10, 12);
-                x00 += x05; x15 = Integers.RotateLeft(x15 ^ x00, 8);
-                x10 += x15; x05 = Integers.RotateLeft(x05 ^ x10, 7);
-                x01 += x06; x12 = Integers.RotateLeft(x12 ^ x01, 16);
-                x11 += x12; x06 = Integers.RotateLeft(x06 ^ x11, 12);
-                x01 += x06; x12 = Integers.RotateLeft(x12 ^ x01, 8);
-                x11 += x12; x06 = Integers.RotateLeft(x06 ^ x11, 7);
-                x02 += x07; x13 = Integers.RotateLeft(x13 ^ x02, 16);
-                x08 += x13; x07 = Integers.RotateLeft(x07 ^ x08, 12);
-                x02 += x07; x13 = Integers.RotateLeft(x13 ^ x02, 8);
-                x08 += x13; x07 = Integers.RotateLeft(x07 ^ x08, 7);
-                x03 += x04; x14 = Integers.RotateLeft(x14 ^ x03, 16);
-                x09 += x14; x04 = Integers.RotateLeft(x04 ^ x09, 12);
-                x03 += x04; x14 = Integers.RotateLeft(x14 ^ x03, 8);
-                x09 += x14; x04 = Integers.RotateLeft(x04 ^ x09, 7);
+                x00 += x04;
+                x12 = Integers.RotateLeft(x12 ^ x00, 16);
+                x08 += x12;
+                x04 = Integers.RotateLeft(x04 ^ x08, 12);
+                x00 += x04;
+                x12 = Integers.RotateLeft(x12 ^ x00, 8);
+                x08 += x12;
+                x04 = Integers.RotateLeft(x04 ^ x08, 7);
+                x01 += x05;
+                x13 = Integers.RotateLeft(x13 ^ x01, 16);
+                x09 += x13;
+                x05 = Integers.RotateLeft(x05 ^ x09, 12);
+                x01 += x05;
+                x13 = Integers.RotateLeft(x13 ^ x01, 8);
+                x09 += x13;
+                x05 = Integers.RotateLeft(x05 ^ x09, 7);
+                x02 += x06;
+                x14 = Integers.RotateLeft(x14 ^ x02, 16);
+                x10 += x14;
+                x06 = Integers.RotateLeft(x06 ^ x10, 12);
+                x02 += x06;
+                x14 = Integers.RotateLeft(x14 ^ x02, 8);
+                x10 += x14;
+                x06 = Integers.RotateLeft(x06 ^ x10, 7);
+                x03 += x07;
+                x15 = Integers.RotateLeft(x15 ^ x03, 16);
+                x11 += x15;
+                x07 = Integers.RotateLeft(x07 ^ x11, 12);
+                x03 += x07;
+                x15 = Integers.RotateLeft(x15 ^ x03, 8);
+                x11 += x15;
+                x07 = Integers.RotateLeft(x07 ^ x11, 7);
+                x00 += x05;
+                x15 = Integers.RotateLeft(x15 ^ x00, 16);
+                x10 += x15;
+                x05 = Integers.RotateLeft(x05 ^ x10, 12);
+                x00 += x05;
+                x15 = Integers.RotateLeft(x15 ^ x00, 8);
+                x10 += x15;
+                x05 = Integers.RotateLeft(x05 ^ x10, 7);
+                x01 += x06;
+                x12 = Integers.RotateLeft(x12 ^ x01, 16);
+                x11 += x12;
+                x06 = Integers.RotateLeft(x06 ^ x11, 12);
+                x01 += x06;
+                x12 = Integers.RotateLeft(x12 ^ x01, 8);
+                x11 += x12;
+                x06 = Integers.RotateLeft(x06 ^ x11, 7);
+                x02 += x07;
+                x13 = Integers.RotateLeft(x13 ^ x02, 16);
+                x08 += x13;
+                x07 = Integers.RotateLeft(x07 ^ x08, 12);
+                x02 += x07;
+                x13 = Integers.RotateLeft(x13 ^ x02, 8);
+                x08 += x13;
+                x07 = Integers.RotateLeft(x07 ^ x08, 7);
+                x03 += x04;
+                x14 = Integers.RotateLeft(x14 ^ x03, 16);
+                x09 += x14;
+                x04 = Integers.RotateLeft(x04 ^ x09, 12);
+                x03 += x04;
+                x14 = Integers.RotateLeft(x14 ^ x03, 8);
+                x09 += x14;
+                x04 = Integers.RotateLeft(x04 ^ x09, 7);
             }
 
             x[0] = x00 + input[0];

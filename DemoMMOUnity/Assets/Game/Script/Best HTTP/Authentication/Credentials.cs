@@ -1,7 +1,7 @@
 ﻿namespace BestHTTP.Authentication
 {
     /// <summary>
-    /// bestttp支持的身份验证类型。
+    /// bestHttp支持的身份验证类型。
     /// 身份验证是由服务器定义的，因此基本和摘要是不可互换的
     /// 如果您不知道使用什么，首选的方法是选择Unknown。
     /// </summary>

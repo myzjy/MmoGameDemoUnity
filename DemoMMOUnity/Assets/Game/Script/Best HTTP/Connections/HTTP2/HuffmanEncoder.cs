@@ -6,9 +6,9 @@ using System.Text;
 namespace BestHTTP.Connections.HTTP2
 {
     [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstruction]
-    static class HuffmanEncoder
+    internal static class HuffmanEncoder
     {
-        public const UInt16 Eos = 256;
+        public const ushort Eos = 256;
 
         public struct TableEntry
         {

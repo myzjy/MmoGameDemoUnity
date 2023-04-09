@@ -47,11 +47,11 @@ namespace BestHTTP.Connections.HTTP2
         Closed
     }
 
-    public sealed class HTTP2Stream
+    public sealed class Http2Stream
     {
-        public readonly HttpPackEncoder Encoder;
+        private readonly HttpPackEncoder _encoder;
 
-        private readonly Queue<Http2FrameHeaderAndPayload> incomingFrames = new Queue<Http2FrameHeaderAndPayload>();
+        private readonly Queue<Http2FrameHeaderAndPayload> _incomingFrames = new Queue<Http2FrameHeaderAndPayload>();
         private FramesAsStreamView _dataView;
         private uint _downloaded;
 
@@ -63,50 +63,55 @@ namespace BestHTTP.Connections.HTTP2
         private bool _isStreamedDownload;
         private int _lastReadCount;
 
+        // ReSharper disable once NotAccessedField.Local
         private DateTime _lastStateChangedAt;
         private Http2StreamStates _state;
 
-        private UInt32 localWindow;
+        private uint _localWindow;
 
-        // Outgoing frames. The stream will send one frame per Process call, but because one step might be able to
-        // generate more than one frames, we use a list.
-        private Queue<Http2FrameHeaderAndPayload> outgoing = new Queue<Http2FrameHeaderAndPayload>();
+        //输出帧。流将为每个Process调用发送一帧，但是因为一个步骤可能能够
+        //生成多个帧，我们使用一个列表。
+        private readonly Queue<Http2FrameHeaderAndPayload> _outgoing = new Queue<Http2FrameHeaderAndPayload>();
 
-        private Http2Handler parent;
-        private Int64 remoteWindow;
+        // ReSharper disable once NotAccessedField.Local
+        private Http2Handler _parent;
+        private long _remoteWindow;
 
-        private Http2Response response;
+        private Http2Response _response;
 
-        private UInt32 sentData;
+        private uint _sentData;
 
-        private Http2SettingsManager settings;
+        private readonly Http2SettingsManager _settings;
 
-        private HttpRequest.UploadStreamInfo uploadStreamInfo;
+        private HttpRequest.UploadStreamInfo _uploadStreamInfo;
 
-        private uint windowUpdateThreshold;
+        private readonly uint _windowUpdateThreshold;
 
         /// <summary>
-        /// Constructor to create a client stream.
+        /// 构造函数来创建客户端流。
         /// </summary>
-        public HTTP2Stream(UInt32 id, Http2Handler parentHandler, Http2SettingsManager registry,
+        public Http2Stream(
+            uint id,
+            Http2Handler parentHandler,
+            Http2SettingsManager registry,
             HttpPackEncoder httpPackEncoder)
         {
             this.Id = id;
-            this.parent = parentHandler;
-            this.settings = registry;
-            this.Encoder = httpPackEncoder;
+            this._parent = parentHandler;
+            this._settings = registry;
+            this._encoder = httpPackEncoder;
 
-            this.remoteWindow = this.settings.RemoteSettings[Http2Settings.InitialWindowSize];
-            this.settings.RemoteSettings.OnSettingChangedEvent += OnRemoteSettingChanged;
+            this._remoteWindow = this._settings.RemoteSettings[Http2Settings.InitialWindowSize];
+            this._settings.RemoteSettings.SettingChangedEvent += OnRemoteSettingChanged;
 
             // Room for improvement: If INITIAL_WINDOW_SIZE is small (what we can consider a 'small' value?), threshold must be higher
-            this.windowUpdateThreshold = (uint)(this.remoteWindow / 2);
+            this._windowUpdateThreshold = (uint)(this._remoteWindow / 2);
 
             this.Context = new LoggingContext(this);
             this.Context.Add("id", id);
         }
 
-        public UInt32 Id { get; private set; }
+        public uint Id { get; private set; }
 
         public Http2StreamStates State
         {
@@ -118,35 +123,28 @@ namespace BestHTTP.Connections.HTTP2
 
                 this._state = value;
 
-                if (oldState != this._state)
-                {
-                    this._lastStateChangedAt = DateTime.Now;
+                if (oldState == this._state) return;
+                this._lastStateChangedAt = DateTime.Now;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.Log(
-                        $"[HTTP2Stream] [method: this Http2StreamStates State set] [msg|Exception] [{this.Id}] State changed from {oldState} to {this._state}");
+                Debug.Log(
+                    $"[HTTP2Stream] [method: this Http2StreamStates State set] [msg|Exception] [{this.Id}] State changed from {oldState} to {this._state}");
 #endif
-                }
             }
         }
         //private TimeSpan TimeSpentInCurrentState { get { return DateTime.Now - this.lastStateChangedAt; } }
 
         /// <summary>
-        /// This flag is checked by the connection to decide whether to do a new processing-frame sending round before sleeping until new data arrives
+        /// 连接检查这个标志，以决定是否在休眠之前进行新的处理帧发送，直到新数据到达
         /// </summary>
-        public bool HasFrameToSend
-        {
-            get
-            {
-                // Don't let the connection sleep until
-                return this.outgoing.Count > 0 || // we already booked at least one frame in advance
-                       (this.State == Http2StreamStates.Open && this.remoteWindow > 0 &&
-                        this._lastReadCount > 0); // we are in the middle of sending request data
-            }
-        }
+        public bool HasFrameToSend =>
+            // 不要让连接休眠直到
+            this._outgoing.Count > 0 || // 我们至少提前订了一帧
+            (this.State == Http2StreamStates.Open && this._remoteWindow > 0 &&
+             this._lastReadCount > 0); //我们正在发送请求数据
 
-        public HttpRequest AssignedRequest { get; private set; }
+        private HttpRequest AssignedRequest { get; set; }
 
-        public LoggingContext Context { get; private set; }
+        private LoggingContext Context { get; set; }
 
         public void Assign(HttpRequest request)
         {
@@ -156,10 +154,10 @@ namespace BestHTTP.Connections.HTTP2
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             StringBuilder sb = new StringBuilder(3);
             sb.Append($"[{this.Id}] Request assigned to stream.");
-            sb.Append($"  Remote Window: {this.remoteWindow:N0}.");
-            sb.Append($" Uri: {request.CurrentUri.ToString()}");
+            sb.Append($"  Remote Window: {this._remoteWindow:N0}.");
+            sb.Append($" Uri: {request.CurrentUri}");
             Debug.Log(
-                $"[HTTP2Stream] [method: Assign] [msg|Exception] {sb.ToString()}");
+                $"[HTTP2Stream] [method: Assign] [msg|Exception] {sb}");
 #endif
             this.AssignedRequest = request;
             this._isStreamedDownload = request.UseStreaming && request.OnStreamingData != null;
@@ -174,9 +172,9 @@ namespace BestHTTP.Connections.HTTP2
                 //this.AssignedRequest.Response = null;
                 //this.AssignedRequest.State = this.AssignedRequest.IsTimedOut ? HTTPRequestStates.TimedOut : HTTPRequestStates.Aborted;
 
-                this.outgoing.Clear();
+                this._outgoing.Clear();
                 if (this.State != Http2StreamStates.Idle)
-                    this.outgoing.Enqueue(Http2FrameHelper.CreateRstFrame(this.Id, Http2ErrorCodes.Cancel));
+                    this._outgoing.Enqueue(Http2FrameHelper.CreateRstFrame(this.Id, Http2ErrorCodes.Cancel));
 
                 // We can close the stream if already received headers, or not even sent one
                 if (this.State == Http2StreamStates.HalfClosedRemote || this.State == Http2StreamStates.Idle)
@@ -192,9 +190,9 @@ namespace BestHTTP.Connections.HTTP2
             ProcessState(outgoingFrames);
 
             // 3.) Send one frame per Process call
-            if (this.outgoing.Count > 0)
+            if (this._outgoing.Count > 0)
             {
-                Http2FrameHeaderAndPayload frame = this.outgoing.Dequeue();
+                Http2FrameHeaderAndPayload frame = this._outgoing.Dequeue();
 
                 outgoingFrames.Add(frame);
 
@@ -212,7 +210,7 @@ namespace BestHTTP.Connections.HTTP2
         {
             // Room for improvement: error check for forbidden frames (like settings) and stream state
 
-            this.incomingFrames.Enqueue(frame);
+            this._incomingFrames.Enqueue(frame);
 
             ProcessIncomingFrames(outgoingFrames);
         }
@@ -253,9 +251,9 @@ namespace BestHTTP.Connections.HTTP2
         {
             UInt32 windowUpdate = 0;
 
-            while (this.incomingFrames.Count > 0)
+            while (this._incomingFrames.Count > 0)
             {
-                Http2FrameHeaderAndPayload frame = this.incomingFrames.Dequeue();
+                Http2FrameHeaderAndPayload frame = this._incomingFrames.Dequeue();
 
                 if ((this._isRstFrameSent || this.AssignedRequest.IsCancellationRequested) &&
                     frame.Type != Http2FrameTypes.Headers && frame.Type != Http2FrameTypes.Continuation)
@@ -264,8 +262,7 @@ namespace BestHTTP.Connections.HTTP2
                     continue;
                 }
 
-                if ( /*HTTPManager.Logger.Level == Logger.Loglevels.All && */
-                    frame.Type != Http2FrameTypes.Data &&
+                if (frame.Type != Http2FrameTypes.Data &&
                     frame.Type !=
                     Http2FrameTypes.WindowUpdate)
                 {
@@ -273,7 +270,7 @@ namespace BestHTTP.Connections.HTTP2
                     var sb = new StringBuilder(3);
                     sb.Append($"[{this.Id}] Process - processing frame: {frame.ToString()}");
                     Debug.Log(
-                        $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+                        $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb}");
 #endif
                 }
 
@@ -313,17 +310,17 @@ namespace BestHTTP.Connections.HTTP2
 
                             try
                             {
-                                this.Encoder.Decode(this, this._headerView, headers);
+                                this._encoder.Decode(this, this._headerView, headers);
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                                 var sb = new StringBuilder(3);
                                 sb.Append("[HTTP2Stream] ");
                                 sb.Append("[method:ProcessIncomingFrames] ");
                                 sb.Append($"[msg] [{this.Id}] ProcessIncomingFrames ");
-                                sb.Append($"- Header Frames: {this._headerView.ToString()},");
-                                sb.Append($" Encoder: {this.Encoder.ToString()},");
+                                sb.Append($"- Header Frames: {this._headerView},");
+                                sb.Append($" Encoder: {this._encoder},");
                                 Debug.LogError(sb.ToString());
 #endif
                             }
@@ -336,11 +333,11 @@ namespace BestHTTP.Connections.HTTP2
                                 break;
                             }
 
-                            if (this.response == null)
+                            if (this._response == null)
                                 this.AssignedRequest.Response =
-                                    this.response = new Http2Response(this.AssignedRequest, false);
+                                    this._response = new Http2Response(this.AssignedRequest, false);
 
-                            this.response.AddHeaders(headers);
+                            this._response.AddHeaders(headers);
 
                             this._headerView.Close();
                             this._headerView = null;
@@ -349,18 +346,17 @@ namespace BestHTTP.Connections.HTTP2
                             {
                                 // If there's any trailing header, no data frame has an END_STREAM flag
                                 if (this._isStreamedDownload)
-                                    this.response.FinishProcessData();
+                                    this._response.FinishProcessData();
 
                                 PlatformSupport.Threading.ThreadedRunner
-                                    .RunShortLiving<HTTP2Stream, FramesAsStreamView>(FinishRequest, this,
+                                    .RunShortLiving(FinishRequest, this,
                                         this._dataView);
 
                                 this._dataView = null;
 
-                                if (this.State == Http2StreamStates.HalfClosedLocal)
-                                    this.State = Http2StreamStates.Closed;
-                                else
-                                    this.State = Http2StreamStates.HalfClosedRemote;
+                                this.State = this.State == Http2StreamStates.HalfClosedLocal
+                                    ? Http2StreamStates.Closed
+                                    : Http2StreamStates.HalfClosedRemote;
                             }
                         }
                     }
@@ -376,8 +372,8 @@ namespace BestHTTP.Connections.HTTP2
 
                         this._downloaded += frame.PayloadLength;
 
-                        if (this._isStreamedDownload && frame.Payload != null && frame.PayloadLength > 0)
-                            this.response.ProcessData(frame.Payload, (int)frame.PayloadLength);
+                        if (this._isStreamedDownload && frame is { Payload: not null, PayloadLength: > 0 })
+                            this._response.ProcessData(frame.Payload, (int)frame.PayloadLength);
 
                         // frame's buffer will be released by the frames view
                         frame.DontUseMemPool = !this._isStreamedDownload;
@@ -389,7 +385,7 @@ namespace BestHTTP.Connections.HTTP2
                             this._dataView.AddFrame(frame);
 
                         // Track received data, and if necessary(local window getting too low), send a window update frame
-                        if (this.localWindow < frame.PayloadLength)
+                        if (this._localWindow < frame.PayloadLength)
                         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                             var sb = new StringBuilder(3);
@@ -397,13 +393,13 @@ namespace BestHTTP.Connections.HTTP2
                             sb.Append("[method:ProcessIncomingFrames] ");
                             sb.Append($"[msg] [{this.Id}] Frame's PayloadLength");
                             sb.Append($" ({frame.PayloadLength:N0}) is larger then local window ");
-                            sb.Append($" ({this.localWindow:N0}). Frame: {frame}");
+                            sb.Append($" ({this._localWindow:N0}). Frame: {frame}");
                             Debug.LogError(sb.ToString());
 #endif
                         }
                         else
                         {
-                            this.localWindow -= frame.PayloadLength;
+                            this._localWindow -= frame.PayloadLength;
                         }
 
                         if ((frame.Flags & (byte)Http2DataFlags.EndStream) != 0)
@@ -415,40 +411,39 @@ namespace BestHTTP.Connections.HTTP2
                         //      sending back two window updates (connection and stream) after every data frame is pointless.
                         //  2.) On the other hand, window updates are cheap and works even when initial window size is low.
                         //          (
-                        if (this._isEndStrReceived || this.localWindow <= this.windowUpdateThreshold)
-                            windowUpdate += this.settings.MySettings[Http2Settings.InitialWindowSize] -
-                                            this.localWindow - windowUpdate;
+                        if (this._isEndStrReceived || this._localWindow <= this._windowUpdateThreshold)
+                            windowUpdate += this._settings.MySettings[Http2Settings.InitialWindowSize] -
+                                            this._localWindow - windowUpdate;
 
                         if (this._isEndStrReceived)
                         {
                             if (this._isStreamedDownload)
                             {
-                                this.response.FinishProcessData();
+                                this._response.FinishProcessData();
                             }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                             var sb = new StringBuilder(3);
                             sb.Append($"[{this.Id}] All data arrived,");
                             sb.Append($" data length: {this._downloaded:N0}");
                             Debug.Log(
-                                $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+                                $"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb}");
 #endif
                             // create a short living thread to process the downloaded data:
-                            PlatformSupport.Threading.ThreadedRunner.RunShortLiving<HTTP2Stream, FramesAsStreamView>(
+                            PlatformSupport.Threading.ThreadedRunner.RunShortLiving(
                                 FinishRequest, this, this._dataView);
 
                             this._dataView = null;
 
-                            if (this.State == Http2StreamStates.HalfClosedLocal)
-                                this.State = Http2StreamStates.Closed;
-                            else
-                                this.State = Http2StreamStates.HalfClosedRemote;
+                            this.State = this.State == Http2StreamStates.HalfClosedLocal
+                                ? Http2StreamStates.Closed
+                                : Http2StreamStates.HalfClosedRemote;
                         }
                         else if (this.AssignedRequest.OnDownloadProgress != null)
                         {
                             RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.AssignedRequest,
                                 RequestEvents.DownloadProgress,
                                 _downloaded,
-                                this.response.ExpectedContentLength));
+                                this._response.ExpectedContentLength));
                         }
                     }
                         break;
@@ -460,15 +455,15 @@ namespace BestHTTP.Connections.HTTP2
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         var sb = new StringBuilder(3);
                         var windowSizeIncrement = windowUpdateFrame.WindowSizeIncrement;
-                        var remoteWindowSizeIncrement = this.remoteWindow + windowUpdateFrame.WindowSizeIncrement;
-                        var remoteSettings = this.settings.RemoteSettings[Http2Settings.InitialWindowSize];
+                        var remoteWindowSizeIncrement = this._remoteWindow + windowUpdateFrame.WindowSizeIncrement;
+                        var remoteSettings = this._settings.RemoteSettings[Http2Settings.InitialWindowSize];
                         sb.Append($"[{this.Id}] Received Window Update: {windowSizeIncrement:N0},");
                         sb.Append($" new remoteWindow: {(remoteWindowSizeIncrement):N0}");
                         sb.Append($", initial remote window: {remoteSettings:N0},");
-                        sb.Append($", total data sent: {this.sentData:N0}");
-                        Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+                        sb.Append($", total data sent: {this._sentData:N0}");
+                        Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb}");
 #endif
-                        this.remoteWindow += windowUpdateFrame.WindowSizeIncrement;
+                        this._remoteWindow += windowUpdateFrame.WindowSizeIncrement;
                     }
                         break;
 
@@ -513,25 +508,23 @@ namespace BestHTTP.Connections.HTTP2
 
             if (windowUpdate > 0)
             {
-                if (HttpManager.Logger.Level <= Logger.Loglevels.All)
-                {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    var sb = new StringBuilder(3);
-                    var windowUpdateLog = windowUpdate;
-                    var mySettings = this.settings.MySettings[Http2Settings.InitialWindowSize];
-                    sb.Append($"[{this.Id}] Sending window update: {windowUpdateLog:N0},");
-                    sb.Append($" current window: {this.localWindow:N0},");
-                    sb.Append($" initial window size: {mySettings:N0}");
-                    Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb.ToString()}");
+                var sb = new StringBuilder(3);
+                var windowUpdateLog = windowUpdate;
+                var mySettings = this._settings.MySettings[Http2Settings.InitialWindowSize];
+                sb.Append($"[{this.Id}] Sending window update: {windowUpdateLog:N0},");
+                sb.Append($" current window: {this._localWindow:N0},");
+                sb.Append($" initial window size: {mySettings:N0}");
+                Debug.Log($"[HTTP2Stream] [method: ProcessIncomingFrames] [msg|Exception] {sb}");
 #endif
-                }
 
-                this.localWindow += windowUpdate;
+                this._localWindow += windowUpdate;
 
                 outgoingFrames.Add(Http2FrameHelper.CreateWindowUpdateFrame(this.Id, windowUpdate));
             }
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private void ProcessState(List<Http2FrameHeaderAndPayload> outgoingFrames)
         {
             switch (this.State)
@@ -539,29 +532,29 @@ namespace BestHTTP.Connections.HTTP2
                 case Http2StreamStates.Idle:
                 {
                     UInt32 initiatedInitialWindowSize =
-                        this.settings.InitiatedMySettings[Http2Settings.InitialWindowSize];
-                    this.localWindow = initiatedInitialWindowSize;
+                        this._settings.InitiatedMySettings[Http2Settings.InitialWindowSize];
+                    this._localWindow = initiatedInitialWindowSize;
                     // window update with a zero increment would be an error (https://httpwg.org/specs/rfc7540.html#WINDOW_UPDATE)
                     //if (HTTP2Connection.MaxValueFor31Bits > initiatedInitialWindowSize)
                     //    this.outgoing.Enqueue(HTTP2FrameHelper.CreateWindowUpdateFrame(this.Id, HTTP2Connection.MaxValueFor31Bits - initiatedInitialWindowSize));
                     //this.localWindow = HTTP2Connection.MaxValueFor31Bits;
 
 #if !BESTHTTP_DISABLE_CACHING
-                    // Setup cache control headers before we send out the request
+                    // 在我们发送请求之前设置缓存控制头
                     if (!this.AssignedRequest.DisableCache)
                         HttpCacheService.SetHeaders(this.AssignedRequest);
 #endif
 
-                    // hpack encode the request's headers
-                    this.Encoder.Encode(this, this.AssignedRequest, this.outgoing, this.Id);
+                    // HttpPack对请求的头进行编码
+                    this._encoder.Encode(this, this.AssignedRequest, this._outgoing, this.Id);
 
-                    // HTTP/2 uses DATA frames to carry message payloads.
-                    // The chunked transfer encoding defined in Section 4.1 of [RFC7230] MUST NOT be used in HTTP/2.
-                    this.uploadStreamInfo = this.AssignedRequest.GetUpStream();
+                    // HTTP/2使用数据帧来承载消息负载。
+                    // HTTP/2中不能使用[RFC7230]章节4.1中定义的分块传输编码。
+                    this._uploadStreamInfo = this.AssignedRequest.GetUpStream();
 
                     //this.State = HTTP2StreamStates.Open;
 
-                    if (this.uploadStreamInfo.Stream == null)
+                    if (this._uploadStreamInfo.Stream == null)
                     {
                         this.State = Http2StreamStates.HalfClosedLocal;
                         this.AssignedRequest.Timing.Add(TimingEventNames.RequestSent);
@@ -576,21 +569,21 @@ namespace BestHTTP.Connections.HTTP2
 
                 case Http2StreamStates.Open:
                 {
-                    // remote Window can be negative! See https://httpwg.org/specs/rfc7540.html#InitialWindowSize
-                    if (this.remoteWindow <= 0)
+                    // 远程窗口可以是负的!看到 https://httpwg.org/specs/rfc7540.html#InitialWindowSize
+                    if (this._remoteWindow <= 0)
                     {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                         var sb = new StringBuilder(3);
-                        sb.Append($"[{this.Id}] Skipping data sending as remote Window is {this.remoteWindow}!");
-                        Debug.Log($"[HTTP2Stream] [method: ProcessState] [msg|Exception] {sb.ToString()}");
+                        sb.Append($"[{this.Id}] 跳过数据发送作为远程窗口 {this._remoteWindow}!");
+                        Debug.Log($"[HTTP2Stream] [method: ProcessState] [msg|Exception] {sb}");
 #endif
                         return;
                     }
 
                     // This step will send one frame per OpenState call.
 
-                    Int64 maxFrameSize = Math.Min(this.remoteWindow,
-                        this.settings.RemoteSettings[Http2Settings.MaxFrameSize]);
+                    Int64 maxFrameSize = Math.Min(this._remoteWindow,
+                        this._settings.RemoteSettings[Http2Settings.MaxFrameSize]);
 
                     Http2FrameHeaderAndPayload frame = new Http2FrameHeaderAndPayload
                     {
@@ -601,7 +594,7 @@ namespace BestHTTP.Connections.HTTP2
 
                     // 如果它是流的结尾，则期望readCount为零。但是，为了使非阻塞场景能够等待数据，将负值视为没有数据。
                     this._lastReadCount =
-                        this.uploadStreamInfo.Stream.Read(frame.Payload, 0, (int)Math.Min(maxFrameSize, int.MaxValue));
+                        this._uploadStreamInfo.Stream.Read(frame.Payload, 0, (int)Math.Min(maxFrameSize, int.MaxValue));
                     if (this._lastReadCount <= 0)
                     {
                         BufferPool.Release(frame.Payload);
@@ -615,7 +608,7 @@ namespace BestHTTP.Connections.HTTP2
                     }
                     else
                     {
-                        frame.PayloadLength = (UInt32)this._lastReadCount;
+                        frame.PayloadLength = (uint)this._lastReadCount;
                     }
 
                     frame.PayloadOffset = 0;
@@ -623,8 +616,8 @@ namespace BestHTTP.Connections.HTTP2
 
                     if (this._lastReadCount <= 0)
                     {
-                        this.uploadStreamInfo.Stream.Dispose();
-                        this.uploadStreamInfo = new HttpRequest.UploadStreamInfo();
+                        this._uploadStreamInfo.Stream.Dispose();
+                        this._uploadStreamInfo = new HttpRequest.UploadStreamInfo();
 
                         frame.Flags = (byte)(Http2DataFlags.EndStream);
 
@@ -633,16 +626,16 @@ namespace BestHTTP.Connections.HTTP2
                         this.AssignedRequest.Timing.Add(TimingEventNames.RequestSent);
                     }
 
-                    this.outgoing.Enqueue(frame);
+                    this._outgoing.Enqueue(frame);
 
-                    this.remoteWindow -= frame.PayloadLength;
+                    this._remoteWindow -= frame.PayloadLength;
 
-                    this.sentData += frame.PayloadLength;
+                    this._sentData += frame.PayloadLength;
 
                     if (this.AssignedRequest.OnUploadProgress != null)
                     {
                         RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.AssignedRequest,
-                            RequestEvents.UploadProgress, this.sentData, this.uploadStreamInfo.Length));
+                            RequestEvents.UploadProgress, this._sentData, this._uploadStreamInfo.Length));
                     }
                 }
                     //HTTPManager.Logger.Information("HTTP2Stream", string.Format("[{0}] New DATA frame created! remoteWindow: {1:N0}", this.Id, this.remoteWindow), this.Context, this.AssignedRequest.Context, this.parent.Context);
@@ -682,27 +675,27 @@ namespace BestHTTP.Connections.HTTP2
                     //发送方必须跟踪负流量控制窗口，不能发送新的流量控制帧
                     //直到它接收到WINDOW_UPDATE帧，导致流控制窗口变成正的。
 
-                    this.remoteWindow += newValue - oldValue;
+                    this._remoteWindow += newValue - oldValue;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     var sb = new StringBuilder(3);
                     sb.Append($"[{this.Id}] Remote Setting's Initial Window Updated from {oldValue:N0}");
                     sb.Append($" to {newValue:N0}, diff: {newValue - oldValue:N0},");
-                    sb.Append($" new remoteWindow: {this.remoteWindow:N0},");
-                    sb.Append($" total data sent: {this.sentData:N0}");
-                    Debug.Log($"[HTTP2Stream] [method: OnRemoteSettingChanged] [msg|Exception] {sb.ToString()}");
+                    sb.Append($" new remoteWindow: {this._remoteWindow:N0},");
+                    sb.Append($" total data sent: {this._sentData:N0}");
+                    Debug.Log($"[HTTP2Stream] [method: OnRemoteSettingChanged] [msg|Exception] {sb}");
 #endif
                 }
                     break;
             }
         }
 
-        private static void FinishRequest(HTTP2Stream stream, FramesAsStreamView dataStream)
+        private static void FinishRequest(Http2Stream stream, FramesAsStreamView dataStream)
         {
             if (dataStream != null)
             {
                 try
                 {
-                    stream.response.AddData(dataStream);
+                    stream._response.AddData(dataStream);
                 }
                 finally
                 {
@@ -737,18 +730,18 @@ namespace BestHTTP.Connections.HTTP2
 
         public void Removed()
         {
-            if (this.uploadStreamInfo.Stream != null)
+            if (this._uploadStreamInfo.Stream != null)
             {
-                this.uploadStreamInfo.Stream.Dispose();
-                this.uploadStreamInfo = new HttpRequest.UploadStreamInfo();
+                this._uploadStreamInfo.Stream.Dispose();
+                this._uploadStreamInfo = new HttpRequest.UploadStreamInfo();
             }
 
             // After receiving a RST_STREAM on a stream, the receiver MUST NOT send additional frames for that stream, with the exception of PRIORITY.
-            this.outgoing.Clear();
+            this._outgoing.Clear();
 
             // https://github.com/Benedicht/BestHTTP-Issues/issues/77
             // Unsubscribe from OnSettingChangedEvent to remove reference to this instance.
-            this.settings.RemoteSettings.OnSettingChangedEvent -= OnRemoteSettingChanged;
+            this._settings.RemoteSettings.SettingChangedEvent -= OnRemoteSettingChanged;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[HTTP2Stream] [method: Removed] [msg|Exception] Stream removed: {this.Id.ToString()}");
 #endif

@@ -1,26 +1,24 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Macs;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Modes.Gcm;
-using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Parameters;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
 {
     /// <summary>
-    /// Implements the Galois/Counter mode (GCM) detailed in
-    /// NIST Special Publication 800-38D.
+    /// 实现Galois/Counter模式(GCM)
+    /// NIST特别出版物800-38D。
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
     public sealed class FastGcmBlockCipher
         : IAeadBlockCipher
     {
@@ -30,7 +28,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private readonly IBlockCipher cipher;
         private IGcmExponentiator exp;
 
-        // These fields are set by Init and not modified by processing
+        // 这些字段由Init设置，不被processing修改
         private bool forEncryption;
         private bool initialised;
         private int macSize;
@@ -40,7 +38,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         private byte[] H;
         private byte[] J0;
 
-        // These fields are modified during processing
+        // 这些字段在处理过程中被修改
         private int bufLength;
         private byte[] bufBlock;
         private byte[] macBlock;
@@ -65,16 +63,21 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             IGcmMultiplier m)
         {
             if (c.GetBlockSize() != BlockSize)
-                throw new ArgumentException("cipher required with a block size of " + BlockSize + ".");
+            {
+                throw new ArgumentException($"{BlockSize} 块大小为的密码.");
+            }
 
             if (m != null)
+            {
                 throw new NotImplementedException("IGcmMultiplier");
-            this.cipher = c;
+            }
+
+            cipher = c;
         }
 
         public string AlgorithmName
         {
-            get { return cipher.AlgorithmName + "/GCM"; }
+            get { return $"{cipher.AlgorithmName}/GCM"; }
         }
 
         public IBlockCipher GetUnderlyingCipher()
@@ -88,8 +91,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /// <remarks>
-        /// MAC sizes from 32 bits to 128 bits (must be a multiple of 8) are supported. The default is 128 bits.
-        /// Sizes less than 96 are not recommended, but are supported for specialized applications.
+        /// MAC支持32位到128位(必须是8的倍数)缺省值是128位。
+        ///不建议小于96的大小，但特殊应用程序支持。
         /// </remarks>
         public void Init(
             bool forEncryption,
@@ -97,9 +100,9 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             this.forEncryption = forEncryption;
             //this.macBlock = null;
-            if (this.macBlock != null)
-                Array.Clear(this.macBlock, 0, this.macBlock.Length);
-            this.initialised = true;
+            if (macBlock != null)
+                Array.Clear(macBlock, 0, macBlock.Length);
+            initialised = true;
 
             NoCopyKeyParameter keyParam;
             byte[] newNonce = null;
@@ -114,7 +117,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 int macSizeBits = param.MacSize;
                 if (macSizeBits < 32 || macSizeBits > 128 || macSizeBits % 8 != 0)
                 {
-                    throw new ArgumentException("Invalid value for MAC size: " + macSizeBits);
+                    throw new ArgumentException($"MAC大小无效值: {macSizeBits}");
                 }
 
                 macSize = macSizeBits / 8;
@@ -123,7 +126,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             else if (parameters is FastParametersWithIV)
             {
                 FastParametersWithIV param = (FastParametersWithIV)parameters;
-            
+
                 newNonce = param.GetIV();
                 initialAssociatedText = null;
                 macSize = 16;
@@ -131,16 +134,16 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             }
             else
             {
-                throw new ArgumentException("invalid parameters passed to GCM");
+                throw new ArgumentException("无效参数传递给GCM");
             }
 
-            this.bufLength = forEncryption ? BlockSize : (BlockSize + macSize);
-            if (this.bufBlock == null || this.bufLength < this.bufBlock.Length)
-                BufferPool.Resize(ref this.bufBlock, this.bufLength, true, true);
+            bufLength = forEncryption ? BlockSize : (BlockSize + macSize);
+            if (bufBlock == null || bufLength < bufBlock.Length)
+                BufferPool.Resize(ref bufBlock, bufLength, true, true);
 
             if (newNonce == null || newNonce.Length < 1)
             {
-                throw new ArgumentException("IV must be at least 1 byte");
+                throw new ArgumentException("IV必须至少为1个字节");
             }
 
             if (forEncryption)
@@ -149,11 +152,12 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 {
                     if (keyParam == null)
                     {
-                        throw new ArgumentException("cannot reuse nonce for GCM encryption");
+                        throw new ArgumentException("不能重用nonce进行GCM加密");
                     }
+
                     if (lastKey != null && Arrays.AreEqual(lastKey, keyParam.GetKey()))
                     {
-                        throw new ArgumentException("cannot reuse nonce for GCM encryption");
+                        throw new ArgumentException("不能重用nonce进行GCM加密");
                     }
                 }
             }
@@ -166,36 +170,36 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             // TODO Restrict macSize to 16 if nonce length not 12?
 
-            // Cipher always used in forward mode
-            // if keyParam is null we're reusing the last key.
+            //密码总是在转发模式中使用
+            //如果keyParam为空，我们将重用最后一个键。
             if (keyParam != null)
             {
                 cipher.Init(true, keyParam);
 
-                if (this.H == null)
-                    this.H = new byte[BlockSize];
+                if (H == null)
+                    H = new byte[BlockSize];
                 else
-                    Array.Clear(this.H, 0, BlockSize);
+                    Array.Clear(H, 0, BlockSize);
                 cipher.ProcessBlock(H, 0, H, 0);
 
-                // if keyParam is null we're reusing the last key and the multiplier doesn't need re-init
+                // 如果keyParam为null，我们将重用最后一个键，乘数不需要重新初始化
                 Tables8kGcmMultiplier_Init(H);
                 exp = null;
             }
-            else if (this.H == null)
+            else if (H == null)
             {
-                throw new ArgumentException("Key must be specified in initial init");
+                throw new ArgumentException("Key必须在initial init中指定");
             }
 
-            if (this.J0 == null)
-                this.J0 = new byte[BlockSize];
+            if (J0 == null)
+                J0 = new byte[BlockSize];
             else
-                Array.Clear(this.J0, 0, BlockSize);
+                Array.Clear(J0, 0, BlockSize);
 
             if (nonce.Length == 12)
             {
                 Array.Copy(nonce, 0, J0, 0, nonce.Length);
-                this.J0[BlockSize - 1] = 0x01;
+                J0[BlockSize - 1] = 0x01;
             }
             else
             {
@@ -210,42 +214,42 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             //BufferPool.Resize(ref this.S_at, BlockSize, false, true);
             //BufferPool.Resize(ref this.S_atPre, BlockSize, false, true);
             //BufferPool.Resize(ref this.atBlock, BlockSize, false, true);
-            if (this.S == null)
-                this.S = new byte[BlockSize];
+            if (S == null)
+                S = new byte[BlockSize];
             else
-                Array.Clear(this.S, 0, this.S.Length);
+                Array.Clear(S, 0, S.Length);
 
-            if (this.S_at == null)
-                this.S_at = new byte[BlockSize];
+            if (S_at == null)
+                S_at = new byte[BlockSize];
             else
-                Array.Clear(this.S_at, 0, this.S_at.Length);
+                Array.Clear(S_at, 0, S_at.Length);
 
-            if (this.S_atPre == null)
-                this.S_atPre = new byte[BlockSize];
+            if (S_atPre == null)
+                S_atPre = new byte[BlockSize];
             else
-                Array.Clear(this.S_atPre, 0, this.S_atPre.Length);
+                Array.Clear(S_atPre, 0, S_atPre.Length);
 
-            if (this.atBlock == null)
-                this.atBlock = new byte[BlockSize];
+            if (atBlock == null)
+                atBlock = new byte[BlockSize];
             else
-                Array.Clear(this.atBlock, 0, this.atBlock.Length);
+                Array.Clear(atBlock, 0, atBlock.Length);
 
-            this.atBlockPos = 0;
-            this.atLength = 0;
-            this.atLengthPre = 0;
+            atBlockPos = 0;
+            atLength = 0;
+            atLengthPre = 0;
 
             //this.counter = Arrays.Clone(J0);
             //BufferPool.Resize(ref this.counter, BlockSize, false, true);
-            if (this.counter == null)
-                this.counter = new byte[BlockSize];
+            if (counter == null)
+                counter = new byte[BlockSize];
             else
-                Array.Clear(this.counter, 0, this.counter.Length);
+                Array.Clear(counter, 0, counter.Length);
 
-            Array.Copy(this.J0, 0, this.counter, 0, BlockSize);
+            Array.Copy(J0, 0, counter, 0, BlockSize);
 
-            this.blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
-            this.bufOff = 0;
-            this.totalLength = 0;
+            blocksRemaining = uint.MaxValue - 1; // page 8, len(P) <= 2^39 - 256, 1 block used by tag
+            bufOff = 0;
+            totalLength = 0;
 
             if (initialAssociatedText != null)
             {
@@ -283,8 +287,10 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 {
                     return 0;
                 }
+
                 totalData -= macSize;
             }
+
             return totalData - totalData % BlockSize;
         }
 
@@ -311,7 +317,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 atBlock[atBlockPos] = inBytes[inOff + i];
                 if (++atBlockPos == BlockSize)
                 {
-                    // Hash each block as it fills
+                    // 当每个块填满时散列
                     gHASHBlock(S_at, atBlock);
                     atBlockPos = 0;
                     atLength += BlockSize;
@@ -327,7 +333,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 atLengthPre = atLength;
             }
 
-            // Finish hash for partial AAD block
+            // 完成部分AAD块的散列
             if (atBlockPos > 0)
             {
                 gHASHPartial(S_atPre, atBlock, 0, atBlockPos);
@@ -360,8 +366,10 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                     Array.Copy(bufBlock, BlockSize, bufBlock, 0, macSize);
                     bufOff = macSize;
                 }
+
                 return BlockSize;
             }
+
             return 0;
         }
 
@@ -401,21 +409,31 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                     while (len >= BlockSize)
                     {
                         // ProcessBlock(byte[] buf, int bufOff, byte[] output, int outOff)
+
                         #region ProcessBlock(buf: input, bufOff: inOff, output: output, outOff: outOff + resultLen);
 
                         if (totalLength == 0)
                             InitCipher();
 
                         #region GetNextCtrBlock(ctrBlock);
+
                         blocksRemaining--;
 
                         uint c = 1;
-                        c += counter[15]; counter[15] = (byte)c; c >>= 8;
-                        c += counter[14]; counter[14] = (byte)c; c >>= 8;
-                        c += counter[13]; counter[13] = (byte)c; c >>= 8;
-                        c += counter[12]; counter[12] = (byte)c;
+                        c += counter[15];
+                        counter[15] = (byte)c;
+                        c >>= 8;
+                        c += counter[14];
+                        counter[14] = (byte)c;
+                        c >>= 8;
+                        c += counter[13];
+                        counter[13] = (byte)c;
+                        c >>= 8;
+                        c += counter[12];
+                        counter[12] = (byte)c;
 
                         cipher.ProcessBlock(counter, 0, ctrBlock, 0);
+
                         #endregion
 
                         ulong* pulongBuf = (ulong*)&pbuf[inOff];
@@ -490,19 +508,29 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                             if (bufOff == bufLength)
                             {
                                 #region ProcessBlock(buf: bufBlock, bufOff: 0, output: output, outOff: outOff + resultLen);
+
                                 if (totalLength == 0)
                                     InitCipher();
 
                                 #region GetNextCtrBlock(ctrBlock);
+
                                 blocksRemaining--;
 
                                 uint c = 1;
-                                c += counter[15]; counter[15] = (byte)c; c >>= 8;
-                                c += counter[14]; counter[14] = (byte)c; c >>= 8;
-                                c += counter[13]; counter[13] = (byte)c; c >>= 8;
-                                c += counter[12]; counter[12] = (byte)c;
+                                c += counter[15];
+                                counter[15] = (byte)c;
+                                c >>= 8;
+                                c += counter[14];
+                                counter[14] = (byte)c;
+                                c >>= 8;
+                                c += counter[13];
+                                counter[13] = (byte)c;
+                                c >>= 8;
+                                c += counter[12];
+                                counter[12] = (byte)c;
 
                                 cipher.ProcessBlock(counter, 0, ctrBlock, 0);
+
                                 #endregion
 
                                 ulong* pulongS = (ulong*)pS;
@@ -565,7 +593,6 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             {
                 fixed (byte* pctrBlock = ctrBlock, pbuf = buf, pS = S)
                 {
-
                     ulong* pulongBuf = (ulong*)&pbuf[bufOff];
                     ulong* pulongctrBlock = (ulong*)pctrBlock;
                     pulongctrBlock[0] ^= pulongBuf[0];
@@ -672,6 +699,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                     exp = new Tables1kGcmExponentiator();
                     exp.Init(H);
                 }
+
                 exp.ExponentiateX(c, H_c);
 
                 // Carry the difference forward
@@ -701,8 +729,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
             // We place into macBlock our calculated value for T
 
-            if (this.macBlock == null || this.macBlock.Length < macSize)
-                this.macBlock = BufferPool.Resize(ref this.macBlock, macSize, false, false);
+            if (macBlock == null || macBlock.Length < macSize)
+                macBlock = BufferPool.Resize(ref macBlock, macSize, false, false);
 
             Array.Copy(tag, 0, macBlock, 0, macSize);
 
@@ -719,7 +747,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 // Retrieve the T value from the message and compare to calculated one
                 byte[] msgMac = BufferPool.Get(macSize, false);
                 Array.Copy(bufBlock, extra, msgMac, 0, macSize);
-                if (!Arrays.ConstantTimeAreEqual(this.macBlock, msgMac))
+                if (!Arrays.ConstantTimeAreEqual(macBlock, msgMac))
                     throw new InvalidCipherTextException("mac check in GCM failed");
                 BufferPool.Release(msgMac);
             }
@@ -758,7 +786,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             atLengthPre = 0;
 
             //BufferPool.Resize(ref this.counter, BlockSize, false, false);
-            Array.Copy(this.J0, 0, this.counter, 0, BlockSize);
+            Array.Copy(J0, 0, counter, 0, BlockSize);
 
             blocksRemaining = uint.MaxValue - 1;
             bufOff = 0;
@@ -772,7 +800,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (clearMac)
             {
                 //macBlock = null;
-                Array.Clear(this.macBlock, 0, this.macSize);
+                Array.Clear(macBlock, 0, macSize);
             }
 
             if (forEncryption)
@@ -812,7 +840,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         {
             for (int pos = 0; pos < len; pos += BlockSize)
             {
-                int num = System.Math.Min(len - pos, BlockSize);
+                int num = Math.Min(len - pos, BlockSize);
                 gHASHPartial(Y, b, pos, num);
             }
         }
@@ -843,10 +871,17 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             blocksRemaining--;
 
             uint c = 1;
-            c += counter[15]; counter[15] = (byte)c; c >>= 8;
-            c += counter[14]; counter[14] = (byte)c; c >>= 8;
-            c += counter[13]; counter[13] = (byte)c; c >>= 8;
-            c += counter[12]; counter[12] = (byte)c;
+            c += counter[15];
+            counter[15] = (byte)c;
+            c >>= 8;
+            c += counter[14];
+            counter[14] = (byte)c;
+            c >>= 8;
+            c += counter[13];
+            counter[13] = (byte)c;
+            c >>= 8;
+            c += counter[12];
+            counter[12] = (byte)c;
 
             cipher.ProcessBlock(counter, 0, block, 0);
         }
@@ -859,6 +894,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 {
                     throw new InvalidOperationException("GCM cipher cannot be reused for encryption");
                 }
+
                 throw new InvalidOperationException("GCM cipher needs to be initialised");
             }
         }
@@ -874,12 +910,12 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             {
                 Tables8kGcmMultiplier_M = new uint[32][][];
             }
-            else if (Arrays.AreEqual(this.Tables8kGcmMultiplier_H, H))
+            else if (Arrays.AreEqual(Tables8kGcmMultiplier_H, H))
             {
                 return;
             }
 
-            this.Tables8kGcmMultiplier_H = Arrays.Clone(H);
+            Tables8kGcmMultiplier_H = Arrays.Clone(H);
 
             Tables8kGcmMultiplier_M[0] = new uint[16][];
             Tables8kGcmMultiplier_M[1] = new uint[16][];
@@ -907,7 +943,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 Tables8kGcmMultiplier_M[0][j] = tmp;
             }
 
-            for (int i = 0; ;)
+            for (int i = 0;;)
             {
                 for (int j = 2; j < 16; j += j)
                 {
@@ -934,6 +970,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 }
             }
         }
+
         uint[] Tables8kGcmMultiplier_z = new uint[4];
 
         public unsafe void Tables8kGcmMultiplier_MultiplyH(byte[] x)
@@ -988,6 +1025,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 px[15] = pbyteZ[12];
             }
         }
+
         #endregion
     }
 }

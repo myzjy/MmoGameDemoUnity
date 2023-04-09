@@ -10,9 +10,13 @@ using BestHTTP.PlatformSupport.Memory;
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
+    using GZipStream = Decompression.Zlib.GZipStream;
+    using CompressionMode = Decompression.Zlib.CompressionMode;
+    using GZipDecompressor = Decompression.GZipDecompressor;
+
     public sealed class Http2Response : HttpResponse
     {
-        private Decompression.GZipDecompressor _decompressor;
+        private GZipDecompressor _decompressor;
 
         private bool _isPrepared;
 
@@ -83,15 +87,18 @@ namespace BestHTTP.Connections.HTTP2
 #endif
             }
 
-            RequestEventHelper.EnqueueRequestEvent(new RequestEventInfo(this.BaseRequest, newHeaders));
+            var requestEvent = new RequestEventInfo(
+                request: this.BaseRequest,
+                headers: newHeaders);
+
+            RequestEventHelper.EnqueueRequestEvent(requestEvent);
         }
 
         internal void AddData(Stream stream)
         {
             if (this.IsCompressed)
             {
-                using var decoderStream =
-                    new Decompression.Zlib.GZipStream(stream, Decompression.Zlib.CompressionMode.Decompress);
+                using var decoderStream = new GZipStream(stream, CompressionMode.Decompress);
                 using var ms = new BufferPoolMemoryStream((int)stream.Length);
                 {
                     var buf = BufferPool.Get(8 * 1024, true);
@@ -125,7 +132,7 @@ namespace BestHTTP.Connections.HTTP2
 
             if (this.IsCompressed)
             {
-                this._decompressor ??= new Decompression.GZipDecompressor(0);
+                this._decompressor ??= new GZipDecompressor(0);
                 var result = this._decompressor.Decompress(payload, 0, payloadLength, true, true);
 
                 FeedStreamFragment(result.Data, 0, result.Length);
@@ -145,14 +152,10 @@ namespace BestHTTP.Connections.HTTP2
         {
             base.Dispose(disposing);
 
-            if (disposing)
-            {
-                if (this._decompressor != null)
-                {
-                    this._decompressor.Dispose();
-                    this._decompressor = null;
-                }
-            }
+            if (!disposing) return;
+            if (this._decompressor == null) return;
+            this._decompressor.Dispose();
+            this._decompressor = null;
         }
     }
 }

@@ -13,6 +13,10 @@ using BestHTTP.PlatformSupport.Memory;
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
+    using Http2FrameAndPayloadList = List<Http2FrameHeaderAndPayload>;
+    using HTTP2StreamList = List<Http2Stream>;
+    using Http2FrameAndPayloadQueue = ConcurrentQueue<Http2FrameHeaderAndPayload>;
+
     public sealed class Http2Handler : IHttpRequestHandler
     {
         public const UInt32 MaxValueFor31Bits = 0xFFFFFFFF >> 1;
@@ -48,18 +52,18 @@ namespace BestHTTP.Connections.HTTP2
 
         private static readonly int RTTBufferCapacity = 5;
 
-        private readonly List<HTTP2Stream> _clientInitiatedStreams = new List<HTTP2Stream>();
+        private readonly HTTP2StreamList _clientInitiatedStreams = new HTTP2StreamList();
 
         private readonly HTTPConnection _conn;
 
         private
             readonly
-            ConcurrentQueue<Http2FrameHeaderAndPayload> _newFrames =
-                new ConcurrentQueue<Http2FrameHeaderAndPayload>();
+            Http2FrameAndPayloadQueue _newFrames =
+                new Http2FrameAndPayloadQueue();
 
         private
             readonly
-            List<Http2FrameHeaderAndPayload> _outgoingFrames = new List<Http2FrameHeaderAndPayload>();
+            Http2FrameAndPayloadList _outgoingFrames = new Http2FrameAndPayloadList();
 
         private readonly ConcurrentQueue<HttpRequest> _requestQueue = new ConcurrentQueue<HttpRequest>();
 
@@ -183,7 +187,7 @@ namespace BestHTTP.Connections.HTTP2
                     (uint)(HttpManager.Http2Settings.EnableConnectProtocol ? 1 : 0);
                 this.Settings.InitiatedMySettings[Http2Settings.EnablePush] = 0;
                 this.Settings.SendChanges(this._outgoingFrames);
-                this.Settings.RemoteSettings.OnSettingChangedEvent += OnRemoteSettingChanged;
+                this.Settings.RemoteSettings.SettingChangedEvent += OnRemoteSettingChanged;
 
                 // 整个连接的默认窗口大小是65535字节，
                 // 但我们希望将其设置为可能的最大值。
@@ -385,7 +389,7 @@ namespace BestHTTP.Connections.HTTP2
                                this._requestQueue.TryDequeue(out var request))
                         {
                             // create a new stream
-                            var newStream = new HTTP2Stream((UInt32)Interlocked.Add(ref _lastStreamId, 2), this,
+                            var newStream = new Http2Stream((UInt32)Interlocked.Add(ref _lastStreamId, 2), this,
                                 this.Settings, this._httpPackEncoder);
 
                             // process the request
@@ -768,7 +772,7 @@ namespace BestHTTP.Connections.HTTP2
             return sumLatency / this._rtts.Count;
         }
 
-        HTTP2Stream FindStreamById(uint streamId)
+        Http2Stream FindStreamById(uint streamId)
         {
             return this._clientInitiatedStreams.FirstOrDefault(stream => stream.Id == streamId);
         }

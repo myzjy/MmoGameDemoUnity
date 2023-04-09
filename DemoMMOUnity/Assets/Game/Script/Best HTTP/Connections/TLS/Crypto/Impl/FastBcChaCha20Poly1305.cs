@@ -61,7 +61,8 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 _mMac.BlockUpdate(expectedMac, 0, 16);
                 _mMac.DoFinal(expectedMac, 0);
 
-                bool badMac = !TlsUtilities.ConstantTimeAreEqual(16, expectedMac, 0, input, inputOffset + ciphertextLength);
+                bool badMac =
+                    !TlsUtilities.ConstantTimeAreEqual(16, expectedMac, 0, input, inputOffset + ciphertextLength);
                 BufferPool.Release(expectedMac);
                 if (badMac)
                     throw new TlsFatalAlert(AlertDescription.bad_record_mac);

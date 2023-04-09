@@ -276,10 +276,9 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /**
-        * Returns a byte array containing the mac calculated as part of the
-        * last encrypt or decrypt operation.
-        *
-        * @return the last mac calculated.
+        * 返回一个字节数组，其中包含作为最后一次加密或解密操作的一部分计算的mac。
+        * <returns>返回最后计算的MAC。</returns>
+        * 
         */
         public byte[] GetMac()
         {
@@ -306,14 +305,14 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /**
-         * Process a packet of data for either CCM decryption or encryption.
+         * 处理一个数据包以进行CCM解密或加密。
          *
-         * @param in data for processing.
-         * @param inOff offset at which data starts in the input array.
-         * @param inLen length of the data in the input array.
-         * @return a byte array containing the processed input..
-         * @throws IllegalStateException if the cipher is not appropriately set up.
-         * @throws InvalidCipherTextException if the input data is truncated or the mac check fails.
+         * <param name="input">在数据中进行处理。</param>
+         * <param name="inOff">输入数组中数据开始的inOff偏移量。</param>
+         * <param name="inLen">inLen输入数组中数据的长度。</param>
+         * <returns>包含已处理输入的字节数组。</returns>
+         * <exception cref="IllegalStateException">如果密码设置不当。</exception>
+         * <exception cref="InvalidCipherTextException">如果输入数据被截断或MAC检查失败。</exception>
          */
         public byte[] ProcessPacket(byte[] input, int inOff, int inLen)
         {
@@ -337,17 +336,17 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         }
 
         /**
-         * Process a packet of data for either CCM decryption or encryption.
+         * 处理一个数据包以进行CCM解密或加密。
          *
-         * @param in data for processing.
-         * @param inOff offset at which data starts in the input array.
-         * @param inLen length of the data in the input array.
-         * @param output output array.
-         * @param outOff offset into output array to start putting processed bytes.
-         * @return the number of bytes added to output.
-         * @throws IllegalStateException if the cipher is not appropriately set up.
-         * @throws InvalidCipherTextException if the input data is truncated or the mac check fails.
-         * @throws DataLengthException if output buffer too short.
+         * <param name="input">在数据中进行处理</param>
+         * <param name="inOff">输入数组中数据开始的inOff偏移量</param>
+         * <param name="inLen">输入数组中数据的长度</param>
+         * <param name="output">输出数组</param>
+         * <param name="outOff">偏移量到输出数组以开始放置处理过的字节</param>
+         * <returns>添加到输出中的字节数</returns>
+         * <exception cref="IllegalStateException">如果密码设置不当</exception>
+         * <exception cref="InvalidCipherTextException">如果输入数据被截断或MAC检查失败</exception>
+         * <exception cref="DataLengthException">如果输出缓冲区过短</exception>
          */
         private int ProcessPacket(byte[] input, int inOff, int inLen, byte[] output, int outOff)
         {
@@ -383,7 +382,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (_forEncryption)
             {
                 outputLen = inLen + _macSize;
-                Check.OutputLength(output, outOff, outputLen, "Output buffer too short.");
+                Check.OutputLength(output, outOff, outputLen, "输出缓冲区过短.");
 
                 CalculateMac(input, inOff, inLen, _macBlock);
 
@@ -410,10 +409,10 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             else
             {
                 if (inLen < _macSize)
-                    throw new InvalidCipherTextException("data too short");
+                    throw new InvalidCipherTextException("数据太短");
 
                 outputLen = inLen - _macSize;
-                Check.OutputLength(output, outOff, outputLen, "Output buffer too short.");
+                Check.OutputLength(output, outOff, outputLen, "输出缓冲区过短.");
 
                 Array.Copy(input, inOff + outputLen, _macBlock, 0, _macSize);
 
@@ -444,7 +443,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
                 CalculateMac(output, outOff, outputLen, calculatedMacBlock);
 
                 if (!Arrays.ConstantTimeAreEqual(_macBlock, calculatedMacBlock))
-                    throw new InvalidCipherTextException("mac check in CCM failed");
+                    throw new InvalidCipherTextException("mac check in CCM失败");
             }
 
             return outputLen;

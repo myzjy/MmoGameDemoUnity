@@ -1,7 +1,7 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
+using BestHTTP.PlatformSupport.IL2CPP;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Crypto.Utilities;
 
 namespace BestHTTP.Connections.TLS.Crypto.Impl
@@ -9,10 +9,10 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
     /// <summary>
     /// Implementation of Daniel J. Bernstein's ChaCha stream cipher.
     /// </summary>
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.NullChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.ArrayBoundsChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppSetOption(BestHTTP.PlatformSupport.IL2CPP.Option.DivideByZeroChecks, false)]
-    [BestHTTP.PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppSetOption(Option.NullChecks, false)]
+    [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
+    [Il2CppSetOption(Option.DivideByZeroChecks, false)]
+    [Il2CppEagerStaticClassConstruction]
     public sealed class FastChaCha7539Engine
         : FastSalsa20Engine
     {
@@ -20,24 +20,19 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
         /// Creates a 20 rounds ChaCha engine.
         /// </summary>
         public FastChaCha7539Engine()
-            : base()
         {
         }
 
-        public override string AlgorithmName
-        {
-            get { return "ChaCha7539"; }
-        }
+        public override string AlgorithmName => "ChaCha7539";
 
-        protected override int NonceSize
-        {
-            get { return 12; }
-        }
+        protected override int NonceSize => 12;
 
         protected override void AdvanceCounter()
         {
             if (++engineState[12] == 0)
-                throw new InvalidOperationException("attempt to increase counter past 2^32.");
+            {
+                throw new InvalidOperationException("尝试增加计数器过去 2^32.");
+            }
         }
 
         protected override void ResetCounter()
@@ -50,7 +45,9 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
             if (keyBytes != null)
             {
                 if (keyBytes.Length != 32)
-                    throw new ArgumentException(AlgorithmName + " requires 256 bit key");
+                {
+                    throw new ArgumentException($"{AlgorithmName} 需要 256 bit key");
+                }
 
                 PackTauOrSigma(keyBytes.Length, engineState, 0);
 
@@ -64,7 +61,7 @@ namespace BestHTTP.Connections.TLS.Crypto.Impl
 
         protected override void GenerateKeyStream(byte[] output)
         {
-            FastChaChaEngine.ChachaCore(rounds, engineState, x);
+            FastChaChaEngine.ChaChaCore(rounds, engineState, x);
             Pack.UInt32_To_LE(x, output, 0);
         }
     }

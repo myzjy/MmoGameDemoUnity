@@ -7,6 +7,9 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2
 {
+    using Http2SettingsKeyValue=KeyValuePair<Http2Settings, uint>;
+    using Http2SettingsKeyList = List<KeyValuePair<Http2Settings, uint>>;
+
     // https://httpwg.org/specs/rfc7540.html#iana-settings
     public enum Http2Settings : ushort
     {
@@ -98,65 +101,61 @@ namespace BestHTTP.Connections.HTTP2
     public sealed class Http2SettingsRegistry
     {
         private readonly bool[] _changeFlags;
+
         // ReSharper disable once NotAccessedField.Local
         private readonly Http2SettingsManager _parent;
 
-        private UInt32[] _values;
-        public Action<Http2SettingsRegistry, Http2Settings, UInt32, UInt32> OnSettingChangedEvent;
+        private uint[] _values;
+        public Action<Http2SettingsRegistry, Http2Settings, uint, uint> SettingChangedEvent;
 
         public Http2SettingsRegistry(Http2SettingsManager parent, bool readOnly, bool treatItAsAlreadyChanged)
         {
             this._parent = parent;
 
-            this._values = new UInt32[Http2SettingsManager.SettingsCount];
+            this._values = new uint[Http2SettingsManager.SettingsCount];
 
             this.IsReadOnly = readOnly;
             if (!this.IsReadOnly)
                 this._changeFlags = new bool[Http2SettingsManager.SettingsCount];
 
             // Set default values (https://httpwg.org/specs/rfc7540.html#iana-settings)
-            this._values[(UInt16)Http2Settings.HeaderTableSize] = 4096;
-            this._values[(UInt16)Http2Settings.EnablePush] = 1;
-            this._values[(UInt16)Http2Settings.MaxConcurrentStreams] = 128;
-            this._values[(UInt16)Http2Settings.InitialWindowSize] = 65535;
-            this._values[(UInt16)Http2Settings.MaxFrameSize] = 16384;
-            this._values[(UInt16)Http2Settings.MaxHeaderListSize] = UInt32.MaxValue; // infinite
+            this._values[(ushort)Http2Settings.HeaderTableSize] = 4096;
+            this._values[(ushort)Http2Settings.EnablePush] = 1;
+            this._values[(ushort)Http2Settings.MaxConcurrentStreams] = 128;
+            this._values[(ushort)Http2Settings.InitialWindowSize] = 65535;
+            this._values[(ushort)Http2Settings.MaxFrameSize] = 16384;
+            this._values[(ushort)Http2Settings.MaxHeaderListSize] = uint.MaxValue; // infinite
 
-            if (this.IsChanged == treatItAsAlreadyChanged)
-            {
-                var changeFlags = this._changeFlags;
-                if (changeFlags != null) changeFlags[(UInt16)Http2Settings.MaxConcurrentStreams] = true;
-            }
+            if (this.IsChanged != treatItAsAlreadyChanged) return;
+            var changeFlags = this._changeFlags;
+            if (changeFlags != null) changeFlags[(ushort)Http2Settings.MaxConcurrentStreams] = true;
         }
 
         private bool IsReadOnly { get; set; }
 
-        public UInt32 this[Http2Settings setting]
+        public uint this[Http2Settings setting]
         {
             get => this._values[(ushort)setting];
 
             set
             {
                 if (this.IsReadOnly)
-                    throw new NotSupportedException("It's a read-only one!");
+                    throw new NotSupportedException("它是只读的!");
 
-                ushort idx = (ushort)setting;
+                var idx = (ushort)setting;
 
                 // https://httpwg.org/specs/rfc7540.html#SettingValues
                 // An endpoint that receives a SETTINGS frame with any unknown or unsupported identifier MUST ignore that setting.
                 if (idx == 0 || idx >= this._values.Length)
                     return;
 
-                UInt32 oldValue = this._values[idx];
-                if (oldValue != value)
-                {
-                    this._values[idx] = value;
-                    this._changeFlags[idx] = true;
-                    IsChanged = true;
+                var oldValue = this._values[idx];
+                if (oldValue == value) return;
+                this._values[idx] = value;
+                this._changeFlags[idx] = true;
+                IsChanged = true;
 
-                    if (this.OnSettingChangedEvent != null)
-                        this.OnSettingChangedEvent(this, setting, oldValue, value);
-                }
+                this.SettingChangedEvent?.Invoke(this, setting, oldValue, value);
             }
         }
 
@@ -169,24 +168,22 @@ namespace BestHTTP.Connections.HTTP2
 
             foreach (var t in settings)
             {
-                Http2Settings setting = t.Key;
-                UInt16 key = (UInt16)setting;
-                UInt32 value = t.Value;
+                var setting = t.Key;
+                var key = (ushort)setting;
+                var value = t.Value;
 
-                if (key > 0 && key <= Http2SettingsManager.SettingsCount)
+                if (key <= 0 || key > Http2SettingsManager.SettingsCount) continue;
+                var oldValue = this._values[key];
+                this._values[key] = value;
+
+                if (oldValue != value && this.SettingChangedEvent != null)
                 {
-                    UInt32 oldValue = this._values[key];
-                    this._values[key] = value;
-
-                    if (oldValue != value && this.OnSettingChangedEvent != null)
-                    {
-                        this.OnSettingChangedEvent(this, setting, oldValue, value);
-                    }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                    Debug.Log(
-                        $"[HTTP2SettingsRegistry] [method:Merge(List<KeyValuePair<Http2Settings, UInt32>> settings)] Merge {setting}({key}) = {value}");
-#endif
+                    this.SettingChangedEvent(this, setting, oldValue, value);
                 }
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                Debug.Log(
+                    $"[HTTP2SettingsRegistry] [method:Merge(List<KeyValuePair<Http2Settings, UInt32>> settings)] Merge {setting}({key}) = {value}");
+#endif
             }
         }
 
@@ -196,24 +193,22 @@ namespace BestHTTP.Connections.HTTP2
                 this._values = new uint[from._values.Length];
 
             var values = this._values;
-            if (values != null)
+            if (values == null) return;
+            for (var i = 0; i < values.Length; ++i)
             {
-                for (int i = 0; i < values.Length; ++i)
-                {
-                    values[i] = from._values[i];
-                }
+                values[i] = from._values[i];
             }
         }
 
         internal Http2FrameHeaderAndPayload CreateFrame()
         {
-            List<KeyValuePair<Http2Settings, UInt32>> keyValuePairs =
-                new List<KeyValuePair<Http2Settings, uint>>(Http2SettingsManager.SettingsCount);
+            var keyValuePairs =
+                new Http2SettingsKeyList(Http2SettingsManager.SettingsCount);
 
             for (int i = 1; i < Http2SettingsManager.SettingsCount; ++i)
             {
                 if (!this._changeFlags[i]) continue;
-                keyValuePairs.Add(new KeyValuePair<Http2Settings, uint>((Http2Settings)i, this[(Http2Settings)i]));
+                keyValuePairs.Add(new Http2SettingsKeyValue((Http2Settings)i, this[(Http2Settings)i]));
                 this._changeFlags[i] = false;
             }
 
@@ -302,6 +297,7 @@ namespace BestHTTP.Connections.HTTP2
             this.SettingsChangesSentAt = DateTime.UtcNow;
         }
     }
+    
 }
 
 #endif

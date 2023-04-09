@@ -23,11 +23,11 @@ namespace BestHTTP.Connections.TLS.Crypto
         private readonly IBlockCipher _cipher;
         private bool _encrypting;
 
-        /**
-        * Basic constructor.
-        *
-        * @param cipher the block cipher to be used as the basis of chaining.
-        */
+        ///<summary>
+        /// 基本的构造函数.
+        ///
+        ///</summary>
+        /// <param name="cipher">用作连接基础的分组密码。</param>
         public FastCbcBlockCipher(
             IBlockCipher cipher)
         {
@@ -39,26 +39,24 @@ namespace BestHTTP.Connections.TLS.Crypto
             _cbcNextV = new byte[_blockSize];
         }
 
-        /**
-        * return the underlying block cipher that we are wrapping.
-        *
-        * @return the underlying block cipher that we are wrapping.
-        */
+        /// <summary>
+        /// 返回正在换行的底层分组密码。
+        /// </summary>
+        /// <returns>返回正在换行的底层分组密码。</returns>
         public IBlockCipher GetUnderlyingCipher()
         {
             return _cipher;
         }
 
-        /**
-        * Initialise the cipher and, possibly, the initialisation vector (IV).
-        * If an IV isn't passed as part of the parameter, the IV will be all zeros.
-        *
-        * @param forEncryption if true the cipher is initialised for
-        *  encryption, if false for decryption.
-        * @param param the key and other data required by the cipher.
-        * @exception ArgumentException if the parameters argument is
-        * inappropriate.
-        */
+        /// <summary>
+        /// <para>
+        /// 初始化密码，并可能初始化向量(IV)。
+        /// </para>
+        /// 如果没有将IV作为参数的一部分传递，则IV将全为0。
+        /// </summary>
+        /// <param name="forEncryption">如果为真，则初始化密码进行加密，如果为假则解密。</param>
+        /// <param name="parameters">参数设置密码所需的密钥和其他数据。。</param>
+        /// <exception cref="ArgumentException">如果参数不合适。</exception>
         public void Init(
             bool forEncryption,
             ICipherParameters parameters)
@@ -94,36 +92,33 @@ namespace BestHTTP.Connections.TLS.Crypto
             }
         }
 
-        /**
-        * 返回算法名称和模式。
-        *
-        * @return 基础算法的名称，后跟 "/CBC".
-        */
+        /// <summary>
+        /// 返回算法名称和模式。
+        /// </summary>
+        /// <returns>基础算法的名称，后跟 "/CBC".</returns>
         public string AlgorithmName => _cipher.AlgorithmName + "/CBC";
 
         public bool IsPartialBlockOkay => false;
 
-        /**
-        * 返回底层密码的块大小。
-        *
-        * @return 底层密码的块大小。
-        */
+        /// <summary>
+        /// 返回底层密码的块大小。
+        /// </summary>
+        /// <returns>底层密码的块大小</returns>
         public int GetBlockSize()
         {
             return _cipher.GetBlockSize();
         }
-
-        /**
-        * 处理来自in数组的一个输入块，并将其写入out数组。
-        *
-        * @param 在包含输入数据的数组中。
-        * @param inOff 偏移到数据起始位置的in数组中。
-        * @param out the array the output data will be copied into.
-        * @param outOff the offset into the out array the output will start at.
-        * @exception DataLengthException 如果里面没有足够的数据，或者里面没有足够的空间。
-        * @exception InvalidOperationException 如果密码没有初始化。
-        * @return 处理和产生的字节数。
-        */
+        
+        /// <summary>
+        /// 处理来自input数组的一个输入块，并将其写入out数组。
+        /// </summary>
+        /// <param name="input">在包含输入数据的数组中</param>
+        /// <param name="inOff">偏移到数据起始位置的input数组中</param>
+        /// <param name="output">输出数据将被复制到数组外。</param>
+        /// <param name="outOff">输出到输出数组的偏移量。</param>
+        /// <exception cref="DataLengthException">如果里面没有足够的数据，或者里面没有足够的空间。</exception>
+        /// <exception cref="InvalidOperationException">如果密码没有初始化。</exception>
+        /// <returns>底层密码的块大小</returns>
         public int ProcessBlock(
             byte[] input,
             int inOff,
@@ -134,10 +129,10 @@ namespace BestHTTP.Connections.TLS.Crypto
                 ? EncryptBlock(input, inOff, output, outOff)
                 : DecryptBlock(input, inOff, output, outOff);
         }
-
-        /**
-        *将链向量重置回IV并重置底层密码。
-        */
+        
+        /// <summary>
+        /// 将链向量重置回IV并重置底层密码。
+        /// </summary>
         public void Reset()
         {
             Array.Copy(_iv, 0, _cbcV, 0, _iv.Length);
@@ -145,19 +140,16 @@ namespace BestHTTP.Connections.TLS.Crypto
 
             _cipher.Reset();
         }
-
-        /**
-        * 为CBC模式加密执行适当的链接步骤。
-        *
-        * <param name="input">in the array containing the data to be encrypted.</param>
-        * <param name="inOff">
-          偏移到数据起始位置的in数组中。
-          将加密的数据复制到数组之外。
-          </param>
-        * <param name="outOff"> 输出开始位置的out数组的偏移量.</param>
-        * <exception cref="DataLengthException">  如果里面没有足够的数据，或者里面没有足够的空间.</exception>
-        * <returns>返回处理和产生的字节数。</returns>
-        */
+        
+        /// <summary>
+        /// 为CBC模式加密执行适当的链接步骤
+        /// </summary>
+        /// <param name="input">在包含待加密数据的数组中。</param>
+        /// <param name="inOff">偏移到数据起始位置的inOff数组中。将加密的数据复制到数组之外</param>
+        /// <param name="output">输出数据将被复制到数组外。</param>
+        /// <param name="outOff">输出开始位置的outOff数组的偏移量。</param>
+        /// <exception cref="DataLengthException">如果里面没有足够的数据，或者里面没有足够的空间。</exception>
+        /// <returns>返回处理和产生的字节数</returns>
         private unsafe int EncryptBlock(
             byte[] input,
             int inOff,
@@ -196,22 +188,17 @@ namespace BestHTTP.Connections.TLS.Crypto
 
             return length;
         }
-
-        /**
-         * 为CBC模式解密执行适当的链接步骤。
-         *
-         * <param name="input"> 在包含待解密数据的数组中。</param>
-         * <param name="inOff">  偏移到数据起始位置的in数组中.</param>
-         * <param name="outBytes">将解密的数据复制到数组之外.</param>
-         * <param name="outOff">输出到输出数组的偏移量。</param>
-         * <exception cref="DataLengthException">
-         * 如果里面没有足够的数据，或者里面没有足够的空间。
-         * </exception>
-         * <exception cref="InvalidOperationException">
-         *  如果密码没有初始化。
-         * </exception>
-         *  <returns>返回处理和产生的字节数.</returns>
-         */
+        
+        /// <summary>
+        /// 为CBC模式解密执行适当的链接步骤
+        /// </summary>
+        /// <param name="input">在包含待解密数据的数组中。</param>
+        /// <param name="inOff">偏移到数据起始位置的in数组中</param>
+        /// <param name="outBytes">将解密的数据复制到数组之外。</param>
+        /// <param name="outOff">输出开始位置的outOff数组的偏移量。</param>
+        /// <exception cref="DataLengthException">如果里面没有足够的数据，或者里面没有足够的空间。</exception>
+        /// <exception cref="InvalidOperationException">如果密码没有初始化。</exception>
+        /// <returns>返回处理和产生的字节数</returns>
         private unsafe int DecryptBlock(
             byte[] input,
             int inOff,

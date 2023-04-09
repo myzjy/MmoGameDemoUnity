@@ -32,7 +32,7 @@ namespace BestHTTP.Connections.HTTP2
             this._responseTable = new HeaderTable(this._settingsRegistry.RemoteSettings);
         }
 
-        public void Encode(HTTP2Stream context, HttpRequest request, Queue<Http2FrameHeaderAndPayload> to,
+        public void Encode(Http2Stream context, HttpRequest request, Queue<Http2FrameHeaderAndPayload> to,
             uint streamId)
         {
             // 添加SETTINGS_MAX_HEADER_LIST_SIZE的使用，以便能够创建一个头和一个或多个延续片段
@@ -103,7 +103,7 @@ namespace BestHTTP.Connections.HTTP2
                 upStreamInfo.Stream != null);
         }
 
-        public void Decode(HTTP2Stream context, Stream stream, List<KeyValuePair<string, string>> to)
+        public void Decode(Http2Stream context, Stream stream, List<KeyValuePair<string, string>> to)
         {
             var headerType = stream.ReadByte();
             while (headerType != -1)
