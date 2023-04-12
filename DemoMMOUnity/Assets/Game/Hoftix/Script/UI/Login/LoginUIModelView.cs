@@ -38,6 +38,11 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         /// </summary>
         public const string ShowLoginAccountUI = "Show_Login_Account_UI";
 
+        /// <summary>
+        /// 点击开始游戏之后的相关处理
+        /// </summary>
+        public const string LoginTapStartGame = "Login_TapStart_Game";
+
         #endregion
     }
 
@@ -66,7 +71,8 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                 UINotifEnum.CloseLoginUI,
                 UINotifEnum.CloseLoginRegisterUI,
                 UINotifEnum.OpenLoginTapToStartUI,
-                UINotifEnum.ShowLoginAccountUI
+                UINotifEnum.ShowLoginAccountUI,
+                UINotifEnum.LoginTapStartGame
             };
         }
 
@@ -97,6 +103,14 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                 case UINotifEnum.ShowLoginAccountUI:
                 {
                     selfView.LoginTip();
+                }
+                    break;
+                case UINotifEnum.LoginTapStartGame:
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log("点击开始游戏之后，服务器在开启时间，可以正常进入");
+#endif
+                    selfView.viewPanel.LoginTapToStartView.LoginStartGame();
                 }
                     break;
             }

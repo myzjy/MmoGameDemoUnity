@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Constant;
+using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
@@ -60,9 +61,9 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         public void Show()
         {
             var sequence = DOTween.Sequence();
-            sequence.AppendCallback(() => {  CommonController.Instance.loadingRotate.OnShow(); });
+            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnShow(); });
             sequence.AppendInterval(1.5f);
-            sequence.AppendCallback(() => {  CommonController.Instance.loadingRotate.OnClose(); });
+            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnClose(); });
             sequence.AppendInterval(0.5f);
 
             sequence.AppendCallback(() =>
@@ -75,7 +76,12 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             });
         }
 
-        public void StartGame()
+        protected virtual void StartGame()
+        {
+            SpringContext.GetBean<ILoginService>().LoginTapToStart();
+        }
+
+        public void LoginStartGame()
         {
             var buttonTapToStartCanvasGroup = GetComponentInChildren<CanvasGroup>();
             buttonTapToStartCanvasGroup.DOKill();

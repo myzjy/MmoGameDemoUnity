@@ -65,6 +65,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         {
             reconnectCount = 0;
             LoginCacheData.loginFlag = false;
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
             CommonController.Instance.loadingRotate.OnClose();
             if (settingManager.HasSetting(GameConstant.SETTING_LOGIN_TOKEN))
             {

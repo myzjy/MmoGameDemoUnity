@@ -18,5 +18,10 @@
         void LoginByAccount();
 
         void Logout();
+
+        /// <summary>
+        /// 账号登录之后， 点击开始游戏
+        /// </summary>
+        void LoginTapToStart();
     }
 }

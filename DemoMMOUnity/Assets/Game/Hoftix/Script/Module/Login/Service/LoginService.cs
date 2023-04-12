@@ -6,6 +6,7 @@ using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
@@ -48,8 +49,8 @@ namespace ZJYFrameWork.Module.Login.Service
             // var sequence = DOTween.Sequence();
             // sequence.AppendCallback(() =>
             // {
-                netManager.Send(
-                    GetPlayerInfoRequest.ValueOf(settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
+            netManager.Send(
+                GetPlayerInfoRequest.ValueOf(settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
             // });
             // sequence.AppendInterval(8f);
             // sequence.AppendCallback(() =>
@@ -66,8 +67,8 @@ namespace ZJYFrameWork.Module.Login.Service
             // var sequence = DOTween.Sequence();
             // sequence.AppendCallback(() =>
             // {
-                LoginCacheData.loginError = false;
-                netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
+            LoginCacheData.loginError = false;
+            netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
             // });
             // sequence.AppendInterval(3f);
             // sequence.AppendCallback(() =>
@@ -89,6 +90,12 @@ namespace ZJYFrameWork.Module.Login.Service
         public void Logout()
         {
             // throw new System.NotImplementedException();
+        }
+
+        public void LoginTapToStart()
+        {
+            var startData = LoginTapToStartRequest.ValueOf();
+            netManager.Send(startData);
         }
     }
 }

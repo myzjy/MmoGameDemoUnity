@@ -13,7 +13,7 @@ namespace ZJYFrameWork.Setting
     {
         private Preferences _preferences;
         private string name;
-        protected static readonly string GLOBAL_NAME = "_GLOBAL_";
+        protected static readonly string GLOBAL_NAME = "_GAME_GLOBAL_";
 
         [BeforePostConstruct]
         private void Init()

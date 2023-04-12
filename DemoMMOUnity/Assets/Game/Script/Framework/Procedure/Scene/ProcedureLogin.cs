@@ -5,6 +5,7 @@ using ZJYFrameWork.Net;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
 using ZJYFrameWork.WebRequest;
 
@@ -21,6 +22,7 @@ namespace ZJYFrameWork.Procedure.Scene
             base.OnEnter(fsm);
             // CommonController.Instance.snackbar.OpenUIDataLoadingPanel("", 0, 1);
 
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(0, 1);
             loginService.ConnectToGateway();
         }
     }

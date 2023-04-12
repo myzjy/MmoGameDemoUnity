@@ -130,13 +130,13 @@ namespace BestHTTP
 #if UNITY_EDITOR
                 if (!UnityEditor.EditorApplication.isPlaying)
                 {
+                    // UnityEditor.EditorApplication.update += Instance.Update;
                     UnityEditor.EditorApplication.update -= Instance.Update;
-                    UnityEditor.EditorApplication.update += Instance.Update;
                 }
 
 #if UNITY_2017_2_OR_NEWER
-                UnityEditor.EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
                 UnityEditor.EditorApplication.playModeStateChanged += Instance.OnPlayModeStateChanged;
+                UnityEditor.EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
 #else
                     UnityEditor.EditorApplication.playmodeStateChanged -= Instance.OnPlayModeStateChanged;
                     UnityEditor.EditorApplication.playmodeStateChanged += Instance.OnPlayModeStateChanged;
