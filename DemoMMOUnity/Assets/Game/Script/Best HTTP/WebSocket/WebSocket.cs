@@ -131,7 +131,7 @@ namespace BestHTTP.WebSocket
         /// </param>
         /// <param name="protocol">客户端想要使用的应用程序级协议(例如。“聊天”、“排行榜”等等)。如果不使用，可以为null或空字符串吗.</param>
         /// <param name="extensions">可选的IExtensions实现</param>
-        public WebSocket(Uri uri, string origin, string protocol
+        private WebSocket(Uri uri, string origin, string protocol
 #if !UNITY_WEBGL || UNITY_EDITOR
             , params IExtension[] extensions
 #endif
@@ -149,7 +149,7 @@ namespace BestHTTP.WebSocket
             {
                 var uriBuilder = new UriBuilder("https", uri.Host, uri.Port);
                 // 尝试找到一个支持连接协议的HTTP/2连接。
-                var con = BestHTTP.Core.HostManager.GetHost(uri.Host)
+                var con = Core.HostManager.GetHost(uri.Host)
                     .GetHostDefinition(Core.HostDefinition.GetKeyFor(uriBuilder.Uri
 #if !BESTHTTP_DISABLE_PROXY
                         , GetProxy(uri)
@@ -224,7 +224,7 @@ namespace BestHTTP.WebSocket
         public LoggingContext Context { get; private set; }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-        internal void FallbackToHTTP1()
+        internal void FallbackToHttp1()
         {
             if (this._implementation == null)
             {
@@ -289,7 +289,7 @@ namespace BestHTTP.WebSocket
 
 #if !UNITY_WEBGL || UNITY_EDITOR
         /// <summary>
-        /// It will send the given frame to the server.
+        /// 它将把给定的帧发送到服务器。
         /// </summary>
         public void Send(WebSocketFrame frame)
         {
@@ -301,7 +301,7 @@ namespace BestHTTP.WebSocket
 #endif
 
         /// <summary>
-        /// It will initiate the closing of the connection to the server.
+        /// 它将启动关闭与服务器的连接。
         /// </summary>
         public void Close()
         {
@@ -312,7 +312,7 @@ namespace BestHTTP.WebSocket
         }
 
         /// <summary>
-        /// It will initiate the closing of the connection to the server sending the given code and message.
+        ///它将启动关闭与发送给定代码和消息的服务器的连接。
         /// </summary>
         public void Close(UInt16 code, string message)
         {
@@ -325,14 +325,16 @@ namespace BestHTTP.WebSocket
 #if !BESTHTTP_DISABLE_PROXY
         internal Proxy GetProxy(Uri uri)
         {
-            // WebSocket is not a request-response based protocol, so we need a 'tunnel' through the proxy
+            //WebSocket不是一个基于请求-响应的协议，所以我们需要一个通过代理的“隧道”
             HTTPProxy proxy = HttpManager.Proxy as HTTPProxy;
             if (proxy != null && proxy.UseProxyForAddress(uri))
+            {
                 proxy = new HTTPProxy(proxy.Address,
                     proxy.Credentials,
                     false, /*turn on 'tunneling'*/
                     false, /*sendWholeUri*/
                     proxy.NonTransparentForHTTPS);
+            }
 
             return proxy;
         }
@@ -341,53 +343,44 @@ namespace BestHTTP.WebSocket
 #if !UNITY_WEBGL || UNITY_EDITOR
 
         /// <summary>
-        /// Set to true to start a new thread to send Pings to the WebSocket server
+        /// 设置为true将启动一个新线程向WebSocket服务器发送ping
         /// </summary>
         public bool StartPingThread { get; set; }
 
         /// <summary>
-        /// The delay between two Pings in milliseconds. Minimum value is 100, default is 1000.
+        /// 两个ping之间的延迟，以毫秒为单位。最小值为100，默认值为1000。
         /// </summary>
         public int PingFrequency { get; set; }
 
         /// <summary>
-        /// If StartPingThread set to true, the plugin will close the connection and emit an OnError event if no
-        /// message is received from the server in the given time. Its default value is 2 sec.
+        ///如果StartPingThread设置为true，插件将关闭连接，如果不设置则触发OnError事件
+        ///在给定时间内从服务器接收消息。缺省值是2秒。
         /// </summary>
         public TimeSpan CloseAfterNoMessage { get; set; }
 
         /// <summary>
-        /// The internal HTTPRequest object.
+        ///内部HTTPRequest对象。
         /// </summary>
-        public HttpRequest InternalRequest
-        {
-            get { return this._implementation.InternalRequest; }
-        }
+        public HttpRequest InternalRequest => this._implementation.InternalRequest;
 
         /// <summary>
-        /// IExtension implementations the plugin will negotiate with the server to use.
+        /// 扩展实现插件将与服务器协商使用。
         /// </summary>
         public IExtension[] Extensions { get; private set; }
 
         /// <summary>
-        /// Latency calculated from the ping-pong message round-trip times.
+        /// 根据ping-pong消息往返时间计算的延迟。
         /// </summary>
-        public int Latency
-        {
-            get { return this._implementation.Latency; }
-        }
+        public int Latency => this._implementation.Latency;
 
         /// <summary>
-        /// When we received the last message from the server.
+        /// 当我们收到服务器发来的最后一条消息时。
         /// </summary>
-        public DateTime LastMessageReceived
-        {
-            get { return this._implementation.LastMessageReceived; }
-        }
+        public DateTime LastMessageReceived => this._implementation.LastMessageReceived;
 
         /// <summary>
-        /// When the Websocket Over HTTP/2 implementation fails to connect and EnableImplementationFallback is true, the plugin tries to fall back to the HTTP/1 implementation.
-        /// When this happens a new InternalRequest is created and all previous custom modifications (like added headers) are lost. With OnInternalRequestCreated these modifications can be reapplied.
+        ///当Websocket Over HTTP/2实现连接失败且EnableImplementationFallback为true时，插件尝试回退到HTTP/1实现。
+        ///当这种情况发生时，一个新的InternalRequest被创建，所有以前的自定义修改(如添加的头)将丢失。使用OnInternalRequestCreated，这些修改可以被重新应用。
         /// </summary>
         public Action<WebSocket, HttpRequest> OnInternalRequestCreated;
 #endif
@@ -396,24 +389,22 @@ namespace BestHTTP.WebSocket
 
         public static byte[] EncodeCloseData(UInt16 code, string message)
         {
-            //If there is a body, the first two bytes of the body MUST be a 2-byte unsigned integer
-            // (in network byte order) representing a status code with value /code/ defined in Section 7.4 (http://tools.ietf.org/html/rfc6455#section-7.4). Following the 2-byte integer,
-            // the body MAY contain UTF-8-encoded data with value /reason/, the interpretation of which is not defined by this specification.
-            // This data is not necessarily human readable but may be useful for debugging or passing information relevant to the script that opened the connection.
+            //如果有body, body的前两个字节必须是一个2字节的无符号整数
+            //(在网络字节顺序中)表示在7.4节(http://tools.ietf.org/html/rfc6455#section-7.4)中定义的值/code/的状态码。在2字节整数之后，
+            // body可以包含utf -8编码的值为/reason/的数据，其解释在本规范中没有定义。
+            //这些数据不一定是人类可读的，但可能对调试或传递与打开连接的脚本相关的信息有用。
             int msgLen = Encoding.UTF8.GetByteCount(message);
-            using (var ms = new BufferPoolMemoryStream(2 + msgLen))
-            {
-                byte[] buff = BitConverter.GetBytes(code);
-                if (BitConverter.IsLittleEndian)
-                    Array.Reverse(buff, 0, buff.Length);
+            using var ms = new BufferPoolMemoryStream(2 + msgLen);
+            byte[] buff = BitConverter.GetBytes(code);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(buff, 0, buff.Length);
 
-                ms.Write(buff, 0, buff.Length);
+            ms.Write(buff, 0, buff.Length);
 
-                buff = Encoding.UTF8.GetBytes(message);
-                ms.Write(buff, 0, buff.Length);
+            buff = Encoding.UTF8.GetBytes(message);
+            ms.Write(buff, 0, buff.Length);
 
-                return ms.ToArray();
-            }
+            return ms.ToArray();
         }
 
         internal static string GetSecKey(object[] from)
@@ -422,9 +413,9 @@ namespace BestHTTP.WebSocket
             byte[] keys = BufferPool.Get(keysLength, true);
             int pos = 0;
 
-            for (int i = 0; i < from.Length; ++i)
+            foreach (var t in from)
             {
-                byte[] hash = BitConverter.GetBytes((Int32)from[i].GetHashCode());
+                byte[] hash = BitConverter.GetBytes(t.GetHashCode());
 
                 for (int cv = 0; cv < hash.Length && pos < keysLength; ++cv)
                     keys[pos++] = hash[cv];

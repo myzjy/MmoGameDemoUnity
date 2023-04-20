@@ -5,8 +5,7 @@ namespace BestHTTP.SignalRCore
     {
         public
             static
-            // ReSharper disable once UnusedTypeParameter
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController8<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -21,8 +20,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            // ReSharper disable once UnusedTypeParameter
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController7<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -38,9 +36,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            // ReSharper disable once UnusedTypeParameter
-            // ReSharper disable once UnusedTypeParameter
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController6<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -55,9 +51,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            // ReSharper disable once UnusedTypeParameter
-            // ReSharper disable once UnusedTypeParameter
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController5<TResult>(
                 this HubConnection hub, string target, params object[] args)
         {
             return hub.State != ConnectionStates.Connected
@@ -71,7 +65,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController4<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -86,7 +80,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController3<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -102,7 +96,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController2<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -117,7 +111,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController1<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -133,7 +127,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -148,7 +142,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult, T1, T2, T3, T4, T5>(
+            UpStreamItemController<TResult> GetUpAndDownStreamController<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -164,7 +158,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(
+            UpStreamItemController<TResult> GetUpStreamController8<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -179,7 +173,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1>(
+            UpStreamItemController<TResult> GetUpStreamController7<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -195,7 +189,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(
+            UpStreamItemController<TResult> GetUpStreamController6<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -210,7 +204,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2>(this HubConnection hub,
+            UpStreamItemController<TResult> GetUpStreamController5<TResult>(this HubConnection hub,
                 string target,
                 params object[] args)
         {
@@ -225,7 +219,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(
+            UpStreamItemController<TResult> GetUpStreamController4<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -240,7 +234,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3>(
+            UpStreamItemController<TResult> GetUpStreamController3<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -256,7 +250,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(
+            UpStreamItemController<TResult> GetUpStreamController2<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -271,7 +265,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4>(
+            UpStreamItemController<TResult> GetUpStreamController1<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -287,7 +281,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(
+            UpStreamItemController<TResult> GetUpStreamController<TResult>(
                 this HubConnection hub,
                 string target)
         {
@@ -302,7 +296,7 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            UpStreamItemController<TResult> GetUpStreamController<TResult, T1, T2, T3, T4, T5>(
+            UpStreamItemController<TResult> GetUpStreamController<TResult>(
                 this HubConnection hub,
                 string target,
                 params object[] args)
@@ -321,19 +315,19 @@ namespace BestHTTP.SignalRCore
     {
         public
             static
-            void UploadParam<TResult, P1>(
+            void UploadParam<TResult, TP1>(
                 this UpStreamItemController<TResult> controller,
-                P1 item)
+                TP1 item)
         {
             controller.UploadParam(controller.StreamingIds[0], item);
         }
 
         public
             static
-            void UploadParam<TResult, P1, P2>(
+            void UploadParam<TResult, TP1, TP2>(
                 this UpStreamItemController<TResult> controller,
-                P1 param1,
-                P2 param2)
+                TP1 param1,
+                TP2 param2)
         {
             controller.UploadParam(controller.StreamingIds[0], param1);
             controller.UploadParam(controller.StreamingIds[1], param2);
@@ -341,11 +335,11 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            void UploadParam<TResult, P1, P2, P3>(
+            void UploadParam<TResult, TP1, TP2, TP3>(
                 this UpStreamItemController<TResult> controller,
-                P1 param1,
-                P2 param2,
-                P3 param3)
+                TP1 param1,
+                TP2 param2,
+                TP3 param3)
         {
             controller.UploadParam(controller.StreamingIds[0], param1);
             controller.UploadParam(controller.StreamingIds[1], param2);
@@ -354,12 +348,12 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            void UploadParam<TResult, P1, P2, P3, P4>(
+            void UploadParam<TResult, TP1, TP2, TP3, TP4>(
                 this UpStreamItemController<TResult> controller,
-                P1 param1,
-                P2 param2,
-                P3 param3,
-                P4 param4)
+                TP1 param1,
+                TP2 param2,
+                TP3 param3,
+                TP4 param4)
         {
             controller.UploadParam(controller.StreamingIds[0], param1);
             controller.UploadParam(controller.StreamingIds[1], param2);
@@ -369,13 +363,13 @@ namespace BestHTTP.SignalRCore
 
         public
             static
-            void UploadParam<TResult, P1, P2, P3, P4, P5>(
+            void UploadParam<TResult, TP1, TP2, TP3, TP4, TP5>(
                 this UpStreamItemController<TResult> controller,
-                P1 param1,
-                P2 param2,
-                P3 param3,
-                P4 param4,
-                P5 param5)
+                TP1 param1,
+                TP2 param2,
+                TP3 param3,
+                TP4 param4,
+                TP5 param5)
         {
             controller.UploadParam(controller.StreamingIds[0], param1);
             controller.UploadParam(controller.StreamingIds[1], param2);

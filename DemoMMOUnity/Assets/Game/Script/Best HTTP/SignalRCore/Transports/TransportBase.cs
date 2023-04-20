@@ -11,55 +11,56 @@ namespace BestHTTP.SignalRCore.Transports
     {
         public abstract TransportTypes TransportType { get; }
 
-        public TransferModes TransferMode { get { return TransferModes.Binary; } }
+        public TransferModes TransferMode => TransferModes.Binary;
 
         /// <summary>
-        /// Current state of the transport. All changes will be propagated to the HubConnection through the onstateChanged event.
+        /// 传输的当前状态。所有更改都将通过onstatechange事件传播到HubConnection。
         /// </summary>
         public TransportStates State
         {
-            get { return this._state; }
+            get => this._transportStates;
             protected set
             {
-                if (this._state != value)
+                if (this._transportStates != value)
                 {
-                    TransportStates oldState = this._state;
-                    this._state = value;
+                    TransportStates oldState = this._transportStates;
+                    this._transportStates = value;
 
                     if (this.OnStateChanged != null)
-                        this.OnStateChanged(oldState, this._state);
+                        this.OnStateChanged(oldState, this._transportStates);
                 }
             }
         }
-        protected TransportStates _state;
+
+        private TransportStates _transportStates;
 
         /// <summary>
-        /// This will store the reason of failures so HubConnection can include it in its OnError event.
+        /// 这将存储失败的原因，以便HubConnection可以将其包含在其OnError事件中。
         /// </summary>
         public string ErrorReason { get; protected set; }
 
         /// <summary>
-        /// Called every time when the transport's <see cref="State"/> changed.
+        /// 每次传输状态改变的时候都会调用
         /// </summary>
         public event Action<TransportStates, TransportStates> OnStateChanged;
 
-        public LoggingContext Context { get; protected set; }
+        protected LoggingContext Context { get; set; }
 
         /// <summary>
-        /// Cached list of parsed messages.
+        /// 已解析消息的缓存列表。
         /// </summary>
-        protected List<Messages.Message> messages = new List<Messages.Message>();
+        protected List<Messages.Message> Messages = new List<Messages.Message>();
 
         /// <summary>
-        /// Parent HubConnection instance.
+        /// 父HubConnection实例。
         /// </summary>
-        protected HubConnection connection;
+        protected readonly HubConnection Connection;
 
         internal TransportBase(HubConnection con)
         {
-            this.connection = con;
+            this.Connection = con;
             this.Context = new LoggingContext(this);
-            this.Context.Add("Hub", this.connection.Context);
+            this.Context.Add("Hub", this.Connection.Context);
             this.State = TransportStates.Initial;
         }
 
@@ -79,22 +80,20 @@ namespace BestHTTP.SignalRCore.Transports
         /// </summary>
         public abstract void StartClose();
 
-        protected string ParseHandshakeResponse(string data)
+        private string ParseHandshakeResponse(string data)
         {
             // The handshake response is
-            //  -an empty json object ('{}') if the handshake process is succesfull
+            //  -an empty json object ('{}') if the handshake process is successFull
             //  -otherwise it has one 'error' field
 
-            Dictionary<string, object> response = BestHTTP.JSON.Json.Decode(data) as Dictionary<string, object>;
+            Dictionary<string, object> response = JSON.Json.Decode(data) as Dictionary<string, object>;
 
             if (response == null)
-                return "Couldn't parse json data: " + data;
+            {
+                return $"Couldn't parse json data: {data}";
+            }
 
-            object error;
-            if (response.TryGetValue("error", out error))
-                return error.ToString();
-
-            return null;
+            return response.TryGetValue("error", out var error) ? error.ToString() : null;
         }
 
         protected void HandleHandshakeResponse(string data)
@@ -104,26 +103,33 @@ namespace BestHTTP.SignalRCore.Transports
             this.State = string.IsNullOrEmpty(this.ErrorReason) ? TransportStates.Connected : TransportStates.Failed;
         }
 
-        StringBuilder queryBuilder = new StringBuilder(3);
+        readonly StringBuilder _queryBuilder = new StringBuilder(3);
+
         protected Uri BuildUri(Uri baseUri)
         {
-            if (this.connection.NegotiationResult == null)
+            if (this.Connection.NegotiationResult == null)
                 return baseUri;
 
             UriBuilder builder = new UriBuilder(baseUri);
 
-            queryBuilder.Length = 0;
+            _queryBuilder.Length = 0;
 
-            queryBuilder.Append(baseUri.Query);
-            if (!string.IsNullOrEmpty(this.connection.NegotiationResult.ConnectionToken))
-                queryBuilder.Append("&id=").Append(this.connection.NegotiationResult.ConnectionToken);
-            else if (!string.IsNullOrEmpty(this.connection.NegotiationResult.ConnectionId))
-                queryBuilder.Append("&id=").Append(this.connection.NegotiationResult.ConnectionId);
+            _queryBuilder.Append(baseUri.Query);
+            if (!string.IsNullOrEmpty(this.Connection.NegotiationResult.ConnectionToken))
+            {
+                _queryBuilder.Append("&id=").Append(this.Connection.NegotiationResult.ConnectionToken);
+            }
+            else if (!string.IsNullOrEmpty(this.Connection.NegotiationResult.ConnectionId))
+            {
+                _queryBuilder.Append("&id=").Append(this.Connection.NegotiationResult.ConnectionId);
+            }
 
-            builder.Query = queryBuilder.ToString();
+            builder.Query = _queryBuilder.ToString();
 
             if (builder.Query.StartsWith("??"))
+            {
                 builder.Query = builder.Query.Substring(2);
+            }
 
             return builder.Uri;
         }

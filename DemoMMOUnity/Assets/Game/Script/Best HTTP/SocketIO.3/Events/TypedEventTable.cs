@@ -95,27 +95,25 @@ namespace BestHTTP.SocketIO3.Events
 
         public void Call(string eventName, object[] args)
         {
-            if (this._subscriptions.TryGetValue(eventName, out var subscription))
+            if (!this._subscriptions.TryGetValue(eventName, out var subscription)) return;
+            for (int i = 0; i < subscription.Callbacks.Count; ++i)
             {
-                for (int i = 0; i < subscription.Callbacks.Count; ++i)
+                var callbackDesc = subscription.Callbacks[i];
+
+                try
                 {
-                    var callbackDesc = subscription.Callbacks[i];
+                    callbackDesc.Callback.Invoke(args);
+                }
+                catch (Exception ex)
+                {
+                    HttpManager.Logger.Exception("TypedEventTable",
+                        $"Call('{eventName}', {args?.Length}) - Callback.Invoke", ex,
+                        this.Socket.Context);
+                }
 
-                    try
-                    {
-                        callbackDesc.Callback.Invoke(args);
-                    }
-                    catch (Exception ex)
-                    {
-                        HttpManager.Logger.Exception("TypedEventTable",
-                            $"Call('{eventName}', {args?.Length ?? 0}) - Callback.Invoke", ex,
-                            this.Socket.Context);
-                    }
-
-                    if (callbackDesc.Once)
-                    {
-                        subscription.Callbacks.RemoveAt(i--);
-                    }
+                if (callbackDesc.Once)
+                {
+                    subscription.Callbacks.RemoveAt(i--);
                 }
             }
         }

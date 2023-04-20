@@ -17,22 +17,22 @@ namespace BestHTTP.SignalRCore.Transports
     internal sealed class LongPollingTransport : TransportBase
     {
         /// <summary>
-        /// Maximum retries for a failed request
+        /// 失败请求的最大重试次数
         /// </summary>
         const int MaxRetries = 6;
 
         /// <summary>
-        /// Polling transport can't send out a new send-messages request until the previous isn't finished, so it must cache new ones.
+        /// 轮询传输在之前的发送消息请求未完成之前不能发送新的发送消息请求，因此它必须缓存新的发送消息请求。
         /// </summary>
         private ConcurrentQueue<BufferSegment> outgoingMessages = new ConcurrentQueue<BufferSegment>();
 
         /// <summary>
-        /// Flag indicating that a send-request is already sent out. We have to cache messages (<see cref="outgoingMessages"/>) until the request finishes.
+        /// 指示发送请求已经发出的标志。我们必须缓存消息(<see cref="outgoingMessages"/>) ，直到请求完成。
         /// </summary>
         private int sendingInProgress;
 
         /// <summary>
-        /// Cached stream instance. By using a <see cref="BufferSegmentStream"/> we can avoid allocating a large byte[] for the cached messages and copy bytes to the new array.
+        /// 缓存流实例。使用<see cref="BufferSegmentStream"/>  ;我们可以避免为缓存消息分配byte[]，并将字节复制到新数组。
         /// </summary>
         private BufferSegmentStream stream = new BufferSegmentStream();
 
@@ -45,8 +45,6 @@ namespace BestHTTP.SignalRCore.Transports
         {
             get { return TransportTypes.LongPolling; }
         }
-
-        #region ITransport methods
 
         public override void StartConnect()
         {
@@ -62,18 +60,18 @@ namespace BestHTTP.SignalRCore.Transports
             // https://github.com/dotnet/aspnetcore/blob/master/src/SignalR/docs/specs/HubProtocol.md#overview
             // When our connection is open, send the 'negotiation' message to the server.
 
-            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Post, OnHandshakeRequestFinished);
+            var request = new HttpRequest(BuildUri(this.Connection.Uri), HttpMethods.Post, OnHandshakeRequestFinished);
             request.Context.Add("Transport", this.Context);
 
             this.stream.Reset();
             this.stream.Write(JsonProtocol.WithSeparator(string.Format("{{\"protocol\":\"{0}\", \"version\": 1}}",
-                this.connection.Protocol.Name)));
+                this.Connection.Protocol.Name)));
 
             request.UploadStream = this.stream;
 
-            if (this.connection.AuthenticationProvider != null)
+            if (this.Connection.AuthenticationProvider != null)
             {
-                this.connection.AuthenticationProvider.PrepareRequest(request);
+                this.Connection.AuthenticationProvider.PrepareRequest(request);
             }
 
             request.Send();
@@ -103,10 +101,6 @@ namespace BestHTTP.SignalRCore.Transports
             SendConnectionCloseRequest();
         }
 
-        #endregion
-
-        #region Private Helper methods
-
         private void SendMessages()
         {
             if (this.State != TransportStates.Connected || this.outgoingMessages.Count == 0)
@@ -115,7 +109,7 @@ namespace BestHTTP.SignalRCore.Transports
             if (Interlocked.CompareExchange(ref this.sendingInProgress, 1, 0) == 1)
                 return;
 
-            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Post, OnSendMessagesFinished);
+            var request = new HttpRequest(BuildUri(this.Connection.Uri), HttpMethods.Post, OnSendMessagesFinished);
             request.Context.Add("Transport", this.Context);
 
             this.stream.Reset();
@@ -128,8 +122,8 @@ namespace BestHTTP.SignalRCore.Transports
 
             request.Tag = 0;
 
-            if (this.connection.AuthenticationProvider != null)
-                this.connection.AuthenticationProvider.PrepareRequest(request);
+            if (this.Connection.AuthenticationProvider != null)
+                this.Connection.AuthenticationProvider.PrepareRequest(request);
 
             request.Send();
         }
@@ -143,15 +137,15 @@ namespace BestHTTP.SignalRCore.Transports
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[LongPollingTransport] [method:DoPoll] [msg] Sending Poll request");
 #endif
-            var request = new HttpRequest(BuildUri(this.connection.Uri), OnPollRequestFinished);
+            var request = new HttpRequest(BuildUri(this.Connection.Uri), OnPollRequestFinished);
             request.Context.Add("Transport", this.Context);
 
             request.AddHeader("Accept", " application/octet-stream");
             request.Timeout = TimeSpan.FromMinutes(2);
 
-            if (this.connection.AuthenticationProvider != null)
+            if (this.Connection.AuthenticationProvider != null)
             {
-                this.connection.AuthenticationProvider.PrepareRequest(request);
+                this.Connection.AuthenticationProvider.PrepareRequest(request);
             }
 
             request.Send();
@@ -166,23 +160,19 @@ namespace BestHTTP.SignalRCore.Transports
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log($"[LongPollingTransport] [method:SendConnectionCloseRequest] [msg] Sending DELETE request");
 #endif
-            var request = new HttpRequest(BuildUri(this.connection.Uri), HttpMethods.Delete,
+            var request = new HttpRequest(BuildUri(this.Connection.Uri), HttpMethods.Delete,
                 OnConnectionCloseRequestFinished);
             request.Context.Add("Transport", this.Context);
 
             request.Tag = retryCount;
 
-            if (this.connection.AuthenticationProvider != null)
+            if (this.Connection.AuthenticationProvider != null)
             {
-                this.connection.AuthenticationProvider.PrepareRequest(request);
+                this.Connection.AuthenticationProvider.PrepareRequest(request);
             }
 
             request.Send();
         }
-
-        #endregion
-
-        #region Callbacks
 
         private void OnHandshakeRequestFinished(HttpRequest req, HttpResponse resp)
         {
@@ -261,14 +251,14 @@ namespace BestHTTP.SignalRCore.Transports
                             Interlocked.Exchange(ref this.sendingInProgress, 0);
 
                             // The connections is OK, call OnMessages with an empty list to update HubConnection's lastMessageReceivedAt.
-                            this.messages.Clear();
+                            this.Messages.Clear();
                             try
                             {
-                                this.connection.OnMessages(this.messages);
+                                this.Connection.OnMessages(this.Messages);
                             }
                             finally
                             {
-                                this.messages.Clear();
+                                this.Messages.Clear();
                             }
 
                             SendMessages();
@@ -353,21 +343,21 @@ namespace BestHTTP.SignalRCore.Transports
 
                             if (this.State == TransportStates.Connected)
                             {
-                                this.messages.Clear();
+                                this.Messages.Clear();
                                 try
                                 {
                                     if (resp.Data.Length - offset > 0)
                                     {
-                                        this.connection.Protocol.ParseMessages(
+                                        this.Connection.Protocol.ParseMessages(
                                             new BufferSegment(resp.Data, offset, resp.Data.Length - offset),
-                                            ref this.messages);
+                                            ref this.Messages);
                                     }
                                     else
                                     {
-                                        this.messages.Add(new Messages.Message { type = Messages.MessageTypes.Ping });
+                                        this.Messages.Add(new Messages.Message { type = SignalRCore.Messages.MessageTypes.Ping });
                                     }
 
-                                    this.connection.OnMessages(this.messages);
+                                    this.Connection.OnMessages(this.Messages);
                                 }
                                 catch (Exception ex)
                                 {
@@ -378,7 +368,7 @@ namespace BestHTTP.SignalRCore.Transports
                                 }
                                 finally
                                 {
-                                    this.messages.Clear();
+                                    this.Messages.Clear();
 
                                     DoPoll();
                                 }
@@ -449,8 +439,8 @@ namespace BestHTTP.SignalRCore.Transports
                             sb.Append("[LongPollingTransport] ");
                             sb.Append("[method:OnConnectionCloseRequestFinished] ");
                             sb.Append("[msg|Exception] ");
-                            sb.Append($"Connection Close Request finished Successfully,");
-                            sb.Append($" but the server sent an error. Status Code: {resp.StatusCode}");
+                            sb.Append($"连接关闭请求成功完成,");
+                            sb.Append($" 但是服务器发送了一个错误。状态码: {resp.StatusCode}");
                             sb.Append($"-{resp.Message} Message: {resp.DataAsText}");
                             Debug.Log(sb.ToString());
 #endif
@@ -459,7 +449,7 @@ namespace BestHTTP.SignalRCore.Transports
 
                     break;
 
-                // The request finished with an unexpected error. The request's Exception property may contain more info about the error.
+                // 请求以意外错误结束。请求的Exception属性可能包含有关错误的更多信息。
                 case HttpRequestStates.Error:
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
@@ -467,7 +457,7 @@ namespace BestHTTP.SignalRCore.Transports
                     sb.Append("[LongPollingTransport] ");
                     sb.Append("[method:OnPollRequestFinished] ");
                     sb.Append("[msg|Exception] ");
-                    sb.Append($"Connection Close Request Finished with Error! ");
+                    sb.Append($"连接关闭请求失败!!!! ");
                     sb.Append((req.Exception != null
                         ? ($"{req.Exception.Message}\n{req.Exception.StackTrace}")
                         : "No Exception"));
@@ -476,7 +466,7 @@ namespace BestHTTP.SignalRCore.Transports
                 }
                     break;
 
-                // The request aborted, initiated by the user.
+                // 请求中止，由用户发起。
                 case HttpRequestStates.Aborted:
                 {
                     {
@@ -492,7 +482,7 @@ namespace BestHTTP.SignalRCore.Transports
                 }
                     break;
 
-                // Connecting to the server is timed out.
+                // 连接服务器超时。
                 case HttpRequestStates.ConnectionTimedOut:
                 {
                     {
@@ -508,7 +498,7 @@ namespace BestHTTP.SignalRCore.Transports
                 }
                     break;
 
-                // The request didn't finished in the given time.
+                // 请求没有在规定的时间内完成。
                 case HttpRequestStates.TimedOut:
                 {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
@@ -526,7 +516,7 @@ namespace BestHTTP.SignalRCore.Transports
             int retryCount = (int)req.Tag;
             if (retryCount <= MaxRetries)
             {
-                // Try again if there were an error
+                // 如果出现错误，请重试
                 SendConnectionCloseRequest(retryCount + 1);
             }
             else
@@ -534,8 +524,6 @@ namespace BestHTTP.SignalRCore.Transports
                 this.State = TransportStates.Closed;
             }
         }
-
-        #endregion
     }
 }
 #endif

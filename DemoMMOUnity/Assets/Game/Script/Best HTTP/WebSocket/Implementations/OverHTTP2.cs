@@ -81,7 +81,7 @@ namespace BestHTTP.WebSocket
                             this.State = WebSocketStates.Closed;
                             this.InternalRequest.OnHeadersReceived = null;
                             this.InternalRequest.Callback = null;
-                            this.Parent.FallbackToHTTP1();
+                            this.Parent.FallbackToHttp1();
                         }
                         else
                         {
@@ -549,7 +549,7 @@ namespace BestHTTP.WebSocket
             if (this.State == WebSocketStates.Connecting &&
                 HttpManager.Http2Settings.WebSocketOverHttp2Settings.EnableImplementationFallback)
             {
-                this.Parent.FallbackToHTTP1();
+                this.Parent.FallbackToHttp1();
                 return;
             }
 
