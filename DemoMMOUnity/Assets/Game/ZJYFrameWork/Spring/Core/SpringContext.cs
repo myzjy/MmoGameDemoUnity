@@ -277,5 +277,15 @@ namespace ZJYFrameWork.Spring.Core
                 throw new Exception(StringUtils.Format("类型[{}]重复创建实例", type.Name));
             }
         }
+
+        public static void UnBean(object bean)
+        {
+            var type = bean.GetType();
+            if (beanMap.ContainsKey(type))
+            {
+                Debug.Log("已经保存，需要清除");
+                beanMap.Remove(type);
+            }
+        }
     }
 }

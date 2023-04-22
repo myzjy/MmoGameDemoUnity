@@ -205,52 +205,54 @@ namespace BestHTTP.SignalRCore.Transports
 
                 // The request aborted, initiated by the user.
                 case HttpRequestStates.Aborted:
-                    this.ErrorReason = "Handshake Request Aborted!";
+                    this.ErrorReason = "握手请求中止!";
                     break;
 
                 // Connecting to the server is timed out.
                 case HttpRequestStates.ConnectionTimedOut:
-                    this.ErrorReason = "Handshake - Connection Timed Out!";
+                    this.ErrorReason = "握手-连接超时!";
                     break;
 
                 // The request didn't finished in the given time.
                 case HttpRequestStates.TimedOut:
-                    this.ErrorReason = "Handshake - Processing the request Timed Out!";
+                    this.ErrorReason = "握手-处理请求超时!";
                     break;
             }
 
             if (!string.IsNullOrEmpty(this.ErrorReason))
                 this.State = TransportStates.Failed;
 
-            // To skip disposing the stream (because we reuse it), set the request's UploadStream to null
+            // 为了跳过处理流(因为我们重用它)，将请求的UploadStream设置为空
             req.UploadStream = null;
         }
 
         private void OnSendMessagesFinished(HttpRequest req, HttpResponse resp)
         {
             /*
-             * The HTTP POST request is made to the URL [endpoint-base]. The mandatory id query string value is used to identify the connection to send to.
-             * If there is no id query string value, a 400 Bad Request response is returned. Upon receipt of the entire payload,
-             * the server will process the payload and responds with 200 OK if the payload was successfully processed.
-             * If a client makes another request to / while an existing request is outstanding, the new request is immediately terminated by the server with the 409 Conflict status code.
-             * 
-             * If a client receives a 409 Conflict request, the connection remains open.
-             * Any other response indicates that the connection has been terminated due to an error.
-             * 
-             * If the relevant connection has been terminated, a 404 Not Found status code is returned.
-             * If there is an error instantiating an EndPoint or dispatching the message, a 500 Server Error status code is returned.
+             * HTTP POST请求发送到URL [endpoint-base]。返回id查询字符串值用于标识要发送到的连接。
+             * 如果没有id查询字符串值，则返回400 Bad Request响应。在收到全部有效载荷后，
+             * 服务器将处理有效负载，如果有效负载被成功处理，则响应200 OK。
+             * 如果客户端发出另一个请求/而现有的请求是未完成的，新的请求将立即被服务器终止409冲突状态码。
+             *
+             * 如果客户端收到409冲突请求，连接保持打开状态。
+             * 任何其他响应表示连接因错误而终止。
+             *
+             * 如果相关连接已被终止，则返回404 Not Found状态码。
+             * 如果实例化端点或发送消息出错，则返回500 Server error状态码。
              * */
             switch (req.State)
             {
-                // The request finished without any problem.
+                // 请求顺利完成了。
                 case HttpRequestStates.Finished:
+                {
                     switch (resp.StatusCode)
                     {
-                        // Upon receipt of the entire payload, the server will process the payload and responds with 200 OK if the payload was successfully processed.
+                        // 在接收到整个有效负载后，服务器将处理有效负载，如果成功处理了有效负载，则响应200 OK。
                         case 200:
+                        {
                             Interlocked.Exchange(ref this.sendingInProgress, 0);
 
-                            // The connections is OK, call OnMessages with an empty list to update HubConnection's lastMessageReceivedAt.
+                            // 连接是OK的，使用空列表调用OnMessages来更新HubConnection的lastMessageReceivedAt。
                             this.Messages.Clear();
                             try
                             {
@@ -262,18 +264,18 @@ namespace BestHTTP.SignalRCore.Transports
                             }
 
                             SendMessages();
-
+                        }
                             break;
 
-                        // Any other response indicates that the connection has been terminated due to an error.
+                        // 任何其他响应都表示连接由于错误而终止。
                         default:
-                            this.ErrorReason = string.Format(
-                                "Send Request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
-                                resp.StatusCode,
-                                resp.Message,
-                                resp.DataAsText);
+                        {
+                            this.ErrorReason =
+                                $"发送请求成功完成，但服务器发送了一个错误。状态码: {resp.StatusCode}-{resp.Message} 消息: {resp.DataAsText}";
+                        }
                             break;
                     }
+                }
 
                     break;
 
@@ -286,30 +288,32 @@ namespace BestHTTP.SignalRCore.Transports
                     }
                     else
                     {
-                        this.ErrorReason = string.Format("Send message reached max retry count ({0})!", MaxRetries);
+                        this.ErrorReason = $"发送消息达到最大重试次数({MaxRetries})!";
                     }
 
                     break;
             }
 
             if (!string.IsNullOrEmpty(this.ErrorReason))
+            {
                 this.State = TransportStates.Failed;
+            }
 
-            // To skip disposing the stream (because we reuse it), set the request's UploadStream to null
+            // 为了跳过处理流(因为我们重用它)，将请求的UploadStream设置为空
             req.UploadStream = null;
         }
 
         private void OnPollRequestFinished(HttpRequest req, HttpResponse resp)
         {
             /*
-             * When data is available, the server responds with a body in one of the two formats below (depending upon the value of the Accept header).
-             * The response may be chunked, as per the chunked encoding part of the HTTP spec.
-             * 
-             * If the id parameter is missing, a 400 Bad Request response is returned.
-             * If there is no connection with the ID specified in id, a 404 Not Found response is returned.
+             * 当数据可用时，服务器用以下两种格式之一的正文响应(取决于Accept报头的值)。
+             * 响应可能被分块，按照HTTP规范的分块编码部分。
              *
-             * When the client has finished with the connection, it can issue a DELETE request to [endpoint-base] (with the id in the query string) to gracefully terminate the connection.
-             * The server will complete the latest poll with 204 to indicate that it has shut down.
+             * 如果缺少id参数，则返回400 Bad Request响应。
+             * 如果与ID中指定的ID没有连接，则返回404 Not Found响应。
+             *
+             * 当客户端完成连接时，它可以向[endpoint-base]发出DELETE请求(带有查询字符串中的id)以优雅地终止连接。
+             * 服务器将用204完成最近的轮询，表明它已经关闭。
              * */
             switch (req.State)
             {
@@ -318,9 +322,10 @@ namespace BestHTTP.SignalRCore.Transports
                     switch (resp.StatusCode)
                     {
                         case 200:
+                        {
                             int offset = 0;
 
-                            // Parse and dispatch messages only if the transport is still in connected state
+                            // 仅当传输仍处于连接状态时才解析和分派消息
                             if (this.State == TransportStates.Connecting)
                             {
                                 int idx = Array.IndexOf<byte>(resp.Data, (byte)JsonProtocol.Separator, 0);
@@ -354,7 +359,8 @@ namespace BestHTTP.SignalRCore.Transports
                                     }
                                     else
                                     {
-                                        this.Messages.Add(new Messages.Message { type = SignalRCore.Messages.MessageTypes.Ping });
+                                        this.Messages.Add(new Messages.Message
+                                            { type = SignalRCore.Messages.MessageTypes.Ping });
                                     }
 
                                     this.Connection.OnMessages(this.Messages);
@@ -375,10 +381,10 @@ namespace BestHTTP.SignalRCore.Transports
                             }
                             else if (this.State == TransportStates.Closing)
                             {
-                                // DELETE message sent out while we received the poll result. We can close the transport at this point as we don't want to send out a new poll request.
+                                // 当我们收到投票结果时发出的DELETE消息。此时我们可以关闭传输，因为我们不想发送新的投票请求。
                                 this.State = TransportStates.Closed;
                             }
-
+                        }
                             break;
 
                         case 204:
@@ -400,7 +406,7 @@ namespace BestHTTP.SignalRCore.Transports
 
                         default:
                             this.ErrorReason = string.Format(
-                                "Poll Request finished Successfully, but the server sent an error. Status Code: {0}-{1} Message: {2}",
+                                "轮询请求成功完成，但服务器发送了一个错误。状态码: {0}-{1} 消息: {2}",
                                 resp.StatusCode,
                                 resp.Message,
                                 resp.DataAsText);

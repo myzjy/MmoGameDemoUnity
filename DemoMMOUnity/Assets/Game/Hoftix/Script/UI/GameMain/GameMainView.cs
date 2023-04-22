@@ -44,6 +44,15 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             SpringContext.GetBean<GameMainUIController>().SetGameMainView(this);
         }
 
+        /// <summary>
+        /// 设置普通水晶 数量
+        /// </summary>
+        /// <param name="num"></param>
+        public void SetGemsTim(int num)
+        {
+            GemsText.text = num.ToString();
+        }
+
         public override void OnShow()
         {
             GetSelfUIView.OnShow();

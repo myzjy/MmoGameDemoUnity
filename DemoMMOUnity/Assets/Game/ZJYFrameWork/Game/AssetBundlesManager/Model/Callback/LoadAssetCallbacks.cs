@@ -98,9 +98,7 @@ namespace ZJYFrameWork.AssetBundles.Model.Callback
             LoadAssetFailureCallback loadAssetFailureCallback, LoadAssetUpdateCallback loadAssetUpdateCallback,
             LoadAssetDependencyAssetCallback loadAssetDependencyAssetCallback)
         {
-            Debug.LogError(loadAssetSuccessCallback);
-            Debug.Assert(loadAssetSuccessCallback == null);
-
+    
             this.LoadAssetSuccessCallback = loadAssetSuccessCallback;
             this.loadAssetFailureCallback = loadAssetFailureCallback;
             this.loadAssetUpdateCallback = loadAssetUpdateCallback;

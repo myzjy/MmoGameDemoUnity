@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Net.Dispatcher
 {
@@ -35,13 +37,14 @@ namespace ZJYFrameWork.Net.Dispatcher
             }
         }
 
-        private static void RegisterPacketReceiver(object bean)
+        private static void RegisterPacketReceiver([NotNull] object bean)
         {
             var classType = bean.GetType();
             var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(classType, typeof(PacketReceiverAttribute));
             foreach (var itMethod in methods)
             {
                 var parameters = itMethod.GetParameters();
+               
                 if (parameters.Length != 1)
                 {
                     throw new Exception(StringUtils.Format("[class:{}] [method:{}] 必须有一个参数!",

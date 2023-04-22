@@ -57,6 +57,7 @@ namespace ZJYFrameWork.Asynchronous
             if (this.callbackable != null)
                 this.callbackable.RaiseOnProgressCallback(progress);
         }
+
         public new virtual IProgressCallbackable<TProgress> Callbackable()
         {
             lock (_lock)
@@ -72,12 +73,13 @@ namespace ZJYFrameWork.Asynchronous
         }
     }
 
-    public class ProgressResult<TProgress, TResult> : ProgressResult<TProgress>, IProgressResult<TProgress, TResult>, IProgressPromise<TProgress, TResult>
+    public class ProgressResult<TProgress, TResult> : ProgressResult<TProgress>, IProgressResult<TProgress, TResult>,
+        IProgressPromise<TProgress, TResult>
     {
         //private static readonly ILog log = LogManager.GetLogger(typeof(ProgressResult<TProgress, TResult>));
 
         private Callbackable<TResult> callbackable;
-        private ProgressCallbackable<TProgress, TResult> progressCallbackable;
+        private ProgressCallBackAble<TProgress, TResult> _progressCallBackAble;
         private Synchronizable<TResult> synchronizable;
 
         public ProgressResult() : this(false)
@@ -110,29 +112,30 @@ namespace ZJYFrameWork.Asynchronous
             base.RaiseOnCallback();
             if (this.callbackable != null)
                 this.callbackable.RaiseOnCallback();
-            if (this.progressCallbackable != null)
-                this.progressCallbackable.RaiseOnCallback();
+            if (this._progressCallBackAble != null)
+                this._progressCallBackAble.RaiseOnCallback();
         }
 
         protected override void RaiseOnProgressCallback(TProgress progress)
         {
             base.RaiseOnProgressCallback(progress);
-            if (this.progressCallbackable != null)
-                this.progressCallbackable.RaiseOnProgressCallback(progress);
+            if (this._progressCallBackAble != null)
+                this._progressCallBackAble.RaiseOnProgressCallback(progress);
         }
 
         public new virtual IProgressCallbackable<TProgress, TResult> Callbackable()
         {
             lock (_lock)
             {
-                return this.progressCallbackable ?? (this.progressCallbackable = new ProgressCallbackable<TProgress, TResult>(this));
+                return this._progressCallBackAble ??= new ProgressCallBackAble<TProgress, TResult>(this);
             }
         }
+
         public new virtual ISynchronizable<TResult> Synchronized()
         {
             lock (_lock)
             {
-                return this.synchronizable ?? (this.synchronizable = new Synchronizable<TResult>(this, this._lock));
+                return this.synchronizable ??= new Synchronizable<TResult>(this, this._lock);
             }
         }
 
@@ -140,7 +143,7 @@ namespace ZJYFrameWork.Asynchronous
         {
             lock (_lock)
             {
-                return this.callbackable ?? (this.callbackable = new Callbackable<TResult>(this));
+                return this.callbackable ??= new Callbackable<TResult>(this);
             }
         }
     }

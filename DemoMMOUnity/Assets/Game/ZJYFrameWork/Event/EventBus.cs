@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Event
 {
@@ -31,6 +33,43 @@ namespace ZJYFrameWork.Event
             foreach (var bean in allBeans)
             {
                 RegisterEventReceiver(bean);
+            }
+
+            foreach (var bean in allBeans)
+            {
+                var classType = bean.GetType();
+                if (classType.IsDefined(typeof(RequestMappingAttribute), false))
+                {
+                    var custom = classType.GetCustomAttributesData();
+                    foreach (var i in custom)
+                    {
+                        var ty = i.AttributeType;
+                        if (ty.Name.Equals("RequestMappingAttribute"))
+                        {
+                            var constructorArguments = i.ConstructorArguments;
+                            //这个类是否被 RequestMapping 表示
+                            var method =
+                                AssemblyUtils.GetMethodsByAnnoInPOJOClass(classType, typeof(RequestMappingAttribute));
+                            foreach (var ite in method)
+                            {
+                                Debug.LogError(ite);
+                            }
+                        }
+                    }
+
+                    Debug.Log(classType);
+                }
+                else
+                {
+                    continue;
+                }
+
+                //这个类是否被 RequestMapping 表示
+                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(classType, typeof(RequestMappingAttribute));
+                foreach (var ite in methods)
+                {
+                    Debug.Log(ite);
+                }
             }
         }
 
@@ -76,6 +115,7 @@ namespace ZJYFrameWork.Event
                 receiverMap[paramType].Add(receiverDefinition);
             }
         }
+
         public static void SyncSubmit(IEvent eve)
         {
             receiverMap.TryGetValue(eve.GetType(), out var list);

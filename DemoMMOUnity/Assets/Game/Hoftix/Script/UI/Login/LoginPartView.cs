@@ -65,7 +65,7 @@ namespace ZJYFrameWork.UISerializable
         }
 
         private long clickLoginTime;
-        public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
+        public static readonly long CLICK_INTERVAL = 2 * DateTimeUtil.NANO_PER_SECOND;
 
         /// <summary>
         /// 登录事件 第一次登录或者登录其他账号的时候
@@ -77,6 +77,8 @@ namespace ZJYFrameWork.UISerializable
                 return;
             }
 
+            clickLoginTime = DateTimeUtil.Now() / 1_0000;
+
             Debug.Log("账号密码登录[account:{}][password:{}]", account.text, password.text);
             var accountString = account.text;
             var passwordString = password.text;
@@ -87,7 +89,7 @@ namespace ZJYFrameWork.UISerializable
         public void Show()
         {
             LoginPart.transform.DOKill();
-            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.2f * 0).OnComplete(() =>
+            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.3f * 0).OnComplete(() =>
             {
                 account.text = "";
                 password.text = "";

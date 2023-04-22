@@ -65,8 +65,8 @@ namespace ZJYFrameWork.Asynchronous
         /// <summary>
         ///在任务完成时调用。
         /// </summary>
-        /// <param name="callback"></param>
-        void OnCallback(Action<IProgressResult<TProgress, TResult>> callback);
+        /// <param name="callBack"></param>
+        void OnCallback(Action<IProgressResult<TProgress, TResult>> callBack);
 
         /// <summary>
         /// 进度更新时调用。
@@ -77,10 +77,10 @@ namespace ZJYFrameWork.Asynchronous
 
     internal class Callbackable : ICallbackable
     {
-
         private IAsyncResult result;
         private readonly object _lock = new object();
         private Action<IAsyncResult> callback;
+
         public Callbackable(IAsyncResult result)
         {
             this.result = result;
@@ -134,6 +134,7 @@ namespace ZJYFrameWork.Asynchronous
                     {
                         Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
+
                     return;
                 }
 
@@ -144,10 +145,10 @@ namespace ZJYFrameWork.Asynchronous
 
     internal class Callbackable<TResult> : ICallbackable<TResult>
     {
-
         private IAsyncResult<TResult> result;
         private readonly object _lock = new object();
         private Action<IAsyncResult<TResult>> callback;
+
         public Callbackable(IAsyncResult<TResult> result)
         {
             this.result = result;
@@ -201,6 +202,7 @@ namespace ZJYFrameWork.Asynchronous
                     {
                         Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
+
                     return;
                 }
 
@@ -211,11 +213,11 @@ namespace ZJYFrameWork.Asynchronous
 
     internal class ProgressCallbackable<TProgress> : IProgressCallbackable<TProgress>
     {
-
         private IProgressResult<TProgress> result;
         private readonly object _lock = new object();
         private Action<IProgressResult<TProgress>> callback;
         private Action<TProgress> progressCallback;
+
         public ProgressCallbackable(IProgressResult<TProgress> result)
         {
             this.result = result;
@@ -302,6 +304,7 @@ namespace ZJYFrameWork.Asynchronous
                     {
                         Debug.LogError("Class[{0}] callback exception.Error:{1}", this.GetType(), e);
                     }
+
                     return;
                 }
 
@@ -326,6 +329,7 @@ namespace ZJYFrameWork.Asynchronous
                     {
                         Debug.LogError("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
                     }
+
                     return;
                 }
 
@@ -334,14 +338,14 @@ namespace ZJYFrameWork.Asynchronous
         }
     }
 
-    internal class ProgressCallbackable<TProgress, TResult> : IProgressCallbackable<TProgress, TResult>
+    internal class ProgressCallBackAble<TProgress, TResult> : IProgressCallbackable<TProgress, TResult>
     {
-
         private IProgressResult<TProgress, TResult> result;
         private readonly object _lock = new object();
         private Action<IProgressResult<TProgress, TResult>> callback;
         private Action<TProgress> progressCallback;
-        public ProgressCallbackable(IProgressResult<TProgress, TResult> result)
+
+        public ProgressCallBackAble(IProgressResult<TProgress, TResult> result)
         {
             this.result = result;
         }
@@ -358,21 +362,22 @@ namespace ZJYFrameWork.Asynchronous
                     var list = this.callback.GetInvocationList();
                     this.callback = null;
 
-                    foreach (Action<IProgressResult<TProgress, TResult>> action in list)
+                    foreach (var @delegate in list)
                     {
-                        try
-                        {
+                        var action = (Action<IProgressResult<TProgress, TResult>>)@delegate;
+                        // try
+                        // {
                             action(this.result);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
-                        }
+                        // }
+                        // catch (Exception e)
+                        // {
+                        //     Debug.LogError($"Class[{GetType()}] callback exception.Error:{e}");
+                        // }
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
+                    Debug.LogError($"Class[{GetType()}] callback exception.Error:{e}");
                 }
                 finally
                 {
@@ -385,76 +390,79 @@ namespace ZJYFrameWork.Asynchronous
         {
             lock (_lock)
             {
-                try
-                {
-                    if (this.progressCallback == null)
-                        return;
+                // try
+                // {
+                if (this.progressCallback == null)
+                    return;
 
-                    var list = this.progressCallback.GetInvocationList();
-                    foreach (Action<TProgress> action in list)
-                    {
-                        try
-                        {
-                            action(progress);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
-                        }
-                    }
-                }
-                catch (Exception e)
+                var list = this.progressCallback.GetInvocationList();
+                foreach (var @delegate in list)
                 {
-                    Debug.LogError("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
+                    var action = (Action<TProgress>)@delegate;
+                    // try
+                    // {
+                    action(progress);
+                    // }
+                    // catch (Exception e)
+                    // {
+                    //     Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                    // }
                 }
+                // }
+                // catch (Exception e)
+                // {
+                // Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                // }
             }
         }
 
-        public void OnCallback(Action<IProgressResult<TProgress, TResult>> callback)
+        public void OnCallback(Action<IProgressResult<TProgress, TResult>> callBack)
         {
             lock (_lock)
             {
-                if (callback == null)
+                if (callBack == null)
                     return;
 
                 if (this.result.IsDone)
                 {
-                    try
-                    {
-                        callback(this.result);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError("Class[{}] callback exception.Error:{}", this.GetType(), e);
-                    }
+                    // try
+                    // {
+                    callBack(this.result);
+                    // }
+                    // catch (Exception e)
+                    // {
+                    //     Debug.LogError($"Class[{GetType()}] callback exception.Error:{e}");
+                    // }
                     return;
                 }
 
-                this.callback += callback;
+                this.callback += callBack;
             }
         }
 
-        public void OnProgressCallback(Action<TProgress> callback)
+        public void OnProgressCallback(Action<TProgress> callBack)
         {
             lock (_lock)
             {
-                if (callback == null)
+                if (callBack == null)
                     return;
 
                 if (this.result.IsDone)
                 {
-                    try
-                    {
-                        callback(this.result.Progress);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError("Class[{0}] progress callback exception.Error:{1}", this.GetType(), e);
-                    }
+                    // try
+                    // {
+                    // Debug.Log(this.result.Progress);
+                    // Debug.Log(this.result);
+                    callBack(this.result.Progress);
+                    // }
+                    // catch (Exception e)
+                    // {
+                    //     Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                    // }
                     return;
                 }
 
-                this.progressCallback += callback;
+                this.progressCallback += callBack;
             }
         }
     }

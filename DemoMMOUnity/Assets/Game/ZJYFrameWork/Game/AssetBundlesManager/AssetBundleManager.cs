@@ -139,6 +139,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 
         public IEnumerator InitBase()
         {
+            yield return new WaitUntil(() => CommonController.Instance != null);
             SetAssetBundle();
             yield return LoadMetadataForAOTAssemblies();
             bool isLoad = false;
@@ -436,9 +437,9 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             loadSceneAsync.allowSceneActivation = false;
             while (!loadSceneAsync.isDone)
             {
-                Debug.Log($"场景进度:{loadSceneAsync.progress * 100}%");
+                // Debug.Log($"场景进度:{loadSceneAsync.progress * 100}%");
 #if UNITY_EDITOR || DEVELOP_BUILD
-                Debug.Log($"加载场景进度：{loadSceneAsync.progress * 100}");
+                // Debug.Log($"加载场景进度：{loadSceneAsync.progress * 100}");
                 loadSceneCallbacks.LoadSceneUpdateCallback(sceneName, loadSceneAsync.progress, null);
 #else
                 loadSceneCallbacks.LoadSceneUpdateCallback(sceneName,  loadSceneAsync.progress, null);
@@ -498,16 +499,14 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                 if (res.Result == null)
                 {
                     var iBundle = Resources.LoadBundle(abName);
-                    iBundle.Callbackable().OnCallback(res =>
+                    iBundle.Callbackable().OnCallback(_ =>
                     {
-                        Debug.Log($"{res.Result}");
-                        var data = res.Result.LoadAsset<TextAsset>(abName);
+                        var data = _.Result.LoadAsset<TextAsset>(abName);
                         loadAssetCallbacks.Invoke(data.bytes);
                     });
                 }
                 else
                 {
-                    Debug.Log(obj.Result);
                     loadAssetCallbacks.Invoke(obj.Result.bytes);
                 }
             });
