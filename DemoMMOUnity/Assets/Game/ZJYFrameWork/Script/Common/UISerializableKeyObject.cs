@@ -62,5 +62,56 @@ namespace ZJYFrameWork.UISerializable
             ObjectsDict.TryGetValue(key: objKey, out var data);
             return data != null ? data as T : null;
         }
+#if UNITY_EDITOR
+        public void FlushData()
+        {
+            List<ViewSignSerializableUI> list = new List<ViewSignSerializableUI>();
+            var ssu = GetComponent<ViewSignSerializableUI>();
+            if (ssu != null && ssu.KodComs.Count > 0)
+            {
+                list.Add(ssu);
+            }
+
+            Transform tf = transform;
+
+            FindAllChild(ref list, tf);
+
+            dataViewList.Clear();
+            foreach (ViewSignSerializableUI viewSignSerializableUI in list)
+            {
+                dataViewList.Add(viewSignSerializableUI);
+            }
+        }
+
+
+        void FindAllChild(ref List<ViewSignSerializableUI> list, Transform selfTf)
+        {
+            Transform tf = selfTf;
+            int childCount = tf.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Transform childTf = tf.GetChild(i);
+                if (childTf.GetComponent<UISerializableKeyObject>() == null)
+                {
+                    var child = childTf.GetComponent<ViewSignSerializableUI>();
+                    if (child != null && child.KodComs.Count > 0)
+                    {
+                        list.Add(child);
+                    }
+
+                    FindAllChild(ref list, childTf);
+                }
+
+                if (childTf.GetComponent<UISerializableKeyObject>() != null)
+                {
+                    var child = childTf.GetComponent<ViewSignSerializableUI>();
+                    if (child != null && child.KodComs.Count > 0)
+                    {
+                        list.Add(child);
+                    }
+                }
+            }
+        }
+#endif
     }
 }

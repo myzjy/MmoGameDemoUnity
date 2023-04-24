@@ -1,5 +1,4 @@
-﻿using Game.Net.Net.Https;
-using ZJYFrameWork.Spring.Core;
+﻿using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.WebRequest
 {

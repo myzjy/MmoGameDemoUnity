@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
+using ZJYFrameWork.Messaging;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Net
 {
@@ -126,7 +128,7 @@ namespace ZJYFrameWork.Net
 
             if (api.onSuccess != null)
             {
-                api.onSuccess(data);
+                SpringContext.GetBean<Messenger>().Publish(data);
             }
 
             OnCompleteCallbackHandler(response, api.onComplete);

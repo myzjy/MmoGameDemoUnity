@@ -1,3 +1,6 @@
+using ZJYFrameWork.Messaging;
+using ZJYFrameWork.Spring.Core;
+
 namespace ZJYFrameWork.Net
 {
     /// <summary>
@@ -13,6 +16,7 @@ namespace ZJYFrameWork.Net
             this.authorize = true;
             this.ignoreError = false;
             this.ignoreVerify = false;
+            SpringContext.GetBean<Messenger>().Subscribe(onSuccess);
         }
     }
 }

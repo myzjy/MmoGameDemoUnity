@@ -9,7 +9,6 @@ namespace ZJYFrameWork.Hoftix.Script.Bag.Controller
     public class BagItemController
     {
         [PacketReceiver]
-        [HttpResponse]
         public void AtAllBagItemResponse(AllBagItemResponse response)
         {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG

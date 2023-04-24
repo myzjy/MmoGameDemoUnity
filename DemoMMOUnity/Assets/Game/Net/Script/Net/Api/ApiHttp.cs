@@ -1,4 +1,5 @@
 ﻿using System;
+using ZJYFrameWork.Messaging;
 
 namespace ZJYFrameWork.Net
 {

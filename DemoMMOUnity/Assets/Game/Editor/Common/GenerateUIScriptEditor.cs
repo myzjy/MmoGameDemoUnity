@@ -91,6 +91,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                         continue;
                     }
 
+                    Debug.Log($"{item.Name}");
                     //保存的UI组件
                     var UIViewDataList = UIView.dataList;
                     var className = $"{Path.GetFileNameWithoutExtension(item.Name)}View";

@@ -8,8 +8,6 @@ namespace ZJYFrameWork.SpriteViewer
 {
     public partial class SpriteAtlasMakerWindow : EditorWindow
     {
-        #region Param
-
         private static SpriteAtlasMakerWindow instance;
 
         private HashSet<Texture> textureHashSet;
@@ -19,10 +17,6 @@ namespace ZJYFrameWork.SpriteViewer
         private SpriteAssetViewerSetting.FolderType saveType = SpriteAssetViewerSetting.FolderType.AssetBundle;
 
         private string targetSpriteAtlasName = string.Empty;
-
-        #endregion
-
-        #region Public Method
 
         public static void ShowWindow(Texture[] textures)
         {
@@ -34,8 +28,12 @@ namespace ZJYFrameWork.SpriteViewer
             switch (EditorSettings.spritePackerMode)
             {
                 case SpritePackerMode.Disabled:
+#pragma warning disable CS0618
                 case SpritePackerMode.BuildTimeOnly:
+#pragma warning restore CS0618
+#pragma warning disable CS0618
                 case SpritePackerMode.AlwaysOn:
+#pragma warning restore CS0618
                     return;
                 case SpritePackerMode.BuildTimeOnlyAtlas:
                 case SpritePackerMode.AlwaysOnAtlas:
@@ -49,14 +47,11 @@ namespace ZJYFrameWork.SpriteViewer
                     instance.Show();
                     instance.Focus();
                     break;
+                case SpritePackerMode.SpriteAtlasV2:
                 default:
                     break;
             }
         }
-
-        #endregion
-
-        #region Inner Method
 
         private void OnEnable()
         {
@@ -188,8 +183,6 @@ namespace ZJYFrameWork.SpriteViewer
             }
         }
 
-        #region ClickEvent
-
         private void OnClickClearButton()
         {
             textureHashSet.Clear();
@@ -248,7 +241,7 @@ namespace ZJYFrameWork.SpriteViewer
             if (!string.IsNullOrEmpty(existFilePath))
             {
                 if (!EditorUtility.DisplayDialog("Warring",
-                        $"The spriteAtlas is exist ! \n (path : {existFilePath})\nAdd these textures into this exist atlas ? ",
+                        $"存在spriteAtlas ! \n (path : {existFilePath})\n将这些纹理添加到这个图集中? ",
                         "Ok", "No")) return;
                 var targetAtlas = SpriteAssetViewerUtility.CreateSpriteAtlasAndSetAb(targetSpriteAtlasName,
                     SpriteAssetViewerUtility.GetFolderPath(existFilePath), textureHashSet.ToArray());
@@ -267,9 +260,5 @@ namespace ZJYFrameWork.SpriteViewer
                 EditorGUIUtility.PingObject(targetAtlas);
             }
         }
-
-        #endregion
-
-        #endregion
     }
 }
