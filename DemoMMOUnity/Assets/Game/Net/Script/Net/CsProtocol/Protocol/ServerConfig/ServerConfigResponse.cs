@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 {

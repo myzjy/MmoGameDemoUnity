@@ -12,6 +12,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button headImgClick=null;
 		public UnityEngine.UI.Text top_head_Name_Text=null;
 		public UnityEngine.UI.Text top_head_id_Text=null;
+		public UnityEngine.UI.Image top_head_Lv_Image=null;
 		public UnityEngine.UI.Text top_head_Lv_LvNum_Text=null;
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject GemsTim_UISerializableKeyObject=null;
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject Gem_UISerializableKeyObject=null;
@@ -52,6 +53,7 @@ namespace ZJYFrameWork.UISerializable
 			headImgClick=_view.GetObjType<UnityEngine.UI.Button>("headImgClick");
 			top_head_Name_Text=_view.GetObjType<UnityEngine.UI.Text>("top_head_Name_Text");
 			top_head_id_Text=_view.GetObjType<UnityEngine.UI.Text>("top_head_id_Text");
+			top_head_Lv_Image=_view.GetObjType<UnityEngine.UI.Image>("top_head_Lv_Image");
 			top_head_Lv_LvNum_Text=_view.GetObjType<UnityEngine.UI.Text>("top_head_Lv_LvNum_Text");
 			GemsTim_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("GemsTim_UISerializableKeyObject");
 			Gem_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("Gem_UISerializableKeyObject");

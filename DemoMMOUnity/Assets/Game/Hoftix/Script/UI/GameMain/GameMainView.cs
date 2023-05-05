@@ -89,6 +89,28 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             GoldCoinText.text = goldCoinNum.ToString();
         }
 
+        /// <summary>
+        /// 设置名字
+        /// </summary>
+        /// <param name="name">名字</param>
+        public void SetShowName(string name)
+        {
+            viewPanel.top_head_Name_Text.text = name;
+        }
+
+        /// <summary>
+        /// 设置等级 经验显示
+        /// </summary>
+        /// <param name="lvNum">当前等级</param>
+        /// <param name="expNum">当前经验</param>
+        /// <param name="expMaxExp">当前等级最大经验</param>
+        public void SetLvAndExpShow(int lvNum, int expNum, int expMaxExp)
+        {
+            float fillAmount = (expNum * 1.0f) / expMaxExp;
+            viewPanel.top_head_Lv_LvNum_Text.text = lvNum.ToString();
+            viewPanel.top_head_Lv_Image.fillAmount = fillAmount;
+        }
+
         public override void OnShow()
         {
             GetSelfUIView.OnShow();

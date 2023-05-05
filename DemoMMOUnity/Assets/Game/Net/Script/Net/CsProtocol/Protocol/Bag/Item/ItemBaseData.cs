@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item
+namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol
 {
     public class ItemBaseData : Model, IPacket, IReference
     {

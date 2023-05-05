@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.Item;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Setting
