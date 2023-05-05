@@ -18,6 +18,7 @@ namespace ZJYFrameWork.UISerializable
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject Gem_UISerializableKeyObject=null;
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject glod_UISerializableKeyObject=null;
 		public UnityEngine.GameObject middle=null;
+		public UnityEngine.UI.Text TimeShow_Text=null;
 		public UnityEngine.GameObject middle_hero=null;
 		public UnityEngine.UI.Button storeBtn=null;
 		public UnityEngine.UI.Button HuodongBtn=null;
@@ -59,6 +60,7 @@ namespace ZJYFrameWork.UISerializable
 			Gem_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("Gem_UISerializableKeyObject");
 			glod_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("glod_UISerializableKeyObject");
 			middle=_view.GetObjType<UnityEngine.GameObject>("middle");
+			TimeShow_Text=_view.GetObjType<UnityEngine.UI.Text>("TimeShow_Text");
 			middle_hero=_view.GetObjType<UnityEngine.GameObject>("middle_hero");
 			storeBtn=_view.GetObjType<UnityEngine.UI.Button>("storeBtn");
 			HuodongBtn=_view.GetObjType<UnityEngine.UI.Button>("HuodongBtn");

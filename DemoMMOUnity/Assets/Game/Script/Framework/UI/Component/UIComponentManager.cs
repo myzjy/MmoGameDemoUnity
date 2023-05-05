@@ -51,6 +51,7 @@ namespace ZJYFrameWork.UISerializable
                 }
             }
         }
+        // public List<UIModelInterface> TimeModelInterfaces=>UIModelInterfaces.Where(a=>a.Notification().Where(s=>s.))
 
         public static List<UIModelInterface> GetList()
         {

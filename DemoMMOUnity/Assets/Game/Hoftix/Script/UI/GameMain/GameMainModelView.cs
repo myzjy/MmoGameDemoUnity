@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.Game.Framwork;
+﻿using System;
+using ZJYFrameWork.Game.Framwork;
 using ZJYFrameWork.Hotfix.UI.GameMain;
 using ZJYFrameWork.UISerializable;
 
@@ -15,6 +16,11 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         /// 关闭主界面面板
         /// </summary>
         public const string CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL";
+
+        /// <summary>
+        /// Time时间
+        /// </summary>
+        public const string TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL";
     }
 
 
@@ -51,7 +57,8 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             return new[]
             {
                 UINotifEnum.OPEN_GAMEMAIN_PANEL,
-                UINotifEnum.CLOSE_GAMEMAIN_PANEL
+                UINotifEnum.CLOSE_GAMEMAIN_PANEL,
+                UINotifEnum.TIME_GAMEMAIN_PANEL,
             };
         }
 
@@ -67,6 +74,18 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                 case UINotifEnum.CLOSE_GAMEMAIN_PANEL:
                 {
                     selfView.OnHide();
+                }
+                    break;
+                case UINotifEnum.TIME_GAMEMAIN_PANEL:
+                {
+                    if (selfView != null)
+                    {
+                        if (selfView.GetSelfUIView != null)
+                        {
+                            var date = (DateTime)_eventNotification.GetEventBody;
+                            selfView.ShowNowTime(date);
+                        }
+                    }
                 }
                     break;
             }

@@ -1,4 +1,5 @@
-﻿using UnityEngine.UI;
+﻿using System;
+using UnityEngine.UI;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
@@ -37,9 +38,13 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             GoldTimButton = viewPanel.glod_UISerializableKeyObject.GetObjType<Button>("click");
             SpringContext.GetBean<Messenger>().Subscribe("ui.gold", (string res) =>
             {
-                string st = res;
+#if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
+                Debug.Log("调用刷新显示金币");
+#endif
+                SetGoldCoinShow(res);
+                //显示金币
             });
-
+// viewPanel.TimeShow_Text
 
             viewPanel.headImgClick.SetListener(() =>
             {
@@ -84,9 +89,9 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// 设置金币数量显示
         /// </summary>
         /// <param name="goldCoinNum"></param>
-        public void SetGoldCoinShow(int goldCoinNum)
+        public void SetGoldCoinShow(string goldCoinNum)
         {
-            GoldCoinText.text = goldCoinNum.ToString();
+            GoldCoinText.text = goldCoinNum;
         }
 
         /// <summary>
@@ -109,6 +114,11 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             float fillAmount = (expNum * 1.0f) / expMaxExp;
             viewPanel.top_head_Lv_LvNum_Text.text = lvNum.ToString();
             viewPanel.top_head_Lv_Image.fillAmount = fillAmount;
+        }
+
+        public void ShowNowTime(DateTime dateTime)
+        {
+            viewPanel.TimeShow_Text.text = $"{dateTime:yyyy}年{dateTime:MM}月{dateTime:dd}日 {dateTime:hh:mm:ss}";
         }
 
         public override void OnShow()
