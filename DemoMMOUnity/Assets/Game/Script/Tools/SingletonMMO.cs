@@ -1,4 +1,4 @@
-﻿using System;
+﻿wusing System;
 
 namespace GameTools.Singletons
 {
