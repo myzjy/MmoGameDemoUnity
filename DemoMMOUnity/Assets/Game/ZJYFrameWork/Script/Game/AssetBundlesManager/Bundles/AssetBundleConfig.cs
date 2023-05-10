@@ -16,6 +16,13 @@ namespace ZJYFrameWork.AssetBundles.AssetBundleToolsConfig
         public const string ManifestFilename = "manifest.dat";
         public const string SpriteAtlasSuffix = ".spriteatlas";
         public const string SpriteAtlasABSuffix = "_spriteatlas.assetbundle";
+        public const string AssetsFolderName = "Game/AssetsBundles";
+        public const string luaAssetbundleAssetName = "Lua";
+
+        /// <summary>
+        /// lua
+        /// </summary>
+        public const string xluaAssetBundle = "";
 
 #if UNITY_EDITOR
 

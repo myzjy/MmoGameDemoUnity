@@ -93,7 +93,7 @@ namespace ZJYFrameWork.Scenes
 
         public override void Update(float elapseSeconds, float realElapseSeconds)
         {
-            // throw new System.NotImplementedException();
+            return;
         }
 
         public override void Shutdown()

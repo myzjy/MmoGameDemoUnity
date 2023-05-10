@@ -13,7 +13,7 @@ using ZJYFrameWork.AttributeCustom;
 using ZJYFrameWork.Common.Utility;
 using JsonConvert = Unity.Plastic.Newtonsoft.Json.JsonConvert;
 
-namespace GameEditor.ApiHttpsEditor
+namespace ZJYFrameWorkEditor.ApiHttpsEditor
 {
     //错误
     class Modified : System.Exception

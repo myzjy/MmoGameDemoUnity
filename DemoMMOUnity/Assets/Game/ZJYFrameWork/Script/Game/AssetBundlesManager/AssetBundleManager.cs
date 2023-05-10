@@ -489,6 +489,29 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             SpringContext.RegisterBean(this);
         }
 
+        public IBundle LoadXLuaAssetBundle(string xLuaAssetBundle, Action<IBundle> resAction)
+        {
+            var abName = $"{xLuaAssetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+            var bundle = Resources.GetBundle(abName);
+            if (bundle != null)
+            {
+                resAction.Invoke(bundle);
+                return bundle;
+            }
+            else
+            {
+                var obj = Resources.LoadBundle(abName);
+                obj.Callbackable().OnCallback(res =>
+                {
+                    resAction.Invoke(res.Result);
+                    bundle = res.Result;
+                });
+                obj.WaitForDone();
+            }
+
+            return bundle;
+        }
+
         public void LoadAsset(string assetBundle, Action<byte[]> loadAssetCallbacks)
         {
             var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";

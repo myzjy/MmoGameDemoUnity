@@ -41,4 +41,46 @@ public static class Util
             .Replace(NewLineCR, System.Environment.NewLine)
             .Replace(NewLineLF, System.Environment.NewLine);
     }
+
+    public static bool SafeDeleteDir(string folderPath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                return true;
+            }
+
+            if (Directory.Exists(folderPath))
+            {
+                DeleteDirectory(folderPath);
+            }
+
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
+            return false;
+        }
+    }
+
+    public static void DeleteDirectory(string dirPath)
+    {
+        string[] files = Directory.GetFiles(dirPath);
+        string[] dirs = Directory.GetDirectories(dirPath);
+
+        foreach (string file in files)
+        {
+            File.SetAttributes(file, FileAttributes.Normal);
+            File.Delete(file);
+        }
+
+        foreach (string dir in dirs)
+        {
+            DeleteDirectory(dir);
+        }
+
+        Directory.Delete(dirPath, false);
+    }
 }

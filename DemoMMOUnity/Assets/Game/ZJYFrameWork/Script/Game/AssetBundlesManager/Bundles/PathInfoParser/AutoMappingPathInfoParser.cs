@@ -96,11 +96,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     assetName = first.Key;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 //代表没找到
-                Debug.Log($"没有找到资产包，请检查资产的配置 '{path}'.");
+                Debug.LogError($"没有找到资产包，请检查资产的配置 '{path}'.");
 #endif
                 return null;
             }

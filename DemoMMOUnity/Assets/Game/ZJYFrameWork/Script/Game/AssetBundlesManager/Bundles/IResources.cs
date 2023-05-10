@@ -234,14 +234,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// </summary>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        IBundle GetBundle(string bundleName);
+        new IBundle GetBundle(string bundleName);
 
         /// <summary>
         /// Asynchronously loads a bundle for the given bundle's name.
         /// </summary>
         /// <param name="bundleName"></param>
         /// <returns></returns>
-        IProgressResult<float, IBundle> LoadBundle(string bundleName);
+        new IProgressResult<float, IBundle> LoadBundle(string bundleName);
 
         /// <summary>
         /// Asynchronously loads a bundle for the given bundle's name.
@@ -249,14 +249,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <param name="bundleName"></param>
         /// <param name="priority">Positive or negative, the default value is 0.When multiple asynchronous operations are queued up, the operation with the higher priority will be executed first. Once an operation has been started on the background thread, changing the priority will have no effect anymore.</param>
         /// <returns></returns>
-        IProgressResult<float, IBundle> LoadBundle(string bundleName, int priority);
+        new IProgressResult<float, IBundle> LoadBundle(string bundleName, int priority);
 
         /// <summary>
         /// Asynchronously loads a group of bundles for the given bundle's names.
         /// </summary>
         /// <param name="bundleNames"></param>
         /// <returns></returns>
-        IProgressResult<float, IBundle[]> LoadBundle(params string[] bundleNames);
+        new IProgressResult<float, IBundle[]> LoadBundle(params string[] bundleNames);
 
         /// <summary>
         /// Asynchronously loads a group of bundles for the given bundle's names.
@@ -264,7 +264,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         /// <param name="bundleNames"></param>
         /// <param name="priority">Positive or negative, the default value is 0.When multiple asynchronous operations are queued up, the operation with the higher priority will be executed first. Once an operation has been started on the background thread, changing the priority will have no effect anymore.</param>
         /// <returns></returns>
-        IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority);
+        new IProgressResult<float, IBundle[]> LoadBundle(string[] bundleNames, int priority);
         
     }
 }
