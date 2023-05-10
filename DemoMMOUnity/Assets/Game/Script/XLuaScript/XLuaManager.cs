@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Framework.AssetBundles.Utilty;
 using UnityEngine;
 using XLua;
 using ZJYFrameWork.AssetBundles.AssetBundlesManager;

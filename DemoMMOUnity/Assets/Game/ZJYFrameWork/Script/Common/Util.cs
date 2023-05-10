@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 // using UniRx;
 using UnityEditor;
@@ -63,6 +64,85 @@ public static class Util
             Debug.LogError($"SafeDeleteDir failed! path = {folderPath} with err: {ex.Message}");
             return false;
         }
+    }
+
+    public static string[] GetSpecifyFilesInFolder(string path, string[] extensions = null, bool exclude = false)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+
+        if (extensions == null)
+        {
+            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+        }
+        else if (exclude)
+        {
+            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                .Where(f => !extensions.Contains(GetFileExtension(f))).ToArray();
+        }
+        else
+        {
+            return Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                .Where(f => extensions.Contains(GetFileExtension(f))).ToArray();
+        }
+    }
+
+    public static bool SafeRenameFile(string sourceFileName, string destFileName)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(sourceFileName))
+            {
+                return false;
+            }
+
+            if (!File.Exists(sourceFileName))
+            {
+                return true;
+            }
+
+            SafeDeleteFile(destFileName);
+            File.SetAttributes(sourceFileName, FileAttributes.Normal);
+            File.Move(sourceFileName, destFileName);
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"SafeRenameFile failed! path = {sourceFileName} with err: {ex.Message}");
+            return false;
+        }
+    }
+
+    public static bool SafeDeleteFile(string filePath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return true;
+            }
+
+            if (!File.Exists(filePath))
+            {
+                return true;
+            }
+
+            File.SetAttributes(filePath, FileAttributes.Normal);
+            File.Delete(filePath);
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"SafeDeleteFile failed! path = {filePath} with err: {ex.Message}");
+            return false;
+        }
+    }
+
+    public static string GetFileExtension(string path)
+    {
+        return Path.GetExtension(path).ToLower();
     }
 
     public static void DeleteDirectory(string dirPath)
