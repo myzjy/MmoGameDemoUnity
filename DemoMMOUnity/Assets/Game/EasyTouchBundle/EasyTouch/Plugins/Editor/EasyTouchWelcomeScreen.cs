@@ -16,7 +16,7 @@ public class EasyTouchWelcomeScreen : EditorWindow {
 	private const float width = 500;
 	private const float height = 440;
 
-	private const string PREFSHOWATSTARTUP = "EasyTouch.ShowWelcomeScreen";
+	// private const string PREFSHOWATSTARTUP = "EasyTouch.ShowWelcomeScreen";
 
 	private static bool showAtStartup;
 	private static GUIStyle imgHeader;
@@ -73,15 +73,15 @@ public class EasyTouchWelcomeScreen : EditorWindow {
 	}
 
 	static EasyTouchWelcomeScreen(){
-		EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
-		EditorApplication.playmodeStateChanged += OnPlayModeChanged;
-		
-		showAtStartup = EditorPrefs.GetBool(PREFSHOWATSTARTUP, true);
-		
-		if (showAtStartup){
-			EditorApplication.update -= OpenAtStartup;
-			EditorApplication.update += OpenAtStartup;
-		}
+		// EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
+		// EditorApplication.playmodeStateChanged += OnPlayModeChanged;
+		//
+		// showAtStartup = EditorPrefs.GetBool(PREFSHOWATSTARTUP, true);
+		//
+		// if (showAtStartup){
+		// 	EditorApplication.update -= OpenAtStartup;
+		// 	EditorApplication.update += OpenAtStartup;
+		// }
 	}
 
 	static void OpenAtStartup(){
@@ -130,11 +130,11 @@ public class EasyTouchWelcomeScreen : EditorWindow {
 			Application.OpenURL(OFFICIALTOPIC);
 		}
 
-		bool show = GUILayout.Toggle(showAtStartup, "Show at startup");
-		if (show != showAtStartup){
-			showAtStartup = show;
-			EditorPrefs.SetBool(PREFSHOWATSTARTUP, showAtStartup);
-		}
+		// bool show = GUILayout.Toggle(showAtStartup, "Show at startup");
+		// if (show != showAtStartup){
+		// 	showAtStartup = show;
+		// 	EditorPrefs.SetBool(PREFSHOWATSTARTUP, showAtStartup);
+		// }
 
 		GUILayout.EndVertical();
 

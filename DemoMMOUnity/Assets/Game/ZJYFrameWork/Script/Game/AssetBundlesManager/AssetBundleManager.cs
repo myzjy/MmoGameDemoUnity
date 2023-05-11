@@ -162,6 +162,8 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             });
             yield return new WaitUntil(() => isLoad);
             ReginBean();
+           
+
             var baseObj = Instantiate(obj, this.transform) as GameObject;
         }
 
@@ -491,7 +493,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         public IBundle LoadXLuaAssetBundle(string xLuaAssetBundle, Action<IBundle> resAction)
         {
             var abName = $"{xLuaAssetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
-            var bundle = Resources.GetBundle(abName);
+            var bundle = Resources.GetBundle(xLuaAssetBundle.ToLower());
             if (bundle != null)
             {
                 resAction.Invoke(bundle);

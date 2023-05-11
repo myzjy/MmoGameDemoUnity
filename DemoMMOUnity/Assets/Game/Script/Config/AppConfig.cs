@@ -7,5 +7,7 @@ namespace ZJYFrameWork.Config
         /// </summary>
         public const string XLuaAssetBundleName = "xlua";
 
+        public const string AssetsGameLuaPath = "Assets/Game/Lua/";
+        public const string GameLuaPath = "Game/Lua/";
     }
 }

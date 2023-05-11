@@ -121,8 +121,8 @@ namespace ZJYFrameWork.Base.Component
             //我当前module 有多少个
             moduleSize = (short)moduleList.Count;
             //初始化流程状态
-            SpringContext.GetBean<NetworkManager>().Init();
-            SpringContext.GetBean<ProcedureComponent>().StartProcedure();
+            // SpringContext.GetBean<NetworkManager>().Init();
+            // SpringContext.GetBean<ProcedureComponent>().StartProcedure();
         }
 
         private void LateUpdate()

@@ -89,6 +89,16 @@ public static class Util
         }
     }
 
+    public static string[] GetSpecifyFilesInFolder(string path, bool exclude = false)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+
+        return Directory.GetFiles(path, "._*.*", SearchOption.AllDirectories);
+    }
+
     public static bool SafeRenameFile(string sourceFileName, string destFileName)
     {
         try
@@ -162,5 +172,27 @@ public static class Util
         }
 
         Directory.Delete(dirPath, false);
+    }
+    public static byte[] GetFileBytes(string inFile)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(inFile))
+            {
+                return null;
+            }
+
+            if (!File.Exists(inFile))
+            {
+                return null;
+            }
+            // File.SetAttributes(inFile, FileAttributes.Normal);
+            return File.ReadAllBytes(inFile);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError(string.Format("SafeReadAllBytes failed! path = {0} with err = {1}", inFile, ex.Message));
+            return null;
+        }
     }
 }

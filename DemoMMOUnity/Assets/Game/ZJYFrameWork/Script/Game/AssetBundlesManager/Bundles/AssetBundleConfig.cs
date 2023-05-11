@@ -18,6 +18,9 @@ namespace ZJYFrameWork.AssetBundles.AssetBundleToolsConfig
         public const string SpriteAtlasABSuffix = "_spriteatlas.assetbundle";
         public const string AssetsFolderName = "Game/AssetBundles";
         public const string luaAssetbundleAssetName = "Lua";
+        public const string xluaEndAssetBundleSuffix = ".lua";
+        public const string xluaEndBytesSuffix = ".lua.bytes";
+        public const string xluaEndByteSuffix = ".lua.byte";
 
         /// <summary>
         /// lua

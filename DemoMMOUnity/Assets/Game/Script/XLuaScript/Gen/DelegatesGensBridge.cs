@@ -216,7 +216,29 @@ namespace XLua
 #endif
 		}
         
-		public void __Gen_Delegate_Imp9(long p0)
+		public void __Gen_Delegate_Imp9(float p0)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                
+                LuaAPI.lua_pushnumber(L, p0);
+                
+                PCall(L, 1, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp10(long p0)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -238,7 +260,7 @@ namespace XLua
 #endif
 		}
         
-		public void __Gen_Delegate_Imp10(long p0, long p1)
+		public void __Gen_Delegate_Imp11(long p0, long p1)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -261,7 +283,7 @@ namespace XLua
 #endif
 		}
         
-		public void __Gen_Delegate_Imp11(UnityEngine.Vector2 p0)
+		public void __Gen_Delegate_Imp12(UnityEngine.Vector2 p0)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -273,6 +295,120 @@ namespace XLua
                 translator.PushUnityEngineVector2(L, p0);
                 
                 PCall(L, 1, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp13(object p0)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                translator.PushAny(L, p0);
+                
+                PCall(L, 1, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public XLua.LuaEnv __Gen_Delegate_Imp14(object p0)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                translator.PushAny(L, p0);
+                
+                PCall(L, 1, 1, errFunc);
+                
+                
+                XLua.LuaEnv __gen_ret = (XLua.LuaEnv)translator.GetObject(L, errFunc + 1, typeof(XLua.LuaEnv));
+                LuaAPI.lua_settop(L, errFunc - 1);
+                return  __gen_ret;
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public byte[] __Gen_Delegate_Imp15(ref string p0)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                
+                LuaAPI.lua_pushstring(L, p0);
+                
+                PCall(L, 1, 2, errFunc);
+                
+                p0 = LuaAPI.lua_tostring(L, errFunc + 2);
+                
+                byte[] __gen_ret = LuaAPI.lua_tobytes(L, errFunc + 1);
+                LuaAPI.lua_settop(L, errFunc - 1);
+                return  __gen_ret;
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp16(object p0, object p1)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                translator.PushAny(L, p0);
+                translator.PushAny(L, p1);
+                
+                PCall(L, 2, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp17(object p0, object p1, object p2)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                translator.PushAny(L, p0);
+                translator.PushAny(L, p1);
+                translator.PushAny(L, p2);
+                
+                PCall(L, 3, 0, errFunc);
                 
                 
                 
@@ -342,19 +478,24 @@ namespace XLua
 			    return new System.Action<float, float>(__Gen_Delegate_Imp8);
 			}
 		
+		    if (type == typeof(System.Action<float>))
+			{
+			    return new System.Action<float>(__Gen_Delegate_Imp9);
+			}
+		
 		    if (type == typeof(UnityEngine.Events.UnityAction<long>))
 			{
-			    return new UnityEngine.Events.UnityAction<long>(__Gen_Delegate_Imp9);
+			    return new UnityEngine.Events.UnityAction<long>(__Gen_Delegate_Imp10);
 			}
 		
 		    if (type == typeof(UnityEngine.Events.UnityAction<long, long>))
 			{
-			    return new UnityEngine.Events.UnityAction<long, long>(__Gen_Delegate_Imp10);
+			    return new UnityEngine.Events.UnityAction<long, long>(__Gen_Delegate_Imp11);
 			}
 		
 		    if (type == typeof(UnityEngine.Events.UnityAction<UnityEngine.Vector2>))
 			{
-			    return new UnityEngine.Events.UnityAction<UnityEngine.Vector2>(__Gen_Delegate_Imp11);
+			    return new UnityEngine.Events.UnityAction<UnityEngine.Vector2>(__Gen_Delegate_Imp12);
 			}
 		
 		    return null;

@@ -122,7 +122,6 @@ namespace ZJYFrameWork.Spring.Core
                              return scanPaths.Any(it => type.FullName != null && type.FullName.StartsWith(it));
                          }))
             {
-                Debug.Log($"{type.FullName}");
 
                 RegisterBean(type);
             }

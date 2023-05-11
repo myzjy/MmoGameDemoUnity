@@ -12,7 +12,7 @@
 -- 8、考虑到定时器可能会被频繁构造、回收，这里已经做了缓存池优化
 --]]
 
-local Messenger = require "Framework.Common.Messenger"
+-- local Messenger = require "Framework.Common.Messenger"
 local TimerManager = BaseClass()
 local UpdateMsgName = "Update"
 

@@ -25,7 +25,6 @@ namespace ZJYFrameWork.UISerializable
                              !type.ContainsGenericParameters && type.IsClass && !type.IsAbstract &&
                              typeof(UIModelInterface).IsAssignableFrom(type)))
                 {
-                    Debug.Log(type);
                     uiModelRegistrationTypeList.Add(type);
                 }
             }
@@ -40,7 +39,6 @@ namespace ZJYFrameWork.UISerializable
                     UIEventNotificationDict.TryGetValue(str, out var action);
                     if (action == null)
                     {
-                        Debug.Log(StringUtils.Format("Notification:[{}]", str));
                         UIEventNotificationDict.Add(str, uiModelRegistration.NotificationHandler);
                     }
                     else

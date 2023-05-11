@@ -1,10 +1,12 @@
 ﻿#if UNITY_EDITOR
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Execution;
+using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.AssetBundles.Bundles
 {
@@ -36,18 +38,34 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (name.StartsWith(ASSETS, System.StringComparison.OrdinalIgnoreCase))
                 return new string[] { name };
 
-            if (name.IndexOf("/") >= 0)
-                return new string[] { string.Format("{0}{1}", ASSETS, name) };
+            if (name.IndexOf("/", StringComparison.Ordinal) >= 0)
+            {
+                if (name.EndsWith(AssetBundleConfig.xluaEndAssetBundleSuffix))
+                {
+                    Debug.Log($"{name}");
+                }
+                else if (name.EndsWith(AssetBundleConfig.xluaEndBytesSuffix))
+                {
+                }
+                else if (name.EndsWith(AssetBundleConfig.xluaEndByteSuffix))
+                {
+                }
+                else
+                {
+                    return new string[] { $"{ASSETS}{name}" };
+                }
+            }
 
             /* search assets */
             List<string> names = new List<string>();
             string[] assets = this.Assets;
-            string text = name.IndexOf(".") < 0 ? name + "." : name;
+            string text = name.IndexOf(".", StringComparison.Ordinal) < 0 ? name + "." : name;
             for (int i = 0; i < assets.Length; i++)
             {
                 if (assets[i].IndexOf(text, System.StringComparison.OrdinalIgnoreCase) > 0)
                     names.Add(assets[i]);
             }
+
             if (names.Count > 0)
                 return names.ToArray();
             return new string[] { name };
@@ -74,10 +92,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         {
             this.Retain();
             InterceptableEnumerator enumerator = new InterceptableEnumerator(task);
-            enumerator.RegisterFinallyBlock(() =>
-            {
-                this.Release();
-            });
+            enumerator.RegisterFinallyBlock(() => { this.Release(); });
             return enumerator;
         }
 
@@ -105,7 +120,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected IProgressResult<TProgress, TResult> Execute<TProgress, TResult>(System.Func<IProgressPromise<TProgress, TResult>, IEnumerator> func)
+        protected IProgressResult<TProgress, TResult> Execute<TProgress, TResult>(
+            System.Func<IProgressPromise<TProgress, TResult>, IEnumerator> func)
         {
             ProgressResult<TProgress, TResult> result = new ProgressResult<TProgress, TResult>();
             Executors.RunOnCoroutine(func(result), result);
@@ -129,6 +145,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     continue;
                 return asset;
             }
+
             return null;
         }
 
@@ -146,6 +163,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     continue;
                 return asset;
             }
+
             return null;
         }
 
@@ -200,7 +218,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual IEnumerator DoLoadAssetsAsync(IProgressPromise<float, Object[]> promise, System.Type type, params string[] names)
+        protected virtual IEnumerator DoLoadAssetsAsync(IProgressPromise<float, Object[]> promise, System.Type type,
+            params string[] names)
         {
             List<Object> assets = new List<Object>();
             for (int i = 0; i < names.Length; i++)
@@ -232,7 +251,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual IEnumerator DoLoadAssetsAsync<T>(IProgressPromise<float, T[]> promise, params string[] names) where T : Object
+        protected virtual IEnumerator DoLoadAssetsAsync<T>(IProgressPromise<float, T[]> promise, params string[] names)
+            where T : Object
         {
             List<T> assets = new List<T>();
             for (int i = 0; i < names.Length; i++)
@@ -249,7 +269,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             promise.SetResult(assets.ToArray());
         }
 
-        public virtual IProgressResult<float, Dictionary<string, Object>> LoadAssetsToMapAsync(System.Type type, params string[] names)
+        public virtual IProgressResult<float, Dictionary<string, Object>> LoadAssetsToMapAsync(System.Type type,
+            params string[] names)
         {
             try
             {
@@ -259,7 +280,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 if (type == null)
                     throw new System.ArgumentNullException("type");
 
-                return this.Execute<float, Dictionary<string, Object>>(promise => Wrap(DoLoadAssetsToMapAsync(promise, type, names)));
+                return this.Execute<float, Dictionary<string, Object>>(promise =>
+                    Wrap(DoLoadAssetsToMapAsync(promise, type, names)));
             }
             catch (System.Exception e)
             {
@@ -267,7 +289,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual IEnumerator DoLoadAssetsToMapAsync(IProgressPromise<float, Dictionary<string, Object>> promise, System.Type type, params string[] names)
+        protected virtual IEnumerator DoLoadAssetsToMapAsync(
+            IProgressPromise<float, Dictionary<string, Object>> promise, System.Type type, params string[] names)
         {
             Dictionary<string, Object> assets = new Dictionary<string, Object>();
             for (int i = 0; i < names.Length; i++)
@@ -285,14 +308,16 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             promise.SetResult(assets);
         }
 
-        public virtual IProgressResult<float, Dictionary<string, T>> LoadAssetsToMapAsync<T>(params string[] names) where T : Object
+        public virtual IProgressResult<float, Dictionary<string, T>> LoadAssetsToMapAsync<T>(params string[] names)
+            where T : Object
         {
             try
             {
                 if (names == null || names.Length <= 0)
                     new System.ArgumentNullException("names", "The names is null or empty!");
 
-                return this.Execute<float, Dictionary<string, T>>(promise => Wrap(DoLoadAssetsToMapAsync<T>(promise, names)));
+                return this.Execute<float, Dictionary<string, T>>(promise =>
+                    Wrap(DoLoadAssetsToMapAsync<T>(promise, names)));
             }
             catch (System.Exception e)
             {
@@ -300,7 +325,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             }
         }
 
-        protected virtual IEnumerator DoLoadAssetsToMapAsync<T>(IProgressPromise<float, Dictionary<string, T>> promise, params string[] names) where T : Object
+        protected virtual IEnumerator DoLoadAssetsToMapAsync<T>(IProgressPromise<float, Dictionary<string, T>> promise,
+            params string[] names) where T : Object
         {
             Dictionary<string, T> assets = new Dictionary<string, T>();
             for (int i = 0; i < names.Length; i++)
@@ -333,10 +359,12 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 Object[] array = AssetDatabase.LoadAllAssetRepresentationsAtPath(fullName);
                 foreach (Object asset in array)
                 {
-                    if (asset != null && type.IsAssignableFrom(asset.GetType()) && !(asset is SceneAsset) && !(asset is DefaultAsset))
+                    if (asset != null && type.IsAssignableFrom(asset.GetType()) && !(asset is SceneAsset) &&
+                        !(asset is DefaultAsset))
                         assets.Add(asset);
                 }
             }
+
             return assets.ToArray();
         }
 
@@ -356,6 +384,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                         assets.Add((T)asset);
                 }
             }
+
             return assets.ToArray();
         }
 
@@ -388,7 +417,8 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 Object[] array = AssetDatabase.LoadAllAssetRepresentationsAtPath(fullName);
                 foreach (Object asset in array)
                 {
-                    if (asset != null && type.IsAssignableFrom(asset.GetType()) && !(asset is SceneAsset) && !(asset is DefaultAsset))
+                    if (asset != null && type.IsAssignableFrom(asset.GetType()) && !(asset is SceneAsset) &&
+                        !(asset is DefaultAsset))
                         assets.Add(asset);
                 }
 
@@ -428,6 +458,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             promise.UpdateProgress(1f);
             promise.SetResult(assets.ToArray());
         }
+
         public virtual UnityEngine.Object[] LoadAssetWithSubAssets(string name, System.Type type)
         {
             throw new System.NotSupportedException();
@@ -443,12 +474,14 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             throw new System.NotSupportedException();
         }
 
-        public virtual IProgressResult<float, UnityEngine.Object[]> LoadAssetWithSubAssetsAsync(string name, System.Type type)
+        public virtual IProgressResult<float, UnityEngine.Object[]> LoadAssetWithSubAssetsAsync(string name,
+            System.Type type)
         {
             throw new System.NotSupportedException();
         }
 
         #region IDisposable Support
+
         private bool disposed = false;
 
         protected virtual void Dispose(bool disposing)
@@ -460,6 +493,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                     this.manager.RemoveBundle(this);
                     this.manager = null;
                 }
+
                 disposed = true;
             }
         }
@@ -474,6 +508,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             Dispose(true);
             System.GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 }

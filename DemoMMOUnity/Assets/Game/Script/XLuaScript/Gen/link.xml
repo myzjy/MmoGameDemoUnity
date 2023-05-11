@@ -2,6 +2,11 @@
 
 <linker>
 
+	<assembly fullname="Assembly-CSharp">
+	    <type fullname="ZJYFrameWork.XLuaScript.XLuaManager" preserve="all"/>
+		
+	</assembly>
+
 	<assembly fullname="mscorlib">
 	    <type fullname="System.Object" preserve="all"/>
 		<type fullname="System.Collections.Generic.List`1[System.Int32]" preserve="all"/>

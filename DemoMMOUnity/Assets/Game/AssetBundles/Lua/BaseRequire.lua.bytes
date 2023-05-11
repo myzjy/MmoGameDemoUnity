@@ -16,4 +16,9 @@ Time		= require "Common.UnityEngine.Time"
 Object		= require "Common.UnityEngine.Object"
 
 require("Common/BaseClass")
-
+require("Common.util.util")
+require("Common.util.LuaUtil")
+list = require("Common.util.list")
+require("Common.util.event")
+require("Common.util.Timer")
+UpdateManager = require "Common.UpdateManager"

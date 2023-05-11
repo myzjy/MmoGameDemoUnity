@@ -148,6 +148,7 @@ public static class ExampleConfig
         typeof(Action<double>),
         typeof(Action<bool>),
         typeof(Action<float, float>),
+        typeof(Action<float>),
         typeof(UnityEngine.Events.UnityAction),
         typeof(UnityEngine.Events.UnityAction<long>),
         typeof(UnityEngine.Events.UnityAction<long,long>),

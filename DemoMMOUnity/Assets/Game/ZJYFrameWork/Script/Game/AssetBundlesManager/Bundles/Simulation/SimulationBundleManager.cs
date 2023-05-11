@@ -57,10 +57,9 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             if (this.bundles == null)
                 return null;
 
-            SimulationBundle bundle;
-            if (this.bundles.TryGetValue(bundleName, out bundle))
-                return new SimulationInternalBundleWrapper(bundle);
-            return null;
+            return this.bundles.TryGetValue(bundleName, out var bundle)
+                ? new SimulationInternalBundleWrapper(bundle)
+                : null;
         }
 
         public IProgressResult<float, IBundle> LoadBundle(string bundleName)
@@ -73,7 +72,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
             try
             {
                 if (string.IsNullOrEmpty(bundleName))
-                    throw new ArgumentNullException("bundleName", "The bundleName is null or empty!");
+                    throw new ArgumentNullException(nameof(bundleName), "The bundleName is null or empty!");
 
                 SimulationBundle bundle = this.GetOrCreateBundle(bundleName);
                 return new ImmutableProgressResult<float, IBundle>(new SimulationInternalBundleWrapper(bundle), 1f);
