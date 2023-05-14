@@ -15,16 +15,17 @@ end
 
 function UIBaseView:OnShow()
 end
--- function UIBaseView:SetUIView(view)
---     print("初始化 set"..view)
---     local uiView = view:GetComponent("UIView")
---     self.SelfUIView = uiView
---     print("UIBaseView:SetUIView Init"..self.SelfUIView)
---     self.viewPanel.Init(view)
--- end
+function UIBaseView:SetUIView(view)
+    print("初始化 set"..view)
+    local uiView = view:GetComponent("UIView")
+    self.SelfUIView = view
+    print("UIBaseView:SetUIView Init"..self.SelfUIView)
+    self.viewPanel.Init(view)
+end
 --- 隐藏 UI
 function UIBaseView:OnHide()
-    self.SelfUIView.OnClose()
+  local view=  self.SelfUIView:GetComponent("UIView")
+  view.OnClose()
 end
 UIBaseView.viewPanel=viewPanel
 return UIBaseView
