@@ -1,30 +1,36 @@
 local LoginUIModelView = BaseClass(UIBaseModule)
-local LoginUIView = require("Game.Login.LoginView")
 local UINotifEnum = LoginConfig
+local LoginView = require("Game.Login.LoginView")
 function LoginUIModelView:Init()
     CS.Debug.Log("LoginUIModelView Init")
     -- LoginUIModelView.base = UIBaseModule.New()
     --- Create the LoginUIModelView instance based on the
-    -- LoginUIView
-    LoginUIModelView.base = UIBaseModule.Create("LoginPanel", UIConfigEnum.UISortType.Last, UIConfigEnum.UICanvasType.UI,
-        LoginUIView)
+    self.LoginUIView = LoginView
+    self.LoginPanel = require("Game.Login.LoginPanelView").New()
+    LoginUIModelView.base =
+        UIBaseModule.Create(
+        "LoginPanel",
+        UIConfigEnum.UISortType.Last,
+        UIConfigEnum.UICanvasType.UI,
+        self.LoginUIView,
+        self.LoginPanel
+    )
     LoginUIModelView.base.InstanceOrReuse()
-
 end
 
 --- UI 通知事件
 ---@return table
 function LoginUIModelView:Notification()
     local Notification = {
-        LoginConfig.OpenLoginUI
+        UINotifEnum.OpenLoginUI
     }
-    return Notification;
+    return Notification
 end
 
 function LoginUIModelView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [LoginUIModelView:Notification()[0]] = function()
-            LoginUIModelView:Create()
+            -- LoginUIModelView:Create()
             LoginUIModelView.base.InstanceOrReuse()
         end
     }

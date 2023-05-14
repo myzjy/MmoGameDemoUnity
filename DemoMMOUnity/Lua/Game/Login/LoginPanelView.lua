@@ -5,11 +5,16 @@
 ---
 
 
-LoginPanelView={}
-
+local LoginPanelView=BaseClass()
+local _UIView={}
 function LoginPanelView:Init(view)
-    self.LoginPart=view:GetObjType("LoginPart") or CS.UnityEngine.GameObject
-    self.LoginPartView=view:GetObjType("LoginPartView")or CS.ZJYFrameWork.UISerializable.LoginPartView
+    print("LoginPanelView:Init",view)
+    _UIView= view:GetComponent("UIView")
+    self.LoginPart=_UIView:GetObjType("LoginPart") or CS.UnityEngine.GameObject
+    print("LoginPanelView:Init  self.LoginPart", self.LoginPart)
+
+    self.LoginPartView=_UIView:GetObjType("LoginPartView")or CS.ZJYFrameWork.UISerializable.LoginPartView
+    print("LoginPanelView:Init  self.LoginPartView", self.LoginPartView)
 end
 
 return LoginPanelView

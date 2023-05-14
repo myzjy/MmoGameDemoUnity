@@ -133,9 +133,4 @@
 		
 	</assembly>
 
-	<assembly fullname="ZJYFrameWork.UISerializable.Common">
-	    <type fullname="ZJYFrameWork.UISerializable.UIView" preserve="all"/>
-		
-	</assembly>
-
 </linker>

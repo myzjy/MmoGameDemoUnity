@@ -5,7 +5,6 @@ using XLua;
 
 namespace ZJYFrameWork.UISerializable
 {
-    [LuaCallCSharp]
     public class UIView : UISerializableKeyObject
     {
         private int instanceID;

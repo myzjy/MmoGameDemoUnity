@@ -71,7 +71,8 @@ namespace ZJYFrameWork.XLuaScript
             {
                 // string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
                 // scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
-                string source = Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
+                string source =
+ Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
                 Debug.Log($"source:{source}");
                 DirectoryInfo dirInfo = new DirectoryInfo(source);
                 Debug.Log($"dirInfo:{dirInfo.FullName}");
@@ -169,6 +170,9 @@ namespace ZJYFrameWork.XLuaScript
         //当退出游戏的时候调用
         public void OnDestroy()
         {
+            Debug.Log("关闭lua虚拟机");
+            luaEnv.Dispose();
+            luaEnv = null;
         }
     }
 

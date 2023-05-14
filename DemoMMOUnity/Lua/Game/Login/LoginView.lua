@@ -4,23 +4,16 @@
 --- DateTime: 2023/5/13 16:17
 ---
 
-local LoginView=BaseClass(UIBaseView)
-local LoginPanel=require("Game.Login.LoginPanelView")
-local base=UIBaseView
-function LoginView:SetUIView(view)
-    print("初始化 set"..view)
-    local uiView = view:GetComponent("UIView")
-    self.SelfUIView = uiView
-    print("UIBaseView:SetUIView Init"..self.SelfUIView)
-    self.viewPanel.Init(view)
-end
+local LoginView=BaseClass(UIBaseView).New()
 
 function LoginView:OnInit()
     print("LoginView:OnInit")
+
     LoginView:OnShow()
 end
 
 function LoginView:OnShow()
 end
-LoginView.viewPanel=LoginPanel
+
+
 return LoginView

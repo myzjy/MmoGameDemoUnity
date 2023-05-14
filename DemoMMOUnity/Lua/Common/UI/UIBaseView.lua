@@ -1,31 +1,25 @@
 local UIBaseView = BaseClass()
-local viewPanel={}
-function UIBaseView:Create(uiPanelView)
-    local uiView = UIBaseView:New();
+local uiPanelView={}
 
-    -- uiView.SetUIView(View,uiPanelView)
-    self.viewPanel=uiPanelView;
-    return uiView
-
-end
 function UIBaseView:ReUse()
     self.SelfUIView:OnShow()
     UIBaseView:OnShow()
 end
 
 function UIBaseView:OnShow()
+    uiPanelView.OnShow()
 end
-function UIBaseView:SetUIView(view)
-    print("初始化 set"..view)
-    local uiView = view:GetComponent("UIView")
+
+function UIBaseView:SetUIView(view,ViewPanel)
     self.SelfUIView = view
-    print("UIBaseView:SetUIView Init"..self.SelfUIView)
-    self.viewPanel.Init(view)
+    uiPanelView = self.SelfUIView:GetComponent("UIView")
+    self.viewPanel=ViewPanel
 end
+
 --- 隐藏 UI
 function UIBaseView:OnHide()
-  local view=  self.SelfUIView:GetComponent("UIView")
-  view.OnClose()
+    -- uiPanelView = self.SelfUIView:GetComponent("UIView")
+    uiPanelView.OnClose()
 end
-UIBaseView.viewPanel=viewPanel
+
 return UIBaseView
