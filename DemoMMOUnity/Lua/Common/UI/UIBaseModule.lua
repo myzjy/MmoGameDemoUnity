@@ -27,7 +27,7 @@ function UIBaseModule.Create(prefabName, sortType, canvasType, selfView, viewPan
     return data
 end
 
-isResuse = false
+UIBaseModule.isResuse = false
 
 function UIBaseModule:Init()
 end
@@ -49,14 +49,15 @@ function UIBaseModule:ReUse()
 end
 
 function UIBaseModule.InstanceOrReuse()
-    print(UIBaseModule.prefabName, "当前UI创建,创建位置", UIBaseModule.canvasType, ",当前还isResuse:", isResuse)
-    if isResuse then
+    print(UIBaseModule.prefabName, "当前UI创建,创建位置", UIBaseModule.canvasType, ",当前还isResuse:", UIBaseModule.isResuse)
+    if UIBaseModule.isResuse then
         if InstanceID == 0 then
             return
         end
         --- 调用 UI 排序
         UIBaseModule:ReUse()
     else
+        UIBaseModule.isResuse=true
         print("创建UI")
         UIBaseModule:InstancePrefab()
     end
