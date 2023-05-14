@@ -222,8 +222,10 @@ namespace ZJYFrameWork.SpriteViewer
                     return;
                 }
 
+#pragma warning disable CS0618
                 if (EditorSettings.spritePackerMode != SpritePackerMode.AlwaysOn &&
                     EditorSettings.spritePackerMode != SpritePackerMode.BuildTimeOnly)
+#pragma warning restore CS0618
                 {
                     EditorGUILayout.HelpBox(
                         "Sprite Atlas packing is disabled. Enable it in Edit > Project Setting > Editor. Or change from the option below.",

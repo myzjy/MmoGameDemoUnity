@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors;
@@ -14,7 +15,7 @@ namespace ZJYFrameWork.Editors.GameTools.AudioDataPost
 {
     public class AudioDataPostprocessor : AssetPostprocessor
     {
-        static readonly string BGMDirectoryPath = "Assets/Game/AssetBundles/AudioClip/BGM";
+        // [FormerlySerializedAs("_bgmDirectoryPath")] [SerializeField] private string bgmDirectoryPath = "Assets/Game/AssetBundles/AudioClip/BGM";
         static readonly string AudioDataDirectoryPath = "Assets/Game/AssetBundles/AudioClip/Sound";
         static readonly string RawDataDirecotyName = "RawData";
 

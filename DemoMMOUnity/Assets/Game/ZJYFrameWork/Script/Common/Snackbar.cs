@@ -82,7 +82,7 @@ namespace ZJYFrameWork.UISerializable.Common
             serverLandscapeLeftError.text = message;
             serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(true);
             serverErrorLandscapeLeftCanvasGroup.alpha = 0;
-            serverErrorLandscapeLeftCanvasGroup.DOFade(1f, 0.8f).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo);
+            // serverErrorLandscapeLeftCanvasGroup.DOFade(1f, 0.8f).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo);
             StartCoroutine(HideServerError(message));
         }
 
@@ -92,17 +92,17 @@ namespace ZJYFrameWork.UISerializable.Common
 
             if (message.Equals(serverLandscapeLeftError.text))
             {
-                serverErrorLandscapeLeftCanvasGroup.DOFade(0f, 1.2f)
-                    .SetEase(Ease.Linear)
-                    .SetLoops(1, LoopType.Yoyo)
-                    .OnComplete(() =>
-                    {
-                        if (message.Equals(serverLandscapeLeftError.text))
-                        {
-                            serverLandscapeLeftError.text = null;
-                            serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
-                        }
-                    });
+                // serverErrorLandscapeLeftCanvasGroup.DOFade(0f, 1.2f)
+                //     .SetEase(Ease.Linear)
+                //     .SetLoops(1, LoopType.Yoyo)
+                //     .OnComplete(() =>
+                //     {
+                //         if (message.Equals(serverLandscapeLeftError.text))
+                //         {
+                //             serverLandscapeLeftError.text = null;
+                //             serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
+                //         }
+                //     });
             }
         }
 

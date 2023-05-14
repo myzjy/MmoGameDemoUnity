@@ -194,8 +194,8 @@ namespace ZJYFrameWork.SpriteViewer
                 switch (EditorSettings.spritePackerMode)
                 {
                     case SpritePackerMode.Disabled:
-                    case SpritePackerMode.BuildTimeOnly:
-                    case SpritePackerMode.AlwaysOn:
+                    // case SpritePackerMode.BuildTimeOnly:
+                    // case SpritePackerMode.AlwaysOn:
                         instance.currentMode = EditorMode.SpritePacker;
                         break;
                     case SpritePackerMode.BuildTimeOnlyAtlas:

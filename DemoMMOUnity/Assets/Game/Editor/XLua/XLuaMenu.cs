@@ -22,7 +22,20 @@ namespace ZJYFrameWorkEditor.XLuaEditor
                     Util.SafeDeleteFile(t);
                 }
             }
-
+            string source = Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}");
+            Debug.Log($"source:{source}");
+            DirectoryInfo dirInfo = new DirectoryInfo(source);
+            Debug.Log($"dirInfo:{dirInfo.FullName}");
+            source = dirInfo.FullName;
+            var notLuaFile = Util.GetSpecifyFilesInFolder(source, true);
+            if (notLuaFile is { Length: > 0 })
+            {
+                foreach (var t in notLuaFile)
+                {
+                    Debug.Log($"file：{t}");
+                    Util.SafeDeleteFile(t);
+                }
+            }
             XLuaAssetBundle();
         }
 
@@ -37,7 +50,7 @@ namespace ZJYFrameWorkEditor.XLuaEditor
             DirectoryInfo destinationDir = new DirectoryInfo(destination);
             Debug.Log($"destinationDir Path :{destinationDir.FullName}");
             destination = destinationDir.FullName;
-            string source = Path.Combine(Application.dataPath, $"Game/{AssetBundleConfig.luaAssetbundleAssetName}");
+            string source = Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}");
             Debug.Log($"source:{source}");
             DirectoryInfo dirInfo = new DirectoryInfo(source);
             Debug.Log($"dirInfo:{dirInfo.FullName}");
@@ -70,6 +83,7 @@ namespace ZJYFrameWorkEditor.XLuaEditor
             Debug.Log("Copy lua files over");
         }
 
+        [MenuItem("Tools/XLua/FileDelete")]
         public static void XLuaAssetBundle()
         {
             // DeleteMacErrorFile();
@@ -108,15 +122,6 @@ namespace ZJYFrameWorkEditor.XLuaEditor
                 EditorUtility.SetDirty(obj);
             }
             AssetDatabase.Refresh();
-            // var assetList = AssetDatabase.LoadAllAssetsAtPath(destination);
-            // for (int i = 0; i < assetList.Length; i++)
-            // {
-            //     Debug.Log($"asset obj name:{assetList[i].name}");
-            // }
-
-            // Debug.Log(assetList.Length);
-            //
-            // Debug.Log(assetList);
         }
     }
 }

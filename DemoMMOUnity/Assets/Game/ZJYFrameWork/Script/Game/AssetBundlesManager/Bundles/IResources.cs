@@ -43,7 +43,7 @@ namespace ZJYFrameWork.AssetBundles.Bundles
         Object LoadAsset(string path, System.Type type);
 
         /// <summary>
-        /// Synchronously loads an asset.The related AssetBundle must already be loaded, otherwise returns null.
+        /// 同步加载资源。相关的AssetBundle必须已经被加载，否则返回null。
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>

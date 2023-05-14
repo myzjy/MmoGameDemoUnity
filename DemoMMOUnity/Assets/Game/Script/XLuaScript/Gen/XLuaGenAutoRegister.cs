@@ -287,6 +287,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(System.Collections.IEnumerator), SystemCollectionsIEnumeratorWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.UISerializable.UIView), ZJYFrameWorkUISerializableUIViewWrap.__Register);
+        
+        
         
         }
         

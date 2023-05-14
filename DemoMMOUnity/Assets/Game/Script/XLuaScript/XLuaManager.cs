@@ -32,12 +32,12 @@ namespace ZJYFrameWork.XLuaScript
         /// </summary>
         LuaEnv luaEnv = null;
 
-        Action onLoginOk = null;
+        // Action onLoginOk = null;
 
         protected override void OnAwake()
         {
             base.OnAwake();
-            InitLuaEnv();
+            // InitLuaEnv();
         }
 
         public void InitLuaEnv()
@@ -48,7 +48,7 @@ namespace ZJYFrameWork.XLuaScript
                 //虚拟机
                 luaEnv.AddLoader(CustomLoader);
                 LoadScript("BaseRequire");
-                LoadScript("Common.util.event");
+                // LoadScript("Common.util.event");
                 luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
                 luaLateUpdate = luaEnv.Global.Get<Action>("LateUpdate");
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
@@ -69,8 +69,13 @@ namespace ZJYFrameWork.XLuaScript
 #if UNITY_EDITOR
             if (AssetBundleConfig.IsEditorMode)
             {
-                string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
-                scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
+                // string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
+                // scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
+                string source = Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
+                Debug.Log($"source:{source}");
+                DirectoryInfo dirInfo = new DirectoryInfo(source);
+                Debug.Log($"dirInfo:{dirInfo.FullName}");
+                scriptPath = dirInfo.FullName;
                 var textLua = Util.GetFileBytes(scriptPath);
                 return textLua;
             }

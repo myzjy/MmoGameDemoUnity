@@ -32,16 +32,7 @@ namespace XLua.CSObjectWrap
 			    null, null, null);
 
 		    Utils.BeginClassRegister(type, L, __CreateInstance, 54, 0, 0);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "ClosestPowerOfTwo", _m_ClosestPowerOfTwo_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "IsPowerOfTwo", _m_IsPowerOfTwo_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "NextPowerOfTwo", _m_NextPowerOfTwo_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "GammaToLinearSpace", _m_GammaToLinearSpace_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "LinearToGammaSpace", _m_LinearToGammaSpace_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "CorrelatedColorTemperatureToRGB", _m_CorrelatedColorTemperatureToRGB_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "FloatToHalf", _m_FloatToHalf_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "HalfToFloat", _m_HalfToFloat_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "PerlinNoise", _m_PerlinNoise_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Sin", _m_Sin_xlua_st_);
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "Sin", _m_Sin_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Cos", _m_Cos_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Tan", _m_Tan_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Asin", _m_Asin_xlua_st_);
@@ -79,6 +70,15 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.CLS_IDX, "PingPong", _m_PingPong_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "InverseLerp", _m_InverseLerp_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "DeltaAngle", _m_DeltaAngle_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "ClosestPowerOfTwo", _m_ClosestPowerOfTwo_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "IsPowerOfTwo", _m_IsPowerOfTwo_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "NextPowerOfTwo", _m_NextPowerOfTwo_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "GammaToLinearSpace", _m_GammaToLinearSpace_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "LinearToGammaSpace", _m_LinearToGammaSpace_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "CorrelatedColorTemperatureToRGB", _m_CorrelatedColorTemperatureToRGB_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "FloatToHalf", _m_FloatToHalf_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "HalfToFloat", _m_HalfToFloat_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "PerlinNoise", _m_PerlinNoise_xlua_st_);
             
 			
             Utils.RegisterObject(L, translator, Utils.CLS_IDX, "PI", UnityEngine.Mathf.PI);
@@ -121,234 +121,6 @@ namespace XLua.CSObjectWrap
         
         
         
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_ClosestPowerOfTwo_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    int _value = LuaAPI.xlua_tointeger(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.ClosestPowerOfTwo( _value );
-                        LuaAPI.xlua_pushinteger(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_IsPowerOfTwo_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    int _value = LuaAPI.xlua_tointeger(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.IsPowerOfTwo( _value );
-                        LuaAPI.lua_pushboolean(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_NextPowerOfTwo_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    int _value = LuaAPI.xlua_tointeger(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.NextPowerOfTwo( _value );
-                        LuaAPI.xlua_pushinteger(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_GammaToLinearSpace_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    float _value = (float)LuaAPI.lua_tonumber(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.GammaToLinearSpace( _value );
-                        LuaAPI.lua_pushnumber(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LinearToGammaSpace_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    float _value = (float)LuaAPI.lua_tonumber(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.LinearToGammaSpace( _value );
-                        LuaAPI.lua_pushnumber(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_CorrelatedColorTemperatureToRGB_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    float _kelvin = (float)LuaAPI.lua_tonumber(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.CorrelatedColorTemperatureToRGB( _kelvin );
-                        translator.PushUnityEngineColor(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_FloatToHalf_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    float _val = (float)LuaAPI.lua_tonumber(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.FloatToHalf( _val );
-                        LuaAPI.xlua_pushinteger(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_HalfToFloat_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    ushort _val = (ushort)LuaAPI.xlua_tointeger(L, 1);
-                    
-                        var gen_ret = UnityEngine.Mathf.HalfToFloat( _val );
-                        LuaAPI.lua_pushnumber(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_PerlinNoise_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-            
-            
-                
-                {
-                    float _x = (float)LuaAPI.lua_tonumber(L, 1);
-                    float _y = (float)LuaAPI.lua_tonumber(L, 2);
-                    
-                        var gen_ret = UnityEngine.Mathf.PerlinNoise( _x, _y );
-                        LuaAPI.lua_pushnumber(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_Sin_xlua_st_(RealStatePtr L)
@@ -1529,6 +1301,234 @@ namespace XLua.CSObjectWrap
                     float _target = (float)LuaAPI.lua_tonumber(L, 2);
                     
                         var gen_ret = UnityEngine.Mathf.DeltaAngle( _current, _target );
+                        LuaAPI.lua_pushnumber(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_ClosestPowerOfTwo_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    int _value = LuaAPI.xlua_tointeger(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.ClosestPowerOfTwo( _value );
+                        LuaAPI.xlua_pushinteger(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_IsPowerOfTwo_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    int _value = LuaAPI.xlua_tointeger(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.IsPowerOfTwo( _value );
+                        LuaAPI.lua_pushboolean(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_NextPowerOfTwo_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    int _value = LuaAPI.xlua_tointeger(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.NextPowerOfTwo( _value );
+                        LuaAPI.xlua_pushinteger(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_GammaToLinearSpace_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    float _value = (float)LuaAPI.lua_tonumber(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.GammaToLinearSpace( _value );
+                        LuaAPI.lua_pushnumber(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_LinearToGammaSpace_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    float _value = (float)LuaAPI.lua_tonumber(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.LinearToGammaSpace( _value );
+                        LuaAPI.lua_pushnumber(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_CorrelatedColorTemperatureToRGB_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    float _kelvin = (float)LuaAPI.lua_tonumber(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.CorrelatedColorTemperatureToRGB( _kelvin );
+                        translator.PushUnityEngineColor(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_FloatToHalf_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    float _val = (float)LuaAPI.lua_tonumber(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.FloatToHalf( _val );
+                        LuaAPI.xlua_pushinteger(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_HalfToFloat_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    ushort _val = (ushort)LuaAPI.xlua_tointeger(L, 1);
+                    
+                        var gen_ret = UnityEngine.Mathf.HalfToFloat( _val );
+                        LuaAPI.lua_pushnumber(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_PerlinNoise_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+            
+            
+                
+                {
+                    float _x = (float)LuaAPI.lua_tonumber(L, 1);
+                    float _y = (float)LuaAPI.lua_tonumber(L, 2);
+                    
+                        var gen_ret = UnityEngine.Mathf.PerlinNoise( _x, _y );
                         LuaAPI.lua_pushnumber(L, gen_ret);
                     
                     

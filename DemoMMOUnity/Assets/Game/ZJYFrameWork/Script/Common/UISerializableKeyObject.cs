@@ -62,6 +62,12 @@ namespace ZJYFrameWork.UISerializable
             ObjectsDict.TryGetValue(key: objKey, out var data);
             return data != null ? data as T : null;
         }
+
+        public Object GetObjType(string objKey)
+        {
+            ObjectsDict.TryGetValue(key: objKey, out var data);
+            return data != null ? data : null;
+        }
 #if UNITY_EDITOR
         public void FlushData()
         {

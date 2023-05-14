@@ -53,7 +53,12 @@ namespace XLua.CSObjectWrap
 			    null, null, null);
 
 		    Utils.BeginClassRegister(type, L, __CreateInstance, 15, 1, 0);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "FromToRotation", _m_FromToRotation_xlua_st_);
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "Dot", _m_Dot_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Angle", _m_Angle_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Euler", _m_Euler_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "RotateTowards", _m_RotateTowards_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Normalize", _m_Normalize_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "FromToRotation", _m_FromToRotation_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Inverse", _m_Inverse_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Slerp", _m_Slerp_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "SlerpUnclamped", _m_SlerpUnclamped_xlua_st_);
@@ -61,11 +66,6 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.CLS_IDX, "LerpUnclamped", _m_LerpUnclamped_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "AngleAxis", _m_AngleAxis_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "LookRotation", _m_LookRotation_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Dot", _m_Dot_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Angle", _m_Angle_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Euler", _m_Euler_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "RotateTowards", _m_RotateTowards_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Normalize", _m_Normalize_xlua_st_);
             
 			
             Utils.RegisterObject(L, translator, Utils.CLS_IDX, "kEpsilon", UnityEngine.Quaternion.kEpsilon);
@@ -230,248 +230,6 @@ namespace XLua.CSObjectWrap
         }
         
         
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_FromToRotation_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Vector3 _fromDirection;translator.Get(L, 1, out _fromDirection);
-                    UnityEngine.Vector3 _toDirection;translator.Get(L, 2, out _toDirection);
-                    
-                        var gen_ret = UnityEngine.Quaternion.FromToRotation( _fromDirection, _toDirection );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_Inverse_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Quaternion _rotation;translator.Get(L, 1, out _rotation);
-                    
-                        var gen_ret = UnityEngine.Quaternion.Inverse( _rotation );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_Slerp_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Quaternion.Slerp( _a, _b, _t );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_SlerpUnclamped_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Quaternion.SlerpUnclamped( _a, _b, _t );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_Lerp_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Quaternion.Lerp( _a, _b, _t );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LerpUnclamped_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Quaternion.LerpUnclamped( _a, _b, _t );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_AngleAxis_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    float _angle = (float)LuaAPI.lua_tonumber(L, 1);
-                    UnityEngine.Vector3 _axis;translator.Get(L, 2, out _axis);
-                    
-                        var gen_ret = UnityEngine.Quaternion.AngleAxis( _angle, _axis );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_LookRotation_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-			    int gen_param_count = LuaAPI.lua_gettop(L);
-            
-                if(gen_param_count == 1&& translator.Assignable<UnityEngine.Vector3>(L, 1)) 
-                {
-                    UnityEngine.Vector3 _forward;translator.Get(L, 1, out _forward);
-                    
-                        var gen_ret = UnityEngine.Quaternion.LookRotation( _forward );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                if(gen_param_count == 2&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)) 
-                {
-                    UnityEngine.Vector3 _forward;translator.Get(L, 1, out _forward);
-                    UnityEngine.Vector3 _upwards;translator.Get(L, 2, out _upwards);
-                    
-                        var gen_ret = UnityEngine.Quaternion.LookRotation( _forward, _upwards );
-                        translator.PushUnityEngineQuaternion(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Quaternion.LookRotation!");
-            
-        }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_Set(RealStatePtr L)
@@ -940,6 +698,248 @@ namespace XLua.CSObjectWrap
             }
             
             return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Quaternion.ToString!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_FromToRotation_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _fromDirection;translator.Get(L, 1, out _fromDirection);
+                    UnityEngine.Vector3 _toDirection;translator.Get(L, 2, out _toDirection);
+                    
+                        var gen_ret = UnityEngine.Quaternion.FromToRotation( _fromDirection, _toDirection );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Inverse_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Quaternion _rotation;translator.Get(L, 1, out _rotation);
+                    
+                        var gen_ret = UnityEngine.Quaternion.Inverse( _rotation );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Slerp_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Quaternion.Slerp( _a, _b, _t );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_SlerpUnclamped_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Quaternion.SlerpUnclamped( _a, _b, _t );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Lerp_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Quaternion.Lerp( _a, _b, _t );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_LerpUnclamped_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Quaternion _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Quaternion _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Quaternion.LerpUnclamped( _a, _b, _t );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_AngleAxis_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    float _angle = (float)LuaAPI.lua_tonumber(L, 1);
+                    UnityEngine.Vector3 _axis;translator.Get(L, 2, out _axis);
+                    
+                        var gen_ret = UnityEngine.Quaternion.AngleAxis( _angle, _axis );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_LookRotation_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& translator.Assignable<UnityEngine.Vector3>(L, 1)) 
+                {
+                    UnityEngine.Vector3 _forward;translator.Get(L, 1, out _forward);
+                    
+                        var gen_ret = UnityEngine.Quaternion.LookRotation( _forward );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                if(gen_param_count == 2&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)) 
+                {
+                    UnityEngine.Vector3 _forward;translator.Get(L, 1, out _forward);
+                    UnityEngine.Vector3 _upwards;translator.Get(L, 2, out _upwards);
+                    
+                        var gen_ret = UnityEngine.Quaternion.LookRotation( _forward, _upwards );
+                        translator.PushUnityEngineQuaternion(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Quaternion.LookRotation!");
             
         }
         

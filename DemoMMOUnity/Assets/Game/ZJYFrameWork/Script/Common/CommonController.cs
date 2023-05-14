@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.UISerializable.Common
 {
@@ -11,5 +12,7 @@ namespace ZJYFrameWork.UISerializable.Common
         {
             base.Init();
         }
+
+
     }
 }

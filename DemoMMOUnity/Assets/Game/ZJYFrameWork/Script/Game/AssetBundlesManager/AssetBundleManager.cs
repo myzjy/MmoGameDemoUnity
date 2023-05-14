@@ -104,7 +104,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             "System_Core_bytes",
         };
 
-        private void Awake()
+        private void Start()
         {
             Debug.Log("[AssetBundleManager]");
             Executors.RunOnCoroutine(InitBase());
@@ -161,8 +161,16 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
                 isLoad = true;
             });
             yield return new WaitUntil(() => isLoad);
+            isLoad = false;
+            var sync = Resources.LoadBundle("xlua.assetbundle");
+            sync.WaitForDone();
+            sync.Callbackable().OnCallback(res =>
+            {
+                isLoad = true;
+            });
+            yield return new WaitUntil(() => isLoad);
             ReginBean();
-           
+
 
             var baseObj = Instantiate(obj, this.transform) as GameObject;
         }
@@ -258,6 +266,35 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
         }
 
         public void LoadAsset(string assetBundle, System.Action<Object> loadAssetCallbacks)
+        {
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+            var obj = Resources.LoadAsset(abName);
+            if (obj == null)
+            {
+                LoadAssetAsync(assetBundle, loadAssetCallbacks);
+            }
+            else
+            {
+                loadAssetCallbacks(obj);
+            }
+        }
+
+        public Object LoadAsset(string assetBundle)
+        {
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+            var obj = Resources.LoadAsset(abName);
+            return obj;
+        }
+
+        public GameObject LoadAssetGameObject(string assetBundle)
+        {
+            var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
+            var obj = Resources.LoadAsset(abName);
+            var gameObj = obj as GameObject;
+            return gameObj;
+        }
+
+        public void LoadAssetAsync(string assetBundle, System.Action<Object> loadAssetCallbacks)
         {
             var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
             var obj = Resources.LoadAssetAsync(abName);

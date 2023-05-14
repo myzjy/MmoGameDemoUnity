@@ -130,7 +130,7 @@ namespace ZJYFrameWork.UISerializable
 
         GameObject InstantiateGameObject(GameObject prefab, Action<GameObject> action)
         {
-            UIRoot ROOT = SpringContext.GetBean<UIComponent>().GetRoot;
+            //UIRoot ROOT = SpringContext.GetBean<UIComponent>().GetRoot;
             var parent = GetPanelUIRoot(GetCanvasType());
             GameObject go = Object.Instantiate(prefab, parent.transform, true);
             var rectTransform = go.GetComponent<RectTransform>();

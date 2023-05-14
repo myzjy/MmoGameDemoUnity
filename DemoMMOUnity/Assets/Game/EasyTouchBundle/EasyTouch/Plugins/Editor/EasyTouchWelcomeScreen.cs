@@ -91,7 +91,7 @@ public class EasyTouchWelcomeScreen : EditorWindow {
 
 	static void OnPlayModeChanged(){
 		EditorApplication.update -= OpenAtStartup;
-		EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
+		// EditorApplication.playmodeStateChanged -= OnPlayModeChanged;
 	}
 	
 	void OnEnable(){

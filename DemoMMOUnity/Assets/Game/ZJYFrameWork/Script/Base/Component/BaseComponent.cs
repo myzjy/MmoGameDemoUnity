@@ -14,6 +14,7 @@ using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.WebRequest;
+using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Base.Component
 {
@@ -120,6 +121,7 @@ namespace ZJYFrameWork.Base.Component
             moduleList.ForEach(item => CachedModules.Add(item));
             //我当前module 有多少个
             moduleSize = (short)moduleList.Count;
+            SpringContext.GetBean<XLuaManager>().InitLuaEnv();
             //初始化流程状态
             // SpringContext.GetBean<NetworkManager>().Init();
             // SpringContext.GetBean<ProcedureComponent>().StartProcedure();

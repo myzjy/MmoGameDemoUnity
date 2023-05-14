@@ -1,1 +1,0 @@
-local _loadAssetCallbacks=CS.ZJYFrameWork.AssetBundles.Model.Callback.LoadAssetCallbacks
