@@ -6,8 +6,13 @@
 
 function LuaMain()
     CS.Debug.Log("LuaMain")
+    UIComponentManager.InitUIModelComponent()
 end
 
 function StartGame()
     CS.Debug.Log("StartGame")
+end
+local Game={}
+function Game:Init()
+
 end

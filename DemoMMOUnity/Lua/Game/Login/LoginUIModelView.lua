@@ -22,12 +22,12 @@ function LoginUIModelView:Init()
 end
 
 --- UI 通知事件
----@return table
 function LoginUIModelView:Notification()
-    local Notification = {
-        UINotifEnum.OpenLoginUI
+    local UINotifEnum={
+        OpenLoginUI="OPEN_LOGIN_UI"
     }
-    return Notification
+
+    return UINotifEnum
 end
 
 

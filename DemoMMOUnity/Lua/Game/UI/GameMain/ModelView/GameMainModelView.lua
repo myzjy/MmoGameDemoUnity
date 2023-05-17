@@ -23,6 +23,12 @@ end
 --- UI 通知事件
 ---@return table
 function GameMainUIModelView:Notification()
+    local UINotifEnum={
+        --- 打开 界面
+        OPEN_GAMEMAIN_PANEL="OPEN_GAMEMAIN_PANEL",
+        CLOSE_GAMEMAIN_PANEL="CLOSE_GAMEMAIN_PANEL",
+        TIME_GAMEMAIN_PANEL="TIME_GAMEMAIN_PANEL"
+    }
     return UINotifEnum
 end
 

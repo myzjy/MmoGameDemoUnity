@@ -51,7 +51,7 @@ namespace ZJYFrameWork.XLuaScript
 
                 var init = luaEnv.Global.Get<Action<int>>("IsDebug");
 #if UNITY_EDITOR || (DEVELOP_BUILD&& ENABLE_LOG)
-                
+                init.Invoke(1);
 #endif
                 LoadScript("BaseRequire");
                 // LoadScript("Common.util.event");

@@ -7,5 +7,4 @@ UIBaseView=require("Common.UI.UIBaseView")
 UIBaseModule=require("Common.UI.UIBaseModule")
 
 UIConfigEnum=require("Common.UI.UIConfigEnum")
-LoginUIModelView=require("Game.Login.LoginUIModelView")
-GameMainUIModelView=require("Game.UI.GameMain.ModelView.GameMainModelView")
+UIComponentManager=require("Game.Manager.UIComponentManager")
