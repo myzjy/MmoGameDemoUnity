@@ -9,6 +9,7 @@ local CommonManager = CS.ZJYFrameWork.Common.CommonManager
 --- @param prefabName string 预制体名字
 --- @param sortType number   排序格式
 --- @param canvasType number 层级
+---@return UIBaseModule
 function UIBaseModule.Create(prefabName, sortType, canvasType, selfView, viewPanel)
     local data = UIBaseModule.New()
     CS.Debug.Log(string.format("创建%s ，%d，%d，", prefabName, sortType, canvasType))

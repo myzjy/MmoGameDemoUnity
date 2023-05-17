@@ -1129,7 +1129,7 @@ namespace BestHTTP
                 if (RawData == null && (_formImpl != null || _fieldCollector is { IsEmpty: false }))
                 {
                     var formData = SelectFormImplementation();
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -1350,7 +1350,7 @@ namespace BestHTTP
                 }
                 catch (Exception ex)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -1391,7 +1391,7 @@ namespace BestHTTP
                 {
                     if (string.IsNullOrEmpty(t))
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         {
                             var st = new StackTrace(new StackFrame(true));
                             var sf = st.GetFrame(0);
@@ -1407,7 +1407,7 @@ namespace BestHTTP
 #endif
                         continue;
                     }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -1458,7 +1458,7 @@ namespace BestHTTP
 
             if (_formImpl == null && _fieldCollector is not { IsEmpty: false }) return null;
             var formData = SelectFormImplementation();
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             var sb = new StringBuilder();
             sb.Append("[HTTPRequest] ");
             sb.Append("[method: GetEntityBody] ");
@@ -1530,7 +1530,7 @@ namespace BestHTTP
                     CurrentUri.GetRequestPathAndQueryURL();
 
             string requestLine = $"{MethodNames[(byte)MethodType]} {requestPathAndQuery} HTTP/1.1";
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[HTTPRequest] [method:SendOutTo] [msg] Sending request: '{requestLine}'");
 #endif
@@ -1665,7 +1665,7 @@ namespace BestHTTP
                 else
                     bufferStream.Flush();
             } // bufferStream.Dispose
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -1695,7 +1695,7 @@ namespace BestHTTP
             }
             catch (Exception ex)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -1747,7 +1747,7 @@ namespace BestHTTP
         /// </summary>
         public void Abort()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);

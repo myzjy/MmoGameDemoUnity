@@ -28,9 +28,6 @@ public class SymbolWindows : EditorWindow
 
     private static  List<SymbolData> _mSymbolDataList = new List<SymbolData>()
     {
-        new SymbolData("OUTPUT_API_JSONS", "向temporary缓存输出API响应的JSON"),
-        new SymbolData("OUTPUT_VERBOSE_LOGS", "记录输出有效化"),
-        new SymbolData("USE_DEBUG_TOOLS", "用户调试"),
         new SymbolData("LOGGER_ON", "LOG"),
         new SymbolData("DEVELOP_BUILD", "开发模式"),
         new SymbolData("DISABLE_SERVERSENT_EVENTS", ""),
@@ -43,6 +40,7 @@ public class SymbolWindows : EditorWindow
         new SymbolData("ENABLE_DEBUG_AND_ABOVE_LOG", ""),
         new SymbolData("ASSET_BUNDLE_DEVELOP_EDITOR", "AssetBundles编辑模式"),
         new SymbolData("HOTFIX_ENABLE", "xlua"),
+        new SymbolData("ENABLE_LOG_NETWORK","网络相关 log")
 
     };
 

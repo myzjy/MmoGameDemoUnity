@@ -4,16 +4,21 @@
 --- DateTime: 2023/5/13 16:17
 ---
 
-local LoginView=BaseClass(UIBaseView).New()
+local LoginView = BaseClass(UIBaseView).New()
 
 function LoginView:OnInit()
     print("LoginView:OnInit")
+    print(LoginView:GetViewPanel())
+    LoginView:GetViewPanel().LoginPartView:Build()
+    LoginView:GetViewPanel().RegisterPartView:Build()
+    LoginView:GetViewPanel().LoginTapToStartView:Build(nil)
+    LoginView:GetViewPanel().LoginController:Build(LoginView:GetViewPanel().LoginPartView, LoginView:GetViewPanel().RegisterPartView, LoginView:GetViewPanel().LoginTapToStartView, LoginView)
+    LoginView:GetViewPanel().LoginController:OnInit();
 
-    LoginView:OnShow()
+
 end
 
 function LoginView:OnShow()
 end
-
 
 return LoginView

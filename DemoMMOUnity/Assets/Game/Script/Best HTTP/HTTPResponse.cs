@@ -237,7 +237,7 @@ namespace BestHTTP
             }
 
             string statusLine;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -274,7 +274,7 @@ namespace BestHTTP
 
                 if (BaseRequest.Retries >= BaseRequest.MaxRetries)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -290,7 +290,7 @@ namespace BestHTTP
 #endif
                     return false;
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -306,7 +306,7 @@ namespace BestHTTP
 #endif
                 throw;
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -335,7 +335,7 @@ namespace BestHTTP
             string[] versions = statusLine.Split(new char[] { '/', '.' });
             this.VersionMajor = int.Parse(versions[1]);
             this.VersionMinor = int.Parse(versions[2]);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -351,7 +351,7 @@ namespace BestHTTP
 #endif
             int statusCode;
             string statusCodeStr = NoTrimReadTo(Stream, (byte)' ', LF);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -380,7 +380,7 @@ namespace BestHTTP
                 (byte)statusCodeStr[^1] != CR)
             {
                 this.Message = ReadTo(Stream, LF);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -397,7 +397,7 @@ namespace BestHTTP
             }
             else
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -432,7 +432,7 @@ namespace BestHTTP
              */
             if (IsUpgraded)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -471,7 +471,7 @@ namespace BestHTTP
             if (forceReadRawContentLength != -1)
             {
                 ReadRaw(Stream, forceReadRawContentLength);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -540,7 +540,7 @@ namespace BestHTTP
                     ReadUnknownSize(stream: Stream);
                 }
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -571,7 +571,7 @@ namespace BestHTTP
                 var value = ReadTo(
                     stream: stream,
                     blocker: LF);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -919,7 +919,7 @@ namespace BestHTTP
             {
                 hasContentLengthHeader = int.TryParse(contentLengthHeader, out realLength);
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -936,7 +936,7 @@ namespace BestHTTP
 #endif
             using var output = new BufferPoolMemoryStream();
             int chunkLength = ReadChunkLength(stream);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -1060,7 +1060,7 @@ namespace BestHTTP
                 {
                     downloadLength += chunkLength;
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -1133,7 +1133,7 @@ namespace BestHTTP
                 RequestEventHelper.EnqueueRequestEvent(@event: requestEvent);
                 
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -1294,7 +1294,7 @@ namespace BestHTTP
                 byte[] buffer = BaseRequest.ReadBufferSizeOverride > 0
                     ? BufferPool.Get(BaseRequest.ReadBufferSizeOverride, false)
                     : BufferPool.Get(MinReadBufferSize, true);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -1565,7 +1565,7 @@ namespace BestHTTP
                    BaseRequest.UseStreaming &&
                    FragmentQueueIsFull())
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -1677,7 +1677,7 @@ namespace BestHTTP
                     Interlocked.Increment(ref this.UnprocessedFragments);
                 }
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -1716,7 +1716,7 @@ namespace BestHTTP
             var unprocessedFragments = Interlocked.Read(ref UnprocessedFragments);
 
             var result = unprocessedFragments >= BaseRequest.MaxFragmentQueueLength;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);

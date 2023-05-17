@@ -57,7 +57,7 @@ namespace BestHTTP.Core
 
         public static void EnqueuePluginEvent(PluginEventInfo @event)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log($"[PluginEventHelper] [EnqueuePluginEvent] [msg] Enqueue plugin event: {@event.ToString()}");
 #endif
             PluginEvents.Enqueue(@event);
@@ -80,7 +80,7 @@ namespace BestHTTP.Core
 
             while (PluginEvents.TryDequeue(out var pluginEvent))
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log($"[PluginEventHelper] [ProcessQueue] [msg] Processing plugin event: {pluginEvent}");
 #endif
                 if (_onEvent != null)
@@ -91,7 +91,7 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         Debug.LogError(
                             $"[PluginEventHelper] [method:ProcessQueue] [msg|Exception] ProcessQueue  Exception:{ex}");
 #endif

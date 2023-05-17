@@ -1,13 +1,15 @@
 local LoginUIModelView = BaseClass(UIBaseModule)
 local UINotifEnum = LoginConfig
 local LoginView = require("Game.Login.LoginView")
+
 function LoginUIModelView:Init()
     CS.Debug.Log("LoginUIModelView Init")
     -- LoginUIModelView.base = UIBaseModule.New()
     --- Create the LoginUIModelView instance based on the
 
     self.LoginUIView = LoginView
-    self.LoginPanel = require("Game.Login.LoginPanelView").New()
+    self.LoginPanel = require("Game.GenerateScripts.UIModules.LoginPanelView").New()
+    ---@type UIBaseModule
     LoginUIModelView.base =
         UIBaseModule.Create(
         "LoginPanel",
@@ -28,12 +30,13 @@ function LoginUIModelView:Notification()
     return Notification
 end
 
+
 function LoginUIModelView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [LoginUIModelView:Notification()[0]] = function()
             -- LoginUIModelView:Create()
             if LoginUIModelView.base.isResuse then
-                LoginUIModelView.base.InstisResuseanceOrReuse()
+                LoginUIModelView.base:InstisResuseanceOrReuse()
             else
                 LoginUIModelView:Init()
             end

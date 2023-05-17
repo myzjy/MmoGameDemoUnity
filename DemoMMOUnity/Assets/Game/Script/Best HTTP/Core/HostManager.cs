@@ -24,7 +24,7 @@ namespace BestHTTP.Core
 
         public static void RemoveAllIdleConnections()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log($"[HostManager] [method:RemoveAllIdleConnections] [msg] RemoveAllIdleConnections");
 #endif
             foreach (var variantKvp in hosts.SelectMany(hostKvp => hostKvp.Value.HostConnectionVariant))
@@ -41,7 +41,7 @@ namespace BestHTTP.Core
 
         public static void Shutdown()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log($"[HostManager] [method:Shutdown] [msg] Shutdown initiated!");
 #endif
             foreach (var kvp in hosts)
@@ -52,7 +52,7 @@ namespace BestHTTP.Core
 
         public static void Clear()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log($"[HostManager] [method:Clear] [msg] Clearing hosts!");
 #endif
             hosts.Clear();
@@ -71,7 +71,7 @@ namespace BestHTTP.Core
                 catch
                 {
                     IsSaveAndLoadSupported = false;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     Debug.Log($"[HostManager] [method:SetupFolder] [msg] Save and load Disabled!");
 #endif
                 }
@@ -98,7 +98,7 @@ namespace BestHTTP.Core
                         kvp.Value.SaveTo(bw);
                     }
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log($"[HostManager] [method:Save] [msg] {hosts.Count} hosts saved!");
 #endif
             }
@@ -132,7 +132,7 @@ namespace BestHTTP.Core
                 {
                     GetHost(br.ReadString()).LoadFrom(version, br);
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log($"[HostManager] [method:Load] [msg] {hostCount.ToString()} HostDefinitions loaded!");
 #endif
             }

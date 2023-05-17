@@ -9,8 +9,8 @@ namespace ZJYFrameWork.UISerializable
     {
         private static readonly List<UIModelInterface> UIModelInterfaces = new List<UIModelInterface>();
         
-        private static readonly Dictionary<string, UIModelInterface> UIEventNotificationStrDict =
-            new Dictionary<string, UIModelInterface>();
+        // private static readonly Dictionary<string, UIModelInterface> UIEventNotificationStrDict =
+        //     new Dictionary<string, UIModelInterface>();
         private static readonly Dictionary<string, Action<UINotification>> UIEventNotificationDict =
             new Dictionary<string, Action<UINotification>>();
         public static void InitUIModelComponent()
@@ -32,7 +32,7 @@ namespace ZJYFrameWork.UISerializable
             foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType => (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
             {
                 UIModelInterfaces.Add(uiModelRegistration);
-                UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
+                // UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
                 var stringList = uiModelRegistration.Notification();
                 foreach (var str in uiModelRegistration.Notification())
                 {
@@ -64,6 +64,11 @@ namespace ZJYFrameWork.UISerializable
             eventAction?.Invoke(eventUI);
             //使用完需要放回池子里
             UINotificationHelp.ResUse(eventUI);
+        }
+
+        public static void CSDispatchEvent(string name, object body = null)
+        {
+            
         }
     }
 }

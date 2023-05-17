@@ -6,7 +6,6 @@
 
 function LuaMain()
     CS.Debug.Log("LuaMain")
-    LoginUIModelView:Init()
 end
 
 function StartGame()

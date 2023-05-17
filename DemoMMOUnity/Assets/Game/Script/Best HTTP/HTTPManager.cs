@@ -342,7 +342,7 @@ namespace BestHTTP
 
             _isSetupCalled = true;
             IsQuitting = false;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -396,7 +396,7 @@ namespace BestHTTP
             HttpRequest SendRequest(string url, HttpMethods methodType, bool isKeepAlive,
                 OnRequestFinishedDelegate callback)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -422,7 +422,7 @@ namespace BestHTTP
                 bool disableCache,
                 OnRequestFinishedDelegate callback)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -442,7 +442,7 @@ namespace BestHTTP
 
         public static HttpRequest SendRequest(HttpRequest request)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -467,7 +467,7 @@ namespace BestHTTP
                 var started = DateTime.Now;
                 PlatformSupport.Threading.ThreadedRunner.RunShortLiving((req) =>
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -510,7 +510,7 @@ namespace BestHTTP
         /// </summary>
         public static string GetRootCacheFolder()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -531,7 +531,7 @@ namespace BestHTTP
             }
             catch (Exception ex)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -562,7 +562,7 @@ namespace BestHTTP
         {
             _isSetupCalled = false;
             BufferedReadNetworkStream.ResetNetworkStats();
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[HTTPManager] [method:ResetSetup] [msg] Reset called!");
 #endif
@@ -574,7 +574,7 @@ namespace BestHTTP
         /// </summary>
         public static void OnUpdate()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -602,7 +602,7 @@ namespace BestHTTP
 
         public static void OnQuit()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -637,7 +637,7 @@ namespace BestHTTP
 
         private static void AbortAll()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);

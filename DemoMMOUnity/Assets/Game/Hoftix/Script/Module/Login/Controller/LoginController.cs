@@ -48,9 +48,11 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().Uid = uid;
             SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
             //只是关闭 输入账号
-            UIComponentManager.DispatchEvent(UINotifEnum.CloseLoginRegisterUI);
-            UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
-            UIComponentManager.DispatchEvent(UINotifEnum.ShowLoginAccountUI);
+            SpringContext.GetBean<Hotfix.UISerializable.LoginController>().OnHide();
+            SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();
+
+            // UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
+            // UIComponentManager.DispatchEvent(UINotifEnum.ShowLoginAccountUI);
         }
 
         [PacketReceiver]

@@ -233,7 +233,7 @@ namespace BestHTTP.Core
 
         public static void EnqueueRequestEvent(RequestEventInfo @event)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[RequestEventHelper] [method:EnqueueRequestEvent(RequestEventInfo @event)] Enqueue request event: {@event.ToString()}");
 #endif
@@ -251,7 +251,7 @@ namespace BestHTTP.Core
             while (requestEventQueue.TryDequeue(out var requestEvent))
             {
                 HttpRequest source = requestEvent.SourceRequest;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[RequestEventHelper] [ProcessQueue] [msg] Processing request event: {requestEvent.ToString()}");
 #endif
@@ -263,7 +263,7 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         Debug.LogError(
                             $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] ProcessQueue  Exception:{ex}");
 #endif
@@ -287,7 +287,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.StreamingData  Exception:{ex}");
 #endif
@@ -308,7 +308,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.DownloadProgress  Exception:{ex}");
 #endif
@@ -326,7 +326,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.UploadProgress  Exception:{ex}");
 #endif
@@ -343,7 +343,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.Upgraded  Exception:{ex}");
 #endif
@@ -376,7 +376,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] Process RequestEventQueue - RequestEvents.Headers  Exception:{ex}");
 #endif
@@ -392,7 +392,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             Debug.LogError(
                                 $"[RequestEventHelper] [method:ProcessQueue] [msg|Exception] HandleRequestStateChange  Exception:{ex}");
 #endif
@@ -422,7 +422,7 @@ namespace BestHTTP.Core
 
             if (request.IsTimedOut)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[RequestEventHelper] [AbortRequestWhenTimedOut] [msg] AbortRequestWhenTimedOut - Request timed out. CurrentUri: {request.CurrentUri.ToString()}");
 #endif
@@ -486,7 +486,7 @@ namespace BestHTTP.Core
                                         source.Response.StatusCode >= 500);
                         if (tryLoad && Caching.HttpCacheService.IsCachedEntityExpiresInTheFuture(source))
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             var sb = new StringBuilder(3);
                             sb.Append($"IsCachedEntityExpiresInTheFuture check returned true! CurrentUri: ");
                             sb.Append($" {source.CurrentUri.ToString()}");
@@ -510,7 +510,7 @@ namespace BestHTTP.Core
                                 }
                                 else
                                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                                     var sb = new StringBuilder(3);
                                     sb.Append($"TryLoadAllFromCache failed to load! CurrentUri: ");
                                     sb.Append($" {req.CurrentUri.ToString()}");
@@ -526,7 +526,7 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         StringBuilder sb = new StringBuilder(3);
                         sb.Append("[RequestEventHelper]");
                         sb.Append(" [method:ProcessQueue] ");
@@ -552,7 +552,7 @@ namespace BestHTTP.Core
                             source.Callback(source, source.Response);
 
                             source.Timing.AddEvent(TimingEventNames.Callback, DateTime.Now, TimeSpan.Zero);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             var sb = new StringBuilder(3);
                             sb.Append($"Finishing request. Timings: ");
                             sb.Append($" {source.Timing.ToString()}");
@@ -562,7 +562,7 @@ namespace BestHTTP.Core
                         }
                         catch (Exception ex)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                             StringBuilder sb = new StringBuilder(3);
                             sb.Append("[RequestEventHelper]");
                             sb.Append(" [method:HandleRequestStateChange] ");

@@ -37,7 +37,7 @@ namespace BestHTTP.Core
 
         public static void EnqueueProtocolEvent(ProtocolEventInfo @event)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[ProtocolEventHelper] [EnqueueProtocolEvent] [msg] Enqueue protocol event: {@event.ToString()}");
 #endif
@@ -53,7 +53,7 @@ namespace BestHTTP.Core
         {
             while (protocolEvents.TryDequeue(out var protocolEvent))
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[ProtocolEventHelper] [ProcessQueue] [msg] Processing protocol event: {protocolEvent.ToString()}");
 #endif
@@ -65,7 +65,7 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         Debug.LogError(
                             $"[PluginEventHelper] [method:ProcessQueue] [msg|Exception] ProcessQueue  Exception:{ex}");
 #endif

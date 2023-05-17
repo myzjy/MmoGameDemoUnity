@@ -46,6 +46,11 @@ namespace ZJYFrameWork.Net
 
         public void Send(IPacket packet)
         {
+            if (netClient == null)
+            {
+                throw new NullReferenceException("网络客户端未开启");
+            }
+
             ByteBuffer byteBuffer = null;
             try
             {

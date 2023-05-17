@@ -65,7 +65,7 @@ namespace BestHTTP
         static void ResetSetup()
         {
             _isSetupCalled = false;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log("[HTTPUpdateDelegator]  [msg:重置 called!]");
 #endif
         }
@@ -104,7 +104,7 @@ namespace BestHTTP
 
                 if (Instance == null)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -146,7 +146,7 @@ namespace BestHTTP
                 // https://docs.unity3d.com/ScriptReference/Application-wantsToQuit.html
                 Application.wantsToQuit -= UnityApplication_WantsToQuit;
                 Application.wantsToQuit += UnityApplication_WantsToQuit;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -163,7 +163,7 @@ namespace BestHTTP
             }
             catch
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -217,7 +217,7 @@ namespace BestHTTP
             {
                 DontDestroyOnLoad(this.gameObject);
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -234,7 +234,7 @@ namespace BestHTTP
 
         private void ThreadFunc()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -263,7 +263,7 @@ namespace BestHTTP
             }
             finally
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -341,7 +341,7 @@ namespace BestHTTP
 
         void OnDisable()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -364,7 +364,7 @@ namespace BestHTTP
 
         void OnApplicationPause(bool isPaused)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -385,7 +385,7 @@ namespace BestHTTP
 
         private static bool UnityApplication_WantsToQuit()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -404,7 +404,7 @@ namespace BestHTTP
                 {
                     if (!_onBeforeApplicationQuit())
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         {
                             var st = new StackTrace(new StackFrame(true));
                             var sf = st.GetFrame(0);
@@ -422,7 +422,7 @@ namespace BestHTTP
                 }
                 catch (System.Exception ex)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);

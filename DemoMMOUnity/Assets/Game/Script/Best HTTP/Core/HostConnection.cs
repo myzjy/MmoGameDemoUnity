@@ -54,7 +54,7 @@ namespace BestHTTP.Core
             {
                 this.ProtocolSupport = protocolSupport;
 
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[{nameof(HostConnection)}] [method:AddProtocol(HostProtocolSupport protocolSupport)] [msg|Exception] AddProtocol({this.VariantId}) - changing from {oldProtocol} to {protocolSupport}");
 #endif
@@ -100,14 +100,14 @@ namespace BestHTTP.Core
                 {
                     if (!conn.TestConnection())
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         Debug.Log(
                             $"[HostConnection] [method: GetNextAvailable(HttpRequest request)] [msg|Exception] GetNextAvailable - TestConnection returned false!");
 #endif
                         RemoveConnectionImpl(conn, HttpConnectionStates.Closed);
                         continue;
                     }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     StringBuilder sb = new StringBuilder();
                     sb.Append($" GetNextAvailable -返回连接。 ");
                     sb.Append($" state: {conn.State}, CanProcessMultiple: {conn.CanProcessMultiple}");
@@ -122,7 +122,7 @@ namespace BestHTTP.Core
 
             if (activeConnections >= HttpManager.MaxConnectionPerServer)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"GetNextAvailable - activeConnections({activeConnections}) ");
                 sb.Append($" >= HTTPManager.MaxConnectionPerServer({HttpManager.MaxConnectionPerServer})");
@@ -149,7 +149,7 @@ namespace BestHTTP.Core
                 if (activeConnections >= 1 && (this.ProtocolSupport == HostProtocolSupport.Unknown ||
                                                this.ProtocolSupport == HostProtocolSupport.Http2))
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     StringBuilder sb = new StringBuilder();
                     sb.Append($"GetNextAvailable - 等待协议支持消息。如果连接: {activeConnections},");
                     sb.Append($"ProtocolSupport: {this.ProtocolSupport} ");
@@ -162,7 +162,7 @@ namespace BestHTTP.Core
 
                 conn = new HTTPConnection(key);
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     StringBuilder sb = new StringBuilder();
                     sb.Append($"GetNextAvailable - creating new connection, key: {key} ");
                     Debug.Log(
@@ -195,7 +195,7 @@ namespace BestHTTP.Core
 
             if (!found)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"RemoveConnection - 找不到联系! key: {conn.ServerAddress} ");
                 Debug.Log(
@@ -237,7 +237,7 @@ namespace BestHTTP.Core
                                    now - conn.LastProcessTime >= conn.KeepAliveTime;
             if (closeConnection)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"CloseConnectionAfterInactivity - [{conn}] Closing!");
                 sb.Append(
@@ -303,7 +303,7 @@ namespace BestHTTP.Core
 
             if (DateTime.UtcNow - this.LastProtocolSupportUpdate >= TimeSpan.FromDays(1))
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"LoadFrom - Too Old! LastProtocolSupportUpdate:");
                 sb.Append(
@@ -317,7 +317,7 @@ namespace BestHTTP.Core
             }
             else
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 StringBuilder sb = new StringBuilder();
                 sb.Append($"LoadFrom - LastProtocolSupportUpdate:");
                 sb.Append(

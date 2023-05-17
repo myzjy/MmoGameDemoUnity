@@ -97,7 +97,7 @@ namespace BestHTTP.Core
 
         public static void EnqueueConnectionEvent(ConnectionEventInfo @event)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[{nameof(ConnectionEventHelper)}] [method:EnqueueConnectionEvent] [msg] Enqueue connection event: {@event.ToString()}");
 #endif
@@ -113,7 +113,7 @@ namespace BestHTTP.Core
         {
             while (ConnectionEventQueue.TryDequeue(out var connectionEvent))
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[{nameof(ConnectionEventHelper)}] [method:ProcessQueue] [msg] Processing connection event:  {connectionEvent.ToString()}");
 #endif
@@ -125,7 +125,7 @@ namespace BestHTTP.Core
                     }
                     catch (Exception ex)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                         Debug.LogError(
                             $"[ConnectionEventHelper] [method:ProcessQueue] [msg|Exception]ProcessQueue  Exception:{ex}");
 #endif
@@ -134,7 +134,7 @@ namespace BestHTTP.Core
 
                 if (connectionEvent.Source.LastProcessedUri == null)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     Debug.Log(
                         $"[{nameof(ConnectionEventHelper)}] [method:ProcessQueue] [msg] Ignoring ConnectionEventInfo({connectionEvent.ToString()}) because its LastProcessedUri is null!");
 #endif

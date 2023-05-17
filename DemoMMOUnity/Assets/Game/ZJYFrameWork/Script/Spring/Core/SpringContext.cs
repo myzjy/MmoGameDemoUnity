@@ -77,6 +77,8 @@ namespace ZJYFrameWork.Spring.Core
         {
             checkBean(bean);
             var type = bean.GetType();
+            Debug.Log(type.ToString());
+            Debug.Log(type.FullName);
             beanMap.Add(type, bean);
         }
 
@@ -90,7 +92,7 @@ namespace ZJYFrameWork.Spring.Core
         {
             //包含用于在本地或远程创建对象类型或获取对现有远程对象的引用的方法
             var bean = Activator.CreateInstance(type);
-            Debug.Log(bean);
+            // Debug.Log(bean);
             if (bean == null)
             {
                 throw new Exception($"无法通过类型[{type}]创建实例");
@@ -204,8 +206,31 @@ namespace ZJYFrameWork.Spring.Core
                 .ToList();
         }
 
+        public static object GetBean(string beanString)
+        {
+            Debug.Log(beanString);
+            object bean = null;
+            foreach (var (key,value) in cachedBeanMap)
+            {
+                var typeFull = key.FullName;
+                if (typeFull != null)
+                {
+                    var fullSplit = typeFull.Split('.');
+                    var beanSplit = fullSplit[^1];
+                    if (beanSplit == beanString)
+                    {
+                        bean = value;
+                    }
+                }
+            }
+
+            return bean;
+
+        }
+
         public static object GetBean(Type type)
         {
+            Debug.Log(type);
             object bean = null;
 
             // 先从缓存获取

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 // using UnityEditor.AddressableAssets;
@@ -49,6 +50,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             var target = $"{Application.dataPath}/Game/AssetBundles/UI/Prefabs/";
             var template = $"{Application.dataPath}/../NewPrefab/";
             var outputPath = $"{Application.dataPath}/Game/Hoftix/Script/GenerateScripts/UIModules/";
+            var outputLuaPath = $"{Application.dataPath}/../Lua/Game/GenerateScripts/UIModules/";
             var outputProCsPath = $"{Application.dataPath}/../Assembly-CSharp.csproj";
             var UISObjet = new DirectoryInfo(target);
             var outputPathDirectoryInfo = new DirectoryInfo(outputPath);
@@ -140,6 +142,68 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                         }
                     }
                 }
+            }
+        }
+
+        [MenuItem("Tools/UI/GenerateLuaUI")]
+        private static void GenerateLuaUI()
+        {
+            var outputLuaPath = $"{Application.dataPath}/../Lua/Game/GenerateScripts/UIModules/";
+            var outputPathDirectoryInfo = new DirectoryInfo(outputLuaPath);
+            if (!outputPathDirectoryInfo.Exists)
+            {
+                Directory.CreateDirectory(outputLuaPath);
+            }
+
+            outputLuaPath = outputPathDirectoryInfo.FullName;
+            Debug.Log($"outputLuaPath:{outputLuaPath}");
+            var target = $"{Application.dataPath}/Game/AssetBundles/UI/Prefabs/";
+            var UISObjet = new DirectoryInfo(target);
+            var UIInfos = UISObjet.GetFiles("*.*", SearchOption.AllDirectories);
+            foreach (var item in UIInfos)
+            {
+                if (item.Extension.Contains("meta"))
+                {
+                    continue;
+                }
+
+                var path = item.FullName.Replace("\\", "/");
+                path = path.Replace(Application.dataPath, "Assets");
+                var UISelfObj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                var UIView = UISelfObj.GetComponent<UIView>();
+                if (UIView == null)
+                {
+                    UnityEngine.Debug.LogError($"{path} 预制体 没有UIView组件");
+                    continue;
+                }
+
+                var UIViewDataList = UIView.dataList;
+                var className = $"{Path.GetFileNameWithoutExtension(item.Name)}View";
+
+                //初始化
+                var initStr = "";
+                UIViewDataList.ForEach(a =>
+                {
+                    var memberName = a.UI_Serializable_Key;
+                    var typeString = a.UI_Serializable_Obj.GetType();
+                    initStr += $"\tself.{memberName} = _UIView:GetObjType(\"{memberName}\") or CS.{typeString}\n";
+                });
+                string TemplateLuaCS = $"local {className} = BaseClass()\n" +
+                                       "local _UIView = {}\n" +
+                                       $"function {className}:Init(view)\n" +
+                                       $"\t_UIView = view:GetComponent(\"UIView\")\n" +
+                                       $"{initStr}" +
+                                       $"end\n\n" +
+                                       $"return {className}";
+                var OutPutFileFUllPath = $"{outputLuaPath}{className}.lua";
+                Debug.Log($"创建脚本目录:{OutPutFileFUllPath}，\n文件：\n {TemplateLuaCS}");
+                var stream = new FileStream(OutPutFileFUllPath, FileMode.Create, FileAccess.Write);
+                Encoding end = new UTF8Encoding(false);
+                var fileWrite = new StreamWriter(stream,end);
+                fileWrite.Write(TemplateLuaCS);
+                fileWrite.Flush();
+                fileWrite.Close();
+                stream.Close();
             }
         }
     }

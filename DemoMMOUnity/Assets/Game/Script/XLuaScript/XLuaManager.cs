@@ -47,6 +47,12 @@ namespace ZJYFrameWork.XLuaScript
             {
                 //虚拟机
                 luaEnv.AddLoader(CustomLoader);
+                LoadScript("init");
+
+                var init = luaEnv.Global.Get<Action<int>>("IsDebug");
+#if UNITY_EDITOR || (DEVELOP_BUILD&& ENABLE_LOG)
+                
+#endif
                 LoadScript("BaseRequire");
                 // LoadScript("Common.util.event");
                 luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
@@ -72,10 +78,8 @@ namespace ZJYFrameWork.XLuaScript
                 // string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
                 // scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
                 string source =
- Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
-                Debug.Log($"source:{source}");
+                    Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
                 DirectoryInfo dirInfo = new DirectoryInfo(source);
-                Debug.Log($"dirInfo:{dirInfo.FullName}");
                 scriptPath = dirInfo.FullName;
                 var textLua = Util.GetFileBytes(scriptPath);
                 return textLua;
@@ -179,13 +183,14 @@ namespace ZJYFrameWork.XLuaScript
     public class CSSharpXLua
     {
 #if UNITY_EDITOR
-    [CSharpCallLua] public static List<Type> CSharpCallLua = new List<Type>()
-    {
-        typeof(Action),
-        typeof(Action<byte[]>),
-        typeof(Action<float>),
-        typeof(Action<float, float>),
-    };
+        [CSharpCallLua] public static List<Type> CSharpCallLua = new List<Type>()
+        {
+            typeof(Action),
+            typeof(Action<byte[]>),
+            typeof(Action<float>),
+            typeof(Action<float, float>),
+            typeof(Action<int>),
+        };
 #endif
     }
 }
