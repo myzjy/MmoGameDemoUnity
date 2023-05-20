@@ -3,16 +3,66 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/16 19:33
 ---
-print("Game Main working...")
-print("Game Main Init...")
 Debug = 0
-
-function IsDebug(debug)
-    Debug = debug
+function init()
+    Debug = CS.ZJYFrameWork.Common.CommonManager.Instance:DebugConfig()
 end
-function printDebug(str)
-    if Debug > 1 then
-        print(str)
+---试一试直接运行
+init()
+require("utils.functions")
+
+printDebug("# DEBUG                        = " .. Debug)
+printDebug("Game Main working...")
+printDebug("Game Main Init...")
+printDebug("Init Global init start")
+
+-- export global variable
+
+local __g = _G
+global = {}
+setmetatable(global, {
+    __newindex = function(_, name, value)
+        rawset(__g, name, value)
+    end,
+
+    __index = function(_, name)
+        return rawget(__g, name)
+    end
+})
+global.class = require("Common.class")
+local lastLuaExceptionMsg
+
+function __G__TRACKBACK__(exceptionMsg)
+    local msg = string.format("[%d] %s\n", handleLuaExceptionIdx, tostring(exceptionMsg))
+    local str = "LUA ERROR: " .. msg
+    print("----------------------------------------")
+    print(str)
+    print(debug.traceback())
+    print("----------------------------------------")
+
+    -- 若报错信息与上一条相同，忽略显示
+    if lastLuaExceptionMsg == exceptionMsg then
+        return
+    end
+    lastLuaExceptionMsg = exceptionMsg
+    --handleLuaException(msg)
+    if Debug < 1 then
+        -- 正式线上不显示详细信息
+        str = str .. debug.traceback() .. "\n"
+    end
+
+end
+local function main()
+    require("BaseRequire")
+
+    if Debug > 0 then
+        printDebug("开启Debug Log")
+    else
+        log.disable()
     end
 end
 
+local status, msg = xpcall(main, __G__TRACKBACK__)
+if not status then
+    print('xpcall robot main error', status, msg)
+end

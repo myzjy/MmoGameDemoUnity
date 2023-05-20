@@ -50,11 +50,7 @@ namespace ZJYFrameWork.XLuaScript
                 luaEnv.AddLoader(CustomLoader);
                 LoadScript("init");
 
-                var init = luaEnv.Global.Get<Action<int>>("IsDebug");
-#if UNITY_EDITOR || (DEVELOP_BUILD&& ENABLE_LOG)
-                init.Invoke(1);
-#endif
-                LoadScript("BaseRequire");
+                // LoadScript("BaseRequire");
                 // LoadScript("Common.util.event");
                 luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
                 luaLateUpdate = luaEnv.Global.Get<Action>("LateUpdate");

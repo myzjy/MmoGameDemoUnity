@@ -5,7 +5,7 @@
 ---
 
 function LuaMain()
-    CS.Debug.Log("LuaMain")
+   log.log("LuaMain")
     UIComponentManager.InitUIModelComponent()
 end
 

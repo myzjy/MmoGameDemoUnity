@@ -38,13 +38,24 @@ namespace ZJYFrameWork.Common
 
         public void LoadAsset(string assetPath, Action<Object> action)
         {
-             SpringContext.GetBean<IAssetBundleManager>().LoadAsset(assetPath,action);
+            SpringContext.GetBean<IAssetBundleManager>().LoadAsset(assetPath, action);
         }
 
         public GameObject LoadAssetGameObject(string assetPath)
         {
             Debug.Log($"读取资源：{assetPath}");
             return SpringContext.GetBean<IAssetBundleManager>().LoadAssetGameObject(assetPath);
+        }
+
+        public int DebugConfig()
+        {
+#if UNITY_EDITOR
+            return 1;
+#elif DEVELOP_BUILD && ENABLE_LOG
+            return 2;
+#else
+            return 0;
+#endif
         }
     }
 }

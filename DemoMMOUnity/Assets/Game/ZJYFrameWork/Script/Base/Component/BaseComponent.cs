@@ -123,8 +123,8 @@ namespace ZJYFrameWork.Base.Component
             moduleSize = (short)moduleList.Count;
             SpringContext.GetBean<XLuaManager>().InitLuaEnv();
             //初始化流程状态
-            SpringContext.GetBean<NetworkManager>().Init();
-            SpringContext.GetBean<ProcedureComponent>().StartProcedure();
+            // SpringContext.GetBean<NetworkManager>().Init();
+            // SpringContext.GetBean<ProcedureComponent>().StartProcedure();
         }
 
         private void LateUpdate()
