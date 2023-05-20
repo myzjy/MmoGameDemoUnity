@@ -11,6 +11,7 @@ using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Config;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 using Object = UnityEngine.Object;
 using Path = System.IO.Path;
 #if UNITY_EDITOR
@@ -60,6 +61,7 @@ namespace ZJYFrameWork.XLuaScript
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
                 LoadScript("LuaMain");
                 SafeDoString("LuaMain()");
+                UIComponentManager.eventUIAction=luaEnv.Global.Get<Action<string, object>>("UIComponentManager:DispatchEvent");
             }
         }
 
@@ -190,6 +192,8 @@ namespace ZJYFrameWork.XLuaScript
             typeof(Action<float>),
             typeof(Action<float, float>),
             typeof(Action<int>),
+            typeof(Action<string,object>),
+
         };
 #endif
     }

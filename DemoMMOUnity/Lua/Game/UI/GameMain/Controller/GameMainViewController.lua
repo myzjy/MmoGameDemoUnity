@@ -6,7 +6,9 @@
 ---@class GameMainViewController
 ---@author zjy
 local GameMainViewController=BaseClass()
-
+function GameMainViewController:OnInit()
+    
+end
 
 
 

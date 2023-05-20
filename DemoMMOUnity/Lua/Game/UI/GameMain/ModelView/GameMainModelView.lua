@@ -23,25 +23,24 @@ end
 --- UI 通知事件
 ---@return table
 function GameMainUIModelView:Notification()
-    local UINotifEnum={
+    local UINotifEnum = {
         --- 打开 界面
-        OPEN_GAMEMAIN_PANEL="OPEN_GAMEMAIN_PANEL",
-        CLOSE_GAMEMAIN_PANEL="CLOSE_GAMEMAIN_PANEL",
-        TIME_GAMEMAIN_PANEL="TIME_GAMEMAIN_PANEL"
+        OPEN_GAMEMAIN_PANEL = "OPEN_GAMEMAIN_PANEL",
+        CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL",
+        TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL"
     }
     return UINotifEnum
 end
 
 function GameMainUIModelView:NotificationHandler(_eventNotification)
-    if _eventNotification.GetEventName==UINotifEnum.OPEN_GAMEMAIN_PANEL then
+    if _eventNotification.GetEventName == UINotifEnum.OPEN_GAMEMAIN_PANEL then
         if GameMainUIModelView.base.isResuse then
             GameMainUIModelView.base:InstisResuseanceOrReuse()
         else
             GameMainUIModelView:Init()
         end
     end
-    
-end
 
+end
 
 return GameMainUIModelView

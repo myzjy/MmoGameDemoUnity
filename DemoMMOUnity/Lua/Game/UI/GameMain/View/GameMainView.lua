@@ -29,7 +29,9 @@ function GameMainVIew:OnInit()
         CS.Debug.Log("点击头像，进行更换")
 
     end)
-
+    self.GoldTimButton:SetListener(function()
+        --- 
+    end)
 end
 
 

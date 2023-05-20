@@ -157,6 +157,8 @@ public static class ExampleConfig
         typeof(UnityEngine.Events.UnityAction<UnityEngine.Vector2>),
         typeof(UnityEngine.Events.UnityEvent<UnityEngine.Vector2>),
         typeof(System.Collections.IEnumerator),
+        typeof(Action<string,object>),
+
     };
 
     //黑名单

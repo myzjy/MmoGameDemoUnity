@@ -8,11 +8,12 @@ namespace ZJYFrameWork.UISerializable
     public class UIComponentManager
     {
         private static readonly List<UIModelInterface> UIModelInterfaces = new List<UIModelInterface>();
-        
+
         // private static readonly Dictionary<string, UIModelInterface> UIEventNotificationStrDict =
         //     new Dictionary<string, UIModelInterface>();
         private static readonly Dictionary<string, Action<UINotification>> UIEventNotificationDict =
             new Dictionary<string, Action<UINotification>>();
+
         public static void InitUIModelComponent()
         {
             var uiModelRegistrationTypeList = new List<Type>();
@@ -29,7 +30,8 @@ namespace ZJYFrameWork.UISerializable
                 }
             }
 
-            foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType => (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
+            foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType =>
+                         (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
             {
                 UIModelInterfaces.Add(uiModelRegistration);
                 // UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
@@ -66,9 +68,13 @@ namespace ZJYFrameWork.UISerializable
             UINotificationHelp.ResUse(eventUI);
         }
 
+        public static Action<string, object> eventUIAction;
+
         public static void CSDispatchEvent(string name, object body = null)
         {
-            
+            // var eventUI = UINotificationHelp.NewUINotification(name, body);
+
+            eventUIAction.Invoke(name, body);
         }
     }
 }
