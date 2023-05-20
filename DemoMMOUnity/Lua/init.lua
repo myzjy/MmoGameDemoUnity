@@ -60,6 +60,10 @@ local function main()
     else
         log.disable()
     end
+
+    --- UI 初始化
+    UIComponentManager.InitUIModelComponent()
+
 end
 
 local status, msg = xpcall(main, __G__TRACKBACK__)

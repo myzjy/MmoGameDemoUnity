@@ -6,7 +6,7 @@
 
 function LuaMain()
    log.log("LuaMain")
-    UIComponentManager.InitUIModelComponent()
+   
 end
 
 function StartGame()

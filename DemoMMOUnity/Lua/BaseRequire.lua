@@ -30,6 +30,10 @@ events = require("Common.util.event")
 require("Common.util.Timer")
 UpdateManager = require "Common.UpdateManager"
 require("Common.UIGloabl")
+-- LuaMain 脚本不从c# 端读取调用
+require("LuaMain")
+
+
 
 
 

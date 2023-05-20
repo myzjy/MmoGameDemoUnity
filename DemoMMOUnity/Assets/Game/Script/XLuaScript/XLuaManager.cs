@@ -49,14 +49,9 @@ namespace ZJYFrameWork.XLuaScript
                 //虚拟机
                 luaEnv.AddLoader(CustomLoader);
                 LoadScript("init");
-
-                // LoadScript("BaseRequire");
-                // LoadScript("Common.util.event");
                 luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
                 luaLateUpdate = luaEnv.Global.Get<Action>("LateUpdate");
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
-                LoadScript("LuaMain");
-                SafeDoString("LuaMain()");
                 UIComponentManager.eventUIAction=luaEnv.Global.Get<Action<string, object>>("UIComponentManager:DispatchEvent");
             }
         }
