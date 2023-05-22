@@ -10,8 +10,13 @@ using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Config;
+using ZJYFrameWork.Hotfix.Module.Login.Controller;
+using ZJYFrameWork.Net;
+using ZJYFrameWork.Net.Dispatcher;
+using ZJYFrameWork.Procedure;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.WebRequest;
 using Object = UnityEngine.Object;
 using Path = System.IO.Path;
 #if UNITY_EDITOR
@@ -52,7 +57,15 @@ namespace ZJYFrameWork.XLuaScript
                 luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
                 luaLateUpdate = luaEnv.Global.Get<Action>("LateUpdate");
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
-                UIComponentManager.eventUIAction=luaEnv.Global.Get<Action<string, object>>("UIComponentManager:DispatchEvent");
+                UIComponentManager.eventUIAction =
+                    luaEnv.Global.Get<Action<string, object>>("DispatchEvent");
+                Debug.LogError($"UIComponentManager.eventUIAction:{UIComponentManager.eventUIAction}");
+                PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
+                SpringContext.GetBean<NetManager>().LuaConnectAction =
+                    luaEnv.Global.Get<Action<string>>("OnConnectServer");
+                //初始化流程状态
+                SpringContext.GetBean<NetworkManager>().Init();
+                SpringContext.GetBean<ProcedureComponent>().StartProcedure();
             }
         }
 
@@ -183,6 +196,7 @@ namespace ZJYFrameWork.XLuaScript
             typeof(Action<float>),
             typeof(Action<float, float>),
             typeof(Action<int>),
+            typeof(Action<string>),
             typeof(Action<string,object>),
 
         };

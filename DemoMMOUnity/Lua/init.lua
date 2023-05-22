@@ -4,8 +4,10 @@
 --- DateTime: 2023/5/16 19:33
 ---
 Debug = 0
+configurationDevice = {}
 function init()
     Debug = CS.ZJYFrameWork.Common.CommonManager.Instance:DebugConfig()
+    configurationDevice = CS.ZJYFrameWork.Common.AppConfig.configurationDevice
 end
 ---试一试直接运行
 init()
@@ -15,10 +17,10 @@ printDebug("# DEBUG                        = " .. Debug)
 printDebug("Game Main working...")
 printDebug("Game Main Init...")
 printDebug("Init Global init start")
-
 -- export global variable
 
 local __g = _G
+--- 定义全局表
 global = {}
 setmetatable(global, {
     __newindex = function(_, name, value)
@@ -30,6 +32,11 @@ setmetatable(global, {
     end
 })
 global.class = require("Common.class")
+
+--- net
+global.netManager = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("ZJYFrameWork.Net.NetManager") or CS.ZJYFrameWork.Net.NetManager
+global.CommonController = CS.ZJYFrameWork.UISerializable.Common.CommonController
+
 local lastLuaExceptionMsg
 
 function __G__TRACKBACK__(exceptionMsg)
@@ -41,9 +48,9 @@ function __G__TRACKBACK__(exceptionMsg)
     print("----------------------------------------")
 
     -- 若报错信息与上一条相同，忽略显示
-    if lastLuaExceptionMsg == exceptionMsg then
-        return
-    end
+    --if lastLuaExceptionMsg == exceptionMsg then
+    --    return
+    --end
     lastLuaExceptionMsg = exceptionMsg
     --handleLuaException(msg)
     if Debug < 1 then
@@ -52,9 +59,13 @@ function __G__TRACKBACK__(exceptionMsg)
     end
 
 end
+GlobalEventSystem = nil
 local function main()
     require("BaseRequire")
-
+    require("Game.Manager.ProtocolManager")
+    require("Game.Net.PacketDispatcher")
+    local EventSystem = require "utils.EventSystem"
+    GlobalEventSystem = EventSystem.New()
     if Debug > 0 then
         printDebug("开启Debug Log")
     else
@@ -63,10 +74,11 @@ local function main()
 
     --- UI 初始化
     UIComponentManager.InitUIModelComponent()
-
+    ProtocolManager.initProtocolManager()
 end
 
-local status, msg = xpcall(main, __G__TRACKBACK__)
+--main()
+local status, msg = pcall(main, __G__TRACKBACK__)
 if not status then
     print('xpcall robot main error', status, msg)
 end

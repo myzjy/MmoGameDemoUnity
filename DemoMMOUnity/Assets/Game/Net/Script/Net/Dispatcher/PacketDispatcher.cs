@@ -44,7 +44,7 @@ namespace ZJYFrameWork.Net.Dispatcher
             foreach (var itMethod in methods)
             {
                 var parameters = itMethod.GetParameters();
-               
+
                 if (parameters.Length != 1)
                 {
                     throw new Exception(StringUtils.Format("[class:{}] [method:{}] 必须有一个参数!",
@@ -100,6 +100,18 @@ namespace ZJYFrameWork.Net.Dispatcher
             }
 
             packetReceiver.Invoke(packet);
+        }
+
+        private static Action<byte[]> receiveAction;
+
+        public static void ReceiveStringAction(Action<byte[]> receiveAction)
+        {
+            PacketDispatcher.receiveAction = receiveAction;
+        }
+
+        public static void ReceiveString(byte[] bytes)
+        {
+            receiveAction.Invoke(bytes);
         }
     }
 }

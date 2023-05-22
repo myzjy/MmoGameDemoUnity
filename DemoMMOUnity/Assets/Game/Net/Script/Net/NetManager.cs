@@ -21,12 +21,24 @@ namespace ZJYFrameWork.Net
         private AbstractClient netClient;
 
         /// <summary>
+        /// 
+        /// </summary>
+        public Action<string> LuaConnectAction
+        {
+            get => luaConnectAction;
+            set => luaConnectAction = value;
+        }
+
+        private Action<string> luaConnectAction = null;
+
+        /// <summary>
         /// 链接
         /// </summary>
         /// <param name="url"></param>
         public void Connect(string url)
         {
             Close();
+            LuaConnectAction.Invoke(url);
             Debug.Log("开始链接服务器[url:{}][Platform:{}]", url, Application.platform);
             netClient = new WebsocketClient(url);
             netClient.Start();
@@ -60,7 +72,7 @@ namespace ZJYFrameWork.Net
                 if (!sendSuccess)
                 {
                     Close();
-                     // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
+                    // EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
                 }
             }
             catch (Exception e)
@@ -77,6 +89,23 @@ namespace ZJYFrameWork.Net
             }
         }
 
+        public void SendMessage(byte[] bytes)
+        {
+            try
+            {
+                var sendSuccess = netClient.Send(bytes);
+                if (!sendSuccess)
+                {
+                    Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         /// <summary>
         /// 轮询
         /// </summary>
@@ -90,26 +119,26 @@ namespace ZJYFrameWork.Net
                 return;
             }
 
-            while (netClient.GetNextMessage(out var message))
-            {
-                switch (message.messageType)
-                {
-                    case MessageType.Connected:
-                        Debug.Log("Connected server [{}]", netClient.ToConnectUrl());
-
-                        break;
-                    case MessageType.Data:
-                        PacketDispatcher.Receive(message.packet);
-
-                        break;
-                    case MessageType.Disconnected:
-                        Debug.Log("Disconnected");
-
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
+            //     while (netClient.GetNextMessage(out var message))
+            //     {
+            //         switch (message.messageType)
+            //         {
+            //             case MessageType.Connected:
+            //                 Debug.Log("Connected server [{}]", netClient.ToConnectUrl());
+            //
+            //                 break;
+            //             case MessageType.Data:
+            //                 PacketDispatcher.Receive(message.packet);
+            //
+            //                 break;
+            //             case MessageType.Disconnected:
+            //                 Debug.Log("Disconnected");
+            //
+            //                 break;
+            //             default:
+            //                 throw new ArgumentOutOfRangeException();
+            //         }
+            //     }
         }
 
         public override void Shutdown()

@@ -5,6 +5,15 @@
 
 
 local UINotification=BaseClass().New()
+function UINotification:new(name,Body)
+    local obj = {
+        eventName=name,
+        eventBody=Body
+    }
+    setmetatable(obj, self)
+    self.__index = self
+    return obj
+end
 local eventName=''
 local eventBody=nil
 

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.Core.Websocket
@@ -62,6 +63,8 @@ namespace ZJYFrameWork.Net.Core.Websocket
         internal void HandleOnOpen(WebSocket ws)
         {
             Debug.Log("成功打开");
+            Debug.Log("Connected server [{}]", ToConnectUrl());
+
             EventBus.AsyncSubmit(NetOpenEvent.ValueOf());
         }
 
@@ -72,9 +75,13 @@ namespace ZJYFrameWork.Net.Core.Websocket
             byteBuffer.WriteBytes(byteString);
 
             byteBuffer.ReadRawInt();
+            PacketDispatcher.ReceiveString(byteBuffer.ToBytes());
+
             var packet = ProtocolManager.Read(byteBuffer);
+            PacketDispatcher.Receive(packet);
+
             // // queue it
-            receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+            // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
         }
 
         internal void HandleOnMessage(byte[] content)
@@ -83,9 +90,11 @@ namespace ZJYFrameWork.Net.Core.Websocket
             byteBuffer.WriteBytes(content);
 
             byteBuffer.ReadRawInt();
+            PacketDispatcher.ReceiveString(content);
             var packet = ProtocolManager.Read(byteBuffer);
+            PacketDispatcher.Receive(packet);
             // // queue it
-            receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+            // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
         }
 
         internal void HandleOnError(string reason)
@@ -97,7 +106,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
         internal void HandleOnClose(ushort code, string message)
         {
             Debug.LogError(message);
-
         }
     }
 }

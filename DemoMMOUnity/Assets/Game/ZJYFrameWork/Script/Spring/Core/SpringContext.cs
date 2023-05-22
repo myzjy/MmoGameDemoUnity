@@ -102,6 +102,11 @@ namespace ZJYFrameWork.Spring.Core
             return bean;
         }
 
+        // public static object TryGetBean(Type type)
+        // {
+        //     
+        // }
+
 
         /// <summary>
         /// 扫描
@@ -124,7 +129,6 @@ namespace ZJYFrameWork.Spring.Core
                              return scanPaths.Any(it => type.FullName != null && type.FullName.StartsWith(it));
                          }))
             {
-
                 RegisterBean(type);
             }
 
@@ -210,7 +214,7 @@ namespace ZJYFrameWork.Spring.Core
         {
             Debug.Log(beanString);
             object bean = null;
-            foreach (var (key,value) in cachedBeanMap)
+            foreach (var (key, value) in cachedBeanMap)
             {
                 var typeFull = key.FullName;
                 if (typeFull != null)
@@ -225,10 +229,50 @@ namespace ZJYFrameWork.Spring.Core
             }
 
             return bean;
-
         }
 
         public static object GetBean(Type type)
+        {
+            Debug.Log(type);
+            object bean = null;
+
+            // 先从缓存获取
+            cachedBeanMap.TryGetValue(type, out bean);
+            if (bean != null)
+            {
+                return bean;
+            }
+
+            // 再从全部的组件获取
+            beanMap.TryGetValue(type, out bean);
+            if (bean != null)
+            {
+                return bean;
+            }
+
+            // 如果是接口类型，没有办法直接获取bean，这里遍历全部的bean
+            var findList = beanMap.Keys.Where(type.IsAssignableFrom).ToList();
+            if (CollectionUtils.IsEmpty(findList))
+            {
+                throw new Exception(StringUtils.Format("无法找到类型[{}]的实例", type.Name));
+            }
+
+            if (findList.Count > 1)
+            {
+                throw new Exception(StringUtils.Format("类型[{}]存在多个[{}][{}]实例"
+                    , type.Name, findList.First().Name, findList.Skip(1).First().Name));
+            }
+
+            //获取注册在BeanMap里面的bean
+            bean = beanMap[findList.First()];
+
+            // 缓存结果
+            cachedBeanMap[type] = bean;
+
+            return bean;
+        }
+
+        public static object TryGetBean(Type type)
         {
             Debug.Log(type);
             object bean = null;

@@ -5,10 +5,9 @@
 ---
 
 local UIModelInterfaces = {}
-
-local UIEventNotificationDict = {}
-
 local UIComponentManager = {}
+
+UIComponentManager.UIEventNotificationDict = {}
 
 function UIComponentManager:InitUIModelComponent()
     printDebug("UIComponentManager:InitUIModelComponent")
@@ -18,12 +17,15 @@ function UIComponentManager:InitUIModelComponent()
     UIModelInterfaces["gameMainUI"] = require("Game.UI.GameMain.ModelView.GameMainModelView")
     ---循环遍历
     for i, v in pairs(UIModelInterfaces) do
+        printDebug("UIComponentManager:InitUIModelComponent:"..type(v))
         for _i, _v in pairs(v.Notification()) do
-            local uiAction = UIEventNotificationDict[_v]
+            printDebug("UIComponentManager:InitUIModelComponent pairs:"..type(_v))
+            local uiAction = UIComponentManager.UIEventNotificationDict[_v]
+            printDebug("uiAction pairs:"..type(uiAction))
             if uiAction == nil then
                 local data = v
                 --- 当前 UI事件没有存储
-                UIEventNotificationDict[_v] = function(_eventNotification)
+                UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
                     data:NotificationHandler(_eventNotification)
                 end
             else
@@ -34,10 +36,12 @@ function UIComponentManager:InitUIModelComponent()
 
 end
 
-function UIComponentManager:DispatchEvent(name, body)
-    local eventUI = require("Game.Common.UINotification").New()
-    eventUI:SetNotification(name, body)
-    local eventAction = UIEventNotificationDict[name]
+function DispatchEvent(name, body)
+    local eventUI = require("Game.Common.UINotification"):new(name, body)
+    printDebug("name:" .. name .. ",body" .. type(body))
+
+    local eventAction = UIComponentManager.UIEventNotificationDict[name]
+    printDebug("eventAction" .. type(eventAction))
     if eventAction ~= nil then
         eventAction(eventUI)
     end

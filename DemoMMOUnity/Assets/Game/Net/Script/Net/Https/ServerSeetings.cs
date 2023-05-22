@@ -38,7 +38,7 @@ namespace ZJYFrameWork.WebRequest
                     break;
                 case HostType.Test:
                     ApiHttpsBaseUrl = "http://127.0.0.1:443";
-                    ApiWebSocketUrl = "ws://192.168.0.109:15000/websocket";
+                    ApiWebSocketUrl = "ws://192.168.1.52:15000/websocket";
                     // ApiWebSocketUrl = "ws://121.41.54.199:15000/websocket";
                     // ApiWebSocketUrl = "ws://127.0.0.1:3010/";
 

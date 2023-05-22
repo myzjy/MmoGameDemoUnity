@@ -6,7 +6,6 @@ require("utils.helper")
 require("utils.print_r")
 require("utils.time")
 
-
 Mathf = require "Common.UnityEngine.Mathf"
 Vector2 = require "Common.UnityEngine.Vector2"
 Vector3 = require "Common.UnityEngine.Vector3"
@@ -22,7 +21,10 @@ Plane = require "Common.UnityEngine.Plane"
 Time = require "Common.UnityEngine.Time"
 Object = require "Common.UnityEngine.Object"
 
+require("Common.json")
 require("Common/BaseClass")
+--require("utils.EventSystem")
+
 require("Common.util.util")
 require("Common.util.LuaUtil")
 list = require("Common.util.list")
@@ -30,6 +32,7 @@ events = require("Common.util.event")
 require("Common.util.Timer")
 UpdateManager = require "Common.UpdateManager"
 require("Common.UIGloabl")
+--require("Game.Manager.ProtocolManager")
 -- LuaMain 脚本不从c# 端读取调用
 require("LuaMain")
 

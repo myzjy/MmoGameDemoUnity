@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Project fullMode="0">
+  <project-home>.</project-home>
+  <exclude-files />
+  <assets>
+    <item path="BaseRequire.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Mathf.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Bounds.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Color.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Object.lua" dflag="131076" />
+    <item path="Common\UnityEngine\LayerMask.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Plane.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Quaternion.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Ray.lua" dflag="131076" />
+    <item path="Common\UnityEngine\RaycastHit.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Time.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Touch.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Vector2.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Vector3.lua" dflag="131076" />
+    <item path="Common\UnityEngine\Vector4.lua" dflag="131076" />
+    <item path="Common\BaseClass.lua" dflag="131076" />
+    <item path="Common\enum.lua" dflag="131076" />
+    <item path="Common\util\Timer.lua" dflag="131076" />
+    <item path="Common\util\list.lua" dflag="131076" />
+    <item path="Common\util\LuaUtil.lua" dflag="131076" />
+    <item path="Common\util\StringUtil.lua" dflag="131076" />
+    <item path="Common\util\TableUtil.lua" dflag="131076" />
+    <item path="Common\util\util.lua" dflag="131076" />
+    <item path="Common\util\event.lua" dflag="131076" />
+    <item path="Common\UpdateManager.lua" dflag="131076" />
+    <item path="Common\Messenger.lua" dflag="131076" />
+    <item path="Common\class.lua" dflag="131076" />
+    <item path="Common\TimerManager.lua" dflag="131076" />
+    <item path="Common\json.lua" dflag="131076" />
+    <item path="Common\UI\UICommonent.lua" dflag="131076" />
+    <item path="Common\UI\UIBaseModule.lua" dflag="131076" />
+    <item path="Common\UI\UIConfigEnum.lua" dflag="131076" />
+    <item path="Common\UI\UIBaseView.lua" dflag="131076" />
+    <item path="Common\UI\UIView.lua" dflag="131076" />
+    <item path="Common\UIGloabl.lua" dflag="131076" />
+    <item path="Common\logUtil.lua" dflag="131076" />
+    <item path="LuaMain.lua" dflag="131076" />
+    <item path="init.lua" dflag="131076" />
+    <item path="global.lua" dflag="131076" />
+    <item path="Game\Login\LoginConfig.lua" dflag="131076" />
+    <item path="Game\Login\LoginPartView.lua" dflag="131076" />
+    <item path="Game\Login\LoginUIModelView.lua" dflag="131076" />
+    <item path="Game\Login\LoginView.lua" dflag="131076" />
+    <item path="Game\Common\UIConfig.lua" dflag="131076" />
+    <item path="Game\Common\UINotification.lua" dflag="131076" />
+    <item path="Game\UI\GameMain\Controller\GameMainViewController.lua" dflag="131076" />
+    <item path="Game\UI\GameMain\ModelView\GameMainModelView.lua" dflag="131076" />
+    <item path="Game\UI\GameMain\ModelView\GameMainConfig.lua" dflag="131076" />
+    <item path="Game\UI\GameMain\View\GameMainView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\BagUIPanelView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\LoadingPanelView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\LoginPanelView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\GameMainUIPanelView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\MapGuideView.lua" dflag="131076" />
+    <item path="Game\GenerateScripts\UIModules\OperationalInterfacePaenlView.lua" dflag="131076" />
+    <item path="Game\Manager\UIComponentManager.lua" dflag="131076" />
+    <item path="Game\Manager\ProtocolManager.lua" dflag="131076" />
+    <item path="Game\Manager\Buffer\ByteBuff.lua" dflag="131076" />
+    <item path="Game\Manager\Buffer\Long.lua" dflag="131076" />
+    <item path="Game\Net\NetManager.lua" dflag="131076" />
+    <item path="Game\Net\LuaProtocol\Common\Error.lua" dflag="131076" />
+    <item path="utils\str.lua" dflag="131076" />
+    <item path="utils\print_r.lua" dflag="131076" />
+    <item path="utils\helper.lua" dflag="131076" />
+    <item path="utils\time.lua" dflag="131076" />
+    <item path="utils\functions.lua" dflag="131076" />
+  </assets>
+  <inspect-dirs>
+    <item></item>
+  </inspect-dirs>
+</Project>
