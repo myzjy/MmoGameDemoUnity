@@ -44,11 +44,9 @@ end
 
 -- C#传进来的byte数组到lua里就会变成string
 function readBytes(bytes)
-    printDebug("[readBytes line 47]"..type(bytes))
     local buffer = ByteBuffer:new()
     buffer:writeString(bytes)
     local packet = ProtocolManager.read(buffer)
-    printDebug("readBytes(bytes) line 51"..type(packet))
     return packet
 end
 

@@ -57,17 +57,18 @@ function __G__TRACKBACK__(exceptionMsg)
     end
 
 end
-GlobalEventValue = {}
+--GlobalEventValue = {}
+GlobalEventSystem={}
 local function main()
     require("BaseRequire")
-    local GlobalEvents = require("Game.Common.GlobalEvents")
-    GlobalEventValue = GlobalEvents
+    --local GlobalEvents = require("Game.Common.GlobalEvents")
+    --GlobalEventValue = GlobalEvents
     printDebug("main() line 63")
     require("Game.Manager.ProtocolManager")
     require("Game.Net.PacketDispatcher")
 
     --setmetatable(GlobalEventSystem, EventSystem)
-    --global.GlobalEventSystem = require("utils.EventSystem").New()
+    GlobalEventSystem = require("utils.EventSystem").New()
     --global.GlobalEventSystem:Constructor()
     if Debug > 0 then
         printDebug("开启Debug Log")

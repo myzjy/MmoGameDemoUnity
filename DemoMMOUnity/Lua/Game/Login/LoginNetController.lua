@@ -22,15 +22,19 @@ function LoginNetController:Init()
 end
 function LoginNetController:InitEvents()
     printDebug("LoginNetController:InitEvents() line 24")
-    GlobalEvent.all_event_dic[PacketDispatcher.Event.OnConnect] = function(url)
-        LoginNetController:Connect(url)
-    end
-    GlobalEvent.all_event_dic[LoginConst.Event.Login] = function(data)
-        LoginNetController:AtLoginResponse(data)
-    end
+    --GlobalEventSystem.all_event_dic[PacketDispatcher.Event.OnConnect] = function(url)
+    --    LoginNetController:Connect(url)
+    --end
+    --GlobalEventSystem.all_event_dic[LoginConst.Event.Login] = function(data)
+    --    LoginNetController:AtLoginResponse(data)
+    --end
 
-    --GlobalEventValue:Bind(PacketDispatcher.Event.OnConnect, LoginNetController.Connect)
-    --GlobalEventValue:Bind(LoginConst.Event.Login, LoginNetController.AtLoginResponse)
+    GlobalEventValue:Bind(PacketDispatcher.Event.OnConnect, function(url)
+        LoginNetController:Connect(url)
+    end)
+    GlobalEventValue:Bind(LoginConst.Event.Login, function(data)
+        LoginNetController:AtLoginResponse(data)
+    end)
 end
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
@@ -43,6 +47,7 @@ function LoginNetController:AtLoginResponse(data)
     local response = data
     local token = response.token
     local uid = response.uid;
+    ---@param userName string
     local userName = response.userName;
     if Debug > 0 then
         printDebug("[user:" .. userName .. "][token:" .. token .. "]" .. "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum)

@@ -8,15 +8,17 @@ local EventSystem = BaseClass()
 local table_insert = table.insert
 local table_remove = table.remove
 EventSystem.all_event_count = 0
-
+EventSystem.all_event_dic = {}
+EventSystem.bind_id_to_event_id_dic = {}
+EventSystem.calling_event_dic = {}
 function EventSystem:Constructor()
-    self.all_event_dic = {}
-    self.bind_id_to_event_id_dic = {}
-    self.calling_event_dic = {}
+    EventSystem.all_event_dic = {}
+    EventSystem.bind_id_to_event_id_dic = {}
+    EventSystem.calling_event_dic = {}
 end
 
 local getEvent = function(self, event_id)
-    return self.all_event_dic[event_id]
+    return EventSystem.all_event_dic[event_id]
 end
 
 function EventSystem:Bind(event_id, event_func, func_owner)

@@ -8,6 +8,7 @@ LoginResponse = {}-- BaseClass()
 
 local json = require("Common.json")
 
+---@param userName string
 function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, diamondNum)
     --local obj = LoginResponse.New()
     local obj = {
@@ -50,7 +51,6 @@ end
 function LoginResponse:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    printDebug("LoginResponse:read(buffer) line 48" .. jsonString)
     local data = json.decode(jsonString)
     local jsonData = LoginResponse:new(data.packet.token,
             data.packet.uid,
@@ -58,7 +58,6 @@ function LoginResponse:read(buffer)
             data.packet.goldNum,
             data.packet.premiumDiamondNum,
             data.packet.diamondNum)
-    printDebug("LoginResponse:read(buffer) line 55" .. jsonData.userName .. "," .. jsonData.token .. "," .. jsonData.diamondNum .. ",")
     return jsonData
 end
 return LoginResponse

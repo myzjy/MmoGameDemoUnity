@@ -37,7 +37,9 @@ end
 ---@param buffer ByteBuffer 字节读取器
 function ProtocolManager.read(buffer)
     local jsonString = buffer:readString()
-    printDebug(jsonString)
+    if Debug > 0 then
+        printDebug("ProtocolManager.read[line 41] jsonString:" .. jsonString)
+    end
     local jsonData = json.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId

@@ -17,12 +17,12 @@ function OnConnectServer(url)
     printDebug(url)
     PacketDispatcher.urlString = url
     ---链接成功
-    GlobalEventValue:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
+    GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
 end
 
 function OnDisConnectFromServer()
     printDebug("Game server disconnected!!")
-    GlobalEventValue:Fire(NetDispatcher.Event.OnDisConnect)
+    GlobalEventSystem:Fire(NetDispatcher.Event.OnDisConnect)
 end
 function OnReceiveLineFromServer(bytes)
     str = bytes
@@ -47,8 +47,7 @@ end
 --end
 
 function PacketDispatcher:Receive(packet)
-    printDebug("PacketDispatcher:Receive(packet) line 50," .. type(packet))
     packetValue = packet
-    GlobalEventValue:Fire(packetValue:protocolId(), packetValue)
+    GlobalEventSystem:Fire(packetValue:protocolId(), packetValue)
 end
 
