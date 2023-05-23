@@ -4,15 +4,12 @@
 --- DateTime: 2023/5/22 14:40
 ---
 ---@class LoginResponse
-LoginResponse = {}
+LoginResponse = {}-- BaseClass()
+
 local json = require("Common.json")
----@param token string
----@param uid number
----@param userName string
----@param goldNum number 金币
----@param premiumDiamondNum number 付费钻石 一般充值才有，付费钻石转换成普通钻石
----@param diamondNum number 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
+
 function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, diamondNum)
+    --local obj = LoginResponse.New()
     local obj = {
         token = token, ---java.lang.String
         uid = uid, -- long
@@ -21,6 +18,15 @@ function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, dia
         premiumDiamondNum = premiumDiamondNum, -- long
         diamondNum = diamondNum -- long
     }
+    ----{
+    --obj.token = token ---java.lang.String
+    --obj.uid = uid -- long
+    --obj.userName = userName ---java.lang.String
+    --obj.goldNum = goldNum -- long
+    --obj.premiumDiamondNum = premiumDiamondNum -- long
+    --obj.diamondNum = diamondNum -- long
+    ----}
+
     setmetatable(obj, self)
     self.__index = self
     return obj
@@ -33,7 +39,7 @@ function LoginResponse:write(buffer, packet)
     if packet == nil then
         return
     end
-    local data = packet or Error
+    local data = packet or LoginResponse
     local message = {
         protocolId = data.protocolId(),
         packet = data
@@ -52,6 +58,7 @@ function LoginResponse:read(buffer)
             data.packet.goldNum,
             data.packet.premiumDiamondNum,
             data.packet.diamondNum)
+    printDebug("LoginResponse:read(buffer) line 55" .. jsonData.userName .. "," .. jsonData.token .. "," .. jsonData.diamondNum .. ",")
     return jsonData
 end
 return LoginResponse

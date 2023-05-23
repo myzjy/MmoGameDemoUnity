@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/22 14:17
 ---
 
-LoginNetController = {}
+LoginNetController = BaseClass()
 LoginConst = {
     Status = {
 
@@ -18,27 +18,39 @@ LoginConst = {
 }
 
 function LoginNetController:Init()
-    LoginController.InitEvents()
+    LoginNetController.InitEvents()
 end
-function LoginController:InitEvents()
-    GlobalEventSystem:Bind(LoginConst.Event.Login, LoginController.AtLoginResponse, self)
+function LoginNetController:InitEvents()
+    printDebug("LoginNetController:InitEvents() line 24")
+    GlobalEvent.all_event_dic[PacketDispatcher.Event.OnConnect] = function(url)
+        LoginNetController:Connect(url)
+    end
+    GlobalEvent.all_event_dic[LoginConst.Event.Login] = function(data)
+        LoginNetController:AtLoginResponse(data)
+    end
+
+    --GlobalEventValue:Bind(PacketDispatcher.Event.OnConnect, LoginNetController.Connect)
+    --GlobalEventValue:Bind(LoginConst.Event.Login, LoginNetController.AtLoginResponse)
 end
 --- 网络打开
-function LoginController:OnNetOpenEvent()
+function LoginNetController:OnNetOpenEvent()
     CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
     CommonController.Instance.loadingRotate.OnClose();
 
 end
 
----@param response LoginResponse
-function LoginNetController:AtLoginResponse(response)
+function LoginNetController:AtLoginResponse(data)
+    local response = data
     local token = response.token
     local uid = response.uid;
     local userName = response.userName;
-    if Debug > 1 then
-        printDebug("[user:" .. userName "][token:" .. token .. "]" .. "[uid:" .. uid .. "]")
+    if Debug > 0 then
+        printDebug("[user:" .. userName .. "][token:" .. token .. "]" .. "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum)
     end
 
+end
+function LoginNetController:Connect(url)
+    printDebug("LoginNetController:Connect(url)line 46" .. type(url))
 end
 
 return LoginNetController

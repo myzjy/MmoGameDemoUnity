@@ -77,8 +77,6 @@ namespace ZJYFrameWork.Spring.Core
         {
             checkBean(bean);
             var type = bean.GetType();
-            Debug.Log(type.ToString());
-            Debug.Log(type.FullName);
             beanMap.Add(type, bean);
         }
 

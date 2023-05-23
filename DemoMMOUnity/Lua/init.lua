@@ -5,11 +5,13 @@
 ---
 Debug = 0
 configurationDevice = {}
+
 function init()
     Debug = CS.ZJYFrameWork.Common.CommonManager.Instance:DebugConfig()
     configurationDevice = CS.ZJYFrameWork.Common.AppConfig.configurationDevice
 end
 ---试一试直接运行
+---
 init()
 require("utils.functions")
 
@@ -33,10 +35,6 @@ setmetatable(global, {
 })
 global.class = require("Common.class")
 
---- net
-global.netManager = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("ZJYFrameWork.Net.NetManager") or CS.ZJYFrameWork.Net.NetManager
-global.CommonController = CS.ZJYFrameWork.UISerializable.Common.CommonController
-
 local lastLuaExceptionMsg
 
 function __G__TRACKBACK__(exceptionMsg)
@@ -59,13 +57,18 @@ function __G__TRACKBACK__(exceptionMsg)
     end
 
 end
-GlobalEventSystem = nil
+GlobalEventValue = {}
 local function main()
     require("BaseRequire")
+    local GlobalEvents = require("Game.Common.GlobalEvents")
+    GlobalEventValue = GlobalEvents
+    printDebug("main() line 63")
     require("Game.Manager.ProtocolManager")
     require("Game.Net.PacketDispatcher")
-    local EventSystem = require "utils.EventSystem"
-    GlobalEventSystem = EventSystem.New()
+
+    --setmetatable(GlobalEventSystem, EventSystem)
+    --global.GlobalEventSystem = require("utils.EventSystem").New()
+    --global.GlobalEventSystem:Constructor()
     if Debug > 0 then
         printDebug("开启Debug Log")
     else
@@ -75,7 +78,9 @@ local function main()
     --- UI 初始化
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()
+    PacketDispatcher:Init()
 end
+
 
 --main()
 local status, msg = pcall(main, __G__TRACKBACK__)

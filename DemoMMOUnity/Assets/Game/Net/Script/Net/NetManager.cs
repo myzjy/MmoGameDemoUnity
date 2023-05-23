@@ -38,8 +38,8 @@ namespace ZJYFrameWork.Net
         public void Connect(string url)
         {
             Close();
-            LuaConnectAction.Invoke(url);
-            Debug.Log("开始链接服务器[url:{}][Platform:{}]", url, Application.platform);
+            LuaConnectAction.Invoke($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
+            Debug.Log($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
             netClient = new WebsocketClient(url);
             netClient.Start();
         }

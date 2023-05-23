@@ -3,6 +3,7 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/19 18:44
 ---
+printDebug("加载 ProtocolManager.lua 文件")
 
 protocols = {}
 
@@ -36,6 +37,7 @@ end
 ---@param buffer ByteBuffer 字节读取器
 function ProtocolManager.read(buffer)
     local jsonString = buffer:readString()
+    printDebug(jsonString)
     local jsonData = json.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId
@@ -48,7 +50,9 @@ end
 
 function ProtocolManager.initProtocolManager()
     local error = require("Game.Net.LuaProtocol.Common.Error")
+    local loginResponse = require("Game.Net.LuaProtocol.Login.LoginResponse")
     protocols[101] = error
+    protocols[1001] = loginResponse
 
 end
 

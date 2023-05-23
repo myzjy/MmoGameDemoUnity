@@ -15,24 +15,24 @@ function EventSystem:Constructor()
     self.calling_event_dic = {}
 end
 
-local getEvent = function ( self, event_id )
+local getEvent = function(self, event_id)
     return self.all_event_dic[event_id]
 end
 
 function EventSystem:Bind(event_id, event_func, func_owner)
     if event_id == nil then
-        print("Cat:EventSystem [Try to bind to a nil event_id] : ",debug.traceback())
+        print("Cat:EventSystem [Try to bind to a nil event_id] : ", debug.traceback())
         return
     end
 
     if event_func == nil then
         --故意报错输出调用堆栈
-        print("Cat:EventSystem [Try to bind to a nil event_func] : ",debug.traceback())
+        print("Cat:EventSystem [Try to bind to a nil event_func] : ", debug.traceback())
         return
     end
     if func_owner then
         local origin_func = event_func
-        event_func = function ( ... )
+        event_func = function(...)
             origin_func(func_owner, ...)
         end
     end
@@ -85,20 +85,21 @@ function EventSystem:UnBindAll(is_delete)
         self.calling_event_dic = {}
     end
 end
-
+eventValues=nil
 --立即触发
 function EventSystem:Fire(event_id, ...)
     if event_id == nil then
-        print("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ",debug.traceback())
+        print("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
         return
     end
-
+    eventValues=...
     local event_list = getEvent(self, event_id)
     if event_list then
         self.calling_event_dic[event_id] = false
         for bind_id, event_call_back in pairs(event_list) do
             if event_call_back then
-                event_call_back(...)
+                printDebug("EventSystem:Fire(event_id, ...) line 101"..type(eventValues))
+                event_call_back(eventValues)
             end
         end
         local calling_event = self.calling_event_dic[event_id]

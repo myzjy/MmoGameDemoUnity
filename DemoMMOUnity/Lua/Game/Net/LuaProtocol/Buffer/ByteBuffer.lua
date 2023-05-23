@@ -10,7 +10,7 @@
 --右移操作>>是无符号右移
 --local Long = require("Long")
 
-local ProtocolManager = require("Game.Manager.ProtocolManager")
+--local ProtocolManager = require("Game.Manager.ProtocolManager")
 
 local maxInt = 2147483647
 local minInt = -2147483648
@@ -44,9 +44,11 @@ end
 
 -- C#传进来的byte数组到lua里就会变成string
 function readBytes(bytes)
+    printDebug("[readBytes line 47]"..type(bytes))
     local buffer = ByteBuffer:new()
-    buffer:writeBuffer(bytes)
+    buffer:writeString(bytes)
     local packet = ProtocolManager.read(buffer)
+    printDebug("readBytes(bytes) line 51"..type(packet))
     return packet
 end
 
