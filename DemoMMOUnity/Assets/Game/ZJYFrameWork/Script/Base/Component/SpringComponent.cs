@@ -21,27 +21,11 @@ namespace ZJYFrameWork.Base.Component
         {
             //注册
             SpringContext.RegisterBean(this);
-            var startSpringFlag = true;
             var subTypeList = AssemblyUtils.GetAllSubClassType(typeof(SpringComponent));
             var list = SpringContext.GetAllBeans();
-            foreach (var subType in subTypeList)
-            {
-                if (list.Any(it =>
-                    {
-                        Debug.Log($"it.GetType():{it.GetType()}");
-                        Debug.Log($"subType:{subType}");
-                        return it.GetType() == subType;
-                    }))
-                {
-                    continue;
-                }
-
-                startSpringFlag = false;
-                break;
-            }
+            var startSpringFlag = subTypeList.All(subType => list.Any(it => it.GetType() == subType));
 
             if (!startSpringFlag) return;
-            Debug.Log("开始扫描");
             SpringContext.GetBean<BaseComponent>().StartSpring();
         }
     }

@@ -36,13 +36,11 @@ function Error:write(buffer, packet)
     }
     local jsonStr = json.encode(message)
     buffer:writeString(jsonStr)
-    printDebug(jsonStr)
 end
 
 function Error:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    printDebug("Error:read(buffer) line 44" .. jsonString)
     local data = json.decode(jsonString)
     return Error:new(data.packet.errorCode, data.packet.errorMessage, data.packet.module)
 end

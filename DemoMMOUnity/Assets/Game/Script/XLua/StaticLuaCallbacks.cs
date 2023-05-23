@@ -788,14 +788,13 @@ namespace XLua
                     {
                         if (LuaAPI.xluaL_loadbuffer(L, bytes, bytes.Length, "@" + real_file_path) != 0)
                         {
-                            return LuaAPI.luaL_error(L, String.Format("error loading module {0} from CustomLoader, {1}",
-                                LuaAPI.lua_tostring(L, 1), LuaAPI.lua_tostring(L, -1)));
+                            return LuaAPI.luaL_error(L,
+                                $"error loading module {LuaAPI.lua_tostring(L, 1)} from CustomLoader, {LuaAPI.lua_tostring(L, -1)}");
                         }
                         return 1;
                     }
                 }
-                LuaAPI.lua_pushstring(L, string.Format(
-                    "\n\tno such file '{0}' in CustomLoaders!", filename));
+                LuaAPI.lua_pushstring(L, $"\n\tno such file '{filename}' in CustomLoaders!");
                 return 1;
             }
             catch (System.Exception e)

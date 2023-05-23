@@ -59,12 +59,9 @@ namespace ZJYFrameWork.XLuaScript
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
                 UIComponentManager.eventUIAction =
                     luaEnv.Global.Get<Action<string, object>>("DispatchEvent");
-                Debug.LogError($"UIComponentManager.eventUIAction:{UIComponentManager.eventUIAction}");
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<string>>("OnReceiveLineFromServer"));
                 SpringContext.GetBean<NetManager>().LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
-                Debug.LogError(
-                    $" SpringContext.GetBean<NetManager>().LuaConnectAction:{SpringContext.GetBean<NetManager>().LuaConnectAction}");
                 //初始化流程状态
                 SpringContext.GetBean<NetworkManager>().Init();
                 SpringContext.GetBean<ProcedureComponent>().StartProcedure();

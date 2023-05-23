@@ -99,18 +99,12 @@ namespace ZJYFrameWork.Base.Component
                 "ZJYFrameWork"
             };
             SpringContext.AddScanPath(scanPaths);
-            Debug.Log("扫描Bean类");
             //扫描Bean类
             SpringContext.Scan();
-            Debug.Log("扫描Bean类成功");
 
-            Debug.Log("开始扫描事件");
             EventBus.Scan();
-            Debug.Log("事件扫描成功");
-            Debug.Log("扫描网络协议模块");
             //网络扫描
             PacketDispatcher.Scan();
-            Debug.Log("扫描网络协议模块成功");
             UIComponentManager.InitUIModelComponent();
             //获取所有Module
             var moduleList = new List<AbstractManager>();
@@ -122,7 +116,6 @@ namespace ZJYFrameWork.Base.Component
             //我当前module 有多少个
             moduleSize = (short)moduleList.Count;
             SpringContext.GetBean<XLuaManager>().InitLuaEnv();
-            
         }
 
         private void LateUpdate()
