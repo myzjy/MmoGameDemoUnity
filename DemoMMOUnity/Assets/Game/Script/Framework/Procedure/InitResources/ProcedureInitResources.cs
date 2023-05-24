@@ -40,11 +40,11 @@ namespace ZJYFrameWork.Procedure.InitResources
             fsm.ChangeState<ProcedurePreLoad>();
         }
 
-        [EventReceiver]
-        public void OnResourceInitCompleteEvent(ResourceInitCompleteEvent eve)
-        {
-            initResourcesComplete = true;
-            // Log.Info("Init resources complete.");
-        }
+        // [EventReceiver]
+        // public void OnResourceInitCompleteEvent(ResourceInitCompleteEvent eve)
+        // {
+        //     initResourcesComplete = true;
+        //     // Log.Info("Init resources complete.");
+        // }
     }
 }

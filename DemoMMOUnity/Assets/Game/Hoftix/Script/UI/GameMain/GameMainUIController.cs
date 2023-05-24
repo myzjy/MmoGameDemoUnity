@@ -8,10 +8,10 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
 {
     public class GameMainUIController : MonoBehaviour
     {
-        /// <summary>
-        /// GameView
-        /// </summary>
-        private GameMainView _view;
+        // /// <summary>
+        // /// GameView
+        // /// </summary>
+        // private GameMainView _view;
 
         /// <summary>
         /// 构建
@@ -22,11 +22,11 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             SpringContext.RegisterBean(this);
         }
 
-        public void SetGameMainView(GameMainView view)
-        {
-            //这样可以关联起来
-            _view = view;
-        }
+        // public void SetGameMainView(GameMainView view)
+        // {
+        //     //这样可以关联起来
+        //     _view = view;
+        // }
 
         public void OnShow()
         {

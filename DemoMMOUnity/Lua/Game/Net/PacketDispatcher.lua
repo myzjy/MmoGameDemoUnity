@@ -7,14 +7,13 @@ printDebug("加载 PacketDispatcher.lua 文件")
 PacketDispatcher = {}
 _receiversMap = {}
 PacketDispatcher.Event = {
-    OnConnect = "NetDispatcher.Event.OnConnect",
-    OnDisConnect = "NetDispatcher.Event.OnDisConnect",
+    OnConnect = "PacketDispatcher.Event.OnConnect",
+    OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
 packetValue = nil
 PacketDispatcher.urlString = nil
 --- 链接建立通知lua
 function OnConnectServer(url)
-    printDebug(url)
     PacketDispatcher.urlString = url
     ---链接成功
     GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
@@ -22,7 +21,7 @@ end
 
 function OnDisConnectFromServer()
     printDebug("Game server disconnected!!")
-    GlobalEventSystem:Fire(NetDispatcher.Event.OnDisConnect)
+    GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
 function OnReceiveLineFromServer(bytes)
     str = bytes
@@ -32,7 +31,7 @@ function OnReceiveLineFromServer(bytes)
 end
 
 function PacketDispatcher:SendMessage(bytes)
-    netManager:SendMessage(bytes)
+    global.netManager:SendMessage(bytes)
 end
 function PacketDispatcher:Init()
     local loginNetController = require("Game.Login.LoginNetController"):New()

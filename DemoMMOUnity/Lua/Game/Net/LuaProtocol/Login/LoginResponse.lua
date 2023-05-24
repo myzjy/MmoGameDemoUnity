@@ -19,19 +19,11 @@ function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, dia
         premiumDiamondNum = premiumDiamondNum, -- long
         diamondNum = diamondNum -- long
     }
-    ----{
-    --obj.token = token ---java.lang.String
-    --obj.uid = uid -- long
-    --obj.userName = userName ---java.lang.String
-    --obj.goldNum = goldNum -- long
-    --obj.premiumDiamondNum = premiumDiamondNum -- long
-    --obj.diamondNum = diamondNum -- long
-    ----}
-
     setmetatable(obj, self)
     self.__index = self
     return obj
 end
+
 function LoginResponse:protocolId()
     return 1001
 end

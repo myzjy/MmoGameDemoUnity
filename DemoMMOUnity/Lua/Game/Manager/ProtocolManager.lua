@@ -52,16 +52,23 @@ end
 
 function ProtocolManager.initProtocolManager()
     local error = require("Game.Net.LuaProtocol.Common.Error")
+    local pong = require("Game.Net.LuaProtocol.Common.Pong")
     local loginRequest = require("Game.Net.LuaProtocol.Login.LoginRequest")
-    local registerRequest = require("Game.Net.LuaProtocol.Login.RegisterRequest")
     local loginResponse = require("Game.Net.LuaProtocol.Login.LoginResponse")
+    local registerRequest = require("Game.Net.LuaProtocol.Login.RegisterRequest")
     local registerResponse = require("Game.Net.LuaProtocol.Login.RegisterResponse")
-    protocols[error.protocolId()] = error
-    protocols[loginRequest.protocolId()] = loginRequest
-    protocols[loginResponse.protocolId()] = loginResponse
-    protocols[registerRequest.protocolId()] = registerRequest
-    protocols[registerResponse.protocolId()] = registerResponse
-
+    local loginTapToStartRequest = require("Game.Net.LuaProtocol.Login.LoginTapToStartRequest")
+    local loginTapToStartResponse = require("Game.Net.LuaProtocol.Login.LoginTapToStartResponse")
+    local serverConfigResponse = require("Game.Net.LuaProtocol.ServerConfig.ServerConfigResponse")
+    protocols[101] = error
+    protocols[104] = pong
+    protocols[1000] = loginRequest
+    protocols[1001] = loginResponse
+    protocols[1005] = registerRequest
+    protocols[1006] = registerResponse
+    protocols[1010] = serverConfigResponse
+    protocols[1013] = loginTapToStartRequest
+    protocols[1014] = loginTapToStartResponse
 end
 
 return ProtocolManager

@@ -117,7 +117,7 @@ end
 function ByteBuffer:setReadOffset(readOffset)
     if readOffset > self.writeOffset then
         error("index out of bounds exception: readerIndex: " + self.readOffset
-                + ", writerIndex: " + this.writeOffset
+                + ", writerIndex: " + self.writeOffset
                 + "(expected: 0 <= readerIndex <= writerIndex <= capacity:" + #self.buffer)
     end
     self.readOffset = readOffset
@@ -471,7 +471,7 @@ function ByteBuffer:getBytes(startIndex, endIndex)
 end
 
 function ByteBuffer:writePacketFlag(value)
-    local flag = (value == null)
+    local flag = (value == nil)
     self:writeBoolean(not flag)
     return flag
 end

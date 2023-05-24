@@ -11,6 +11,7 @@ LoginConst = {
     },
     Event = {
         Login = 1001,
+        Pong = 104,
         NetOpen = "LoginConst.Event.NetOpenEvent",
         StartLogin = "LoginConst.Event.StartLogin",
         LoginSucceed = "LoginConst.Event.LoginSucceed",
@@ -18,7 +19,7 @@ LoginConst = {
 }
 
 function LoginNetController:Init()
-    LoginNetController.InitEvents()
+    LoginNetController:InitEvents()
 end
 function LoginNetController:InitEvents()
     printDebug("LoginNetController:InitEvents() line 24")
@@ -29,11 +30,14 @@ function LoginNetController:InitEvents()
     --    LoginNetController:AtLoginResponse(data)
     --end
 
-    GlobalEventValue:Bind(PacketDispatcher.Event.OnConnect, function(url)
+    GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
         LoginNetController:Connect(url)
     end)
-    GlobalEventValue:Bind(LoginConst.Event.Login, function(data)
+    GlobalEventSystem:Bind(LoginConst.Event.Login, function(data)
         LoginNetController:AtLoginResponse(data)
+    end)
+    GlobalEventSystem:Bind(LoginConst.Event.Pong, function(data)
+        LoginNetController:AtPong(data)
     end)
 end
 --- 网络打开
@@ -56,6 +60,20 @@ function LoginNetController:AtLoginResponse(data)
 end
 function LoginNetController:Connect(url)
     printDebug("LoginNetController:Connect(url)line 46" .. type(url))
+end
+
+function LoginNetController:AtPong(data)
+    printDebug("当前时间" .. data.time .. "," .. type(data.time))
+    local timeNum = string.format("%.0f", (data.time / 1000));
+    local time = os.date("%Y.%m.%d:%H.%M.%S", tonumber(timeNum))
+    printDebug("当前时间" .. time)
+end
+
+function LoginNetController:AtLoginTapToStartResponse(data)
+    local response = data
+    if response.message ~= nil then
+        printDebug("可以登陆" .. response.accessGame .. "," .. response.message)
+    end
 end
 
 return LoginNetController

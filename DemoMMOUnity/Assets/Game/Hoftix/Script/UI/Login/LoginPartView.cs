@@ -72,12 +72,12 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         private void ClickLogin()
         {
-            if (DateTimeUtil.CurrentTimeMillis() - clickLoginTime < CLICK_INTERVAL)
-            {
-                return;
-            }
-
-            clickLoginTime = DateTimeUtil.Now() / 1_0000;
+            // if (DateTimeUtil.CurrentTimeMillis() - clickLoginTime < CLICK_INTERVAL)
+            // {
+            //     return;
+            // }
+            //
+            // clickLoginTime = DateTimeUtil.Now() / 1_0000;
 
             Debug.Log("账号密码登录[account:{}][password:{}]", account.text, password.text);
             var accountString = account.text;
@@ -89,7 +89,7 @@ namespace ZJYFrameWork.UISerializable
         public void Show()
         {
             LoginPart.transform.DOKill();
-            LoginPart.transform.DOScale(1f, 1f).SetEase(Ease.OutBack).SetDelay(0.3f * 0).OnComplete(() =>
+            LoginPart.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack).SetDelay(0.3f).OnComplete(() =>
             {
                 account.text = "";
                 password.text = "";

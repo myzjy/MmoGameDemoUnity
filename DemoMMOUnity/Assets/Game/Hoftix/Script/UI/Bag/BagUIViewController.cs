@@ -14,7 +14,7 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
         /// <summary>
         /// 
         /// </summary>
-        private GameMainView _view;
+        // private GameMainView _view;
 
         /// <summary>
         /// build
@@ -24,10 +24,10 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
             SpringContext.RegisterBean(this);
         }
 
-        public void SetGameView(GameMainView mainView)
-        {
-            this._view = mainView;
-        }
+        // public void SetGameView(GameMainView mainView)
+        // {
+        //     this._view = mainView;
+        // }
 
         //这个方法无法判断 是否生成了背包 点击过
         // public void OnEnter()
@@ -41,7 +41,7 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
         /// </summary>
         public void OnLeave()
         {
-            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_GAMEMAIN_PANEL);
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.CLOSE_GAMEMAIN_PANEL);
         }
     }
 }

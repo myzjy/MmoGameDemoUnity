@@ -14,7 +14,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
     {
         public Button LoginStartMaxButton = null;
         public Button LoginStartButton = null;
-        public LoginView LoginView = null;
+        // public LoginView LoginView = null;
 
         /// <summary>
         /// 赋值 构建 传递过来LoginView，便于控制
@@ -22,7 +22,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         /// <param name="loginView"></param>
         public void Build(LoginView loginView)
         {
-            LoginView = loginView;
+            // LoginView = loginView;
             LoginStartButton = GetObjType<Button>("LoginStartButton");
             LoginStartMaxButton = GetObjType<Button>("LoginStartMaxButton");
             if (LoginStartButton == null)
@@ -54,26 +54,39 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             {
                 return;
             }
-
+            var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
+            buttonTapToStartCanvasGroup.DOFade(0f, 1f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                buttonTapToStartCanvasGroup.interactable = false;
+                buttonTapToStartCanvasGroup.ignoreParentGroups = false;
+                buttonTapToStartCanvasGroup.blocksRaycasts = false;
+                buttonTapToStartCanvasGroup.interactable = false;
+            }).Play();
             gameObject.SetActive(false);
         }
 
         public void Show()
         {
-            var sequence = DOTween.Sequence();
-            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnShow(); });
-            sequence.AppendInterval(1.5f);
-            sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnClose(); });
-            sequence.AppendInterval(0.5f);
-
-            sequence.AppendCallback(() =>
-            {
+            // var sequence = DOTween.Sequence();
+            // sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnShow(); });
+            // sequence.AppendInterval(1.5f);
+            // sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnClose(); });
+            // sequence.AppendInterval(0.5f);
+            //
+            // sequence.AppendCallback(() =>
+            // {
                 gameObject.SetActive(true);
 
                 CommonController.Instance.loadingRotate.OnClose();
-                var buttonTapToStartCanvasGroup = GetComponentInChildren<CanvasGroup>();
-                buttonTapToStartCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
-            });
+                var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
+                buttonTapToStartCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).OnComplete(() =>
+                {
+                    buttonTapToStartCanvasGroup.interactable = true;
+                    buttonTapToStartCanvasGroup.ignoreParentGroups = true;
+                    buttonTapToStartCanvasGroup.blocksRaycasts = true;
+                    buttonTapToStartCanvasGroup.interactable = true;
+                }).Play();
+            // });
         }
 
         protected virtual void StartGame()
@@ -85,19 +98,19 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         {
             var buttonTapToStartCanvasGroup = GetComponentInChildren<CanvasGroup>();
             buttonTapToStartCanvasGroup.DOKill();
-            buttonTapToStartCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
+            buttonTapToStartCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-                    if (LoginView == null)
-                    {
-#if DEVELOP_BUILD
-                        Debug.LogError(
-                            $"[LoginView] 组件为空,请检查Build方法,检查[LoginView]中方法[OnInit]有没有进行build方法调度,有没有进行赋值,流程无法继续");
-#endif
-                        //流程卡死了，不能隐藏
-                        Show();
-                        return;
-                    }
+//                     if (LoginView == null)
+//                     {
+// #if DEVELOP_BUILD
+//                         Debug.LogError(
+//                             $"[LoginView] 组件为空,请检查Build方法,检查[LoginView]中方法[OnInit]有没有进行build方法调度,有没有进行赋值,流程无法继续");
+// #endif
+//                         //流程卡死了，不能隐藏
+//                         Show();
+//                         return;
+//                     }
 
                     SpringContext.GetBean<LoginController>().OnHide();
                     //跳转场景 

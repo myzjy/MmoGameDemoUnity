@@ -154,7 +154,7 @@ function Time:StartSynchServerTime(  )
 				end, 600)
 				timer:Start()
             end
-            NetDispatcher:SendMessage("account_get_server_time", nil, on_server_time_ack)
+            --NetDispatcher:SendMessage("account_get_server_time", nil, on_server_time_ack)
         end
         synch_time()
     end

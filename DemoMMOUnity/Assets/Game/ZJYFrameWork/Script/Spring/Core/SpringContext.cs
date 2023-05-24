@@ -231,7 +231,7 @@ namespace ZJYFrameWork.Spring.Core
 
         public static object GetBean(Type type)
         {
-            Debug.Log(type);
+            // Debug.Log(type);
             object bean = null;
 
             // 先从缓存获取

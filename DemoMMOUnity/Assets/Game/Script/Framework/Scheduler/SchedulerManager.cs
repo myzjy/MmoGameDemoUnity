@@ -33,12 +33,11 @@ namespace ZJYFrameWork.Scheduler
             var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
             DateTimeUtil.SetNow(now);
             count = 0;
-            if (now - minuteSchedulerTimestamp > DateTimeUtil.MILLIS_PER_MINUTE)
+            if (now - minuteSchedulerTimestamp  >= DateTimeUtil.MILLIS_PER_MINUTE)
             {
                 minuteSchedulerTimestamp = now;
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
-
             }
         }
 
