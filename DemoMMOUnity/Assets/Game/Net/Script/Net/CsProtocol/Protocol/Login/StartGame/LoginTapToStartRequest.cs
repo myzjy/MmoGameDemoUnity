@@ -10,17 +10,27 @@ namespace ZJYFrameWork.Net.CsProtocol
     /// <summary>
     /// 游戏登录拦截
     /// </summary>
-    public class LoginTapToStartRequest : Model,IReference, IPacket
+    public class LoginTapToStartRequest : Model, IReference, IPacket
     {
+        public string clientName { get; set; }
+
         public void Clear()
         {
-            
+            clientName = string.Empty;
         }
 
         public static LoginTapToStartRequest ValueOf()
         {
             var packet = ReferenceCache.Acquire<LoginTapToStartRequest>();
-            
+            packet.Clear();
+            packet.clientName =
+#if UNITY_EDITOR
+                "editor";
+#elif UNITY_ANDROID || UNITY_IOS
+                "app";
+#else
+                "pc";
+#endif
             return packet;
         }
 
@@ -30,6 +40,7 @@ namespace ZJYFrameWork.Net.CsProtocol
             return 1013;
         }
     }
+
     public class LoginTapToStartRequestRegistration : IProtocolRegistration
     {
         public short ProtocolId()
@@ -39,7 +50,7 @@ namespace ZJYFrameWork.Net.CsProtocol
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-            LoginTapToStartRequest message = (LoginTapToStartRequest) packet;
+            LoginTapToStartRequest message = (LoginTapToStartRequest)packet;
             var _message = new ServerMessageWrite(message.ProtocolId(), message);
             var json = JsonConvert.SerializeObject(_message);
             buffer.WriteString(json);
@@ -52,7 +63,6 @@ namespace ZJYFrameWork.Net.CsProtocol
 
 
             return packet;
-
         }
     }
 }
