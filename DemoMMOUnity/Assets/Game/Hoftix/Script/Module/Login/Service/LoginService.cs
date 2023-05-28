@@ -46,20 +46,8 @@ namespace ZJYFrameWork.Module.Login.Service
         /// </summary>
         public void LoginByToken()
         {
-            // var sequence = DOTween.Sequence();
-            // sequence.AppendCallback(() =>
-            // {
             netManager.Send(
                 GetPlayerInfoRequest.ValueOf(settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
-            // });
-            // sequence.AppendInterval(8f);
-            // sequence.AppendCallback(() =>
-            // {
-            //     if (!LoginCacheData.loginFlag)
-            //     {
-            //         LoginByToken();
-            //     }
-            // });
         }
 
         public void LoginByAccount()
