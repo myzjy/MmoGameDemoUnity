@@ -217,15 +217,37 @@ namespace ZJYFrameWork.Spring.Core
                 var typeFull = key.FullName;
                 if (typeFull != null)
                 {
-                    var fullSplit = typeFull.Split('.');
-                    var beanSplit = fullSplit[^1];
-                    if (beanSplit == beanString)
+                    Debug.Log($"GetBean,typeFull:{typeFull}");
+                    if (typeFull == beanString)
                     {
                         bean = value;
                     }
                 }
             }
 
+            if (bean != null)
+            {
+                Debug.Log($"bean:{bean},if,{beanString}");
+                return bean;
+            }
+
+            foreach (var (key, value) in beanMap)
+            {
+                var typeFull = key.FullName;
+                if (typeFull != null)
+                {
+                    // var fullSplit = typeFull.Split('.');
+                    // // Debug.Log($"GetBean,typeFull:{typeFull}");
+                    // var beanSplit = fullSplit[^1];
+                    if (typeFull == beanString)
+                    {
+                        bean = value;
+                        cachedBeanMap[key] = bean;
+                    }
+                }
+            }
+
+            Debug.Log($"bean:{bean},{beanString}");
             return bean;
         }
 
