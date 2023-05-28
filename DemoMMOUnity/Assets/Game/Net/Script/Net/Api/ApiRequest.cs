@@ -53,6 +53,40 @@ namespace ZJYFrameWork.Net
             this._onComplete = onComplete;
         }
 
+        public ApiRequest(BestHTTP.HttpMethods method, string uri, byte[] data = null,
+            Action<ApiRequest> onBeforeSend = null,
+            Action<ApiResponse> onSuccess = null, Action<ApiResponse> onError = null,
+            Action<ApiResponse> onComplete = null)
+        {
+            this.Uri = new Uri(uri);
+            this.Method = method;
+            this._bhRequest = new HttpRequest(Uri, method);
+
+            // 超时设定
+            _bhRequest.ConnectTimeout = TimeSpan.FromSeconds(TimeoutSec);
+            _bhRequest.Timeout = TimeSpan.FromSeconds(TimeoutSec);
+
+
+#if !BESTHTTP_DISABLE_CACHING && (!UNITY_WEBGL || UNITY_EDITOR)
+            // 不使用现金
+            _bhRequest.DisableCache = true;
+#endif
+
+            _bhRequest.SetHeader("Accept-Encoding", "gzip");
+            _bhRequest.SetHeader("App-Version", Application.version);
+            _bhRequest.SetHeader("User-Agent", UserAgent.Value);
+            _bhRequest.SetHeader("Content-Type", "application/json");
+
+            _bhRequest.RawData = data;
+
+            _bhRequest.Callback = HandleResponse;
+
+            this._onBeforeSend = onBeforeSend;
+            this._onSuccess = onSuccess;
+            this._onError = onError;
+            this._onComplete = onComplete;
+        }
+
         public Uri Uri { get; private set; }
         public BestHTTP.HttpMethods Method { get; private set; }
 

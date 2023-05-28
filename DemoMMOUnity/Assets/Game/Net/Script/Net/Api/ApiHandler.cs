@@ -60,6 +60,10 @@ namespace ZJYFrameWork.Net
             this.logger = logger;
         }
 
+        public void LuaRequest()
+        {
+            
+        }
         public void Request<TRequestData, TResponseData, TError>(ApiHttp<TRequestData, TResponseData, TError> api)
             where TRequestData : Model, new()
             where TResponseData : Model, new()
