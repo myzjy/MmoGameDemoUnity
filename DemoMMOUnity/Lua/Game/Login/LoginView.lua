@@ -7,8 +7,7 @@
 local LoginView = BaseClass(UIBaseView).New()
 
 function LoginView:OnInit()
-    print("LoginView:OnInit")
-    print(LoginView:GetViewPanel())
+    printInfo("LoginView:OnInit line 10")
     LoginView:GetViewPanel().LoginPartView:Build()
     LoginView:GetViewPanel().RegisterPartView:Build()
     LoginView:GetViewPanel().LoginTapToStartView:Build(nil)
@@ -19,6 +18,8 @@ function LoginView:OnInit()
 end
 
 function LoginView:OnShow()
+    printInfo("LoginView:OnShow line 21")
+
 end
 
 return LoginView

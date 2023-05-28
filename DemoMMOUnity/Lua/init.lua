@@ -58,9 +58,10 @@ function __G__TRACKBACK__(exceptionMsg)
 
 end
 --GlobalEventValue = {}
-GlobalEventSystem={}
+GlobalEventSystem = {}
 local function main()
     require("BaseRequire")
+    require("Game.Http.init")
     --local GlobalEvents = require("Game.Common.GlobalEvents")
     --GlobalEventValue = GlobalEvents
     printDebug("main() line 63")
@@ -75,7 +76,8 @@ local function main()
     else
         log.disable()
     end
-
+    local httpClient = require("Game.Http.src.httpClient.httpClient")
+    httpClient.Init()
     --- UI 初始化
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()

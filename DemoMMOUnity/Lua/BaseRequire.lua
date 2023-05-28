@@ -21,6 +21,10 @@ Plane = require "Common.UnityEngine.Plane"
 Time = require "Common.UnityEngine.Time"
 Object = require "Common.UnityEngine.Object"
 
+require("Common.csSharpClassGloabl")
+
+
+
 require("Common.json")
 require("Common/BaseClass")
 --require("utils.EventSystem")
