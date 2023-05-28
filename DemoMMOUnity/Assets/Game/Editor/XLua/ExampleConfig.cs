@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Linq;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using ZJYFrameWork.Net;
+
 //using System.Reflection;
 //using System.Linq;
 
@@ -41,6 +43,7 @@ public static class ExampleConfig
         typeof(ParticleSystem),
         typeof(SkinnedMeshRenderer),
         typeof(Renderer),
+        typeof(Uri),
         // typeof(WWW),
         typeof(Light),
         typeof(Mathf),
@@ -101,7 +104,10 @@ public static class ExampleConfig
         typeof(CinemachineFreeLook),
         typeof(AxisState),
         typeof(UnityEngine.UI.ScrollRect.ScrollRectEvent),
-        typeof(UnityEngine.Debug)
+        typeof(UnityEngine.Debug),
+        typeof(ApiRequest),
+        typeof(ApiResponse),
+        typeof(ApiHandler)
     };
 
     // [LuaCallCSharp]
@@ -114,19 +120,19 @@ public static class ExampleConfig
     //     typeof(Unity.Entities.EntityManager.EntityManagerDebug),
     // };
 
-    [LuaCallCSharp]
-    [CSharpCallLua]
-    public static List<Type> CSharpCallLuaUnityMMO
-    {
-        get
-        {
-            Type[] types = Assembly.Load("Assembly-CSharp").GetTypes();
-            List<Type> list = (from type in types
-                               where (type.Namespace == "UnityMMO" || type.Namespace == "XLuaFramework" || type.Namespace == "Cocos")
-                               select type).ToList();
-            return list;
-        }
-    }
+    // [LuaCallCSharp]
+    // [CSharpCallLua]
+    // public static List<Type> CSharpCallLuaUnityMMO
+    // {
+    //     get
+    //     {
+    //         Type[] types = Assembly.Load("Assembly-CSharp").GetTypes();
+    //         List<Type> list = (from type in types
+    //                            where (type.Namespace == "UnityMMO" || type.Namespace == "XLuaFramework" || type.Namespace == "Cocos")
+    //                            select type).ToList();
+    //         return list;
+    //     }
+    // }
 
     [LuaCallCSharp]
     public static List<Type> LuaCallCSharpTextMeshPro = new List<Type>() {
@@ -146,6 +152,7 @@ public static class ExampleConfig
         typeof(Func<string, long>),
         typeof(Action<string>),
         typeof(Action<double>),
+        typeof(Action<byte[]>),
         typeof(Action<bool>),
         typeof(Action<float, float>),
         typeof(Action<float>),
