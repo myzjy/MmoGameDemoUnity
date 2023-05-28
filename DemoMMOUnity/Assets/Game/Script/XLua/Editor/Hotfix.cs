@@ -1665,7 +1665,7 @@ namespace XLua
             var inject_tool_path = "./Tools/XLuaHotfixInject.exe";
             if (!File.Exists(inject_tool_path))
             {
-                UnityEngine.Debug.LogError("please install the Tools");
+                UnityEngine.Debug.LogError("please install thes Tool");
                 return;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using XLua;
 using ZJYFrameWork.Prefs;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.WebRequest;
@@ -9,7 +10,8 @@ namespace ZJYFrameWork.Setting
     /// 游戏配置管理器
     /// </summary>
     [Bean]
-    public sealed class SettingManager : ISettingManager
+    [LuaCallCSharp]
+    public class SettingManager : ISettingManager
     {
         /// <summary>
         /// 服务器设置配置相关
@@ -48,6 +50,7 @@ namespace ZJYFrameWork.Setting
 
         public string GetHttpsBase()
         {
+            Debug.Log($"{Settings}");
             if (Settings == null)
             {
                 throw new Exception("ServerSetting helper is invalid.");
@@ -269,7 +272,7 @@ namespace ZJYFrameWork.Setting
             return settingHelper.GetInt(settingName, defaultValue);
         }
 
-          /// <summary>
+        /// <summary>
         /// 向指定游戏配置项写入整数值。
         /// </summary>
         /// <param name="settingName">要写入游戏配置项的名称。</param>
