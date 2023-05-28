@@ -4,6 +4,10 @@
 
 	<assembly fullname="Assembly-CSharp">
 	    <type fullname="ZJYFrameWork.XLuaScript.XLuaManager" preserve="all"/>
+		<type fullname="ZJYFrameWork.Setting.SettingManager" preserve="all"/>
+		<type fullname="ZJYFrameWork.Net.ApiRequest" preserve="all"/>
+		<type fullname="ZJYFrameWork.Net.ApiResponse" preserve="all"/>
+		<type fullname="ZJYFrameWork.Net.ApiHandler" preserve="all"/>
 		
 	</assembly>
 
@@ -69,6 +73,11 @@
 
 	<assembly fullname="UnityEngine.ParticleSystemModule">
 	    <type fullname="UnityEngine.ParticleSystem" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="System">
+	    <type fullname="System.Uri" preserve="all"/>
 		
 	</assembly>
 

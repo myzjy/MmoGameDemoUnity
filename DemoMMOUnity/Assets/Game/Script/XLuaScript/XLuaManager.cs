@@ -59,7 +59,7 @@ namespace ZJYFrameWork.XLuaScript
                 luaFixedUpdate = luaEnv.Global.Get<Action<float>>("FixedUpdate");
                 UIComponentManager.eventUIAction =
                     luaEnv.Global.Get<Action<string, object>>("DispatchEvent");
-                PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<string>>("OnReceiveLineFromServer"));
+                PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
                 SpringContext.GetBean<NetManager>().LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
                 //初始化流程状态

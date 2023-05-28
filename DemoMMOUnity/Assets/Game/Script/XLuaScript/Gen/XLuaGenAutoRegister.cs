@@ -25,6 +25,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(ZJYFrameWork.XLuaScript.XLuaManager), ZJYFrameWorkXLuaScriptXLuaManagerWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.Setting.SettingManager), ZJYFrameWorkSettingSettingManagerWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(object), SystemObjectWrap.__Register);
         
         
@@ -95,6 +98,9 @@ namespace XLua.CSObjectWrap
         
         
             translator.DelayWrapLoader(typeof(UnityEngine.Renderer), UnityEngineRendererWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(System.Uri), SystemUriWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(UnityEngine.Light), UnityEngineLightWrap.__Register);
@@ -168,16 +174,16 @@ namespace XLua.CSObjectWrap
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.MaskableGraphic.CullStateChangedEvent), UnityEngineUIMaskableGraphicCullStateChangedEventWrap.__Register);
         
+        }
+        
+        static void wrapInit1(LuaEnv luaenv, ObjectTranslator translator)
+        {
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect), UnityEngineUIScrollRectWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect.MovementType), UnityEngineUIScrollRectMovementTypeWrap.__Register);
         
-        }
-        
-        static void wrapInit1(LuaEnv luaenv, ObjectTranslator translator)
-        {
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect.ScrollbarVisibility), UnityEngineUIScrollRectScrollbarVisibilityWrap.__Register);
         
@@ -270,6 +276,15 @@ namespace XLua.CSObjectWrap
         
         
             translator.DelayWrapLoader(typeof(UnityEngine.Debug), UnityEngineDebugWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.Net.ApiRequest), ZJYFrameWorkNetApiRequestWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.Net.ApiResponse), ZJYFrameWorkNetApiResponseWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.Net.ApiHandler), ZJYFrameWorkNetApiHandlerWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(TMPro.TextMeshProUGUI), TMProTextMeshProUGUIWrap.__Register);
