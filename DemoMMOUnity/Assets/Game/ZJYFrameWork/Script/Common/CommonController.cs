@@ -1,18 +1,34 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using ZJYFrameWork.Spring.Core;
+using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.UISerializable.Common
 {
-    public class CommonController : Singleton<CommonController>
+    public class CommonController : MonoBehaviour
     {
+        private static CommonController instance = null;
+
+        public static CommonController Instance
+        {
+            get { return instance; }
+        }
+
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                instance = this;
+            }
+
+            Init();
+        }
+
         public LoadingRotate loadingRotate;
         public Snackbar snackbar;
 
-        protected override void Init()
+        protected  void Init()
         {
-            base.Init();
         }
-
-
     }
 }

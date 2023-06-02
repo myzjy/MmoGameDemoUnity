@@ -474,7 +474,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     {
                         throw new Exception("IsCancellationRequested");
                     }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     Debug.Log(
                         $"[TcpClient] [method: TcpClient.Connect] [msg|Exception] Trying to connect to {address.ToString()}:{port.ToString()}");
 #endif
@@ -517,7 +517,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                     {
                     }
 #endif
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     Debug.Log(
                         $"[TcpClient] [method: TcpClient.Connect] [msg|Exception] Connected to {address.ToString()}:{port.ToString()}");
 #endif

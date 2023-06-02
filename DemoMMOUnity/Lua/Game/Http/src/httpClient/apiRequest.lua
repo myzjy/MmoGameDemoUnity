@@ -4,16 +4,19 @@
 --- DateTime: 2023/5/27 13:37
 ---
 
-local ApiRequest = CS.ZJYFrameWork.Net.ApiRequest
-
 local apiRequest = BaseClass()
 apiRequest.Uri = nil
 apiRequest.Method = nil
 apiRequest._watch = CS.System.Diagnostics.Stopwatch
 
 local _bhRequest = nil
-function apiRequest.Init(method, uri, onBeforeSend, data, onSuccess, onError, onComplete)
-    apiRequest.Uri = CS.System.Uri(uri)
+local _onBeforeSend = nil
+local _onSuccess = nil
+local _onError = nil
+local _onComplete = nil
+
+function apiRequest.Init(method, uri, data, onBeforeSend, onSuccess, onError, onComplete)
+    apiRequest.Uri = uri
     apiRequest.Method = method
     _bhRequest = CS.BestHTTP.HttpRequest(apiRequest.Uri, apiRequest.Method)
     _bhRequest:SetHeader("Accept-Encoding", "gzip")
@@ -21,12 +24,40 @@ function apiRequest.Init(method, uri, onBeforeSend, data, onSuccess, onError, on
     _bhRequest:SetHeader("User-Agent", CS.ZJYFrameWork.Net.UserAgent.Value)
     _bhRequest:SetHeader("Content-Type", "application/json")
     _bhRequest.RawData = data
-
-
+    _onBeforeSend = onBeforeSend
+    _onSuccess = onSuccess
+    _onError = onError
+    _onComplete = onComplete
 end
+
 function apiRequest.HandleResponse(originalBhRequest, bhResponse)
-    _watch.Stop()
-    local elapsedMsec = _watch.ElapsedMilliseconds;
+    apiRequest._watch.Stop()
+    local elapsedMsec = apiRequest._watch.ElapsedMilliseconds
+    local apiRespnse = require("Game.Http.src.httpClient.apiResponse"):New()
+    apiRespnse.new(apiRequest, bhResponse, elapsedMsec)
 
+    if apiRespnse.IsSuccess() then
+        if _onSuccess ~= nil then
+            _onSuccess(apiRespnse)
+        end
+    else
+        if _onError ~= nil then
+            _onError(apiRespnse)
+        end
+    end
+    if _onComplete~=nil then
+        _onComplete(apiRespnse)
+    end
 end
+
+function apiRequest.Send()
+    if _onBeforeSend ~= nil then
+        _onBeforeSend(apiRequest)
+    end
+    apiRequest._watch = CS.System.Diagnostics.Stopwatch()
+    apiRequest._watch.Start()
+
+    _bhRequest.Send()
+end
+
 return apiRequest

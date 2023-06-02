@@ -4,11 +4,21 @@
 --- DateTime: 2023/5/16 0:12
 ---
 
-local UINotifEnum={
-    --- 打开 界面 
-    OPEN_GAMEMAIN_PANEL="OPEN_GAMEMAIN_PANEL",
-    CLOSE_GAMEMAIN_PANEL="CLOSE_GAMEMAIN_PANEL",
-    TIME_GAMEMAIN_PANEL="TIME_GAMEMAIN_PANEL"
+local GameMainConfig = {
+    ---预制体名字
+    prefabName = "LoginPanel",
+    --- 当前会生成在那一层
+    canvasType = UIConfigEnum.UICanvasType.UI,
+    sortType = UIConfigEnum.UISortType.First,
+    --- 当前 UI 交互事件 消息
+    eventNotification = {
+        --- 打开 界面
+        OPEN_GAMEMAIN_PANEL = "OPEN_GAMEMAIN_PANEL",
+        --- 关闭界面
+        CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL",
+        --- 时间显示
+        TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL"
+    }
 }
 
-return UINotifEnum
+return GameMainConfig

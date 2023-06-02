@@ -132,7 +132,7 @@ namespace BestHTTP.Connections
                 }
                 catch (Exception ex)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     var sb = new StringBuilder(3);
                     sb.Append("[HTTPConnection] ");
                     sb.Append("[method:ThreadFunc] ");
@@ -161,7 +161,7 @@ namespace BestHTTP.Connections
                 this.connector.Client.NoDelay = true;
 #endif
                 StartTime = DateTime.UtcNow;
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[{nameof(HTTPConnection)}] [method:ThreadFunc] [msg] Negotiated protocol through ALPN: '{this.connector.NegotiatedProtocol}'");
 #endif
@@ -187,7 +187,7 @@ namespace BestHTTP.Connections
 #endif
 
                     default:
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                         var sb = new StringBuilder(3);
                         sb.Append("[HTTPConnection] ");
                         sb.Append("[method:ThreadFunc] ");

@@ -46,6 +46,7 @@ namespace ZJYFrameWork.XLuaScript
             // InitLuaEnv();
         }
 
+
         public void InitLuaEnv()
         {
             luaEnv = new LuaEnv();
@@ -62,9 +63,6 @@ namespace ZJYFrameWork.XLuaScript
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
                 SpringContext.GetBean<NetManager>().LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
-                //初始化流程状态
-                SpringContext.GetBean<NetworkManager>().Init();
-                SpringContext.GetBean<ProcedureComponent>().StartProcedure();
             }
         }
 

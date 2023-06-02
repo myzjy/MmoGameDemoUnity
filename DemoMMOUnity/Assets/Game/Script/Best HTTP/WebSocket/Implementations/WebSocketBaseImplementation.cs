@@ -43,7 +43,7 @@ namespace BestHTTP.WebSocket
             string origin,
             string protocol)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);

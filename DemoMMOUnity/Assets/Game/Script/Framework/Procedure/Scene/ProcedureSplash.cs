@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
+using ZJYFrameWork.Procedure.InitResources;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Procedure.Scene
@@ -7,6 +9,7 @@ namespace ZJYFrameWork.Procedure.Scene
     public class ProcedureSplash : FsmState<IProcedureFsmManager>
     {
         private bool checkNetworkComplete;
+
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
@@ -21,6 +24,7 @@ namespace ZJYFrameWork.Procedure.Scene
                 checkNetworkComplete = true;
             }
         }
+
         public override void OnUpdate(IFsm<IProcedureFsmManager> fsm, float elapseSeconds, float realElapseSeconds)
         {
             base.OnUpdate(fsm, elapseSeconds, realElapseSeconds);
@@ -29,19 +33,20 @@ namespace ZJYFrameWork.Procedure.Scene
             {
                 return;
             }
-
-            // if (AssetBundleConfig.IsEditorMode)
-            // {
+#if UNITY_EDITOR
+            if (AssetBundleConfig.IsEditorMode)
+            {
                 // 编辑器模式
                 Debug.Log("Editor resource mode detected.");
                 fsm.ChangeState<ProcedurePreLoad>();
-            // }
-            // else 
-            // {
-            //     // 单机模式
-            //     Debug.Log("Package resource mode detected.");
-            //     fsm.ChangeState<ProcedureInitResources>();
-            // }
+                return;
+            }
+#endif
+            {
+                // 单机模式
+                Debug.Log("Package resource mode detected.");
+                fsm.ChangeState<ProcedureInitResources>();
+            }
         }
     }
 }

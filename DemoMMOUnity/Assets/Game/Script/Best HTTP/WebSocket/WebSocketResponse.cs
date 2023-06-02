@@ -57,7 +57,7 @@ namespace BestHTTP.WebSocket
                     {
                         case WebSocketFrameTypes.Continuation:
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                             {
                                 var st = new StackTrace(new StackFrame(true));
                                 var sf = st.GetFrame(0);
@@ -82,7 +82,7 @@ namespace BestHTTP.WebSocket
                             {
                                 goto case WebSocketFrameTypes.Continuation;
                             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                             {
                                 var st = new StackTrace(new StackFrame(true));
                                 var sf = st.GetFrame(0);
@@ -107,7 +107,7 @@ namespace BestHTTP.WebSocket
                             {
                                 goto case WebSocketFrameTypes.Continuation;
                             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                             {
                                 var st = new StackTrace(new StackFrame(true));
                                 var sf = st.GetFrame(0);
@@ -136,7 +136,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -158,7 +158,7 @@ namespace BestHTTP.WebSocket
             //现在，当有错误时，只有OnError事件将被调用!
             if (!IsClosed || OnClosed == null || BaseRequest.State != HttpRequestStates.Processing) return;
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -200,7 +200,7 @@ namespace BestHTTP.WebSocket
                 }
                 catch (Exception ex)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -248,7 +248,7 @@ namespace BestHTTP.WebSocket
 
         private bool SendPing()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -274,7 +274,7 @@ namespace BestHTTP.WebSocket
             }
             catch
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -334,7 +334,7 @@ namespace BestHTTP.WebSocket
                 _newFrameSignal = null;
 
                 CloseStream();
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -603,7 +603,7 @@ namespace BestHTTP.WebSocket
 
             if (Interlocked.CompareExchange(ref this._sendThreadCreated, 1, 0) == 0)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -620,7 +620,7 @@ namespace BestHTTP.WebSocket
             }
 
             Interlocked.Add(ref this._bufferedAmount, frame.Data != null ? frame.DataLength : 0);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -646,7 +646,7 @@ namespace BestHTTP.WebSocket
             {
                 return;
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             {
                 var st = new StackTrace(new StackFrame(true));
                 var sf = st.GetFrame(0);
@@ -692,7 +692,7 @@ namespace BestHTTP.WebSocket
                 using WriteOnlyBufferedStream bufferedStream = new WriteOnlyBufferedStream(this.Stream, 16 * 1024);
                 while (!_closed && !_closeSent)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
                         var sf = st.GetFrame(0);
@@ -727,7 +727,7 @@ namespace BestHTTP.WebSocket
                         if (_waitingForPong && now - _lastPing > this.WebSocket.CloseAfterNoMessage)
                         {
                             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                                 var st = new StackTrace(new StackFrame(true));
                                 var sf = st.GetFrame(0);
                                 StringBuilder sb = new StringBuilder(6);
@@ -753,7 +753,7 @@ namespace BestHTTP.WebSocket
 
                     try
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                         {
                             var st = new StackTrace(new StackFrame(true));
                             var sf = st.GetFrame(0);
@@ -804,7 +804,7 @@ namespace BestHTTP.WebSocket
                         _closed = true;
                     }
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -823,7 +823,7 @@ namespace BestHTTP.WebSocket
             }
             catch (Exception ex)
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -840,7 +840,7 @@ namespace BestHTTP.WebSocket
             finally
             {
                 Interlocked.Exchange(ref _sendThreadCreated, 0);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -867,7 +867,7 @@ namespace BestHTTP.WebSocket
                     {
                         WebSocketFrameReader frame = new WebSocketFrameReader();
                         frame.Read(this.Stream);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                         {
                             var st = new StackTrace(new StackFrame(true));
                             var sf = st.GetFrame(0);
@@ -887,7 +887,7 @@ namespace BestHTTP.WebSocket
                         //(这些规则在未来的规范中可能会被放宽。)
                         if (frame.HasMask)
                         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                             {
                                 var st = new StackTrace(new StackFrame(true));
                                 var sf = st.GetFrame(0);
@@ -1000,7 +1000,7 @@ namespace BestHTTP.WebSocket
                             // 如果一个端点接收到一个关闭帧，并且之前没有发送一个关闭帧，端点必须发送一个关闭帧作为响应。
                             case WebSocketFrameTypes.ConnectionClose:
                             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                                 {
                                     var st = new StackTrace(new StackFrame(true));
                                     var sf = st.GetFrame(0);
@@ -1046,7 +1046,7 @@ namespace BestHTTP.WebSocket
                         _newFrameSignal.Set();
                     }
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);
@@ -1062,7 +1062,7 @@ namespace BestHTTP.WebSocket
             }
             finally
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 {
                     var st = new StackTrace(new StackFrame(true));
                     var sf = st.GetFrame(0);

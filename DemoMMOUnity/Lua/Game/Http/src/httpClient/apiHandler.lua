@@ -26,7 +26,8 @@ function apiHandler.Request(api)
     --- api 地址
     local relativePath = api.Path
     local data = nil
-    local request=require("Game.Http.src.httpClient.apiRequest")
+    local request=require("Game.Http.src.httpClient.apiRequest"):New()
+    request.Init(api.Method,CS.System.Uri(baseUrl))
 end
 
 return apiHandler

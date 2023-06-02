@@ -36,6 +36,7 @@ events = require("Common.util.event")
 require("Common.util.Timer")
 UpdateManager = require "Common.UpdateManager"
 require("Common.UIGloabl")
+require("Game.UI.init")
 require("Game.Net.LuaProtocol.Buffer.ByteBuffer")
 --require("Game.Manager.ProtocolManager")
 -- LuaMain 脚本不从c# 端读取调用

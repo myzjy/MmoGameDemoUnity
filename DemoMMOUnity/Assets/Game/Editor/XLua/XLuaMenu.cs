@@ -83,7 +83,7 @@ namespace ZJYFrameWorkEditor.XLuaEditor
             Debug.Log("Copy lua files over");
         }
 
-        [MenuItem("Tools/XLua/FileDelete")]
+        [MenuItem("Tools/XLua/XLuaAssetBundle")]
         public static void XLuaAssetBundle()
         {
             // DeleteMacErrorFile();

@@ -78,7 +78,7 @@ namespace BestHTTP.Connections
 #endif
                     HTTPProtocolFactory.IsSecureProtocol(uri);
 #endif
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] '{request.CurrentUri.ToString()}' - Connecting to {uri.Host}:{uri.Port.ToString()}");
 #endif
@@ -104,7 +104,7 @@ namespace BestHTTP.Connections
                 {
                     if (changed)
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                         StringBuilder sb = new StringBuilder();
                         sb.Append($"'{request.CurrentUri.ToString()}'");
                         sb.Append($"- Buffer sizes changed - Send from: {sendBufferSize}");
@@ -119,7 +119,7 @@ namespace BestHTTP.Connections
                     }
                     else
                     {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
 
                         StringBuilder sb = new StringBuilder();
                         sb.Append($"'{request.CurrentUri.ToString()}'");
@@ -178,14 +178,14 @@ namespace BestHTTP.Connections
                 {
                     request.Timing.Add(TimingEventNames.DnsLookup);
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] '{request.CurrentUri.ToString()}' - 返回带有地址的DNS查询: {addresses?.Length ?? -1}");
 #endif
 
                 if (request.IsCancellationRequested)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     Debug.LogError(
                         $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] IsCancellationRequested(是否要求取消)");
 #endif
@@ -203,21 +203,21 @@ namespace BestHTTP.Connections
 
                 if (request.IsCancellationRequested)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     Debug.LogError(
                         $"[TCPConnector] [method: Connect(HttpRequest request)] [msg|Exception] IsCancellationRequested(是否要求取消)");
 #endif
                     throw new Exception("IsCancellationRequested");
                 }
 #endif
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] Connected to {uri.Host}:{uri.Port.ToString()}");
 #endif
             }
             else
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[TCPConnector] [method: Connect(HttpRequest request)] [msg] Already connected to {uri.Host}:{uri.Port.ToString()}");
 #endif
@@ -250,7 +250,7 @@ namespace BestHTTP.Connections
 
                 if (request.IsCancellationRequested)
                 {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                     Debug.LogError(
                         $"[TCPConnector] [method: Connect(HttpRequest request)] [msg|Exception] IsCancellationRequested(是否要求取消)");
 #endif
@@ -299,7 +299,7 @@ namespace BestHTTP.Connections
                             }
                             catch (Exception ex)
                             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                                 Debug.LogError(
                                     $"[{nameof(TCPConnector)}] [method: Connect(HttpRequest request)] [msg|Exception] {nameof(HttpManager.TlsClientFactory)} ex:{ex}");
 #endif

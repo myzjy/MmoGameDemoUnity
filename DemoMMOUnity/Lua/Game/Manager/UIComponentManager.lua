@@ -13,7 +13,7 @@ function UIComponentManager:InitUIModelComponent()
     printDebug("UIComponentManager:InitUIModelComponent")
     --- 这里不能使用 baseClass 的new函数 去读取函数 会报错
     --- 创建一个新的table ，不会读取到正确 元地址
-    UIModelInterfaces["loginUI"] = require("Game.Login.LoginUIModelView")
+    UIModelInterfaces["loginUI"] = require("Game.UI.Login.LoginUIModelView")
     UIModelInterfaces["gameMainUI"] = require("Game.UI.GameMain.ModelView.GameMainModelView")
     ---循环遍历
     for i, v in pairs(UIModelInterfaces) do

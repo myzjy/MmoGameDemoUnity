@@ -8,7 +8,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
     {
         public Stream CreateFileStream(string path, FileStreamModes mode)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: CreateFileStream(path:{path}, mode:{mode})] [msg|Exception] CreateFileStream path: '{path}' mode: {mode}");
 #endif
@@ -26,7 +26,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
 
         public void DirectoryCreate(string path)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: DirectoryCreate(path:{path})] [msg|Exception] DirectoryCreate path: '{path}'");
 #endif
@@ -36,7 +36,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
         public bool DirectoryExists(string path)
         {
             bool exists = Directory.Exists(path);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: DirectoryExists(path:{path})] [msg|Exception] DirectoryExists path: '{path}' exists: {exists}");
 #endif
@@ -46,7 +46,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
         public string[] GetFiles(string path)
         {
             var files = Directory.GetFiles(path);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: GetFiles(path:{path})] [msg|Exception] GetFiles path: '{path}' files count: {files.Length}");
 #endif
@@ -55,7 +55,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
 
         public void FileDelete(string path)
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: FileDelete(path:{path})] [msg|Exception] FileDelete path: '{path}'");
 #endif
@@ -66,7 +66,7 @@ namespace BestHTTP.PlatformSupport.FileSystem
         {
             bool exists = File.Exists(path);
 
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[DefaultIOService] [method: FileExists(path:{path})] [msg|Exception] FileExists path: '{path}' exists: {exists}");
 #endif

@@ -6,39 +6,49 @@
 
 --- UI Model View
 local GameMainUIModelView = BaseClass(UIBaseModule).New()
---- @class GameMainView
---- @return GameMainView
-local UINotifEnum = GameMainConfig
 
 --- 初始化 UI Model View
-function GameMainUIModelView:Init()
+function GameMainUIModelView:InitUI()
     CS.Debug.Log("GameMainUIModelView Init")
-    self.GameMainUIPanel = require("Game.GenerateScripts.UIModules.GameMainUIPanelView").New()
-    self.GameMainUIView = require("Game.UI.GameMain.View.GameMainView")
-    GameMainUIModelView.base = UIBaseModule.Create("GameMainUIPanel", UIConfigEnum.UISortType.Last,
-            UIConfigEnum.UICanvasType.UI, self.GameMainUIView, self.GameMainUIPanel)
-    GameMainUIModelView.base.InstanceOrReuse()
+    GameMainUIPanel = require("Game.GenerateScripts.UIModules.GameMainUIPanelView").New()
+    GameMainUIView = require("Game.UI.GameMain.View.GameMainView")
+    GameMainUIModelView.Init(  ---配置类
+            GameMainConfig,
+    --- UI 详细代码
+            GameMainUIView,
+    ---UI组件绑定信息
+            GameMainUIPanel)
+    GameMainUIModelView.InstanceOrReuse()
 
 end
 --- UI 通知事件
 ---@return table
 function GameMainUIModelView:Notification()
-    local UINotifEnum = {
-        --- 打开 界面
-        OPEN_GAMEMAIN_PANEL = "OPEN_GAMEMAIN_PANEL",
-        CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL",
-        TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL"
+    ---不能直接返回，直接返回在内部拿不到表
+    local data = {
+        [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL,
+        [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL,
     }
-    return UINotifEnum
+    return data
 end
 
 function GameMainUIModelView:NotificationHandler(_eventNotification)
-    if _eventNotification.GetEventName == UINotifEnum.OPEN_GAMEMAIN_PANEL then
-        if GameMainUIModelView.base.isResuse then
-            GameMainUIModelView.base:InstisResuseanceOrReuse()
-        else
-            GameMainUIModelView:Init()
+    local eventSwitch = {
+        [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = function()
+            if isReuse then
+                GameMainUIModelView.InstanceOrReuse()
+            else
+                isReuse = true
+                GameMainUIModelView:InitUI()
+            end
+        end,
+        [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = function(obj)
+            GameMainUIModelView.OnHide()
         end
+    }
+    local switchAction = eventSwitch[_eventNotification.eventName]
+    if eventSwitch then
+        return switchAction(_eventNotification.eventBody)
     end
 
 end

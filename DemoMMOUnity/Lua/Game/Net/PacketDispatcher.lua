@@ -24,6 +24,7 @@ function OnDisConnectFromServer()
     GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
 function OnReceiveLineFromServer(bytes)
+    printDebug(type(bytes))
     str = bytes
     local packet = readBytes(str)
     packetValue = packet
@@ -34,7 +35,7 @@ function PacketDispatcher:SendMessage(bytes)
     global.netManager:SendMessage(bytes)
 end
 function PacketDispatcher:Init()
-    local loginNetController = require("Game.Login.LoginNetController"):New()
+    local loginNetController = require("Game.UI.Login.LoginNetController"):New()
     loginNetController.Init()
 
 end

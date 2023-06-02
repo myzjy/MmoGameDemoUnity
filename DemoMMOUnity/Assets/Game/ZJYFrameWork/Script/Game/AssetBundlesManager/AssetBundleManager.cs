@@ -106,6 +106,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 
         private void Start()
         {
+            DontDestroyOnLoad(this);
             Debug.Log("[AssetBundleManager]");
             Executors.RunOnCoroutine(InitBase());
         }
@@ -259,9 +260,6 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             if (obj == null)
             {
                 // loadAssetCallbacks.LoadAssetFailureCallback();
-            }
-            else
-            {
             }
         }
 

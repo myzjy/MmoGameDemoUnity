@@ -44,7 +44,7 @@ namespace BestHTTP.Connections
 
         public void RunHandler()
         {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[HTTP1Handler] [method:RunHandler] [msg|Exception] [{this}]开始处理请求 '{this.conn.CurrentRequest.CurrentUri.ToString()}'");
 #endif
@@ -152,7 +152,7 @@ namespace BestHTTP.Connections
 
                     exceptionMessage = sb.ToString();
                 }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log($"[HTTP1Handler] [method:RunHandler] [msg|Exception] {exceptionMessage}");
 #endif
 
@@ -261,7 +261,7 @@ namespace BestHTTP.Connections
         private bool Receive(HttpRequest request)
         {
             SupportedProtocols protocol = HttpProtocolFactory.GetProtocolFromUri(request.CurrentUri);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[HTTPConnection] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - protocol: {protocol.ToString()}");
 #endif
@@ -270,14 +270,14 @@ namespace BestHTTP.Connections
 
             if (!request.Response.Receive())
             {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 Debug.Log(
                     $"[HTTP1Handler] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - 失败了!响应将为空，返回false。");
 #endif
                 request.Response = null;
                 return false;
             }
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
             Debug.Log(
                 $"[HTTP1Handler] [method:Receive(HttpRequest request)] [msg] [{this.ToString()}] - Receive - 成功完成了!");
 #endif
