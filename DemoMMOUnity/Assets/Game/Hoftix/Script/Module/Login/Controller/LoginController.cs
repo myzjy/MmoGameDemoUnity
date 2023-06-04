@@ -51,8 +51,8 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().OnHide();
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();
 
-            // UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
-            // UIComponentManager.DispatchEvent(UINotifEnum.ShowLoginAccountUI);
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.ShowLoginAccountUI);
         }
 
         [PacketReceiver]

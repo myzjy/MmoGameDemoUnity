@@ -4,7 +4,8 @@
 --- DateTime: 2023/5/22 14:17
 ---
 
-LoginNetController = BaseClass()
+local LoginNetController = BaseClass()
+local json = require("Common.json")
 LoginConst = {
     Status = {
 
@@ -12,6 +13,8 @@ LoginConst = {
     Event = {
         Login = 1001,
         Pong = 104,
+        ---登录拦截
+        LoginTapTOStart = 1014,
         NetOpen = "LoginConst.Event.NetOpenEvent",
         StartLogin = "LoginConst.Event.StartLogin",
         LoginSucceed = "LoginConst.Event.LoginSucceed",
@@ -39,6 +42,9 @@ function LoginNetController:InitEvents()
     GlobalEventSystem:Bind(LoginConst.Event.Pong, function(data)
         LoginNetController:AtPong(data)
     end)
+    GlobalEventSystem:Bind(LoginConst.Event.LoginTapTOStart, function(data)
+        LoginNetController:AtLoginTapToStartResponse(data)
+    end)
 end
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
@@ -65,15 +71,26 @@ end
 function LoginNetController:AtPong(data)
     printDebug("当前时间" .. data.time .. "," .. type(data.time))
     local timeNum = string.format("%.0f", (data.time / 1000));
-    local time = os.date("%Y.%m.%d:%H.%M.%S", tonumber(timeNum))
+    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     printDebug("当前时间" .. time)
 end
 
+--- 是否可以登录
 function LoginNetController:AtLoginTapToStartResponse(data)
     local response = data
     if response.message ~= nil then
-        printDebug("可以登陆" .. response.accessGame .. "," .. response.message)
+        printDebug("可以登陆" .. json.encode(data.accessGame) .. "," .. response.message)
     end
+    if response.accessGame then
+    else
+        --- 不能登錄
+        CommonController.Instance.snackbar.OpenCommonUIPanel(DialogConfig.ButtonType.YesNo, "", "当前不在登录时间..MESSAGE:" .. response.message,
+                function(res)
+
+                end, "确定", "取消")
+        return
+    end
+    DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
 end
 
 return LoginNetController

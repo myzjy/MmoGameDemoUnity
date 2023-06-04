@@ -466,7 +466,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             //关闭
             // UIManager.Instance.GetSystem<IUISystemModule>().CloseUIEvent();
             // LandscapeLeftOrPortrait(false);
-
+            loadSceneCallbacks.LoadSceneDependencyAssetCallback(sceneName, "",0,0, null);
             //场景加载进度条
             var loadSceneAsync = SceneManager.LoadSceneAsync(sceneName);
             //如果为true，那么加载结束后直接就会跳转，我们根本看不见加载的过程

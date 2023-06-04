@@ -1,13 +1,7 @@
-﻿using UnityEngine;
-using ZJYFrameWork.Constant;
-using ZJYFrameWork.Module.Login.Service;
-using ZJYFrameWork.Net;
+﻿using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
-using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
-using ZJYFrameWork.UISerializable.Manager;
-using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Procedure.Scene
 {

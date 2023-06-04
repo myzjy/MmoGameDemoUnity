@@ -21,7 +21,7 @@ function LoginTapToStartResponse:new(message, accessGame)
     return obj
 end
 function LoginTapToStartResponse:protocolId()
-    return 1001
+    return 1014
 end
 
 function LoginTapToStartResponse:write(buffer, packet)

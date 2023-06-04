@@ -18,7 +18,7 @@ function UIBaseModule.Init(config, selfView, viewPanel)
     UIBaseModule.viewPanel = viewPanel
 end
 
-UIBaseModule.isResuse = false
+UIBaseModule.isReuse = false
 
 local InstanceID = 0
 --- 刷新 复用
@@ -38,16 +38,15 @@ function UIBaseModule:ReUse()
 end
 
 function UIBaseModule.InstanceOrReuse()
-    print(Config.prefabName, "当前UI创建,创建位置", Config.canvasType, ",当前还isResuse:", UIBaseModule.isResuse)
-    if UIBaseModule.isResuse then
+    print(Config.prefabName, "当前UI创建,创建位置", Config.canvasType, ",当前还isResuse:", UIBaseModule.isReuse)
+    if UIBaseModule.isReuse then
         if InstanceID == 0 then
             return
         end
         --- 调用 UI 排序
         UIBaseModule:ReUse()
     else
-        UIBaseModule.isResuse = true
-        print("创建UI")
+        UIBaseModule.isReuse = true
         UIBaseModule:InstancePrefab()
     end
 end
@@ -56,28 +55,23 @@ function UIBaseModule:InstancePrefab()
     printDebug("UIBaseModule:InstancePrefab[77]")
     ---打开loading 界面
     CommonController.Instance.loadingRotate:OnShow()
-    printDebug("预制体名字", self.prefabName)
-    printDebug("CommonManager.Instance:", CommonController.Instance)
     local actionObj = function(obj)
-        printDebug("obj:" .. type(obj))
         UIBaseModule:InstantiateGameObject(obj)
         CommonController.Instance.loadingRotate:OnClose()
     end
     --- 根据预制体名字 生成 预制体
     CommonManager.Instance:LoadAsset(Config.prefabName, actionObj)
     UIBaseModule.viewPanel:Init(UIBaseModule.UIObject)
-    self.selfView:SetUIView(UIBaseModule.UIObject, UIBaseModule.viewPanel)
-    self.selfView.OnInit()
-    self.selfView.OnShow()
+    UIBaseModule.selfView:SetUIView(UIBaseModule.UIObject, UIBaseModule.viewPanel)
+    UIBaseModule.selfView:OnInit()
+    self.selfView:OnShow()
 end
 UIBaseModule.UIObject = {}
 _UIObject = {}
 function UIBaseModule:InstantiateGameObject(gameObject)
     local parent = UIBaseModule:GetPanelUIRoot(Config.canvasType)
     local go = CS.UnityEngine.Object.Instantiate(gameObject, parent, true) or CS.UnityEngine.GameObject
-    printDebug("当前生成:" .. type(go))
     local rectTransform = go:GetComponent("RectTransform")
-    printDebug("rectTransform 获取组件:" .. type(rectTransform))
     UIBaseModule.UIObject = go
     rectTransform.offsetMax = Vector2.zero
     rectTransform.offsetMin = Vector2.zero
@@ -90,8 +84,6 @@ end
 function UIBaseModule:ActionGameObject()
     local rtf = UIBaseModule.UIObject:GetComponent("RectTransform")
     local uiView = UIBaseModule.UIObject:GetComponent("UIView")
-    -- CS.Debug.Log(('获取到UIView'..uiView))
-    printDebug("获取到UIView:" .. type(uiView))
     if rtf ~= nil then
         rtf.offsetMin = Vector2.zero
         rtf.offsetMax = Vector2.one

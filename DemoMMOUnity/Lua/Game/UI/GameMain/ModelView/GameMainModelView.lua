@@ -6,13 +6,15 @@
 
 --- UI Model View
 local GameMainUIModelView = BaseClass(UIBaseModule).New()
+local GameMainUIPanel = nil
+local GameMainUIView = nil
 
 --- 初始化 UI Model View
 function GameMainUIModelView:InitUI()
     CS.Debug.Log("GameMainUIModelView Init")
     GameMainUIPanel = require("Game.GenerateScripts.UIModules.GameMainUIPanelView").New()
-    GameMainUIView = require("Game.UI.GameMain.View.GameMainView")
-    GameMainUIModelView.Init(  ---配置类
+    GameMainUIView = require("Game.UI.GameMain.View.GameMainView").New()
+    GameMainUIModelView.Init(---配置类
             GameMainConfig,
     --- UI 详细代码
             GameMainUIView,
@@ -35,10 +37,9 @@ end
 function GameMainUIModelView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = function()
-            if isReuse then
+            if GameMainUIModelView.isReuse then
                 GameMainUIModelView.InstanceOrReuse()
             else
-                isReuse = true
                 GameMainUIModelView:InitUI()
             end
         end,

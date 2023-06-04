@@ -60,7 +60,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             protocolList.TryGetValue(protocolId, out var protocol);
             if (protocol == null)
             {
-                throw new Exception("[protocolId:" + protocolId + "]协议不存在");
+                Debug.LogError("[protocolId:" + protocolId + "]协议不存在");
+                return null;
             }
 
             return protocol;
@@ -91,8 +92,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 {
                     var protocolId = short.Parse(protocolIdStr.ToString());
                     dict.TryGetValue("packet", out var packetJson);
-                  
-                    return GetProtocol(protocolId).Read(byteBuffer, dict);
+                    var data = GetProtocol(protocolId);
+                    if (data == null)
+                    {
+                        return null;
+                    }
+
+                    return data.Read(byteBuffer, dict);
                 }
             }
             catch (Exception e)

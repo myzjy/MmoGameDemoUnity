@@ -2,7 +2,7 @@
 local UIBaseView = BaseClass()
 --- 保存 C# 侧对应的预制体上面UIView
 local uiPanelView = {}
-
+local viewPanel = nil
 ---复用 UI调度
 function UIBaseView:ReUse()
     uiPanelView:OnShow()
@@ -21,15 +21,15 @@ function UIBaseView:SetUIView(view, ViewPanel)
     self.SelfUIView = view
     --- 保存 预制体上面的 UIView
     uiPanelView = self.SelfUIView:GetComponent("UIView")
-    self.viewPanel = ViewPanel
+    viewPanel = ViewPanel
 end
 ---返回 UIView
 ---@return table
-function UIBaseView:GetUIView()
+function UIBaseView.GetUIView()
     return uiPanelView
 end
-function UIBaseView:GetViewPanel()
-    return self.viewPanel
+function UIBaseView.GetViewPanel()
+    return viewPanel
 end
 
 --- 隐藏 UI

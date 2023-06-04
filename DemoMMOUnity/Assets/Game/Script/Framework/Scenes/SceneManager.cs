@@ -130,7 +130,8 @@ namespace ZJYFrameWork.Scenes
 
         private void LoadSceneUpdateCallback(string sceneAssetName, float progress, object userData)
         {
-            SpringContext.GetBean<LoadUIController>().SetNowProgressNum(progress);
+            UIComponentManager.DispatchEvent(UINotifEnum.REFUSH_LOADINNG_UIPANEL,progress);
+            // SpringContext.GetBean<LoadUIController>().SetNowProgressNum(progress);
         }
 
         private void LoadSceneDependencyAssetCallback(string sceneAssetName, string dependencyAssetName,
@@ -159,7 +160,7 @@ namespace ZJYFrameWork.Scenes
         public IEnumerator FadeAndLoadSceneAsyncNew(string sceneAssetName)
         {
             UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
-            SpringContext.GetBean<LoadUIController>().SetNowProgressNum(0);
+            // SpringContext.GetBean<LoadUIController>().SetNowProgressNum(0);
             for (var i = unloadingSceneAssetNames.Count - 1; i >= 0; i--)
             {
                 yield return UnloadScene(unloadingSceneAssetNames[i]);

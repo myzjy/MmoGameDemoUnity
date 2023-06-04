@@ -99,8 +99,9 @@ namespace ZJYFrameWork.UISerializable.Common
                 //     {
                 //         if (message.Equals(serverLandscapeLeftError.text))
                 //         {
-                //             serverLandscapeLeftError.text = null;
-                //             serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
+                serverLandscapeLeftError.text = null;
+                serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
+                serverErrorLandscapeLeftCanvasGroup.alpha = 0;
                 //         }
                 //     });
             }

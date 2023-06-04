@@ -24,20 +24,26 @@ function GameMainVIew:OnInit()
     self.GoldCoinText = ViewPanel.Gem_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
     --- 购买金币，第一跳转商场兑换
     self.GoldTimButton = ViewPanel.glod_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
-    ViewPanel.headImgClick:SetListener(function()
+    CS.Util.SetListener(ViewPanel.headImgClick, (function()
         --- 点击头像
         CS.Debug.Log("点击头像，进行更换")
         --- 目前来说还不知道需不需要
-    end)
-    self.GoldTimButton:SetListener(function()
+    end))
+    CS.Util.SetListener(self.GoldTimButton, function()
         --- 购买金币 这个是需要 去兑换
         --- 先写 但是不知道需要不要 明确
     end)
+    
 end
-
 
 function GameMainVIew:OnShow()
     CS.Debug.Log("GameMain:OnShow")
+    GameMainVIew.super:OnShow()
 end
 
+---@param dateTime 
+function GameMainVIew:ShowNowTime(dateTime)
+    local timeNum = string.format("%.0f", (dateTime.time / 1000));
+    local time = os.date("%Y.%m.%d.%H.%M.%S", tonumber(timeNum))
+end
 return GameMainVIew

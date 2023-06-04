@@ -1,9 +1,8 @@
 ---@class LoginUIModelView
-local LoginUIModelView = BaseClass(UIBaseModule)
+local LoginUIModelView = BaseClass(UIBaseModule.New())
 
 local LoginView = nil
 local LoginPanel = nil
-local isReuse = false
 
 function LoginUIModelView:InitUI()
     printDebug("LoginUIModelView Init")
@@ -28,6 +27,8 @@ function LoginUIModelView:Notification()
     local data = {
         [LoginConfig.eventNotification.OPEN_LOGIN_INIT_PANEL] = LoginConfig.eventNotification.OPEN_LOGIN_INIT_PANEL,
         [LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL] = LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL,
+        [LoginConfig.eventNotification.OpenLoginTapToStartUI] = LoginConfig.eventNotification.OpenLoginTapToStartUI,
+        [LoginConfig.eventNotification.ShowLoginAccountUI] = LoginConfig.eventNotification.ShowLoginAccountUI,
     }
     return data
 end
@@ -35,14 +36,22 @@ end
 function LoginUIModelView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [LoginConfig.eventNotification.OPEN_LOGIN_INIT_PANEL] = function()
-            if isReuse then
+            if LoginUIModelView.isReuse then
                 LoginUIModelView.InstanceOrReuse()
             else
-                isReuse = true
                 LoginUIModelView:InitUI()
             end
         end,
         [LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL] = function(obj)
+            LoginView.OnHide()
+        end,
+        [LoginConfig.eventNotification.OpenLoginTapToStartUI] = function(obj)
+            if Debug > 0 then
+                printDebug("点击开始游戏之后，服务器在开启时间，可以正常进入")
+            end
+            LoginView:LoginStartGame()
+        end,
+        [LoginConfig.eventNotification.ShowLoginAccountUI] = function(obj)
             LoginView.OnHide()
         end
     }
@@ -50,7 +59,6 @@ function LoginUIModelView:NotificationHandler(_eventNotification)
     if eventSwitch then
         return switchAction(_eventNotification.eventBody)
     end
-
 end
 
 return LoginUIModelView

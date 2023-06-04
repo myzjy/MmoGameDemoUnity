@@ -19,7 +19,7 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
             SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);
             UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOADING_UIPAENL);
 
-            UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }
     }
 }

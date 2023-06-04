@@ -119,7 +119,6 @@ namespace ZJYFrameWork.Base.Component
             //初始化流程状态
             SpringContext.GetBean<NetworkManager>().Init();
             SpringContext.GetBean<ProcedureComponent>().StartProcedure();
-            SpringContext.GetBean<XLuaManager>().InitLuaEnv();
         }
 
         // IEnumerator AwakeSpring()

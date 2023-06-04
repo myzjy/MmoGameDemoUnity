@@ -31,7 +31,7 @@ namespace ZJYFrameWork.UI.UIModel
         /// 标题
         /// </summary>
         [SerializeField] protected Text titleText = null;
-        
+
         /// <summary>
         /// 文字主题
         /// </summary>
@@ -117,6 +117,8 @@ namespace ZJYFrameWork.UI.UIModel
             }
 
             onClickAction = onClick;
+
+
             return true;
         }
 

@@ -78,7 +78,10 @@ namespace ZJYFrameWork.Net.Core.Websocket
             PacketDispatcher.ReceiveString(byteString);
 
             var packet = ProtocolManager.Read(byteBuffer);
-            PacketDispatcher.Receive(packet);
+            if (packet != null)
+            {
+                PacketDispatcher.Receive(packet);
+            }
 
             // // queue it
             // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
@@ -90,11 +93,12 @@ namespace ZJYFrameWork.Net.Core.Websocket
             byteBuffer.WriteBytes(content);
 
             byteBuffer.ReadRawInt();
-            var json = StringUtils.BytesToString(byteBuffer.ToBytes());
-
             PacketDispatcher.ReceiveString(content);
             var packet = ProtocolManager.Read(byteBuffer);
-            PacketDispatcher.Receive(packet);
+            if (packet != null)
+            {
+                PacketDispatcher.Receive(packet);
+            }
             // // queue it
             // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
         }

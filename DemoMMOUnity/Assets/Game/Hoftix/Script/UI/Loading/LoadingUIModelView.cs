@@ -10,6 +10,8 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         /// </summary>
         public const string OPEN_LOADINNG_UIPANEL = "OPEN_LOADINNG_UIPANEL";
 
+        public const string REFUSH_LOADINNG_UIPANEL = "REFUSH_LOADINNG_UIPANEL";
+
         /// <summary>
         /// 关闭loading界面
         /// </summary>
@@ -39,6 +41,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             {
                 UINotifEnum.OPEN_LOADINNG_UIPANEL,
                 UINotifEnum.CLOSE_LOADING_UIPAENL,
+                UINotifEnum.REFUSH_LOADINNG_UIPANEL
             };
         }
 
@@ -50,6 +53,23 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                 {
                     InstanceOrReuse();
                 }
+                    break;
+                case UINotifEnum.REFUSH_LOADINNG_UIPANEL:
+                    if (selfView.GetSelfUIView != null)
+                    {
+                        selfView.OnShow();
+                        var num = (float)_eventNotification.GetEventBody;
+                        selfView.SetNowProgressNum(num);
+                    }
+                    else
+                    {
+                        InstanceOrReuse(() =>
+                        {
+                            var num = (float)_eventNotification.GetEventBody;
+                            selfView.SetNowProgressNum(num);
+                        });
+                    }
+
                     break;
                 case UINotifEnum.CLOSE_LOADING_UIPAENL:
                 {

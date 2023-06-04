@@ -6,8 +6,7 @@
 
 --- net
 global.netManager = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("ZJYFrameWork.Net.NetManager") or CS.ZJYFrameWork.Net.NetManager
---- CommonController
-global.CommonController = CS.ZJYFrameWork.UISerializable.Common.CommonController
+
 --- settingManager 当前
 global.settingManager=CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("ZJYFrameWork.Setting.SettingManager") or CS.ZJYFrameWork.Setting.SettingManager
 

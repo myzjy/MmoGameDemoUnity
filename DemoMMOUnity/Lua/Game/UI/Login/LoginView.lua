@@ -4,15 +4,15 @@
 --- DateTime: 2023/5/13 16:17
 ---
 
-local LoginView = BaseClass(UIBaseView).New()
+local LoginView = BaseClass(UIBaseView.New())
 
 function LoginView:OnInit()
     printInfo("LoginView:OnInit line 10")
-    LoginView:GetViewPanel().LoginPartView:Build()
-    LoginView:GetViewPanel().RegisterPartView:Build()
-    LoginView:GetViewPanel().LoginTapToStartView:Build(nil)
-    LoginView:GetViewPanel().LoginController:Build(LoginView:GetViewPanel().LoginPartView, LoginView:GetViewPanel().RegisterPartView, LoginView:GetViewPanel().LoginTapToStartView, LoginView)
-    LoginView:GetViewPanel().LoginController:OnInit();
+    LoginView.GetViewPanel().LoginPartView:Build()
+    LoginView.GetViewPanel().RegisterPartView:Build()
+    LoginView.GetViewPanel().LoginTapToStartView:Build(nil)
+    LoginView.GetViewPanel().LoginController:Build(LoginView:GetViewPanel().LoginPartView, LoginView:GetViewPanel().RegisterPartView, LoginView:GetViewPanel().LoginTapToStartView, LoginView)
+    LoginView.GetViewPanel().LoginController:OnInit();
 
 
 end
@@ -22,4 +22,12 @@ function LoginView:OnShow()
 
 end
 
+function LoginView:LoginStartGame()
+    printDebug("LoginView:LoginStartGame() line 26")
+    local view = LoginView.GetViewPanel()
+    view.LoginTapToStartView:LoginStartGame()
+end
+function LoginView:StartLoginTip()
+    --coroutine.start()
+end
 return LoginView

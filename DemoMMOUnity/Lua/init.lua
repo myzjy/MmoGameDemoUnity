@@ -57,36 +57,37 @@ function __G__TRACKBACK__(exceptionMsg)
     end
 
 end
+
 --GlobalEventValue = {}
 GlobalEventSystem = {}
 local function main()
     require("BaseRequire")
-    require("Game.Http.init")
-    --local GlobalEvents = require("Game.Common.GlobalEvents")
-    --GlobalEventValue = GlobalEvents
     printDebug("main() line 63")
     require("Game.Manager.ProtocolManager")
     require("Game.Net.PacketDispatcher")
 
-    --setmetatable(GlobalEventSystem, EventSystem)
     GlobalEventSystem = require("utils.EventSystem").New()
-    --global.GlobalEventSystem:Constructor()
     if Debug > 0 then
         printDebug("开启Debug Log")
     else
         log.disable()
     end
-    local httpClient = require("Game.Http.src.httpClient.httpClient")
-    httpClient.Init()
-    --- UI 初始化
+    
+    ----- UI 初始化
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()
     PacketDispatcher:Init()
+    local client = cs_generator(function()
+        printDebug("执行 init 最外 86")
+        coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
+        printDebug("1S结束 line 89")
+    end)
+    Executors.RunOnCoroutineNoReturn(client)
+
 end
 
-
---main()
-local status, msg = pcall(main, __G__TRACKBACK__)
-if not status then
-    print('xpcall robot main error', status, msg)
-end
+main()
+--local status, msg = pcall(main, __G__TRACKBACK__)
+--if not status then
+--    print('xpcall robot main error', status, msg)
+--end
