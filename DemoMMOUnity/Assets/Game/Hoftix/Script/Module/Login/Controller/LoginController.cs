@@ -50,9 +50,6 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             //只是关闭 输入账号
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().OnHide();
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();
-
-            // UIComponentManager.CSDispatchEvent(UINotifEnum.OpenLoginTapToStartUI);
-            // UIComponentManager.CSDispatchEvent(UINotifEnum.ShowLoginAccountUI);
         }
 
         [PacketReceiver]

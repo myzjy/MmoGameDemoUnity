@@ -19,8 +19,9 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
             //设置为1
             CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
 
+            UIComponentManager.CSDispatchEvent(UINotifEnum.CloseLoginUI);
 
-            // UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
+            UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }
     }
 }
