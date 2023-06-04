@@ -6,18 +6,18 @@ namespace ZJYFrameWork.Hotfix.Common
     public class PlayerUserCaCheData
     {
         /**
-     * 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
-     */
+         * 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
+         */
         public long DiamondNum;
 
         /**
-     * 金币
-     */
+         * 金币
+         */
         public long goldNum;
 
         /**
-     * 付费钻石 一般充值才有，付费钻石转换成普通钻石
-     */
+         * 付费钻石 一般充值才有，付费钻石转换成普通钻石
+         */
         public long PremiumDiamondNum;
 
         /// <summary>
