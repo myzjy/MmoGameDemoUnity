@@ -53,7 +53,10 @@ namespace ZJYFrameWork.UISerializable.Common
 
             UIDataLoading.SetShowCount(nowDownNums, maxDownNums, downText);
         }
-
+        public void CloseUIDataLoadingPanel()
+        {
+            UIDataLoading.Close();
+        }
         /// <summary>
         /// 转换场景的时候调用显示面板
         /// </summary>
@@ -67,6 +70,11 @@ namespace ZJYFrameWork.UISerializable.Common
             }
 
             UIDataLoading.SetSceneProgress(nowDownNums, maxDownNums);
+        }
+
+        public void CloseUIDataScenePanel()
+        {
+            UIDataLoading.Close();
         }
 
         #endregion
