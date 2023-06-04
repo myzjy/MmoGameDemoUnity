@@ -5,9 +5,9 @@
 ---
 printDebug("加载 ProtocolManager.lua 文件")
 
-protocols = {}
+local protocols = {}
 
-ProtocolManager = {}
+local ProtocolManager = {}
 local json = require("Common.json")
 
 -- table扩展方法，map的大小

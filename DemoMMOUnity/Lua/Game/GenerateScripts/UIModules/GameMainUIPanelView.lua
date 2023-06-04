@@ -14,6 +14,7 @@ function GameMainUIPanelView:Init(view)
 	self.Gem_UISerializableKeyObject = _UIView:GetObjType("Gem_UISerializableKeyObject") or CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.glod_UISerializableKeyObject = _UIView:GetObjType("glod_UISerializableKeyObject") or CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.middle = _UIView:GetObjType("middle") or CS.UnityEngine.GameObject
+	self.TimeShow_Text = _UIView:GetObjType("TimeShow_Text") or CS.UnityEngine.UI.Text
 	self.middle_hero = _UIView:GetObjType("middle_hero") or CS.UnityEngine.GameObject
 	self.storeBtn = _UIView:GetObjType("storeBtn") or CS.UnityEngine.UI.Button
 	self.HuodongBtn = _UIView:GetObjType("HuodongBtn") or CS.UnityEngine.UI.Button

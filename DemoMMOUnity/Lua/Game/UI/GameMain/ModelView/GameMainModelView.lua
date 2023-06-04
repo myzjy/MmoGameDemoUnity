@@ -30,6 +30,7 @@ function GameMainUIModelView:Notification()
     local data = {
         [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL,
         [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL,
+        [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL,
     }
     return data
 end
@@ -44,6 +45,9 @@ function GameMainUIModelView:NotificationHandler(_eventNotification)
             end
         end,
         [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = function(obj)
+            GameMainUIModelView.OnHide()
+        end,
+        [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = function(obj)
             GameMainUIModelView.OnHide()
         end
     }

@@ -3,9 +3,19 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/6/2 15:52
 
+
+UIBaseView = require("Common.UI.UIBaseView")
+UIBaseModule = require("Common.UI.UIBaseModule")
+
+UIConfigEnum = require("Common.UI.UIConfigEnum")
+
 ----------------start Config----------------
 LoginConfig = require("Game.UI.Login.LoginConfig")
 
 GameMainConfig = require("Game.UI.GameMain.ModelView.GameMainConfig")
 UINotification = require("Game.Common.UINotification")
 ----------------end   Config----------------
+---
+----------------start UI Component ----------------
+UIComponentManager = require("Game.UI.UIComponentManager")
+----------------end UI Component ----------------

@@ -5,7 +5,6 @@
 ---
 ---@class Error
 local Error = {}
-local messageData = require("Game.Net.serverMessageWrite")
 local json = require("Common.json")
 
 function Error:new(errorCode, errorMessage, module)

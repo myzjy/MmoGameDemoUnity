@@ -63,8 +63,7 @@ GlobalEventSystem = {}
 local function main()
     require("BaseRequire")
     printDebug("main() line 63")
-    require("Game.Manager.ProtocolManager")
-    require("Game.Net.PacketDispatcher")
+    require("Game.Net.main")
 
     GlobalEventSystem = require("utils.EventSystem").New()
     if Debug > 0 then

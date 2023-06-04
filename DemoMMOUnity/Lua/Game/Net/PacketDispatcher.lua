@@ -4,8 +4,8 @@
 --- DateTime: 2023/5/22 13:10
 
 printDebug("加载 PacketDispatcher.lua 文件")
-PacketDispatcher = {}
-_receiversMap = {}
+local PacketDispatcher = {}
+--_receiversMap = {}
 PacketDispatcher.Event = {
     OnConnect = "PacketDispatcher.Event.OnConnect",
     OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
@@ -27,8 +27,8 @@ function OnReceiveLineFromServer(bytes)
     printDebug(type(bytes))
     str = bytes
     local packet = readBytes(str)
-    packetValue = packet
-    PacketDispatcher:Receive(packetValue)
+    --packetValue = packet
+    PacketDispatcher:Receive(packet)
 end
 
 function PacketDispatcher:SendMessage(bytes)
@@ -47,7 +47,8 @@ end
 --end
 
 function PacketDispatcher:Receive(packet)
-    packetValue = packet
-    GlobalEventSystem:Fire(packetValue:protocolId(), packetValue)
+    --packetValue = packet
+    GlobalEventSystem:Fire(packet:protocolId(), packet)
 end
 
+return PacketDispatcher

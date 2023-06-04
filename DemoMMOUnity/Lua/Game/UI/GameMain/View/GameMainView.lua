@@ -33,7 +33,7 @@ function GameMainVIew:OnInit()
         --- 购买金币 这个是需要 去兑换
         --- 先写 但是不知道需要不要 明确
     end)
-    
+
 end
 
 function GameMainVIew:OnShow()
@@ -41,9 +41,11 @@ function GameMainVIew:OnShow()
     GameMainVIew.super:OnShow()
 end
 
----@param dateTime 
+---@param dateTime
 function GameMainVIew:ShowNowTime(dateTime)
     local timeNum = string.format("%.0f", (dateTime.time / 1000));
-    local time = os.date("%Y.%m.%d.%H.%M.%S", tonumber(timeNum))
+    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
+    local ViewPanel = GameMainVIew:GetViewPanel()
+    ViewPanel.TimeShow_Text.text = time
 end
 return GameMainVIew
