@@ -190,8 +190,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Archives
                         break;
                     case CompressionType.LZ4:
                     case CompressionType.LZ4HC:
-                        buffer = LZ4.LZ4Codec.Decode(buffer, 0, compressedBlockSize, uncompressedBlockSize);
-                        break;
+                        // buffer = LZ4.LZ4Codec.Decode(buffer, 0, compressedBlockSize, uncompressedBlockSize);
+                        // break;
                     default:
                         throw new NotSupportedException("Not supported compression type : " + compressionType);
                 }
