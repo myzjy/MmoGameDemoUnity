@@ -101,24 +101,9 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             buttonTapToStartCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-//                     if (LoginView == null)
-//                     {
-// #if DEVELOP_BUILD
-//                         Debug.LogError(
-//                             $"[LoginView] 组件为空,请检查Build方法,检查[LoginView]中方法[OnInit]有没有进行build方法调度,有没有进行赋值,流程无法继续");
-// #endif
-//                         //流程卡死了，不能隐藏
-//                         Show();
-//                         return;
-//                     }
-
                     SpringContext.GetBean<LoginController>().OnHide();
                     //跳转场景 
                     SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
-
-                    // PlayManager.Instance.LoadScene(Data.scene_home);
-                    // SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.Menu);
-                    // LoginController.GetInstance().DestroyThis();
                 });
         }
     }

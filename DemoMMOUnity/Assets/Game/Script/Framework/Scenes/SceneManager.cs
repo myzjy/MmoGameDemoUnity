@@ -13,6 +13,7 @@ using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Scenes
 {
@@ -103,10 +104,9 @@ namespace ZJYFrameWork.Scenes
 
         private void LoadSceneSuccessCallback(string sceneAssetName, float duration, object userData)
         {
-            // UIComponentManager.DispatchEvent(UINotifEnum.);f
-            SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);
+            // CommonController.Instance.snackbar.OpenUIDataScenePanel(0, 1);
 
-            // CommonUIManager.Instance.Snackbar.OpenUIDataScenePanel(duration, 1);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(duration, 1);
 
             Debug.Log("Load assetSceneName:[{}]", sceneAssetName);
             loadedSceneAssetNames.Add(sceneAssetName);
@@ -130,14 +130,16 @@ namespace ZJYFrameWork.Scenes
 
         private void LoadSceneUpdateCallback(string sceneAssetName, float progress, object userData)
         {
-            UIComponentManager.DispatchEvent(UINotifEnum.REFUSH_LOADINNG_UIPANEL,progress);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(progress, 1);
+
             // SpringContext.GetBean<LoadUIController>().SetNowProgressNum(progress);
         }
 
         private void LoadSceneDependencyAssetCallback(string sceneAssetName, string dependencyAssetName,
             int loadedCount, int totalCount, object userData)
         {
-            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(0, 1);
+
             // var eve = LoadSceneDependencyAssetEvent.ValueOf(sceneAssetName, dependencyAssetName, loadedCount, totalCount, userData);
             // EventBus.SyncSubmit(eve);
             // ReferenceCache.Release(eve);
@@ -159,7 +161,8 @@ namespace ZJYFrameWork.Scenes
 
         public IEnumerator FadeAndLoadSceneAsyncNew(string sceneAssetName)
         {
-            UIComponentManager.DispatchEvent(UINotifEnum.OPEN_LOADINNG_UIPANEL);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(0, 1);
+
             // SpringContext.GetBean<LoadUIController>().SetNowProgressNum(0);
             for (var i = unloadingSceneAssetNames.Count - 1; i >= 0; i--)
             {

@@ -4,6 +4,7 @@ using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Module.ServerConfig.Controller
 {
@@ -16,8 +17,8 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
             //获取
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
             //设置为1
-            SpringContext.GetBean<LoadUIController>().SetNowProgressNum(1);
-            UIComponentManager.DispatchEvent(UINotifEnum.CLOSE_LOADING_UIPAENL);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
+
 
             // UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }

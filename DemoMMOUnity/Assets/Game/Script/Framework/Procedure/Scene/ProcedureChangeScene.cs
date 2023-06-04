@@ -1,9 +1,11 @@
 ﻿using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Execution;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Scenes;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.Procedure.Scene
 {
@@ -64,6 +66,7 @@ namespace ZJYFrameWork.Procedure.Scene
             Debug.Log("Load Scene '{}' OK", eve.sceneAssetName);
 #endif
             changeSceneComplete = true;
+            UIComponentManager.DispatchEvent(UINotifEnum.CloseLoginUI);
             // CommonUIManager.Instance.Snackbar.OpenUIDataScenePanel(1, 1);
         }
     }
