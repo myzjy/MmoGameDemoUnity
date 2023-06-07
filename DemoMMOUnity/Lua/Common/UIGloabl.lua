@@ -3,8 +3,3 @@
 --- Created by Administrator.
 --- DateTime: 2023/5/13 23:13
 ---
-UIBaseView=require("Common.UI.UIBaseView")
-UIBaseModule=require("Common.UI.UIBaseModule")
-
-UIConfigEnum=require("Common.UI.UIConfigEnum")
-UIComponentManager=require("Game.Manager.UIComponentManager")

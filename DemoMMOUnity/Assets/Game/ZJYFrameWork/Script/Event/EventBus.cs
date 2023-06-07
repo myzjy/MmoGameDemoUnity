@@ -43,7 +43,7 @@ namespace ZJYFrameWork.Event
         private static void RegisterEventReceiver(object bean)
         {
             var classType = bean.GetType();
-            var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(classType, typeof(EventReceiverAttribute));
+            var methods = AssemblyUtils.GetMethodsByAnnoInPojoClass(classType, typeof(EventReceiverAttribute));
             foreach (var item in methods)
             {
                 var parameters = item.GetParameters();

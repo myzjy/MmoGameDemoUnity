@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 using Object = System.Object;
 
 namespace ZJYFrameWork.Spring.Utils
@@ -13,16 +12,16 @@ namespace ZJYFrameWork.Spring.Utils
         * 获取所有程序集，这里过滤掉不需要程序集
         * 
         */
-        private static readonly Assembly[] allAssemblys = AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-            a.Equals(typeof(AssemblyUtils).Assembly) || 
-            a.FullName.StartsWith("Assembly-CSharp-Editor")||
-            a.FullName.StartsWith("Assembly-CSharp")||
-            a.FullName.StartsWith("Main")||
-            a.FullName.StartsWith("ZJYFrameWork.AssetBundles.Bundles")||
+        private static readonly Assembly[] AllAssembly = AppDomain.CurrentDomain.GetAssemblies().Where(a =>
+            a.Equals(typeof(AssemblyUtils).Assembly) ||
+            a.FullName.StartsWith("Assembly-CSharp-Editor") ||
+            a.FullName.StartsWith("Assembly-CSharp") ||
+            a.FullName.StartsWith("Main") ||
+            a.FullName.StartsWith("ZJYFrameWork.AssetBundles.Bundles") ||
             a.FullName.StartsWith("ZJYFrameWork.Log")
         ).ToArray();
 
-        private static readonly Dictionary<string, Type> cachedTypes = new Dictionary<string, Type>();
+        private static readonly Dictionary<string, Type> CachedTypes = new Dictionary<string, Type>();
 
         /// <summary>
         /// 获取Type里面所有属性
@@ -35,13 +34,13 @@ namespace ZJYFrameWork.Spring.Utils
                                   | BindingFlags.Instance | BindingFlags.Default);
         }
 
-        public static MethodInfo[] GetMethodsTypes(Type type)
+        private static MethodInfo[] GetMethodsTypes(Type type)
         {
             return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
                                    | BindingFlags.Instance | BindingFlags.Default);
         }
 
-        public static FieldInfo[] GetFieldsByAnnoInPOJOClass(Type type, Type attribute)
+        public static FieldInfo[] GetFieldsByAnnoInPojoClass(Type type, Type attribute)
         {
             var list = new List<FieldInfo>();
             var fields = GetFieldTypes(type);
@@ -56,7 +55,7 @@ namespace ZJYFrameWork.Spring.Utils
             return list.ToArray();
         }
 
-        public static MethodInfo[] GetMethodsByAnnoInPOJOClass(Type type, Type attribute)
+        public static MethodInfo[] GetMethodsByAnnoInPojoClass(Type type, Type attribute)
         {
             var list = new List<MethodInfo>();
             MethodInfo[] methods = GetMethodsTypes(type);
@@ -78,7 +77,7 @@ namespace ZJYFrameWork.Spring.Utils
         public static List<Type> GetAllClassTypes()
         {
             var results = new List<Type>();
-            foreach (var assembly in allAssemblys)
+            foreach (var assembly in AllAssembly)
             {
                 results.AddRange(assembly.GetTypes());
             }
@@ -98,7 +97,7 @@ namespace ZJYFrameWork.Spring.Utils
                 throw new Exception("Type name is invalid.");
             }
 
-            if (cachedTypes.TryGetValue(typeName, out var type))
+            if (CachedTypes.TryGetValue(typeName, out var type))
             {
                 return type;
             }
@@ -106,15 +105,15 @@ namespace ZJYFrameWork.Spring.Utils
             type = Type.GetType(typeName);
             if (type != null)
             {
-                cachedTypes.Add(typeName, type);
+                CachedTypes.Add(typeName, type);
                 return type;
             }
 
-            foreach (var assembly in allAssemblys)
+            foreach (var assembly in AllAssembly)
             {
                 type = Type.GetType(StringUtils.Format("{}, {}", typeName, assembly.FullName));
                 if (type == null) continue;
-                cachedTypes.Add(typeName, type);
+                CachedTypes.Add(typeName, type);
                 return type;
             }
 

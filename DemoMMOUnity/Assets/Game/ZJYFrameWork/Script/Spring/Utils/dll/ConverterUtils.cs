@@ -3,12 +3,12 @@ using System.Text;
 
 namespace ZJYFrameWork.Spring.Utils
 {
- /// <summary>
+    /// <summary>
     /// 类型转换相关的实用函数。
     /// </summary>
     public abstract class ConverterUtils
     {
-        private static readonly byte[] EMPTY_BYTE_ARRAY = new byte[] { };
+        private static readonly byte[] EmptyByteArray = new byte[] { };
 
         private const float InchesToCentimeters = 2.54f; // 1 inch = 2.54 cm
         private const float CentimetersToInches = 1f / InchesToCentimeters; // 1 cm = 0.3937 inches
@@ -16,10 +16,7 @@ namespace ZJYFrameWork.Spring.Utils
         /// <summary>
         /// 获取数据在此计算机结构中存储时的字节顺序。
         /// </summary>
-        public static bool IsLittleEndian
-        {
-            get { return BitConverter.IsLittleEndian; }
-        }
+        public static bool IsLittleEndian => BitConverter.IsLittleEndian;
 
         /// <summary>
         /// 获取或设置屏幕每英寸点数。
@@ -98,12 +95,12 @@ namespace ZJYFrameWork.Spring.Utils
         //    for compatibility with erlang
         public static byte[] IntToBytesBigEndian(int value)
         {
-            return new byte[]
+            return new[]
             {
-                (byte) (value >> 24),
-                (byte) (value >> 16),
-                (byte) (value >> 8),
-                (byte) value
+                (byte)(value >> 24),
+                (byte)(value >> 16),
+                (byte)(value >> 8),
+                (byte)value
             };
         }
 
@@ -111,10 +108,10 @@ namespace ZJYFrameWork.Spring.Utils
         // -> important for MMO scale networking performance.
         public static void IntToBytesBigEndianNonAlloc(int value, byte[] bytes)
         {
-            bytes[0] = (byte) (value >> 24);
-            bytes[1] = (byte) (value >> 16);
-            bytes[2] = (byte) (value >> 8);
-            bytes[3] = (byte) value;
+            bytes[0] = (byte)(value >> 24);
+            bytes[1] = (byte)(value >> 16);
+            bytes[2] = (byte)(value >> 8);
+            bytes[3] = (byte)value;
         }
 
         public static int BytesToIntBigEndian(byte[] bytes)
@@ -453,7 +450,7 @@ namespace ZJYFrameWork.Spring.Utils
         {
             if (value == null)
             {
-                return EMPTY_BYTE_ARRAY;
+                return EmptyByteArray;
             }
 
             return Encoding.UTF8.GetBytes(value);
@@ -538,7 +535,7 @@ namespace ZJYFrameWork.Spring.Utils
         /// <param name="buffer">用于存放结果的字节数组。</param>
         /// <param name="startIndex">buffer 内的起始位置。</param>
         /// <returns>buffer 内实际填充了多少字节。</returns>
-        public static int GetBytes(string value, Encoding encoding, byte[] buffer, int startIndex)
+        private static int GetBytes(string value, Encoding encoding, byte[] buffer, int startIndex)
         {
             if (value == null)
             {
@@ -595,7 +592,7 @@ namespace ZJYFrameWork.Spring.Utils
         /// <param name="length">长度。</param>
         /// <param name="encoding">要使用的编码。</param>
         /// <returns>转换后的字符串。</returns>
-        public static string GetString(byte[] value, int startIndex, int length, Encoding encoding)
+        private static string GetString(byte[] value, int startIndex, int length, Encoding encoding)
         {
             if (value == null)
             {

@@ -48,7 +48,12 @@ function GameMainUIModelView:NotificationHandler(_eventNotification)
             GameMainUIModelView.OnHide()
         end,
         [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = function(obj)
-            GameMainUIModelView.OnHide()
+            if GameMainUIView == nil then
+                return
+            end
+            local timeString = obj or string
+            ---显示时间
+            GameMainUIView:ShowNowTime(timeString)
         end
     }
     local switchAction = eventSwitch[_eventNotification.eventName]

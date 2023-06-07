@@ -40,7 +40,7 @@ namespace ZJYFrameWork.Net.Dispatcher
         private static void RegisterPacketReceiver([NotNull] object bean)
         {
             var classType = bean.GetType();
-            var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(classType, typeof(PacketReceiverAttribute));
+            var methods = AssemblyUtils.GetMethodsByAnnoInPojoClass(classType, typeof(PacketReceiverAttribute));
             foreach (var itMethod in methods)
             {
                 var parameters = itMethod.GetParameters();

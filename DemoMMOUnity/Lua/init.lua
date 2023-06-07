@@ -76,17 +76,17 @@ local function main()
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()
     PacketDispatcher:Init()
-    local client = cs_generator(function()
-        printDebug("执行 init 最外 86")
-        coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
-        printDebug("1S结束 line 89")
-    end)
-    Executors.RunOnCoroutineNoReturn(client)
+    --local client = cs_generator(function()
+    --    printDebug("执行 init 最外 86")
+    --    coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
+    --    printDebug("1S结束 line 89")
+    --end)
+    --Executors.RunOnCoroutineNoReturn(client)
 
 end
 
-main()
---local status, msg = pcall(main, __G__TRACKBACK__)
---if not status then
---    print('xpcall robot main error', status, msg)
---end
+--main()
+local status, msg = pcall(main, __G__TRACKBACK__)
+if not status then
+    print('xpcall robot main error', status, msg)
+end

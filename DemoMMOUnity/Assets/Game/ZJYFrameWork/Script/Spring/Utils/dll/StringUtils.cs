@@ -8,82 +8,82 @@ namespace ZJYFrameWork.Spring.Utils
 {
     public abstract class StringUtils
     {
-        [ThreadStatic] private static StringBuilder cachedStringBuilder;
+        [ThreadStatic] private static StringBuilder _cachedStringBuilder;
 
-        [ThreadStatic] private static object[] oneArgs;
+        [ThreadStatic] private static object[] _oneArgs;
 
-        [ThreadStatic] private static object[] twoArgs;
+        [ThreadStatic] private static object[] _twoArgs;
 
-        [ThreadStatic] private static object[] threeArgs;
+        [ThreadStatic] private static object[] _threeArgs;
 
         public static readonly string Empty = "";
 
-        public const string NullObjectString = "null";
+        private const string NullObjectString = "null";
 
         public static readonly string[] EmptyStringArray = new string[] { };
 
         public static readonly object[] OneObjectArray = { NullObjectString };
 
-        public static readonly string COMMA = ","; // [com·ma || 'kɒmə] n.  逗点; 逗号
-        public static readonly string COMMA_REGEX = ",|，";
+        public static readonly string Comma = ","; // [com·ma || 'kɒmə] n.  逗点; 逗号
+        public static readonly string CommaRegex = ",|，";
 
-        public static readonly string PERIOD = "."; // 句号
+        public static readonly string Period = "."; // 句号
 
-        public static readonly string LEFT_SQUARE_BRACKET = "["; //左方括号
+        public static readonly string LeftSquareBracket = "["; //左方括号
 
-        public static readonly string RIGHT_SQUARE_BRACKET = "]"; //右方括号
+        public static readonly string RightSquareBracket = "]"; //右方括号
 
-        public static readonly string COLON = ":"; //冒号[co·lon || 'kəʊlən]
-        public static readonly string COLON_REGEX = ":|：";
+        public static readonly string Colon = ":"; //冒号[co·lon || 'kəʊlən]
+        public static readonly string ColonRegex = ":|：";
 
-        public static readonly string SEMICOLON = ";"; //分号['semi'kәulәn]
-        public static readonly string SEMICOLON_REGEX = ";|；";
+        public static readonly string Semicolon = ";"; //分号['semi'kәulәn]
+        public static readonly string SemicolonRegex = ";|；";
 
-        public static readonly string QUOTATION_MARK = "\""; //引号[quo·ta·tion || kwəʊ'teɪʃn]
+        public static readonly string QuotationMark = "\""; //引号[quo·ta·tion || kwəʊ'teɪʃn]
 
-        public static readonly string ELLIPSIS = "..."; //省略号
+        public static readonly string Ellipsis = "..."; //省略号
 
-        public static readonly string EXCLAMATION_POINT = "!"; //感叹号
+        public static readonly string ExclamationPoint = "!"; //感叹号
 
-        public static readonly string DASH = "-"; //破折号
+        public static readonly string Dash = "-"; //破折号
 
-        public static readonly string QUESTION_MARK = "?"; //问好
+        public static readonly string QuestionMark = "?"; //问好
 
-        public static readonly string HYPHEN = "-"; //连接号，连接号与破折号的区别是，连接号的两头不用空格
+        public static readonly string Hyphen = "-"; //连接号，连接号与破折号的区别是，连接号的两头不用空格
 
-        public static readonly string SLASH = "/"; //斜线号
+        public static readonly string Slash = "/"; //斜线号
 
-        public static readonly string BACK_SLASH = "\\"; //反斜线号
+        public static readonly string BackSlash = "\\"; //反斜线号
 
-        public static readonly string VERTICAL_BAR = "|"; // 竖线
-        public static readonly string VERTICAL_BAR_REGEX = "\\|";
+        public static readonly string VerticalBar = "|"; // 竖线
+        public static readonly string VerticalBarRegex = "\\|";
 
-        public static readonly string SHARP = "#";
-        public static readonly string SHARP_REGEX = "\\#";
+        public static readonly string Sharp = "#";
+        public static readonly string SharpRegex = "\\#";
 
-        public static readonly string DOLLAR = "$"; // 美元符号
+        public static readonly string Dollar = "$"; // 美元符号
 
-        public static readonly string EMPTY_JSON = "{}";
+        private const string EmptyJson = "{}";
 
-        public static readonly string MULTIPLE_HYPHENS =
+        public static readonly string MultipleHyphens =
             "-----------------------------------------------------------------------";
 
 
-        public static readonly int INDEX_NOT_FOUND = -1; //Represents a failed index search.
+        public static readonly int IndexNotFound = -1; //Represents a failed index search.
 
-        public static readonly string DEFAULT_CHARSET = "UTF-8";
+        public static readonly string DefaultCharset = "UTF-8";
 
         /**
          * 用于随机选的数字
          */
-        public static readonly string ARAB_NUMBER = "0123456789";
+        public static readonly string ArabNumber = "0123456789";
 
         /**
          * 用于随机选的字符
          */
-        public static readonly string ENGLISH_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public static readonly string EnglishChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        public static readonly HashSet<char> ENGLISH_SET = new HashSet<char>()
+        public static readonly HashSet<char> EnglishSet = new HashSet<char>()
         {
             'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
             'v', 'w', 'x', 'y', 'z',
@@ -105,7 +105,7 @@ namespace ZJYFrameWork.Spring.Utils
      * @param cs the CharSequence to check, may be null
      * @return {@code true} if the CharSequence is empty or null
      */
-        public static bool IsEmpty(string cs)
+        private static bool IsEmpty(string cs)
         {
             return string.IsNullOrEmpty(cs);
         }
@@ -147,13 +147,10 @@ namespace ZJYFrameWork.Spring.Utils
                 throw new Exception("Format is invalid.");
             }
 
-            if (oneArgs == null)
-            {
-                oneArgs = new object[1];
-            }
+            _oneArgs ??= new object[1];
 
-            oneArgs[0] = arg0;
-            return Format(format, oneArgs);
+            _oneArgs[0] = arg0;
+            return Format(format, _oneArgs);
         }
 
         public static string Format(string format, object arg0, object arg1)
@@ -163,14 +160,11 @@ namespace ZJYFrameWork.Spring.Utils
                 throw new Exception("Format is invalid.");
             }
 
-            if (twoArgs == null)
-            {
-                twoArgs = new object[2];
-            }
+            _twoArgs ??= new object[2];
 
-            twoArgs[0] = arg0;
-            twoArgs[1] = arg1;
-            return Format(format, twoArgs);
+            _twoArgs[0] = arg0;
+            _twoArgs[1] = arg1;
+            return Format(format, _twoArgs);
         }
 
         public static string Format(string format, object arg0, object arg1, object arg2)
@@ -180,15 +174,12 @@ namespace ZJYFrameWork.Spring.Utils
                 throw new Exception("Format is invalid.");
             }
 
-            if (threeArgs == null)
-            {
-                threeArgs = new object[3];
-            }
+            _threeArgs ??= new object[3];
 
-            threeArgs[0] = arg0;
-            threeArgs[1] = arg1;
-            threeArgs[2] = arg2;
-            return Format(format, threeArgs);
+            _threeArgs[0] = arg0;
+            _threeArgs[1] = arg1;
+            _threeArgs[2] = arg2;
+            return Format(format, _threeArgs);
         }
 
         public static string Format(string template, params object[] args)
@@ -203,10 +194,10 @@ namespace ZJYFrameWork.Spring.Utils
 
             // 记录已经处理到的位置
             var readIndex = 0;
-            for (var i = 0; i < args.Length; i++)
+            foreach (var t in args)
             {
                 // 占位符所在位置
-                var placeholderIndex = template.IndexOf(EMPTY_JSON, readIndex, StringComparison.Ordinal);
+                var placeholderIndex = template.IndexOf(EmptyJson, readIndex, StringComparison.Ordinal);
                 // 剩余部分无占位符
                 if (placeholderIndex == -1)
                 {
@@ -219,14 +210,14 @@ namespace ZJYFrameWork.Spring.Utils
                     break;
                 }
 
-                cachedStringBuilder.Append(template, readIndex, placeholderIndex - readIndex);
-                cachedStringBuilder.Append(args[i]);
+                _cachedStringBuilder.Append(template, readIndex, placeholderIndex - readIndex);
+                _cachedStringBuilder.Append(t);
                 readIndex = placeholderIndex + 2;
             }
 
             // 字符串模板剩余部分不再包含占位符，加入剩余部分后返回结果
-            cachedStringBuilder.Append(template, readIndex, template.Length - readIndex);
-            return cachedStringBuilder.ToString();
+            _cachedStringBuilder.Append(template, readIndex, template.Length - readIndex);
+            return _cachedStringBuilder.ToString();
         }
 
         public static string SubstringAfterFirst(string str, string separator)
@@ -262,7 +253,7 @@ namespace ZJYFrameWork.Spring.Utils
                 return Empty;
             }
 
-            var pos = str.IndexOf(separator);
+            var pos = str.IndexOf(separator, StringComparison.Ordinal);
             if (pos < 0)
             {
                 return str;
@@ -271,23 +262,20 @@ namespace ZJYFrameWork.Spring.Utils
             return str.Substring(0, pos);
         }
 
-        public static StringBuilder CachedStringBuilder()
+        private static StringBuilder CachedStringBuilder()
         {
-            if (cachedStringBuilder == null)
-            {
-                cachedStringBuilder = new StringBuilder(1024);
-            }
+            _cachedStringBuilder ??= new StringBuilder(1024);
 
-            cachedStringBuilder.Clear();
-            return cachedStringBuilder;
+            _cachedStringBuilder.Clear();
+            return _cachedStringBuilder;
         }
 
         // Joining
         //-----------------------------------------------------------------------
 
-        public static string DefaultString(string str, string defaultStr)
+        private static string DefaultString(string str, string defaultStr)
         {
-            return str == null ? defaultStr : str;
+            return str ?? defaultStr;
         }
 
         public static byte[] Bytes(string str)
@@ -298,7 +286,7 @@ namespace ZJYFrameWork.Spring.Utils
             }
             catch (Exception)
             {
-                return CollectionUtils.EMPTY_BYTE_ARRAY;
+                return CollectionUtils.EmptyByteArray;
             }
         }
 

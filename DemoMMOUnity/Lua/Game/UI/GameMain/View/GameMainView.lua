@@ -41,11 +41,16 @@ function GameMainVIew:OnShow()
     GameMainVIew.super:OnShow()
 end
 
----@param dateTime
+---@param dateTime string
 function GameMainVIew:ShowNowTime(dateTime)
-    local timeNum = string.format("%.0f", (dateTime.time / 1000));
-    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
+    --local timeNum = string.format("%.0f", (dateTime.time / 1000));
+    --local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     local ViewPanel = GameMainVIew:GetViewPanel()
-    ViewPanel.TimeShow_Text.text = time
+    ViewPanel.TimeShow_Text.text = dateTime
+end
+
+---显示金币数量
+function GameMainVIew:ShowGoldNumTextAction(num)
+
 end
 return GameMainVIew

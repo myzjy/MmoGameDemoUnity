@@ -161,7 +161,7 @@ namespace ZJYFrameWork.Spring.Core
             {
                 var type = pair.Key;
                 var beanObj = pair.Value;
-                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(type, typeof(BeforePostConstructAttribute));
+                var methods = AssemblyUtils.GetMethodsByAnnoInPojoClass(type, typeof(BeforePostConstructAttribute));
                 foreach (var method in methods)
                 {
                     method.Invoke(beanObj, null);
@@ -173,7 +173,7 @@ namespace ZJYFrameWork.Spring.Core
             {
                 var type = pair.Key;
                 var bean = pair.Value;
-                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(type, typeof(PostConstructAttribute));
+                var methods = AssemblyUtils.GetMethodsByAnnoInPojoClass(type, typeof(PostConstructAttribute));
                 foreach (var method in methods)
                 {
                     method.Invoke(bean, null);
@@ -185,7 +185,7 @@ namespace ZJYFrameWork.Spring.Core
             {
                 var type = pair.Key;
                 var bean = pair.Value;
-                var methods = AssemblyUtils.GetMethodsByAnnoInPOJOClass(type, typeof(AfterPostConstructAttribute));
+                var methods = AssemblyUtils.GetMethodsByAnnoInPojoClass(type, typeof(AfterPostConstructAttribute));
                 foreach (var method in methods)
                 {
                     method.Invoke(bean, null);

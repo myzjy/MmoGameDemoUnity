@@ -4,9 +4,9 @@ namespace ZJYFrameWork.Spring.Utils
 {
     public abstract class CollectionUtils
     {
-        public static readonly int[] EMPTY_INT_ARRAY = new int[] { };
+        public static readonly int[] EmptyINTArray = new int[] { };
 
-        public static readonly byte[] EMPTY_BYTE_ARRAY = new byte[] { };
+        public static readonly byte[] EmptyByteArray = new byte[] { };
         
         public static List<T> EmptyList<T>()
         {
@@ -18,9 +18,9 @@ namespace ZJYFrameWork.Spring.Utils
             return new HashSet<T>();
         }
         
-        public static Dictionary<K, V> EmptyDictionary<K, V>()
+        public static Dictionary<TK, TV> EmptyDictionary<TK, TV>()
         {
-            return new Dictionary<K, V>(0);
+            return new Dictionary<TK, TV>(0);
         }
         
         public static bool IsEmpty(object[] array)
@@ -30,7 +30,7 @@ namespace ZJYFrameWork.Spring.Utils
 
         public static bool IsEmpty<T>(ICollection<T> collection)
         {
-            return collection == null || collection.Count <= 0;
+            return collection is not { Count: > 0 };
         }
 
         public static bool IsNotEmpty<T>(ICollection<T> collection)

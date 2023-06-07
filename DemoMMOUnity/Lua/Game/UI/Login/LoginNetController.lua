@@ -3,7 +3,7 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/22 14:17
 ---
-
+---@class LoginNetController
 local LoginNetController = BaseClass()
 local json = require("Common.json")
 LoginConst = {
@@ -69,10 +69,10 @@ function LoginNetController:Connect(url)
 end
 
 function LoginNetController:AtPong(data)
-    printDebug("当前时间" .. data.time .. "," .. type(data.time))
     local timeNum = string.format("%.0f", (data.time / 1000));
     local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     printDebug("当前时间" .. time)
+    DispatchEvent(GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL,time)
 end
 
 --- 是否可以登录
