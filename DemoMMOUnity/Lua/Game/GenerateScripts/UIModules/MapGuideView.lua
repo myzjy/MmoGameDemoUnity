@@ -1,3 +1,4 @@
+---@MapGuideView
 local MapGuideView = BaseClass()
 local _UIView = {}
 function MapGuideView:Init(view)

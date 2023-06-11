@@ -4,6 +4,7 @@
 --- DateTime: 2023/6/9 18:25
 ---
 
+---@class GameMainNetController
 local GameMainNetController = {}
 GameMainConst = {
     Status = {},

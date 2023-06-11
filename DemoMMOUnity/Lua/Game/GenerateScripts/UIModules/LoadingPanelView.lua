@@ -1,3 +1,4 @@
+---@LoadingPanelView
 local LoadingPanelView = BaseClass()
 local _UIView = {}
 function LoadingPanelView:Init(view)

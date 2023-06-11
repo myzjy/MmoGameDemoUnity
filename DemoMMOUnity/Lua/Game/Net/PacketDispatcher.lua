@@ -27,7 +27,6 @@ function OnReceiveLineFromServer(bytes)
     printDebug(type(bytes))
     str = bytes
     local packet = readBytes(str)
-    --packetValue = packet
     PacketDispatcher:Receive(packet)
 end
 
@@ -35,8 +34,17 @@ function PacketDispatcher:SendMessage(bytes)
     global.netManager:SendMessage(bytes)
 end
 function PacketDispatcher:Init()
+    -------------------------------- start Login   pack 包 --------------------------------------
+    ---@type LoginNetController
     local loginNetController = require("Game.UI.Login.LoginNetController"):New()
-    loginNetController.Init()
+    loginNetController:Init()
+    -------------------------------- end   Login    pack 包 --------------------------------------
+    ---
+    -------------------------------- start gameMain pack 包 --------------------------------------
+    ---@type GameMainNetController
+    local gameMainNetController = require("Game.Net.Controller.GameMainNetController"):New()
+    gameMainNetController:Init()
+    -------------------------------- end   gameMain pack 包 --------------------------------------
 
 end
 
