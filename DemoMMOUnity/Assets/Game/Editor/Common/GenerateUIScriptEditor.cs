@@ -188,7 +188,8 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     var typeString = a.UI_Serializable_Obj.GetType();
                     initStr += $"\tself.{memberName} = _UIView:GetObjType(\"{memberName}\") or CS.{typeString}\n";
                 });
-                string TemplateLuaCS = $"local {className} = BaseClass()\n" +
+                string TemplateLuaCS = $"---@{className}" +
+                                       $"local {className} = BaseClass()\n" +
                                        "local _UIView = {}\n" +
                                        $"function {className}:Init(view)\n" +
                                        $"\t_UIView = view:GetComponent(\"UIView\")\n" +
