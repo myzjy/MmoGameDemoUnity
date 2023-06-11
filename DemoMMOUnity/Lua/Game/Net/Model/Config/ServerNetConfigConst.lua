@@ -8,7 +8,7 @@
 --- 配置器
 local ServerNetConfigConst = {
     Const = {
-        
+        ServerNetConfig="ServerNetConfigConst.Event.ServerNetConfig"
     }
 }
 

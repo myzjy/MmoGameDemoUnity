@@ -71,7 +71,7 @@ local function main()
     else
         log.disable()
     end
-    
+
     ----- UI 初始化
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()
@@ -82,11 +82,15 @@ local function main()
     --    printDebug("1S结束 line 89")
     --end)
     --Executors.RunOnCoroutineNoReturn(client)
-
+    -----@type GameObject
+    --local gameObject = GameObject.New()
+    --                             .GameObject()
+    --gameObject:SetActive(false)
+    -- printError("tr:" .. type(gameObject:transform()))
 end
 
---main()
-local status, msg = pcall(main, __G__TRACKBACK__)
-if not status then
-    print('xpcall robot main error', status, msg)
-end
+main()
+--local status, msg = pcall(main, __G__TRACKBACK__)
+--if not status then
+--    print('xpcall robot main error', status, msg)
+--end

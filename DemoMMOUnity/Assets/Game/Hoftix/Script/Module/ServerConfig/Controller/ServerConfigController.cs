@@ -16,12 +16,12 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
         {
             //获取
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
-            //设置为1
-            CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
-
-            UIComponentManager.CSDispatchEvent(UINotifEnum.CloseLoginUI);
-
-            UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
+            // //设置为1
+            // CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
+            //
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.CloseLoginUI);
+            //
+            // UIComponentManager.CSDispatchEvent(UINotifEnum.OPEN_GAMEMAIN_PANEL);
         }
     }
 }

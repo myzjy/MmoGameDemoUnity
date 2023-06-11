@@ -17,7 +17,9 @@ local GameMainConfig = {
         --- 关闭界面
         CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL",
         --- 时间显示
-        TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL"
+        TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL",
+        --- 面板数据显示
+        SHOW_GAMEMAIN_DATAPANEL = "SHOW_GAMEMAIN_DATAPANEL"
     }
 }
 

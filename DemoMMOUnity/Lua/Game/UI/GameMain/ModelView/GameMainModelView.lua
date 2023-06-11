@@ -6,7 +6,9 @@
 
 --- UI Model View
 local GameMainUIModelView = BaseClass(UIBaseModule).New()
+--- UI 组件
 local GameMainUIPanel = nil
+--- 具体代码
 local GameMainUIView = nil
 
 --- 初始化 UI Model View
@@ -45,7 +47,7 @@ function GameMainUIModelView:NotificationHandler(_eventNotification)
             end
         end,
         [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = function(obj)
-            GameMainUIModelView.OnHide()
+            GameMainUIView.OnHide()
         end,
         [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = function(obj)
             if GameMainUIView == nil then
@@ -61,6 +63,19 @@ function GameMainUIModelView:NotificationHandler(_eventNotification)
         return switchAction(_eventNotification.eventBody)
     end
 
+end
+---返回 GameMainUIView UI具体脚本
+---@return GameMainVIew
+function GameMainUIModelView:GetGameMainUIView()
+    return GameMainUIView
+end
+---返回 GameMainUIView UI 绑定相关组件
+---@return GameMainUIPanelView
+function GameMainUIModelView:GetGameMainUIPane()
+    return GameMainUIPanel
+end
+function GameMainUIModelView:Build()
+    GameMainViewController:GetInstance():OnInit(GameMainUIModelView)
 end
 
 return GameMainUIModelView

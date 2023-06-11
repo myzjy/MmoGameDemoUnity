@@ -26,13 +26,6 @@ function LoginNetController:Init()
 end
 function LoginNetController:InitEvents()
     printDebug("LoginNetController:InitEvents() line 24")
-    --GlobalEventSystem.all_event_dic[PacketDispatcher.Event.OnConnect] = function(url)
-    --    LoginNetController:Connect(url)
-    --end
-    --GlobalEventSystem.all_event_dic[LoginConst.Event.Login] = function(data)
-    --    LoginNetController:AtLoginResponse(data)
-    --end
-
     GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
         LoginNetController:Connect(url)
     end)

@@ -4,6 +4,14 @@
 --- DateTime: 2023/6/4 11:09
 ---
 
+---- Start  CS 侧
+CSUnityEngine = CS.UnityEngine
+CSGameObject=CSUnityEngine.GameObject
+CSTransform=CSUnityEngine.Transform
+GameObject=require("Game.CS.UnityEngine.GameObject.GameObject")
+
+----End
+
 --- CommonController
 CommonController = CS.ZJYFrameWork.UISerializable.Common.CommonController
 require("Game.CS.ZJYFrameWork.Execution.Executors")

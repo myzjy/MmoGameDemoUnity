@@ -20,6 +20,7 @@ function UIComponentManager:InitUIModelComponent()
             local uiAction = UIComponentManager.UIEventNotificationDict[_v]
             if uiAction == nil then
                 local data = v
+                data:Build()
                 --- 当前 UI事件没有存储
                 UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
                     data:NotificationHandler(_eventNotification)

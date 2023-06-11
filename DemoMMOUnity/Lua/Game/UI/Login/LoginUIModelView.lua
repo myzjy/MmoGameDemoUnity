@@ -60,5 +60,7 @@ function LoginUIModelView:NotificationHandler(_eventNotification)
         return switchAction(_eventNotification.eventBody)
     end
 end
-
+function LoginUIModelView:Build()
+    
+end
 return LoginUIModelView

@@ -22,12 +22,12 @@ Time = require "Common.UnityEngine.Time"
 Object = require "Common.UnityEngine.Object"
 
 require("Common.csSharpClassGloabl")
-require("Game.CS.init")
 require "Common.System.coroutine"
 
 require("Common.json")
 require("Common/BaseClass")
 --require("utils.EventSystem")
+require("Game.CS.init")
 
 require("Common.util.util")
 require("Common.util.LuaUtil")

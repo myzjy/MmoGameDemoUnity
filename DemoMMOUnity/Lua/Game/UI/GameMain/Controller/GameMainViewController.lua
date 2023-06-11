@@ -5,14 +5,14 @@
 
 ---@class GameMainViewController
 ---@author zjy
-local GameMainViewController=BaseClass()
-
-function GameMainViewController:OnInit()
-    
+GameMainViewController = {}
+local modelView
+function GameMainViewController:GetInstance()
+    return GameMainViewController
 end
 
-
-
-
-
-return GameMainViewController
+function GameMainViewController:OnInit(_modelView)
+    modelView = _modelView
+end
+function GameMainViewController.OnOpen()
+end

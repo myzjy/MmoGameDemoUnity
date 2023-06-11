@@ -5,7 +5,12 @@
 ---
 
 ServerDataManager = {}
+local bagItemEntityList
 
 function ServerDataManager:GetInstance()
     return ServerDataManager
+end
+
+function ServerDataManager.SetItemBaseDataList(list)
+    bagItemEntityList = list
 end 

@@ -3,7 +3,7 @@
 --- Created by Administrator.
 --- DateTime: 2023/5/16 0:10
 ---
-
+---@class GameMainVIew
 local GameMainVIew = BaseClass(UIBaseView).New()
 
 function GameMainVIew:OnInit()
@@ -50,7 +50,8 @@ function GameMainVIew:ShowNowTime(dateTime)
 end
 
 ---显示金币数量
+---@param num number
 function GameMainVIew:ShowGoldNumTextAction(num)
-
+    self.GoldCoinText.text = tostring(num)
 end
 return GameMainVIew
