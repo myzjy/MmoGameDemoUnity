@@ -1,4 +1,4 @@
----@GameMainUIPanelView
+---@class GameMainUIPanelView
 local GameMainUIPanelView = BaseClass()
 local _UIView = {}
 function GameMainUIPanelView:Init(view)

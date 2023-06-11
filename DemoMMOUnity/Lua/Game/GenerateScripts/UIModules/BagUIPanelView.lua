@@ -1,4 +1,4 @@
----@BagUIPanelView
+---@class BagUIPanelView
 local BagUIPanelView = BaseClass()
 local _UIView = {}
 function BagUIPanelView:Init(view)

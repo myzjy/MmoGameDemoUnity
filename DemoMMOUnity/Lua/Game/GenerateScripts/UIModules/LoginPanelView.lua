@@ -1,4 +1,4 @@
----@LoginPanelView
+---@class LoginPanelView
 local LoginPanelView = BaseClass()
 local _UIView = {}
 function LoginPanelView:Init(view)

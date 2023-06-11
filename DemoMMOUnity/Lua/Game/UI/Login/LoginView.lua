@@ -4,6 +4,7 @@
 --- DateTime: 2023/5/13 16:17
 ---
 
+---@class LoginView
 local LoginView = BaseClass(UIBaseView.New())
 
 function LoginView:OnInit()
@@ -24,6 +25,7 @@ end
 
 function LoginView:LoginStartGame()
     printDebug("LoginView:LoginStartGame() line 26")
+    ---@type LoginPanelView
     local view = LoginView.GetViewPanel()
     view.LoginTapToStartView:LoginStartGame()
 end

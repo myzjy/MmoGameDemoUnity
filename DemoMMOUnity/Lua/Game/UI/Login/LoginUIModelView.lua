@@ -9,7 +9,9 @@ function LoginUIModelView:InitUI()
     -- LoginUIModelView.base = UIBaseModule.New()
     --- Create the LoginUIModelView instance based on the
 
+    ---@type LoginView
     LoginView = require("Game.UI.Login.LoginView").New()
+    ---@type LoginPanelView
     LoginPanel = require("Game.GenerateScripts.UIModules.LoginPanelView").New()
     LoginUIModelView.Init(
     ---配置类
@@ -61,6 +63,6 @@ function LoginUIModelView:NotificationHandler(_eventNotification)
     end
 end
 function LoginUIModelView:Build()
-    
+
 end
 return LoginUIModelView
