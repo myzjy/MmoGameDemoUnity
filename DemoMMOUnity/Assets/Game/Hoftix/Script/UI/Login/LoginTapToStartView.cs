@@ -14,15 +14,13 @@ namespace ZJYFrameWork.Hotfix.UISerializable
     {
         public Button LoginStartMaxButton = null;
         public Button LoginStartButton = null;
-        // public LoginView LoginView = null;
 
         /// <summary>
         /// 赋值 构建 传递过来LoginView，便于控制
         /// </summary>
         /// <param name="loginView"></param>
-        public void Build(LoginView loginView)
+        public void Build()
         {
-            // LoginView = loginView;
             LoginStartButton = GetObjType<Button>("LoginStartButton");
             LoginStartMaxButton = GetObjType<Button>("LoginStartMaxButton");
             if (LoginStartButton == null)

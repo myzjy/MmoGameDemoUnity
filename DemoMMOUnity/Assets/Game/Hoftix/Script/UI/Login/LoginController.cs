@@ -15,16 +15,14 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         [FormerlySerializedAs("LoginTapToStartView")]
         public LoginTapToStartView loginTapToStartView = null;
-
-        public LoginView LoginView = null;
+        
 
         public void Build(LoginPartView loginPartView, RegisterPartView registerPartView,
-            LoginTapToStartView loginTapToStartView, LoginView loginView)
+            LoginTapToStartView loginTapToStartView)
         {
             this.loginPartView = loginPartView;
             this.registerPartRegisterPartView = registerPartView;
             this.loginTapToStartView = loginTapToStartView;
-            this.LoginView = loginView;
             SpringContext.RegisterBean(this);
 
         }
@@ -34,8 +32,8 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             OnHide();
             registerPartRegisterPartView.OnClose();
             loginTapToStartView.Hide();
-            LoginView.OnShow();
             loginPartView.Show();
+            
         }
         public void OnRegisterStartLogin(){}
         

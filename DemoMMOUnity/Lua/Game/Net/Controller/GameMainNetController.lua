@@ -5,7 +5,7 @@
 ---
 
 ---@class GameMainNetController
-local GameMainNetController = {}
+local GameMainNetController = BaseClass()
 GameMainConst = {
     Status = {},
     Event = {
@@ -22,6 +22,7 @@ end
 --- GameMainNetController 事件初始化
 function GameMainNetController:InitEvent()
     GlobalEventSystem:Bind(GameMainConst.Event.ServerData, function(response)
+        --- 请求服务器 部分配置表时 在打开游戏登录界面之前 必须请求完成
         GameMainNetController:AtServerConfigResponse(response)
     end)
 end
@@ -29,8 +30,10 @@ end
 function GameMainNetController:AtServerConfigResponse(response)
     ServerDataManager:GetInstance().SetItemBaseDataList(response.bagItemEntityList)
     CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1)
+    --- 关闭 登陆 注册界面
     DispatchEvent(LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL)
-    DispatchEvent(GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL)
+    --- 打开游戏主界面
+    GameMainViewController:GetInstance().OnOpen()
 end
 
 return GameMainNetController

@@ -87,6 +87,8 @@ local function main()
     --                             .GameObject()
     --gameObject:SetActive(false)
     -- printError("tr:" .. type(gameObject:transform()))
+    
+    --require("Game.CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData")
 end
 
 main()

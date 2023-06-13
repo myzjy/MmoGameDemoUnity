@@ -4,9 +4,9 @@
 --- DateTime: 2023/5/15 23:41
 
 ---@class GameMainViewController
----@author zjy
 GameMainViewController = {}
-local modelView
+---@type GameMainUIModelView
+local modelView = nil
 function GameMainViewController:GetInstance()
     return GameMainViewController
 end
@@ -14,5 +14,19 @@ end
 function GameMainViewController:OnInit(_modelView)
     modelView = _modelView
 end
+
 function GameMainViewController.OnOpen()
+    if modelView == nil then
+        --没有初始化 UI
+        DispatchEvent(GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL)
+    else
+        ---直接调用
+        modelView:GetGameMainUIView():OnShow()
+    end
 end
+
+
+function GameMainViewController.ShowGoldNumTextAction(num)
+    
+end
+return GameMainViewController

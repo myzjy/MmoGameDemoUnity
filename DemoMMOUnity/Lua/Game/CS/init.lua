@@ -6,9 +6,9 @@
 
 ---- Start  CS 侧
 CSUnityEngine = CS.UnityEngine
-CSGameObject=CSUnityEngine.GameObject
-CSTransform=CSUnityEngine.Transform
-GameObject=require("Game.CS.UnityEngine.GameObject.GameObject")
+CSGameObject = CSUnityEngine.GameObject
+CSTransform = CSUnityEngine.Transform
+GameObject = require("Game.CS.UnityEngine.GameObject.GameObject")
 
 ----End
 
@@ -17,3 +17,5 @@ CommonController = CS.ZJYFrameWork.UISerializable.Common.CommonController
 require("Game.CS.ZJYFrameWork.Execution.Executors")
 
 DialogConfig = require("Game.CS.ZJYFrameWork.UI.Model.DialogEum")
+
+PlayerUserCaCheData = require("Game.CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData")

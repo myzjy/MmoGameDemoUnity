@@ -44,9 +44,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName, token, uid);
 #endif
             settingManager.SetString(GameConstant.SETTING_LOGIN_TOKEN, token);
-            // settingManager.Set(GameConstant.SETTING_LOGIN_TOKEN_USERID, uid);
-            SpringContext.GetBean<PlayerUserCaCheData>().Uid = uid;
-            SpringContext.GetBean<PlayerUserCaCheData>().userName = userName;
+
             //只是关闭 输入账号
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().OnHide();
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();

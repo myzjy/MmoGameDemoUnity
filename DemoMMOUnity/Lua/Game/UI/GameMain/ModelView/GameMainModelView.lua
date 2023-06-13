@@ -5,6 +5,7 @@
 ---
 
 --- UI Model View
+---@class GameMainUIModelView
 local GameMainUIModelView = BaseClass(UIBaseModule).New()
 --- UI 组件
 local GameMainUIPanel = nil
@@ -40,6 +41,7 @@ end
 function GameMainUIModelView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = function()
+            GameMainUIModelView:Build()
             if GameMainUIModelView.isReuse then
                 GameMainUIModelView.InstanceOrReuse()
             else

@@ -50,11 +50,15 @@ function LoginNetController:AtLoginResponse(data)
     local response = data
     local token = response.token
     local uid = response.uid;
-    ---@param userName string
     local userName = response.userName;
     if Debug > 0 then
         printDebug("[user:" .. userName .. "][token:" .. token .. "]" .. "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum)
     end
+    PlayerUserCaCheData:SetUID(uid)
+    PlayerUserCaCheData:SetUseName(userName)
+    PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
+    PlayerUserCaCheData:SetGoldNum(response.goldNum)
+    PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
 
 end
 function LoginNetController:Connect(url)
@@ -65,7 +69,7 @@ function LoginNetController:AtPong(data)
     local timeNum = string.format("%.0f", (data.time / 1000));
     local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     printDebug("当前时间" .. time)
-    DispatchEvent(GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL,time)
+    DispatchEvent(GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL, time)
 end
 
 --- 是否可以登录

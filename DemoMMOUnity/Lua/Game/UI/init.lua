@@ -18,6 +18,13 @@ UINotification = require("Game.Common.UINotification")
 ---
 ----------------start UI Component ----------------
 UIComponentManager = require("Game.UI.UIComponentManager")
-require("Game.UI.GameMain.Controller.GameMainViewController")
 
 ----------------end UI Component ----------------
+
+------------******* start require file controller *******------------
+
+require("Game.UI.GameMain.Controller.GameMainViewController")
+
+
+
+------------******* end   require file controller *******------------

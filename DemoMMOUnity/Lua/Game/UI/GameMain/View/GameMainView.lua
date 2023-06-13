@@ -39,6 +39,7 @@ end
 function GameMainVIew:OnShow()
     CS.Debug.Log("GameMain:OnShow")
     GameMainVIew.super:OnShow()
+    ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
 end
 
 ---@param dateTime string
