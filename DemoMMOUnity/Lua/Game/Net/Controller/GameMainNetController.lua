@@ -28,7 +28,7 @@ function GameMainNetController:InitEvent()
 end
 
 function GameMainNetController:AtServerConfigResponse(response)
-    ServerDataManager:GetInstance().SetItemBaseDataList(response.bagItemEntityList)
+    ServerDataManager:GetInstance():SetItemBaseDataList(response.bagItemEntityList)
     CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1)
     --- 关闭 登陆 注册界面
     DispatchEvent(LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL)

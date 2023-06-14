@@ -59,6 +59,7 @@ function LoginNetController:AtLoginResponse(data)
     PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
     PlayerUserCaCheData:SetGoldNum(response.goldNum)
     PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
+    
 
 end
 function LoginNetController:Connect(url)

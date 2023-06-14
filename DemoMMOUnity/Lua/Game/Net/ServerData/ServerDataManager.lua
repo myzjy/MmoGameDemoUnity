@@ -11,6 +11,8 @@ function ServerDataManager:GetInstance()
     return ServerDataManager
 end
 
-function ServerDataManager.SetItemBaseDataList(list)
+function ServerDataManager:SetItemBaseDataList(list)
     bagItemEntityList = list
-end 
+end
+
+return ServerDataManager
