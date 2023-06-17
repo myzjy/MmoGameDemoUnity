@@ -5,7 +5,7 @@
 
 ---@class GameMainViewController
 GameMainViewController = {}
----@type GameMainUIModelView
+
 local modelView = nil
 function GameMainViewController:GetInstance()
     return GameMainViewController
@@ -16,12 +16,12 @@ function GameMainViewController:OnInit(_modelView)
 end
 
 function GameMainViewController.OnOpen()
-    if modelView == nil then
-        --没有初始化 UI
-        DispatchEvent(GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL)
-    else
+    if GameMainVIew.reUse then
         ---直接调用
         modelView:GetGameMainUIView():OnShow()
+    else
+        --没有初始化 UI
+        DispatchEvent(GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL)
     end
 end
 

@@ -4,13 +4,13 @@
 --- DateTime: 2023/6/4 0:14
 ---
 
-local UILoadingUIModelView = BaseClass(UIBaseModule.New())
+local UILoadingUIModelView = class("UILoadingUIModelView",UIBaseModule())
 --- UI 主要逻辑
 local UILoadingUIView = nil
 --- UI组件绑定代码
 local LoadingPanelView = nil
 
-function LoginUIModelView:InitUI()
+function UILoadingUIModelView:InitUI()
 
 end
 

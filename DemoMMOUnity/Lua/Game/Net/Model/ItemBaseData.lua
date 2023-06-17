@@ -4,7 +4,7 @@
 --- DateTime: 2023/6/14 23:26
 ---
 
-local ItemBaseData = BaseClass()
+local ItemBaseData = class("ItemBaseData")
 
 local id
 local name

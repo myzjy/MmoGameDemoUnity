@@ -186,21 +186,19 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                 {
                     var memberName = a.UI_Serializable_Key;
                     var typeString = a.UI_Serializable_Obj.GetType();
-                    initStr += $"\tself.{memberName} = _UIView:GetObjType(\"{memberName}\") or CS.{typeString}\n";
+                    initStr += $"\tself.{memberName} = self._UIView:GetObjType(\"{memberName}\") or CS.{typeString}\n";
                 });
                 string TemplateLuaCS = $"---@class {className}\n" +
-                                       $"local {className} = BaseClass()\n" +
-                                       "local _UIView = {}\n" +
+                                       $"{className} = class(\"{className}\")\n" +
                                        $"function {className}:Init(view)\n" +
-                                       $"\t_UIView = view:GetComponent(\"UIView\")\n" +
+                                       $"\tself._UIView = view:GetComponent(\"UIView\")\n" +
                                        $"{initStr}" +
-                                       $"end\n\n" +
-                                       $"return {className}";
+                                       $"end\n\n";
                 var OutPutFileFUllPath = $"{outputLuaPath}{className}.lua";
                 Debug.Log($"创建脚本目录:{OutPutFileFUllPath}，\n文件：\n {TemplateLuaCS}");
                 var stream = new FileStream(OutPutFileFUllPath, FileMode.Create, FileAccess.Write);
                 Encoding end = new UTF8Encoding(false);
-                var fileWrite = new StreamWriter(stream,end);
+                var fileWrite = new StreamWriter(stream, end);
                 fileWrite.Write(TemplateLuaCS);
                 fileWrite.Flush();
                 fileWrite.Close();

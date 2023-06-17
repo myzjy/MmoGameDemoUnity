@@ -36,13 +36,13 @@ end
 function PacketDispatcher:Init()
     -------------------------------- start Login   pack 包 --------------------------------------
     ---@type LoginNetController
-    local loginNetController = require("Game.UI.Login.LoginNetController"):New()
+    local loginNetController = require("Game.Net.Controller.LoginNetController")
     loginNetController:Init()
     -------------------------------- end   Login    pack 包 --------------------------------------
     ---
     -------------------------------- start gameMain pack 包 --------------------------------------
     ---@type GameMainNetController
-    local gameMainNetController = require("Game.Net.Controller.GameMainNetController"):New()
+    local gameMainNetController = require("Game.Net.Controller.GameMainNetController")
     gameMainNetController:Init()
     -------------------------------- end   gameMain pack 包 --------------------------------------
 

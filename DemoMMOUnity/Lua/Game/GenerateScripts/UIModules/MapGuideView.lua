@@ -1,8 +1,6 @@
 ---@class MapGuideView
-local MapGuideView = BaseClass()
-local _UIView = {}
+MapGuideView = class("MapGuideView")
 function MapGuideView:Init(view)
-	_UIView = view:GetComponent("UIView")
+	self._UIView = view:GetComponent("UIView")
 end
 
-return MapGuideView

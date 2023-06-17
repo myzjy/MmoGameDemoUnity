@@ -16,7 +16,8 @@
 -- 3、换句话说：广播发出，回调一定会被调用，但回调参数中的实例对象，可能已经被销毁，所以回调函数一定要注意判空
 --]]
 
-local Messenger = BaseClass()
+---@class Messenger
+local Messenger = class("Messenger")
 
 function Messenger:Constructor()
 	self.events = {}

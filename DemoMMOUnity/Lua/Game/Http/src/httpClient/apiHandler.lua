@@ -3,7 +3,7 @@
 --- Created by Administrator.
 --- DateTime: 2023/5/28 10:13
 ---
-local apiHandler = BaseClass()
+local apiHandler = class("apiHandler")
 apiHandler.Const = {
     Event = {
         OnBeforeSendDelegate = "apiHandler.OnBeforeSendDelegate",
@@ -26,7 +26,7 @@ function apiHandler.Request(api)
     --- api 地址
     local relativePath = api.Path
     local data = nil
-    local request=require("Game.Http.src.httpClient.apiRequest"):New()
+    local request=require("Game.Http.src.httpClient.apiRequest")()
     request.Init(api.Method,CS.System.Uri(baseUrl))
 end
 

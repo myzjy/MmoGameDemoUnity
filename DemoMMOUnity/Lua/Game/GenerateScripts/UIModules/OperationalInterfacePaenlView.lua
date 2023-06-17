@@ -1,8 +1,6 @@
 ---@class OperationalInterfacePaenlView
-local OperationalInterfacePaenlView = BaseClass()
-local _UIView = {}
+OperationalInterfacePaenlView = class("OperationalInterfacePaenlView")
 function OperationalInterfacePaenlView:Init(view)
-	_UIView = view:GetComponent("UIView")
+	self._UIView = view:GetComponent("UIView")
 end
 
-return OperationalInterfacePaenlView

@@ -1,9 +1,7 @@
 ---@class BagUIPanelView
-local BagUIPanelView = BaseClass()
-local _UIView = {}
+BagUIPanelView = class("BagUIPanelView")
 function BagUIPanelView:Init(view)
-	_UIView = view:GetComponent("UIView")
-	self.EquipAndItemPanel = _UIView:GetObjType("EquipAndItemPanel") or CS.UnityEngine.GameObject
+	self._UIView = view:GetComponent("UIView")
+	self.EquipAndItemPanel = self._UIView:GetObjType("EquipAndItemPanel") or CS.UnityEngine.GameObject
 end
 
-return BagUIPanelView

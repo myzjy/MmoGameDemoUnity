@@ -65,7 +65,7 @@ local function main()
     printDebug("main() line 63")
     require("Game.Net.main")
 
-    GlobalEventSystem = require("utils.EventSystem").New()
+    GlobalEventSystem = require("utils.EventSystem")
     if Debug > 0 then
         printDebug("开启Debug Log")
     else
@@ -82,9 +82,6 @@ local function main()
     --    printDebug("1S结束 line 89")
     --end)
     --Executors.RunOnCoroutineNoReturn(client)
-    -----@type GameObject
-    --local gameObject = GameObject.New()
-    --                             .GameObject()
     --gameObject:SetActive(false)
     -- printError("tr:" .. type(gameObject:transform()))
     

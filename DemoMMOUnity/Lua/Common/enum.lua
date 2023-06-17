@@ -1,5 +1,5 @@
 ---@class Enum
-Enum=BaseClass()
+Enum=class("Enum")
 
 
 ---@param enum table

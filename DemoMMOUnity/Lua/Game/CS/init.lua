@@ -8,7 +8,6 @@
 CSUnityEngine = CS.UnityEngine
 CSGameObject = CSUnityEngine.GameObject
 CSTransform = CSUnityEngine.Transform
-GameObject = require("Game.CS.UnityEngine.GameObject.GameObject")
 
 ----End
 

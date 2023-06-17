@@ -3,13 +3,34 @@
 --- Created by Administrator.
 --- DateTime: 2023/5/16 0:10
 ---
----@class GameMainVIew
-local GameMainVIew = BaseClass(UIBaseView).New()
+---@class GameMainVIew:UIView
+GameMainView = class("GameMainView", UIView)
+require("Game.GenerateScripts.UIModules.GameMainUIPanelView")
 
-function GameMainVIew:OnInit()
+function GameMainView:OnLoad()
+    self.UIConfig = {
+        Config = LoginConfig,
+        viewPanel = GameMainUIPanelView,
+        initFunc = function()
+            printDebug("GameMainVIew:Init()")
+            GameMainVIew:Init()
+        end,
+        showFunc = function()
+            printDebug("GameMainVIew:showUI()-->showFunc")
+            GameMainVIew:OnShow()
+        end,
+        hideFunc = function()
+
+        end
+    }
+    self:Load(self.UIConfig)
+    self:InstanceOrReuse()
+
+end
+function GameMainView:OnInit()
     print("GameMain:OnInit")
     --- GameMain ViewPanel
-    local ViewPanel = GameMainVIew:GetViewPanel()
+    local ViewPanel = GameMainVIew.viewPanel
     --- 转换水晶 按钮
     self.GemsTimeButton = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
     self.GemsText = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
@@ -36,14 +57,14 @@ function GameMainVIew:OnInit()
 
 end
 
-function GameMainVIew:OnShow()
+function GameMainView:OnShow()
     CS.Debug.Log("GameMain:OnShow")
-    GameMainVIew.super:OnShow()
+    GameMainVIew:OnShow()
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
 end
 
 ---@param dateTime string
-function GameMainVIew:ShowNowTime(dateTime)
+function GameMainView:ShowNowTime(dateTime)
     --local timeNum = string.format("%.0f", (dateTime.time / 1000));
     --local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     local ViewPanel = GameMainVIew:GetViewPanel()
@@ -52,7 +73,42 @@ end
 
 ---显示金币数量
 ---@param num number
-function GameMainVIew:ShowGoldNumTextAction(num)
+function GameMainView:ShowGoldNumTextAction(num)
     self.GoldCoinText.text = tostring(num)
 end
-return GameMainVIew
+function GameMainView:Notification()
+    ---不能直接返回，直接返回在内部拿不到表
+    local data = {
+        [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL,
+        [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL,
+        [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL,
+    }
+    return data
+end
+function GameMainView:NotificationHandler(_eventNotification)
+    local eventSwitch = {
+        [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = function()
+            if self.reUse then
+                GameMainVIew:InstanceOrReuse()
+            else
+                self:OnLoad()
+            end
+        end,
+        [GameMainConfig.eventNotification.CLOSE_GAMEMAIN_PANEL] = function(obj)
+            self:OnHide()
+        end,
+        [GameMainConfig.eventNotification.TIME_GAMEMAIN_PANEL] = function(obj)
+            if self.reUse == false then
+                return
+            end
+            local timeString = obj or string
+            ---显示时间
+            self:ShowNowTime(timeString)
+        end
+    }
+    local switchAction = eventSwitch[_eventNotification.eventName]
+    if eventSwitch then
+        return switchAction(_eventNotification.eventBody)
+    end
+
+end

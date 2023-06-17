@@ -3,12 +3,7 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/26 17:14
 ---
-socket = require("Game.Http.src.httpClient.httpClient")
 --http = require("Game.Http.src.socket.http")
-if socket ~= nil then
-    print(type(socket))
-    printDebug("文件读取到"..type(socket))
-end
 
 --if http ~= nil then
 --    printDebug("文件读取到", http)

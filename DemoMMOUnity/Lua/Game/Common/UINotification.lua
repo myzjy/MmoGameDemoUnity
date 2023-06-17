@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/17 16:49
 
 
-local UINotification=BaseClass().New()
+local UINotification=class("UINotification")
 function UINotification:new(name,Body)
     local obj = {
         eventName=name,

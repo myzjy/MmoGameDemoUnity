@@ -5,7 +5,7 @@
 ---
 
 ---@class GameMainNetController
-local GameMainNetController = BaseClass()
+local GameMainNetController = class("GameMainNetController")
 GameMainConst = {
     Status = {},
     Event = {

@@ -1,12 +1,10 @@
 ---@class LoadingPanelView
-local LoadingPanelView = BaseClass()
-local _UIView = {}
+LoadingPanelView = class("LoadingPanelView")
 function LoadingPanelView:Init(view)
-	_UIView = view:GetComponent("UIView")
-	self.leftSlider_Slider = _UIView:GetObjType("leftSlider_Slider") or CS.UnityEngine.UI.Slider
-	self.rightSlider_Slider = _UIView:GetObjType("rightSlider_Slider") or CS.UnityEngine.UI.Slider
-	self.progressNum_Text = _UIView:GetObjType("progressNum_Text") or CS.UnityEngine.UI.Text
-	self.LoadingController = _UIView:GetObjType("LoadingController") or CS.UnityEngine.Object
+	self._UIView = view:GetComponent("UIView")
+	self.leftSlider_Slider = self._UIView:GetObjType("leftSlider_Slider") or CS.UnityEngine.UI.Slider
+	self.rightSlider_Slider = self._UIView:GetObjType("rightSlider_Slider") or CS.UnityEngine.UI.Slider
+	self.progressNum_Text = self._UIView:GetObjType("progressNum_Text") or CS.UnityEngine.UI.Text
+	self.LoadingController = self._UIView:GetObjType("LoadingController") or CS.UnityEngine.Object
 end
 
-return LoadingPanelView

@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/27 13:37
 ---
 
-local apiRequest = BaseClass()
+local apiRequest = class("apiRequest")
 apiRequest.Uri = nil
 apiRequest.Method = nil
 apiRequest._watch = CS.System.Diagnostics.Stopwatch
@@ -33,10 +33,10 @@ end
 function apiRequest.HandleResponse(originalBhRequest, bhResponse)
     apiRequest._watch.Stop()
     local elapsedMsec = apiRequest._watch.ElapsedMilliseconds
-    local apiRespnse = require("Game.Http.src.httpClient.apiResponse"):New()
-    apiRespnse.new(apiRequest, bhResponse, elapsedMsec)
+    local apiResponse = require("Game.Http.src.httpClient.apiResponse")()
+    apiResponse.new(apiRequest, bhResponse, elapsedMsec)
 
-    if apiRespnse.IsSuccess() then
+    if apiResponse.IsSuccess() then
         if _onSuccess ~= nil then
             _onSuccess(apiRespnse)
         end

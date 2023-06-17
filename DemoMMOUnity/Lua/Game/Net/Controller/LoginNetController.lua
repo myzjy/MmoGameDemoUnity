@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/22 14:17
 ---
 ---@class LoginNetController
-local LoginNetController = BaseClass()
+local LoginNetController = class("LoginNetController")
 local json = require("Common.json")
 LoginConst = {
     Status = {

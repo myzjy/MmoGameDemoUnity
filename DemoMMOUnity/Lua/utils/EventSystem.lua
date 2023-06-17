@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/21 22:58
 ---
 --场景里的节点状态变更事件及战斗事件管理器
-local EventSystem = BaseClass()
+local EventSystem = class("EventSystem")
 local table_insert = table.insert
 local table_remove = table.remove
 EventSystem.all_event_count = 0

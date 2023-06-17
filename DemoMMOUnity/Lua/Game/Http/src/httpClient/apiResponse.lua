@@ -3,7 +3,7 @@
 --- Created by Administrator.
 --- DateTime: 2023/5/28 14:56
 ---
-local apiResponse = BaseClass()
+local apiResponse = class("apiResponse")
 apiResponse.Request = nil
 apiResponse.bhResponse = nil
 apiResponse.ElapsedMilliseconds = nil

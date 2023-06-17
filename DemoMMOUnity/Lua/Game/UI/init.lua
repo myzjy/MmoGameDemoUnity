@@ -3,9 +3,9 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/6/2 15:52
 
-
-UIBaseView = require("Common.UI.UIBaseView")
-UIBaseModule = require("Common.UI.UIBaseModule")
+require("Game.UI.NewUI.LuaUIObject")
+require("Game.UI.NewUI.UIBaseView")
+require("Game.UI.NewUI.UIView")
 
 UIConfigEnum = require("Common.UI.UIConfigEnum")
 

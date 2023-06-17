@@ -4,7 +4,7 @@
 --- DateTime: 2023/5/22 14:40
 ---
 ---@class LoginResponse
-local LoginResponse = {}-- BaseClass()
+local LoginResponse = {}
 
 local json = require("Common.json")
 

@@ -1,4 +1,4 @@
-local UIView = BaseClass()
+local UIView = class("UIView")
 -- UIView.
 
 

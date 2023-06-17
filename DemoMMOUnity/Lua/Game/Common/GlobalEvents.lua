@@ -6,17 +6,7 @@
 ---@class GlobalEvent
 GlobalEvent = {}
 setmetatable(GlobalEvent, self)
---GlobalEventValues=BaseClass(GlobalEvent)
---function GlobalEvent:new()
---    local obj = {
---        GlobalEvent.all_event_dic,
---        GlobalEvent.calling_event_dic,
---        GlobalEvent.bind_id_to_event_id_dic
---    }
---    setmetatable(obj, self)
---    self.__index = self
---    return obj
---end
+
 
 GlobalEvent.all_event_dic = {}
 GlobalEvent.calling_event_dic = {}
