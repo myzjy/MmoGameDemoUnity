@@ -37,3 +37,4 @@ function GameMainNetController:AtServerConfigResponse(response)
 end
 
 return GameMainNetController
+

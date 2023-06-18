@@ -6,7 +6,7 @@ local LoginConfig = {
     sortType = UIConfigEnum.UISortType.First,
     --- 当前 UI 交互事件 消息
     eventNotification = {
-        --- 打开登录 注册界面 
+        --- 打开登录 注册界面
         OPEN_LOGIN_INIT_PANEL = "OPEN_LOGIN_UI",
         --- 关闭登录 注册界面
         CLOSE_LOGIN_INIT_PANEL = "CLOSE_LOGIN_PANEL",

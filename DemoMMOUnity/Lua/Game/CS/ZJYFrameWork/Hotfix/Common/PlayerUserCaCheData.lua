@@ -5,11 +5,12 @@
 ---
 local cs = require("NameSpace.ZJYFrameWork.Hotfix.Common")
 
-local PlayerUserCaCheData = {}
+PlayerUserCaCheData = class("PlayerUserCaCheData")
 
-function PlayerUserCaCheData:SetUID(uid)
+function PlayerUserCaCheData:SetUIDValue(uid)
     cs.PlayerUserCaCheData().Uid = uid
 end
+
 function PlayerUserCaCheData:GetUID()
     return cs.PlayerUserCaCheData().Uid
 end
@@ -21,6 +22,7 @@ end
 function PlayerUserCaCheData:SetUseName(userName)
     cs.PlayerUserCaCheData().userName = userName
 end
+
 ---@return number 免费钻石
 function PlayerUserCaCheData:GetDiamondNumValue()
     return cs.PlayerUserCaCheData().DiamondNum
@@ -55,4 +57,3 @@ function PlayerUserCaCheData:SetGoldNum(num)
     cs.PlayerUserCaCheData().goldNum = num
 end
 
-return PlayerUserCaCheData

@@ -51,7 +51,6 @@ function UIComponentManager:InitUIModelComponent()
     --        end
     --    end
     --end
-
 end
 
 --- 调用事件
@@ -65,3 +64,4 @@ function DispatchEvent(name, body)
 end
 
 return UIComponentManager
+

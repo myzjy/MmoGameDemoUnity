@@ -18,6 +18,7 @@ function UIView:InstanceOrReuse()
         self:InstancePrefab()
     end
 end
+
 function UIView:InstancePrefab()
     ---打开loading 界面
     CommonController.Instance.loadingRotate:OnShow()
@@ -28,4 +29,5 @@ function UIView:InstancePrefab()
         self:OnInit()
         self:OnShow()
     end)
-end 
+end
+

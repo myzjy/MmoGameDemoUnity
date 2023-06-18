@@ -4,7 +4,6 @@
 --- DateTime: 2023/6/4 23:19
 ---
 
-PlayerUserCaCheData=require("Game.Net.NetCaCheModel.PlayerUserCaCheData")
 
 PacketDispatcher=require("Game.Net.PacketDispatcher")
 

@@ -24,6 +24,7 @@ LoginConst = {
 function LoginNetController:Init()
     LoginNetController:InitEvents()
 end
+
 function LoginNetController:InitEvents()
     printDebug("LoginNetController:InitEvents() line 24")
     GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
@@ -39,11 +40,11 @@ function LoginNetController:InitEvents()
         LoginNetController:AtLoginTapToStartResponse(data)
     end)
 end
+
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
     CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
     CommonController.Instance.loadingRotate.OnClose();
-
 end
 
 function LoginNetController:AtLoginResponse(data)
@@ -52,16 +53,21 @@ function LoginNetController:AtLoginResponse(data)
     local uid = response.uid;
     local userName = response.userName;
     if Debug > 0 then
-        printDebug("[user:" .. userName .. "][token:" .. token .. "]" .. "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum)
+        printDebug("[user:" ..
+        userName ..
+        "][token:" ..
+        token ..
+        "]" ..
+        "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response
+        .premiumDiamondNum)
     end
-    PlayerUserCaCheData:SetUID(uid)
+    PlayerUserCaCheData:SetUIDValue(uid)
     PlayerUserCaCheData:SetUseName(userName)
     PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
     PlayerUserCaCheData:SetGoldNum(response.goldNum)
     PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
-    
-
 end
+
 function LoginNetController:Connect(url)
     printDebug("LoginNetController:Connect(url)line 46" .. type(url))
 end
@@ -82,13 +88,15 @@ function LoginNetController:AtLoginTapToStartResponse(data)
     if response.accessGame then
     else
         --- 不能登錄
-        CommonController.Instance.snackbar.OpenCommonUIPanel(DialogConfig.ButtonType.YesNo, "", "当前不在登录时间..MESSAGE:" .. response.message,
-                function(res)
+        CommonController.Instance.snackbar.OpenCommonUIPanel(DialogConfig.ButtonType.YesNo, "",
+            "当前不在登录时间..MESSAGE:" .. response.message,
+            function(res)
 
-                end, "确定", "取消")
+            end, "确定", "取消")
         return
     end
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
 end
 
 return LoginNetController
+

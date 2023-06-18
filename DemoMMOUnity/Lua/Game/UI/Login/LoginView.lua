@@ -25,7 +25,6 @@ function LoginView:OnLoad()
     }
     self:Load(self.UIConfig)
     self:InstanceOrReuse()
-
 end
 
 function LoginView:OnInit()
@@ -34,16 +33,15 @@ function LoginView:OnInit()
     LoginView.viewPanel.RegisterPartView:Build()
     LoginView.viewPanel.LoginTapToStartView:Build(nil)
     LoginView.viewPanel.LoginController:Build(
-            LoginView.viewPanel.LoginPartView,
-            LoginView.viewPanel.RegisterPartView,
-            LoginView.viewPanel.LoginTapToStartView, 
-            LoginView)
+        LoginView.viewPanel.LoginPartView,
+        LoginView.viewPanel.RegisterPartView,
+        LoginView.viewPanel.LoginTapToStartView,
+        LoginView)
     LoginView.viewPanel.LoginController:OnInit();
 end
 
 function LoginView:OnShow()
     printInfo("LoginView:OnShow line 21")
-
 end
 
 function LoginView:LoginStartGame()
@@ -52,9 +50,11 @@ function LoginView:LoginStartGame()
     local view = LoginView.viewPanel
     view.LoginTapToStartView:LoginStartGame()
 end
+
 function LoginView:StartLoginTip()
     --coroutine.start()
 end
+
 --- UI 通知事件
 function LoginView:Notification()
     ---不能直接返回，直接返回在内部拿不到表
@@ -94,3 +94,4 @@ function LoginView:NotificationHandler(_eventNotification)
         return switchAction(_eventNotification.eventBody)
     end
 end
+

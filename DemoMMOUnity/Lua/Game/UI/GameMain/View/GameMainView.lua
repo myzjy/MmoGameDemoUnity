@@ -25,8 +25,8 @@ function GameMainView:OnLoad()
     }
     self:Load(self.UIConfig)
     self:InstanceOrReuse()
-
 end
+
 function GameMainView:OnInit()
     print("GameMain:OnInit")
     --- GameMain ViewPanel
@@ -45,16 +45,16 @@ function GameMainView:OnInit()
     self.GoldCoinText = ViewPanel.Gem_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
     --- 购买金币，第一跳转商场兑换
     self.GoldTimButton = ViewPanel.glod_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
-    CS.Util.SetListener(ViewPanel.headImgClick, (function()
+
+    self.SetListener(ViewPanel.headImgClick, function()
         --- 点击头像
         CS.Debug.Log("点击头像，进行更换")
         --- 目前来说还不知道需不需要
-    end))
-    CS.Util.SetListener(self.GoldTimButton, function()
+    end)
+    self:SetListener(self.GoldTimButton, function()
         --- 购买金币 这个是需要 去兑换
         --- 先写 但是不知道需要不要 明确
     end)
-
 end
 
 function GameMainView:OnShow()
@@ -76,6 +76,7 @@ end
 function GameMainView:ShowGoldNumTextAction(num)
     self.GoldCoinText.text = tostring(num)
 end
+
 function GameMainView:Notification()
     ---不能直接返回，直接返回在内部拿不到表
     local data = {
@@ -85,11 +86,12 @@ function GameMainView:Notification()
     }
     return data
 end
+
 function GameMainView:NotificationHandler(_eventNotification)
     local eventSwitch = {
         [GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL] = function()
             if self.reUse then
-                GameMainVIew:InstanceOrReuse()
+                self:InstanceOrReuse()
             else
                 self:OnLoad()
             end
@@ -110,5 +112,4 @@ function GameMainView:NotificationHandler(_eventNotification)
     if eventSwitch then
         return switchAction(_eventNotification.eventBody)
     end
-
 end

@@ -16,17 +16,16 @@ function GameMainViewController:OnInit(_modelView)
 end
 
 function GameMainViewController.OnOpen()
-    if GameMainVIew.reUse then
+    if GameMainView.reUse then
         ---直接调用
-        modelView:GetGameMainUIView():OnShow()
+        GameMainView:OnShow()
     else
         --没有初始化 UI
         DispatchEvent(GameMainConfig.eventNotification.OPEN_GAMEMAIN_PANEL)
     end
 end
 
-
 function GameMainViewController.ShowGoldNumTextAction(num)
-    
+
 end
-return GameMainViewController
+

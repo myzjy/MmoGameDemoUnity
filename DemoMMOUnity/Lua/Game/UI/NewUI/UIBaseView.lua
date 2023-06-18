@@ -99,22 +99,17 @@ function UIBaseView:GetPanelUIRoot(canvasType)
     --- 返回空
     return nil
 end
+
 function UIBaseView:OnInit()
     self.initFunc()
 end
+
 function UIBaseView:OnShow()
     self.UIView:OnShow()
     self.showFunc()
-    
 end
 
 function UIBaseView:OnHide()
     self.UIView:OnClose()
     self.hideFunc()
 end
-
-
-
-
-
-

@@ -7,13 +7,13 @@ function LuaUIObject:SetPanel(Panel)
     self.gameObject = Panel.gameObject
     self.transform = Panel.gameObject.transform
     self.InstanceID = self.gameObject:GetInstanceID()
-
 end
 
 ---@param value boolean 设置
 function LuaUIObject:SetActive(value)
     self.GameObject:SetActive(value)
 end
+
 ---@param type string 类型
 function LuaUIObject:GetComponent(type)
     local component = self.transform:GetComponent(type)
@@ -36,4 +36,5 @@ end
 ---@param sprite UnityEngine.Sprite
 function LuaUIObject:SetSprite(image, sprite)
     image.sprite = sprite
-end 
+end
+
