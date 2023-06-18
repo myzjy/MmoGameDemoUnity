@@ -10,6 +10,7 @@ function init()
     Debug = CS.ZJYFrameWork.Common.CommonManager.Instance:DebugConfig()
     configurationDevice = CS.ZJYFrameWork.Common.AppConfig.configurationDevice
 end
+
 ---试一试直接运行
 ---
 init()
@@ -55,7 +56,6 @@ function __G__TRACKBACK__(exceptionMsg)
         -- 正式线上不显示详细信息
         str = str .. debug.traceback() .. "\n"
     end
-
 end
 
 --GlobalEventValue = {}
@@ -84,7 +84,7 @@ local function main()
     --Executors.RunOnCoroutineNoReturn(client)
     --gameObject:SetActive(false)
     -- printError("tr:" .. type(gameObject:transform()))
-    
+
     --require("Game.CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData")
 end
 
@@ -93,3 +93,4 @@ main()
 --if not status then
 --    print('xpcall robot main error', status, msg)
 --end
+
