@@ -67,7 +67,13 @@ end
 function GameMainView:ShowNowTime(dateTime)
     --local timeNum = string.format("%.0f", (dateTime.time / 1000));
     --local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    local ViewPanel = GameMainVIew:GetViewPanel()
+    local ViewPanel = GameMainVIew.viewPanel
+    if not GameMainView.viewPanel then
+        return
+    end
+    if ViewPanel == nil then
+        return
+    end
     ViewPanel.TimeShow_Text.text = dateTime
 end
 
