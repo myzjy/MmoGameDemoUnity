@@ -6,7 +6,7 @@
 
 local GameMainConfig = {
     ---预制体名字
-    prefabName = "GameMainPanel",
+    prefabName = "GameMainUIPanel",
     --- 当前会生成在那一层
     canvasType = UIConfigEnum.UICanvasType.UI,
     sortType = UIConfigEnum.UISortType.First,

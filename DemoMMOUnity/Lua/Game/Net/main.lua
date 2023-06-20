@@ -4,6 +4,7 @@
 --- DateTime: 2023/6/4 23:19
 ---
 
+require("Game.Net.ServerData.ServerDataManager")
 
 PacketDispatcher=require("Game.Net.PacketDispatcher")
 

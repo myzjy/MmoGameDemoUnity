@@ -24,6 +24,7 @@ function LoginView:OnLoad()
         end
     }
     self:Load(self.UIConfig)
+    self:LoadUI(self.UIConfig)
     self:InstanceOrReuse()
 end
 

@@ -150,9 +150,19 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         {
             var outputLuaPath = $"{Application.dataPath}/../Lua/Game/GenerateScripts/UIModules/";
             var outputPathDirectoryInfo = new DirectoryInfo(outputLuaPath);
+         
             if (!outputPathDirectoryInfo.Exists)
             {
                 Directory.CreateDirectory(outputLuaPath);
+                var notLuaFiles = Util.GetSpecifyFilesInFolder(outputLuaPath, null, true);
+                if (notLuaFiles is { Length: > 0 })
+                {
+                    foreach (var t in notLuaFiles)
+                    {
+                        Debug.Log($"file：{t}");
+                        Util.SafeDeleteFile(t);
+                    }
+                }
             }
 
             outputLuaPath = outputPathDirectoryInfo.FullName;

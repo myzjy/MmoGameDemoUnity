@@ -30,7 +30,7 @@ function UIComponentManager:InitUIModelComponent()
             --local data = v
             --- 当前 UI事件没有存储
             UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
-                GameMainVIew:NotificationHandler(_eventNotification)
+                GameMainView:NotificationHandler(_eventNotification)
             end
         else
             error("[class:" .. i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")

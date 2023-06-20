@@ -20,13 +20,21 @@ function UIBaseView:Load(viewConfig)
     self.hideFunc = function()
         viewConfig.hideFunc()
     end
-    self.viewPanel = viewConfig.viewPanel
-    self.Config = viewConfig.Config
+
+end
+--- 设置 config
+function UIBaseView:SetConfig(panel)
+    self.Config = panel.Config
 end
 
-function UIBaseView:ViewPanelInit(UIView)
-    self.viewPanel:Init(UIView)
+function UIBaseView:SetViewPanel(viewPanel)
+    self.viewPanel = viewPanel
 end
+function UIBaseView:GetViewPanel()
+    local viewPanel = self.viewPanel
+    return viewPanel
+end
+
 
 function UIBaseView:SetReUseBool(value)
     self.reUse = value
@@ -63,7 +71,6 @@ function UIBaseView:InstantiateGameObject(gameObject)
             self.transform:SetAsLastSibling()
         end
     end
-    self.UIView = self:GetComponent("UIView")
     self.UIView.GetTransform.localScale = Vector3.one
     self.UIView.GetTransform.localPosition = Vector3.zero
     return go
@@ -101,12 +108,12 @@ function UIBaseView:GetPanelUIRoot(canvasType)
 end
 
 function UIBaseView:OnInit()
-    self.initFunc()
+    --self.initFunc()
 end
 
 function UIBaseView:OnShow()
     self.UIView:OnShow()
-    self.showFunc()
+    --self.showFunc()
 end
 
 function UIBaseView:OnHide()

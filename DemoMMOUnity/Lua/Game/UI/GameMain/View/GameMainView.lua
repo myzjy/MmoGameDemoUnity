@@ -9,32 +9,35 @@ require("Game.GenerateScripts.UIModules.GameMainUIPanelView")
 
 function GameMainView:OnLoad()
     self.UIConfig = {
-        Config = LoginConfig,
+        Config = GameMainConfig,
         viewPanel = GameMainUIPanelView,
         initFunc = function()
             printDebug("GameMainVIew:Init()")
-            GameMainVIew:Init()
+            GameMainView:OnInit()
         end,
         showFunc = function()
             printDebug("GameMainVIew:showUI()-->showFunc")
-            GameMainVIew:OnShow()
+            GameMainView:OnShow()
         end,
         hideFunc = function()
 
         end
     }
     self:Load(self.UIConfig)
+    self:LoadUI(self.UIConfig)
     self:InstanceOrReuse()
 end
 
 function GameMainView:OnInit()
-    print("GameMain:OnInit")
+    printDebug("GameMain:OnInit")
     --- GameMain ViewPanel
-    local ViewPanel = GameMainVIew.viewPanel
+    local ViewPanel = self.viewPanel
+    printDebug(type(ViewPanel.GemsTim_UISerializableKeyObject))
+    
     --- 转换水晶 按钮
     self.GemsTimeButton = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
     self.GemsText = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
-    local data = CS.SpringContext.GetBean("PlayerUserCaCheData") or CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData
+    local data = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("PlayerUserCaCheData") or CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData
     --- 显示名字
     ViewPanel.top_head_Name_Text.text = data.userName
     --- 付费水晶 商店充值跳转按钮
@@ -59,7 +62,7 @@ end
 
 function GameMainView:OnShow()
     CS.Debug.Log("GameMain:OnShow")
-    GameMainVIew:OnShow()
+    self.UIView:OnShow()
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
 end
 
@@ -67,8 +70,8 @@ end
 function GameMainView:ShowNowTime(dateTime)
     --local timeNum = string.format("%.0f", (dateTime.time / 1000));
     --local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    local ViewPanel = GameMainVIew.viewPanel
-    if not GameMainView.viewPanel then
+    local ViewPanel = self.viewPanel
+    if not self.viewPanel then
         return
     end
     if ViewPanel == nil then
