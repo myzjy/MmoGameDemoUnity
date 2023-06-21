@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using GameUtil;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;

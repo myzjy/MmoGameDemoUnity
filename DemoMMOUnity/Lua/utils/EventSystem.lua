@@ -87,20 +87,21 @@ function EventSystem:UnBindAll(is_delete)
         self.calling_event_dic = {}
     end
 end
-eventValues=nil
+
+eventValues = nil
 --立即触发
 function EventSystem:Fire(event_id, ...)
     if event_id == nil then
         print("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
         return
     end
-    eventValues=...
+    eventValues = ...
     local event_list = getEvent(self, event_id)
     if event_list then
         self.calling_event_dic[event_id] = false
         for bind_id, event_call_back in pairs(event_list) do
             if event_call_back then
-                printDebug("EventSystem:Fire(event_id, ...) line 101"..type(eventValues))
+                printDebug("EventSystem:Fire(event_id, ...) line 101" .. type(eventValues))
                 event_call_back(eventValues)
             end
         end
@@ -115,3 +116,4 @@ function EventSystem:Fire(event_id, ...)
 end
 
 return EventSystem
+

@@ -36,5 +36,9 @@ function GameMainNetController:AtServerConfigResponse(response)
     GameMainViewController:GetInstance().OnOpen()
 end
 
+function GameMainNetController:AtPhysicalPowerUserPropsResponse(response)
+    
+end
+
 return GameMainNetController
 

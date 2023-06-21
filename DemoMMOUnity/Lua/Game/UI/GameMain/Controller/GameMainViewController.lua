@@ -27,9 +27,9 @@ end
 
 ---@param num number 金币数量
 function GameMainViewController:ShowGoldNumTextAction(num)
-    GameMainView:ShowGoldNumTextAction(num)
+    GameMainView:GetInstance():ShowGoldNumTextAction(num)
 end
 
 function GameMainViewController:ShowTime(dataTime)
-    GameMainView:ShowNowTime(dataTime)
+    GameMainView:GetInstance():ShowNowTime(dataTime)
 end

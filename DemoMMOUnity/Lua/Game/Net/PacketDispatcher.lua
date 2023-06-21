@@ -23,6 +23,7 @@ function OnDisConnectFromServer()
     printDebug("Game server disconnected!!")
     GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
+
 function OnReceiveLineFromServer(bytes)
     printDebug(type(bytes))
     str = bytes
@@ -33,6 +34,7 @@ end
 function PacketDispatcher:SendMessage(bytes)
     global.netManager:SendMessage(bytes)
 end
+
 function PacketDispatcher:Init()
     -------------------------------- start Login   pack 包 --------------------------------------
     ---@type LoginNetController
@@ -45,7 +47,6 @@ function PacketDispatcher:Init()
     local gameMainNetController = require("Game.Net.Controller.GameMainNetController")
     gameMainNetController:Init()
     -------------------------------- end   gameMain pack 包 --------------------------------------
-
 end
 
 --function PacketDispatcher:Receive(str)
@@ -60,3 +61,4 @@ function PacketDispatcher:Receive(packet)
 end
 
 return PacketDispatcher
+

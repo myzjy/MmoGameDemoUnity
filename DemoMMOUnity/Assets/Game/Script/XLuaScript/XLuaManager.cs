@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using GameUtil;
 using UnityEngine;
 using XLua;
 using ZJYFrameWork.AssetBundles.AssetBundlesManager;
@@ -16,6 +17,7 @@ using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Procedure;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
+using ZJYFrameWork.UISerializable.Manager;
 using ZJYFrameWork.WebRequest;
 using Object = UnityEngine.Object;
 using Path = System.IO.Path;
@@ -63,6 +65,7 @@ namespace ZJYFrameWork.XLuaScript
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
                 SpringContext.GetBean<NetManager>().LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
+                DateTimeUtil.timeShowNum = luaEnv.Global.Get<Action<long>>("SetNowTime");
             }
         }
 

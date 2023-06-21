@@ -10,6 +10,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+          //  return;
             UISerializableKeyObject keyGizmos = target as UISerializableKeyObject;
             // EditorGUI.BeginChangeCheck();
 
@@ -49,8 +50,9 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     }
                 }
 
-                AssetDatabase.Refresh();
             }
+            AssetDatabase.Refresh();
+
         }
     }
 }

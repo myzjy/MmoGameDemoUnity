@@ -16,3 +16,4 @@ function ServerDataManager:SetItemBaseDataList(list)
 end
 
 return ServerDataManager
+

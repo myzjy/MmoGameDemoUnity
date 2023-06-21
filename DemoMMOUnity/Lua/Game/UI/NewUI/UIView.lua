@@ -18,10 +18,12 @@ function UIView:InstanceOrReuse()
         self:InstancePrefab()
     end
 end
+
 function UIView:LoadUI(viewConfig)
     self:SetViewPanel(viewConfig.viewPanel)
     self:SetConfig(viewConfig)
 end
+
 function UIView:InstancePrefab()
     ---打开loading 界面
     CommonController.Instance.loadingRotate:OnShow()
@@ -34,4 +36,3 @@ function UIView:InstancePrefab()
         self:OnShow()
     end)
 end
-

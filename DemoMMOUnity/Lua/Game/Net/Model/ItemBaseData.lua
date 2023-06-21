@@ -20,6 +20,7 @@ function ItemBaseData:new()
     obj.__index = self
     return obj
 end
+
 function ItemBaseData:ValueOf(_id, _name, _icon, _minNum, _maxNum, _type, _des)
     self:SetIDValue(_id)
     self:SetNameValue(_name)
@@ -29,6 +30,7 @@ end
 function ItemBaseData:SetIDValue(_id)
     id = _id
 end
+
 function ItemBaseData:GetIDValue()
     return id
 end
@@ -36,12 +38,15 @@ end
 function ItemBaseData:SetNameValue(Name)
     name = Name
 end
+
 function ItemBaseData:GetNameValue()
     return name
 end
+
 function ItemBaseData:SetMinNumValue(_minNum)
     minNum = _minNum
 end
+
 function ItemBaseData:GetMinNumValue()
     return minNum
 end
@@ -91,3 +96,4 @@ function ItemBaseData:GetIconStringValue()
 end
 
 return ItemBaseData
+

@@ -1,4 +1,5 @@
 using System;
+using GameUtil;
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Hotfix.Script.Module.Bag.Service;

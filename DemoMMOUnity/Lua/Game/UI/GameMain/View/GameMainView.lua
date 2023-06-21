@@ -27,13 +27,15 @@ function GameMainView:OnLoad()
     self:LoadUI(self.UIConfig)
     self:InstanceOrReuse()
 end
-
+function GameMainView:GetInstance()
+    return GameMainView
+end
 function GameMainView:OnInit()
     printDebug("GameMain:OnInit")
     --- GameMain ViewPanel
     local ViewPanel = self.viewPanel
-    printDebug(type(ViewPanel.GemsTim_UISerializableKeyObject))
-    
+    printDebug(type(ViewPanel.TimeShow_Text))
+
     --- 转换水晶 按钮
     self.GemsTimeButton = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
     self.GemsText = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
@@ -49,7 +51,7 @@ function GameMainView:OnInit()
     --- 购买金币，第一跳转商场兑换
     self.GoldTimButton = ViewPanel.glod_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
 
-    self.SetListener(ViewPanel.headImgClick, function()
+    self:SetListener(ViewPanel.headImgClick, function()
         --- 点击头像
         CS.Debug.Log("点击头像，进行更换")
         --- 目前来说还不知道需不需要
@@ -77,7 +79,7 @@ function GameMainView:ShowNowTime(dateTime)
     if ViewPanel == nil then
         return
     end
-    ViewPanel.TimeShow_Text.text = dateTime
+    self.viewPanel.TimeShow_Text.text = dateTime
 end
 
 ---显示金币数量

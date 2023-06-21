@@ -46,7 +46,7 @@ function global.print_r(root, lvl, deep)
     local tb = string.split(debug.traceback("", 2), "\n")
     local str = dumps(root, lua_type(root) == "table", deep)
     local str0 = '++++------------------------------'
-    lua_print("\n" .. str0 .. "\n" .."dump from: " .. string.trim(tb[3]) .. "\n" .. str .. "\n" .. str0)
+    lua_print("\n" .. str0 .. "\n" .. "dump from: " .. string.trim(tb[3]) .. "\n" .. str .. "\n" .. str0)
 end
 
 function global.print_r_deep(root, deep)
@@ -55,7 +55,8 @@ end
 
 function global.print_hex(s)
     local function hexadump(s)
-        return (s:gsub('.', function (c) return format('%02X ', c:byte()) end))
+        return (s:gsub('.', function(c) return format('%02X ', c:byte()) end))
     end
     lua_print(hexadump(s))
 end
+

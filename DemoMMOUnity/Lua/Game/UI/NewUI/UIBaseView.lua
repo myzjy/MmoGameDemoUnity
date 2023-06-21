@@ -20,8 +20,8 @@ function UIBaseView:Load(viewConfig)
     self.hideFunc = function()
         viewConfig.hideFunc()
     end
-
 end
+
 --- 设置 config
 function UIBaseView:SetConfig(panel)
     self.Config = panel.Config
@@ -30,11 +30,11 @@ end
 function UIBaseView:SetViewPanel(viewPanel)
     self.viewPanel = viewPanel
 end
+
 function UIBaseView:GetViewPanel()
     local viewPanel = self.viewPanel
     return viewPanel
 end
-
 
 function UIBaseView:SetReUseBool(value)
     self.reUse = value

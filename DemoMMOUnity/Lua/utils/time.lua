@@ -61,7 +61,7 @@ end
 ---time.dayTime = {flag=1,baseTime=0,isLoop=false} --游戏的day时间
 ---flag 1:正计时; 2:倒计时 . baseTime:基准时间 . isLoop:是否循环，一般用于倒计时
 ---倒计时的话 比如5分钟,现在还剩4分钟,basetime=4*60; recordTime=5*60
-function time.registerTime(key,flag,baseTime,isLoop,recordTime)
+function time.registerTime(key, flag, baseTime, isLoop, recordTime)
     time[key] = {}
     time[key].flag = flag
     if flag == 1 then
@@ -76,7 +76,7 @@ function time.registerTime(key,flag,baseTime,isLoop,recordTime)
 end
 
 ---返回os.date,返回0表示倒计时结束
-function time.getTimeTable(key,_noupdate)
+function time.getTimeTable(key, _noupdate)
     key = key or time.SERVER_TIMEKEY
     local info = time[key]
     if info == nil then return nil end
@@ -92,7 +92,7 @@ function time.getTimeTable(key,_noupdate)
             end
             return 0
         else
-            return {hour=floor(fixTime/3600),min=floor((fixTime%3600)/60),sec=time%60}
+            return { hour = floor(fixTime / 3600), min = floor((fixTime % 3600) / 60), sec = time % 60 }
         end
     end
 end
@@ -113,7 +113,7 @@ end
 --- 自然日
 function time.getTodayStr() --20150612
     local T = time.getTimeTable()
-    return format("%04d%02d%02d",T.year,T.month,T.day)
+    return format("%04d%02d%02d", T.year, T.month, T.day)
 end
 
 --- 获取下次默认5点刷新时间
@@ -122,10 +122,10 @@ function time.getNextdayStrInClock(freshHour, freshMin)
     freshMin = freshMin or 0
     local T = time.getTimeTable()
     if T.hour * 100 + T.min > freshHour * 100 + freshMin then
-        local t = time.getTimestamp(T) + 24*3600
+        local t = time.getTimestamp(T) + 24 * 3600
         T = time.getDate(t)
     end
-    return format("%04d%02d%02d",T.year,T.month,T.day)
+    return format("%04d%02d%02d", T.year, T.month, T.day)
 end
 
 --- 默认5点刷新时间
@@ -134,10 +134,10 @@ function time.getTodayStrInClock(freshHour, freshMin) -- str 20150612
     freshMin = freshMin or 0
     local T = time.getTimeTable()
     if T.hour * 100 + T.min < freshHour * 100 + freshMin then
-        local t = time.getTimestamp(T) - 24*3600
+        local t = time.getTimestamp(T) - 24 * 3600
         T = time.getDate(t)
     end
-    return format("%04d%02d%02d",T.year,T.month,T.day)
+    return format("%04d%02d%02d", T.year, T.month, T.day)
 end
 
 --- 默认5点刷新时间, 获取周一的日期
@@ -146,13 +146,13 @@ function time.getWeekStrInClock(freshHour, freshMin) -- str 20150612
     freshMin = freshMin or 0
     local T = time.getTimeTable()
     if T.hour * 100 + T.min < freshHour * 100 + freshMin then
-        local t = time.getTimestamp(T) - 24*3600
+        local t = time.getTimestamp(T) - 24 * 3600
         T = time.getDate(t)
     end
     local wday = T.wday == 1 and 7 or T.wday - 1 -- Sunday is 1
-    local t = time.getTimestamp(T) - 24*3600*(wday-1)
+    local t = time.getTimestamp(T) - 24 * 3600 * (wday - 1)
     T = time.getDate(t)
-    return format("%04d%02d%02d",T.year,T.month,T.day)
+    return format("%04d%02d%02d", T.year, T.month, T.day)
 end
 
 --- 默认5点刷新时间, 获取1号的日期
@@ -169,17 +169,17 @@ function time.getCutDown(timeNum, noNegative, ignoreSec)
         timeNum = timeNum > 0 and timeNum or 0
     end
 
-    local day,hour,min,sec
+    local day, hour, min, sec
     day = floor(timeNum / 86400)
-    hour = floor((timeNum % 86400 ) / 3600)
-    min = floor((timeNum % 3600 ) / 60)
+    hour = floor((timeNum % 86400) / 3600)
+    min = floor((timeNum % 3600) / 60)
     sec = floor(timeNum % 60)
 
     local str = format("%02d:%02d:%02d", hour, min, sec)
     if day >= 1 then
         str = format(gLanguageCsv.day .. " %s", day, str)
     end
-    local ret = {day = day, hour = hour, min = min, sec = sec, str = str}
+    local ret = { day = day, hour = hour, min = min, sec = sec, str = str }
 
     --- 时钟str 只显示hour-min-sec
     ret.clock_str = format("%02d:%02d:%02d", hour, min, sec)
@@ -197,7 +197,7 @@ function time.getCutDown(timeNum, noNegative, ignoreSec)
     ret.minstr = minstr
     ret.secstr = secstr
     --- 日期文本
-    ret.date_str = ignoreSec and daystr..hourstr..minstr or daystr..hourstr..minstr..secstr
+    ret.date_str = ignoreSec and daystr .. hourstr .. minstr or daystr .. hourstr .. minstr .. secstr
 
     --- short_date_str 短日期文本，当不足一天则没有天，以此类推
     --- head_date_str 头日期文本，只显示不为0的最大单位日期
@@ -205,10 +205,10 @@ function time.getCutDown(timeNum, noNegative, ignoreSec)
         ret.short_date_str = ret.date_str
         ret.head_date_str = daystr
     elseif hour > 0 then
-        ret.short_date_str = ignoreSec and hourstr..minstr or hourstr..minstr..secstr
+        ret.short_date_str = ignoreSec and hourstr .. minstr or hourstr .. minstr .. secstr
         ret.head_date_str = hourstr
     elseif min > 0 then
-        ret.short_date_str = ignoreSec and minstr or minstr..secstr
+        ret.short_date_str = ignoreSec and minstr or minstr .. secstr
         ret.head_date_str = minstr
     else
         ret.short_date_str = ignoreSec and minstr or secstr
@@ -227,22 +227,22 @@ function time.getActivityOpenDate(activityID)
         local endHour = time.getHourAndMin(cfg.endTime)
         local _, startMonth, startDay = time.getYearMonthDay(cfg.beginDate)
         local _, endMonth, endDay = time.getYearMonthDay(cfg.endDate)
-        date = string.formatex(gLanguageCsv.timeString, {month = startMonth, day = startDay, hour = startHour}).."-"
-                .. string.formatex(gLanguageCsv.timeString, {month = endMonth, day = endDay, hour = endHour})
+        date = string.formatex(gLanguageCsv.timeString, { month = startMonth, day = startDay, hour = startHour }) .. "-"
+            .. string.formatex(gLanguageCsv.timeString, { month = endMonth, day = endDay, hour = endHour })
         return date, time.getNumTimestamp(cfg.beginDate, time.getHourAndMin(cfg.beginTime, true))
-
     elseif cfg.openType == 3 or cfg.openType == 4 then
         local endTime = gGameModel.role:read("yy_endtime")[activityID] or 0
         local startTime = endTime - (cfg.relativeDayRange[2] - cfg.relativeDayRange[1] + 1) * 24 * 3600
         if endTime > 0 and startTime > 0 then
             local date1 = time.getDate(startTime)
             local date2 = time.getDate(endTime)
-            local startMonth = format("%02d",date1.month)
-            local startDay = format("%02d",date1.day)
-            local endMonth = format("%02d",date2.month)
-            local endDay = format("%02d",date2.day)
-            date = string.formatex(gLanguageCsv.timeString, {month = startMonth, day = startDay, hour = date1.hour}).."-"
-                    .. string.formatex(gLanguageCsv.timeString, {month = endMonth, day = endDay, hour = date2.hour})
+            local startMonth = format("%02d", date1.month)
+            local startDay = format("%02d", date1.day)
+            local endMonth = format("%02d", date2.month)
+            local endDay = format("%02d", date2.day)
+            date = string.formatex(gLanguageCsv.timeString, { month = startMonth, day = startDay, hour = date1.hour }) ..
+                "-"
+                .. string.formatex(gLanguageCsv.timeString, { month = endMonth, day = endDay, hour = date2.hour })
             return date, startTime
         end
     end
@@ -267,15 +267,15 @@ function time.getHourAndMin(timeStr, toInt)
     if toInt then
         return hour, min
     end
-    return format("%02d", hour) , format("%02d", min)
+    return format("%02d", hour), format("%02d", min)
 end
 
 --- 将20150612数字转成时间戳
 function time.getNumTimestamp(timeNum, hour, min, sec)
     local t = {
-        year = floor(timeNum/10000),
-        month = floor((timeNum%10000)/100),
-        day = floor(timeNum%100),
+        year = floor(timeNum / 10000),
+        month = floor((timeNum % 10000) / 100),
+        day = floor(timeNum % 100),
         hour = tonumber(hour) or 0,
         min = tonumber(min) or 0,
         sec = tonumber(sec) or 0
@@ -299,7 +299,5 @@ end
 
 --- kr 特殊 0 点刷新
 function time.getRefreshHour()
-    return matchLanguage({"kr", "en"}) and 0 or 5
+    return matchLanguage({ "kr", "en" }) and 0 or 5
 end
-
-

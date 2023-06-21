@@ -41,7 +41,6 @@ function ByteBuffer:new()
     return obj
 end
 
-
 -- C#传进来的byte数组到lua里就会变成string
 ---xlua 和c# 交互，字节数组会被解密
 function readBytes(bytes)
@@ -104,8 +103,8 @@ end
 function ByteBuffer:setWriteOffset(writeOffset)
     if writeOffset > #self.buffer then
         error("index out of bounds exception: readerIndex: " + self.readOffset
-                + ", writerIndex: " + self.writeOffset
-                + "(expected: 0 <= readerIndex <= writerIndex <= capacity:" + #self.buffer)
+            + ", writerIndex: " + self.writeOffset
+            + "(expected: 0 <= readerIndex <= writerIndex <= capacity:" + #self.buffer)
     end
     self.writeOffset = writeOffset
     return self
@@ -118,8 +117,8 @@ end
 function ByteBuffer:setReadOffset(readOffset)
     if readOffset > self.writeOffset then
         error("index out of bounds exception: readerIndex: " + self.readOffset
-                + ", writerIndex: " + self.writeOffset
-                + "(expected: 0 <= readerIndex <= writerIndex <= capacity:" + #self.buffer)
+            + ", writerIndex: " + self.writeOffset
+            + "(expected: 0 <= readerIndex <= writerIndex <= capacity:" + #self.buffer)
     end
     self.readOffset = readOffset
     return self
@@ -155,7 +154,6 @@ function ByteBuffer:readBoolean()
     return self:readRawByteStr() == trueBooleanStrValue
 end
 
-
 --- byte
 -- The byte is a number between -128 and 127, otherwise, the lua will get an error.
 function ByteBuffer:writeByte(byteValue)
@@ -179,7 +177,6 @@ function ByteBuffer:readUByte()
     return string.byte(self:readRawByteStr())
 end
 
-
 -- short
 function ByteBuffer:writeShort(shortValue)
     local str = string.pack(">h", shortValue)
@@ -192,7 +189,6 @@ function ByteBuffer:readShort()
     local result = string.unpack(">h", byteStrArray)
     return result
 end
-
 
 -- int
 function ByteBuffer:writeInt(intValue)
@@ -369,9 +365,6 @@ function ByteBuffer:readLuaNumber()
     return result
 end
 
-
-
-
 --float
 function ByteBuffer:writeFloat(floatValue)
     local str = string.pack(">f", floatValue)
@@ -385,7 +378,6 @@ function ByteBuffer:readFloat()
     return result
 end
 
-
 --double
 function ByteBuffer:writeDouble(doubleValue)
     local str = string.pack(">d", doubleValue)
@@ -398,7 +390,6 @@ function ByteBuffer:readDouble()
     local result = string.unpack(">d", byteStrArray)
     return result
 end
-
 
 --string
 function ByteBuffer:writeString(str)

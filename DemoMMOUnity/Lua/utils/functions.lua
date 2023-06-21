@@ -79,4 +79,3 @@ end
 function setLogColor(nColor, fmt)
     return "<color=" .. nColor .. ">" .. fmt .. "</color>"
 end
-
