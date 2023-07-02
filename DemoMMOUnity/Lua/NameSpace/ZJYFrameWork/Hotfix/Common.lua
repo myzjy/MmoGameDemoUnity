@@ -9,13 +9,18 @@ local _common = {
     Common = hotfix.Common
 }
 local CsCommon = {
-    PlayerUserCaCheData = _common.Common.PlayerUserCaCheData
+    PlayerUserCaCheData = _common.Common.PlayerUserCaCheData,
+    PhysicalPowerCacheData = _common.Common.PhysicalPowerCacheData
 }
 
 local PlayerUserCaCheDataBeanString = "ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData"
+local PhysicalPowerCacheDataBeanString = "ZJYFrameWork.Hotfix.Common.PhysicalPowerCacheData"
 local Common = {
     PlayerUserCaCheData = function()
         return SpringContext.GetBean(PlayerUserCaCheDataBeanString) or CsCommon.PlayerUserCaCheData
+    end,
+    PhysicalPowerCacheData=function() 
+        return  SpringContext.GetBean(PhysicalPowerCacheDataBeanString) or CsCommon.PhysicalPowerCacheData
     end
 
 }
