@@ -1,0 +1,813 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="35ced9b7-f1a4-4a8b-aa4e-82b4897a779e" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/AmplifyAnimationPack/BlenderSource/BlenderSource.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/PSD/PSD.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_EquipmentIcons_(x2)/NoShadow/NoShadow.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_EquipmentIcons_(x2)/Shadow/Shadow.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_ItemIcons_(x2)/NoShadow/NoShadow.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_ItemIcons_(x2)/Shadow/Shadow.unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_PictoIcons_(x2)/PictoIcons_(x2).unitypackage.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/libxlua.so.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/libxlua.so.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/xlua.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/xlua.dll.meta" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Game/Script/Common/CommonManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Game/Script/XLuaScript/Gen/ZJYFrameWork_XLuaScript_XLuaManagerWrap.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Game/Script/XLuaScript/XLuaManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Game/com.focus-creative-games.hybridclr_unity/Editor/Installer/InstallerController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/Assets/Plugins/XLua/x86/libxlua.so.meta" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/Assets/Plugins/XLua/x86/libxlua.so.meta" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/ProjectSettings/ProjectSettings.asset" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="SWEA" />
+  </component>
+  <component name="ProjectId" id="2OJt1IrKEkVmCnyCAgA9zxpG7Xc" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Discover.Launch.Via.Unity&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Local\\Symbols\\src&quot;
+    ]
+  }
+}</component>
+  <component name="RunManager" selected="附加到 Unity 编辑器.附加到 Unity 编辑器">
+    <configuration name="启动 Unity" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="D:\Program Files\Unity\2021.3.16f1c1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-projectPath $PROJECT_DIR$ -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2021.3.16f1c1/Unity.app/Contents/MacOS/Unity" />
+      <option name="PROGRAM_PARAMETERS" value="-projectPath $PROJECT_DIR$ -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unit Tests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2021.3.16f1c1/Unity.app/Contents/MacOS/Unity" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath $PROJECT_DIR$ -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="UnitTests (batch mode)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="/Applications/Unity/Hub/Editor/2021.3.16f1c1/Unity.app/Contents/MacOS/Unity" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath $PROJECT_DIR$ -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="单元测试(批处理模式)" type="RunUnityExe" factoryName="Unity Executable">
+      <option name="EXE_PATH" value="D:\Program Files\Unity\2021.3.16f1c1\Editor\Unity.exe" />
+      <option name="PROGRAM_PARAMETERS" value="-runTests -batchmode -projectPath $PROJECT_DIR$ -testResults Logs/results.xml -testPlatform EditMode -debugCodeOptimization" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <method v="2" />
+    </configuration>
+    <configuration name="附加到 Unity 编辑器" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="附加到 Unity 编辑器并运行" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <method v="2" />
+    </configuration>
+    <configuration name="Hotfix.lua" type="lua.app" factoryName="Lua Application" temporary="true">
+      <option name="program" value="lua.exe" />
+      <option name="file" value="$PROJECT_DIR$/Lua/NameSpace/ZJYFrameWork/Hotfix.lua" />
+      <option name="workingDir" value="" />
+      <option name="debuggerType" value="2" />
+      <option name="params" value="" />
+      <option name="charset" value="UTF-8" />
+      <option name="showConsole" value="true" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Lua Application.Hotfix.lua" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\Administrator.DESKTOP-RJIHOV7\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="35ced9b7-f1a4-4a8b-aa4e-82b4897a779e" name="更改" comment="" />
+      <created>1681290296274</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1681290296274</updated>
+      <workItem from="1681290299081" duration="6245000" />
+      <workItem from="1681313147357" duration="2624000" />
+      <workItem from="1681977206661" duration="749000" />
+      <workItem from="1681978003121" duration="6699000" />
+      <workItem from="1682058033162" duration="12461000" />
+      <workItem from="1682089005711" duration="4824000" />
+      <workItem from="1682152626754" duration="16745000" />
+      <workItem from="1682214973741" duration="713000" />
+      <workItem from="1682215694085" duration="1294000" />
+      <workItem from="1682217215463" duration="17478000" />
+      <workItem from="1682318779867" duration="11929000" />
+      <workItem from="1682349502281" duration="2833000" />
+      <workItem from="1683250196288" duration="1132000" />
+      <workItem from="1683251813009" duration="11824000" />
+      <workItem from="1683275283172" duration="3422000" />
+      <workItem from="1683284946509" duration="3022000" />
+      <workItem from="1683302225186" duration="300000" />
+      <workItem from="1683545359916" duration="1277000" />
+      <workItem from="1683547058168" duration="269000" />
+      <workItem from="1683614800375" duration="11230000" />
+      <workItem from="1683689891876" duration="14848000" />
+      <workItem from="1683726793835" duration="4065000" />
+      <workItem from="1683736279808" duration="789000" />
+      <workItem from="1683775601999" duration="465000" />
+      <workItem from="1683776141561" duration="8920000" />
+      <workItem from="1683790398380" duration="11121000" />
+      <workItem from="1683814936662" duration="6021000" />
+      <workItem from="1683855025626" duration="261000" />
+      <workItem from="1683855293742" duration="19290000" />
+      <workItem from="1683892505058" duration="861000" />
+      <workItem from="1683957453555" duration="11223000" />
+      <workItem from="1684030474363" duration="9254000" />
+      <workItem from="1684044559251" duration="477000" />
+      <workItem from="1684045050968" duration="9658000" />
+      <workItem from="1684072154839" duration="4581000" />
+      <workItem from="1684117416048" duration="16492000" />
+      <workItem from="1684151599434" duration="431000" />
+      <workItem from="1684167729135" duration="254000" />
+      <workItem from="1684201281713" duration="14844000" />
+      <workItem from="1684295435935" duration="66000" />
+      <workItem from="1684303867750" duration="15072000" />
+      <workItem from="1684338749613" duration="475000" />
+      <workItem from="1684388568929" duration="14001000" />
+      <workItem from="1684469418968" duration="1808000" />
+      <workItem from="1684493645311" duration="795000" />
+      <workItem from="1684501645083" duration="538000" />
+      <workItem from="1684575280054" duration="6666000" />
+      <workItem from="1684649040839" duration="11487000" />
+      <workItem from="1684727303682" duration="20331000" />
+      <workItem from="1684812815571" duration="16129000" />
+      <workItem from="1684848799645" duration="5509000" />
+      <workItem from="1684893508573" duration="3672000" />
+      <workItem from="1684907936686" duration="11891000" />
+      <workItem from="1684943176893" duration="1418000" />
+      <workItem from="1685069120560" duration="3092000" />
+      <workItem from="1685087900178" duration="5727000" />
+      <workItem from="1685117913618" duration="1786000" />
+      <workItem from="1685162227179" duration="6833000" />
+      <workItem from="1685239348762" duration="10222000" />
+      <workItem from="1685262401581" duration="11994000" />
+      <workItem from="1685352682245" duration="2874000" />
+      <workItem from="1685359550964" duration="1667000" />
+      <workItem from="1685418792431" duration="490000" />
+      <workItem from="1685421200639" duration="11019000" />
+      <workItem from="1685526265751" duration="3319000" />
+      <workItem from="1685600187155" duration="6054000" />
+      <workItem from="1685688429450" duration="5960000" />
+      <workItem from="1685696347637" duration="3512000" />
+      <workItem from="1685721010328" duration="473000" />
+      <workItem from="1685771647445" duration="85000" />
+      <workItem from="1685771762755" duration="314000" />
+      <workItem from="1685775700391" duration="6436000" />
+      <workItem from="1685848027457" duration="20233000" />
+      <workItem from="1685886572974" duration="1180000" />
+      <workItem from="1685887776454" duration="5116000" />
+      <workItem from="1685976239740" duration="1476000" />
+      <workItem from="1686064676591" duration="1421000" />
+      <workItem from="1686066117243" duration="634000" />
+      <workItem from="1686066989286" duration="819000" />
+      <workItem from="1686153807081" duration="21000" />
+      <workItem from="1686154119908" duration="77000" />
+      <workItem from="1686299430603" duration="2440000" />
+      <workItem from="1686382701601" duration="4632000" />
+      <workItem from="1686466276815" duration="7641000" />
+      <workItem from="1686578657898" duration="180000" />
+      <workItem from="1686584519303" duration="1483000" />
+      <workItem from="1686641850549" duration="13724000" />
+      <workItem from="1686671424721" duration="243000" />
+      <workItem from="1686755958893" duration="3016000" />
+      <workItem from="1686969199261" duration="1201000" />
+      <workItem from="1686970432744" duration="10788000" />
+      <workItem from="1687085363841" duration="321000" />
+      <workItem from="1687191313084" duration="277000" />
+      <workItem from="1687239780184" duration="525000" />
+      <workItem from="1687254294726" duration="1928000" />
+      <workItem from="1687273398376" duration="3102000" />
+      <workItem from="1687315609139" duration="12756000" />
+      <workItem from="1687362664168" duration="1621000" />
+      <workItem from="1687408748208" duration="1224000" />
+      <workItem from="1688289878558" duration="1113000" />
+    </task>
+    <task id="LOCAL-00010" summary="lua修改">
+      <created>1683735143583</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1683735143583</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Lua 转换">
+      <created>1683736851027</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1683736851027</updated>
+    </task>
+    <task id="LOCAL-00012" summary="lua">
+      <created>1683821016517</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1683821016517</updated>
+    </task>
+    <task id="LOCAL-00013" summary="lua 修复">
+      <created>1684057618980</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1684057618980</updated>
+    </task>
+    <task id="LOCAL-00014" summary="UIView">
+      <created>1684059791454</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1684059791454</updated>
+    </task>
+    <task id="LOCAL-00015" summary="将UI相关改成lua 侧">
+      <created>1684076983492</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1684076983492</updated>
+    </task>
+    <task id="LOCAL-00016" summary="lua代码 注释">
+      <created>1684077707056</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1684077707056</updated>
+    </task>
+    <task id="LOCAL-00017" summary="lua">
+      <created>1684078210371</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1684078210371</updated>
+    </task>
+    <task id="LOCAL-00018" summary="显示 lua">
+      <created>1684080504762</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1684080504762</updated>
+    </task>
+    <task id="LOCAL-00019" summary="lua 修复">
+      <created>1684317316727</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1684317316727</updated>
+    </task>
+    <task id="LOCAL-00020" summary="lua 初始化">
+      <created>1684324167458</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1684324167458</updated>
+    </task>
+    <task id="LOCAL-00021" summary="lua 相关工具脚本，修好初始化脚本">
+      <created>1684588357858</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1684588357858</updated>
+    </task>
+    <task id="LOCAL-00022" summary="流程更改">
+      <created>1684602459900</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1684602459900</updated>
+    </task>
+    <task id="LOCAL-00023" summary="lua 脚本">
+      <created>1684754302087</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1684754302087</updated>
+    </task>
+    <task id="LOCAL-00024" summary="相关修改 &#10;lua:&#10;[Game\Common] 添加 GlobalEvent.lua 文件 全局事件绑定不通过调用函数绑定&#10;[Game\Login] 修改：&#10;       1.Init  内部调用类不一致 修改&#10;       2.InitEvents  绑定事件直接调用 GlobalEvent.all_event_dic 在给对应function函数&#10;       3.AtLoginResponse 去掉注解 防止报错 if Debug &gt;1 改为&gt;0&#10;       4.添加 Connect 函数 &#10;[Game\Manager] 修改\添加：&#10;ProtocolManager.lua 文件：&#10;      1.initProtocolManager 函数添加 读取 LoginResponse.lua 文件并采用Id形式存放&#10;      2.部分函数添加打印&#10;[Game\Net]&#10;   [Game\Net\LuaProtocol\Buffer]&#10;    ByteBuffer.lua 文件：&#10;    1.部分函数添加打印&#10;    2.readBytes 全局函数 内部buffer:writeBuffer--&gt;buffer:writeString&#10;   [Game\Net\LuaProtocol\Login]&#10;      添加 LoginRequest.lua 文件，暂时还没有做完&#10;      修改 LoginResponse.lua 文件&#10;       1.去掉注解，可能会导致报错，解析不出来对应内容&#10;       2.write函数内部，不正确的函数调用修改&#10;修改 PacketDispatcher.lua 文件&#10;  1.添加全局变量 packetValue、 PacketDispatcher.urlString&#10;  2.全局函数内容修改:&#10;    2.1. OnReceiveLineFromServer 函数 传递参数找一个全局变量存放，以防丢失、回收&#10;  3.内部函数修改：&#10;   3.1. Init、Receive 内容修改 &#10;[最外层]&#10; init.lua 内容修改 添加全局函数定义 main函数 内容修改">
+      <created>1684853274524</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1684853274524</updated>
+    </task>
+    <task id="LOCAL-00025" summary="lua 文件修改添加&#10; EventSystem.lua 内容修改，部分变量变成全局">
+      <created>1684857383283</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1684857383283</updated>
+    </task>
+    <task id="LOCAL-00026" summary="修改lua文件，网络协议文件">
+      <created>1684859484095</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1684859484095</updated>
+    </task>
+    <task id="LOCAL-00028" summary="[Editor] xlua lua侧会使用到库添加">
+      <created>1685266765782</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1685266765782</updated>
+    </task>
+    <task id="LOCAL-00029" summary="c#:&#10;[Game]&#10;   [Hoftix/Script/Module/Login/Service] 修改 LoginService 脚本">
+      <created>1685266883083</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1685266883083</updated>
+    </task>
+    <task id="LOCAL-00030" summary="c#:&#10; [Game]&#10;    [Net]&#10;      [Api] &#10;       ApiHandler 修改&#10;       ApiRequest 添加 有参构造函数&#10;       ApiRequest 修改&#10;      [Core/Websocket]&#10;        WebsocketClient 解析消息侧 传递给lua侧为 从字符改为字节">
+      <created>1685271553861</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1685271553861</updated>
+    </task>
+    <task id="LOCAL-00031" summary="1">
+      <created>1685271561246</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1685271561246</updated>
+    </task>
+    <task id="LOCAL-00032" summary="c# &#10; [Game]&#10;   [ZJYFrameWork\Spring\Core]&#10;      SpringContext.cs 修改 GetBean(string) 函数">
+      <created>1685271636574</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1685271636574</updated>
+    </task>
+    <task id="LOCAL-00033" summary="SettingManager.cs 添加 注解&#10;Hotfix.cs 添加必要">
+      <created>1685271987371</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1685271987371</updated>
+    </task>
+    <task id="LOCAL-00034" summary="c# &#10;[Game]&#10;  [Net\Dispatcher]&#10;     修改解析&#10;  [xLuaScript]&#10;     修改">
+      <created>1685272061109</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1685272061109</updated>
+    </task>
+    <task id="LOCAL-00035" summary="[Lua]&#10; 添加http  socket">
+      <created>1685272117331</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1685272117331</updated>
+    </task>
+    <task id="LOCAL-00037" summary="添加修改">
+      <created>1685877744710</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1685877744710</updated>
+    </task>
+    <task id="LOCAL-00038" summary="修改调用loading 界面">
+      <created>1685878272423</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1685878272423</updated>
+    </task>
+    <task id="LOCAL-00039" summary="添加场景,包管理修改">
+      <created>1685883272922</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1685883272922</updated>
+    </task>
+    <task id="LOCAL-00040" summary="添加">
+      <created>1685888458977</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1685888458977</updated>
+    </task>
+    <task id="LOCAL-00041" summary="添加asset文件">
+      <created>1685888531895</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1685888531895</updated>
+    </task>
+    <task id="LOCAL-00042" summary="[C#]&#10;  [Game/Hotfix/Script/Common]&#10;    PlayerUserCaCheData 修改注释 格式对齐">
+      <created>1685893273149</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1685893273149</updated>
+    </task>
+    <task id="LOCAL-00043" summary="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs &#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件">
+      <created>1685893583587</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1685893583587</updated>
+    </task>
+    <task id="LOCAL-00044" summary="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs&#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件">
+      <created>1685893594684</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1685893594684</updated>
+    </task>
+    <task id="LOCAL-00045" summary="移除部分代码，添加修改部分代码">
+      <created>1685893660435</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1685893660435</updated>
+    </task>
+    <task id="LOCAL-00046" summary="添加lua代码，修改部分代码">
+      <created>1686154171836</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1686154171836</updated>
+    </task>
+    <task id="LOCAL-00047" summary="添加代码 lua">
+      <created>1686493052902</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1686493052902</updated>
+    </task>
+    <task id="LOCAL-00048" summary="lua ui 绑定代码生成修改">
+      <created>1686495538744</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1686495538744</updated>
+    </task>
+    <task id="LOCAL-00049" summary="修改lua UI 绑定代码生成，为lua UI 添加注解，好供调用">
+      <created>1686496100393</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1686496100393</updated>
+    </task>
+    <task id="LOCAL-00050" summary="修改lua UI生成代码">
+      <created>1686500302768</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1686500302769</updated>
+    </task>
+    <task id="LOCAL-00051" summary="lua 代码修改">
+      <created>1686655473999</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1686655473999</updated>
+    </task>
+    <task id="LOCAL-00052" summary="修改lua代码">
+      <created>1686758551310</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1686758551310</updated>
+    </task>
+    <task id="LOCAL-00053" summary="lua 修复">
+      <created>1686995863942</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1686995863943</updated>
+    </task>
+    <task id="LOCAL-00054" summary="设置">
+      <created>1687085447312</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1687085447312</updated>
+    </task>
+    <task id="LOCAL-00055" summary="login ui controller">
+      <created>1687085468633</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1687085468633</updated>
+    </task>
+    <task id="LOCAL-00056" summary="修复bug">
+      <created>1687191359968</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1687191359968</updated>
+    </task>
+    <task id="LOCAL-00057" summary="修复Login 登录流程到GameMain 界面流程之间错误问题">
+      <created>1687277061942</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1687277061942</updated>
+    </task>
+    <task id="LOCAL-00058" summary="体力修改">
+      <option name="closed" value="true" />
+      <created>1687342450389</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1687342450389</updated>
+    </task>
+    <task id="LOCAL-00059" summary="修复">
+      <option name="closed" value="true" />
+      <created>1687343152227</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1687343152227</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Lua代码修复">
+      <created>1688290352183</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1688290352183</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="修改xlua 添加lua脚本" />
+    <MESSAGE value="添加修改" />
+    <MESSAGE value="修改调用loading 界面" />
+    <MESSAGE value="添加场景,包管理修改" />
+    <MESSAGE value="添加" />
+    <MESSAGE value="添加asset文件" />
+    <MESSAGE value="[C#]&#10;  [Game/Hotfix/Script/Common]&#10;    PlayerUserCaCheData 修改注释 格式对齐" />
+    <MESSAGE value="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs &#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件" />
+    <MESSAGE value="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs&#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件" />
+    <MESSAGE value="移除部分代码，添加修改部分代码" />
+    <MESSAGE value="添加lua代码，修改部分代码" />
+    <MESSAGE value="添加代码 lua" />
+    <MESSAGE value="lua ui 绑定代码生成修改" />
+    <MESSAGE value="修改lua UI 绑定代码生成，为lua UI 添加注解，好供调用" />
+    <MESSAGE value="修改lua UI生成代码" />
+    <MESSAGE value="lua 代码修改" />
+    <MESSAGE value="修改lua代码" />
+    <MESSAGE value="lua 修复" />
+    <MESSAGE value="设置" />
+    <MESSAGE value="login ui controller" />
+    <MESSAGE value="修复bug" />
+    <MESSAGE value="修复Login 登录流程到GameMain 界面流程之间错误问题" />
+    <MESSAGE value="体力修改" />
+    <MESSAGE value="修复" />
+    <MESSAGE value="Lua代码修复" />
+    <option name="LAST_COMMIT_MESSAGE" value="Lua代码修复" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs</url>
+          <line>174</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs" initialLine="140" containingFunctionPresentation="方法 'LoadAsset'">
+            <startOffsets>
+              <option value="5067" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5120" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs</url>
+          <line>176</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs" initialLine="142" containingFunctionPresentation="方法 'LoadAsset'">
+            <startOffsets>
+              <option value="5151" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5206" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs</url>
+          <line>179</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs" initialLine="145" containingFunctionPresentation="方法 'LoadAsset'">
+            <startOffsets>
+              <option value="5288" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5341" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs</url>
+          <line>177</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs" initialLine="143" containingFunctionPresentation="方法 'LoadAsset'">
+            <startOffsets>
+              <option value="5223" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5241" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs</url>
+          <line>184</line>
+          <properties documentPath="$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/Simulation/SimulationBundle.cs" initialLine="150" containingFunctionPresentation="方法 'LoadAsset'">
+            <startOffsets>
+              <option value="5429" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5441" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/AssetBundleConfig.cs</url>
+          <line>35</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Game\AssetBundlesManager\Bundles\AssetBundleConfig.cs" initialLine="35" containingFunctionPresentation="属性 'IsEditorLogMode'" />
+          <option name="timeStamp" value="56" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/AssetBundleConfig.cs</url>
+          <line>37</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Game\AssetBundlesManager\Bundles\AssetBundleConfig.cs" initialLine="37" containingFunctionPresentation="属性 'IsEditorLogMode'" />
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/AssetBundleConfig.cs</url>
+          <line>45</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Game\AssetBundlesManager\Bundles\AssetBundleConfig.cs" initialLine="45" containingFunctionPresentation="属性 'IsEditorLogMode'" />
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Game/AssetBundlesManager/Bundles/AssetBundleConfig.cs</url>
+          <line>50</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Game\AssetBundlesManager\Bundles\AssetBundleConfig.cs" initialLine="50" containingFunctionPresentation="属性 'IsEditorLogMode'" />
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/hybridclr_unity/Editor/Installer/InstallerWindow.cs</url>
+          <line>43</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\hybridclr_unity\Editor\Installer\InstallerWindow.cs" initialLine="38" containingFunctionPresentation="方法 'OnGUI'" />
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/hybridclr_unity/Editor/Installer/InstallerWindow.cs</url>
+          <line>19</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\hybridclr_unity\Editor\Installer\InstallerWindow.cs" initialLine="19" containingFunctionPresentation="方法 'OnEnable'" />
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Common/UISerializableKeyObject.cs</url>
+          <line>69</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Common\UISerializableKeyObject.cs" initialLine="67" containingFunctionPresentation="方法 'GetObjType'" />
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/ZJYFrameWork/Script/Common/UISerializableKeyObject.cs</url>
+          <line>70</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\ZJYFrameWork\Script\Common\UISerializableKeyObject.cs" initialLine="68" containingFunctionPresentation="方法 'GetObjType'" />
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/Editor/Common/GenerateUIScriptEditor.cs</url>
+          <line>192</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\Editor\Common\GenerateUIScriptEditor.cs" initialLine="180" containingFunctionPresentation="方法 'GenerateLuaUI'" />
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Assets/Game/Editor/Common/GenerateUIScriptEditor.cs</url>
+          <line>202</line>
+          <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\Editor\Common\GenerateUIScriptEditor.cs" initialLine="190" containingFunctionPresentation="方法 'GenerateLuaUI'" />
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="lua-line">
+          <url>file://$PROJECT_DIR$/Lua/Game/GenerateScripts/UIModules/GameMainUIPanelView.lua</url>
+          <line>3</line>
+          <option name="timeStamp" value="71" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
