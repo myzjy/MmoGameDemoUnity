@@ -5,10 +5,8 @@
 ---
 
 ---@class PhysicalPowerUsePropsRequest
-local PhysicalPowerUsePropsRequest = {}
-
-local json = require("Common.json")
-function PhysicalPowerUsePropsRequest:new(usePropNum)
+local PhysicalPowerSecondsResponse = {}
+function PhysicalPowerSecondsResponse:new(usePropNum)
     local obj = {
         usePropNum = usePropNum
     }
@@ -34,13 +32,14 @@ function PhysicalPowerUsePropsRequest:write(buffer, packet)
         protocolId = data:protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function PhysicalPowerUsePropsRequest:read(buffer)
     local jsonStr = buffer:readString()
-    local data = json.decode(jsonStr)
+    ---@type {protocolId:number,packet:{usePropNum:number}}
+    local data = JSON.decode(jsonStr)
     local jsonData = PhysicalPowerUsePropsRequest:new(data.packet.usePropNum)
     return jsonData
 end

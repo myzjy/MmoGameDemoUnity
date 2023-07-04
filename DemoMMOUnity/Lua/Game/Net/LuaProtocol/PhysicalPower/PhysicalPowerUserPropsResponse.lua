@@ -21,7 +21,7 @@ function PhysicalPowerUserPropsResponse:new(nowPhysicalPower, residueTime, maxim
     return obj
 end
 
-function PhysicalPowerUserPropsResponse:protocoId()
+function PhysicalPowerUserPropsResponse:protocolId()
     return 1026
 end
 
@@ -32,13 +32,16 @@ function PhysicalPowerUserPropsResponse:write(buffer, packet)
     local data = packet or PhysicalPowerUserPropsResponse
 
     local message = {
-        protocoId = data:protocoId(),
+        protocolId = data:protocolId(),
         packet = data
     }
     local jsonStr = json.encode(message)
     buffer:writeString(jsonStr)
 end
 
+---  读取器 从字节流管理器中读取到对应字符
+---@param buffer any
+---@return table
 function PhysicalPowerUserPropsResponse:read(buffer)
     local jsonString = buffer:readString()
 
