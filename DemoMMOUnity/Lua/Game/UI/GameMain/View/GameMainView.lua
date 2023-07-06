@@ -65,6 +65,8 @@ end
 function GameMainView:OnShow()
     CS.Debug.Log("GameMain:OnShow")
     self.UIView:OnShow()
+    local protocolData = ProtocolManager.getProtocol(1023):new(PlayerUserCaCheData:GetUID())
+    
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
 end
 

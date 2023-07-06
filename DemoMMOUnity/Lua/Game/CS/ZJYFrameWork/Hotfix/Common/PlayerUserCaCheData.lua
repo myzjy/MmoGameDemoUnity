@@ -4,7 +4,7 @@
 --- DateTime: 2023/6/13 16:21
 ---
 local cs = require("NameSpace.ZJYFrameWork.Hotfix.Common")
-
+---@class PlayerUserCaCheData
 PlayerUserCaCheData = class("PlayerUserCaCheData")
 
 function PlayerUserCaCheData:SetUIDValue(uid)

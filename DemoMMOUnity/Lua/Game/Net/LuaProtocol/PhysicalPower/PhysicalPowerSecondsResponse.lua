@@ -12,7 +12,8 @@ local PhysicalPowerSecondsResponse = {}
 ---@param residueNowTime number 当前体力实时时间 会跟着剩余时间一起变化
 ---@param maximumStrength number 最大体力 用于限制 这个值会随着 等级增长
 ---@param maximusResidueEndTime number 我恢复到最大体力的结束时间
-function PhysicalPowerSecondsResponse:new(nowPhysicalPower, residueTime, residueNowTime, maximumStrength, maximusResidueEndTime)
+function PhysicalPowerSecondsResponse:new(nowPhysicalPower, residueTime, residueNowTime, maximumStrength,
+                                          maximusResidueEndTime)
     local object = {
         nowPhysicalPower = nowPhysicalPower,
         residueTime = residueTime,
@@ -54,10 +55,10 @@ function PhysicalPowerSecondsResponse:read(buffer)
     ---@type {protocolId:number,packet:{nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number}}
     local data = JSON.decode(jsonStr)
     local jsonData = PhysicalPowerSecondsResponse:new(data.packet.nowPhysicalPower,
-            data.packet.residueTime,
-            data.packet.residueNowTime,
-            data.packet.maximumStrength,
-            data.packet.maximusResidueEndTime)
+        data.packet.residueTime,
+        data.packet.residueNowTime,
+        data.packet.maximumStrength,
+        data.packet.maximusResidueEndTime)
     return jsonData
 end
 

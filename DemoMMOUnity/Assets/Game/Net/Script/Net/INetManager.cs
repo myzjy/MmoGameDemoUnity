@@ -9,6 +9,6 @@ namespace ZJYFrameWork.Net
         void Close();
 
         void Send(IPacket packet);
-        void SendMessage(byte[] bytes);
+        void SendMessage(string bytes);
     }
 }

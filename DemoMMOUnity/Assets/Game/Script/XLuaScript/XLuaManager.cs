@@ -63,7 +63,7 @@ namespace ZJYFrameWork.XLuaScript
                 UIComponentManager.eventUIAction =
                     luaEnv.Global.Get<Action<string, object>>("DispatchEvent");
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
-                SpringContext.GetBean<NetManager>().LuaConnectAction =
+                SpringContext.GetBean<NetManager>(). LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
                 DateTimeUtil.timeShowNum = luaEnv.Global.Get<Action<long>>("SetNowTime");
             }

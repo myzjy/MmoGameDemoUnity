@@ -89,11 +89,13 @@ namespace ZJYFrameWork.Net
             }
         }
 
-        public void SendMessage(byte[] bytes)
+        public void SendMessage(string bytes)
         {
             try
             {
-                var sendSuccess = netClient.Send(bytes);
+                ByteBuffer byteBuffer = ByteBuffer.ValueOf();
+                byteBuffer.WriteString(bytes);
+                var sendSuccess = netClient.Send(byteBuffer.ToBytes());
                 if (!sendSuccess)
                 {
                     Close();

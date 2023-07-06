@@ -51,28 +51,60 @@ function ProtocolManager.read(buffer)
 end
 
 function ProtocolManager.initProtocolManager()
-    local error                     = require("Game.Net.LuaProtocol.Common.Error")
-    local pong                      = require("Game.Net.LuaProtocol.Common.Pong")
-    local loginRequest              = require("Game.Net.LuaProtocol.Login.LoginRequest")
-    local loginResponse             = require("Game.Net.LuaProtocol.Login.LoginResponse")
-    local registerRequest           = require("Game.Net.LuaProtocol.Login.RegisterRequest")
-    local registerResponse          = require("Game.Net.LuaProtocol.Login.RegisterResponse")
-    local loginTapToStartRequest    = require("Game.Net.LuaProtocol.Login.LoginTapToStartRequest")
-    local loginTapToStartResponse   = require("Game.Net.LuaProtocol.Login.LoginTapToStartResponse")
-    local serverConfigResponse      = require("Game.Net.LuaProtocol.ServerConfig.ServerConfigResponse")
-    local physicalPowerUserRequest  = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerUsePropsRequest")
+    ---------------------------- error 101     ----------------------------
+    local error = require("Game.Net.LuaProtocol.Common.Error")
+    -----------------------------------------------------------------------
+    
+    ----------------------------  pong 104    ----------------------------
+    local pong = require("Game.Net.LuaProtocol.Common.Pong")
+    -----------------------------------------------------------------------
+    ----------------------------  login   ----------------------------
+    local loginRequest = require("Game.Net.LuaProtocol.Login.LoginRequest")
+    local loginResponse = require("Game.Net.LuaProtocol.Login.LoginResponse")
+    -----------------------------register------------------------------------------
+    local registerRequest = require("Game.Net.LuaProtocol.Login.RegisterRequest")
+    local registerResponse = require("Game.Net.LuaProtocol.Login.RegisterResponse")
+    -----------------------------loginTapToStart------------------------------------------------------------
+    local loginTapToStartRequest = require("Game.Net.LuaProtocol.Login.LoginTapToStartRequest")
+    local loginTapToStartResponse = require("Game.Net.LuaProtocol.Login.LoginTapToStartResponse")
+    ----------------------------------------------------------------------- --------------------------------
+    -----------------------------serverConfigStart------------------------------------------------------------
+    local serverConfigResponse = require("Game.Net.LuaProtocol.ServerConfig.ServerConfigResponse")
+    --------------------------------------------------------------------------------------------------------
+
+    -----------------------------physicalPowerUser------------------------------------------------------------
+    local physicalPowerUserRequest = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerUsePropsRequest")
     local physicalPowerUserResponse = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerUserPropsResponse")
-    protocols[101]                  = error
-    protocols[104]                  = pong
-    protocols[1000]                 = loginRequest
-    protocols[1001]                 = loginResponse
-    protocols[1005]                 = registerRequest
-    protocols[1006]                 = registerResponse
-    protocols[1010]                 = serverConfigResponse
-    protocols[1013]                 = loginTapToStartRequest
-    protocols[1014]                 = loginTapToStartResponse
-    protocols[1025]                 = physicalPowerUserRequest
-    protocols[1026]                 = physicalPowerUserResponse
+    --------------------------------------------------------------------------------------------------------
+
+    -----------------------------physicalPowerSeconds------------------------------------------------------------
+    local physicalPowerSecondsRequest = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerSecondsRequest")
+    local PhysicalPowerSecondsResponse = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerSecondsResponse")
+    --------------------------------------------------------------------------------------------------------
+
+    -----------------------------PhysicalPower------------------------------------------------------------
+    local PhysicalPowerRequest = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerRequest")
+    local PhysicalPowerResponse = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerResponse")
+    --------------------------------------------------------------------------------------------------------
+
+    protocols[101] = error
+    protocols[104] = pong
+    protocols[1000] = loginRequest
+    protocols[1001] = loginResponse
+    protocols[1005] = registerRequest
+    protocols[1006] = registerResponse
+    protocols[1010] = serverConfigResponse
+    protocols[1013] = loginTapToStartRequest
+    protocols[1014] = loginTapToStartResponse
+
+    protocols[1023] = PhysicalPowerRequest
+    protocols[1024] = PhysicalPowerResponse
+
+    protocols[1025] = physicalPowerUserRequest
+    protocols[1026] = physicalPowerUserResponse
+
+    protocols[1029] = physicalPowerSecondsRequest
+    protocols[1030] = PhysicalPowerSecondsResponse
 end
 
 return ProtocolManager
