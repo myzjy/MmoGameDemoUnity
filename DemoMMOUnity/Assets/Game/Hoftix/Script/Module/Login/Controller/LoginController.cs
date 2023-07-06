@@ -55,6 +55,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         {
             // 设置一下服务器的最新时间
             DateTimeUtil.SetNow(pong.time);
+
         }
 
         [EventReceiver]

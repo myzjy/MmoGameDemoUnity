@@ -60,7 +60,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             protocolList.TryGetValue(protocolId, out var protocol);
             if (protocol == null)
             {
-                Debug.LogError("[protocolId:" + protocolId + "]协议不存在");
+                Debug.LogError($"C# [protocolId: {protocolId}协议不存在，请检查lua 代码中是否已经注册协议，已注册，不需要管");
                 return null;
             }
 

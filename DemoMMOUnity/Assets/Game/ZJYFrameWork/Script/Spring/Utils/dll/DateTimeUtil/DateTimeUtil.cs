@@ -40,12 +40,12 @@ namespace ZJYFrameWork.UISerializable.Manager
         /// </summary>
         public static readonly DayOfWeek[] WEEKEND = { DayOfWeek.Saturday, DayOfWeek.Sunday };
 
-        private static long timestamp = CurrentTimeMillis();
+        private static long timestamp = 0;
         public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
 
         /**
          * 使用服务器的时间戳，会有一些误差
-         * 
+         *
          * 获取最多只有一秒延迟的粗略时间戳，适用于对时间精度要求不高的场景，最多只有1-2秒误差
          * <p>
          * 比CurrentTimeMillis()的性能高10倍
@@ -64,6 +64,7 @@ namespace ZJYFrameWork.UISerializable.Manager
         {
             return time != START_TIME_LOCAL && time != DateTime.MinValue;
         }
+
         public static Action<long> timeShowNum = null;
 
         public static void SetNow(long time)
@@ -74,8 +75,8 @@ namespace ZJYFrameWork.UISerializable.Manager
                 return;
             }
 
+            timeShowNum.Invoke(time);
             timestamp = time;
-            timeShowNum.Invoke(timestamp);
         }
 
         /**

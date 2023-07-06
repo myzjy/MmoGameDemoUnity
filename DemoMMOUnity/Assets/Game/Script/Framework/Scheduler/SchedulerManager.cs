@@ -1,4 +1,6 @@
-﻿using ZJYFrameWork.Base;
+﻿using System;
+using System.Collections.Generic;
+using ZJYFrameWork.Base;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
@@ -30,19 +32,47 @@ namespace ZJYFrameWork.Scheduler
                 return;
             }
 
+            if (DateTimeUtil.Now() <= 0)
+            {
+                EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
+                return;
+            }
             var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
             DateTimeUtil.SetNow(now);
+            if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
+            {
+                //涉及时间
+                foreach (var action in actionList)
+                {
+                    action.Invoke();
+                }
+            }
+
             count = 0;
-            if (now - minuteSchedulerTimestamp  >= DateTimeUtil.MILLIS_PER_MINUTE)
+            //定时
+            if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_MINUTE)
             {
                 minuteSchedulerTimestamp = now;
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
+               
             }
         }
 
         public override void Shutdown()
         {
+        }
+
+        private readonly List<Action> actionList = new List<Action>();
+
+        public void AddEventSystemAction(Action action)
+        {
+            actionList.Add(action);
+        }
+
+        public void SubEventSystemAction(Action action)
+        {
+            actionList.Remove(action);
         }
     }
 }

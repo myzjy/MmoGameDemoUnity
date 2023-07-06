@@ -103,7 +103,7 @@ namespace ZJYFrameWork.Net
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.LogError(e.Message);
                 throw;
             }
         }
