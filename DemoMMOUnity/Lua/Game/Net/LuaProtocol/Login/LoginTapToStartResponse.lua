@@ -7,8 +7,6 @@
 ---@class LoginTapToStartResponse
 local LoginTapToStartResponse = {}
 
-local json = require("Common.json")
-
 function LoginTapToStartResponse:new(message, accessGame)
 
     local obj = {
@@ -33,14 +31,14 @@ function LoginTapToStartResponse:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function LoginTapToStartResponse:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     local jsonData = LoginTapToStartResponse:new(
             data.packet.message,
             data.packet.accessGame)

@@ -5,7 +5,7 @@
 ---
 
 ---@class PhysicalPowerSecondsResponse
-local PhysicalPowerSecondsResponse = {}
+PhysicalPowerSecondsResponse = class("PhysicalPowerSecondsResponse")
 
 ---@param nowPhysicalPower number 返回 使用体力 所扣除 当前体力
 ---@param residueTime number 一点体力增长剩余时间
@@ -62,4 +62,3 @@ function PhysicalPowerSecondsResponse:read(buffer)
     return jsonData
 end
 
-return PhysicalPowerSecondsResponse

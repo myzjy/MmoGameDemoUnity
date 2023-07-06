@@ -6,7 +6,6 @@
 ---@class ServerConfigResponse
 local ServerConfigResponse = {}
 
-local json = require("Common.json")
 function ServerConfigResponse:new(bagItemEntityList)
     --local obj = LoginResponse.New()
     local obj = {
@@ -30,14 +29,14 @@ function ServerConfigResponse:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function ServerConfigResponse:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     local jsonData = ServerConfigResponse:new(data.packet.bagItemEntityList)
     return jsonData
 end

@@ -5,7 +5,6 @@
 ---
 ---@class LoginTapToStartRequest
 local LoginTapToStartRequest = {}
-local json = require("Common.json")
 
 function LoginTapToStartRequest:new()
     local obj = {}
@@ -27,14 +26,14 @@ function LoginTapToStartRequest:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function LoginTapToStartRequest:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     return LoginTapToStartRequest:new()
 end
 

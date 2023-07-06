@@ -34,8 +34,6 @@ function GameMainView:OnInit()
     printDebug("GameMain:OnInit")
     --- GameMain ViewPanel
     local ViewPanel = self.viewPanel
-    printDebug(type(ViewPanel.TimeShow_Text))
-
     --- 转换水晶 按钮
     self.GemsTimeButton = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
     self.GemsText = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
@@ -60,20 +58,27 @@ function GameMainView:OnInit()
         --- 购买金币 这个是需要 去兑换
         --- 先写 但是不知道需要不要 明确
     end)
+    GameMainView:OnShow()
 end
 
 function GameMainView:OnShow()
     CS.Debug.Log("GameMain:OnShow")
     self.UIView:OnShow()
-    local protocolData = ProtocolManager.getProtocol(1023):new(PlayerUserCaCheData:GetUID())
-    
+    GameMainView:SendPhysicalPower()
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
+end
+
+function GameMainView:SendPhysicalPower()
+    local protocol = ProtocolManager.getProtocol(1023)
+    local protocolData = protocol:new(PlayerUserCaCheData:GetUID())
+    local buffer = ByteBuffer:new()
+    protocol:write(buffer, protocolData)
+    local str = buffer:readString()
+    PacketDispatcher:SendMessage(str)
 end
 
 ---@param dateTime string
 function GameMainView:ShowNowTime(dateTime)
-    --local timeNum = string.format("%.0f", (dateTime.time / 1000));
-    --local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     local ViewPanel = self.viewPanel
     if not self.viewPanel then
         return

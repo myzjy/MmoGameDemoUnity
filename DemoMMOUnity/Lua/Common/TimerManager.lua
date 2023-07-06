@@ -13,6 +13,7 @@
 --]]
 
 -- local Messenger = require "Framework.Common.Messenger"
+---@class TimerManager
 local TimerManager = class("TimerManager")
 local UpdateMsgName = "Update"
 

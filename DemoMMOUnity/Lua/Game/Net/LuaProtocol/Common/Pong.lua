@@ -5,7 +5,6 @@
 ---
 ---@class Pong pong
 local Pong = {}
-local json = require("Common.json")
 function Pong:new(time)
     local obj = {
         time = time, -- long
@@ -30,14 +29,14 @@ function Pong:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function Pong:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     return Pong:new(data.packet.time)
 end
 

@@ -22,7 +22,8 @@ end
 function ProtocolManager.getProtocol(protocolId)
     local protocol = protocols[protocolId]
     if protocol == nil then
-        error("[protocolId:" .. protocolId .. "]协议不存在")
+        printError("[protocolId:" .. protocolId .. "]协议不存在")
+        return nil
     end
     return protocol
 end
@@ -54,7 +55,7 @@ function ProtocolManager.initProtocolManager()
     ---------------------------- error 101     ----------------------------
     local error = require("Game.Net.LuaProtocol.Common.Error")
     -----------------------------------------------------------------------
-    
+
     ----------------------------  pong 104    ----------------------------
     local pong = require("Game.Net.LuaProtocol.Common.Pong")
     -----------------------------------------------------------------------
@@ -95,8 +96,9 @@ function ProtocolManager.initProtocolManager()
     protocols[1006] = registerResponse
     protocols[1010] = serverConfigResponse
     protocols[1013] = loginTapToStartRequest
-    protocols[1014] = loginTapToStartResponse
-
+    protocols[loginTapToStartResponse:protocolId()] = loginTapToStartResponse
+    
+    
     protocols[1023] = PhysicalPowerRequest
     protocols[1024] = PhysicalPowerResponse
 

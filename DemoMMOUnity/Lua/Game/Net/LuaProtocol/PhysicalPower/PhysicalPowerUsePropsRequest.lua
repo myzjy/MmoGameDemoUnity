@@ -5,8 +5,8 @@
 ---
 
 ---@class PhysicalPowerUsePropsRequest
-local PhysicalPowerSecondsResponse = {}
-function PhysicalPowerSecondsResponse:new(usePropNum)
+local PhysicalPowerUsePropsRequest = {}
+function PhysicalPowerUsePropsRequest:new(usePropNum)
     local obj = {
         usePropNum = usePropNum
     }

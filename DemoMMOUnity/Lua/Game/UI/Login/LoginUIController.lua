@@ -1,3 +1,4 @@
+---@class LoginUIController
 LoginUIController = class("LoginUIController")
 
 function LoginUIController:GetInstance()

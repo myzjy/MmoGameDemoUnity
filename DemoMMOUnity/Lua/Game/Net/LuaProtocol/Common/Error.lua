@@ -5,7 +5,6 @@
 ---
 ---@class Error
 local Error = {}
-local json = require("Common.json")
 
 function Error:new(errorCode, errorMessage, module)
     local obj = {
@@ -33,14 +32,14 @@ function Error:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function Error:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     return Error:new(data.packet.errorCode, data.packet.errorMessage, data.packet.module)
 end
 return Error

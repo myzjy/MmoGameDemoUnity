@@ -25,7 +25,6 @@ function OnDisConnectFromServer()
 end
 
 function OnReceiveLineFromServer(bytes)
-    printDebug(type(bytes))
     str = bytes
     local packet = readBytes(str)
     PacketDispatcher:Receive(packet)
@@ -47,9 +46,17 @@ function PacketDispatcher:Init()
     local gameMainNetController = require("Game.Net.Controller.GameMainNetController")
     gameMainNetController:Init()
     -------------------------------- end   gameMain pack 包 --------------------------------------
+
+    -------------------------------- start physicalPower pack 包 --------------------------------------
+    local physicalPowerNetController=require("Game.Net.Controller.PhysicalPowerNetController")
+    physicalPowerNetController:Init()
+    -------------------------------- end physicalPower pack 包 --------------------------------------
+
+    
+    
 end
 
---function PacketDispatcher:Receive(str)
+---function PacketDispatcher:Receive(str)
 --    printDebug("PacketDispatcher:Receive(packet) line 50," .. type(packet))
 --    PacketDispatcher.packetValue = packet
 --    GlobalEventValue:Fire(PacketDispatcher.packetValue:protocolId(), PacketDispatcher.packetValue)

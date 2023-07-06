@@ -33,3 +33,7 @@ end
 function GameMainViewController:ShowTime(dataTime)
     GameMainView:GetInstance():ShowNowTime(dataTime)
 end
+---初始
+function GameMainViewController:ShowPhysicalPowerPanel(response)
+    
+end 

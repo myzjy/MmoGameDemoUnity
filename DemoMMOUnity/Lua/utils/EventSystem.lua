@@ -4,6 +4,7 @@
 --- DateTime: 2023/5/21 22:58
 ---
 --场景里的节点状态变更事件及战斗事件管理器
+---@EventSystem
 local EventSystem = class("EventSystem")
 local table_insert = table.insert
 local table_remove = table.remove
@@ -91,8 +92,8 @@ end
 eventValues = nil
 --立即触发
 function EventSystem:Fire(event_id, ...)
-    if event_id == nil then
-        print("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
+    if event_id == nil then 
+        printDebug("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
         return
     end
     eventValues = ...
@@ -101,7 +102,6 @@ function EventSystem:Fire(event_id, ...)
         self.calling_event_dic[event_id] = false
         for bind_id, event_call_back in pairs(event_list) do
             if event_call_back then
-                printDebug("EventSystem:Fire(event_id, ...) line 101" .. type(eventValues))
                 event_call_back(eventValues)
             end
         end

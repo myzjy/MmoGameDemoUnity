@@ -47,10 +47,10 @@ function PhysicalPowerUserPropsResponse:read(buffer)
     ---@type {protocolId:number,packet:{nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number}}
     local data = JSON.decode(jsonString)
     local jsonData = PhysicalPowerUserPropsResponse:new(data.packet.nowPhysicalPower,
-        data.packet.residueTime,
-        data.packet.maximumStrength,
-        data.packet.maximusResidueEndTime,
-        data.packet.residueNowTime)
+            data.packet.residueTime,
+            data.packet.maximumStrength,
+            data.packet.maximusResidueEndTime,
+            data.packet.residueNowTime)
     return jsonData
 end
 

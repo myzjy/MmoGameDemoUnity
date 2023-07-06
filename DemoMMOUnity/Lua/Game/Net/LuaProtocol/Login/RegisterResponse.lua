@@ -6,7 +6,6 @@
 
 ---@class RegisterResponse
 local RegisterResponse = {}
-local json = require("Common.json")
 function RegisterResponse:new(error, mRegister)
     local obj = {
         error = error, -- java.lang.String
@@ -30,14 +29,14 @@ function RegisterResponse:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function RegisterResponse:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     return RegisterResponse:new(data.packet.error, data.packet.mRegister)
 end
 

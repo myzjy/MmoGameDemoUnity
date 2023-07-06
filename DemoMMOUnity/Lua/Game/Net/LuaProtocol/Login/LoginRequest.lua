@@ -5,7 +5,6 @@
 ---
 ---@class LoginRequest
 local LoginRequest = {}
-local json = require("Common.json")
 
 ---@param account string 用户名
 ---@param password string 密码
@@ -31,14 +30,14 @@ function LoginRequest:write(buffer, packet)
         protocolId = data.protocolId(),
         packet = data
     }
-    local jsonStr = json.encode(message)
+    local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
 
 function LoginRequest:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    local data = json.decode(jsonString)
+    local data = JSON.decode(jsonString)
     return LoginRequest:new(data.packet.account, data.packet.password)
 end
 return LoginRequest
