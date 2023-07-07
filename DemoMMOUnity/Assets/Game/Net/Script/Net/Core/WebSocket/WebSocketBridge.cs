@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using AOT;
 using BestHTTP.WebSocket;
@@ -34,6 +35,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 return;
             }
         }
+
         private System.Diagnostics.Stopwatch _watch;
 
         public void WebSocketSend(byte[] dataPtr)
@@ -43,6 +45,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
             _webSocket.Send(dataPtr);
             LogRequest(_webSocket, dataPtr);
         }
+
         private void LogRequest(WebSocket webSocket, byte[] bytes)
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
@@ -54,6 +57,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 $"{webSocket.InternalRequest.DumpHeaders()}\n\n{message1}\n");
 #endif
         }
+
         private void LogResponse(WebSocket webSocket, string message)
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
@@ -73,7 +77,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
                 var count = item.Value.Count;
                 for (var i = 0; i < count; i++)
                 {
-                
                     if (i > 0)
                     {
                         sb.Append(",");
@@ -94,9 +97,32 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             var message = StringUtils.BytesToString(data);
-            var itemStr = JsonConvert.DeserializeObject(message);
+            var itemStr = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
+            bool isPing = false;
+            foreach (var (key,value) in itemStr)
+            {
+                var keyString = key.ToString();
+                if (keyString == "protocolId")
+                {
+                    var valueString = value.ToString();
+                    if (valueString=="104")
+                    {
+                        isPing = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+                
+            }
 
-            string json = JsonConvert.SerializeObject(itemStr);
+            if (isPing)
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.Append(
                 $"[ApiResponse] {webSocket.InternalRequest.MethodType.ToString().ToUpper()} {webSocket.InternalRequest.Uri.AbsoluteUri}\n");
@@ -120,9 +146,10 @@ namespace ZJYFrameWork.Net.Core.Websocket
             }
 
             // Debug.Log($"{webSocket.InternalRequest.Uri.AbsoluteUri}:{json}");
-            Debug.Log($"{sb.ToString()}{json}");
+            Debug.Log($"{sb.ToString()}{message}");
 #endif
         }
+
         /// <summary>
         /// 当socket打开成功的回调
         /// </summary>

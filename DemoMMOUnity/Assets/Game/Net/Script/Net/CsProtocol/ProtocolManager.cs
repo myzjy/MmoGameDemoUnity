@@ -81,7 +81,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         {
             ;
             var json = StringUtils.BytesToString(byteBuffer.ToBytes());
-            Debug.Log(json);
 
             try
             {
