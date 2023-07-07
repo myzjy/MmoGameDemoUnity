@@ -27,17 +27,21 @@ function GameMainView:OnLoad()
     self:LoadUI(self.UIConfig)
     self:InstanceOrReuse()
 end
+
 function GameMainView:GetInstance()
     return GameMainView
 end
+
 function GameMainView:OnInit()
     printDebug("GameMain:OnInit")
     --- GameMain ViewPanel
+    ---@type GameMainUIPanelView
     local ViewPanel = self.viewPanel
     --- 转换水晶 按钮
     self.GemsTimeButton = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
     self.GemsText = ViewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
-    local data = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("PlayerUserCaCheData") or CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData
+    local data = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("PlayerUserCaCheData") or
+            CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData
     --- 显示名字
     ViewPanel.top_head_Name_Text.text = data.userName
     --- 付费水晶 商店充值跳转按钮
@@ -58,23 +62,34 @@ function GameMainView:OnInit()
         --- 购买金币 这个是需要 去兑换
         --- 先写 但是不知道需要不要 明确
     end)
+    self:SetListener(ViewPanel.settingBtn, function()
+        PhysicalPowerService:SubPhysicalPowerService(10)
+    end)
+    local handle = UpdateBeat:CreateListener(GameMainView.UpdatePhysical, 0)
+    UpdateBeat:AddListener(handle)
+
     GameMainView:OnShow()
+
+end
+local nowPhysicalPowerUpdateNum = 0
+
+function GameMainView.UpdatePhysical(number)
+    if timestamp < 1 then
+        return
+    end
+    local nowTime = timestamp + 1000
+    if nowTime - nowPhysicalPowerUpdateNum >= 1000 then
+        nowPhysicalPowerUpdateNum = nowTime
+        PhysicalPowerService:SendPhysicalPowerSecondsRequest()
+    end
+
 end
 
 function GameMainView:OnShow()
-    CS.Debug.Log("GameMain:OnShow")
+    printDebug("GameMain:OnShow")
     self.UIView:OnShow()
-    GameMainView:SendPhysicalPower()
+    PhysicalPowerService:SendPhysicalPower()
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
-end
-
-function GameMainView:SendPhysicalPower()
-    local protocol = ProtocolManager.getProtocol(1023)
-    local protocolData = protocol:new(PlayerUserCaCheData:GetUID())
-    local buffer = ByteBuffer:new()
-    protocol:write(buffer, protocolData)
-    local str = buffer:readString()
-    PacketDispatcher:SendMessage(str)
 end
 
 ---@param dateTime string
@@ -87,6 +102,19 @@ function GameMainView:ShowNowTime(dateTime)
         return
     end
     self.viewPanel.TimeShow_Text.text = dateTime
+end
+
+function GameMainView:ShowPhysicalPowerPanel(responseData)
+    ---@type GameMainUIPanelView
+    local ViewPanel = self.viewPanel
+    if not self.viewPanel then
+        return
+    end
+    if ViewPanel == nil then
+        return
+    end
+
+    self:SetText(ViewPanel.physicalPower_Text, responseData.nowPhysicalPower .. "")
 end
 
 ---显示金币数量

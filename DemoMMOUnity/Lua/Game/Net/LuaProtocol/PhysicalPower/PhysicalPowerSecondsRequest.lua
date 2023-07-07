@@ -16,7 +16,6 @@ function PhysicalPowerSecondsRequest:new(nowTime)
     return obj
 end
 
-
 -- 协议id
 ---@return number
 function PhysicalPowerSecondsRequest:protocolId()
@@ -30,13 +29,17 @@ function PhysicalPowerSecondsRequest:write(buffer, packer)
         return
     end
     --- 传递过来得 包数据可能 类型不一定是需要 需要转换一下
-    local data = packer or PhysicalPowerSecondsRequest
+    local data = packer
+    printDebug("json: data.nowTime ：" .. data.nowTime )
     --- 数据结合
     local message = {
-        protocolId = data:protocolId(),
-        packet = data
+        protocolId =PhysicalPowerSecondsRequest:protocolId(),
+        packet = {
+            nowTime = data.nowTime ---num
+        }
     }
     local jsonString = JSON.encode(message)
+    printDebug("json:" .. jsonString)
     buffer:writeString(jsonString)
 end
 

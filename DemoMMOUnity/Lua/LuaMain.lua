@@ -15,10 +15,13 @@ end
 timestamp = 0
 function SetNowTime(nowTime)
     timestamp = nowTime
-    local timeNum = string.format("%.0f", (timestamp/ 1000));
-    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    printDebug("当前时间" .. time)
-    GameMainViewController:GetInstance():ShowTime(time)
+
+end
+
+
+---这个是不带任何参数
+function EventSystemAction(name)
+    GlobalEventSystem:Fire(name)
 end
 
 

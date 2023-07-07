@@ -8,11 +8,11 @@
 local PhysicalPowerResponse = {}
 
 --- 创建协议体
----@param nowPhysicalPower number
----@param residueTime number
----@param maximumStrength  number
----@param maximusResidueEndTime number
----@param residueNowTime number
+---@param nowPhysicalPower number 当前体力
+---@param residueTime number 一点体力增长剩余时间
+---@param maximumStrength  number 最大体力 用于限制 这个值会随着 等级增长
+---@param maximusResidueEndTime number 我恢复到最大体力的结束时间
+---@param residueNowTime number 当前体力实时时间 会跟着剩余时间一起变化
 function PhysicalPowerResponse:new(nowPhysicalPower, residueTime, maximumStrength, maximusResidueEndTime, residueNowTime)
     local object = {
         nowPhysicalPower = nowPhysicalPower,
@@ -21,10 +21,10 @@ function PhysicalPowerResponse:new(nowPhysicalPower, residueTime, maximumStrengt
         maximusResidueEndTime = maximusResidueEndTime,
         residueNowTime = residueNowTime
     }
-    setmetatable(obj, self)
+    setmetatable(object, self)
 
     self.__index = self
-    return obj
+    return object
 end
 
 --- 返回当前协议id
@@ -51,7 +51,7 @@ function PhysicalPowerResponse:write(buffer, packet)
 end
 
 ---  读取器 从字节流管理器中读取到对应字符
----@param buffer any
+---@param buffer ByteBuffer
 ---@return table
 function PhysicalPowerResponse:read(buffer)
     local jsonString = buffer:readString()

@@ -12,6 +12,8 @@ PhysicalConst = {
 
     },
     Event = {
+        --- 使用体力
+        PhysicalPowerSecondsProps="PhysicalConst.PhysicalPowerSeconds",
         PhysicalPowerRequest = 1023,
         PhysicalPowerResponse = 1024,
     }
@@ -23,8 +25,11 @@ end
 
 --- 初始化 事件
 function PhysicalPowerNetController:InitEvent()
+    GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerSecondsProps,function()
+        PhysicalPowerService:SendPhysicalPowerSecondsRequest()
+    end)
     GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerResponse, function(res)
-        physicalPowerNetController:AtPhysicalPowerResponse(res)
+        PhysicalPowerNetController:AtPhysicalPowerResponse(res)
     end)
 end
 

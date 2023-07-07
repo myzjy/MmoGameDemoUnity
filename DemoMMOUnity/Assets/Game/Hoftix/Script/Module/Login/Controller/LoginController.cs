@@ -11,6 +11,7 @@ using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Procedure.Scene;
+using ZJYFrameWork.Scheduler;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
@@ -50,12 +51,13 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();
         }
 
+
         [PacketReceiver]
         public void AtPong(Pong pong)
         {
+            SpringContext.GetBean<SchedulerManager>().serverTime = pong.time;
             // 设置一下服务器的最新时间
             DateTimeUtil.SetNow(pong.time);
-
         }
 
         [EventReceiver]

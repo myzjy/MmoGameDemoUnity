@@ -5,7 +5,6 @@
 ---
 ---@class LoginNetController
 local LoginNetController = class("LoginNetController")
-local json = require("Common.json")
 LoginConst = {
     Status = {
 
@@ -54,12 +53,12 @@ function LoginNetController:AtLoginResponse(data)
     local userName = response.userName;
     if Debug > 0 then
         printDebug("[user:" ..
-        userName ..
-        "][token:" ..
-        token ..
-        "]" ..
-        "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response
-        .premiumDiamondNum)
+                userName ..
+                "][token:" ..
+                token ..
+                "]" ..
+                "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response
+                .premiumDiamondNum)
     end
     PlayerUserCaCheData:SetUIDValue(uid)
     PlayerUserCaCheData:SetUseName(userName)
@@ -75,7 +74,7 @@ end
 function LoginNetController:AtPong(data)
     local timeNum = string.format("%.0f", (data.time / 1000));
     local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    printDebug("当前时间" .. time)
+    --  printDebug("当前时间" .. time)
     GameMainViewController:GetInstance():ShowTime(time)
 end
 
@@ -83,16 +82,16 @@ end
 function LoginNetController:AtLoginTapToStartResponse(data)
     local response = data
     if response.message ~= nil then
-        printDebug("可以登陆" .. json.encode(data.accessGame) .. "," .. response.message)
+        printDebug("可以登陆" .. JSON.encode(data.accessGame) .. "," .. response.message)
     end
     if response.accessGame then
     else
         --- 不能登錄
         CommonController.Instance.snackbar.OpenCommonUIPanel(DialogConfig.ButtonType.YesNo, "",
-            "当前不在登录时间..MESSAGE:" .. response.message,
-            function(res)
+                "当前不在登录时间..MESSAGE:" .. response.message,
+                function(res)
 
-            end, "确定", "取消")
+                end, "确定", "取消")
         return
     end
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)

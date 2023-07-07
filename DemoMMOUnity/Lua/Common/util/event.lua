@@ -138,3 +138,5 @@ function FixedUpdate(fixedDeltaTime)
 	FixedUpdateBeat()
 	CoFixedUpdateBeat()
 end
+
+return _event

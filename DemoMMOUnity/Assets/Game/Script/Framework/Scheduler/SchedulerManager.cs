@@ -21,6 +21,8 @@ namespace ZJYFrameWork.Scheduler
         /// </summary>
         [Autowired] private BaseComponent baseComponent;
 
+        public long serverTime = 0;
+
         private byte count;
         private long minuteSchedulerTimestamp = DateTimeUtil.Now();
 
@@ -37,25 +39,24 @@ namespace ZJYFrameWork.Scheduler
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
                 return;
             }
-            var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
-            DateTimeUtil.SetNow(now);
-            if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
+
+            var nowCha = DateTimeUtil.Now() - serverTime;
+
+            if (nowCha > DateTimeUtil.MILLIS_PER_SECOND * 2)
             {
-                //涉及时间
-                foreach (var action in actionList)
-                {
-                    action.Invoke();
-                }
+                return;
             }
 
+            var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
+            DateTimeUtil.SetNow(now);
+            Debug.Log($"{now - minuteSchedulerTimestamp}>={DateTimeUtil.MILLIS_PER_SECOND}");
             count = 0;
             //定时
-            if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_MINUTE)
+            if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
                 minuteSchedulerTimestamp = now;
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
-               
             }
         }
 

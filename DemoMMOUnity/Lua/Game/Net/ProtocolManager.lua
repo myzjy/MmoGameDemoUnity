@@ -10,6 +10,7 @@ local protocols = {}
 local ProtocolManager = {}
 local json = require("Common.json")
 
+
 -- table扩展方法，map的大小
 function table.mapSize(map)
     local size = 0
@@ -52,6 +53,12 @@ function ProtocolManager.read(buffer)
 end
 
 function ProtocolManager.initProtocolManager()
+    ---------------------------------Start of Service-------------------------------------
+    
+    require("Game.Net.Service.PhysicalPowerService")
+
+    ---------------------------------End of Service-------------------------------------
+
     ---------------------------- error 101     ----------------------------
     local error = require("Game.Net.LuaProtocol.Common.Error")
     -----------------------------------------------------------------------
@@ -108,5 +115,14 @@ function ProtocolManager.initProtocolManager()
     protocols[1029] = physicalPowerSecondsRequest
     protocols[1030] = PhysicalPowerSecondsResponse
 end
+
+ProtocolConfig = {
+    PhysicalPowerUserPropsRequest={id=1025,protocolData=protocols[1025] },
+    PhysicalPowerSecondsRequest={id=1029}
+}
+
+
+
+
 
 return ProtocolManager

@@ -71,7 +71,10 @@ local function main()
     else
         log.disable()
     end
-
+   --local handle= UpdateBeat:CreateListener(function(number)
+   --     printDebug("1111")
+   -- end,0)
+   -- UpdateBeat:AddListener(handle)
     ----- UI 初始化
     UIComponentManager.InitUIModelComponent()
     ProtocolManager.initProtocolManager()

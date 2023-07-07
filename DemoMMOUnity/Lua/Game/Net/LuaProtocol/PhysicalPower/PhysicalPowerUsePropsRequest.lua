@@ -27,7 +27,7 @@ function PhysicalPowerUsePropsRequest:write(buffer, packet)
     if packet == nil then
         return
     end
-    local data = packet or PhysicalPowerUsePropsRequest
+    local data = packet
     local message = {
         protocolId = data:protocolId(),
         packet = data
