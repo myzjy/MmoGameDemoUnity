@@ -24,7 +24,7 @@ namespace ZJYFrameWork.Module.Register.Controller
             Debug.Log("AtRegisterResponse");
 #endif
             //重新打开登录面板
-            SpringContext.GetBean<LoginController>().OnInit();
+            SpringContext.GetBean<LoginUIController>().OnInit();
         }
     }
 }

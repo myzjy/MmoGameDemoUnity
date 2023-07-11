@@ -59,7 +59,7 @@ namespace ZJYFrameWork.UISerializable
             RegisterBtn.SetListener(() =>
             {
                 Hide();
-                SpringContext.GetBean<LoginController>().registerPartRegisterPartView.OnShow();
+                SpringContext.GetBean<LoginUIController>().registerPartRegisterPartView.OnShow();
             });
             // LoginBtn.onClick.RemoveAllListeners();
             LoginBtn.onClick.AddListener(() => { ClickLogin(); });

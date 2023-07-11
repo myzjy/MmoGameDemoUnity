@@ -5,7 +5,7 @@ using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.Hotfix.UISerializable
 {
-    public class LoginController : MonoBehaviour
+    public class LoginUIController : MonoBehaviour
     {
         [FormerlySerializedAs("LoginPartView")]
         public LoginPartView loginPartView = null;

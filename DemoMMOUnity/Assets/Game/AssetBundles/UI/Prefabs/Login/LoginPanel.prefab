@@ -2328,14 +2328,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataViewList:
+  - {fileID: 1003772822015568461}
+  - {fileID: 2887286817253044829}
+  - {fileID: 5194155295844259383}
+  - {fileID: 6157225092508190709}
   - {fileID: 4548462337066523778}
   - {fileID: 7622137904974989906}
   - {fileID: 4266571107642333592}
   - {fileID: 7421680849228347599}
-  - {fileID: 5194155295844259383}
-  - {fileID: 6157225092508190709}
-  - {fileID: 2887286817253044829}
-  - {fileID: 1003772822015568461}
+  - {fileID: 7236548743885483865}
   mSelfObj: {fileID: 1899562274783211712}
   MTransform: {fileID: 7960560374260678589}
   MObjCanvasGroup: {fileID: 5635103283465375700}
@@ -3887,12 +3888,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataViewList:
+  - {fileID: 7622137904974989906}
+  - {fileID: 6891563286360855122}
   - {fileID: 8738612608067733551}
   - {fileID: 8578358550628591861}
   - {fileID: 1586715832105115593}
   - {fileID: 430668615927816904}
   - {fileID: 5758009091781868334}
-  - {fileID: 6891563286360855122}
   rootCanvasGroup: {fileID: 0}
   root: {fileID: 0}
   rootObj: {fileID: 0}
@@ -6052,6 +6054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataViewList:
+  - {fileID: 4266571107642333592}
   - {fileID: 917775613464192907}
   - {fileID: 2020806025000977844}
   LoginStartMaxButton: {fileID: 0}
@@ -8173,11 +8176,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataViewList:
-  - {fileID: 7717076792245837084}
-  - {fileID: 663313220370998969}
   - {fileID: 4548462337066523778}
   - {fileID: 1999889696300109558}
   - {fileID: 6926591055983717950}
+  - {fileID: 7717076792245837084}
+  - {fileID: 663313220370998969}
   LoginPart: {fileID: 0}
   LoginBtn: {fileID: 0}
   RegisterBtn: {fileID: 0}
@@ -9561,8 +9564,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6531717727459058904}
-  - component: {fileID: 8316700760961535777}
   - component: {fileID: 7421680849228347599}
+  - component: {fileID: 4114645995840341925}
   m_Layer: 5
   m_Name: LoginControll
   m_TagString: Untagged
@@ -9590,21 +9593,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8316700760961535777
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8598809022653625315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c87f894dc8d49c08e1c34ec7f12b934, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loginPartView: {fileID: 0}
-  registerPartRegisterPartView: {fileID: 0}
-  loginTapToStartView: {fileID: 0}
 --- !u!114 &7421680849228347599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9619,9 +9607,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kodComs:
   - UI_Serializable_Key: LoginController
-    UI_Serializable_Obj: {fileID: 8316700760961535777}
+    UI_Serializable_Obj: {fileID: 4114645995840341925}
     Path: LoginPanel/LoginControll
   maskIndex: 2
+--- !u!114 &4114645995840341925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8598809022653625315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c87f894dc8d49c08e1c34ec7f12b934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loginPartView: {fileID: 0}
+  registerPartRegisterPartView: {fileID: 0}
+  loginTapToStartView: {fileID: 0}
 --- !u!1 &8613637727540871330
 GameObject:
   m_ObjectHideFlags: 0

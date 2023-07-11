@@ -42,19 +42,19 @@ namespace ZJYFrameWork.Scheduler
 
             var nowCha = DateTimeUtil.Now() - serverTime;
 
-            if (nowCha > DateTimeUtil.MILLIS_PER_SECOND * 2)
+            if (nowCha > DateTimeUtil.MILLIS_PER_SECOND * 3)
             {
                 return;
             }
 
-            var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
-            DateTimeUtil.SetNow(now);
+            var now = serverTime + DateTimeUtil.MILLIS_PER_SECOND;
             Debug.Log($"{now - minuteSchedulerTimestamp}>={DateTimeUtil.MILLIS_PER_SECOND}");
             count = 0;
             //定时
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
-                minuteSchedulerTimestamp = now;
+                //DateTimeUtil.SetNow(now);
+                minuteSchedulerTimestamp = DateTimeUtil.Now() ;
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
             }

@@ -24,7 +24,6 @@ Object = require "Common.UnityEngine.Object"
 require("Common.csSharpClassGloabl")
 require "Common.System.coroutine"
 
-require("Common.json")
 require("Common/BaseClass")
 --require("utils.EventSystem")
 require("Game.CS.init")

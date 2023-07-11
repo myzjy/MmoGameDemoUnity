@@ -121,7 +121,7 @@ namespace ZJYFrameWork.UISerializable
                     // PlayManager.Instance.LoadScene(Data.scene_home);
                     rootObj.SetActive(false);
                     //打开登录界面
-                    SpringContext.GetBean<LoginController>().loginPartView.Show();
+                    SpringContext.GetBean<LoginUIController>().loginPartView.Show();
                 });
         }
     }

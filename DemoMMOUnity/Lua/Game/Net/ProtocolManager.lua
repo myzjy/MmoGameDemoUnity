@@ -8,7 +8,6 @@ printDebug("加载 ProtocolManager.lua 文件")
 local protocols = {}
 
 local ProtocolManager = {}
-local json = require("Common.json")
 
 
 -- table扩展方法，map的大小
@@ -42,7 +41,7 @@ function ProtocolManager.read(buffer)
     if Debug > 0 then
         printDebug("ProtocolManager.read[line 41] jsonString:" .. jsonString)
     end
-    local jsonData = json.decode(jsonString);
+    local jsonData = JSON.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId
     local byteBuffer = require("Game.Net.LuaProtocol.Buffer.ByteBuffer"):new()
@@ -54,7 +53,7 @@ end
 
 function ProtocolManager.initProtocolManager()
     ---------------------------------Start of Service-------------------------------------
-    
+
     require("Game.Net.Service.PhysicalPowerService")
 
     ---------------------------------End of Service-------------------------------------
@@ -104,8 +103,7 @@ function ProtocolManager.initProtocolManager()
     protocols[1010] = serverConfigResponse
     protocols[1013] = loginTapToStartRequest
     protocols[loginTapToStartResponse:protocolId()] = loginTapToStartResponse
-    
-    
+
     protocols[1023] = PhysicalPowerRequest
     protocols[1024] = PhysicalPowerResponse
 
@@ -117,12 +115,15 @@ function ProtocolManager.initProtocolManager()
 end
 
 ProtocolConfig = {
-    PhysicalPowerUserPropsRequest={id=1025,protocolData=protocols[1025] },
-    PhysicalPowerSecondsRequest={id=1029}
+    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerUsePropsRequest}
+    PhysicalPowerUserPropsRequest = { id = 1025, protocolData = function(id)
+        return ProtocolManager.getProtocol(id)
+    end},
+    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerSecondsRequest}
+    PhysicalPowerSecondsRequest = { id = 1029, protocolData =
+    function(id)
+        return ProtocolManager.getProtocol(id)
+    end }
 }
-
-
-
-
 
 return ProtocolManager

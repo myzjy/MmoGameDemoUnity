@@ -80,6 +80,10 @@ function GameMainView.UpdatePhysical(number)
     local nowTime = timestamp + 1000
     if nowTime - nowPhysicalPowerUpdateNum >= 1000 then
         nowPhysicalPowerUpdateNum = nowTime
+        if PhysicalPowerCacheData:getNowPhysicalPower() >= PhysicalPowerCacheData:getMaximumStrength() then
+            --- 体力满了
+            return
+        end
         PhysicalPowerService:SendPhysicalPowerSecondsRequest()
     end
 

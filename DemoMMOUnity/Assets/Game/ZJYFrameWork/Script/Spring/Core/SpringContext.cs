@@ -210,14 +210,12 @@ namespace ZJYFrameWork.Spring.Core
 
         public static object GetBean(string beanString)
         {
-            Debug.Log(beanString);
             object bean = null;
             foreach (var (key, value) in cachedBeanMap)
             {
                 var typeFull = key.FullName;
                 if (typeFull != null)
                 {
-                    Debug.Log($"GetBean,typeFull:{typeFull}");
                     if (typeFull == beanString)
                     {
                         bean = value;
@@ -227,7 +225,6 @@ namespace ZJYFrameWork.Spring.Core
 
             if (bean != null)
             {
-                Debug.Log($"bean:{bean},if,{beanString}");
                 return bean;
             }
 
@@ -236,9 +233,6 @@ namespace ZJYFrameWork.Spring.Core
                 var typeFull = key.FullName;
                 if (typeFull != null)
                 {
-                    // var fullSplit = typeFull.Split('.');
-                    // // Debug.Log($"GetBean,typeFull:{typeFull}");
-                    // var beanSplit = fullSplit[^1];
                     if (typeFull == beanString)
                     {
                         bean = value;
@@ -246,8 +240,6 @@ namespace ZJYFrameWork.Spring.Core
                     }
                 }
             }
-
-            Debug.Log($"bean:{bean},{beanString}");
             return bean;
         }
 

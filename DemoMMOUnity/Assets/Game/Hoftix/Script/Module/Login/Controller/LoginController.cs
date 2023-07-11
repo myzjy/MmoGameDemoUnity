@@ -47,8 +47,8 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             settingManager.SetString(GameConstant.SETTING_LOGIN_TOKEN, token);
 
             //只是关闭 输入账号
-            SpringContext.GetBean<Hotfix.UISerializable.LoginController>().OnHide();
-            SpringContext.GetBean<Hotfix.UISerializable.LoginController>().loginTapToStartView.Show();
+            SpringContext.GetBean<LoginUIController>().OnHide();
+            SpringContext.GetBean<LoginUIController>().loginTapToStartView.Show();
         }
 
 

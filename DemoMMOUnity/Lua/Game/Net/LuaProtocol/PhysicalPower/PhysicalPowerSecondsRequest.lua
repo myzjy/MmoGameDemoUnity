@@ -1,6 +1,4 @@
 --- 体力恢复
---- @author zjy
---- @since 2023/7/2 21:54
 
 ---@class PhysicalPowerSecondsRequest
 local PhysicalPowerSecondsRequest = {}
@@ -30,7 +28,6 @@ function PhysicalPowerSecondsRequest:write(buffer, packer)
     end
     --- 传递过来得 包数据可能 类型不一定是需要 需要转换一下
     local data = packer
-    printDebug("json: data.nowTime ：" .. data.nowTime )
     --- 数据结合
     local message = {
         protocolId =PhysicalPowerSecondsRequest:protocolId(),
@@ -39,7 +36,6 @@ function PhysicalPowerSecondsRequest:write(buffer, packer)
         }
     }
     local jsonString = JSON.encode(message)
-    printDebug("json:" .. jsonString)
     buffer:writeString(jsonString)
 end
 

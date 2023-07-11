@@ -5,9 +5,64 @@
 ---
 
 local cs = require("NameSpace.ZJYFrameWork.Hotfix.Common")
-PhysicalPowerCacheData = {}
+---@class PhysicalPowerCacheData
+PhysicalPowerCacheData = class("PhysicalPowerCacheData")
 
 ---返回 使用体力 所扣除 当前体力
 function PhysicalPowerCacheData:getNowPhysicalPower()
     return cs.PhysicalPowerCacheData():getNowPhysicalPower()
 end
+
+---设置体力
+function PhysicalPowerCacheData:setNowPhysicalPower(number)
+     cs.PhysicalPowerCacheData():setNowPhysicalPower(number)
+end
+
+---一点体力增长剩余时间
+function PhysicalPowerCacheData:getResidueTime()
+    return cs.PhysicalPowerCacheData():getResidueTime()
+end
+
+---一点体力增长剩余时间
+function PhysicalPowerCacheData:setResidueTime(number)
+     cs.PhysicalPowerCacheData():setResidueTime(number)
+end
+
+---当前体力实时时间 会跟着剩余时间一起变化
+function PhysicalPowerCacheData:getResidueNowTime()
+    return cs.PhysicalPowerCacheData():getResidueNowTime()
+end
+
+---当前体力实时时间 会跟着剩余时间一起变化
+function PhysicalPowerCacheData:setResidueNowTime(number)
+     cs.PhysicalPowerCacheData():setResidueNowTime(number)
+end
+
+---最大体力 用于限制 这个值会随着 等级增长
+function PhysicalPowerCacheData:getMaximumStrength()
+    return cs.PhysicalPowerCacheData():getMaximumStrength()
+end
+
+---最大体力 用于限制 这个值会随着 等级增长
+function PhysicalPowerCacheData:setMaximumStrength(number)
+     cs.PhysicalPowerCacheData():setMaximumStrength(number)
+end
+
+---我恢复到最大体力的结束时间
+function PhysicalPowerCacheData:getMaximusResidueEndTime()
+    return cs.PhysicalPowerCacheData():getMaximusResidueEndTime()
+end
+
+---我恢复到最大体力的结束时间
+function PhysicalPowerCacheData:setMaximusResidueEndTime(number)
+     cs.PhysicalPowerCacheData():setMaximusResidueEndTime(number)
+end
+local nowReturn=true
+function PhysicalPowerCacheData:getReturn()
+    return nowReturn
+end
+
+function PhysicalPowerCacheData:setReturn(number)
+    nowReturn=number
+end
+

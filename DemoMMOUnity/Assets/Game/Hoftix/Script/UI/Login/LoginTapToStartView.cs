@@ -43,7 +43,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             }
             else
             {
-                LoginStartMaxButton.SetListener(() => { SpringContext.GetBean<LoginController>().OnHide(); });
+                LoginStartMaxButton.SetListener(() => { SpringContext.GetBean<LoginUIController>().OnHide(); });
             }
         }
 
@@ -100,7 +100,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             buttonTapToStartCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-                    SpringContext.GetBean<LoginController>().OnHide();
+                    SpringContext.GetBean<LoginUIController>().OnHide();
                     //跳转场景 
                     SpringContext.GetBean<ProcedureChangeScene>().ChangeScene(SceneEnum.GameMain, "GameMain");
                 });

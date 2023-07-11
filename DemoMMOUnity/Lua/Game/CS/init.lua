@@ -18,3 +18,4 @@ require("Game.CS.ZJYFrameWork.Execution.Executors")
 DialogConfig = require("Game.CS.ZJYFrameWork.UI.Model.DialogEum")
 
 require("Game.CS.ZJYFrameWork.Hotfix.Common.PlayerUserCaCheData")
+require("Game.CS.ZJYFrameWork.Hotfix.Common.PhysicalPowerCacheData")
