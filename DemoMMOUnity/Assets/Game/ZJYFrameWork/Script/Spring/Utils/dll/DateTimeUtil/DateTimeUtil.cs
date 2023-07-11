@@ -75,7 +75,7 @@ namespace ZJYFrameWork.UISerializable.Manager
                 return;
             }
 
-            timeShowNum.Invoke(time);
+            // timeShowNum.Invoke(time);
             timestamp = time;
         }
 

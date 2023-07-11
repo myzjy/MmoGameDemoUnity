@@ -27,6 +27,10 @@ end
 --- 初始化 事件
 function PhysicalPowerNetController:InitEvent()
     GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerSecondsProps, function()
+        if PhysicalPowerCacheData:getNowPhysicalPower() >= PhysicalPowerCacheData:getMaximumStrength() then
+            --- 体力满了
+            return
+        end
         PhysicalPowerService:SendPhysicalPowerSecondsRequest()
     end)
     GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerResponse, function(res)

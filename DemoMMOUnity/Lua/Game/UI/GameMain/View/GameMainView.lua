@@ -63,31 +63,31 @@ function GameMainView:OnInit()
         --- 先写 但是不知道需要不要 明确
     end)
     self:SetListener(ViewPanel.settingBtn, function()
-        PhysicalPowerService:SubPhysicalPowerService(10)
+        PhysicalPowerService:SubPhysicalPowerService(1)
     end)
-    local handle = UpdateBeat:CreateListener(GameMainView.UpdatePhysical, 0)
-    UpdateBeat:AddListener(handle)
+    --local handle = UpdateBeat:CreateListener(GameMainView.UpdatePhysical, 0)
+    --UpdateBeat:AddListener(handle)
 
     GameMainView:OnShow()
 
 end
 local nowPhysicalPowerUpdateNum = 0
 
-function GameMainView.UpdatePhysical(number)
-    if timestamp < 1 then
-        return
-    end
-    local nowTime = timestamp + 1000
-    if nowTime - nowPhysicalPowerUpdateNum >= 1000 then
-        nowPhysicalPowerUpdateNum = nowTime
-        if PhysicalPowerCacheData:getNowPhysicalPower() >= PhysicalPowerCacheData:getMaximumStrength() then
-            --- 体力满了
-            return
-        end
-        PhysicalPowerService:SendPhysicalPowerSecondsRequest()
-    end
-
-end
+--function GameMainView.UpdatePhysical(number)
+--    if timestamp < 1 then
+--        return
+--    end
+--    local nowTime = timestamp + 1000
+--    if nowTime - nowPhysicalPowerUpdateNum >= 1000 then
+--        nowPhysicalPowerUpdateNum = nowTime
+--        if PhysicalPowerCacheData:getNowPhysicalPower() >= PhysicalPowerCacheData:getMaximumStrength() then
+--            --- 体力满了
+--            return
+--        end
+--        PhysicalPowerService:SendPhysicalPowerSecondsRequest()
+--    end
+--
+--end
 
 function GameMainView:OnShow()
     printDebug("GameMain:OnShow")

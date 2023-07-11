@@ -4,6 +4,7 @@ using ZJYFrameWork.Base;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -37,7 +38,11 @@ namespace ZJYFrameWork.Scheduler
             if (DateTimeUtil.Now() <= 0)
             {
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
-                EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
+                if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
+                {
+                    EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
+                }
+
                 return;
             }
 
@@ -48,15 +53,20 @@ namespace ZJYFrameWork.Scheduler
                 return;
             }
 
-            var now = serverTime + DateTimeUtil.MILLIS_PER_SECOND;
+            var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
             Debug.Log($"{now - minuteSchedulerTimestamp}>={DateTimeUtil.MILLIS_PER_SECOND}");
             count = 0;
+            DateTimeUtil.SetNow(now);
+            DateTimeUtil.timeShowNum.Invoke(now);
             //定时
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
-                minuteSchedulerTimestamp = DateTimeUtil.Now() ;
-                DateTimeUtil.SetNow(now);
-                EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
+                minuteSchedulerTimestamp = DateTimeUtil.Now();
+                if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
+                {
+                    EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
+                }
+
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
             }
