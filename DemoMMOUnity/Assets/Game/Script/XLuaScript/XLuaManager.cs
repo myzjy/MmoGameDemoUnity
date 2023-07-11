@@ -11,6 +11,7 @@ using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Config;
+using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Module.Login.Controller;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Dispatcher;
@@ -65,6 +66,7 @@ namespace ZJYFrameWork.XLuaScript
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
                 SpringContext.GetBean<NetManager>(). LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
+                EventBus.InstallAsyncExecute(luaEnv.Global.Get<Action<string>>("SyncSubmit"));
                 DateTimeUtil.timeShowNum = luaEnv.Global.Get<Action<long>>("SetNowTime");
             }
         }

@@ -37,6 +37,7 @@ namespace ZJYFrameWork.Scheduler
             if (DateTimeUtil.Now() <= 0)
             {
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
+                EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
                 return;
             }
 
@@ -53,8 +54,9 @@ namespace ZJYFrameWork.Scheduler
             //定时
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
-                //DateTimeUtil.SetNow(now);
                 minuteSchedulerTimestamp = DateTimeUtil.Now() ;
+                DateTimeUtil.SetNow(now);
+                EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
             }

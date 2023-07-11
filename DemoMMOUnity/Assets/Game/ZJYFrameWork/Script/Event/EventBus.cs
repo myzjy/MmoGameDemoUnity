@@ -115,19 +115,19 @@ namespace ZJYFrameWork.Event
             action();
 #else
             SpringContext.GetApplicationContext().GetMainLoopExcutor().RunOnMainThread(action);
-            //SpringContext.GetBean<NetSendManager>().Add(action);
-            // ThreadPool.QueueUserWorkItem((param) =>
-            // {
-            //     try
-            //     {
-            //         action();
-            //     }
-            //     catch (Exception e)
-            //     {
-            //         Debug.LogError(e);
-            //     }
-            // });
+        
 #endif
+        }
+        private static Action<string> receiverAction = null;
+
+        public static void InstallAsyncExecute(Action<string> action)
+        {
+            receiverAction = action;
+        }
+
+        public static void AsyncExecute(string action)
+        {
+            receiverAction.Invoke(action);
         }
 
         private static void DoSubmit(IEvent eve, ICollection<IEventReceiver> listReceiver)
