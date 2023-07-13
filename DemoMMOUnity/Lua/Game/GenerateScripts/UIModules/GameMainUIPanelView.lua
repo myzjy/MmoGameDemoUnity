@@ -22,6 +22,8 @@ function GameMainUIPanelView:Init(view)
 	self.newplayer_Button = self._UIView:GetObjType("newplayer_Button") or CS.UnityEngine.UI.Button
 	self.middle_Right = self._UIView:GetObjType("middle_Right") or CS.UnityEngine.GameObject
 	self.middle_Right_PVEBtn_Button = self._UIView:GetObjType("middle_Right_PVEBtn_Button") or CS.UnityEngine.UI.Button
+	self.physicalPower_Text = self._UIView:GetObjType("physicalPower_Text") or CS.UnityEngine.UI.Text
+	self.physicalPowerTip_Text = self._UIView:GetObjType("physicalPowerTip_Text") or CS.UnityEngine.UI.Text
 	self.physicaButton = self._UIView:GetObjType("physicaButton") or CS.UnityEngine.UI.Button
 	self.ruqin_Button = self._UIView:GetObjType("ruqin_Button") or CS.UnityEngine.UI.Button
 	self.wujinBtn_Button = self._UIView:GetObjType("wujinBtn_Button") or CS.UnityEngine.UI.Button

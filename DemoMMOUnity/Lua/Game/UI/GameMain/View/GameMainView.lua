@@ -108,6 +108,7 @@ function GameMainView:ShowNowTime(dateTime)
     self.viewPanel.TimeShow_Text.text = dateTime
 end
 
+--- @param responseData {nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number}
 function GameMainView:ShowPhysicalPowerPanel(responseData)
     ---@type GameMainUIPanelView
     local ViewPanel = self.viewPanel
@@ -119,6 +120,7 @@ function GameMainView:ShowPhysicalPowerPanel(responseData)
     end
 
     self:SetText(ViewPanel.physicalPower_Text, responseData.nowPhysicalPower .. "")
+    self:SetText(ViewPanel.physicalPowerTip_Text,"理智/"..responseData.maximumStrength)
 end
 
 ---显示金币数量

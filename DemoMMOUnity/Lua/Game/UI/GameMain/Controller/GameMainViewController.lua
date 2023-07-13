@@ -36,5 +36,5 @@ end
 ---初始
 --- @param response {nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number}
 function GameMainViewController:ShowPhysicalPowerPanel(response)
-    
+    GameMainView:GetInstance():ShowPhysicalPowerPanel(response)
 end 

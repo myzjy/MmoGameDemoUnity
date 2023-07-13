@@ -38,17 +38,16 @@ end
 ---@param buffer ByteBuffer 字节读取器
 function ProtocolManager.read(buffer)
     local jsonString = buffer:readString()
-    if Debug > 0 then
-        printDebug("ProtocolManager.read[line 41] jsonString:" .. jsonString)
-    end
     local jsonData = JSON.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId
     local byteBuffer = require("Game.Net.LuaProtocol.Buffer.ByteBuffer"):new()
     --- 把json字符串放入字节器中
     byteBuffer:writeString(jsonString)
+    local protocol = ProtocolManager.getProtocol(protocolId)
     --- 返回对应的结构
-    return ProtocolManager.getProtocol(protocolId):read(byteBuffer)
+    local protocolData = protocol:read(byteBuffer)
+    return protocolData
 end
 
 function ProtocolManager.initProtocolManager()
@@ -118,10 +117,9 @@ ProtocolConfig = {
     ---@type {id:number,protocolData:fun(id:number):PhysicalPowerUsePropsRequest}
     PhysicalPowerUserPropsRequest = { id = 1025, protocolData = function(id)
         return ProtocolManager.getProtocol(id)
-    end},
+    end },
     ---@type {id:number,protocolData:fun(id:number):PhysicalPowerSecondsRequest}
-    PhysicalPowerSecondsRequest = { id = 1029, protocolData =
-    function(id)
+    PhysicalPowerSecondsRequest = { id = 1029, protocolData = function(id)
         return ProtocolManager.getProtocol(id)
     end }
 }

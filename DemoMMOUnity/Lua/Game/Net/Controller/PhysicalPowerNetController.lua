@@ -52,14 +52,13 @@ function PhysicalPowerNetController:AtPhysicalPowerResponse(response)
     GameMainViewController:GetInstance():ShowPhysicalPowerPanel(response)
 end
 
---- @param response {nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number,nowReturn:boolean}
+--- @param response {nowPhysicalPower:number, residueTime:number, residueNowTime:number, maximumStrength:number, maximusResidueEndTime:number}
 function PhysicalPowerNetController:AtPhysicalPowerUserPropsResponse(response)
     PhysicalPowerCacheData:setNowPhysicalPower(response.nowPhysicalPower)
     PhysicalPowerCacheData:setMaximumStrength(response.maximumStrength)
     PhysicalPowerCacheData:setResidueTime(response.residueTime)
     PhysicalPowerCacheData:setMaximusResidueEndTime(response.maximusResidueEndTime)
     PhysicalPowerCacheData:setResidueNowTime(response.residueNowTime)
-    PhysicalPowerCacheData:setReturn(response.nowReturn)
     GameMainViewController:GetInstance():ShowPhysicalPowerPanel(response)
 
 end
