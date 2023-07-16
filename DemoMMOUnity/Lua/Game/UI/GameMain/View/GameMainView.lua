@@ -71,24 +71,8 @@ function GameMainView:OnInit()
     GameMainView:OnShow()
 
 end
-local nowPhysicalPowerUpdateNum = 0
 
---function GameMainView.UpdatePhysical(number)
---    if timestamp < 1 then
---        return
---    end
---    local nowTime = timestamp + 1000
---    if nowTime - nowPhysicalPowerUpdateNum >= 1000 then
---        nowPhysicalPowerUpdateNum = nowTime
---        if PhysicalPowerCacheData:getNowPhysicalPower() >= PhysicalPowerCacheData:getMaximumStrength() then
---            --- 体力满了
---            return
---        end
---        PhysicalPowerService:SendPhysicalPowerSecondsRequest()
---    end
---
---end
-
+--- 显示刷新 打开 GameMain 界面
 function GameMainView:OnShow()
     printDebug("GameMain:OnShow")
     self.UIView:OnShow()
@@ -96,6 +80,7 @@ function GameMainView:OnShow()
     ---此处 需要请求一系列 协议或者http 请求 以便刷新界面
 end
 
+--- 显示时间
 ---@param dateTime string
 function GameMainView:ShowNowTime(dateTime)
     local ViewPanel = self.viewPanel

@@ -20,7 +20,7 @@ function UIComponentManager:InitUIModelComponent()
                 LoginView:NotificationHandler(_eventNotification)
             end
         else
-            error("[class:" .. i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")
+            error("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")
         end
     end
     require("Game.UI.GameMain.View.GameMainView")

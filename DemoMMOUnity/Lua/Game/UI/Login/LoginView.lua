@@ -95,4 +95,3 @@ function LoginView:NotificationHandler(_eventNotification)
         return switchAction(_eventNotification.eventBody)
     end
 end
-
