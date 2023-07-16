@@ -97,32 +97,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             var message = StringUtils.BytesToString(data);
-            var itemStr = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
-            bool isPing = false;
-            foreach (var (key,value) in itemStr)
-            {
-                var keyString = key.ToString();
-                if (keyString == "protocolId")
-                {
-                    var valueString = value.ToString();
-                    if (valueString=="104")
-                    {
-                        isPing = true;
-                        break;
-                    }
-                }
-                else
-                {
-                    continue;
-                }
-                
-            }
-
-            if (isPing)
-            {
-                return;
-            }
-
             StringBuilder sb = new StringBuilder();
             sb.Append(
                 $"[ApiResponse] {webSocket.InternalRequest.MethodType.ToString().ToUpper()} {webSocket.InternalRequest.Uri.AbsoluteUri}\n");

@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
-    public class LoginRequest : Model, IPacket
+    public class LoginRequest : Model, IPacket, IReference
     {
         public string account;
         public string password;
@@ -22,6 +24,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 password = password
             };
             return packet;
+        }
+
+        public void Clear()
+        {
+            account = String.Empty;
+            password = String.Empty;
         }
     }
 
@@ -48,9 +56,29 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            var packet = JsonConvert.DeserializeObject<LoginRequest>(dict["packet"].ToString());
+            if (string.IsNullOrEmpty(json)) return null;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = ReferenceCache.Acquire<LoginRequest>();
+            foreach (var (key, value) in dict)
+            {
+                var keyString = key.ToString();
+                switch (keyString)
+                {
+                    case "account":
+                    {
+                        packet.account = value?.ToString();
+                    }
+                        break;
+                    case "password":
+                    {
+                        packet.password = value?.ToString();
+                    }
+                        break;
+                }
+            }
+
             return packet;
         }
     }

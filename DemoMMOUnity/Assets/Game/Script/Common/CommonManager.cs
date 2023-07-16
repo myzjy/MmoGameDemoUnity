@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1.X9;
 using Unity.VisualScripting;
 using UnityEngine;
-using XLua;
 using ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface;
 using ZJYFrameWork.Spring.Core;
 using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.Common
 {
-    // [LuaCallCSharp]
     public class CommonManager : MonoBehaviour
     {
         private static CommonManager instance = null;

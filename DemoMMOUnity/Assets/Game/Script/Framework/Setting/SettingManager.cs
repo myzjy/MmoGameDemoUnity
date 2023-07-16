@@ -1,5 +1,4 @@
 ﻿using System;
-using XLua;
 using ZJYFrameWork.Prefs;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.WebRequest;
@@ -10,7 +9,6 @@ namespace ZJYFrameWork.Setting
     /// 游戏配置管理器
     /// </summary>
     [Bean]
-    [LuaCallCSharp]
     public class SettingManager : ISettingManager
     {
         /// <summary>

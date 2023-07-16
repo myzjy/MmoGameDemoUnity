@@ -54,10 +54,8 @@ namespace ZJYFrameWork.Scheduler
             }
 
             var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
-            Debug.Log($"{now - minuteSchedulerTimestamp}>={DateTimeUtil.MILLIS_PER_SECOND}");
             count = 0;
             DateTimeUtil.SetNow(now);
-            DateTimeUtil.timeShowNum.Invoke(now);
             //定时
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
@@ -74,18 +72,6 @@ namespace ZJYFrameWork.Scheduler
 
         public override void Shutdown()
         {
-        }
-
-        private readonly List<Action> actionList = new List<Action>();
-
-        public void AddEventSystemAction(Action action)
-        {
-            actionList.Add(action);
-        }
-
-        public void SubEventSystemAction(Action action)
-        {
-            actionList.Remove(action);
         }
     }
 }

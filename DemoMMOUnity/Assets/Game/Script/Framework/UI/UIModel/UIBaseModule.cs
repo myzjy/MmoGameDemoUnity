@@ -90,7 +90,7 @@ namespace ZJYFrameWork.UISerializable
         {
         }
 
-        protected void InstanceOrReuse(Action action = null)
+        public void InstanceOrReuse(Action action = null)
         {
             if (isResuse)
             {

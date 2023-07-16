@@ -102,16 +102,85 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            dict.TryGetValue("packet", out var packetJson);
-            if (packetJson != null)
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packetData = ReferenceCache.Acquire<ItemBaseData>();
+            foreach (var (key, value) in dict)
             {
-                var json = packetJson.ToString();
-                var packet = ItemBaseData.ValueOf();
-                var bytes = buffer.GetBytes(json);
-                packet.Unpack(bytes);
-                return packet;
+                var keyString = key.ToString();
+                switch (keyString)
+                {
+                    case "id":
+                    {
+                        var valueStr = value.ToString();
+                        packetData.id = int.Parse(valueStr);
+                    }
+                        break;
+                    case "name":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        packetData.name = value.ToString();
+                    }
+                        break;
+                    case "icon":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        packetData.icon = value.ToString();
+                    }
+                        break;
+                    case "minNum":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        var valueStr = value.ToString();
+                        packetData.minNum = int.Parse(valueStr);
+                    }
+                        break;
+                    case "maxNum":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        var valueStr = value.ToString();
+                        packetData.maxNum = int.Parse(valueStr);
+                    }
+                        break;
+                    case "type":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        var valueStr = value.ToString();
+                        packetData.type = int.Parse(valueStr);
+                    }
+                        break;
+                    case "des":
+                    {
+                        if (value == null)
+                        {
+                            throw new NullReferenceException("消息错误，请检查配置");
+                        }
+
+                        packetData.des = value.ToString();
+                    }
+                        break;
+                }
             }
 
             return null;

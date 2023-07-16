@@ -21,24 +21,12 @@ namespace ZJYFrameWork.Net
         private AbstractClient netClient;
 
         /// <summary>
-        /// 
-        /// </summary>
-        public Action<string> LuaConnectAction
-        {
-            get => luaConnectAction;
-            set => luaConnectAction = value;
-        }
-
-        private Action<string> luaConnectAction = null;
-
-        /// <summary>
         /// 链接
         /// </summary>
         /// <param name="url"></param>
         public void Connect(string url)
         {
             Close();
-            LuaConnectAction.Invoke($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
             Debug.Log($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
             netClient = new WebsocketClient(url);
             netClient.Start();

@@ -64,9 +64,6 @@ namespace ZJYFrameWork.UISerializable.Manager
         {
             return time != START_TIME_LOCAL && time != DateTime.MinValue;
         }
-
-        public static Action<long> timeShowNum = null;
-
         public static void SetNow(long time)
         {
             if (time - timestamp < 5)

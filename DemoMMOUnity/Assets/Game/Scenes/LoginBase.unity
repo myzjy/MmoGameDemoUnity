@@ -481,11 +481,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3360ce595e6f41c4a270e6fafaff7769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  backgroundCloseButton: {fileID: 0}
   mSelfObj: {fileID: 106181026}
   MTransform: {fileID: 106181027}
   MObjCanvasGroup: {fileID: 106181029}
-  backgroundCloseButton: {fileID: 0}
   progress: {fileID: 513077335}
   progressText: {fileID: 1228460290}
   tipsProgressText: {fileID: 2131172907}
@@ -808,7 +807,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 426121676}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300420398}
+        m_TargetAssemblyTypeName: ZJYFrameWork.UI.UIModel.Dialog, ZJYFrameWork.UISerializable.Common
+        m_MethodName: OnClickNo
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &426121676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1767,11 +1778,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54ddc8da37b444c9b2e7078f87615d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  backgroundCloseButton: {fileID: 1333476192}
   mSelfObj: {fileID: 1300420396}
   MTransform: {fileID: 1300420397}
   MObjCanvasGroup: {fileID: 1300420399}
-  backgroundCloseButton: {fileID: 1333476192}
   titleText: {fileID: 1337465200}
   bodyText: {fileID: 1723464741}
   noButton: {fileID: 426121675}
@@ -2941,7 +2951,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1750777888}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1300420398}
+        m_TargetAssemblyTypeName: ZJYFrameWork.UI.UIModel.Dialog, ZJYFrameWork.UISerializable.Common
+        m_MethodName: OnClickYes
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1750777888
 MonoBehaviour:
   m_ObjectHideFlags: 0

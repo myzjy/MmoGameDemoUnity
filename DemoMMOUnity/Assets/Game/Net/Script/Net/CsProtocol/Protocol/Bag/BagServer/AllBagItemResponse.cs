@@ -8,7 +8,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
 {
-    public class AllBagItemResponse : Model, IPacket,IReference
+    public class AllBagItemResponse : Model, IPacket, IReference
     {
         public List<BagUserItemData> list;
 
@@ -62,21 +62,48 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            dict.TryGetValue("packet", out var packetJson);
-
-            if (packetJson != null)
+            if (string.IsNullOrEmpty(json))
             {
-                var json = packetJson.ToString();
-                var bytes = buffer.GetBytes(json);
-                var packet = AllBagItemResponse.ValueOf();
-                packet.Unpack(bytes);
-
-                return packet;
+                return null;
             }
 
-            return null;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+
+            var packet = AllBagItemResponse.ValueOf();
+            var list = dict.Select(a => a).ToList();
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var item = list[i];
+                if (item.Value == null)
+                {
+                    throw new NullReferenceException($"{item.Key}为空,请检查{typeof(AllBagItemResponse)}消息体.");
+                }
+
+                switch (item.Key)
+                {
+                    case "list":
+                    {
+                        var packetList = JsonConvert.DeserializeObject<List<string>>(item.Value.ToString());
+                        var items = new BagUserItemData[packetList.Count];
+                        packet.list = new List<BagUserItemData>();
+                        for (int j = 0; j < packetList.Count; j++)
+                        {
+                            var str = packetList[j];
+                            BagUserItemData itemData = items[j];
+                            var data = ProtocolManager.GetProtocol(itemData.ProtocolId());
+                            var iPacketData = data.Read(buffer, str);
+                            var protocolData = (BagUserItemData)iPacketData;
+                            packet.list.Add(protocolData);
+                        }
+                    }
+                        break;
+                }
+            }
+
+            return packet;
         }
     }
 
@@ -92,36 +119,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
                 if (data == null)
                 {
                     throw new NullReferenceException($"传递信息为空,请检查{typeof(AllBagItemResponse)}消息体.");
-                }
-
-                var list = data.Select(a => a).ToList();
-                int count = list.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    var item = list[i];
-                    if (item.Value == null)
-                    {
-                        throw new NullReferenceException($"{item.Key}为空,请检查{typeof(AllBagItemResponse)}消息体.");
-                    }
-
-                    switch (item.Key)
-                    {
-                        case "list":
-                        {
-                            var packetList = JsonConvert.DeserializeObject<List<string>>(item.Value.ToString());
-                            var items = new BagUserItemData[packetList.Count];
-                            response.list = new List<BagUserItemData>();
-                            for (int j = 0; j < packetList.Count; j++)
-                            {
-                                var str = packetList[j];
-                                var by = byteBuff.GetBytes(str);
-                                BagUserItemData datas = items[j];
-                                datas.Unpack(by);
-                                response.list.Add(datas);
-                            }
-                        }
-                            break;
-                    }
                 }
             }
             catch (Exception e)

@@ -6,29 +6,31 @@ namespace ZJYFrameWork.UISerializable
 {
     public class LoginPanelView:UIViewInterface
     {
-        public UnityEngine.GameObject LoginPart=null;
+        public UnityEngine.UI.Image bg_Image=null;
+		public UnityEngine.UI.Button Gonggao_Button=null;
+		public UnityEngine.GameObject tips=null;
+		public UnityEngine.UI.Text UserNameText=null;
+		public UnityEngine.GameObject LoginPart=null;
 		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
 		public ZJYFrameWork.UISerializable.RegisterPartView RegisterPartView=null;
 		public ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView LoginTapToStartView=null;
 		public ZJYFrameWork.Hotfix.UISerializable.LoginUIController LoginController=null;
-		public UnityEngine.GameObject tips=null;
-		public UnityEngine.UI.Text UserNameText=null;
-		public UnityEngine.UI.Button Gonggao_Button=null;
-		public UnityEngine.UI.Image bg_Image=null;
+		public UnityEngine.AudioSource AudioSource=null;
 		
 
 
         public void Init(UIView _view)
         {
-            LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
+            bg_Image=_view.GetObjType<UnityEngine.UI.Image>("bg_Image");
+			Gonggao_Button=_view.GetObjType<UnityEngine.UI.Button>("Gonggao_Button");
+			tips=_view.GetObjType<UnityEngine.GameObject>("tips");
+			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
+			LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
 			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
 			RegisterPartView=_view.GetObjType<ZJYFrameWork.UISerializable.RegisterPartView>("RegisterPartView");
 			LoginTapToStartView=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView>("LoginTapToStartView");
 			LoginController=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginUIController>("LoginController");
-			tips=_view.GetObjType<UnityEngine.GameObject>("tips");
-			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
-			Gonggao_Button=_view.GetObjType<UnityEngine.UI.Button>("Gonggao_Button");
-			bg_Image=_view.GetObjType<UnityEngine.UI.Image>("bg_Image");
+			AudioSource=_view.GetObjType<UnityEngine.AudioSource>("AudioSource");
 			
         }
     }

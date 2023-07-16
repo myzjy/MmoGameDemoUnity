@@ -52,27 +52,8 @@ namespace ZJYFrameWork.Module.Login.Service
 
         public void LoginByAccount()
         {
-            // var sequence = DOTween.Sequence();
-            // sequence.AppendCallback(() =>
-            // {
             LoginCacheData.loginError = false;
             netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
-            // });
-            // sequence.AppendInterval(3f);
-            // sequence.AppendCallback(() =>
-            // {
-            //     if (LoginCacheData.loginFlag)
-            //     {
-            //         return;
-            //     }
-            //
-            //     if (LoginCacheData.loginError)
-            //     {
-            //         return;
-            //     }
-            //
-            //     LoginByAccount();
-            // });
         }
 
         public void Logout()

@@ -26,6 +26,8 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button newplayer_Button=null;
 		public UnityEngine.GameObject middle_Right=null;
 		public UnityEngine.UI.Button middle_Right_PVEBtn_Button=null;
+		public UnityEngine.UI.Text physicalPower_Text=null;
+		public UnityEngine.UI.Text physicalPowerTip_Text=null;
 		public UnityEngine.UI.Button physicaButton=null;
 		public UnityEngine.UI.Button ruqin_Button=null;
 		public UnityEngine.UI.Button wujinBtn_Button=null;
@@ -42,7 +44,6 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Button settingBtn=null;
 		public UnityEngine.UI.Button MailBtn=null;
 		public UnityEngine.GameObject MailBtn_tips=null;
-		public ZJYFrameWork.Hotfix.UI.GameMain.GameMainUIController GMUIController=null;
 		
 
 
@@ -68,6 +69,8 @@ namespace ZJYFrameWork.UISerializable
 			newplayer_Button=_view.GetObjType<UnityEngine.UI.Button>("newplayer_Button");
 			middle_Right=_view.GetObjType<UnityEngine.GameObject>("middle_Right");
 			middle_Right_PVEBtn_Button=_view.GetObjType<UnityEngine.UI.Button>("middle_Right_PVEBtn_Button");
+			physicalPower_Text=_view.GetObjType<UnityEngine.UI.Text>("physicalPower_Text");
+			physicalPowerTip_Text=_view.GetObjType<UnityEngine.UI.Text>("physicalPowerTip_Text");
 			physicaButton=_view.GetObjType<UnityEngine.UI.Button>("physicaButton");
 			ruqin_Button=_view.GetObjType<UnityEngine.UI.Button>("ruqin_Button");
 			wujinBtn_Button=_view.GetObjType<UnityEngine.UI.Button>("wujinBtn_Button");
@@ -84,7 +87,6 @@ namespace ZJYFrameWork.UISerializable
 			settingBtn=_view.GetObjType<UnityEngine.UI.Button>("settingBtn");
 			MailBtn=_view.GetObjType<UnityEngine.UI.Button>("MailBtn");
 			MailBtn_tips=_view.GetObjType<UnityEngine.GameObject>("MailBtn_tips");
-			GMUIController=_view.GetObjType<ZJYFrameWork.Hotfix.UI.GameMain.GameMainUIController>("GMUIController");
 			
         }
     }

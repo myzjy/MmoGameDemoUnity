@@ -12,7 +12,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
         public static ServerConfigRequest ValueOf()
         {
             var packet = new ServerConfigRequest();
-            
+
             return packet;
         }
 
@@ -22,6 +22,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             return 1009;
         }
     }
+
     public class ServerConfigRequestRegistration : IProtocolRegistration
     {
         public short ProtocolId()
@@ -31,18 +32,15 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-            ServerConfigRequest message = (ServerConfigRequest) packet;
+            ServerConfigRequest message = (ServerConfigRequest)packet;
             var _message = new ServerMessageWrite(message.ProtocolId(), message);
             var json = JsonConvert.SerializeObject(_message);
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object,object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            dict.TryGetValue("packet", out var packetJson);
-            var packet = JsonConvert.DeserializeObject<ServerConfigRequest>(packetJson.ToString());
-
-            return packet;
+            return null;
         }
     }
 }

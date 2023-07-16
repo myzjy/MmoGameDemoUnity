@@ -101,19 +101,6 @@ namespace ZJYFrameWork.Net.Dispatcher
 
             packetReceiver.Invoke(packet);
         }
-
-        private static Action<byte[]> receiveAction;
-
-        public static void ReceiveStringAction(Action<byte[]> receiveAction)
-        {
-            PacketDispatcher.receiveAction = receiveAction;
-            Debug.LogError($" PacketDispatcher.receiveAction:{receiveAction}");
-
-        }
-
-        public static void ReceiveString(byte[] bytes)
-        {
-            receiveAction.Invoke(bytes);
-        }
+        
     }
 }

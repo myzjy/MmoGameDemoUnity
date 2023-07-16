@@ -72,7 +72,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log("连接成功事件，通过Token登录服务器");
 #endif
-                UIComponentManager.CSDispatchEvent(UINotifEnum.OpenLoginUI);
+                UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
                 //loginService.LoginByToken();
             }
             else
@@ -81,7 +81,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
                 Debug.Log("连接成功事件，通过账号密码登录服务器");
 #endif
                 //没有登录过，没有记录
-                UIComponentManager.CSDispatchEvent(UINotifEnum.OpenLoginUI);
+                UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
             }
         }
 

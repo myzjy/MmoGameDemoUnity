@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 {
     /// <summary>
     /// 系统基础配置表相关
     /// </summary>
-    public class ServerConfigResponse : Model, IPacket
+    public class ServerConfigResponse : Model, IPacket, IReference
     {
         public List<ItemBaseData> bagItemEntityList;
 
@@ -25,9 +27,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             return packet;
         }
 
-        public override void Unpack(byte[] bytes)
+        public void Clear()
         {
-            base.Unpack(bytes);
+            bagItemEntityList = new List<ItemBaseData>();
         }
     }
 
@@ -46,12 +48,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            dict.TryGetValue("packet", out var packetJson);
-            var packet = JsonConvert.DeserializeObject<ServerConfigResponse>(packetJson.ToString());
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            
 
-            return packet;
+            return null;
         }
     }
 }

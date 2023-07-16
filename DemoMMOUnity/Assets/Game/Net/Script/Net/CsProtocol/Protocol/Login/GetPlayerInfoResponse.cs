@@ -33,39 +33,40 @@ namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            dict.TryGetValue("packet", out var packetJson);
-            try
-            {
-                if (packetJson != null)
-                {
-                    var packetJsonDict = JsonConvert.DeserializeObject<Dictionary<object, object>>(packetJson.ToString());
-                    if (packetJsonDict != null)
-                    {
-                        GetPlayerInfoResponse response = new GetPlayerInfoResponse();
-                        foreach (var item in packetJsonDict)
-                        {
-                            string key = item.Key.ToString();
-                            switch (key)
-                            {
-                                case  "":
-                                    break;
-                            }
-                        }
-
-                        // var packet =response;
-                        return response;
-                    }
-
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-                throw;
-            }
+            
+            // try
+            // {
+            //     if (packetJson != null)
+            //     {
+            //         var packetJsonDict =
+            //             JsonConvert.DeserializeObject<Dictionary<object, object>>(packetJson.ToString());
+            //         if (packetJsonDict != null)
+            //         {
+            //             GetPlayerInfoResponse response = new GetPlayerInfoResponse();
+            //             foreach (var item in packetJsonDict)
+            //             {
+            //                 string key = item.Key.ToString();
+            //                 switch (key)
+            //                 {
+            //                     case "":
+            //                         break;
+            //                 }
+            //             }
+            //
+            //             // var packet =response;
+            //             return response;
+            //         }
+            //
+            //         return null;
+            //     }
+            // }
+            // catch (Exception e)
+            // {
+            //     Debug.LogError(e);
+            //     throw;
+            // }
 
             return null;
         }

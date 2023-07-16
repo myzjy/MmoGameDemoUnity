@@ -33,23 +33,6 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 {
     public partial class UINotifEnum
     {
-        #region GameView
-
-        /// <summary>
-        /// 打开主界面面板
-        /// </summary>
-        public const string OPEN_GAMEMAIN_PANEL = "OPEN_GAMEMAIN_PANEL";
-
-        /// <summary>
-        /// 关闭主界面面板
-        /// </summary>
-        public const string CLOSE_GAMEMAIN_PANEL = "CLOSE_GAMEMAIN_PANEL";
-
-        /// <summary>
-        /// Time时间
-        /// </summary>
-        public const string TIME_GAMEMAIN_PANEL = "TIME_GAMEMAIN_PANEL";
-
-        #endregion
+   
     }
 }

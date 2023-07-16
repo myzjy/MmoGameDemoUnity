@@ -15,7 +15,7 @@ using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.WebRequest;
-using ZJYFrameWork.XLuaScript;
+// using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Base.Component
 {

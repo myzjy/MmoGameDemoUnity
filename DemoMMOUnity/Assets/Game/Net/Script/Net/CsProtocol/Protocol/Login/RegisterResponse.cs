@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace  ZJYFrameWork.Net.CsProtocol
+namespace ZJYFrameWork.Net.CsProtocol
 {
-    public class RegisterResponse: Model, IPacket
+    public class RegisterResponse : Model, IPacket, IReference
     {
         public bool mRegister;
 
@@ -24,7 +25,13 @@ namespace  ZJYFrameWork.Net.CsProtocol
         {
             return 1006;
         }
+
+        public void Clear()
+        {
+            mRegister = false;
+        }
     }
+
     public class RegisterResponseRegistration : IProtocolRegistration
     {
         public short ProtocolId()
@@ -34,26 +41,29 @@ namespace  ZJYFrameWork.Net.CsProtocol
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-
-            RegisterResponse message = (RegisterResponse) packet;
+            RegisterResponse message = (RegisterResponse)packet;
             var _message = new ServerMessageWrite(message.ProtocolId(), message);
             var json = JsonConvert.SerializeObject(_message);
             buffer.WriteString(json);
-
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>( StringUtils.BytesToString(buffer.ToBytes()));
-            dict.TryGetValue("packet", out var packetJson);
-            if (packetJson != null)
+            if (string.IsNullOrEmpty(json))
             {
-                var packet = JsonConvert.DeserializeObject<RegisterResponse>(packetJson.ToString());
-
-                return packet;
+                return null;
             }
 
-            return null;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+
+            var packet = ReferenceCache.Acquire<RegisterResponse>();
+            dict.TryGetValue("mRegister", out var mRegister);
+            if (mRegister != null)
+            {
+                packet.mRegister = bool.Parse(mRegister.ToString());
+            }
+
+            return packet;
         }
     }
 }

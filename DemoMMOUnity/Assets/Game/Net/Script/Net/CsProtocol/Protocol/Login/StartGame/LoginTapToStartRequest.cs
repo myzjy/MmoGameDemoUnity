@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol
@@ -56,13 +57,9 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict = null)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            if (dict == null) return null;
-            var packet = JsonConvert.DeserializeObject<GetPlayerInfoRequest>(dict["packet"].ToString());
-
-
-            return packet;
+            return null;
         }
     }
 }

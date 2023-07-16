@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
-    public class LoginResponse : Model, IPacket
+    public class LoginResponse : Model, IPacket, IReference
     {
         /**
         * 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
@@ -15,16 +16,20 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         /**
         * 金币
         */
-        public long goldNum;
+        public long goldNum { get; set; }
 
         /**
         * 付费钻石 一般充值才有，付费钻石转换成普通钻石
         */
         public long PremiumDiamondNum;
 
-        public string token;
-        public long uid;
-        public string userName;
+        public string token { get; set; }
+        public long uid { get; set; }
+        public string userName { get; set; }
+        public int lv { get; set; }
+        public int maxLv { get; set; }
+        public int exp { get; set; }
+        public int maxExp { get; set; }
 
         public short ProtocolId()
         {
@@ -56,9 +61,14 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             return packet;
         }
 
-        public override void Unpack(byte[] bytes)
+        public void Clear()
         {
-            base.Unpack(bytes);
+            token = "";
+            uid = 0;
+            userName = String.Empty;
+            goldNum = 0;
+            PremiumDiamondNum = 0;
+            DiamondNum = 0;
         }
     }
 
@@ -82,46 +92,78 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            var packet = JsonConvert.DeserializeObject<LoginResponse>(dict["packet"].ToString());
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = ReferenceCache.Acquire<LoginResponse>();
+            packet.Clear();
+            foreach (var (key, value) in dict)
+            {
+                var keyString = key.ToString();
+                switch (keyString)
+                {
+                    case "token":
+                    {
+                        packet.token = value?.ToString();
+                    }
+                        break;
+                    case "uid":
+                    {
+                        var valueString = value.ToString();
+                        packet.uid = long.Parse(valueString);
+                    }
+                        break;
+                    case "userName":
+                    {
+                        packet.userName = value.ToString();
+                    }
+                        break;
+                    case "goldNum":
+                    {
+                        var valueString = value.ToString();
+                        packet.goldNum = long.Parse(valueString);
+                    }
+                        break;
+                    case "DiamondNum":
+                    {
+                        var valueString = value.ToString();
+                        packet.DiamondNum = long.Parse(valueString);
+                    }
+                        break;
+                    case "PremiumDiamondNum":
+                    {
+                        var valueString = value.ToString();
+                        packet.PremiumDiamondNum = long.Parse(valueString);
+                    }
+                        break;
+                    case "lv":
+                    {
+                        var valueString = value.ToString();
+                        packet.lv = int.Parse(valueString);
+                    }
+                        break;
+                    case "exp":
+                    {
+                        var valueString = value.ToString();
+                        packet.exp = int.Parse(valueString);
+                    }
+                        break;
+                    case "maxLv":
+                    {
+                        var valueString = value.ToString();
+                        packet.maxLv = int.Parse(valueString);
+                    }
+                        break;
+                    case "maxExp":
+                    {
+                        var valueString = value.ToString();
+                        packet.maxExp = int.Parse(valueString);
+                    }
+                        break;
+                }
+            }
 
             return packet;
-        }
-    }
-
-    public abstract class LoginResponseSerializer
-    {
-        public static void Unpack(LoginResponse response, byte[] bytes)
-        {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-            Debug.Log($"返回成功协议号：[{response.ProtocolId()}]");
-#endif
-            try
-            {
-                var byteBuff = ByteBuffer.ValueOf();
-                var message = byteBuff.GetString(bytes);
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"解析bytes ---> message:[{message}]");
-#endif
-                var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
-
-                if (dict == null)
-                {
-                    throw new System.AggregateException($"[type:{typeof(LoginResponse)}] [message:{message}] 无法完整解析成字典重新查看");
-                }
-
-                foreach (var item in dict)
-                {
-                }
-            }
-            catch (Exception e)
-            {
-#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
-                Debug.Log($"解析bytes ---> message:[{e}]");
-#endif
-                throw new Exception(e.Message);
-            }
         }
     }
 }

@@ -40,7 +40,7 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object,object> dict)
+        public IPacket Read(ByteBuffer buffer,string json)
         {
             Ping packet = new Ping();
             return packet;

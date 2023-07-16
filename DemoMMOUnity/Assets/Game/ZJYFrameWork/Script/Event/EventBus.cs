@@ -115,9 +115,10 @@ namespace ZJYFrameWork.Event
             action();
 #else
             SpringContext.GetApplicationContext().GetMainLoopExcutor().RunOnMainThread(action);
-        
+
 #endif
         }
+
         private static Action<string> receiverAction = null;
 
         public static void InstallAsyncExecute(Action<string> action)
@@ -125,6 +126,10 @@ namespace ZJYFrameWork.Event
             receiverAction = action;
         }
 
+        /// <summary>
+        /// 调用lua 事件
+        /// </summary>
+        /// <param name="action"></param>
         public static void AsyncExecute(string action)
         {
             receiverAction.Invoke(action);

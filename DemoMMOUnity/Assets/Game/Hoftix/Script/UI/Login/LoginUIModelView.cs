@@ -45,4 +45,75 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         #endregion
     }
+
+    public class LoginUIModelView : UIBaseModule<UILoginView, LoginPanelView>
+    {
+        public override string PrefabName()
+        {
+            return "LoginPanel";
+        }
+
+        public override UICanvasType GetCanvasType()
+        {
+            return UICanvasType.UI;
+        }
+
+        public override UISortType GetSortType()
+        {
+            return UISortType.Last;
+        }
+
+        public override string[] Notification()
+        {
+            return new string[]
+            {
+                UINotifEnum.OpenLoginUI,
+                UINotifEnum.CloseLoginUI,
+                UINotifEnum.CloseLoginRegisterUI,
+                UINotifEnum.OpenLoginTapToStartUI,
+                UINotifEnum.ShowLoginAccountUI,
+                UINotifEnum.LoginTapStartGame
+            };
+        }
+
+
+        public override void NotificationHandler(UINotification _eventNotification)
+        {
+            switch (_eventNotification.GetEventName)
+            {
+                case UINotifEnum.OpenLoginUI:
+                    InstanceOrReuse();
+                    break;
+                case UINotifEnum.CloseLoginUI:
+                {
+                    selfView.OnHide();
+                }
+                    break;
+                case UINotifEnum.CloseLoginRegisterUI:
+                {
+                    // 输入账号 UI 关闭
+                    SpringContext.GetBean<LoginUIController>().OnHide();
+                }
+                    break;
+                case UINotifEnum.OpenLoginTapToStartUI:
+                {
+                    selfView.viewPanel.LoginTapToStartView.Show();
+                }
+                    break;
+                case UINotifEnum.ShowLoginAccountUI:
+                {
+                    // selfView.LoginTip();
+                }
+                    break;
+                case UINotifEnum.LoginTapStartGame:
+                {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log("点击开始游戏之后，服务器在开启时间，可以正常进入");
+#endif
+                    selfView.viewPanel.LoginTapToStartView.LoginStartGame();
+                }
+                    break;
+            }
+        }
+    }
 }

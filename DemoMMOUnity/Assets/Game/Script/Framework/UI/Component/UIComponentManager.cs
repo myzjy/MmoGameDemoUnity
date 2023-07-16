@@ -16,40 +16,40 @@ namespace ZJYFrameWork.UISerializable
 
         public static void InitUIModelComponent()
         {
-            // var uiModelRegistrationTypeList = new List<Type>();
-            // foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            // {
-            //     if (!assembly.Equals(typeof(UIComponentManager).Assembly)) continue;
-            //     var results = new List<Type>();
-            //     results.AddRange(assembly.GetTypes());
-            //     foreach (var type in results.Where(type =>
-            //                  !type.ContainsGenericParameters && type.IsClass && !type.IsAbstract &&
-            //                  typeof(UIModelInterface).IsAssignableFrom(type)))
-            //     {
-            //         uiModelRegistrationTypeList.Add(type);
-            //     }
-            // }
-            //
-            // foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType =>
-            //              (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
-            // {
-            //     UIModelInterfaces.Add(uiModelRegistration);
-            //     // UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
-            //     var stringList = uiModelRegistration.Notification();
-            //     foreach (var str in uiModelRegistration.Notification())
-            //     {
-            //         UIEventNotificationDict.TryGetValue(str, out var action);
-            //         if (action == null)
-            //         {
-            //             UIEventNotificationDict.Add(str, uiModelRegistration.NotificationHandler);
-            //         }
-            //         else
-            //         {
-            //             throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
-            //                 uiModelRegistration.GetType().Name, str));
-            //         }
-            //     }
-            // }
+            var uiModelRegistrationTypeList = new List<Type>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (!assembly.Equals(typeof(UIComponentManager).Assembly)) continue;
+                var results = new List<Type>();
+                results.AddRange(assembly.GetTypes());
+                foreach (var type in results.Where(type =>
+                             !type.ContainsGenericParameters && type.IsClass && !type.IsAbstract &&
+                             typeof(UIModelInterface).IsAssignableFrom(type)))
+                {
+                    uiModelRegistrationTypeList.Add(type);
+                }
+            }
+
+            foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType =>
+                         (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
+            {
+                UIModelInterfaces.Add(uiModelRegistration);
+                // UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
+                var stringList = uiModelRegistration.Notification();
+                foreach (var str in uiModelRegistration.Notification())
+                {
+                    UIEventNotificationDict.TryGetValue(str, out var action);
+                    if (action == null)
+                    {
+                        UIEventNotificationDict.Add(str, uiModelRegistration.NotificationHandler);
+                    }
+                    else
+                    {
+                        throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
+                            uiModelRegistration.GetType().Name, str));
+                    }
+                }
+            }
         }
         // public List<UIModelInterface> TimeModelInterfaces=>UIModelInterfaces.Where(a=>a.Notification().Where(s=>s.))
 
@@ -66,15 +66,6 @@ namespace ZJYFrameWork.UISerializable
             eventAction?.Invoke(eventUI);
             //使用完需要放回池子里
             UINotificationHelp.ResUse(eventUI);
-        }
-
-        public static Action<string, object> eventUIAction;
-
-        public static void CSDispatchEvent(string name, object body = null)
-        {
-            // var eventUI = UINotificationHelp.NewUINotification(name, body);
-
-            eventUIAction.Invoke(name, body);
         }
     }
 }

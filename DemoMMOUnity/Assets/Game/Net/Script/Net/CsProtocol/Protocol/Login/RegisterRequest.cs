@@ -6,7 +6,6 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol
 {
-    
     public class RegisterRequest : Model, IPacket
     {
         public string account;
@@ -41,27 +40,21 @@ namespace ZJYFrameWork.Net.CsProtocol
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-
-            RegisterRequest message = (RegisterRequest) packet;
+            RegisterRequest message = (RegisterRequest)packet;
             var _message = new ServerMessageWrite(message.ProtocolId(), message);
             var json = JsonConvert.SerializeObject(_message);
             buffer.WriteString(json);
-
         }
 
-        public IPacket Read(ByteBuffer buffer,Dictionary<object, object> dict)
+        public IPacket Read(ByteBuffer buffer, string json)
         {
-            // var json = StringUtils.BytesToString(buffer.ToBytes());
-            // var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            dict.TryGetValue("packet", out var packetJson);
-            if (packetJson != null)
+            if (string.IsNullOrEmpty(json))
             {
-                var packet = JsonConvert.DeserializeObject<RegisterRequest>(packetJson.ToString());
-
-                return packet;
+                return null;
             }
+            var packet = JsonConvert.DeserializeObject<RegisterRequest>(json);
 
-            return null;
+            return packet;
         }
     }
 }

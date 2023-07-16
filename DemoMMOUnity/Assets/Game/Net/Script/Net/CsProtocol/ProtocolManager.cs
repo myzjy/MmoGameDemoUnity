@@ -13,7 +13,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
     /**
      * 协议的注册管理类
-     * 
+     *
      */
     public class ProtocolManager
     {
@@ -90,14 +90,20 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 if (protocolIdStr != null)
                 {
                     var protocolId = short.Parse(protocolIdStr.ToString());
-                    dict.TryGetValue("packet", out var packetJson);
                     var data = GetProtocol(protocolId);
                     if (data == null)
                     {
                         return null;
                     }
 
-                    return data.Read(byteBuffer, dict);
+                    dict.TryGetValue("packet", out var packetJson);
+                    if (packetJson != null)
+                    {
+                        var str = packetJson.ToString();
+                        return data.Read(byteBuffer, str);
+                    }
+
+                    return null;
                 }
             }
             catch (Exception e)

@@ -258,7 +258,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Archives
                             case CompressionType.LZ4HC:
                                 {
                                     buffer = reader.ReadBytes((int)block.compressedSize);
-                                    var data = LZ4.LZ4Codec.Decode(buffer, 0, (int)block.compressedSize, (int)block.uncompressedSize);
+                                    var data = LZ4ps.LZ4Codec.Decode64(buffer, 0, (int)block.compressedSize, (int)block.uncompressedSize);
                                     dataStream.Write(data, 0, data.Length);
                                     break;
                                 }

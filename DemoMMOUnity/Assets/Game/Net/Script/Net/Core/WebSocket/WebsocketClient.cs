@@ -74,9 +74,6 @@ namespace ZJYFrameWork.Net.Core.Websocket
             var byteString = StringUtils.Bytes(message);
             byteBuffer.WriteBytes(byteString);
 
-            byteBuffer.ReadRawInt();
-            PacketDispatcher.ReceiveString(byteString);
-
             var packet = ProtocolManager.Read(byteBuffer);
             if (packet != null)
             {
@@ -91,9 +88,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
             var byteBuffer = ByteBuffer.ValueOf();
             byteBuffer.WriteBytes(content);
-
-            byteBuffer.ReadRawInt();
-            PacketDispatcher.ReceiveString(content);
+            
             var packet = ProtocolManager.Read(byteBuffer);
             if (packet != null)
             {
