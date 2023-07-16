@@ -78,10 +78,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     {
                         if (value != null)
                         {
+                            var valueString = value.ToString();
+                            response.nowPhysicalPower = int.Parse(valueString);
                         }
 
-                        var valueString = value.ToString();
-                        response.nowPhysicalPower = int.Parse(valueString);
                     }
                         break;
                     case "residueTime":

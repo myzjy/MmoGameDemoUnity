@@ -108,7 +108,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             }
             catch (Exception e)
             {
-                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo, "", "网络连接错误", res =>
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo, "提示", "网络连接错误", res =>
                 {
                     //解析报错
                 }, "确定", "取消");

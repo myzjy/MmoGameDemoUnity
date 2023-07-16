@@ -1782,8 +1782,8 @@ MonoBehaviour:
   mSelfObj: {fileID: 1300420396}
   MTransform: {fileID: 1300420397}
   MObjCanvasGroup: {fileID: 1300420399}
-  titleText: {fileID: 1337465200}
-  bodyText: {fileID: 1723464741}
+  titleText: {fileID: 1723464741}
+  bodyText: {fileID: 1337465200}
   noButton: {fileID: 426121675}
   noButtonText: {fileID: 2123242602}
   yesButton: {fileID: 1750777887}

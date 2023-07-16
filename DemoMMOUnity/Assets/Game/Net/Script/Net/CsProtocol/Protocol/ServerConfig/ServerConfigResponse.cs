@@ -50,10 +50,37 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 
         public IPacket Read(ByteBuffer buffer, string json)
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
 
-            return null;
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = ReferenceCache.Acquire<ServerConfigResponse>();
+            foreach (var (key, value) in dict)
+            {
+                var keyString = key.ToString();
+                switch (keyString)
+                {
+                    case "bagItemEntityList":
+                    {
+                        var valueString = value.ToString();
+                        var bagEntityList = JsonConvert.DeserializeObject<List<object>>(valueString);
+                        int length = bagEntityList.Count;
+                        packet.bagItemEntityList = new List<ItemBaseData>();
+                        for (int i = 0; i < length; i++)
+                        {
+                            var entityObj = bagEntityList[i];
+                            var packetData = ProtocolManager.GetProtocol(201);
+                            var packetDataRead = (ItemBaseData)packetData.Read(buffer, entityObj.ToString());
+                            packet.bagItemEntityList.Add(packetDataRead);
+                        }
+                    }
+                        break;
+                }
+            }
+
+            return packet;
         }
     }
 }

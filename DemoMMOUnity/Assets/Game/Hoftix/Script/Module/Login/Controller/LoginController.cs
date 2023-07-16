@@ -15,6 +15,7 @@ using ZJYFrameWork.Scheduler;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UI.UIModel;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
@@ -111,6 +112,27 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         public void OnMinuteSchedulerAsyncEvent(MinuteSchedulerAsyncEvent eve)
         {
             netManager.Send(Ping.ValueOf());
+        }
+
+        [PacketReceiver]
+        public void AtLoginTapToStartResponse(LoginTapToStartResponse response)
+        {
+            if (!string.IsNullOrEmpty(response.message))
+            {
+#if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
+                Debug.Log($"可以登录：{response.accessGame},message:{response.message}");
+#endif
+            }
+
+            if (!response.accessGame)
+            {
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo,"提示","当前不在登录时间", res =>
+                {
+                    
+                },"确定","取消");
+                return;
+            }
+            SpringContext.GetBean<LoginUIController>().loginTapToStartView.LoginStartGame();
         }
     }
 }

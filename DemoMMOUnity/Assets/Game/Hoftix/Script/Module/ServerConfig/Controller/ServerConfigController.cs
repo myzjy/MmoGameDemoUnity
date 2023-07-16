@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.Hotfix.UISerializable;
+﻿using ZJYFrameWork.Hotfix.UI.GameMain;
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
@@ -16,6 +17,9 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
         {
             //获取
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
+            CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
+            SpringContext.GetBean<LoginUIController>().OnHide();
+            SpringContext.GetBean<GameMainUIController>().OnShow();
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.UISerializable
@@ -16,38 +18,33 @@ namespace ZJYFrameWork.UISerializable
 
         public static void InitUIModelComponent()
         {
-            var uiModelRegistrationTypeList = new List<Type>();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            var loginUI = SpringContext.GetBean<LoginUIModelView>();
+            var gameUIModelView = SpringContext.GetBean<GameMainModelView>();
+            foreach (var str in loginUI.Notification())
             {
-                if (!assembly.Equals(typeof(UIComponentManager).Assembly)) continue;
-                var results = new List<Type>();
-                results.AddRange(assembly.GetTypes());
-                foreach (var type in results.Where(type =>
-                             !type.ContainsGenericParameters && type.IsClass && !type.IsAbstract &&
-                             typeof(UIModelInterface).IsAssignableFrom(type)))
+                UIEventNotificationDict.TryGetValue(str, out var action);
+                if (action == null)
                 {
-                    uiModelRegistrationTypeList.Add(type);
+                    UIEventNotificationDict.Add(str, loginUI.NotificationHandler);
+                }
+                else
+                {
+                    throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
+                        loginUI.GetType().Name, str));
                 }
             }
 
-            foreach (var uiModelRegistration in uiModelRegistrationTypeList.Select(uiModelRegistrationType =>
-                         (UIModelInterface)Activator.CreateInstance(uiModelRegistrationType)))
+            foreach (var str in gameUIModelView.Notification())
             {
-                UIModelInterfaces.Add(uiModelRegistration);
-                // UIEventNotificationStrDict.Add(uiModelRegistration.PrefabName(),uiModelRegistration);
-                var stringList = uiModelRegistration.Notification();
-                foreach (var str in uiModelRegistration.Notification())
+                UIEventNotificationDict.TryGetValue(str, out var action);
+                if (action == null)
                 {
-                    UIEventNotificationDict.TryGetValue(str, out var action);
-                    if (action == null)
-                    {
-                        UIEventNotificationDict.Add(str, uiModelRegistration.NotificationHandler);
-                    }
-                    else
-                    {
-                        throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
-                            uiModelRegistration.GetType().Name, str));
-                    }
+                    UIEventNotificationDict.Add(str, gameUIModelView.NotificationHandler);
+                }
+                else
+                {
+                    throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
+                        gameUIModelView.GetType().Name, str));
                 }
             }
         }

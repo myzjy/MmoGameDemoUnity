@@ -46,6 +46,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         #endregion
     }
 
+    [Bean]
     public class LoginUIModelView : UIBaseModule<UILoginView, LoginPanelView>
     {
         public override string PrefabName()
