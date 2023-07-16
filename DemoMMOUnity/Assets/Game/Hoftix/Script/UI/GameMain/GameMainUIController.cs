@@ -4,6 +4,7 @@ using ZJYFrameWork.Hotfix.UI.Common;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Hotfix.UI.GameMain
 {
@@ -34,6 +35,15 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             else
             {
                 _view.OnShow();
+            }
+        }
+
+        public void ShowNowTime(long timeLong)
+        {
+            var time = DateTimeUtil.GetCurrEntTimeMilliseconds(timeLong);
+            if (_view != null)
+            {
+                _view.ShowNowTime(time);
             }
         }
 
