@@ -27,5 +27,40 @@ namespace ZJYFrameWork.Hotfix.Common
         /// 登录的时候是否报错了
         /// </summary>
         public bool loginError;
+
+        private int lv { get; set; }
+        private int maxLv { get; set; }
+        private int exp { get; set; }
+        private int maxExp { get; set; }
+
+        public void SetLv(int mLv)
+        {
+            lv = mLv;
+        }
+
+        public int GetLv()
+        {
+            return lv;
+        }
+
+        public void SetMaxLv(int gMaxLv)
+        {
+            this.maxLv = gMaxLv;
+        }
+
+        public int GetMaxLv()
+        {
+            return maxLv;
+        }
+
+        public void SetExp(int mExp)
+        {
+            exp = mExp;
+        }
+
+        public int GetExp()
+        {
+            return exp;
+        }
     }
 }
