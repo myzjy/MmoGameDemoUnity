@@ -19,7 +19,7 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
         [EventReceiver]
         public void OnPhysicalPowerSecondsEvent(PhysicalPowerSecondsEvent eve)
         {
-            // netManager.Send(PhysicalPowerSecondsRequ.ValueOf());
+            netManager.Send(PhysicalPowerSecondsRequest.ValueOf(eve.nowTime));
         }
     }
 }

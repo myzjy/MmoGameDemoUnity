@@ -15,5 +15,11 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
             var request = PhysicalPowerUserPropsRequest.ValueOf(userNum);
             _netManager.Send(request);
         }
+
+        public void SendPhysicalPowerSecondsRequest(long nowTime)
+        {
+            var request = PhysicalPowerSecondsRequest.ValueOf(nowTime);
+            _netManager.Send(request);
+        }
     }
 }

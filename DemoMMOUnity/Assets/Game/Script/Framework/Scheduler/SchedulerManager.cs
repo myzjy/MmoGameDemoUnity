@@ -6,6 +6,7 @@ using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UI.GameMain;
+using ZJYFrameWork.Module.PhysicalPower.Model;
 using ZJYFrameWork.Scheduler.Model;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Manager;
@@ -41,10 +42,10 @@ namespace ZJYFrameWork.Scheduler
             if (DateTimeUtil.Now() <= 0)
             {
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());
-                if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
-                {
-                    EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
-                }
+                // if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
+                // {
+                //     EventBus.AsyncSubmit(PhysicalPowerSecondsEvent.ValueOf());
+                // }
 
                 return;
             }
@@ -66,7 +67,7 @@ namespace ZJYFrameWork.Scheduler
                 minuteSchedulerTimestamp = DateTimeUtil.Now();
                 if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
                 {
-                    EventBus.AsyncExecute("Event.PhysicalConst.PhysicalPowerSeconds");
+                    EventBus.AsyncSubmit(PhysicalPowerSecondsEvent.ValueOf(now));
                 }
 
                 //异步请求最新
