@@ -1,3 +1,4 @@
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Hotfix.Common
@@ -85,6 +86,15 @@ namespace ZJYFrameWork.Hotfix.Common
         public void setMaximusResidueEndTime(int maximusResidueEndTime)
         {
             this.maximusResidueEndTime = maximusResidueEndTime;
+        }
+
+        public void SetPhysicalPowerSecondsResponse(PhysicalPowerSecondsResponse response)
+        {
+            setResidueTime(residueTime: response.residueTime);
+            setMaximumStrength(response.maximumStrength);
+            setNowPhysicalPower(response.nowPhysicalPower);
+            setMaximusResidueEndTime(response.maximusResidueEndTime);
+            setResidueNowTime(residueNowTime: response.residueNowTime);
         }
     }
 }

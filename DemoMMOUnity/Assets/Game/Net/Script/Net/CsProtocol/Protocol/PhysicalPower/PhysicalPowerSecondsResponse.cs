@@ -17,7 +17,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public int residueTime { get; set; }
         public int maximumStrength { get; set; }
-        public long maximusResidueEndTime { get; set; }
+        public int maximusResidueEndTime { get; set; }
         public long residueNowTime { get; set; }
 
         public short ProtocolId()
@@ -113,7 +113,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     case "maximusResidueEndTime":
                     {
                         var valueString = value.ToString();
-                        response.maximusResidueEndTime = long.Parse(valueString);
+                        response.maximusResidueEndTime = int.Parse(valueString);
                     }
                         break;
                     case "residueNowTime":
