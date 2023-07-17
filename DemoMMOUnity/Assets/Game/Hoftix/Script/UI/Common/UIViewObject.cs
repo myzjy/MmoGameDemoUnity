@@ -9,7 +9,7 @@ namespace ZJYFrameWork.Hotfix.UI.Common
         /// </summary>
         /// <param name="textUI">Text 组件</param>
         /// <param name="text">文本</param>
-        public void SetText(Text textUI, string text)
+        protected void SetText(Text textUI, string text)
         {
             textUI.text = text;
         }

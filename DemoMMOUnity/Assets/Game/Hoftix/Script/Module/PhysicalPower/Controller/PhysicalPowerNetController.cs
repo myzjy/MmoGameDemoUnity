@@ -21,6 +21,7 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
         {
             //设置值
             _cacheData.SetPhysicalPowerUserPropsResponse(response);
+            _gameMainUIController.SetPhysicalPowerText(response.nowPhysicalPower,response.maximumStrength);
         }
 
         [Autowired]

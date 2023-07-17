@@ -115,6 +115,16 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             viewPanel.top_head_Lv_Image.fillAmount = fillAmount;
         }
 
+        /// <summary>
+        /// 设置体力
+        /// </summary>
+        /// <param name="nowPhysicalPower">当前体力</param>
+        /// <param name="maxNowPhysicalPower">最大体力</param>
+        public void SetPhysicalPowerText(int nowPhysicalPower, int maxNowPhysicalPower)
+        {
+            viewPanel.physicalPowerTip_Text.text = $"理智/{maxNowPhysicalPower}";
+            viewPanel.physicalPower_Text.text = nowPhysicalPower.ToString();
+        }
         public void ShowNowTime(DateTime dateTime)
         {
             viewPanel.TimeShow_Text.text = $"{dateTime:yyyy}年{dateTime:MM}月{dateTime:dd}日 {dateTime:hh:mm:ss}";

@@ -47,6 +47,20 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             }
         }
 
+        /// <summary>
+        /// 设置体力 显示
+        /// </summary>
+        /// <param name="nowPhysicalPower">当前体力</param>
+        /// <param name="maxNowPhysicalPower">最大体力</param>
+        public void SetPhysicalPowerText(int nowPhysicalPower, int maxNowPhysicalPower)
+        {
+            if (_view == null)
+            {
+                return;
+            }
+            _view.SetPhysicalPowerText(nowPhysicalPower,maxNowPhysicalPower);
+        }
+
         public void OnHide()
         {
             _view.OnHide();
