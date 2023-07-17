@@ -19,6 +19,8 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
         [PacketReceiver]
         public void AtPhysicalPowerUserPropsResponse(PhysicalPowerUserPropsResponse response)
         {
+            //设置值
+            _cacheData.SetPhysicalPowerSecondsResponse(response);
         }
 
         [Autowired]

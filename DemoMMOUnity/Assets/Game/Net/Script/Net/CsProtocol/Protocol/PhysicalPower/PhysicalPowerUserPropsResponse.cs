@@ -10,7 +10,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         public int nowPhysicalPower { get; set; }
         public int residueTime { get; set; }
         public int maximumStrength { get; set; }
-        public long maximusResidueEndTime { get; set; }
+        public int maximusResidueEndTime { get; set; }
         public long residueNowTime { get; set; }
 
         public short ProtocolId()
@@ -22,7 +22,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             int nowPhysicalPower,
             int residueTime,
             int maximumStrength,
-            long maximusResidueEndTime,
+            int maximusResidueEndTime,
             long residueNowTime)
         {
             var packet = ReferenceCache.Acquire<PhysicalPowerUserPropsResponse>();
@@ -99,7 +99,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     case "maximusResidueEndTime":
                     {
                         var valueString = value.ToString();
-                        response.maximusResidueEndTime = long.Parse(valueString);
+                        response.maximusResidueEndTime = int.Parse(valueString);
                     }
                         break;
                     case "residueNowTime":
