@@ -20,7 +20,7 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
         public void AtPhysicalPowerUserPropsResponse(PhysicalPowerUserPropsResponse response)
         {
             //设置值
-            _cacheData.SetPhysicalPowerSecondsResponse(response);
+            _cacheData.SetPhysicalPowerUserPropsResponse(response);
         }
 
         [Autowired]
