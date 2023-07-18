@@ -422,6 +422,7 @@ namespace BestHTTP
                 }
                 catch (System.Exception ex)
                 {
+                    // ignored
 #if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
                     {
                         var st = new StackTrace(new StackFrame(true));
