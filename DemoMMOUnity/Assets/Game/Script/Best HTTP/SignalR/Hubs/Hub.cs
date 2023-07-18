@@ -214,22 +214,31 @@ namespace BestHTTP.SignalR.Hubs
                 {
                     OnMethodCall(this, msg.Method, msg.Arguments);
                 }
-                catch(Exception ex)
+#pragma warning disable CS0168 // Variable is declared but never used
+                catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
-                    HttpManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - OnMethodCall", ex);
+                    // ignored
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                HttpManager.Logger.Exception($"Hub - {this.Name}", "IHub.OnMethod - OnMethodCall", ex);
+#endif
                 }
             }
 
-            OnMethodCallCallbackDelegate callback;
-            if (MethodTable.TryGetValue(msg.Method, out callback) && callback != null)
+            if (MethodTable.TryGetValue(msg.Method, out var callback) && callback != null)
             {
                 try
                 {
                     callback(this, msg);
                 }
-                catch(Exception ex)
+#pragma warning disable CS0168 // Variable is declared but never used
+                catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
-                    HttpManager.Logger.Exception("Hub - " + this.Name, "IHub.OnMethod - callback", ex);
+                    // ignored
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                    HttpManager.Logger.Exception($"Hub - {this.Name}", "IHub.OnMethod - callback", ex);
+#endif
                 }
             }
             else if (OnMethodCall == null)
@@ -255,24 +264,34 @@ namespace BestHTTP.SignalR.Hubs
             switch(msg.Type)
             {
                 case MessageTypes.Result:
-                    ResultMessage result = msg as ResultMessage;
+                {
+                    var result = msg as ResultMessage;
 
                     // Merge the incoming State before firing the events
-                    MergeState(result.State);
-
-                    if (originalMsg.ResultCallback != null)
+                    if (result != null)
                     {
-                        try
+                        MergeState(result.State);
+
+                        if (originalMsg.ResultCallback != null)
                         {
-                            originalMsg.ResultCallback(this, originalMsg, result);
-                        }
-                        catch(Exception ex)
-                        {
-                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultCallback", ex);
+                            try
+                            {
+                                originalMsg.ResultCallback(this, originalMsg, result);
+                            }
+#pragma warning disable CS0168 // Variable is declared but never used
+                            catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
+                            {
+                                // ignored
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                                HttpManager.Logger.Exception($"Hub - {this.Name}", "IHub.OnMessage - ResultCallback", ex);
+#endif
+                            }
                         }
                     }
 
                     SentMessages.Remove(id);
+                }
 
                     break;
 
@@ -290,7 +309,9 @@ namespace BestHTTP.SignalR.Hubs
                         }
                         catch(Exception ex)
                         {
-                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ResultErrorCallback", ex);
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                            HttpManager.Logger.Exception($"Hub {this.Name}" , "IHub.OnMessage - ResultErrorCallback", ex);
+#endif
                         }
                     }
 
@@ -306,7 +327,9 @@ namespace BestHTTP.SignalR.Hubs
                         }
                         catch(Exception ex)
                         {
-                            HttpManager.Logger.Exception("Hub " + this.Name, "IHub.OnMessage - ProgressCallback", ex);
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                            HttpManager.Logger.Exception($"Hub {this.Name}", "IHub.OnMessage - ProgressCallback", ex);
+#endif
                         }
                     }
                     break;
@@ -371,10 +394,13 @@ namespace BestHTTP.SignalR.Hubs
 
                 return builder.ToString();
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
-                HttpManager.Logger.Exception("Hub - " + this.Name, "Send", ex);
-
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                HttpManager.Logger.Exception($"Hub - {this.Name}", "Send", ex);
+#endif
                 return null;
             }
             finally

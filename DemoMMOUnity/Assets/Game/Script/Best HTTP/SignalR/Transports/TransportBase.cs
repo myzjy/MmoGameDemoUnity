@@ -290,13 +290,19 @@ namespace BestHTTP.SignalR.Transports
         {
             try
             {
-                HttpManager.Logger.Information("Transport - " + this.Name, "Sending: " + jsonStr);
-
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                HttpManager.Logger.Information($"Transport - {Name}", $"Sending: {jsonStr}");
+#endif
                 SendImpl(jsonStr);
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
-                HttpManager.Logger.Exception("Transport - " + this.Name, "Send", ex);
+                // ignored
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                HttpManager.Logger.Exception($"Transport - {Name}", "Send", ex);
+#endif
             }
         }
 
@@ -341,15 +347,21 @@ namespace BestHTTP.SignalR.Transports
                 // try to decode the json message with the encoder
                 msg = encoder.DecodeMessage(json);
             }
+#pragma warning disable CS0168 // Variable is declared but never used
             catch(Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
                 HttpManager.Logger.Exception("MessageFactory", "Parse - encoder.DecodeMessage", ex);
+#endif
                 return null;
             }
 
             if (msg == null)
             {
-                HttpManager.Logger.Error("MessageFactory", "Parse - Json Decode failed for json string: \"" + json + "\"");
+#if (UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG) && ENABLE_LOG_NETWORK
+                HttpManager.Logger.Error("MessageFactory", $"Parse - Json Decode failed for json string: {json}");
+#endif
                 return null;
             }
 

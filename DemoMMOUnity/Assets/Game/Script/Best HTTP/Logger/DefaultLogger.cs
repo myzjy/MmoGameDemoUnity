@@ -131,7 +131,9 @@ namespace BestHTTP.Logger
                                                              ex != null ? ex.StackTrace : "null"));
                 }
                 catch
-                { }
+                {
+                    // ignored
+                }
             }
         }
     
