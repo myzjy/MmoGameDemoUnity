@@ -15,9 +15,24 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         /// </summary>
         public int nowPhysicalPower { get; set; }
 
+        /**
+         * 一点体力增长剩余时间
+         * <p> 注意这里不是时间戳赋值</p>
+         */
         public int residueTime { get; set; }
+        /**
+         * 最大体力 用于限制 这个值会随着 等级增长
+         */
         public int maximumStrength { get; set; }
+        /**
+         * 我恢复到最大体力的结束时间
+         * <p>这里不是时间戳</p>
+         */
         public int maximusResidueEndTime { get; set; }
+
+        /**
+         * 当前体力实时时间 会跟着剩余时间一起变化
+         * */
         public long residueNowTime { get; set; }
 
         public short ProtocolId()
