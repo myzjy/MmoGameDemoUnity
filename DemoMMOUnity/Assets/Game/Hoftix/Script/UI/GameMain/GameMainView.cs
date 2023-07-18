@@ -5,6 +5,7 @@ using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Messaging;
+using ZJYFrameWork.Module.PhysicalPower.Service;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
@@ -125,6 +126,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             viewPanel.physicalPowerTip_Text.text = $"理智/{maxNowPhysicalPower}";
             viewPanel.physicalPower_Text.text = nowPhysicalPower.ToString();
         }
+
         public void ShowNowTime(DateTime dateTime)
         {
             viewPanel.TimeShow_Text.text = $"{dateTime:yyyy}年{dateTime:MM}月{dateTime:dd}日 {dateTime:hh:mm:ss}";
@@ -133,6 +135,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         public override void OnShow()
         {
             GetSelfUIView.OnShow();
+            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
         }
     }
 }
