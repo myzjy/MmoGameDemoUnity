@@ -692,7 +692,7 @@ namespace BestHTTP.SignalR
 
             if (string.IsNullOrEmpty(json))
                 HttpManager.Logger.Error("SignalR Connection",
-                    "Failed to JSon encode the given argument. Please try to use an advanced JSon encoder(check the documentation how you can do it).");
+                    "对给定参数进行JSon编码失败。请尝试使用高级JSon编码器(检查文档如何做到这一点)。");
             else
                 Transport.Send(json);
 
