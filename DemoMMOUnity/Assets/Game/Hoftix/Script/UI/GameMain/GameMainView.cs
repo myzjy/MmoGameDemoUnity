@@ -135,7 +135,11 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         public override void OnShow()
         {
             GetSelfUIView.OnShow();
-            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
+            //打开GameMain 界面
+            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest(res =>
+            {
+                SetPhysicalPowerText(res.nowPhysicalPower,res.maximumStrength);
+            });
         }
     }
 }

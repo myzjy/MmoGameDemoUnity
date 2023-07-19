@@ -1,3 +1,7 @@
+using System;
+using UnityEngine.Events;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
+
 namespace ZJYFrameWork.Module.PhysicalPower.Service
 {
     public interface IPhysicalPowerService
@@ -17,6 +21,6 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
         /// <summary>
         /// 请求服务器体力信息
         /// </summary>
-        void SendPhysicalPowerRequest();
+        void SendPhysicalPowerRequest(UnityAction<PhysicalPowerResponse> action);
     }
 }

@@ -1,4 +1,7 @@
+using System;
+using UnityEngine.Events;
 using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Module.PhysicalPower.Controller;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Core;
@@ -12,6 +15,8 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
         [Autowired] private PlayerUserCaCheData _caCheData;
         [Autowired] private INetManager _netManager;
 
+        [Autowired]
+        private PhysicalPowerNetController _physicalPowerNetController;
         public void SendPhysicalPowerUserProps(int userNum)
         {
             var request = PhysicalPowerUserPropsRequest.ValueOf(userNum);
@@ -24,10 +29,13 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
             _netManager.Send(request);
         }
 
-        public void SendPhysicalPowerRequest()
+        public void SendPhysicalPowerRequest(UnityAction<PhysicalPowerResponse> action)
         {
             var uid = _caCheData.Uid;
+            _physicalPowerNetController.RemovePhysicalPowerResponseAction(action);
+            _physicalPowerNetController.AddPhysicalPowerResponseAction(action);
             var request = PhysicalPowerRequest.ValueOf(uid);
+            _netManager.Send(request);
         }
     }
 }
