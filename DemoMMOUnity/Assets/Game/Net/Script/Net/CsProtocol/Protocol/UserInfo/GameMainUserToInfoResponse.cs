@@ -148,4 +148,22 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             return data;
         }
     }
+
+    public class GameMainUserToInfoResponseRegistration : IProtocolRegistration
+    {
+        public short ProtocolId()
+        {
+            return 1032;
+        }
+
+        public void Write(ByteBuffer buffer, IPacket packet)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IPacket Read(ByteBuffer buffer, string json = "")
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }
