@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
@@ -176,6 +177,21 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             if (string.IsNullOrEmpty(json))
             {
                 return null;
+            }
+
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = ReferenceCache.Acquire<GameMainUserToInfoResponse>();
+            if (dict == null)
+            {
+#if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
+                Debug.LogError("消息解析错误，请检查");
+#endif
+                return null;
+            }
+
+            foreach (var (key, value) in dict)
+            {
+                
             }
 
             return null;
