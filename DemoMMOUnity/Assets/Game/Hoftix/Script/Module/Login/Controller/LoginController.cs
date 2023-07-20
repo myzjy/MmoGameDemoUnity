@@ -134,5 +134,6 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             }
             SpringContext.GetBean<LoginUIController>().loginTapToStartView.LoginStartGame();
         }
+        
     }
 }

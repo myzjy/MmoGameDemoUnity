@@ -1,4 +1,6 @@
+using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Net.Core;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
 {
@@ -19,8 +21,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
         }
 
         /**
-   * 当前经验
-   */
+         * 当前经验
+         */
         private int nowExp;
 
         /**
@@ -158,12 +160,25 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-            throw new System.NotImplementedException();
+            if (packet == null)
+            {
+                return;
+            }
+
+            var data = (GameMainUserToInfoResponse)packet;
+            var serverMessage = new ServerMessageWrite(data.ProtocolId(), data);
+            var jsonStr = JsonConvert.SerializeObject(serverMessage);
+            buffer.WriteString(jsonStr);
         }
 
         public IPacket Read(ByteBuffer buffer, string json = "")
         {
-            throw new System.NotImplementedException();
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
+
+            return null;
         }
     }
 }
