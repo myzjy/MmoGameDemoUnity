@@ -33,6 +33,16 @@ namespace ZJYFrameWork.Hotfix.Common
         private int exp { get; set; }
         private int maxExp { get; set; }
 
+        public void SetMaxExp(int gMaxExp)
+        {
+            maxExp = gMaxExp;
+        }
+
+        public int GetMaxExp()
+        {
+            return maxExp;
+        }
+
         public void SetLv(int mLv)
         {
             lv = mLv;

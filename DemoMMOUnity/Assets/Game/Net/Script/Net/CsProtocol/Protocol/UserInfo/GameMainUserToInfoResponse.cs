@@ -191,7 +191,53 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
 
             foreach (var (key, value) in dict)
             {
-                
+                var keyStr = key.ToString();
+                var valueStr = value.ToString();
+                switch (keyStr)
+                {
+                    case "nowLv":
+                    {
+                        var nowLv = int.Parse(valueStr);
+                        packet.setNowLv(nowLv);
+                    }
+                        break;
+                    case "diamondsNum":
+                    {
+                        var diamondsNum = int.Parse(valueStr);
+                        packet.setDiamondsNum(diamondsNum);
+                    }
+                        break;
+                    case "maxExp":
+                    {
+                        var maxExp = int.Parse(valueStr);
+                        packet.setMaxExp(maxExp);
+                    }
+                        break;
+                    case "nowExp":
+                    {
+                        var nowExp = int.Parse(valueStr);
+                        packet.setNowExp(nowExp);
+                    }
+                        break;
+                    case "maxLv":
+                    {
+                        var maxLv = int.Parse(valueStr);
+                        packet.setMaxLv(maxLv);
+                    }
+                        break;
+                    case "goldCoinNum":
+                    {
+                        var goldCoinNum = long.Parse(valueStr);
+                        packet.setGoldCoinNum(goldCoinNum);
+                    }
+                        break;
+                    case "paidDiamondsNum":
+                    {
+                        var paidDiamondsNum = long.Parse(valueStr);
+                        packet.setPaidDiamondsNum(paidDiamondsNum);
+                    }
+                        break;
+                }
             }
 
             return null;

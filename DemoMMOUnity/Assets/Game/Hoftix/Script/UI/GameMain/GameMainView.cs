@@ -38,14 +38,14 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             GemText = viewPanel.Gem_UISerializableKeyObject.GetObjType<Text>("numText");
             GoldCoinText = viewPanel.glod_UISerializableKeyObject.GetObjType<Text>("numText");
             GoldTimButton = viewPanel.glod_UISerializableKeyObject.GetObjType<Button>("click");
-            SpringContext.GetBean<Messenger>().Subscribe("ui.gold", (string res) =>
-            {
-#if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
-                Debug.Log("调用刷新显示金币");
-#endif
-                SetGoldCoinShow(res);
-                //显示金币
-            });
+//             SpringContext.GetBean<Messenger>().Subscribe("ui.gold", (string res) =>
+//             {
+// #if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
+//                 Debug.Log("调用刷新显示金币");
+// #endif
+//                 SetGoldCoinShow(res);
+//                 //显示金币
+//             });
 // viewPanel.TimeShow_Text
 
             viewPanel.headImgClick.SetListener(() =>
@@ -71,7 +71,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// 设置普通水晶 数量
         /// </summary>
         /// <param name="num"></param>
-        public void SetGemsTim(int num)
+        public void SetGemsTim(long num)
         {
             GemsText.text = num.ToString();
         }
@@ -80,7 +80,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// 设置付费水晶
         /// </summary>
         /// <param name="gemNum"></param>
-        public void SetGemTextShow(int gemNum)
+        public void SetGemTextShow(long gemNum)
         {
             GemText.text = gemNum.ToString();
         }
@@ -89,9 +89,9 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// 设置金币数量显示
         /// </summary>
         /// <param name="goldCoinNum"></param>
-        public void SetGoldCoinShow(string goldCoinNum)
+        public void SetGoldCoinShow(long goldCoinNum)
         {
-            GoldCoinText.text = goldCoinNum;
+            GoldCoinText.text = goldCoinNum.ToString();
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             //打开GameMain 界面
             SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest(res =>
             {
-                SetPhysicalPowerText(res.nowPhysicalPower,res.maximumStrength);
+                SetPhysicalPowerText(res.nowPhysicalPower, res.maximumStrength);
             });
         }
     }

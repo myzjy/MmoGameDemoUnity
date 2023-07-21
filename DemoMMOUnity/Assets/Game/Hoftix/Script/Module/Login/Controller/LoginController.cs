@@ -3,12 +3,14 @@ using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UI.GameMain;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Procedure.Scene;
 using ZJYFrameWork.Scheduler;
@@ -126,14 +128,26 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 
             if (!response.accessGame)
             {
-                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo,"提示","当前不在登录时间", res =>
-                {
-                    
-                },"确定","取消");
+                CommonController.Instance.snackbar.OpenCommonUIPanel(Dialog.ButtonType.YesNo, "提示", "当前不在登录时间",
+                    res => { }, "确定", "取消");
                 return;
             }
+
             SpringContext.GetBean<LoginUIController>().loginTapToStartView.LoginStartGame();
         }
-        
+
+        [PacketReceiver]
+        public void AtGameMainUserToInfoResponse(GameMainUserToInfoResponse response)
+        {
+            LoginCacheData.SetExp(response.getNowExp());
+            LoginCacheData.SetLv(response.getNowLv());
+            LoginCacheData.SetMaxLv(response.getMaxLv());
+            LoginCacheData.SetMaxExp(response.getMaxExp());
+            SpringContext.GetBean<PlayerUserCaCheData>().goldNum = response.getGoldCoinNum();
+            SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.getDiamondsNum();
+            SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.getPaidDiamondsNum();
+            // SpringContext.GetBean<>()
+            SpringContext.GetBean<GameMainUIController>();
+        }
     }
 }

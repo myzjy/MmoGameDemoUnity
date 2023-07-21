@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UI.Common;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
@@ -15,6 +16,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// GameView
         /// </summary>
         private GameMainView _view;
+        
 
 
         public void SetGameMainView(GameMainView view)
@@ -59,6 +61,16 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
                 return;
             }
             _view.SetPhysicalPowerText(nowPhysicalPower,maxNowPhysicalPower);
+        }
+
+        public void ShowGameMainUserInfoMessage(LoginClientCacheData cacheData)
+        {
+            if (_view != null)
+            {
+                _view.SetGemsTim(SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum);
+                _view.SetGoldCoinShow(SpringContext.GetBean<PlayerUserCaCheData>().goldNum);
+                _view.SetGemTextShow(SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum);
+            }
         }
 
         public void OnHide()
