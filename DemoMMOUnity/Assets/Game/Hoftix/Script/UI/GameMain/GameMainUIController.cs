@@ -67,9 +67,15 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         {
             if (_view != null)
             {
+                /* *
+                 * 设置 金币 砖石
+                 */
                 _view.SetGemsTim(SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum);
                 _view.SetGoldCoinShow(SpringContext.GetBean<PlayerUserCaCheData>().goldNum);
                 _view.SetGemTextShow(SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum);
+                //刷新
+                _view.SetLvAndExpShow(cacheData.GetLv(),cacheData.GetExp(),cacheData.GetMaxExp());
+                _view.SetShowName(SpringContext.GetBean<PlayerUserCaCheData>().userName);
             }
         }
 

@@ -44,6 +44,8 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             var uid = response.uid;
             var userName = response.userName;
             LoginCacheData.loginFlag = true;
+            SpringContext.GetBean<PlayerUserCaCheData>().userName = response.userName;
+            SpringContext.GetBean<PlayerUserCaCheData>().Uid = response.uid;
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
             Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName, token, uid);
 #endif
@@ -147,7 +149,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.getDiamondsNum();
             SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.getPaidDiamondsNum();
             // SpringContext.GetBean<>()
-            SpringContext.GetBean<GameMainUIController>();
+            SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(LoginCacheData);
         }
     }
 }
