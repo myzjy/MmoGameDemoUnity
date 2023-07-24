@@ -4,6 +4,7 @@ using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.Module.Login.Controller;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
@@ -72,6 +73,13 @@ namespace ZJYFrameWork.Module.Login.Service
         {
             var UID = SpringContext.GetBean<PlayerUserCaCheData>().Uid;
             var service = GameMainUserToInfoRequest.ValueOf(UID);
+            netManager.Send(service);
+        }
+
+        public void GetServerGameMainInfo(Action responseAction)
+        {
+            SpringContext.GetBean<LoginController>().SetGameMainUserInfoAction(responseAction);
+            GetServerGameMainInfo();
         }
     }
 }

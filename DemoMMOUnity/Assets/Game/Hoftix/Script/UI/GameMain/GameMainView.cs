@@ -5,6 +5,7 @@ using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Messaging;
+using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Module.PhysicalPower.Service;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
@@ -139,6 +140,12 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest(res =>
             {
                 SetPhysicalPowerText(res.nowPhysicalPower, res.maximumStrength);
+            });
+            SpringContext.GetBean<ILoginService>().GetServerGameMainInfo(() =>
+            {
+                var loginCacheData = SpringContext.GetBean<LoginClientCacheData>();
+                SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(loginCacheData);
+
             });
         }
     }

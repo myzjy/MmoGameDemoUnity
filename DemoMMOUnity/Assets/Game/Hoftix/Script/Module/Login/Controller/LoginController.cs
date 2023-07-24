@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
@@ -138,6 +139,13 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<LoginUIController>().loginTapToStartView.LoginStartGame();
         }
 
+        private Action gameMainUserInfoAction;
+
+        public void SetGameMainUserInfoAction(Action action)
+        {
+            gameMainUserInfoAction = action;
+        }
+
         [PacketReceiver]
         public void AtGameMainUserToInfoResponse(GameMainUserToInfoResponse response)
         {
@@ -148,8 +156,8 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().goldNum = response.getGoldCoinNum();
             SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.getDiamondsNum();
             SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.getPaidDiamondsNum();
-            // SpringContext.GetBean<>()
-            SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(LoginCacheData);
+            //调用回调消息
+            gameMainUserInfoAction?.Invoke();
         }
     }
 }
