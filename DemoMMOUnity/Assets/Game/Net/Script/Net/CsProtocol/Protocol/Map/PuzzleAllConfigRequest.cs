@@ -54,12 +54,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 
         public IPacket Read(string json = "")
         {
+            var packet = PuzzleAllConfigRequest.ValueOf();
             if (string.IsNullOrEmpty(json))
             {
-                return null;
+                return packet;
             }
 
-            var packet = PuzzleAllConfigRequest.ValueOf();
             return packet;
         }
     }

@@ -58,26 +58,25 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             {
                 return null;
             }
-
             var packet = PuzzleAllConfigResponse.ValueOf();
+
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             dict.TryGetValue("puzzleConfigList", out var listObj);
-            if (listObj != null)
+            if (listObj == null) return packet;
+            var dictString = listObj.ToString();
+            var packetDict = JsonConvert.DeserializeObject<List<object>>(json);
+            packet.Clear();
+            int length = packetDict.Count;
+            for (int i = 0; i < length; i++)
             {
-                var dictString = listObj.ToString();
-                var packetDict = JsonConvert.DeserializeObject<List<object>>(json);
-                packet.Clear();
-                int length = packetDict.Count;
-                for (int i = 0; i < length; i++)
-                {
-                    var dataObj = packetDict[i];
-                    var dataString = dataObj.ToString();
-                    var puzzleData = ProtocolManager.GetProtocol(202);
-                    puzzleData.Read(dataString);
-                }
+                var dataObj = packetDict[i];
+                var dataString = dataObj.ToString();
+                var puzzleData = ProtocolManager.GetProtocol(202);
+                var puzzleRead = (Puzzle)puzzleData.Read(dataString);
+                packet.PuzzleList.Add(puzzleRead);
             }
 
-            return null;
+            return packet;
         }
     }
 }

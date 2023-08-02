@@ -7,6 +7,7 @@ using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Messaging;
 using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Module.PhysicalPower.Service;
+using ZJYFrameWork.Module.PuzzleNet.service;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
@@ -54,7 +55,11 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
                 //点击头像
             });
             //pve 主线
-            viewPanel.middle_Right_PVEBtn_Button.SetListener(() => { });
+            viewPanel.middle_Right_PVEBtn_Button.SetListener(() =>
+            {
+                //请求配置 配置请求结束，打开界面
+                SpringContext.GetBean<IPuzzleNetService>().GetTheMapTotalDataTableService(0);
+            });
             viewPanel.BagButton.SetListener(() =>
             {
                 //背包界面

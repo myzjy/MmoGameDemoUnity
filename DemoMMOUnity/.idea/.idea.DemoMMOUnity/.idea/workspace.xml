@@ -4,17 +4,40 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35ced9b7-f1a4-4a8b-aa4e-82b4897a779e" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/AmplifyAnimationPack/BlenderSource/BlenderSource.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/PSD/PSD.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_EquipmentIcons_(x2)/NoShadow/NoShadow.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_EquipmentIcons_(x2)/Shadow/Shadow.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_ItemIcons_(x2)/NoShadow/NoShadow.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_ItemIcons_(x2)/Shadow/Shadow.unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GUI PRO Kit - Fantasy RPG/ResourcesData/Sprites/Component/Icon_PictoIcons_(x2)/PictoIcons_(x2).unitypackage.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/libxlua.so.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/libxlua.so.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/xlua.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/XLua/x86/xlua.dll.meta" afterDir="false" />
+    <list default="true" id="35ced9b7-f1a4-4a8b-aa4e-82b4897a779e" name="更改" comment="修改">
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/SpriteAtlasTexture-UI_ACT_5D0_COMMON-2048x1024-fmt34.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/UI_SKIN_SELECT--fmt34.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/UI_SKIN_SELECT--fmt34.png.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Sprites/UI_Map.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Sprites/UI_Map/puzzle_BG_1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Sprites/UI_Map/puzzle_BG_1.png.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/Model.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/controller.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/controller/PuzzleNetController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/controller/PuzzleNetController.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service/IPuzzleNetService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service/IPuzzleNetService.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service/PuzzleNetService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service/PuzzleNetService.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/User.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/User/Model.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.DemoMMOUnity/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.DemoMMOUnity/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/AudioClip/Sound/SOUND_HUANLE.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/AudioClip/Sound/SOUND_HUANLE.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/Spine/Caozhang/Caozhang_Atlas.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/Spine/Caozhang/Caozhang_Atlas.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/Spine/Caozhang/Caozhang_Material.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/Spine/Caozhang/Caozhang_Material.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/SpriteAtlasTexture-UI_ACT_5D0_COMMON-2048x1024-fmt34.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/SpriteAtlasTexture-UI_ACT_5D0_COMMON-2048x1024-fmt34.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/SpriteAtlasTexture-UI_SKIN_SELECT-512x512-fmt34.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Packing/SpriteAtlasTexture-UI_SKIN_SELECT-512x512-fmt34.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Prefabs/Map/OperationalInterfacePaenl.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/AssetBundles/UI/Prefabs/Map/OperationalInterfacePaenl.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/UI/GameMain/GameMainView.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/Hoftix/Script/UI/GameMain/GameMainView.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/Net/Script/Net/CsProtocol/Protocol/Map/PuzzleAllConfigRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/Net/Script/Net/CsProtocol/Protocol/Map/PuzzleAllConfigRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/Net/Script/Net/CsProtocol/Protocol/Map/PuzzleAllConfigResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/Net/Script/Net/CsProtocol/Protocol/Map/PuzzleAllConfigResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Game/Script/Framework/Setting/ServerDataManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Game/Script/Framework/Setting/ServerDataManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/DOTweenSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/DOTweenSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ShaderGraphSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ShaderGraphSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,13 +60,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/Game/Hoftix/Script/Module/PuzzleNet/service/PuzzleNetService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Game/Script/Common/CommonManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Game/Script/XLuaScript/Gen/ZJYFrameWork_XLuaScript_XLuaManagerWrap.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Game/Script/XLuaScript/XLuaManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Game/com.focus-creative-games.hybridclr_unity/Editor/Installer/InstallerController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/Assets/Plugins/XLua/x86/libxlua.so.meta" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/Assets/Plugins/XLua/x86/libxlua.so.meta" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://F:/GIthub/MmoGameDemoUnity/DemoMMOUnity/ProjectSettings/ProjectSettings.asset" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -52,6 +71,9 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="SWEA" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2OJt1IrKEkVmCnyCAgA9zxpG7Xc" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -80,8 +102,8 @@
   },
   &quot;keyToStringList&quot;: {
     &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
       &quot;C:\\Users\\Administrator.DESKTOP-RJIHOV7\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
@@ -157,11 +179,6 @@
       <option name="showConsole" value="true" />
       <method v="2" />
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Lua Application.Hotfix.lua" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -274,6 +291,20 @@
       <workItem from="1687362664168" duration="1621000" />
       <workItem from="1687408748208" duration="1224000" />
       <workItem from="1688289878558" duration="1113000" />
+      <workItem from="1689557752160" duration="10395000" />
+      <workItem from="1689583255564" duration="10355000" />
+      <workItem from="1689644590281" duration="22592000" />
+      <workItem from="1689737200676" duration="11511000" />
+      <workItem from="1689868690132" duration="849000" />
+      <workItem from="1689907417920" duration="10443000" />
+      <workItem from="1689956602722" duration="576000" />
+      <workItem from="1690041343638" duration="897000" />
+      <workItem from="1690078770655" duration="11125000" />
+      <workItem from="1690181965013" duration="9865000" />
+      <workItem from="1690264998598" duration="2416000" />
+      <workItem from="1690890299097" duration="3307000" />
+      <workItem from="1690943709784" duration="107000" />
+      <workItem from="1690943834820" duration="24443000" />
     </task>
     <task id="LOCAL-00010" summary="lua修改">
       <created>1683735143583</created>
@@ -597,22 +628,6 @@
       <option name="project" value="LOCAL" />
       <updated>1687277061942</updated>
     </task>
-    <task id="LOCAL-00058" summary="体力修改">
-      <option name="closed" value="true" />
-      <created>1687342450389</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1687342450389</updated>
-    </task>
-    <task id="LOCAL-00059" summary="修复">
-      <option name="closed" value="true" />
-      <created>1687343152227</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1687343152227</updated>
-    </task>
     <task id="LOCAL-00060" summary="Lua代码修复">
       <created>1688290352183</created>
       <option name="number" value="00060" />
@@ -620,7 +635,23 @@
       <option name="project" value="LOCAL" />
       <updated>1688290352183</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00079" summary="Puzzle 协议">
+      <option name="closed" value="true" />
+      <created>1690906133624</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1690906133624</updated>
+    </task>
+    <task id="LOCAL-00080" summary="修改 数据读取函数">
+      <option name="closed" value="true" />
+      <created>1690965042179</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1690965042179</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -643,24 +674,6 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="修改xlua 添加lua脚本" />
-    <MESSAGE value="添加修改" />
-    <MESSAGE value="修改调用loading 界面" />
-    <MESSAGE value="添加场景,包管理修改" />
-    <MESSAGE value="添加" />
-    <MESSAGE value="添加asset文件" />
-    <MESSAGE value="[C#]&#10;  [Game/Hotfix/Script/Common]&#10;    PlayerUserCaCheData 修改注释 格式对齐" />
-    <MESSAGE value="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs &#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件" />
-    <MESSAGE value="[C#]&#10; [Game/Hotfix/Script]&#10;    [GenerateScripts/UIModules]&#10;       LoadingPanelView 屏蔽部分代码，防止报错&#10;    [Modules]&#10;      [Login/Controller]&#10;          LoginController.cs 去掉部分已注释代码&#10;      [ServerConfig/Controller]&#10;         ServerConfigController.cs&#10;           修改 AtServerConfigResponse 函数 把UIComponentManager 调用lua侧的ui通知事件" />
-    <MESSAGE value="移除部分代码，添加修改部分代码" />
-    <MESSAGE value="添加lua代码，修改部分代码" />
-    <MESSAGE value="添加代码 lua" />
-    <MESSAGE value="lua ui 绑定代码生成修改" />
-    <MESSAGE value="修改lua UI 绑定代码生成，为lua UI 添加注解，好供调用" />
-    <MESSAGE value="修改lua UI生成代码" />
-    <MESSAGE value="lua 代码修改" />
-    <MESSAGE value="修改lua代码" />
-    <MESSAGE value="lua 修复" />
     <MESSAGE value="设置" />
     <MESSAGE value="login ui controller" />
     <MESSAGE value="修复bug" />
@@ -668,7 +681,25 @@
     <MESSAGE value="体力修改" />
     <MESSAGE value="修复" />
     <MESSAGE value="Lua代码修复" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lua代码修复" />
+    <MESSAGE value="体力恢复" />
+    <MESSAGE value="体力缓存 修改" />
+    <MESSAGE value="体力使用 数据缓存" />
+    <MESSAGE value="体力缓存" />
+    <MESSAGE value="登录" />
+    <MESSAGE value="添加log显示" />
+    <MESSAGE value="获取体力" />
+    <MESSAGE value="添加注释" />
+    <MESSAGE value="体力" />
+    <MESSAGE value="体力修复" />
+    <MESSAGE value="UserInfo" />
+    <MESSAGE value="Game Main User Info" />
+    <MESSAGE value="GameMainUserToInfo 修改" />
+    <MESSAGE value="GameMain" />
+    <MESSAGE value="请求界面数据" />
+    <MESSAGE value="Puzzle 协议" />
+    <MESSAGE value="修改 数据读取函数" />
+    <MESSAGE value="修改" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -797,11 +828,6 @@
           <line>202</line>
           <properties documentPath="F:\GIthub\MmoGameDemoUnity\DemoMMOUnity\Assets\Game\Editor\Common\GenerateUIScriptEditor.cs" initialLine="190" containingFunctionPresentation="方法 'GenerateLuaUI'" />
           <option name="timeStamp" value="73" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="lua-line">
-          <url>file://$PROJECT_DIR$/Lua/Game/GenerateScripts/UIModules/GameMainUIPanelView.lua</url>
-          <line>3</line>
-          <option name="timeStamp" value="71" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

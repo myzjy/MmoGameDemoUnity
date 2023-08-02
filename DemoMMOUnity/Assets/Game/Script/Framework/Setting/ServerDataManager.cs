@@ -2,6 +2,7 @@
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol;
+using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Setting
@@ -24,6 +25,11 @@ namespace ZJYFrameWork.Setting
 
         public LoginClientCacheData GetLoginClientCacheData => LoginCacheData;
         public RegisterPartClientCacheData GetRegisterPartClientCacheData => RegisterPartClientCacheData;
+
+        /// <summary>
+        /// 地图 关卡配置 config 
+        /// </summary>
+        public List<Puzzle> PuzzleConfigList = new List<Puzzle>();
 
 
         [AfterPostConstruct]
@@ -59,6 +65,16 @@ namespace ZJYFrameWork.Setting
         {
             _itemBaseDataList = new List<ItemBaseData>();
             _itemBaseDataList.AddRange(itemBaseList);
+        }
+
+        /// <summary>
+        /// 保存 地图关卡 配置 list
+        /// </summary>
+        /// <param name="puzzles"></param>
+        public void SetPuzzleConfigList(List<Puzzle> puzzles)
+        {
+            PuzzleConfigList = new List<Puzzle>();
+            PuzzleConfigList.AddRange(puzzles);
         }
     }
 }
