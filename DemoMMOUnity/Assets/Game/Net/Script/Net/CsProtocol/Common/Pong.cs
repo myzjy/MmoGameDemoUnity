@@ -44,7 +44,7 @@ namespace ZJYFrameWork.Net.CsProtocol
             buffer.WriteLong(message.time);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             // var json = StringUtils.BytesToString(buffer.ToBytes());
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);

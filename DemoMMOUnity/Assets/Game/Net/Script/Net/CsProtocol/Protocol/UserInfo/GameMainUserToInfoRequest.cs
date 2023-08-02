@@ -11,6 +11,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
     public class GameMainUserToInfoRequest : Model, IPacket, IReference
     {
         public long uid { get; set; }
+
         public short ProtocolId()
         {
             return 1031;
@@ -45,12 +46,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             }
 
             var request = (GameMainUserToInfoRequest)packet;
-            var packetData = new ServerMessageWrite(request.ProtocolId(),request);
+            var packetData = new ServerMessageWrite(request.ProtocolId(), request);
             var jsonData = JsonConvert.SerializeObject(packetData);
             buffer.WriteString(jsonData);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json = "")
+        public IPacket Read(string json = "")
         {
             if (string.IsNullOrEmpty(json))
             {
@@ -58,7 +59,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             }
 
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            if (dict==null)
+            if (dict == null)
             {
 #if UNITY_EDITOR || (DEVELOP_BUILD&& ENABLE_LOG)
                 Debug.LogError($"");

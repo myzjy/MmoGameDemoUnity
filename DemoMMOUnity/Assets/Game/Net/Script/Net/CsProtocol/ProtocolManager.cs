@@ -100,7 +100,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     if (packetJson != null)
                     {
                         var str = packetJson.ToString();
-                        return data.Read(byteBuffer, str);
+                        return data.Read( str);
                     }
 
                     return null;

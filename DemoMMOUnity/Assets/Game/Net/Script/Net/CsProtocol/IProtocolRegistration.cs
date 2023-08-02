@@ -27,6 +27,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         /// <param name="buffer"></param>
         /// <param name="json">解析的json 字典</param>
         /// <returns></returns>
-        IPacket Read(ByteBuffer buffer, string json = "");
+        IPacket Read(string json = "");
     }
 }

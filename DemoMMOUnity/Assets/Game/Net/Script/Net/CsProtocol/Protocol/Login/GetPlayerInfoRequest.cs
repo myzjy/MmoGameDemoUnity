@@ -39,13 +39,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 return;
             }
 
-            var InfoRequest = (GetPlayerInfoRequest)packet;
-            var message = new ServerMessageWrite(InfoRequest.ProtocolId(), InfoRequest);
+            var infoRequest = (GetPlayerInfoRequest)packet;
+            var message = new ServerMessageWrite(infoRequest.ProtocolId(), infoRequest);
             var json = JsonConvert.SerializeObject(message);
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             return null;
         }

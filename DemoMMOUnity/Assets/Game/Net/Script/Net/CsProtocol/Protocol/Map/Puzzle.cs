@@ -71,27 +71,63 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             buffer.WriteString(jsonStr);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json = "")
+        public IPacket Read(string json = "")
         {
             if (string.IsNullOrEmpty(json))
             {
                 return null;
             }
+
+            var packet = Puzzle.ValueOf();
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            foreach (var (key,value) in dict)
+            foreach (var (key, value) in dict)
             {
                 var keyString = key.ToString();
+                var valueString = value.ToString();
                 switch (keyString)
                 {
-                    case "":
+                    case "id":
                     {
-                        
+                        var id = int.Parse(valueString);
+                        packet.id = id;
+                    }
+                        break;
+                    case "puzzleName":
+                    {
+                        packet.puzzleName = valueString;
+                    }
+                        break;
+                    case "lastPuzzleID":
+                    {
+                        var lastPuzzleID = int.Parse(valueString);
+                        packet.lastPuzzleID = lastPuzzleID;
+                    }
+                        break;
+                    case "nextPuzzleID":
+                    {
+                        var nextPuzzleID = int.Parse(valueString);
+                        packet.nextPuzzleID = nextPuzzleID;
+                    }
+                        break;
+                    case "puzzleRewards":
+                    {
+                        packet.puzzleRewards = valueString;
+                    }
+                        break;
+                    case "icon":
+                    {
+                        packet.icon = valueString;
+                    }
+                        break;
+                    case "resourcePath":
+                    {
+                        packet.resourcePath = valueString;
                     }
                         break;
                 }
             }
 
-            return null;
+            return packet;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             
             // try

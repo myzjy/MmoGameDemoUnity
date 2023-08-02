@@ -17,10 +17,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
          * <p> 注意这里不是时间戳赋值</p>
          */
         public int residueTime { get; set; }
+
         /**
          * 最大体力 用于限制 这个值会随着 等级增长
          */
         public int maximumStrength { get; set; }
+
         /**
          * 我恢复到最大体力的结束时间
          * <p>这里不是时间戳</p>
@@ -84,7 +86,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             var response = ReferenceCache.Acquire<PhysicalPowerUserPropsResponse>();
@@ -100,7 +102,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                             var valueString = value.ToString();
                             response.nowPhysicalPower = int.Parse(valueString);
                         }
-
                     }
                         break;
                     case "residueTime":

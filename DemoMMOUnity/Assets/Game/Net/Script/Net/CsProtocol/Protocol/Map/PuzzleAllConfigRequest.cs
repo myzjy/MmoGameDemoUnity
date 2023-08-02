@@ -1,43 +1,42 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 {
     /// <summary>
-    /// 获取体力
-    /// 
+    /// 地图 所有总信息 request
     /// </summary>
-    public class PhysicalPowerRequest : Model, IPacket, IReference
+    public class PuzzleAllConfigRequest : Model, IPacket, IReference
     {
-        public long uid { get; set; }
+        /// <summary>
+        /// 事件id 也可以
+        /// </summary>
+        public int eventId { get; set; }
 
         public short ProtocolId()
         {
-            return 1023;
+            return 1035;
         }
 
         public void Clear()
         {
-            uid = 0;
+            eventId = 0;
         }
 
-        public static PhysicalPowerRequest ValueOf(long uid)
+        public static PuzzleAllConfigRequest ValueOf()
         {
-            var packet = ReferenceCache.Acquire<PhysicalPowerRequest>();
+            var packet = ReferenceCache.Acquire<PuzzleAllConfigRequest>();
             packet.Clear();
-            packet.uid = uid;
             return packet;
         }
     }
 
-    public class PhysicalPowerRequestRegistration : IProtocolRegistration
+    public class PuzzleAllConfigRequestRegistration : IProtocolRegistration
     {
         public short ProtocolId()
         {
-            return 1023;
+            return 1036;
         }
 
         public void Write(ByteBuffer buffer, IPacket packet)
@@ -47,8 +46,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 return;
             }
 
-            var data = (PhysicalPowerRequest)packet;
-            var packetData = new ServerMessageWrite(protocolId: ProtocolId(), data);
+            var data = (PuzzleAllConfigRequest)packet;
+            var packetData = new ServerMessageWrite(ProtocolId(), data);
             var jsonString = JsonConvert.SerializeObject(packetData);
             buffer.WriteString(jsonString);
         }
@@ -60,8 +59,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 return null;
             }
 
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var packet = ReferenceCache.Acquire<PhysicalPowerRequest>();
+            var packet = PuzzleAllConfigRequest.ValueOf();
             return packet;
         }
     }

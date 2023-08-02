@@ -48,7 +48,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             if (string.IsNullOrEmpty(json))
             {
@@ -72,7 +72,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
                         {
                             var entityObj = bagEntityList[i];
                             var packetData = ProtocolManager.GetProtocol(201);
-                            var packetDataRead = (ItemBaseData)packetData.Read(buffer, entityObj.ToString());
+                            var packetDataRead = (ItemBaseData)packetData.Read(entityObj.ToString());
                             packet.bagItemEntityList.Add(packetDataRead);
                         }
                     }

@@ -70,7 +70,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json)
+        public IPacket Read(string json)
         {
             var packet = BagUserItemData.ValueOf();
             var data = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);

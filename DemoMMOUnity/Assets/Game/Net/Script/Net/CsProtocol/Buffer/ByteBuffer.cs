@@ -869,7 +869,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 IProtocolRegistration protocolRegistration = ProtocolManager.GetProtocol(protocolId);
                 for (int index = 0; index < size; index++)
                 {
-                    array[index] = (T) protocolRegistration.Read(this);
+                    array[index] = (T) protocolRegistration.Read();
                 }
             }
             return array;
@@ -1164,19 +1164,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     protocolRegistration.Write(this, (IPacket) list[index]);
                 }
             }
-        }
-        
-        public List<T> ReadPacketList<T>(short protocolId)
-        {
-            var size = ReadInt();
-            var list = new List<T>(size);
-            if (size <= 0) return list;
-            var protocolRegistration = ProtocolManager.GetProtocol(protocolId);
-            for (var index = 0; index < size; index++)
-            {
-                list.Add((T) protocolRegistration.Read(this));
-            }
-            return list;
         }
     }
 }

@@ -90,7 +90,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(ByteBuffer buffer, string json = "")
+        public IPacket Read(string json = "")
         {
             if (string.IsNullOrEmpty(json))
             {
