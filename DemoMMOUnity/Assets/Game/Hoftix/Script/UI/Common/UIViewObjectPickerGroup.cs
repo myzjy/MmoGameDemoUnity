@@ -9,6 +9,10 @@ namespace ZJYFrameWork.Module.UICommon
     {
         [FormerlySerializedAs("_MinGameObject")] public GameObject minGameObject;
         [FormerlySerializedAs("_MaxGameObject")] public GameObject maxGameObject;
-        public 
+        [FormerlySerializedAs("_SelectGameObject")] public GameObject selectGameObject;
+        /// <summary>
+        /// 物体选择列表
+        /// </summary>
+        private List<GameObject> _gameObjectPackerList;
     }
 }
