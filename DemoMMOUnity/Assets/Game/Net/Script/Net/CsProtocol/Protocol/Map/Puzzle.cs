@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
@@ -15,7 +16,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
         public string puzzleName { get; set; }
         public int lastPuzzleID { get; set; }
         public int nextPuzzleID { get; set; }
-        public string puzzleRewards { get; set; }
+        public PuzzleRewardsData[] puzzleRewards { get; set; }
         public string icon { get; set; }
         public string resourcePath { get; set; }
 
@@ -30,7 +31,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             puzzleName = string.Empty;
             lastPuzzleID = 0;
             nextPuzzleID = 0;
-            puzzleRewards = string.Empty;
+            puzzleRewards = Array.Empty<PuzzleRewardsData>();
             icon = string.Empty;
             resourcePath = string.Empty;
         }
@@ -111,7 +112,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                         break;
                     case "puzzleRewards":
                     {
-                        packet.puzzleRewards = valueString;
+                        // packet.puzzleRewards = valueString;
                     }
                         break;
                     case "icon":
