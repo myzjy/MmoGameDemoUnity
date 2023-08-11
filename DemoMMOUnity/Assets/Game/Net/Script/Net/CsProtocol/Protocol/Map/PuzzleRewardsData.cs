@@ -88,7 +88,23 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                         packet.rewardId = int.Parse(valueStr);
                     }
                         break;
-                    
+                    case "rewardType":
+                    {
+                        var typeNum = int.Parse(valueStr);
+                        packet.rewardType = (PuzzleRewardsEnum)typeNum;
+                    }
+                        break;
+                    case "rewardIcon":
+                    {
+                        packet.rewardIcon = valueStr;
+                    }
+                        break;
+                    case "rewardResource":
+                    {
+                        packet.rewardResource = valueStr;
+                    }
+                        break;
+
                 }
             }
 

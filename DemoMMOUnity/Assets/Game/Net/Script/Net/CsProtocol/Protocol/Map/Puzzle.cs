@@ -112,7 +112,17 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                         break;
                     case "puzzleRewards":
                     {
-                        // packet.puzzleRewards = valueString;
+                        var rewardDict = JsonConvert.DeserializeObject<List<Object>>(valueString);
+                        int length = rewardDict.Count;
+                        packet.puzzleRewards = new PuzzleRewardsData[length];
+                        for (int i = 0; i < length; i++)
+                        {
+                            var data1 = rewardDict[i].ToString();
+                            var packetDataRegistration = ProtocolManager.GetProtocol(203);
+                            var packetDataRead = packetDataRegistration.Read(data1);
+                            var packetData = (PuzzleRewardsData)packetDataRead;
+                            packet.puzzleRewards[i] = packetData;
+                        }
                     }
                         break;
                     case "icon":
