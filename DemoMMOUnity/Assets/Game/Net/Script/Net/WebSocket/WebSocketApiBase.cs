@@ -2,7 +2,7 @@ using System;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.WebSocket
+namespace ZJYFrameWork.Net.Websocket
 {
     public abstract class WebSocketApiBase<wbRequest,wbResponse,wbError>
     where wbRequest:Model,IPacket,IReference
