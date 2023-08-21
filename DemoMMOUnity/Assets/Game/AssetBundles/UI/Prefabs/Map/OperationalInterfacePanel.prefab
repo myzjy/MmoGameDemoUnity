@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 5345230215097817415}
   - component: {fileID: 4489561345152143145}
   m_Layer: 0
-  m_Name: OperationalInterfacePaenl
+  m_Name: OperationalInterfacePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
