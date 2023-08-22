@@ -1,3 +1,4 @@
+using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
@@ -22,6 +23,7 @@ namespace ZJYFrameWork.Module.PuzzleNet.controller
         {
             _serverDataManager.SetPuzzleConfigList(response.PuzzleList);
             //请求结束了 打开界面
+            SpringContext.GetBean<UIOperationalInterfaceController>().Open();
         }
     }
 }
