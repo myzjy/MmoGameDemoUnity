@@ -8,6 +8,7 @@ namespace ZJYFrameWork.UISerializable
     {
         public UnityEngine.UI.Button ReturnButton=null;
 		public UnityEngine.GameObject MapGuideObj=null;
+		public ZJYFrameWork.Module.UICommon.AdaptiveReuseGrid Grid=null;
 		
 
 
@@ -15,6 +16,7 @@ namespace ZJYFrameWork.UISerializable
         {
             ReturnButton=_view.GetObjType<UnityEngine.UI.Button>("ReturnButton");
 			MapGuideObj=_view.GetObjType<UnityEngine.GameObject>("MapGuideObj");
+			Grid=_view.GetObjType<ZJYFrameWork.Module.UICommon.AdaptiveReuseGrid>("Grid");
 			
         }
     }
