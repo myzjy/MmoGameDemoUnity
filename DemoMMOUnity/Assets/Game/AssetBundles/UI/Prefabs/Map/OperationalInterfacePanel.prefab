@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2250402025262144774
 RectTransform:
   m_ObjectHideFlags: 0
@@ -309,6 +309,7 @@ GameObject:
   - component: {fileID: 8103639371224474649}
   - component: {fileID: 208916766056513624}
   - component: {fileID: 3347922997340874894}
+  - component: {fileID: 3634291240858927741}
   m_Layer: 0
   m_Name: MapGuideButton
   m_TagString: Untagged
@@ -404,6 +405,20 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3634291240858927741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3011422106185424778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs: []
+  maskIndex: 0
 --- !u!1 &3438410663726145870
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,6 +1032,7 @@ MonoBehaviour:
   dataViewList:
   - {fileID: 6249816744069064681}
   - {fileID: 5990323784120510540}
+  - {fileID: 8063019406453467975}
   mSelfObj: {fileID: 8049313778701752039}
   MTransform: {fileID: 7284318727684505491}
   MObjCanvasGroup: {fileID: 5345230215097817415}
@@ -1030,6 +1046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2630807398267215269}
   - component: {fileID: 3118172435041409671}
+  - component: {fileID: 8063019406453467975}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -1079,6 +1096,23 @@ MonoBehaviour:
   m_FixedColumnCount: 1
   m_FixedRowCount: 1
   isOpenWuJin: 1
+--- !u!114 &8063019406453467975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8615631521290141831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: Grid
+    UI_Serializable_Obj: {fileID: 3118172435041409671}
+    Path: OperationalInterfacePanel/mapGuideGrid/Viewport/Content
+  maskIndex: 2
 --- !u!1 &8685980851484888874
 GameObject:
   m_ObjectHideFlags: 0

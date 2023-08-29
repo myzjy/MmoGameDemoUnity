@@ -1,3 +1,4 @@
+using UnityEngine.UI;
 using ZJYFrameWork.Module.UICommon;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
@@ -29,6 +30,13 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         private void OnItemOperationalGrid(GridItem item)
         {
             item.itemData.gameObject.SetActive(true);
+            var list = SpringContext.GetBean<ServerDataManager>().PuzzleConfigList;
+
+            var data = list[item.Index];
+            var objectKey = item.itemData;
+            var mapGuideNameText = objectKey.GetObjType<Text>("MapGuideName_Text");
+            var MapGuideButton = objectKey.GetObjType<Button>("MapGuideButton");
+            mapGuideNameText.text = data.puzzleName;
         }
 
         public override void OnHide()
