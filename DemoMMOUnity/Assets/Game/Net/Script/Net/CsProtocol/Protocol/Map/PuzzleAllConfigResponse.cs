@@ -64,7 +64,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             dict.TryGetValue("puzzleConfigList", out var listObj);
             if (listObj == null) return packet;
             var dictString = listObj.ToString();
-            var packetDict = JsonConvert.DeserializeObject<List<object>>(json);
+            var packetDict = JsonConvert.DeserializeObject<List<object>>(dictString);
             packet.Clear();
             int length = packetDict.Count;
             for (int i = 0; i < length; i++)

@@ -65,10 +65,10 @@ namespace ZJYFrameWork.Scheduler
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {
                 minuteSchedulerTimestamp = DateTimeUtil.Now();
-                if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
-                {
-                    EventBus.AsyncSubmit(PhysicalPowerSecondsEvent.ValueOf(now));
-                }
+                // if (SpringContext.GetBean<PlayerUserCaCheData>().Uid > 0)
+                // {
+                //     EventBus.AsyncSubmit(PhysicalPowerSecondsEvent.ValueOf(now));
+                // }
 
                 //异步请求最新
                 EventBus.AsyncSubmit(MinuteSchedulerAsyncEvent.ValueOf());

@@ -1,4 +1,5 @@
 using ZJYFrameWork.Game.Framwork;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable;
 
 namespace ZJYFrameWork.Hotfix.UISerializable
@@ -14,6 +15,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         /// </summary>
         public const string CLOSE_OPERATIONAL_INTERFACE_VIEW="CLOSE_OPERATIONAL_INTERFACE_VIEW";
     }
+    [Bean]
     public class UIOperationalInterfacePanelModelView:UIBaseModule<UIOperationalInterfacePanelView,OperationalInterfacePanelView>
     {
         public override string PrefabName()

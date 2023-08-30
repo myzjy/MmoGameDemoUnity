@@ -97,6 +97,13 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
 #if DEVELOP_BUILD || UNITY_EDITOR
             var message = StringUtils.BytesToString(data);
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
+            // var jsonDict = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
+            dict.TryGetValue("protocolId", out var protocolIdStr);
+            if (protocolIdStr!=null&&protocolIdStr.ToString() == "104")
+            {
+                return;
+            }
             StringBuilder sb = new StringBuilder();
             sb.Append(
                 $"[ApiResponse] {webSocket.InternalRequest.MethodType.ToString().ToUpper()} {webSocket.InternalRequest.Uri.AbsoluteUri}\n");

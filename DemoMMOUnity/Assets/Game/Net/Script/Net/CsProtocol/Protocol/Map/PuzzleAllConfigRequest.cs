@@ -36,7 +36,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
     {
         public short ProtocolId()
         {
-            return 1036;
+            return 1035;
         }
 
         public void Write(ByteBuffer buffer, IPacket packet)

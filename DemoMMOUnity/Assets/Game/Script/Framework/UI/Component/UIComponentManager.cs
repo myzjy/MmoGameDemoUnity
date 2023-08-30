@@ -20,6 +20,7 @@ namespace ZJYFrameWork.UISerializable
         {
             var loginUI = SpringContext.GetBean<LoginUIModelView>();
             var gameUIModelView = SpringContext.GetBean<GameMainModelView>();
+            var operationalInterfacePanelModelView = SpringContext.GetBean<UIOperationalInterfacePanelModelView>();
             foreach (var str in loginUI.Notification())
             {
                 UIEventNotificationDict.TryGetValue(str, out var action);
@@ -45,6 +46,20 @@ namespace ZJYFrameWork.UISerializable
                 {
                     throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
                         gameUIModelView.GetType().Name, str));
+                }
+            }
+
+            foreach (var str in operationalInterfacePanelModelView.Notification())
+            {
+                UIEventNotificationDict.TryGetValue(str, out var action);
+                if (action == null)
+                {
+                    UIEventNotificationDict.Add(str, operationalInterfacePanelModelView.NotificationHandler);
+                }
+                else
+                {
+                    throw new Exception(StringUtils.Format("[class:{}] [Notification:{}] 有重复的事件id",
+                        operationalInterfacePanelModelView.GetType().Name, str));
                 }
             }
         }
