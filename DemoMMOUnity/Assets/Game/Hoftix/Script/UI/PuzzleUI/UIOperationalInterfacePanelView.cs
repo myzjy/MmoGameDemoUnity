@@ -1,3 +1,4 @@
+using GameUtil;
 using UnityEngine.UI;
 using ZJYFrameWork.Module.UICommon;
 using ZJYFrameWork.Setting;
@@ -15,6 +16,12 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             viewPanel.Grid.OnItemShow = OnItemOperationalGrid;
             viewPanel.Grid.itemCount = 0;
             viewPanel.Grid.RefrashItemGrid();
+            viewPanel.ReturnButton.SetListener(() =>
+            {
+                viewPanel.Grid.itemCount = 0;
+                viewPanel.Grid.RefrashItemGrid();
+                OnHide();
+            });
             OnShow();
         }
 
@@ -37,6 +44,10 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             var mapGuideNameText = objectKey.GetObjType<Text>("MapGuideName_Text");
             var MapGuideButton = objectKey.GetObjType<Button>("MapGuideButton");
             mapGuideNameText.text = data.puzzleName;
+            MapGuideButton.SetListener(() =>
+            {
+                
+            });
         }
 
         public override void OnHide()
