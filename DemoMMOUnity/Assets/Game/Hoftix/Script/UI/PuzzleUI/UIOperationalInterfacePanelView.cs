@@ -46,7 +46,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             mapGuideNameText.text = data.puzzleName;
             MapGuideButton.SetListener(() =>
             {
-                
+                // 点击章节
             });
         }
 
