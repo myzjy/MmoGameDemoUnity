@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Net.Core;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -64,6 +67,79 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             packet.maximusResidueEndTime = maximusResidueEndTime;
             packet.residueNowTime = residueNowTime;
             return packet;
+        }
+    }
+        public class PPhysicalPowerResponseRegistration : IProtocolRegistration
+    {
+        public short ProtocolId()
+        {
+            return 1024;
+        }
+
+        public void Write(ByteBuffer buffer, IPacket packet)
+        {
+            if (packet == null)
+            {
+                return;
+            }
+
+            var packetData = (PhysicalPowerResponse)packet;
+            var message = new ServerMessageWrite(packetData.ProtocolId(), packetData);
+            var json = JsonConvert.SerializeObject(message);
+            buffer.WriteString(json);
+        }
+
+        public IPacket Read(string json = "")
+        {
+            if (string.IsNullOrEmpty(json))
+            {
+                return null;
+            }
+
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var response = ReferenceCache.Acquire<PhysicalPowerResponse>();
+            foreach (var (key, value) in dict)
+            {
+                var keyString = key.ToString();
+                switch (keyString)
+                {
+                    case "nowPhysicalPower":
+                    {
+                        if (value != null)
+                        {
+                            var valueString = value.ToString();
+                            response.nowPhysicalPower = int.Parse(valueString);
+                        }
+                    }
+                        break;
+                    case "residueTime":
+                    {
+                        var valueString = value.ToString();
+                        response.residueTime = int.Parse(valueString);
+                    }
+                        break;
+                    case "maximumStrength":
+                    {
+                        var valueString = value.ToString();
+                        response.maximumStrength = int.Parse(valueString);
+                    }
+                        break;
+                    case "maximusResidueEndTime":
+                    {
+                        var valueString = value.ToString();
+                        response.maximusResidueEndTime = int.Parse(valueString);
+                    }
+                        break;
+                    case "residueNowTime":
+                    {
+                        var valueString = value.ToString();
+                        response.residueNowTime = long.Parse(valueString);
+                    }
+                        break;
+                }
+            }
+
+            return response;
         }
     }
 }
