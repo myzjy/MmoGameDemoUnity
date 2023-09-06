@@ -31,6 +31,8 @@ namespace ZJYFrameWork.Setting
         /// </summary>
         public List<Puzzle> PuzzleConfigList = new List<Puzzle>();
 
+        public List<PuzzleChapter> PuzzleChapterConfigList = new List<PuzzleChapter>();
+
 
         [AfterPostConstruct]
         public void Init()
