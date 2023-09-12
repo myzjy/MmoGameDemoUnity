@@ -22,6 +22,7 @@ namespace ZJYFrameWork.Module.PuzzleNet.controller
         public void AtPuzzleAllConfigResponse(PuzzleAllConfigResponse response)
         {
             _serverDataManager.SetPuzzleConfigList(response.PuzzleList);
+            _serverDataManager.SetPuzzleChapterConfigList(response.PuzzleChaptersList);
             //请求结束了 打开界面
             SpringContext.GetBean<UIOperationalInterfaceController>().Open();
         }

@@ -28,7 +28,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         public override void OnShow()
         {
-            var list = SpringContext.GetBean<ServerDataManager>().PuzzleConfigList;
+            var list = SpringContext.GetBean<ServerDataManager>().PuzzleChapterConfigList;
             viewPanel.Grid.itemCount = list.Count;
             //刷新
             viewPanel.Grid.RefrashItemGrid();
@@ -37,13 +37,13 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         private void OnItemOperationalGrid(GridItem item)
         {
             item.itemData.gameObject.SetActive(true);
-            var list = SpringContext.GetBean<ServerDataManager>().PuzzleConfigList;
+            var list = SpringContext.GetBean<ServerDataManager>().PuzzleChapterConfigList;
 
             var data = list[item.Index];
             var objectKey = item.itemData;
             var mapGuideNameText = objectKey.GetObjType<Text>("MapGuideName_Text");
             var MapGuideButton = objectKey.GetObjType<Button>("MapGuideButton");
-            mapGuideNameText.text = data.puzzleName;
+            mapGuideNameText.text = data.chapterName;
             MapGuideButton.SetListener(() =>
             {
                 // 点击章节

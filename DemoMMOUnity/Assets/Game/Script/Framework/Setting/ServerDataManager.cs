@@ -78,5 +78,11 @@ namespace ZJYFrameWork.Setting
             PuzzleConfigList = new List<Puzzle>();
             PuzzleConfigList.AddRange(puzzles);
         }
+
+        public void SetPuzzleChapterConfigList(List<PuzzleChapter> puzzleChapters)
+        {
+            PuzzleChapterConfigList = new List<PuzzleChapter>();
+            PuzzleChapterConfigList.AddRange(puzzleChapters);
+        }
     }
 }
