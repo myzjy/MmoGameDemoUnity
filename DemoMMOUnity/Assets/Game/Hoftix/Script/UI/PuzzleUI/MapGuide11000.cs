@@ -2,17 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGuide11000 : MonoBehaviour
+namespace ZJYFrameWork.Hotfix.UISerializable
 {
-    // Start is called before the first frame update
-    void Start()
+    public class MapGuide11000 : MapGuideBaseService
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+      
     }
 }
