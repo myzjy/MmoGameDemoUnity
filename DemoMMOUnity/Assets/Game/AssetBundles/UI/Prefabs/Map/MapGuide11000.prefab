@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7239359679958718687}
   - component: {fileID: 5167172221591754753}
   - component: {fileID: -367328268106639913}
+  - component: {fileID: 806214659918834494}
   m_Layer: 0
   m_Name: MapGuide11000
   m_TagString: Untagged
@@ -61,10 +62,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d51f3e12bada403ca980a96ce4126294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  dataViewList:
+  - {fileID: 6699387369583468851}
   mSelfObj: {fileID: 316879674057737899}
   MTransform: {fileID: 7239359679958718687}
-  MObjCanvasGroup: {fileID: 0}
+  MObjCanvasGroup: {fileID: 806214659918834494}
+--- !u!225 &806214659918834494
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 316879674057737899}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &921426413733815775
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,6 +204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5170142275009676713}
   - component: {fileID: 5429906236074258690}
+  - component: {fileID: 954652407775207602}
   m_Layer: 0
   m_Name: MapGuideUI
   m_TagString: Untagged
@@ -229,6 +244,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 802764a0891667b428eed1f2f2f219f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BgTopCanvasGroup: {fileID: 806214659918834494}
+--- !u!114 &954652407775207602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4271005310527708357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: MapGuideUI_MapGuide11000
+    UI_Serializable_Obj: {fileID: 5429906236074258690}
+    Path: MapGuide11000/MapGuideUI
+  maskIndex: 2
 --- !u!1 &5021810359584646345
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,6 +273,8 @@ GameObject:
   - component: {fileID: 6879495676508184858}
   - component: {fileID: 6098786035546748893}
   - component: {fileID: 3942761346066473557}
+  - component: {fileID: 8531870683815184907}
+  - component: {fileID: 6699387369583468851}
   m_Layer: 0
   m_Name: Grid01
   m_TagString: Untagged
@@ -305,6 +340,67 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8531870683815184907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5021810359584646345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 3942761346066473557}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6699387369583468851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5021810359584646345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: Grid01_Button
+    UI_Serializable_Obj: {fileID: 8531870683815184907}
+    Path: MapGuide11000/ScrollMap/Grid01
+  maskIndex: 8
 --- !u!1 &5269560361004789007
 GameObject:
   m_ObjectHideFlags: 0
