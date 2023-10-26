@@ -14,6 +14,7 @@
 // using ZJYFrameWork.Base.Model;
 // using ZJYFrameWork.Event;
 // using ZJYFrameWork.Net.Core.Model;
+// using ZJYFrameWork.Setting;
 // using ZJYFrameWork.Spring.Core;
 // using UNIT = ZJYFrameWork.AssetBundles.Bundle.UNIT;
 //
@@ -26,7 +27,6 @@
 //
 //         private const int OneMegaBytes = 1024 * 1024;
 //         private readonly TaskPool<DownloadTask> taskPool = new TaskPool<DownloadTask>();
-//
 //         /// <summary>
 //         /// 下载接口
 //         /// </summary>
