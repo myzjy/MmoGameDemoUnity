@@ -2,10 +2,13 @@
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.I18n;
+using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.Module.Register.Controller
 {
@@ -25,6 +28,27 @@ namespace ZJYFrameWork.Module.Register.Controller
 #endif
             //重新打开登录面板
             SpringContext.GetBean<LoginUIController>().OnInit();
+        }
+
+        public void AtRegisterRequest()
+        {
+            UserAccountRegisterApi registerApi = new UserAccountRegisterApi
+            {
+                onBeforeSend = () => { CommonController.Instance.loadingRotate.OnShow(); },
+                onComplete = () => { CommonController.Instance.loadingRotate.OnClose(); },
+                onSuccess = res =>
+                {
+                    //重新打开登录面板
+                    SpringContext.GetBean<LoginUIController>().OnInit();
+                },
+                Param =
+                {
+                    Account = RegisterCacheData.Account,
+                    Password = RegisterCacheData.Password,
+                    AffirmPassword = RegisterCacheData.AffirmPassword
+                }
+            };
+            SpringContext.GetBean<NetworkManager>().Request(registerApi);
         }
     }
 }

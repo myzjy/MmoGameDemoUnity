@@ -5,6 +5,7 @@ using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.Module.Register.Controller;
 using ZJYFrameWork.Module.Register.Service;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Setting;
@@ -91,25 +92,7 @@ namespace ZJYFrameWork.UISerializable
             SpringContext.GetBean<ServerDataManager>()
                 .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
 #if HTTP_SEND_OPEN
-            UserAccountRegisterApi registerApi = new UserAccountRegisterApi()
-            {
-                onBeforeSend = () => { CommonController.Instance.loadingRotate.OnShow(); },
-                onComplete = () => { CommonController.Instance.loadingRotate.OnClose(); },
-                onSuccess = res =>
-                {
-                    //重新打开登录面板
-                    SpringContext.GetBean<LoginUIController>().OnInit();
-                },
-                Param =
-                {
-                    Account = accountString,
-                    Password = passwordString
-                }
-            };
-            registerApi.Param.Account = accountString;
-            registerApi.Param.Password = passwordString;
-            registerApi.Param.AffirmPassword = affirmPasswordString;
-            SpringContext.GetBean<NetworkManager>().Request(registerApi);
+            SpringContext.GetBean<RegisterController>().AtRegisterRequest();
 #else
             SpringContext.GetBean<IRegisterService>().RegisterAccount();
 #endif
