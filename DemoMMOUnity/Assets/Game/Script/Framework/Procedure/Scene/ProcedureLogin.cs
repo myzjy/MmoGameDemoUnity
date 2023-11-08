@@ -1,6 +1,8 @@
-﻿using ZJYFrameWork.Module.Login.Service;
+﻿using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.Module.Login.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Procedure.Scene
@@ -14,10 +16,13 @@ namespace ZJYFrameWork.Procedure.Scene
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
-            // CommonController.Instance.snackbar.OpenUIDataLoadingPanel("", 0, 1);
-
+#if HTTP_SEND_OPEN
+            CommonController.Instance.snackbar.CloseUIDataLoadingPanel();
+            UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
+#else
             CommonController.Instance.snackbar.OpenUIDataScenePanel(0, 1);
             loginService.ConnectToGateway();
+#endif
         }
     }
 }

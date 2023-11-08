@@ -1,12 +1,17 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Register.Service;
+using ZJYFrameWork.Net;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -85,13 +90,33 @@ namespace ZJYFrameWork.UISerializable
             var affirmPasswordString = registerPasswordInputField.text;
             SpringContext.GetBean<ServerDataManager>()
                 .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
+#if HTTP_SEND_OPEN
+            UserAccountRegisterApi registerApi = new UserAccountRegisterApi()
+            {
+                onBeforeSend = () => { CommonController.Instance.loadingRotate.OnShow(); },
+                onComplete = () => { CommonController.Instance.loadingRotate.OnClose(); },
+                onSuccess = res =>
+                {
+                    //重新打开登录面板
+                    SpringContext.GetBean<LoginUIController>().OnInit();
+                },
+                Param =
+                {
+                    Account = accountString,
+                    Password = passwordString
+                }
+            };
+            registerApi.Param.Account = accountString;
+            registerApi.Param.Password = passwordString;
+            registerApi.Param.AffirmPassword = affirmPasswordString;
+            SpringContext.GetBean<NetworkManager>().Request(registerApi);
+#else
             SpringContext.GetBean<IRegisterService>().RegisterAccount();
-          
+#endif
         }
 
         public void OnShow()
         {
-           
             rootCanvasGroup.DOKill();
             rootCanvasGroup.DOFade(0f, 0f);
             rootCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
@@ -110,7 +135,7 @@ namespace ZJYFrameWork.UISerializable
             {
                 return;
             }
-            
+
             rootCanvasGroup.DOKill();
             rootCanvasGroup.DOFade(0f, 0f);
             rootCanvasGroup.DOFade(0f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)

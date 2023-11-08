@@ -116,7 +116,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         [EventReceiver]
         public void OnMinuteSchedulerAsyncEvent(MinuteSchedulerAsyncEvent eve)
         {
-            netManager.Send(Ping.ValueOf());
+            // netManager.Send(Ping.ValueOf());
         }
 
         [PacketReceiver]
