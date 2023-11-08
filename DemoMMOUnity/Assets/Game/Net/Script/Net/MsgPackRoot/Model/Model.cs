@@ -45,7 +45,7 @@ namespace ZJYFrameWork.Net
         /// <summary>
         /// JSONにシリアライズ
         /// </summary>
-        public virtual string ToJson()
+        public virtual string ToJson(bool isPretty = false)
         {
             var str = JsonConvert.SerializeObject(this);
             JsonSerializer serializer = new JsonSerializer();

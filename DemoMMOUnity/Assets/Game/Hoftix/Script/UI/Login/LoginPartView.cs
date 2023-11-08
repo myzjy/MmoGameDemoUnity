@@ -3,12 +3,16 @@ using GameUtil;
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Common;
+using ZJYFrameWork.Constant;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Login.Service;
+using ZJYFrameWork.Net;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
+using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.UISerializable
 {
@@ -84,7 +88,38 @@ namespace ZJYFrameWork.UISerializable
             var accountString = account.text;
             var passwordString = password.text;
             SpringContext.GetBean<ServerDataManager>().SetCacheAccountAndPassword(accountString, passwordString);
+#if HTTP_SEND_OPEN
+            UserAccountLoginApi loginApi = new UserAccountLoginApi
+            {
+                onBeforeSend = () => { CommonController.Instance.loadingRotate.OnShow(); },
+                onComplete = () => { CommonController.Instance.loadingRotate.OnClose(); },
+                onSuccess = res =>
+                {
+                    var token = res.Token;
+                    var uid = res.Uid;
+                    var userName = res.UserName;
+                    SpringContext.GetBean<LoginClientCacheData>().loginFlag = true;
+                    SpringContext.GetBean<PlayerUserCaCheData>().userName = res.UserName;
+                    SpringContext.GetBean<PlayerUserCaCheData>().Uid = res.Uid;
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+                    Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName, token, uid);
+#endif
+                    SpringContext.GetBean<SettingManager>().SetString(GameConstant.SETTING_LOGIN_TOKEN, token);
+
+                    //只是关闭 输入账号
+                    SpringContext.GetBean<LoginUIController>().OnHide();
+                    SpringContext.GetBean<LoginUIController>().loginTapToStartView.Show();
+                },
+                Param =
+                {
+                    Account = accountString,
+                    Password = passwordString
+                }
+            };
+            SpringContext.GetBean<NetworkManager>().Request(loginApi);
+#else
             SpringContext.GetBean<ILoginService>().LoginByAccount();
+#endif
         }
 
         public void Show()

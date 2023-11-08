@@ -79,12 +79,14 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public static IPacket Read(ByteBuffer byteBuffer)
         {
-            ;
+        
+           
             var json = StringUtils.BytesToString(byteBuffer.ToBytes());
 
             try
             {
                 var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+              
                 // var jsonDict = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
                 dict.TryGetValue("protocolId", out var protocolIdStr);
                 if (protocolIdStr != null)

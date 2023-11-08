@@ -55,6 +55,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             {
                 return;
             }
+
             var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
             buttonTapToStartCanvasGroup.DOFade(0f, 1f).SetEase(Ease.Linear).OnComplete(() =>
             {
@@ -76,23 +77,27 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             //
             // sequence.AppendCallback(() =>
             // {
-                gameObject.SetActive(true);
+            gameObject.SetActive(true);
 
-                CommonController.Instance.loadingRotate.OnClose();
-                var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
-                buttonTapToStartCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).OnComplete(() =>
-                {
-                    buttonTapToStartCanvasGroup.interactable = true;
-                    buttonTapToStartCanvasGroup.ignoreParentGroups = true;
-                    buttonTapToStartCanvasGroup.blocksRaycasts = true;
-                    buttonTapToStartCanvasGroup.interactable = true;
-                }).Play();
+            CommonController.Instance.loadingRotate.OnClose();
+            var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
+            buttonTapToStartCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                buttonTapToStartCanvasGroup.interactable = true;
+                buttonTapToStartCanvasGroup.ignoreParentGroups = true;
+                buttonTapToStartCanvasGroup.blocksRaycasts = true;
+                buttonTapToStartCanvasGroup.interactable = true;
+            }).Play();
             // });
         }
 
         protected virtual void StartGame()
         {
+#if HTTP_SEND_OPEN
+            
+#else
             SpringContext.GetBean<ILoginService>().LoginTapToStart();
+#endif
         }
 
         public void LoginStartGame()

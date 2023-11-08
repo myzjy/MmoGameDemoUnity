@@ -40,7 +40,8 @@ public class SymbolWindows : EditorWindow
         new SymbolData("ENABLE_DEBUG_AND_ABOVE_LOG", ""),
         new SymbolData("ASSET_BUNDLE_DEVELOP_EDITOR", "AssetBundles编辑模式"),
         new SymbolData("HOTFIX_ENABLE", "xlua"),
-        new SymbolData("ENABLE_LOG_NETWORK","网络相关 log")
+        new SymbolData("ENABLE_LOG_NETWORK","网络相关 log"),
+        new SymbolData("HTTP_SEND_OPEN","开启Http 请求"),
 
     };
 
