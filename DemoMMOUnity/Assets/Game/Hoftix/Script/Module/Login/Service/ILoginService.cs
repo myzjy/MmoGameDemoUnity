@@ -31,6 +31,5 @@ namespace ZJYFrameWork.Module.Login.Service
         /// 请求 User 相关数据信息
         /// </summary>
         void GetServerGameMainInfo();
-        void GetServerGameMainInfo(Action responseAction);
     }
 }

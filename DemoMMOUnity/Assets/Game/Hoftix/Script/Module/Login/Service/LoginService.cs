@@ -76,11 +76,5 @@ namespace ZJYFrameWork.Module.Login.Service
             var service = GameMainUserToInfoRequest.ValueOf(UID);
             netManager.Send(service);
         }
-
-        public void GetServerGameMainInfo(Action responseAction)
-        {
-            SpringContext.GetBean<LoginController>().SetGameMainUserInfoAction(responseAction);
-            GetServerGameMainInfo();
-        }
     }
 }

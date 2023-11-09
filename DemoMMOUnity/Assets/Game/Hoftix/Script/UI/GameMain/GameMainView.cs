@@ -136,12 +136,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             GetSelfUIView.OnShow();
             //打开GameMain 界面
             SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
-            SpringContext.GetBean<ILoginService>().GetServerGameMainInfo(() =>
-            {
-                var loginCacheData = SpringContext.GetBean<LoginClientCacheData>();
-                SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(loginCacheData);
-
-            });
+            SpringContext.GetBean<ILoginService>().GetServerGameMainInfo();
         }
     }
 }
