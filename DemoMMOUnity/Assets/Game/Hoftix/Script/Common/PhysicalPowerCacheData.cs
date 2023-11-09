@@ -96,6 +96,7 @@ namespace ZJYFrameWork.Hotfix.Common
             setMaximusResidueEndTime(response.maximusResidueEndTime);
             setResidueNowTime(residueNowTime: response.residueNowTime);
         }
+
         public void SetPhysicalPowerUserPropsResponse(PhysicalPowerUserPropsResponse response)
         {
             setResidueTime(residueTime: response.residueTime);
@@ -104,6 +105,14 @@ namespace ZJYFrameWork.Hotfix.Common
             setMaximusResidueEndTime(response.maximusResidueEndTime);
             setResidueNowTime(residueNowTime: response.residueNowTime);
         }
-        
+
+        public void SetPhysicalPowerResponse(PhysicalPowerResponse response)
+        {
+            setResidueTime(residueTime: response.residueTime);
+            setMaximumStrength(response.maximumStrength);
+            setNowPhysicalPower(response.nowPhysicalPower);
+            setMaximusResidueEndTime(response.maximusResidueEndTime);
+            setResidueNowTime(residueNowTime: response.residueNowTime);
+        }
     }
 }

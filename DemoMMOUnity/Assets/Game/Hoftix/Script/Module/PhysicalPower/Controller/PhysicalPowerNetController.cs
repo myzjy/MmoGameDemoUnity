@@ -36,31 +36,6 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
             _gameMainUIController.SetPhysicalPowerText(response.nowPhysicalPower, response.maximumStrength);
         }
 
-        private UnityEvent<PhysicalPowerResponse> _physicalPowerResponseAction;
-
-        public void AddPhysicalPowerResponseAction(UnityAction<PhysicalPowerResponse> res)
-        {
-            _physicalPowerResponseAction ??= new UnityEvent<PhysicalPowerResponse>();
-            _physicalPowerResponseAction.AddListener(res);
-        }
-
-        public void RemovePhysicalPowerResponseAction(UnityAction<PhysicalPowerResponse> res)
-        {
-            if (_physicalPowerResponseAction == null)
-            {
-                return;
-            }
-
-            _physicalPowerResponseAction.RemoveListener(res);
-        }
-
-        /// <summary>
-        /// 移除事件
-        /// </summary>
-        public void RemovesPhysicalPowerResponseAction()
-        {
-            _physicalPowerResponseAction.RemoveAllListeners();
-        }
 
         /// <summary>
         /// 体力查看 显示
@@ -69,7 +44,8 @@ namespace ZJYFrameWork.Module.PhysicalPower.Controller
         [PacketReceiver]
         public void AtPhysicalPowerResponse(PhysicalPowerResponse powerResponse)
         {
-            _physicalPowerResponseAction?.Invoke(powerResponse);
+            _cacheData.SetPhysicalPowerResponse(powerResponse);
+            _gameMainUIController.SetPhysicalPowerText(powerResponse.nowPhysicalPower, powerResponse.maximumStrength);
         }
 
 

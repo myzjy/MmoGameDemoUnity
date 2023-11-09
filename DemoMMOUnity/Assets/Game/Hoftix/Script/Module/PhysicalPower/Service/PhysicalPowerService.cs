@@ -29,11 +29,9 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
             _netManager.Send(request);
         }
 
-        public void SendPhysicalPowerRequest(UnityAction<PhysicalPowerResponse> action)
+        public void SendPhysicalPowerRequest()
         {
             var uid = _caCheData.Uid;
-            _physicalPowerNetController.RemovePhysicalPowerResponseAction(action);
-            _physicalPowerNetController.AddPhysicalPowerResponseAction(action);
             var request = PhysicalPowerRequest.ValueOf(uid);
             _netManager.Send(request);
         }

@@ -175,11 +175,12 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
                     SpringContext.GetBean<LoginClientCacheData>().loginFlag = true;
                     SpringContext.GetBean<PlayerUserCaCheData>().userName = res.UserName;
                     SpringContext.GetBean<PlayerUserCaCheData>().Uid = res.Uid;
+                    
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName, token, uid);
 #endif
                     SpringContext.GetBean<SettingManager>().SetString(GameConstant.SETTING_LOGIN_TOKEN, token);
-
+                    SpringContext.GetBean<NetworkManager>().SetAuthToken(token);
                     //只是关闭 输入账号
                     SpringContext.GetBean<LoginUIController>().OnHide();
                     SpringContext.GetBean<LoginUIController>().loginTapToStartView.Show();

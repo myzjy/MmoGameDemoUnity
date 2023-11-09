@@ -21,6 +21,6 @@ namespace ZJYFrameWork.Module.PhysicalPower.Service
         /// <summary>
         /// 请求服务器体力信息
         /// </summary>
-        void SendPhysicalPowerRequest(UnityAction<PhysicalPowerResponse> action);
+        void SendPhysicalPowerRequest();
     }
 }

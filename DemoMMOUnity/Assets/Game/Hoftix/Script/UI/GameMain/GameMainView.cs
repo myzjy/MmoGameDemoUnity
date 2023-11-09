@@ -30,6 +30,8 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
 
         public override void OnInit()
         {
+            SpringContext.GetBean<GameMainUIController>().SetGameMainView(this);
+
             //转换水晶
             GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject.GetObjType<Button>("click");
             //普通水晶 数量显示
@@ -40,15 +42,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             GemText = viewPanel.Gem_UISerializableKeyObject.GetObjType<Text>("numText");
             GoldCoinText = viewPanel.glod_UISerializableKeyObject.GetObjType<Text>("numText");
             GoldTimButton = viewPanel.glod_UISerializableKeyObject.GetObjType<Button>("click");
-//             SpringContext.GetBean<Messenger>().Subscribe("ui.gold", (string res) =>
-//             {
-// #if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
-//                 Debug.Log("调用刷新显示金币");
-// #endif
-//                 SetGoldCoinShow(res);
-//                 //显示金币
-//             });
-// viewPanel.TimeShow_Text
+
 
             viewPanel.headImgClick.SetListener(() =>
             {
@@ -70,7 +64,6 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
                 //兑换金币
             });
             OnShow();
-            SpringContext.GetBean<GameMainUIController>().SetGameMainView(this);
         }
 
         /// <summary>
@@ -142,10 +135,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         {
             GetSelfUIView.OnShow();
             //打开GameMain 界面
-            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest(res =>
-            {
-                SetPhysicalPowerText(res.nowPhysicalPower, res.maximumStrength);
-            });
+            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
             SpringContext.GetBean<ILoginService>().GetServerGameMainInfo(() =>
             {
                 var loginCacheData = SpringContext.GetBean<LoginClientCacheData>();

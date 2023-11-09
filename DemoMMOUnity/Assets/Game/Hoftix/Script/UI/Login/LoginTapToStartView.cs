@@ -93,11 +93,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         protected virtual void StartGame()
         {
-#if HTTP_SEND_OPEN
-            
-#else
             SpringContext.GetBean<ILoginService>().LoginTapToStart();
-#endif
         }
 
         public void LoginStartGame()
