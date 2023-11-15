@@ -8,7 +8,7 @@ namespace ZJYFrameWork.Net
     public abstract class Model
     {
         /// <summary>
-        /// MsgPackのバイナリを変数に流し込む
+        /// 将MsgPack的二进制注入变量
         /// </summary>
         public virtual void Unpack(byte[] bytes)
         {
@@ -17,7 +17,7 @@ namespace ZJYFrameWork.Net
         }
 
         /// <summary>
-        /// MsgPackフォーマットに変換
+        /// 转换成MsgPack格式
         /// </summary>
         public virtual byte[] Pack()
         {
@@ -26,11 +26,10 @@ namespace ZJYFrameWork.Net
             var byteBuff = ByteBuffer.ValueOf();
             byteBuff.WriteString(str);
             return byteBuff.ToBytes();
-            throw new NotImplementedException("Pack is not Implemented for class " + GetType().FullName);
         }
 
         /// <summary>
-        /// クエリパラメータを生成
+        /// 生成查询参数
         /// </summary>
         public virtual string BuildQuery()
         {
@@ -43,7 +42,7 @@ namespace ZJYFrameWork.Net
         }
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
         /// <summary>
-        /// JSONにシリアライズ
+        /// JSON串行化
         /// </summary>
         public virtual string ToJson(bool isPretty = false)
         {

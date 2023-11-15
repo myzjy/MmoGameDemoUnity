@@ -90,7 +90,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             var json = StringUtils.BytesToString(bytes);
             if (string.IsNullOrEmpty(json)) return;
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var packet = ReferenceCache.Acquire<LoginRequest>();
             foreach (var (key, value) in dict)
             {
                 var keyString = key.ToString();
@@ -98,12 +97,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 {
                     case "account":
                     {
-                        packet.account = value?.ToString();
+                        response.account = value?.ToString();
                     }
                         break;
                     case "password":
                     {
-                        packet.password = value?.ToString();
+                        response.password = value?.ToString();
                     }
                         break;
                 }

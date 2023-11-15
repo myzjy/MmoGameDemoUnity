@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -39,36 +40,30 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="token"></param>
-        /// <param name="uid"></param>
-        /// <param name="userName"></param>
-        /// <param name="goldNum"></param>
-        /// <param name="premiumDiamondNum"></param>
-        /// <param name="diamondNum"></param>
         /// <returns></returns>
-        public static LoginResponse ValueOf(string token, long uid, string userName, long goldNum,
-            long premiumDiamondNum, long diamondNum)
+        public static LoginResponse ValueOf()
         {
-            var packet = new LoginResponse
-            {
-                token = token,
-                uid = uid,
-                userName = userName,
-                goldNum = goldNum,
-                PremiumDiamondNum = premiumDiamondNum,
-                DiamondNum = diamondNum
-            };
+            var packet = ReferenceCache.Acquire<LoginResponse>();
             return packet;
         }
 
         public void Clear()
         {
-            token = "";
-            uid = 0;
-            userName = String.Empty;
-            goldNum = 0;
-            PremiumDiamondNum = 0;
-            DiamondNum = 0;
+            DiamondNum = -1;
+            goldNum = -1;
+            PremiumDiamondNum = -1;
+            token = string.Empty;
+            uid = -1;
+            userName = string.Empty;
+            lv = -1;
+            maxLv = -1;
+            exp = -1;
+            maxExp = -1;
+        }
+
+        public override void Unpack(byte[] bytes)
+        {
+            LoginResponseSerializer.Unpack(this, bytes);
         }
     }
 
@@ -92,9 +87,29 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read( string json)
+        public IPacket Read(ByteBuffer buffer)
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            var packet = LoginRequest.ValueOf();
+            packet.Unpack(buffer.ToBytes());
+            return packet;
+        }
+    }
+
+    public abstract class LoginResponseSerializer : Serializer
+    {
+        /// <summary>
+        /// 此为json解析,不直接用json库解析,因为可能json传过来的时候,少字段,这样可以明确是那个字段少
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="bytes"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void Unpack(LoginResponse response, byte[] bytes)
+        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("返回成功,协议:[{}]", response.ProtocolId());
+#endif
+            var message = StringUtils.BytesToString(bytes);
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
             var packet = ReferenceCache.Acquire<LoginResponse>();
             packet.Clear();
             foreach (var (key, value) in dict)
@@ -162,8 +177,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                         break;
                 }
             }
-
-            return packet;
         }
     }
 }

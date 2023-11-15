@@ -860,20 +860,20 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             }
         }
         
-        public T[] ReadPacketArray<T>(short protocolId)
-        {
-            int size = ReadInt();
-            T[] array = new T[size];
-            if (size > 0)
-            {
-                IProtocolRegistration protocolRegistration = ProtocolManager.GetProtocol(protocolId);
-                for (int index = 0; index < size; index++)
-                {
-                    array[index] = (T) protocolRegistration.Read();
-                }
-            }
-            return array;
-        }
+        // public T[] ReadPacketArray<T>(short protocolId)
+        // {
+        //     int size = ReadInt();
+        //     T[] array = new T[size];
+        //     if (size > 0)
+        //     {
+        //         IProtocolRegistration protocolRegistration = ProtocolManager.GetProtocol(protocolId);
+        //         for (int index = 0; index < size; index++)
+        //         {
+        //             array[index] = (T) protocolRegistration.Read();
+        //         }
+        //     }
+        //     return array;
+        // }
         
         public void WriteBooleanList(List<bool> list)
         {
