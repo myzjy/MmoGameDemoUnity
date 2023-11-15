@@ -70,60 +70,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
             var packet = BagUserItemData.ValueOf();
-            var data = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var list = data.Select(a => a).ToList();
-            int count = list.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var item = list[i];
-                switch (item.Key)
-                {
-                    case "_id":
-                    {
-                        if (item.Value == null)
-                        {
-                            throw new NullReferenceException($"{item.Key}为空,请检查{typeof(BagUserItemData)}消息体.");
-                        }
-
-                        packet._id = int.Parse(item.Value.ToString());
-                    }
-                        break;
-                    case "masterUserId":
-                    {
-                        if (item.Value == null)
-                        {
-                            throw new NullReferenceException($"{item.Key}为空,请检查{typeof(BagUserItemData)}消息体.");
-                        }
-
-                        packet.masterUserId = long.Parse(item.Value.ToString());
-                    }
-                        break;
-                    case "itemId":
-                    {
-                        if (item.Value == null)
-                        {
-                            throw new NullReferenceException($"{item.Key}为空,请检查{typeof(BagUserItemData)}消息体.");
-                        }
-
-                        packet.itemId = int.Parse(item.Value.ToString());
-                    }
-                        break;
-                    case "nowItemNum":
-                    {
-                        if (item.Value == null)
-                        {
-                            throw new NullReferenceException($"{item.Key}为空,请检查{typeof(BagUserItemData)}消息体.");
-                        }
-
-                        packet.nowItemNum = int.Parse(item.Value.ToString());
-                    }
-                        break;
-                }
-            }
-
+            packet.Unpack(buffer.ToBytes());
             return packet;
         }
     }
@@ -132,6 +82,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
     {
         public static void Unpack(BagUserItemData response, byte[] bytes)
         {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("返回成功,协议:[{}]", response.ProtocolId());
+#endif
             var message = StringUtils.BytesToString(bytes);
             var data = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
             try
@@ -139,6 +92,53 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
                 if (data == null)
                 {
                     throw new NullReferenceException($"传递信息为空,请检查{typeof(BagUserItemData)}消息体.");
+                }
+
+                foreach (var (Key, Value) in data)
+                {
+                    switch (Key)
+                    {
+                        case "_id":
+                        {
+                            if (Value == null)
+                            {
+                                throw new NullReferenceException($"{Key}为空,请检查{typeof(BagUserItemData)}消息体.");
+                            }
+
+                            response._id = int.Parse(Value.ToString());
+                        }
+                            break;
+                        case "masterUserId":
+                        {
+                            if (Value == null)
+                            {
+                                throw new NullReferenceException($"{Key}为空,请检查{typeof(BagUserItemData)}消息体.");
+                            }
+
+                            response.masterUserId = long.Parse(Value.ToString());
+                        }
+                            break;
+                        case "itemId":
+                        {
+                            if (Value == null)
+                            {
+                                throw new NullReferenceException($"{Key}为空,请检查{typeof(BagUserItemData)}消息体.");
+                            }
+
+                            response.itemId = int.Parse(Value.ToString());
+                        }
+                            break;
+                        case "nowItemNum":
+                        {
+                            if (Value == null)
+                            {
+                                throw new NullReferenceException($"{Key}为空,请检查{typeof(BagUserItemData)}消息体.");
+                            }
+
+                            response.nowItemNum = int.Parse(Value.ToString());
+                        }
+                            break;
+                    }
                 }
             }
             catch (Exception e)

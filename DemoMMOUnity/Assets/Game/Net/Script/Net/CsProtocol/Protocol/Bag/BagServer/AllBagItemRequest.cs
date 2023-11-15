@@ -13,7 +13,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
         public static AllBagItemRequest ValueOf()
         {
             var packet = new AllBagItemRequest();
-
+            packet.Clear();
             return packet;
         }
 
@@ -38,27 +38,14 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
         public void Write(ByteBuffer buffer, IPacket packet)
         {
             AllBagItemRequest message = (AllBagItemRequest)packet;
-            var _message = new ServerMessageWrite(message.ProtocolId(), message);
-            var json = JsonConvert.SerializeObject(_message);
+            var messageWrite = new ServerMessageWrite(message.ProtocolId(), message);
+            var json = JsonConvert.SerializeObject(messageWrite);
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var packet = ReferenceCache.Acquire<AllBagItemRequest>();
-            foreach (var (key, value) in dict)
-            {
-                var keyString = key.ToString();
-                switch (keyString)
-                {
-                    case "type":
-                    {
-                    }
-                        break;
-                }
-            }
-
+            var packet = AllBagItemRequest.ValueOf();
             return packet;
         }
     }

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol
 {
-    public class RegisterRequest : Model, IPacket
+    public class RegisterRequest : Model, IPacket,IReference
     {
         public string account;
         public string password;
@@ -22,11 +23,22 @@ namespace ZJYFrameWork.Net.CsProtocol
             };
             return packet;
         }
-
+        public static RegisterRequest ValueOf()
+        {
+            var packet = ReferenceCache.Acquire<RegisterRequest>();
+            return packet;
+        }
 
         public short ProtocolId()
         {
             return 1005;
+        }
+
+        public void Clear()
+        {
+            account = string.Empty;
+            password = string.Empty;
+            affirmPassword = string.Empty;
         }
     }
 
@@ -41,19 +53,14 @@ namespace ZJYFrameWork.Net.CsProtocol
         public void Write(ByteBuffer buffer, IPacket packet)
         {
             RegisterRequest message = (RegisterRequest)packet;
-            var _message = new ServerMessageWrite(message.ProtocolId(), message);
-            var json = JsonConvert.SerializeObject(_message);
+            var messageWrite = new ServerMessageWrite(message.ProtocolId(), message);
+            var json = JsonConvert.SerializeObject(messageWrite);
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                return null;
-            }
-
-            var packet = JsonConvert.DeserializeObject<RegisterRequest>(json);
+            var packet = RegisterRequest.ValueOf();
 
             return packet;
         }
