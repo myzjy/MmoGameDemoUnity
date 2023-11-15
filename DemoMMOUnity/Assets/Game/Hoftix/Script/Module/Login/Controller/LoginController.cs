@@ -143,13 +143,13 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         [PacketReceiver]
         public void AtGameMainUserToInfoResponse(GameMainUserToInfoResponse response)
         {
-            LoginCacheData.SetExp(response.getNowExp());
-            LoginCacheData.SetLv(response.getNowLv());
-            LoginCacheData.SetMaxLv(response.getMaxLv());
-            LoginCacheData.SetMaxExp(response.getMaxExp());
-            SpringContext.GetBean<PlayerUserCaCheData>().goldNum = response.getGoldCoinNum();
-            SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.getDiamondsNum();
-            SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.getPaidDiamondsNum();
+            LoginCacheData.SetExp(response.GetNowExp());
+            LoginCacheData.SetLv(response.GetNowLv());
+            LoginCacheData.SetMaxLv(response.GetMaxLv());
+            LoginCacheData.SetMaxExp(response.GetMaxExp());
+            SpringContext.GetBean<PlayerUserCaCheData>().goldNum = response.GetGoldCoinNum();
+            SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.GetDiamondsNum();
+            SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.GetPaidDiamondsNum();
             SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(LoginCacheData);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Module.PuzzleNet.Model;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 {
@@ -67,17 +68,19 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             throw new NotImplementedException();
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             var packet = PuzzleRewardsData.ValueOf();
             packet.Clear();
             if (string.IsNullOrEmpty(json))
             {
                 return null;
             }
+
             //解析
-            var dict = JsonConvert.DeserializeObject<Dictionary<Object, Object>>(json);
-            foreach (var (key,value) in dict)
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+            foreach (var (key, value) in dict)
             {
                 var keyStr = key.ToString();
                 var valueStr = value.ToString();
@@ -104,7 +107,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                         packet.rewardResource = valueStr;
                     }
                         break;
-
                 }
             }
 

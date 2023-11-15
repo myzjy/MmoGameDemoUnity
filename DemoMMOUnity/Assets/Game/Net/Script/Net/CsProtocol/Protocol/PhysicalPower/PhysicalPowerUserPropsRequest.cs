@@ -48,8 +48,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             var json = JsonConvert.SerializeObject(message);
             buffer.WriteString(json);
         }
-        
-        public IPacket Read( string json)
+
+        public IPacket Read(ByteBuffer buffer)
         {
             return null;
         }

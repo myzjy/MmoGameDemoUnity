@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 {
@@ -87,8 +88,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             buffer.WriteString(jsonString);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             var packet = PuzzleChapter.ValueOf();
             packet.Clear();
             if (string.IsNullOrEmpty(json))

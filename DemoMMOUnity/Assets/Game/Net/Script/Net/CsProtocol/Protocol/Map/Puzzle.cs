@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 {
@@ -72,8 +73,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             buffer.WriteString(jsonStr);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             if (string.IsNullOrEmpty(json))
             {
                 return null;
@@ -115,13 +117,16 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                         var rewardDict = JsonConvert.DeserializeObject<List<Object>>(valueString);
                         int length = rewardDict.Count;
                         packet.puzzleRewards = new PuzzleRewardsData[length];
+                        var byteBuffer = ByteBuffer.ValueOf();
                         for (int i = 0; i < length; i++)
                         {
                             var data1 = rewardDict[i].ToString();
                             var packetDataRegistration = ProtocolManager.GetProtocol(203);
-                            var packetDataRead = packetDataRegistration.Read(data1);
+                            byteBuffer.WriteString(data1);
+                            var packetDataRead = packetDataRegistration.Read(byteBuffer);
                             var packetData = (PuzzleRewardsData)packetDataRead;
                             packet.puzzleRewards[i] = packetData;
+                            byteBuffer.Clear();
                         }
                     }
                         break;

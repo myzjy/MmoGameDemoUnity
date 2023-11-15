@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -86,8 +87,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             var response = ReferenceCache.Acquire<PhysicalPowerUserPropsResponse>();
             foreach (var (key, value) in dict)

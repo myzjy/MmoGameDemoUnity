@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 {
@@ -26,11 +27,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             {
                 PuzzleList.Clear();
             }
+
             PuzzleList = new List<Puzzle>();
             if (PuzzleChaptersList != null)
             {
                 PuzzleChaptersList.Clear();
             }
+
             PuzzleChaptersList = new List<PuzzleChapter>();
         }
 
@@ -62,8 +65,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
             buffer.WriteString(jsonString);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             if (string.IsNullOrEmpty(json))
             {
                 return null;
@@ -73,7 +77,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
 
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             packet.Clear();
-            foreach (var (key,value) in dict)
+            var byteBuffer = ByteBuffer.ValueOf();
+            foreach (var (key, value) in dict)
             {
                 var keyString = key.ToString();
                 var valueString = value.ToString();
@@ -82,34 +87,39 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
                     case "puzzleConfigList":
                     {
                         var packetDict = JsonConvert.DeserializeObject<List<object>>(valueString);
-                     
+
                         int length = packetDict.Count;
                         for (int i = 0; i < length; i++)
                         {
                             var dataObj = packetDict[i];
                             var dataString = dataObj.ToString();
+                            byteBuffer.WriteString(dataString);
                             var puzzleData = ProtocolManager.GetProtocol(202);
-                            var puzzleRead = (Puzzle)puzzleData.Read(dataString);
+                            var puzzleRead = (Puzzle)puzzleData.Read(byteBuffer);
                             packet.PuzzleList.Add(puzzleRead);
+                            byteBuffer.Clear();
                         }
                     }
                         break;
                     case "puzzleChapterConfigList":
                     {
-                        var packetDict = JsonConvert.DeserializeObject<List<object>>( valueString);
+                        var packetDict = JsonConvert.DeserializeObject<List<object>>(valueString);
                         var length = packetDict.Count;
                         for (var i = 0; i < length; i++)
                         {
                             var dataObj = packetDict[i];
                             var dataString = dataObj.ToString();
+                            byteBuffer.WriteString(dataString);
                             var puzzleData = ProtocolManager.GetProtocol(204);
-                            var puzzleRead = (PuzzleChapter)puzzleData.Read(dataString);
+                            var puzzleRead = (PuzzleChapter)puzzleData.Read(byteBuffer);
                             packet.PuzzleChaptersList.Add(puzzleRead);
+                            byteBuffer.Clear();
                         }
                     }
                         break;
                 }
             }
+
             return packet;
         }
     }

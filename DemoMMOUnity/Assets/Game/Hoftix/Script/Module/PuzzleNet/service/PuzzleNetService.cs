@@ -19,7 +19,7 @@ namespace ZJYFrameWork.Module.PuzzleNet.service
         public void GetTheMapTotalDataTableService(int eventID)
         {
             var packet = ProtocolManager.GetProtocol(1035);
-            var data = (PuzzleAllConfigRequest)packet.Read();
+            var data = (PuzzleAllConfigRequest)packet.Read(null);
             data.eventId = eventID;
             _netManager.Send(data);
         }

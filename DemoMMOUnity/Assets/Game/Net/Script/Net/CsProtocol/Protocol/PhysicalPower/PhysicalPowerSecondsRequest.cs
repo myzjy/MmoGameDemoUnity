@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -55,16 +56,18 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var packet = ReferenceCache.Acquire<PhysicalPowerSecondsRequest>();
+            var json = StringUtils.BytesToString(buffer.ToBytes());
+            packet.Clear();
             if (string.IsNullOrEmpty(json))
             {
-                return null;
+                return packet;
             }
 
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var packet = ReferenceCache.Acquire<PhysicalPowerSecondsRequest>();
-            packet.Clear();
+            // packet.Clear();
             dict.TryGetValue("nowTime", out var nowTime);
             if (nowTime == null)
             {

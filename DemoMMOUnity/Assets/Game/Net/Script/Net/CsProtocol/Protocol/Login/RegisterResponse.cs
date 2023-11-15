@@ -20,6 +20,12 @@ namespace ZJYFrameWork.Net.CsProtocol
             return packet;
         }
 
+        public static RegisterResponse ValueOf()
+        {
+            var packet = ReferenceCache.Acquire<RegisterResponse>();
+            packet.Clear();
+            return packet;
+        }
 
         public short ProtocolId()
         {
@@ -29,6 +35,11 @@ namespace ZJYFrameWork.Net.CsProtocol
         public void Clear()
         {
             mRegister = false;
+        }
+
+        public override void Unpack(byte[] bytes)
+        {
+            RegisterResponseSerializer.Unpack(this, bytes);
         }
     }
 
@@ -42,28 +53,34 @@ namespace ZJYFrameWork.Net.CsProtocol
         public void Write(ByteBuffer buffer, IPacket packet)
         {
             RegisterResponse message = (RegisterResponse)packet;
-            var _message = new ServerMessageWrite(message.ProtocolId(), message);
-            var json = JsonConvert.SerializeObject(_message);
+            var messageWrite = new ServerMessageWrite(message.ProtocolId(), message);
+            var json = JsonConvert.SerializeObject(messageWrite);
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                return null;
-            }
+            var packet = RegisterResponse.ValueOf();
+            packet.Unpack(buffer.ToBytes());
+            return packet;
+        }
+    }
 
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
+    internal abstract class RegisterResponseSerializer
+    {
+        public static void Unpack(RegisterResponse response, byte[] bytes)
+        {
+#if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
+            Debug.Log("返回成功,协议:[{}]", response.ProtocolId());
+#endif
+            var message = StringUtils.BytesToString(bytes);
+            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
 
-            var packet = ReferenceCache.Acquire<RegisterResponse>();
             dict.TryGetValue("mRegister", out var mRegister);
             if (mRegister != null)
             {
-                packet.mRegister = bool.Parse(mRegister.ToString());
+                response.mRegister = bool.Parse(mRegister.ToString());
             }
-
-            return packet;
         }
     }
 }

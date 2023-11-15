@@ -51,21 +51,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             buffer.WriteString(jsonData);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                return null;
-            }
-
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            if (dict == null)
-            {
-#if UNITY_EDITOR || (DEVELOP_BUILD&& ENABLE_LOG)
-                Debug.LogError($"");
-#endif
-            }
-
             return null;
         }
     }

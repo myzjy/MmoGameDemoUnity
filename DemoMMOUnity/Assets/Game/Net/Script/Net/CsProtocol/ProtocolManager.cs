@@ -87,7 +87,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             {
                 var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
               
-                // var jsonDict = JsonConvert.DeserializeObject<ServerMessageWrite>(json);
                 dict.TryGetValue("protocolId", out var protocolIdStr);
                 if (protocolIdStr != null)
                 {
@@ -102,7 +101,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                     if (packetJson != null)
                     {
                         var str = packetJson.ToString();
-                        return data.Read( str);
+                        var mByteBuffer = ByteBuffer.ValueOf();
+                        mByteBuffer.WriteString(str);
+                        return data.Read( mByteBuffer);
                     }
 
                     return null;

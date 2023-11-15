@@ -53,14 +53,8 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(jsonString);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                return null;
-            }
-
-            var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             var packet = ReferenceCache.Acquire<PhysicalPowerRequest>();
             return packet;
         }

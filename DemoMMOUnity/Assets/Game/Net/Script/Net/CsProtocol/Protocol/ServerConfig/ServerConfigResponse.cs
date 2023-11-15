@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
 {
@@ -48,8 +49,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
             if (string.IsNullOrEmpty(json))
             {
                 return null;
@@ -59,6 +61,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
             var packet = ReferenceCache.Acquire<ServerConfigResponse>();
             foreach (var (key, value) in dict)
             {
+                var byteBuffers = ByteBuffer.ValueOf();
                 var keyString = key.ToString();
                 switch (keyString)
                 {
@@ -72,8 +75,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
                         {
                             var entityObj = bagEntityList[i];
                             var packetData = ProtocolManager.GetProtocol(201);
-                            var packetDataRead = (ItemBaseData)packetData.Read(entityObj.ToString());
+                            byteBuffers.WriteString(entityObj.ToString());
+                            var packetDataRead = (ItemBaseData)packetData.Read(byteBuffers);
                             packet.bagItemEntityList.Add(packetDataRead);
+                            byteBuffers.Clear();
                         }
                     }
                         break;

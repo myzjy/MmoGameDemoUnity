@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
 {
@@ -18,112 +19,125 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
 
         public void Clear()
         {
-            throw new System.NotImplementedException();
+            _nowExp = 0;
+            _maxExp = 0;
+            _diamondsNum = 0;
+            _maxLv = 0;
+            _goldCoinNum = 0;
+            _nowLv = 0;
+            _paidDiamondsNum = 0;
         }
 
         /**
          * 当前经验
          */
-        private int nowExp;
+        private int _nowExp;
 
         /**
          * 最大经验
          */
-        private int maxExp;
+        private int _maxExp;
 
         /**
          * 当前等级
          */
-        private int nowLv;
+        private int _nowLv;
 
         /**
          * 最大等级
          */
-        private int maxLv;
+        private int _maxLv;
 
         /**
          * 金币
          */
-        private long goldCoinNum;
+        private long _goldCoinNum;
 
         /**
          * 钻石
          */
-        private long diamondsNum;
+        private long _diamondsNum;
 
         /**
          * 付费钻石
          */
-        private long paidDiamondsNum;
+        private long _paidDiamondsNum;
 
-        public int getNowExp()
+        public int GetNowExp()
         {
-            return nowExp;
+            return _nowExp;
         }
 
-        public void setNowExp(int nowExp)
+        public void SetNowExp(int nowExp)
         {
-            this.nowExp = nowExp;
+            this._nowExp = nowExp;
         }
 
-        public int getMaxExp()
+        public int GetMaxExp()
         {
-            return maxExp;
+            return _maxExp;
         }
 
-        public void setMaxExp(int maxExp)
+        public void SetMaxExp(int maxExp)
         {
-            this.maxExp = maxExp;
+            this._maxExp = maxExp;
         }
 
-        public int getNowLv()
+        public int GetNowLv()
         {
-            return nowLv;
+            return _nowLv;
         }
 
-        public void setNowLv(int nowLv)
+        public void SetNowLv(int nowLv)
         {
-            this.nowLv = nowLv;
+            this._nowLv = nowLv;
         }
 
-        public int getMaxLv()
+        public int GetMaxLv()
         {
-            return maxLv;
+            return _maxLv;
         }
 
-        public void setMaxLv(int maxLv)
+        public void SetMaxLv(int maxLv)
         {
-            this.maxLv = maxLv;
+            this._maxLv = maxLv;
         }
 
-        public long getGoldCoinNum()
+        public long GetGoldCoinNum()
         {
-            return goldCoinNum;
+            return _goldCoinNum;
         }
 
-        public void setGoldCoinNum(long goldCoinNum)
+        public void SetGoldCoinNum(long goldCoinNum)
         {
-            this.goldCoinNum = goldCoinNum;
+            this._goldCoinNum = goldCoinNum;
         }
 
-        public long getDiamondsNum()
+        public long GetDiamondsNum()
         {
-            return diamondsNum;
+            return _diamondsNum;
         }
 
-        public void setDiamondsNum(long diamondsNum)
+        public void SetDiamondsNum(long diamondsNum)
         {
-            this.diamondsNum = diamondsNum;
+            this._diamondsNum = diamondsNum;
         }
 
-        public long getPaidDiamondsNum()
+        public long GetPaidDiamondsNum()
         {
-            return paidDiamondsNum;
+            return _paidDiamondsNum;
         }
 
-        public void setPaidDiamondsNum(long paidDiamondsNum)
+        public void SetPaidDiamondsNum(long paidDiamondsNum)
         {
-            this.paidDiamondsNum = paidDiamondsNum;
+            this._paidDiamondsNum = paidDiamondsNum;
+        }
+
+        public static GameMainUserToInfoResponse ValueOf()
+        {
+            var data = ReferenceCache.Acquire<GameMainUserToInfoResponse>();
+            data.Clear();
+            return data;
         }
 
         /**
@@ -141,13 +155,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             long diamondsNum, long paidDiamondsNum)
         {
             GameMainUserToInfoResponse data = new GameMainUserToInfoResponse();
-            data.setNowLv(nowLv);
-            data.setMaxLv(maxLv);
-            data.setNowExp(nowExp);
-            data.setMaxExp(maxExp);
-            data.setGoldCoinNum(goldCoinNum);
-            data.setDiamondsNum(diamondsNum);
-            data.setPaidDiamondsNum(paidDiamondsNum);
+            data.SetNowLv(nowLv);
+            data.SetMaxLv(maxLv);
+            data.SetNowExp(nowExp);
+            data.SetMaxExp(maxExp);
+            data.SetGoldCoinNum(goldCoinNum);
+            data.SetDiamondsNum(diamondsNum);
+            data.SetPaidDiamondsNum(paidDiamondsNum);
             return data;
         }
     }
@@ -172,21 +186,23 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
             buffer.WriteString(jsonStr);
         }
 
-        public IPacket Read(string json = "")
+        public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
+            var packet = ReferenceCache.Acquire<GameMainUserToInfoResponse>();
+            packet.Clear();
             if (string.IsNullOrEmpty(json))
             {
-                return null;
+                return packet;
             }
 
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
-            var packet = ReferenceCache.Acquire<GameMainUserToInfoResponse>();
             if (dict == null)
             {
 #if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
                 Debug.LogError("消息解析错误，请检查");
 #endif
-                return null;
+                return packet;
             }
 
             foreach (var (key, value) in dict)
@@ -198,43 +214,43 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
                     case "nowLv":
                     {
                         var nowLv = int.Parse(valueStr);
-                        packet.setNowLv(nowLv);
+                        packet.SetNowLv(nowLv);
                     }
                         break;
                     case "diamondsNum":
                     {
                         var diamondsNum = int.Parse(valueStr);
-                        packet.setDiamondsNum(diamondsNum);
+                        packet.SetDiamondsNum(diamondsNum);
                     }
                         break;
                     case "maxExp":
                     {
                         var maxExp = int.Parse(valueStr);
-                        packet.setMaxExp(maxExp);
+                        packet.SetMaxExp(maxExp);
                     }
                         break;
                     case "nowExp":
                     {
                         var nowExp = int.Parse(valueStr);
-                        packet.setNowExp(nowExp);
+                        packet.SetNowExp(nowExp);
                     }
                         break;
                     case "maxLv":
                     {
                         var maxLv = int.Parse(valueStr);
-                        packet.setMaxLv(maxLv);
+                        packet.SetMaxLv(maxLv);
                     }
                         break;
                     case "goldCoinNum":
                     {
                         var goldCoinNum = long.Parse(valueStr);
-                        packet.setGoldCoinNum(goldCoinNum);
+                        packet.SetGoldCoinNum(goldCoinNum);
                     }
                         break;
                     case "paidDiamondsNum":
                     {
                         var paidDiamondsNum = long.Parse(valueStr);
-                        packet.setPaidDiamondsNum(paidDiamondsNum);
+                        packet.SetPaidDiamondsNum(paidDiamondsNum);
                     }
                         break;
                 }
