@@ -45,7 +45,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
             return null;
         }

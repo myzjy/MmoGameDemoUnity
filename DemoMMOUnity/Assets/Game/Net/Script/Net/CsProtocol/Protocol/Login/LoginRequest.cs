@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer
 {
@@ -14,6 +15,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
         public short ProtocolId()
         {
             return 1000;
+        }
+
+        public static LoginRequest ValueOf()
+        {
+            var packet = ReferenceCache.Acquire<LoginRequest>();
+            packet.Clear();
+            return packet;
         }
 
         public static LoginRequest ValueOf(string account, string password)
@@ -28,8 +36,13 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public void Clear()
         {
-            account = String.Empty;
-            password = String.Empty;
+            account = string.Empty;
+            password = string.Empty;
+        }
+
+        public override void Unpack(byte[] bytes)
+        {
+            LoginRequestSerializer.Unpack(this, bytes);
         }
     }
 
@@ -56,9 +69,26 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             buffer.WriteString(json);
         }
 
-        public IPacket Read(string json)
+        public IPacket Read(ByteBuffer buffer)
         {
-            if (string.IsNullOrEmpty(json)) return null;
+            var data = LoginRequest.ValueOf();
+            data.Unpack(buffer.ToBytes());
+            return data;
+        }
+    }
+
+    public abstract class LoginRequestSerializer : Serializer
+    {
+        /// <summary>
+        /// 此为json解析,不直接用json库解析,因为可能json传过来的时候,少字段,这样可以明确是那个字段少
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="bytes"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public static void Unpack(LoginRequest response, byte[] bytes)
+        {
+            var json = StringUtils.BytesToString(bytes);
+            if (string.IsNullOrEmpty(json)) return;
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(json);
             var packet = ReferenceCache.Acquire<LoginRequest>();
             foreach (var (key, value) in dict)
@@ -78,8 +108,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                         break;
                 }
             }
-
-            return packet;
         }
     }
 }
