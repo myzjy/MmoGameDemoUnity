@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
 {
-    public partial class EquipmentBaseData
+    public partial class EquipmentBaseData: Model, IPacket, IReference
     {
         /**
          * 介绍id
