@@ -3,7 +3,7 @@ using ZJYFrameWork.Collection.Reference;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
 {
-    public partial class EquipmentBaseData
+    public partial class EquipmentBaseData : Model, IPacket, IReference
     {
         /**
          * 介绍id
@@ -51,6 +51,11 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
             data.Clear();
             return data;
         }
+
+        public override void Unpack(byte[] bytes)
+        {
+            base.Unpack(bytes);  
+        }
     }
 
     public class EquipmentBaseDataRegistration : IProtocolRegistration
@@ -62,41 +67,12 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
 
         public void Write(ByteBuffer buffer, IPacket packet)
         {
-            if (packet == null)
-            {
-                return;
-            }
-
-            var request = (EquipmentBaseData)packet;
-            var packetData = new ServerMessageWrite(request.ProtocolId(), request);
-            var json = JsonConvert.SerializeObject(packetData);
-            buffer.WriteString(json);
+            throw new NotImplementedException();
         }
 
         public IPacket Read(ByteBuffer buffer)
         {
-            var buffStr = StringUtils.BytesToString(buffer.ToBytes());
-            var packet = EquipmentBaseData.ValueOf();
-            if (string.IsNullOrEmpty(buffStr))
-            {
-                return packet;
-            }
-
-            var jsonDict = JsonConvert.DeserializeObject<Dictionary<object, object>>(buffStr);
-            foreach (var (key, value) in jsonDict)
-            {
-                var keyString = key.ToString();
-                switch (keyString)
-                {
-                    case "desId":
-                    {
-                        packet.desId = int.Parse(value.ToString());
-                    }
-                        break;
-                }
-            }
-
-            return packet;
+            throw new NotImplementedException();
         }
     }
 }
