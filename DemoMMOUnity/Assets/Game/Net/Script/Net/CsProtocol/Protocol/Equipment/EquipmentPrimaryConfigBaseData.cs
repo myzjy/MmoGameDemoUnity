@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
@@ -22,8 +23,9 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
                 return;
             }
 
-            var packetData = (EquipmentPrimaryConfigBaseData)packet;
-            var json = JsonConvert.SerializeObject(packetData);
+            var requestData = (EquipmentPrimaryConfigBaseData)packet;
+            var jsonData = new ServerMessageWrite(packet.ProtocolId(), requestData);
+            var json = JsonConvert.SerializeObject(jsonData);
             buffer.WriteString(json);
         }
 

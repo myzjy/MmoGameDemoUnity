@@ -55,11 +55,6 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
             data.Clear();
             return data;
         }
-
-        public override void Unpack(byte[] bytes)
-        {
-            base.Unpack(bytes);  
-        }
     }
 
     public class EquipmentBaseDataRegistration : IProtocolRegistration
