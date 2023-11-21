@@ -4,16 +4,16 @@ using System;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 {
-	public class BerApplicationSpecific
-		: DerApplicationSpecific
-	{
-		public BerApplicationSpecific(
-			int					tagNo,
-			Asn1EncodableVector	vec)
-			: base(tagNo, vec)
-		{
-		}
-	}
+    public class BerApplicationSpecific
+        : DerApplicationSpecific
+    {
+        public BerApplicationSpecific(
+            int tagNo,
+            Asn1EncodableVector vec)
+            : base(tagNo, vec)
+        {
+        }
+    }
 }
 #pragma warning restore
 #endif

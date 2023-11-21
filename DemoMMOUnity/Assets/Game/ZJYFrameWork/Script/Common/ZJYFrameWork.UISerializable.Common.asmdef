@@ -1,18 +1,18 @@
 {
-    "name": "ZJYFrameWork.UISerializable.Common",
-    "rootNamespace": "",
-    "references": [
-        "GUID:d50e89131eca26a469b0dd3b3c3304ae",
-        "GUID:ca8d574d9e58cdd4481102472565983a",
-        "GUID:5b37a11e6fbbe2542aa3580b9973df17"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": true,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "ZJYFrameWork.UISerializable.Common",
+  "rootNamespace": "",
+  "references": [
+    "GUID:d50e89131eca26a469b0dd3b3c3304ae",
+    "GUID:ca8d574d9e58cdd4481102472565983a",
+    "GUID:5b37a11e6fbbe2542aa3580b9973df17"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

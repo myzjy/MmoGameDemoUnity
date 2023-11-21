@@ -60,21 +60,4 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
           return data;
         }
     }
-    public class EquipmentPrimaryConfigBaseDataRegistration : IProtocolRegistration
-    {
-     public short ProtocolId()
-     {
-      return 208;
-     }
-
-     public void Write(ByteBuffer buffer, IPacket packet)
-     {
-      throw new System.NotImplementedException();
-     }
-
-     public IPacket Read(ByteBuffer buffer)
-     {
-      throw new System.NotImplementedException();
-     }
-    }
 }

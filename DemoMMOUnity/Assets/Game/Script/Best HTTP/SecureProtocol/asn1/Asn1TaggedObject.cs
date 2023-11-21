@@ -1,7 +1,6 @@
 #if !BESTHTTP_DISABLE_ALTERNATE_SSL && (!UNITY_WEBGL || UNITY_EDITOR)
 #pragma warning disable
 using System;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
@@ -12,7 +11,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
      * rules (as with sequences).
      */
     public abstract class Asn1TaggedObject
-		: Asn1Object, Asn1TaggedObjectParser
+        : Asn1Object, Asn1TaggedObjectParser
     {
         internal static bool IsConstructed(bool isExplicit, Asn1Object obj)
         {
@@ -24,14 +23,15 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
             return IsConstructed(tagged.IsExplicit(), tagged.GetObject());
         }
 
-        internal int            tagNo;
-//        internal bool           empty;
-        internal bool           explicitly = true;
-        internal Asn1Encodable  obj;
+        internal int tagNo;
 
-		static public Asn1TaggedObject GetInstance(
-            Asn1TaggedObject	obj,
-            bool				explicitly)
+//        internal bool           empty;
+        internal bool explicitly = true;
+        internal Asn1Encodable obj;
+
+        static public Asn1TaggedObject GetInstance(
+            Asn1TaggedObject obj,
+            bool explicitly)
         {
             if (explicitly)
             {
@@ -41,85 +41,88 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
             throw new ArgumentException("implicitly tagged tagged object");
         }
 
-		static public Asn1TaggedObject GetInstance(
-			object obj)
-		{
-			if (obj == null || obj is Asn1TaggedObject)
-			{
-				return (Asn1TaggedObject) obj;
-			}
+        static public Asn1TaggedObject GetInstance(
+            object obj)
+        {
+            if (obj == null || obj is Asn1TaggedObject)
+            {
+                return (Asn1TaggedObject)obj;
+            }
 
-			throw new ArgumentException("Unknown object in GetInstance: " + BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
-		}
+            throw new ArgumentException(
+                "Unknown object in GetInstance: " +
+                BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.GetTypeName(obj), "obj");
+        }
 
-		/**
+        /**
          * @param tagNo the tag number for this object.
          * @param obj the tagged object.
          */
         protected Asn1TaggedObject(
-            int             tagNo,
-            Asn1Encodable   obj)
+            int tagNo,
+            Asn1Encodable obj)
         {
             this.explicitly = true;
             this.tagNo = tagNo;
             this.obj = obj;
         }
 
-		/**
+        /**
          * @param explicitly true if the object is explicitly tagged.
          * @param tagNo the tag number for this object.
          * @param obj the tagged object.
          */
         protected Asn1TaggedObject(
-            bool            explicitly,
-            int             tagNo,
-            Asn1Encodable   obj)
+            bool explicitly,
+            int tagNo,
+            Asn1Encodable obj)
         {
-			// IAsn1Choice marker interface 'insists' on explicit tagging
+            // IAsn1Choice marker interface 'insists' on explicit tagging
             this.explicitly = explicitly || (obj is IAsn1Choice);
             this.tagNo = tagNo;
             this.obj = obj;
         }
 
-		protected override bool Asn1Equals(
-			Asn1Object asn1Object)
+        protected override bool Asn1Equals(
+            Asn1Object asn1Object)
         {
-			Asn1TaggedObject other = asn1Object as Asn1TaggedObject;
+            Asn1TaggedObject other = asn1Object as Asn1TaggedObject;
 
-			if (other == null)
-				return false;
+            if (other == null)
+                return false;
 
-			return this.tagNo == other.tagNo
+            return this.tagNo == other.tagNo
 //				&& this.empty == other.empty
-				&& this.explicitly == other.explicitly   // TODO Should this be part of equality?
-				&& BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.Equals(GetObject(), other.GetObject());
-		}
+                   && this.explicitly == other.explicitly // TODO Should this be part of equality?
+                   && BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.Equals(GetObject(),
+                       other.GetObject());
+        }
 
-		protected override int Asn1GetHashCode()
-		{
+        protected override int Asn1GetHashCode()
+        {
             int code = tagNo.GetHashCode();
 
-			// TODO: actually this is wrong - the problem is that a re-encoded
-			// object may end up with a different hashCode due to implicit
-			// tagging. As implicit tagging is ambiguous if a sequence is involved
-			// it seems the only correct method for both equals and hashCode is to
-			// compare the encodings...
+            // TODO: actually this is wrong - the problem is that a re-encoded
+            // object may end up with a different hashCode due to implicit
+            // tagging. As implicit tagging is ambiguous if a sequence is involved
+            // it seems the only correct method for both equals and hashCode is to
+            // compare the encodings...
 //			code ^= explicitly.GetHashCode();
 
-			if (obj != null)
+            if (obj != null)
             {
                 code ^= obj.GetHashCode();
             }
 
-			return code;
+            return code;
         }
 
-		public int TagNo
+        public int TagNo
         {
-			get { return tagNo; }
+            get { return tagNo; }
         }
 
-		/**
+        /**
          * return whether or not the object may be explicitly tagged.
          * <p>
          * Note: if the object has been read from an input stream, the only
@@ -138,7 +141,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
             return false; //empty;
         }
 
-		/**
+        /**
          * return whatever was following the tag.
          * <p>
          * Note: tagged objects are generally context dependent if you're
@@ -152,41 +155,42 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
                 return obj.ToAsn1Object();
             }
 
-			return null;
+            return null;
         }
 
-		/**
-		* Return the object held in this tagged object as a parser assuming it has
-		* the type of the passed in tag. If the object doesn't have a parser
-		* associated with it, the base object is returned.
-		*/
-		public IAsn1Convertible GetObjectParser(
-			int		tag,
-			bool	isExplicit)
-		{
-			switch (tag)
-			{
-				case Asn1Tags.Set:
-					return Asn1Set.GetInstance(this, isExplicit).Parser;
-				case Asn1Tags.Sequence:
-					return Asn1Sequence.GetInstance(this, isExplicit).Parser;
-				case Asn1Tags.OctetString:
-					return Asn1OctetString.GetInstance(this, isExplicit).Parser;
-			}
+        /**
+        * Return the object held in this tagged object as a parser assuming it has
+        * the type of the passed in tag. If the object doesn't have a parser
+        * associated with it, the base object is returned.
+        */
+        public IAsn1Convertible GetObjectParser(
+            int tag,
+            bool isExplicit)
+        {
+            switch (tag)
+            {
+                case Asn1Tags.Set:
+                    return Asn1Set.GetInstance(this, isExplicit).Parser;
+                case Asn1Tags.Sequence:
+                    return Asn1Sequence.GetInstance(this, isExplicit).Parser;
+                case Asn1Tags.OctetString:
+                    return Asn1OctetString.GetInstance(this, isExplicit).Parser;
+            }
 
-			if (isExplicit)
-			{
-				return GetObject();
-			}
+            if (isExplicit)
+            {
+                return GetObject();
+            }
 
-			throw BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateNotImplementedException("implicit tagging for tag: " + tag);
-		}
+            throw BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateNotImplementedException(
+                "implicit tagging for tag: " + tag);
+        }
 
-		public override string ToString()
-		{
-			return "[" + tagNo + "]" + obj;
-		}
-	}
+        public override string ToString()
+        {
+            return "[" + tagNo + "]" + obj;
+        }
+    }
 }
 #pragma warning restore
 #endif

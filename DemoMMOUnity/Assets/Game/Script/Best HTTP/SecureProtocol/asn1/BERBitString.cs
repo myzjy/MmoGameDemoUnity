@@ -2,7 +2,6 @@
 #pragma warning disable
 using System;
 using System.Diagnostics;
-
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities;
 
 namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
@@ -17,43 +16,44 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
             int count = bitStrings.Length;
             switch (count)
             {
-            case 0:
-                // No bits
-                return new byte[]{ 0 };
-            case 1:
-                return bitStrings[0].contents;
-            default:
-            {
-                int last = count - 1, totalLength = 0;
-                for (int i = 0; i < last; ++i)
+                case 0:
+                    // No bits
+                    return new byte[] { 0 };
+                case 1:
+                    return bitStrings[0].contents;
+                default:
                 {
-                    byte[] elementContents = bitStrings[i].contents;
-                    if (elementContents[0] != 0)
-                        throw new ArgumentException("only the last nested bitstring can have padding", "bitStrings");
+                    int last = count - 1, totalLength = 0;
+                    for (int i = 0; i < last; ++i)
+                    {
+                        byte[] elementContents = bitStrings[i].contents;
+                        if (elementContents[0] != 0)
+                            throw new ArgumentException("only the last nested bitstring can have padding",
+                                "bitStrings");
 
-                    totalLength += elementContents.Length - 1;
+                        totalLength += elementContents.Length - 1;
+                    }
+
+                    // Last one can have padding
+                    byte[] lastElementContents = bitStrings[last].contents;
+                    byte padBits = lastElementContents[0];
+                    totalLength += lastElementContents.Length;
+
+                    byte[] contents = new byte[totalLength];
+                    contents[0] = padBits;
+
+                    int pos = 1;
+                    for (int i = 0; i < count; ++i)
+                    {
+                        byte[] elementContents = bitStrings[i].contents;
+                        int length = elementContents.Length - 1;
+                        Array.Copy(elementContents, 1, contents, pos, length);
+                        pos += length;
+                    }
+
+                    System.Diagnostics.Debug.Assert(pos == totalLength);
+                    return contents;
                 }
-
-                // Last one can have padding
-                byte[] lastElementContents = bitStrings[last].contents;
-                byte padBits = lastElementContents[0];
-                totalLength += lastElementContents.Length;
-
-                byte[] contents = new byte[totalLength];
-                contents[0] = padBits;
-
-                int pos = 1;
-                for (int i = 0; i < count; ++i)
-                {
-                    byte[] elementContents = bitStrings[i].contents;
-                    int length = elementContents.Length - 1;
-                    Array.Copy(elementContents, 1, contents, pos, length);
-                    pos += length;
-                }
-
-                System.Diagnostics.Debug.Assert(pos == totalLength);
-                return contents;
-            }
             }
         }
 
@@ -74,7 +74,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 
         public BerBitString(byte[] data, int padBits)
             : this(data, padBits, DefaultSegmentLimit)
-		{
+        {
         }
 
         public BerBitString(byte[] data, int padBits, int segmentLimit)
@@ -93,7 +93,7 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 
         public BerBitString(Asn1Encodable obj)
             : this(obj.GetDerEncoded(), 0)
-		{
+        {
         }
 
         public BerBitString(DerBitString[] elements)
@@ -122,7 +122,8 @@ namespace BestHTTP.SecureProtocol.Org.BouncyCastle.Asn1
 
         internal override int EncodedLength(bool withID)
         {
-            throw BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateNotImplementedException("BerBitString.EncodedLength");
+            throw BestHTTP.SecureProtocol.Org.BouncyCastle.Utilities.Platform.CreateNotImplementedException(
+                "BerBitString.EncodedLength");
 
             // TODO This depends on knowing it's not DER
             //if (!IsConstructed)
