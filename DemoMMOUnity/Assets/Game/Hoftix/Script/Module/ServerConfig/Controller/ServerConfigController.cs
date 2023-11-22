@@ -15,6 +15,7 @@ namespace ZJYFrameWork.Module.ServerConfig.Controller
         [PacketReceiver]
         public void AtServerConfigResponse(ServerConfigResponse response)
         {
+            CommonController.Instance.loadingRotate.OnClose();
             //获取
             SpringContext.GetBean<ServerDataManager>().SetItemBaseDataList(response.bagItemEntityList);
             CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
