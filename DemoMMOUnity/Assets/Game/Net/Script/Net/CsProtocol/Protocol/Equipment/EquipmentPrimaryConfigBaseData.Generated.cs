@@ -41,6 +41,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
         {
             return 208;
         }
+        public static short GetProtocolId()
+        { 
+         return 208;
+        }
 
         public void Clear()
         {

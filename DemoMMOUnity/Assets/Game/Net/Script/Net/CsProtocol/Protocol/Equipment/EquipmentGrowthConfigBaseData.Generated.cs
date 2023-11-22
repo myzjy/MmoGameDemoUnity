@@ -23,7 +23,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
         {
             return 211;
         }
-
+        public static short GetProtocolId()
+        {
+            return 211;
+        }
         public void Clear()
         {
             id = 0;
