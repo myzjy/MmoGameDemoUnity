@@ -89,7 +89,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 
         public IPacket Read(ByteBuffer buffer)
         {
-            var packet = LoginRequest.ValueOf();
+            var packet = LoginResponse.ValueOf();
             packet.Unpack(buffer.ToBytes());
             return packet;
         }
@@ -110,8 +110,7 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
 #endif
             var message = StringUtils.BytesToString(bytes);
             var dict = JsonConvert.DeserializeObject<Dictionary<object, object>>(message);
-            var packet = ReferenceCache.Acquire<LoginResponse>();
-            packet.Clear();
+           
             foreach (var (key, value) in dict)
             {
                 var keyString = key.ToString();
@@ -119,60 +118,60 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
                 {
                     case "token":
                     {
-                        packet.token = value?.ToString();
+                        response.token = value?.ToString();
                     }
                         break;
                     case "uid":
                     {
                         var valueString = value.ToString();
-                        packet.uid = long.Parse(valueString);
+                        response.uid = long.Parse(valueString);
                     }
                         break;
                     case "userName":
                     {
-                        packet.userName = value.ToString();
+                        response.userName = value.ToString();
                     }
                         break;
                     case "goldNum":
                     {
                         var valueString = value.ToString();
-                        packet.goldNum = long.Parse(valueString);
+                        response.goldNum = long.Parse(valueString);
                     }
                         break;
                     case "DiamondNum":
                     {
                         var valueString = value.ToString();
-                        packet.DiamondNum = long.Parse(valueString);
+                        response.DiamondNum = long.Parse(valueString);
                     }
                         break;
                     case "PremiumDiamondNum":
                     {
                         var valueString = value.ToString();
-                        packet.PremiumDiamondNum = long.Parse(valueString);
+                        response.PremiumDiamondNum = long.Parse(valueString);
                     }
                         break;
                     case "lv":
                     {
                         var valueString = value.ToString();
-                        packet.lv = int.Parse(valueString);
+                        response.lv = int.Parse(valueString);
                     }
                         break;
                     case "exp":
                     {
                         var valueString = value.ToString();
-                        packet.exp = int.Parse(valueString);
+                        response.exp = int.Parse(valueString);
                     }
                         break;
                     case "maxLv":
                     {
                         var valueString = value.ToString();
-                        packet.maxLv = int.Parse(valueString);
+                        response.maxLv = int.Parse(valueString);
                     }
                         break;
                     case "maxExp":
                     {
                         var valueString = value.ToString();
-                        packet.maxExp = int.Parse(valueString);
+                        response.maxExp = int.Parse(valueString);
                     }
                         break;
                 }
