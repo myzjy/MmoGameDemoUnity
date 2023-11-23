@@ -3845,8 +3845,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4378535149520221427}
-  - component: {fileID: 8569379068832259980}
   - component: {fileID: 7622137904974989906}
+  - component: {fileID: 851209164219129482}
   m_Layer: 5
   m_Name: RegisterPart
   m_TagString: Untagged
@@ -3875,34 +3875,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8569379068832259980
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3146546060513168608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 106f277311b041108c3afc1af986d330, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 7622137904974989906}
-  - {fileID: 6891563286360855122}
-  - {fileID: 8738612608067733551}
-  - {fileID: 8578358550628591861}
-  - {fileID: 1586715832105115593}
-  - {fileID: 430668615927816904}
-  - {fileID: 5758009091781868334}
-  rootCanvasGroup: {fileID: 0}
-  root: {fileID: 0}
-  rootObj: {fileID: 0}
-  registerAccountInputField: {fileID: 0}
-  registerPasswordInputField: {fileID: 0}
-  registerAffirmPasswordInputField: {fileID: 0}
-  okButton: {fileID: 0}
-  cancelButton: {fileID: 0}
 --- !u!114 &7622137904974989906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3916,10 +3888,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: RegisterPartView
-    UI_Serializable_Obj: {fileID: 8569379068832259980}
+  - UI_Serializable_Key: RegisterPart_UISerializableKeyObject
+    UI_Serializable_Obj: {fileID: 851209164219129482}
     Path: RegisterPart
   maskIndex: 2
+--- !u!114 &851209164219129482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146546060513168608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataViewList:
+  - {fileID: 7622137904974989906}
+  - {fileID: 6891563286360855122}
+  - {fileID: 8738612608067733551}
+  - {fileID: 8578358550628591861}
+  - {fileID: 1586715832105115593}
+  - {fileID: 430668615927816904}
+  - {fileID: 5758009091781868334}
 --- !u!1 &3191773757919231790
 GameObject:
   m_ObjectHideFlags: 0

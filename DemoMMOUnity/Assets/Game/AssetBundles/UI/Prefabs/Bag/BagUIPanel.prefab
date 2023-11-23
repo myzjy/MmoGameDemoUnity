@@ -4921,7 +4921,7 @@ GameObject:
   - component: {fileID: 4050018962331585570}
   - component: {fileID: 6104662020218988668}
   m_Layer: 5
-  m_Name: Button (Legacy)
+  m_Name: InDetailButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4946,8 +4946,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 3}
-  m_SizeDelta: {x: 225, y: 56}
+  m_AnchoredPosition: {x: -0.00056291, y: 2.3435}
+  m_SizeDelta: {x: 232, y: 57.3128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4437397205403006823
 CanvasRenderer:
@@ -4964,7 +4964,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2310669966605276238}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -5041,7 +5041,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6908163612851813804}
   m_Layer: 5
-  m_Name: Buttons
+  m_Name: ButtonList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15591,7 +15591,7 @@ GameObject:
   - component: {fileID: 3278624168619784837}
   - component: {fileID: 3137686324898159893}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: InDetailText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
