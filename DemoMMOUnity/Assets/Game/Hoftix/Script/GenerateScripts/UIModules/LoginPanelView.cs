@@ -12,7 +12,7 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.UI.Text UserNameText=null;
 		public UnityEngine.GameObject LoginPart=null;
 		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
-		public ZJYFrameWork.UISerializable.RegisterPartView RegisterPartView=null;
+		public ZJYFrameWork.UISerializable.UISerializableKeyObject RegisterPart_UISerializableKeyObject=null;
 		public ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView LoginTapToStartView=null;
 		public ZJYFrameWork.Hotfix.UISerializable.LoginUIController LoginController=null;
 		public UnityEngine.AudioSource AudioSource=null;
@@ -27,7 +27,7 @@ namespace ZJYFrameWork.UISerializable
 			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
 			LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
 			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
-			RegisterPartView=_view.GetObjType<ZJYFrameWork.UISerializable.RegisterPartView>("RegisterPartView");
+			RegisterPart_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("RegisterPart_UISerializableKeyObject");
 			LoginTapToStartView=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView>("LoginTapToStartView");
 			LoginController=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginUIController>("LoginController");
 			AudioSource=_view.GetObjType<UnityEngine.AudioSource>("AudioSource");

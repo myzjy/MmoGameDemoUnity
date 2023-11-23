@@ -33,7 +33,7 @@ function GameMainNetController:AtServerConfigResponse(response)
     --- 关闭 登陆 注册界面
     DispatchEvent(LoginConfig.eventNotification.CLOSE_LOGIN_INIT_PANEL)
     --- 打开游戏主界面
-    GameMainViewController:GetInstance().OnOpen()
+    GameMainViewController:GetInstance():OnOpen()
 end
 
 function GameMainNetController:AtPhysicalPowerUserPropsResponse(response)
