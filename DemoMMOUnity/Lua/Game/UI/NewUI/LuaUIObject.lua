@@ -20,6 +20,9 @@ function LuaUIObject:GetComponent(type)
     --local component = self.transform:GetComponent(type)
     return self.transform:GetComponent(type)
 end
+function LuaUIObject:GetComponent(transform,type)
+    return transform:GetComponent(type)
+end
 
 ---@param btn
 ---@param func function

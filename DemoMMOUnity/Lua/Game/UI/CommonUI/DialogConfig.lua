@@ -12,6 +12,15 @@ local DialogConfig = {
         OK = 1,
         Yes = 2,
         No = 3
+    },
+    config={
+        backgroundCloseButton="Button",
+        titleText="Text",
+        BodyText="Tips",
+        NoButton="GridButton/NoBtn",
+        NoButtonText="GridButton/NoBtn/Text",
+        YesButton="GridButton/YesBtn",
+        YesButtonText="GridButton/YesBtn/Text",
     }
 
 }
