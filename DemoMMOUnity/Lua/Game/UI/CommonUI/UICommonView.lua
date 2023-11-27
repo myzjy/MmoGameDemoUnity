@@ -19,4 +19,30 @@ function UICommonView:OnInit(gameObject)
     self.backgroundCloseButton = self:GetComponent(backgroundCloseTransform, "Button")
     self.titleText = self:GetComponent(titleTextTransform, "Text")
     self.BodyText = self:GetComponent(BodyTextTransform, "Text")
+    self.NoButton = self:GetComponent(NoButtonTransform, "Button")
+    self.NoButtonText = self:GetComponent(NoButtonTextTransform, "Text")
+    self.YesButton = self:GetComponent(YesButtonTransform, "Button")
+    self.YesButtonText = self:GetComponent(YesButtonTextTransform, "Text")
+    self.objCanvasGroup = self:GetComponent(gameObject, "CanvasGroup")
+end
+
+function UICommonView:OnShow()
+    self.objCanvasGroup.alpha = 1
+    self.objCanvasGroup.interactable = true
+    self.objCanvasGroup.blocksRaycasts = true
+end
+
+function UICommonView:OnClose()
+    self.objCanvasGroup.alpha = 0
+    self.objCanvasGroup.interactable = false
+    self.objCanvasGroup.blocksRaycasts = false
+end
+
+---@param active boolean
+function UICommonView:Active(active)
+    if active then
+        self:OnShow()
+    else
+        self:OnClose()
+    end
 end
