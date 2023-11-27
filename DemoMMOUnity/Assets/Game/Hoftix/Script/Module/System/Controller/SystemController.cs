@@ -26,6 +26,8 @@ namespace ZJYFrameWork.Module.System.Controller
         public void AtError(Error error)
         {
             var errorMessage = error.errorMessage;
+            CommonController.Instance.loadingRotate.OnClose();
+            CommonController.Instance.snackbar.SeverError("出现错误！");
 
             if (StringUtils.IsBlank(errorMessage))
             {

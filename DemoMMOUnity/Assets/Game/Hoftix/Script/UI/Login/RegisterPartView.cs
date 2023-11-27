@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using GameUtil;
 using UnityEngine;
 using UnityEngine.UI;
 using ZJYFrameWork.Constant;
@@ -16,7 +17,7 @@ using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.UISerializable
 {
-    public class RegisterPartView : UISerializableKeyObject
+    public class RegisterPartView
     {
         /// <summary>
         /// root节点CanvasGroup
@@ -56,48 +57,20 @@ namespace ZJYFrameWork.UISerializable
 
         public Button cancelButton;
         private long clickLoginTime;
-
-        public void Build()
+        protected UISerializableKeyObject registerSerializableKeyObject { get; set; }
+        public void Build(UISerializableKeyObject keyObject)
         {
-            rootCanvasGroup = GetObjType<CanvasGroup>("root_CanvasGroup");
-            rootObj = GetObjType<GameObject>("root");
+            registerSerializableKeyObject = keyObject;
+            rootCanvasGroup = registerSerializableKeyObject.GetObjType<CanvasGroup>("root_CanvasGroup");
+            rootObj = registerSerializableKeyObject.GetObjType<GameObject>("root");
             root = rootObj.transform;
-            registerAccountInputField = GetObjType<InputField>("registerAccountInputField");
-            registerPasswordInputField = GetObjType<InputField>("registerPasswordInputField");
-            registerAffirmPasswordInputField = GetObjType<InputField>("registerAffirmPasswordInputField");
-            okButton = GetObjType<Button>("okButton");
-            cancelButton = GetObjType<Button>("cancelButton");
-            okButton.onClick.RemoveAllListeners();
-            okButton.onClick.AddListener(() => { OnClickRegister(); });
-            cancelButton.onClick.RemoveAllListeners();
-            cancelButton.onClick.AddListener(() =>
-            {
-                //隐藏按钮
-                OnClose();
-            });
+            registerAccountInputField = registerSerializableKeyObject.GetObjType<InputField>("registerAccountInputField");
+            registerPasswordInputField = registerSerializableKeyObject.GetObjType<InputField>("registerPasswordInputField");
+            registerAffirmPasswordInputField = registerSerializableKeyObject.GetObjType<InputField>("registerAffirmPasswordInputField");
+            okButton = registerSerializableKeyObject.GetObjType<Button>("okButton");
+            cancelButton = registerSerializableKeyObject.GetObjType<Button>("cancelButton");
         }
-
-        private void OnClickRegister()
-        {
-            if (DateTimeUtil.CurrentTimeMillis() - clickLoginTime < DateTimeUtil.CLICK_INTERVAL)
-            {
-                return;
-            }
-
-            Debug.Log("账号密码注册[account:{}][password:{}][affirmPassword:{}]", registerAccountInputField.text,
-                registerPasswordInputField.text, registerAffirmPasswordInputField.text);
-            var accountString = registerAccountInputField.text;
-            var passwordString = registerPasswordInputField.text;
-            var affirmPasswordString = registerPasswordInputField.text;
-            SpringContext.GetBean<ServerDataManager>()
-                .SetCacheRegisterAccountAndPassword(accountString, passwordString, affirmPasswordString);
-#if HTTP_SEND_OPEN
-            SpringContext.GetBean<RegisterController>().AtRegisterRequest();
-#else
-            SpringContext.GetBean<IRegisterService>().RegisterAccount();
-#endif
-        }
-
+        
         public void OnShow()
         {
             rootCanvasGroup.DOKill();

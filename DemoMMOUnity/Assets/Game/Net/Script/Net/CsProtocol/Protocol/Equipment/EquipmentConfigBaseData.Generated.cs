@@ -32,7 +32,10 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
         {
             return 207;
         }
-
+        public static short GetProtocolId()
+        {
+            return 207;
+        }
         public void Clear()
         {
             quality = 0;

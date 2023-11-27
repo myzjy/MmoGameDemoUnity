@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7f81c70685c6b944ca93bd18101fecb6
+guid: 42ef8076877f22e4c85accdd24e19309
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -143,5 +143,5 @@ TextureImporter:
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: ui_bag_tab_icon_spriteatlas.assetbundle
+  assetBundleName: uitabicon_spriteatlas.assetbundle
   assetBundleVariant: 
