@@ -5,8 +5,15 @@
 ---
 ---@class UICommonViewController
 UICommonViewController = class("UICommonViewController")
-
+function UICommonViewController:GetInstance()
+    return UICommonViewController
+end
 
 function UICommonViewController:OnInit()
+    self.viewPanel = UICommonView
+    self.viewPanel:OnInit(CommonController.Instance.snackbar.DialogPanelObject)
+end
 
+function UICommonViewController:OnOpenDialog(buttonType, title, body, yesButtonText, noButtonText, onClick)
+    self.viewPanel:OnOpen(buttonType, title, body, yesButtonText, noButtonText, onClick)
 end

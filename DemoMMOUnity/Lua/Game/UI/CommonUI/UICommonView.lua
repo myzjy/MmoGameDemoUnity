@@ -46,3 +46,48 @@ function UICommonView:Active(active)
         self:OnClose()
     end
 end
+
+function UICommonView:SetTitleText(text)
+    self.titleText.text = text
+end
+
+function UICommonView:SetBodyText(text)
+    self.BodyText.text = text
+end
+
+function UICommonView:SetupButtons(type)
+    local buttonFunction = {
+        [self.config.ButtonType.YesNO] = function()
+            self.NoButton.gameObject:SetActive(true)
+            self.YesButton.gameObject:SetActive(true)
+        end,
+        [self.config.ButtonType.Yes] = function()
+            self.NoButton.gameObject:SetActive(false)
+            self.YesButton.gameObject:SetActive(true)
+        end,
+    }
+    local switchAction = buttonFunction[type]
+    switchAction()
+end
+
+function UICommonView:OnOpen(type, title, body, yesButtonText, noButtonText, onClick)
+    self:Active(true)
+    self:SetTitleText(title)
+    self:SetupButtons(type)
+    self:SetBodyText(body)
+    if self.backgroundCloseButton ~= nil then
+        self:SetListener(self.backgroundCloseButton, function()
+            self:OnClose()
+        end)
+    end
+    self.YesButtonText.text = yesButtonText
+    self.NoButtonText.text = noButtonText
+    self:SetListener(self.YesButton, function()
+        self:OnClose()
+        onClick(self.config.Result.Yes)
+    end)
+    self:SetListener(self.NoButton, function()
+        self:OnClose()
+        onClick(self.config.Result.No)
+    end)
+end
