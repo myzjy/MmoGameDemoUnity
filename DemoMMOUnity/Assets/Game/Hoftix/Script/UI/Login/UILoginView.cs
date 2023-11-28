@@ -1,4 +1,5 @@
 using GameUtil;
+using ZJYFrameWork.Module.Register.Controller;
 using ZJYFrameWork.Module.Register.Service;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
