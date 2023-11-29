@@ -33,7 +33,7 @@ namespace ZJYFrameWork.UISerializable.Common
         public Text serverLandscapeLeftError;
         public UIDataLoading UIDataLoading;
         public Dialog OverlayDialog;
-
+        public GameObject DialogPanelObject;
         #endregion
 
         #region 进度条显示
