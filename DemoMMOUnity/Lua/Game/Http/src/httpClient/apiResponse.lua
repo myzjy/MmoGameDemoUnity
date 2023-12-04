@@ -4,13 +4,13 @@
 --- DateTime: 2023/5/28 14:56
 ---
 local apiResponse = class("apiResponse")
-apiResponse.Request = nil
-apiResponse.bhResponse = nil
-apiResponse.ElapsedMilliseconds = nil
-apiResponse.StatusCode = 0
-apiResponse.StatusMessage = "Timeout"
-apiResponse.Headers = nil
-apiResponse.RawData = nil
+-- apiResponse.Request = nil
+-- apiResponse.bhResponse = nil
+-- apiResponse.ElapsedMilliseconds = nil
+-- apiResponse.StatusCode = 0
+-- apiResponse.StatusMessage = "Timeout"
+-- apiResponse.Headers = nil
+-- apiResponse.RawData = nil
 function apiResponse.new(request, bhResponse, elapsedMilliseconds)
     apiResponse.Request = request
     apiResponse.bhResponse = bhResponse

@@ -13,7 +13,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
         private RegisterPartView RegisterPartView;
         public override void OnInit()
         {
-            viewPanel.LoginPartView.Build();
+            // viewPanel.LoginPartView.Build();
             RegisterPartView = new RegisterPartView();
             RegisterPartView.Build(viewPanel.RegisterPart_UISerializableKeyObject);
             viewPanel.LoginTapToStartView.Build(this);

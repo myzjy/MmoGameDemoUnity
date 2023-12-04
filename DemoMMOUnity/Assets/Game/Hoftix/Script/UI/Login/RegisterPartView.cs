@@ -2,6 +2,7 @@
 using GameUtil;
 using UnityEngine;
 using UnityEngine.UI;
+using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
@@ -17,7 +18,7 @@ using ZJYFrameWork.WebRequest;
 
 namespace ZJYFrameWork.UISerializable
 {
-    public class RegisterPartView
+    public class RegisterPartView : IReference
     {
         /// <summary>
         /// root节点CanvasGroup
@@ -58,19 +59,23 @@ namespace ZJYFrameWork.UISerializable
         public Button cancelButton;
         private long clickLoginTime;
         protected UISerializableKeyObject registerSerializableKeyObject { get; set; }
+
         public void Build(UISerializableKeyObject keyObject)
         {
             registerSerializableKeyObject = keyObject;
             rootCanvasGroup = registerSerializableKeyObject.GetObjType<CanvasGroup>("root_CanvasGroup");
             rootObj = registerSerializableKeyObject.GetObjType<GameObject>("root");
             root = rootObj.transform;
-            registerAccountInputField = registerSerializableKeyObject.GetObjType<InputField>("registerAccountInputField");
-            registerPasswordInputField = registerSerializableKeyObject.GetObjType<InputField>("registerPasswordInputField");
-            registerAffirmPasswordInputField = registerSerializableKeyObject.GetObjType<InputField>("registerAffirmPasswordInputField");
+            registerAccountInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerAccountInputField");
+            registerPasswordInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerPasswordInputField");
+            registerAffirmPasswordInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerAffirmPasswordInputField");
             okButton = registerSerializableKeyObject.GetObjType<Button>("okButton");
             cancelButton = registerSerializableKeyObject.GetObjType<Button>("cancelButton");
         }
-        
+
         public void OnShow()
         {
             rootCanvasGroup.DOKill();
@@ -104,6 +109,13 @@ namespace ZJYFrameWork.UISerializable
                     //打开登录界面
                     SpringContext.GetBean<LoginUIController>().loginPartView.Show();
                 });
+        }
+
+        public void Clear()
+        {
+            rootCanvasGroup = null;
+            root = null;
+            
         }
     }
 }

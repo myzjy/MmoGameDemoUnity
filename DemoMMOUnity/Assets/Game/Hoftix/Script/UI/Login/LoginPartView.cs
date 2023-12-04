@@ -20,7 +20,7 @@ namespace ZJYFrameWork.UISerializable
     /// <summary>
     /// 登录面板
     /// </summary>
-    public sealed class LoginPartView : UISerializableKeyObject
+    public abstract  class LoginPartView
     {
         /// <summary>
         /// 登录界面
@@ -47,19 +47,19 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public InputField password;
 
-        public void Build()
+        public void Build(UISerializableKeyObject keyObject)
         {
             //登录面板
-            LoginPart = GetObjType<GameObject>("LoginPart");
+            LoginPart = keyObject.GetObjType<GameObject>("LoginPart");
             //登录-->账号密码正确进入游戏
-            LoginBtn = GetObjType<Button>("LoginBtn_Button");
+            LoginBtn = keyObject.GetObjType<Button>("LoginBtn_Button");
             //注册--->进入注册界面，进行账号注册
-            RegisterBtn = GetObjType<Button>("RegisterBtn_Button");
+            RegisterBtn = keyObject.GetObjType<Button>("RegisterBtn_Button");
             //账号输入框
-            account = GetObjType<InputField>("account");
+            account = keyObject.GetObjType<InputField>("account");
             account.text = "";
             //密码输入框
-            password = GetObjType<InputField>("password");
+            password = keyObject.GetObjType<InputField>("password");
             password.text = "";
             RegisterBtn.SetListener(() =>
             {

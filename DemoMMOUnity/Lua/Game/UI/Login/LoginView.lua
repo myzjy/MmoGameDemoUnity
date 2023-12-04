@@ -13,7 +13,7 @@ function LoginView:OnLoad()
         viewPanel = LoginPanelView,
         initFunc = function()
             printDebug("UILoginUIPanelView:Init()")
-            LoginView:Init()
+            LoginView:OnInit()
         end,
         showFunc = function()
             printDebug("UILoginUIPanelView:showUI()-->showFunc")

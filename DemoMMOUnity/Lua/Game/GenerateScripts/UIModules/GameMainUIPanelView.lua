@@ -40,6 +40,5 @@ function GameMainUIPanelView:Init(view)
 	self.settingBtn = self._UIView:GetObjType("settingBtn") or CS.UnityEngine.UI.Button
 	self.MailBtn = self._UIView:GetObjType("MailBtn") or CS.UnityEngine.UI.Button
 	self.MailBtn_tips = self._UIView:GetObjType("MailBtn_tips") or CS.UnityEngine.GameObject
-	self.GMUIController = self._UIView:GetObjType("GMUIController") or CS.ZJYFrameWork.Hotfix.UI.GameMain.GameMainUIController
 end
 

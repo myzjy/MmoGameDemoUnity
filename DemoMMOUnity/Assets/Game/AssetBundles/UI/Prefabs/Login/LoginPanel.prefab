@@ -8102,7 +8102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 226294053470361185}
   - component: {fileID: 4548462337066523778}
-  - component: {fileID: 2681772145587560702}
+  - component: {fileID: 4441707503095852103}
   m_Layer: 5
   m_Name: LoginPart
   m_TagString: Untagged
@@ -8151,11 +8151,11 @@ MonoBehaviour:
   - UI_Serializable_Key: LoginPart
     UI_Serializable_Obj: {fileID: 7320187304149993461}
     Path: LoginPart
-  - UI_Serializable_Key: LoginPartView
-    UI_Serializable_Obj: {fileID: 2681772145587560702}
+  - UI_Serializable_Key: LoginPart_UISerializableKeyObject
+    UI_Serializable_Obj: {fileID: 4441707503095852103}
     Path: LoginPart
   maskIndex: 6
---- !u!114 &2681772145587560702
+--- !u!114 &4441707503095852103
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8164,20 +8164,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7320187304149993461}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9bf057a4ca44355a834455715ad9172, type: 3}
+  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 4548462337066523778}
-  - {fileID: 1999889696300109558}
-  - {fileID: 6926591055983717950}
-  - {fileID: 7717076792245837084}
-  - {fileID: 663313220370998969}
-  LoginPart: {fileID: 0}
-  LoginBtn: {fileID: 0}
-  RegisterBtn: {fileID: 0}
-  account: {fileID: 0}
-  password: {fileID: 0}
+  dataViewList: []
 --- !u!1 &7418065423706028953
 GameObject:
   m_ObjectHideFlags: 0
@@ -9614,8 +9604,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c87f894dc8d49c08e1c34ec7f12b934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loginPartView: {fileID: 0}
-  registerPartRegisterPartView: {fileID: 0}
   loginTapToStartView: {fileID: 0}
 --- !u!1 &8613637727540871330
 GameObject:

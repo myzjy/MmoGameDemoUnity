@@ -187,6 +187,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     UnityEngine.Debug.LogError($"{path} 预制体 没有UIView组件");
                     continue;
                 }
+                Debug.Log($"{path}");
 
                 var UIViewDataList = UIView.dataList;
                 var className = $"{Path.GetFileNameWithoutExtension(item.Name)}View";
