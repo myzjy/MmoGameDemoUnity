@@ -7,6 +7,8 @@
 ---@class LoginView:UIView
 LoginView = class("LoginView", UIView)
 require("Game.GenerateScripts.UIModules.LoginPanelView")
+LoginView.LoginPartView = require("Game.UI.Login.LoginPartView")
+
 function LoginView:OnLoad()
     self.UIConfig = {
         Config = LoginConfig,
@@ -30,7 +32,8 @@ end
 
 function LoginView:OnInit()
     printInfo("LoginView:OnInit line 10")
-    LoginView.viewPanel.LoginPartView:Build()
+
+    LoginPartView:Build(LoginView.viewPanel.LoginPart_UISerializableKeyObject)
     LoginView.viewPanel.RegisterPartView:Build()
     LoginView.viewPanel.LoginTapToStartView:Build(nil)
     LoginView.viewPanel.LoginController:Build(

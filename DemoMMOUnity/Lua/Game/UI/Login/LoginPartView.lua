@@ -4,15 +4,13 @@
 --- DateTime: 2023/5/15 19:09
 ---
 ---@class LoginPartView
-local LoginPartView=BaseClass()
+local LoginPartView = class("LoginPartView", UIView)
 
 function LoginPartView:Build(view)
-
+    self.LoginPart = view:GetObjType("LoginPart") or CS.UnityEngine.GameObject
+    self.LoginBtn = view:GetObjType("LoginBtn_Button") or CS.UnityEngine.UI.Button
+    self.RegisterBtn = view:GetObjType("RegisterBtn_Button") or CS.UnityEngine.UI.Button
+    self.account = view:GetObjType("account") or CS.UnityEngine.UI.InputField
+    self.password = view:GetObjType("password") or CS.UnityEngine.UI.InputField
 end
-
-
-
-
-
-
-return LoginPartView;
+return LoginPartView
