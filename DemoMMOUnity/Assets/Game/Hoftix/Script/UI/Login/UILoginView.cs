@@ -11,25 +11,32 @@ namespace ZJYFrameWork.Hotfix.UISerializable
     public class UILoginView : UIBaseView<LoginPanelView>
     {
         private RegisterPartView RegisterPartView;
+        private LoginPartView LoginPartView = new LoginPartView();
+        public LoginTapToStartView LoginTapToStartView;
+
         public override void OnInit()
         {
             // viewPanel.LoginPartView.Build();
             RegisterPartView = new RegisterPartView();
             RegisterPartView.Build(viewPanel.RegisterPart_UISerializableKeyObject);
-            viewPanel.LoginTapToStartView.Build(this);
-            viewPanel.LoginController.Build(loginPartView: viewPanel.LoginPartView,
-                registerPartView: RegisterPartView, loginTapToStartView: viewPanel.LoginTapToStartView);
+            LoginPartView = new LoginPartView();
+            LoginPartView.Build(viewPanel.LoginPart_UISerializableKeyObject);
+            LoginTapToStartView = new LoginTapToStartView();
+            LoginTapToStartView.Build(viewPanel.LoginStart_UISerializableKeyObject);
+            // viewPanel.LoginTapToStartView.Build();
+            viewPanel.LoginController.Build(loginPartView: LoginPartView,
+                registerPartView: RegisterPartView, loginTapToStartView: LoginTapToStartView);
             RegisterPartView.okButton.SetListener(OnClickRegister);
             RegisterPartView.cancelButton.SetListener(RegisterPartView.OnClose);
-            
+
             viewPanel.LoginController.OnInit();
         }
 
         public override void OnShow()
         {
             viewPanel.LoginController.OnInit();
-
         }
+
         private long clickLoginTime;
 
         private void OnClickRegister()
@@ -39,8 +46,10 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                 return;
             }
 
-            Debug.Log("账号密码注册[account:{}][password:{}][affirmPassword:{}]", RegisterPartView.registerAccountInputField.text,
-                RegisterPartView.registerPasswordInputField.text, RegisterPartView.registerAffirmPasswordInputField.text);
+            Debug.Log("账号密码注册[account:{}][password:{}][affirmPassword:{}]",
+                RegisterPartView.registerAccountInputField.text,
+                RegisterPartView.registerPasswordInputField.text,
+                RegisterPartView.registerAffirmPasswordInputField.text);
             var accountString = RegisterPartView.registerAccountInputField.text;
             var passwordString = RegisterPartView.registerPasswordInputField.text;
             var affirmPasswordString = RegisterPartView.registerPasswordInputField.text;

@@ -9,7 +9,8 @@ function LoginPanelView:Init(view)
 	self.LoginPart = self._UIView:GetObjType("LoginPart") or CS.UnityEngine.GameObject
 	self.LoginPart_UISerializableKeyObject = self._UIView:GetObjType("LoginPart_UISerializableKeyObject") or CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.RegisterPart_UISerializableKeyObject = self._UIView:GetObjType("RegisterPart_UISerializableKeyObject") or CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
-	self.LoginTapToStartView = self._UIView:GetObjType("LoginTapToStartView") or CS.ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView
+	self.LoginStart_CanvasGroup = self._UIView:GetObjType("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
+	self.LoginStart_UISerializableKeyObject = self._UIView:GetObjType("LoginStart_UISerializableKeyObject") or CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.LoginController = self._UIView:GetObjType("LoginController") or CS.ZJYFrameWork.Hotfix.UISerializable.LoginUIController
 	self.AudioSource = self._UIView:GetObjType("AudioSource") or CS.UnityEngine.AudioSource
 end

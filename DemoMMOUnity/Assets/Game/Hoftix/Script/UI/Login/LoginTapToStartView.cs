@@ -11,25 +11,25 @@ using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Hotfix.UISerializable
 {
-    public class LoginTapToStartView : UISerializableKeyObject
+    public class LoginTapToStartView 
     {
         public Button LoginStartMaxButton = null;
         public Button LoginStartButton = null;
-        public UILoginView LoginView = null;
+        public CanvasGroup SteamLoginCanvasGroup = null;
 
         /// <summary>
         /// 赋值 构建 传递过来LoginView，便于控制
         /// </summary>
         /// <param name="loginView"></param>
-        public void Build(UILoginView loginView)
+        public void Build(UISerializableKeyObject loginView)
         {
-            LoginView = loginView;
-            LoginStartButton = GetObjType<Button>("LoginStartButton");
-            LoginStartMaxButton = GetObjType<Button>("LoginStartMaxButton");
+            LoginStartButton = loginView.GetObjType<Button>("LoginStartButton");
+            LoginStartMaxButton = loginView.GetObjType<Button>("LoginStartMaxButton");
+            SteamLoginCanvasGroup = loginView.GetObjType<CanvasGroup>("LoginStart_CanvasGroup");
             if (LoginStartButton == null)
             {
 #if DEVELOP_BUILD
-                Debug.LogError($"请检查[{name}]物体配置下面是否有[LoginStartButton]组件");
+                Debug.LogError($"请检查[{loginView.name}]物体配置下面是否有[LoginStartButton]组件");
 #endif
             }
             else
@@ -40,7 +40,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
             if (LoginStartMaxButton == null)
             {
 #if DEVELOP_BUILD
-                Debug.LogError($"请检查{name}物体配置下面是否有[LoginStartMaxButton]组件");
+                Debug.LogError($"请检查{loginView.name}物体配置下面是否有[LoginStartMaxButton]组件");
 #endif
             }
             else
@@ -51,44 +51,30 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         public void Hide()
         {
-            if (!gameObject.activeSelf)
+            if (SteamLoginCanvasGroup.alpha < 1)
             {
                 return;
             }
 
-            var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
-            buttonTapToStartCanvasGroup.DOFade(0f, 1f).SetEase(Ease.Linear).OnComplete(() =>
+            SteamLoginCanvasGroup.DOFade(0f, 1f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                buttonTapToStartCanvasGroup.interactable = false;
-                buttonTapToStartCanvasGroup.ignoreParentGroups = false;
-                buttonTapToStartCanvasGroup.blocksRaycasts = false;
-                buttonTapToStartCanvasGroup.interactable = false;
+                SteamLoginCanvasGroup.interactable = false;
+                SteamLoginCanvasGroup.ignoreParentGroups = false;
+                SteamLoginCanvasGroup.blocksRaycasts = false;
+                SteamLoginCanvasGroup.interactable = false;
             }).Play();
-            gameObject.SetActive(false);
         }
 
         public void Show()
         {
-            // var sequence = DOTween.Sequence();
-            // sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnShow(); });
-            // sequence.AppendInterval(1.5f);
-            // sequence.AppendCallback(() => { CommonController.Instance.loadingRotate.OnClose(); });
-            // sequence.AppendInterval(0.5f);
-            //
-            // sequence.AppendCallback(() =>
-            // {
-            gameObject.SetActive(true);
-
             CommonController.Instance.loadingRotate.OnClose();
-            var buttonTapToStartCanvasGroup = GetComponent<CanvasGroup>();
-            buttonTapToStartCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).OnComplete(() =>
+            SteamLoginCanvasGroup.DOFade(1f, 1.2f).SetEase(Ease.Linear).OnComplete(() =>
             {
-                buttonTapToStartCanvasGroup.interactable = true;
-                buttonTapToStartCanvasGroup.ignoreParentGroups = true;
-                buttonTapToStartCanvasGroup.blocksRaycasts = true;
-                buttonTapToStartCanvasGroup.interactable = true;
+                SteamLoginCanvasGroup.interactable = true;
+                SteamLoginCanvasGroup.ignoreParentGroups = true;
+                SteamLoginCanvasGroup.blocksRaycasts = true;
+                SteamLoginCanvasGroup.interactable = true;
             }).Play();
-            // });
         }
 
         protected virtual void StartGame()
@@ -98,9 +84,8 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 
         public void LoginStartGame()
         {
-            var buttonTapToStartCanvasGroup = GetComponentInChildren<CanvasGroup>();
-            buttonTapToStartCanvasGroup.DOKill();
-            buttonTapToStartCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear)
+            SteamLoginCanvasGroup.DOKill();
+            SteamLoginCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
                     SpringContext.GetBean<LoginUIController>().OnHide();

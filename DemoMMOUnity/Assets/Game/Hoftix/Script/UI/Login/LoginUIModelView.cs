@@ -98,7 +98,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
                     break;
                 case UINotifEnum.OpenLoginTapToStartUI:
                 {
-                    selfView.viewPanel.LoginTapToStartView.Show();
+                    selfView.LoginTapToStartView.Show();
                 }
                     break;
                 case UINotifEnum.ShowLoginAccountUI:
@@ -111,7 +111,7 @@ namespace ZJYFrameWork.Hotfix.UISerializable
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.Log("点击开始游戏之后，服务器在开启时间，可以正常进入");
 #endif
-                    selfView.viewPanel.LoginTapToStartView.LoginStartGame();
+                    selfView.LoginTapToStartView.LoginStartGame();
                 }
                     break;
             }

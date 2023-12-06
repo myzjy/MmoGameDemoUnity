@@ -11,9 +11,10 @@ namespace ZJYFrameWork.UISerializable
 		public UnityEngine.GameObject tips=null;
 		public UnityEngine.UI.Text UserNameText=null;
 		public UnityEngine.GameObject LoginPart=null;
-		public ZJYFrameWork.UISerializable.LoginPartView LoginPartView=null;
+		public ZJYFrameWork.UISerializable.UISerializableKeyObject LoginPart_UISerializableKeyObject=null;
 		public ZJYFrameWork.UISerializable.UISerializableKeyObject RegisterPart_UISerializableKeyObject=null;
-		public ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView LoginTapToStartView=null;
+		public UnityEngine.CanvasGroup LoginStart_CanvasGroup=null;
+		public ZJYFrameWork.UISerializable.UISerializableKeyObject LoginStart_UISerializableKeyObject=null;
 		public ZJYFrameWork.Hotfix.UISerializable.LoginUIController LoginController=null;
 		public UnityEngine.AudioSource AudioSource=null;
 		
@@ -26,9 +27,10 @@ namespace ZJYFrameWork.UISerializable
 			tips=_view.GetObjType<UnityEngine.GameObject>("tips");
 			UserNameText=_view.GetObjType<UnityEngine.UI.Text>("UserNameText");
 			LoginPart=_view.GetObjType<UnityEngine.GameObject>("LoginPart");
-			LoginPartView=_view.GetObjType<ZJYFrameWork.UISerializable.LoginPartView>("LoginPartView");
+			LoginPart_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("LoginPart_UISerializableKeyObject");
 			RegisterPart_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("RegisterPart_UISerializableKeyObject");
-			LoginTapToStartView=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginTapToStartView>("LoginTapToStartView");
+			LoginStart_CanvasGroup=_view.GetObjType<UnityEngine.CanvasGroup>("LoginStart_CanvasGroup");
+			LoginStart_UISerializableKeyObject=_view.GetObjType<ZJYFrameWork.UISerializable.UISerializableKeyObject>("LoginStart_UISerializableKeyObject");
 			LoginController=_view.GetObjType<ZJYFrameWork.Hotfix.UISerializable.LoginUIController>("LoginController");
 			AudioSource=_view.GetObjType<UnityEngine.AudioSource>("AudioSource");
 			

@@ -32,7 +32,6 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
 
         public override void OnInit()
         {
-            InitEquipPanel();
             OnShow();
         }
 
@@ -42,7 +41,6 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
             switch (lastOpenBagType)
             {
                 case OpenBagType.Equip:
-                    EquipBagUIPanel();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -53,7 +51,7 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
 
         private void CloseUIPanel()
         {
-            EquipPanel.SetActive(false);
+            
         }
 
         public override void OnHide()
@@ -62,53 +60,7 @@ namespace ZJYFrameWork.Hotfix.UI.BagUI
             CloseUIPanel();
         }
 
-        #region 背包界面 基础相关
+    
 
-        /// <summary>
-        /// 背包关闭 按钮
-        /// </summary>
-        public Button bagCloseButton;
-
-        public void InitBag()
-        {
-            var skObject = viewPanel.EquipAndItemPanel.GetComponent<UISerializableKeyObject>();
-            bagCloseButton = skObject.GetObjType<Button>("CloseBtn");
-            bagCloseButton.SetListener(OnHide);
-        }
-
-        #endregion
-
-        #region 装备
-
-        /// <summary>
-        /// 装备界面
-        /// </summary>
-        private GameObject EquipPanel;
-
-        /// <summary>
-        /// 背包道具 item
-        /// </summary>
-        public UISerializableKeyObject ItemKeyObject;
-
-        private void InitEquipPanel()
-        {
-            var skObject = viewPanel.EquipAndItemPanel.GetComponent<UISerializableKeyObject>();
-            EquipPanel = skObject.GetObjType<GameObject>("EquipPanel");
-            var ItemObj = skObject.GetObjType<GameObject>("ItemObjTr");
-            ItemKeyObject = ItemObj.GetComponent<UISerializableKeyObject>();
-        }
-
-        /// <summary>
-        /// 装备界面
-        /// </summary>
-        public void EquipBagUIPanel()
-        {
-            EquipPanel.SetActive(true);
-            var skObject = viewPanel.EquipAndItemPanel.GetComponent<UISerializableKeyObject>();
-            //生成装备 父物体
-            var EquipContent = skObject.GetObjType<GameObject>("EquipContent");
-        }
-
-        #endregion
     }
 }

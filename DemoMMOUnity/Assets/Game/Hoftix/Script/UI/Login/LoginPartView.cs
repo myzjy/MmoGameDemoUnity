@@ -20,7 +20,7 @@ namespace ZJYFrameWork.UISerializable
     /// <summary>
     /// 登录面板
     /// </summary>
-    public abstract  class LoginPartView
+    public class LoginPartView
     {
         /// <summary>
         /// 登录界面

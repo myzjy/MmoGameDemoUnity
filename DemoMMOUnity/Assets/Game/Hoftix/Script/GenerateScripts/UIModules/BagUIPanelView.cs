@@ -6,13 +6,13 @@ namespace ZJYFrameWork.UISerializable
 {
     public class BagUIPanelView:UIViewInterface
     {
-        public UnityEngine.GameObject EquipAndItemPanel=null;
+        public UnityEngine.GameObject equipmentOtem=null;
 		
 
 
         public void Init(UIView _view)
         {
-            EquipAndItemPanel=_view.GetObjType<UnityEngine.GameObject>("EquipAndItemPanel");
+            equipmentOtem=_view.GetObjType<UnityEngine.GameObject>("equipmentOtem");
 			
         }
     }

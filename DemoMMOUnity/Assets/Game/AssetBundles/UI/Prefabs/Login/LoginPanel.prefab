@@ -2334,7 +2334,7 @@ MonoBehaviour:
   - {fileID: 6157225092508190709}
   - {fileID: 4548462337066523778}
   - {fileID: 7622137904974989906}
-  - {fileID: 4266571107642333592}
+  - {fileID: 0}
   - {fileID: 7421680849228347599}
   - {fileID: 7236548743885483865}
   mSelfObj: {fileID: 1899562274783211712}
@@ -5989,10 +5989,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1005835883573863339}
   - component: {fileID: 8420755454070734423}
-  - component: {fileID: 7517360314702790454}
-  - component: {fileID: 4266571107642333592}
+  - component: {fileID: 3095057475168958607}
+  - component: {fileID: 7494502169147901862}
   m_Layer: 5
-  m_Name: SteamLogin
+  m_Name: LoginStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6033,25 +6033,7 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!114 &7517360314702790454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5593194841706032213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57a78f43877c462f8ee4e4313c0087c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dataViewList:
-  - {fileID: 4266571107642333592}
-  - {fileID: 917775613464192907}
-  - {fileID: 2020806025000977844}
-  LoginStartMaxButton: {fileID: 0}
-  LoginStartButton: {fileID: 0}
---- !u!114 &4266571107642333592
+--- !u!114 &3095057475168958607
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6064,10 +6046,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: LoginTapToStartView
-    UI_Serializable_Obj: {fileID: 7517360314702790454}
-    Path: SteamLogin
-  maskIndex: 4
+  - UI_Serializable_Key: LoginStart_CanvasGroup
+    UI_Serializable_Obj: {fileID: 8420755454070734423}
+    Path: LoginPanel/LoginStart
+  - UI_Serializable_Key: LoginStart_UISerializableKeyObject
+    UI_Serializable_Obj: {fileID: 7494502169147901862}
+    Path: LoginStart
+  maskIndex: 6
+--- !u!114 &7494502169147901862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593194841706032213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dataViewList:
+  - {fileID: 3095057475168958607}
+  - {fileID: 917775613464192907}
+  - {fileID: 2020806025000977844}
 --- !u!1 &5604176683095195285
 GameObject:
   m_ObjectHideFlags: 0
@@ -9604,7 +9605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c87f894dc8d49c08e1c34ec7f12b934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loginTapToStartView: {fileID: 0}
 --- !u!1 &8613637727540871330
 GameObject:
   m_ObjectHideFlags: 0
