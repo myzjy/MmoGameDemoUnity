@@ -7,7 +7,7 @@
 ---@class LoginView:UIView
 LoginView = class("LoginView", UIView)
 require("Game.GenerateScripts.UIModules.LoginPanelView")
-LoginView.LoginPartView = require("Game.UI.Login.LoginPartView")
+require("Game.UI.Login.LoginPartView")
 
 function LoginView:OnLoad()
     self.UIConfig = {
@@ -37,7 +37,7 @@ function LoginView:OnInit()
     LoginView.viewPanel.RegisterPartView:Build()
     LoginView.viewPanel.LoginTapToStartView:Build(nil)
     LoginView.viewPanel.LoginController:Build(
-        LoginView.viewPanel.LoginPartView,
+        LoginPartView,
         LoginView.viewPanel.RegisterPartView,
         LoginView.viewPanel.LoginTapToStartView,
         LoginView)
