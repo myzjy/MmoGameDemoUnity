@@ -1,8 +1,8 @@
 ---
 ---datetime.datetime
 ---
----@class RegisterPartView:UIView
-RegisterPartView = class("RegisterPartView", UIView)
+---@class RegisterPartView:UIBaseView
+local RegisterPartView = class("RegisterPartView", UIBaseView)
 
 function RegisterPartView:Build(view)
     self.rootCanvasGroup = view:GetObjType("root_CanvasGroup") or CS.UnityEngine.CanvasGroup
@@ -43,6 +43,9 @@ function RegisterPartView:OnHide()
             self.rootCanvasGroup.blocksRaycasts = false
             -- PlayManager.Instance.LoadScene(Data.scene_home);
             self.rootObj:SetActive(false)
+            LoginUIController:GetInstance():Open()
         end
         );
 end
+
+return RegisterPartView

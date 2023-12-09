@@ -7,7 +7,7 @@
 ---@class LoginView:UIView
 LoginView = class("LoginView", UIView)
 require("Game.GenerateScripts.UIModules.LoginPanelView")
-require("Game.UI.Login.LoginPartView")
+LoginView.LoginPartView = require("Game.UI.Login.LoginPartView")
 
 function LoginView:OnLoad()
     self.UIConfig = {
@@ -33,11 +33,12 @@ end
 function LoginView:OnInit()
     printInfo("LoginView:OnInit line 10")
 
-    LoginPartView:Build(LoginView.viewPanel.LoginPart_UISerializableKeyObject)
+    self.LoginPartView:Build(LoginView.viewPanel.LoginPart_UISerializableKeyObject)
+
     LoginView.viewPanel.RegisterPartView:Build()
     LoginView.viewPanel.LoginTapToStartView:Build(nil)
     LoginView.viewPanel.LoginController:Build(
-        LoginPartView,
+        self.LoginPartView,
         LoginView.viewPanel.RegisterPartView,
         LoginView.viewPanel.LoginTapToStartView,
         LoginView)
@@ -90,7 +91,7 @@ function LoginView:NotificationHandler(_eventNotification)
             LoginView:LoginStartGame()
         end,
         [LoginConfig.eventNotification.ShowLoginAccountUI] = function(obj)
-            LoginView.OnHide()
+            LoginView:OnHide()
         end
     }
     local switchAction = eventSwitch[_eventNotification.eventName]

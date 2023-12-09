@@ -3,8 +3,8 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/15 19:09
 ---
----@class LoginPartView:UIView
-LoginPartView = class("LoginPartView", UIView)
+---@class LoginPartView:UIBaseView
+local LoginPartView = class("LoginPartView", UIBaseView)
 
 function LoginPartView:Build(view)
     self:Close()
@@ -22,3 +22,5 @@ function LoginPartView:Close()
     self.account = nil
     self.password = nil
 end
+
+return LoginPartView
