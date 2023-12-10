@@ -5,10 +5,12 @@
 local LoginService = class("LoginService")
 local function LoginServiceConfig()
     return {
+        ---@type {id:number,protocolData:fun(id:number):LoginRequest|nil}
         LoginRequest = {
-            protocolId = 1000,
-            ---@type LoginRequest|nil
-            packet = ProtocolManager.getProtocol(1000)
+            id = 1000,
+            protocolData = function(id)
+                return ProtocolManager.getProtocol(id)
+            end
         }
     }
 end
@@ -17,7 +19,8 @@ end
 function LoginService:LoginByAccount(account, password)
     LoginChcheData:SetAccount(account)
     LoginChcheData:SetPassword(password)
-    local packetData = LoginServiceConfig().LoginRequest.packet
+    local id = LoginServiceConfig().LoginRequest.id
+    local packetData = LoginServiceConfig().LoginRequest.protocolData(id)
     if packetData == nil then
         printError("当前 LoginReuqest 脚本 没有读取到 请检查")
         return
@@ -29,6 +32,16 @@ function LoginService:LoginByAccount(account, password)
 end
 
 function LoginService:LoginTapToStart()
+    local platform = "ediotr"
+    if CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.Android then
+        platform = "android"
+    elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.IPhonePlayer then
+        platform = "ios"
+    elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.WindowsPlayer then
+        platform = "pc"
+    else
+        printDebug("Current platform is unknown.")
+    end
     
 end
 

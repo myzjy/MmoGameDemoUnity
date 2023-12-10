@@ -63,7 +63,6 @@ GlobalEventSystem = {}
 local function main()
     require("BaseRequire")
     printDebug("main() line 63")
-    require("Game.Net.main")
 
     GlobalEventSystem = require("utils.EventSystem")
     if Debug > 0 then
