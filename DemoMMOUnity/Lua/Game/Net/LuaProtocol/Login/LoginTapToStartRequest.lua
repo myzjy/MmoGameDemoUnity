@@ -6,8 +6,10 @@
 ---@class LoginTapToStartRequest
 local LoginTapToStartRequest = {}
 
-function LoginTapToStartRequest:new()
-    local obj = {}
+function LoginTapToStartRequest:new(clientName)
+    local obj = {
+        clientName = clientName
+    }
     setmetatable(obj, self)
     self.__index = self
     return obj

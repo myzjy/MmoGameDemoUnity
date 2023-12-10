@@ -24,7 +24,7 @@ Object = require "Common.UnityEngine.Object"
 require("Common.csSharpClassGloabl")
 require "Common.System.coroutine"
 
-require("Common/BaseClass")
+require("Common.BaseClass")
 --require("utils.EventSystem")
 require("Game.CS.init")
 
@@ -36,10 +36,9 @@ require("Common.util.Timer")
 UpdateManager = require "Common.UpdateManager"
 require("Common.UIGloabl")
 require("Game.UI.init")
-ByteBuffer = require("Game.Net.LuaProtocol.Buffer.ByteBuffer")
 JSON = require("Common.json")
---require("Game.Manager.ProtocolManager")
 require("Game.Event.EventBus")
+require("Game.Net.init")
 
 -- LuaMain 脚本不从c# 端读取调用
 require("LuaMain")

@@ -114,14 +114,28 @@ function ProtocolManager.initProtocolManager()
 end
 
 ProtocolConfig = {
-    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerUsePropsRequest}
-    PhysicalPowerUserPropsRequest = { id = 1025, protocolData = function(id)
-        return ProtocolManager.getProtocol(id)
-    end },
-    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerSecondsRequest}
-    PhysicalPowerSecondsRequest = { id = 1029, protocolData = function(id)
-        return ProtocolManager.getProtocol(id)
-    end }
+    ---@type {id:number,protocolData:fun(id:number):LoginRequest|nil}
+    LoginRequest = {
+        id = 1000,
+        protocolData = function(id)
+            return ProtocolManager.getProtocol(id)
+        end
+    },
+    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerUsePropsRequest|nil}
+    PhysicalPowerUserPropsRequest = {
+        id = 1025,
+        protocolData = function(id)
+            return ProtocolManager.getProtocol(id)
+        end
+    },
+    ---@type {id:number,protocolData:fun(id:number):PhysicalPowerSecondsRequest|nil}
+    PhysicalPowerSecondsRequest = {
+        id = 1029,
+        protocolData = function(id)
+            return ProtocolManager.getProtocol(id)
+        end
+    },
+
 }
 
 return ProtocolManager

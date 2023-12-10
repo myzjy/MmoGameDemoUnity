@@ -8,6 +8,7 @@
 LoginView = class("LoginView", UIView)
 require("Game.GenerateScripts.UIModules.LoginPanelView")
 LoginView.LoginPartView = require("Game.UI.Login.LoginPartView")
+LoginView.RegisterPartView = require("Game.UI.Login.RegisterPartView")
 
 function LoginView:OnLoad()
     self.UIConfig = {
@@ -33,15 +34,16 @@ end
 function LoginView:OnInit()
     printInfo("LoginView:OnInit line 10")
 
-    self.LoginPartView:Build(LoginView.viewPanel.LoginPart_UISerializableKeyObject)
-
+    ---@type LoginPanelView
+    local viewPanel = LoginView.viewPanel
+    self.LoginPartView:Build(viewPanel.LoginPart_UISerializableKeyObject)
+    self.RegisterPartView:Build(viewPanel.RegisterPart_UISerializableKeyObject)
     LoginView.viewPanel.RegisterPartView:Build()
     LoginView.viewPanel.LoginTapToStartView:Build(nil)
-    LoginView.viewPanel.LoginController:Build(
+    LoginUIController:GetInstance():Build(
+        self,
         self.LoginPartView,
-        LoginView.viewPanel.RegisterPartView,
-        LoginView.viewPanel.LoginTapToStartView,
-        LoginView)
+        self.RegisterPartView)
     LoginView.viewPanel.LoginController:OnInit();
 end
 
@@ -49,12 +51,12 @@ function LoginView:OnShow()
     printInfo("LoginView:OnShow line 21")
 end
 
-function LoginView:LoginStartGame()
-    printDebug("LoginView:LoginStartGame() line 26")
-    ---@type LoginPanelView
-    local view = LoginView.viewPanel
-    view.LoginTapToStartView:LoginStartGame()
-end
+-- function LoginView:LoginStartGame()
+--     printDebug("LoginView:LoginStartGame() line 26")
+--     ---@type LoginPanelView
+--     local view = LoginView.viewPanel
+--     view.LoginTapToStartView:LoginStartGame()
+-- end
 
 function LoginView:StartLoginTip()
     --coroutine.start()
