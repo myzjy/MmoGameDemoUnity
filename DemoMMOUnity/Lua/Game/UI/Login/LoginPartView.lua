@@ -7,20 +7,33 @@
 local LoginPartView = class("LoginPartView", UIBaseView)
 
 function LoginPartView:Build(view)
-    self:Close()
-    self.LoginPart = view:GetObjType("LoginPart") or CS.UnityEngine.GameObject
-    self.LoginBtn = view:GetObjType("LoginBtn_Button") or CS.UnityEngine.UI.Button
-    self.RegisterBtn = view:GetObjType("RegisterBtn_Button") or CS.UnityEngine.UI.Button
-    self.account = view:GetObjType("account") or CS.UnityEngine.UI.InputField
-    self.password = view:GetObjType("password") or CS.UnityEngine.UI.InputField
+	self:Close()
+	self.LoginPart = view:GetObjType("LoginPart") or CS.UnityEngine.GameObject
+	self.LoginBtn = view:GetObjType("LoginBtn_Button") or CS.UnityEngine.UI.Button
+	self.RegisterBtn = view:GetObjType("RegisterBtn_Button") or CS.UnityEngine.UI.Button
+	self.account = view:GetObjType("account") or CS.UnityEngine.UI.InputField
+	self.password = view:GetObjType("password") or CS.UnityEngine.UI.InputField
 end
 
 function LoginPartView:Close()
-    self.LoginPart = nil
-    self.LoginBtn = nil
-    self.RegisterBtn = nil
-    self.account = nil
-    self.password = nil
+	self.LoginPart = nil
+	self.LoginBtn = nil
+	self.RegisterBtn = nil
+	self.account = nil
+	self.password = nil
+end
+
+function LoginPartView:OnShow()
+	self.LoginPart.transform:DOKill()
+	self.LoginPart.transform:DOScale(1, 1):SetEase(CS.DG.Tweening.Ease.OutBack):SetDelay(0.3):OnComplete(function()
+		self.account.text = ""
+		self.password.text = ""
+		self.LoginPart:SetActive(true)
+	end)
+end
+
+function LoginPartView:OnHide()
+	self.LoginPart:SetActive(false)
 end
 
 return LoginPartView

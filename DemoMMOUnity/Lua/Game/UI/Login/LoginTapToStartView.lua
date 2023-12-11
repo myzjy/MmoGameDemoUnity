@@ -7,9 +7,19 @@
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView)
 
 function LoginTapToStartView:Build(view)
-    self.LoginStartButton = view:GetObjType("LoginStartButton") or CS.UnityEngine.UI.Button
-    self.LoginStartMaxButton = view:GetObjType("LoginStartMaxButton") or CS.UnityEngine.UI.Button
-    self.SteamLoginCanvasGroup = view:GetObjType("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
+	self.LoginStartButton = view:GetObjType("LoginStartButton") or CS.UnityEngine.UI.Button
+	self.LoginStartMaxButton = view:GetObjType("LoginStartMaxButton") or CS.UnityEngine.UI.Button
+	self.SteamLoginCanvasGroup = view:GetObjType("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
+
+	if self.LoginStartButton == nil then
+		if Debug > 0 then
+			printError("请检查[" .. view.name .. "]物体配置下面是否有[LoginStartButton]组件")
+		end
+	end
 end
+
+function LoginTapToStartView:OnShow() end
+
+function LoginTapToStartView:OnHide() end
 
 return LoginTapToStartView
