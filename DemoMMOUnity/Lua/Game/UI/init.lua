@@ -25,8 +25,7 @@ UIComponentManager = require("Game.UI.UIComponentManager")
 
 require("Game.UI.GameMain.Controller.GameMainViewController")
 require("Game.UI.CommonUI.UICommonView")
+require("Game.UI.CommonUI.LoadingRotate")
 require("Game.UI.CommonUI.UICommonViewController")
-
-
 
 ------------******* end   require file controller *******------------

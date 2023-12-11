@@ -1,6 +1,7 @@
 --- 控制 网络 发送时 的 警示动画
 --04
 
+---@class LoadingRotate
 LoadingRotate = class("LoadingRotate")
 
 function LoadingRotate:OnInit(view)
