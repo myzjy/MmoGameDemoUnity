@@ -1,13 +1,14 @@
-LoginChcheData = class("LoginChcheData")
+---@class LoginCacheData
+LoginCacheData = class("LoginCacheData")
 
 ---@param account string
-function LoginChcheData:SetAccount(account)
+function LoginCacheData:SetAccount(account)
 	---@type string
 	self.account = account
 end
 
 ---@param password string
-function LoginChcheData:SetPassword(password)
+function LoginCacheData:SetPassword(password)
 	---@type string
 	self.password = password
 end

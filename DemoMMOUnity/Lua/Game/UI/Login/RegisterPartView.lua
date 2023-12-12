@@ -14,6 +14,9 @@ function RegisterPartView:Build(view)
         CS.UnityEngine.UI.InputField
     self.okButton = view:GetObjType("okButton") or CS.UnityEngine.UI.Button
     self.cancelButton = view:GetObjType("cancelButton") or CS.UnityEngine.UI.Button
+    self:SetListener(self.okButton,function ()
+        
+    end)
 end
 
 function RegisterPartView:OnShow()

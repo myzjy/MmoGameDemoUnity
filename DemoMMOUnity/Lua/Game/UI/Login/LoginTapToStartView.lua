@@ -16,6 +16,9 @@ function LoginTapToStartView:Build(view)
 			printError("请检查[" .. view.name .. "]物体配置下面是否有[LoginStartButton]组件")
 		end
 	end
+	self:SetListener(self.LoginStartButton,function ()
+		LoginService:LoginTapToStart()
+	end)
 end
 
 function LoginTapToStartView:OnShow() end

@@ -114,6 +114,13 @@ function ProtocolManager.initProtocolManager()
 end
 
 ProtocolConfig = {
+    ---@type {id:number,protocolData:fun(id:number):RegisterRequest|nil}
+    RegisterRequest={
+        id=1005,
+        protocolData = function(id)
+            return ProtocolManager.getProtocol(id)
+        end
+    },
     ---@type {id:number,protocolData:fun(id:number):PhysicalPowerUsePropsRequest|nil}
     PhysicalPowerUserPropsRequest = {
         id = 1025,
