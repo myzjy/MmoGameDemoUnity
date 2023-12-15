@@ -94,6 +94,7 @@ function LoginNetController:AtLoginTapToStartResponse(data)
                 end, "确定", "取消")
         return
     end
+LoginUIController:GetInstance().LoginView
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
 end
 

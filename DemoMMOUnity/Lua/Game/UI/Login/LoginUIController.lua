@@ -38,15 +38,25 @@ function LoginUIController:OnClose()
 			printError("LoginView 并未打开界面 生成")
 		end
 	end
+	self.LoginPartView:OnHide()
+	self.LoginTapToStartView:OnHide()
+	self.RegisterPartView:OnHide()
 end
 
-function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView)
+---comment
+---@param LoginView LoginView|nil
+---@param LoginPartView LoginPartView|nil
+---@param RegisterPartView RegisterPartView|nil
+---@param LoginTapToStartView LoginTapToStartView|nil
+function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, LoginTapToStartView)
 	---@type LoginView|nil
 	self.LoginView = LoginView
 	---@type LoginPartView|nil
 	self.LoginPartView = LoginPartView
 	---@type RegisterPartView|nil
 	self.RegisterPartView = RegisterPartView
+	---@type LoginTapToStartView|nil
+	self.LoginTapToStartView = LoginTapToStartView
 	self:SetListener(self.LoginPartView.LoginBtn, function()
 		printDebug(
 			"账号密码登录[account:"

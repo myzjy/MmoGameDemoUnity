@@ -11,7 +11,9 @@ end
 
 function UICommonViewController:OnInit()
     self.viewPanel = UICommonView
+    self.LoadingRotate = LoadingRotate
     self.viewPanel:OnInit(CommonController.Instance.snackbar.DialogPanelObject)
+    self.LoadingRotate:OnInit(CommonController.Instance.loadingRotate)
 end
 
 function UICommonViewController:OnOpenDialog(buttonType, title, body, yesButtonText, noButtonText, onClick)

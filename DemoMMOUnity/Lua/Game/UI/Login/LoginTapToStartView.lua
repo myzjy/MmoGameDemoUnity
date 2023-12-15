@@ -5,6 +5,7 @@
 ---
 ---@class LoginTapToStartView:UIBaseView
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView)
+local SpringContext = require("NameSpace.ZJYFrameWork.Spring.Core.Springtext")
 
 function LoginTapToStartView:Build(view)
 	self.LoginStartButton = view:GetObjType("LoginStartButton") or CS.UnityEngine.UI.Button
@@ -16,13 +17,40 @@ function LoginTapToStartView:Build(view)
 			printError("请检查[" .. view.name .. "]物体配置下面是否有[LoginStartButton]组件")
 		end
 	end
-	self:SetListener(self.LoginStartButton,function ()
+	self:SetListener(self.LoginStartButton, function()
 		LoginService:LoginTapToStart()
+	end)
+	self:SetListener(self.LoginStartMaxButton, function()
+		LoginUIController:OnClose()
 	end)
 end
 
-function LoginTapToStartView:OnShow() end
+function LoginTapToStartView:OnShow()
+	UICommonViewController:GetInstance().LoadingRotate:OnClose()
+	self.SteamLoginCanvasGroup:DOFade(1, 1.2):SetEase(CS.DG.Tweening.Ease.Linear):OnComplete(function()
+		self.SteamLoginCanvasGroup.interactable = true
+		self.SteamLoginCanvasGroup.ignoreParentGroups = true
+		self.SteamLoginCanvasGroup.blocksRaycasts = true
+	end):Play()
+end
 
-function LoginTapToStartView:OnHide() end
+function LoginTapToStartView:OnHide()
+	if self.SteamLoginCanvasGroup.alpha < 1 then
+		return
+	end
+	self.SteamLoginCanvasGroup:DOFade(0, 1):SetEase(CS.DG.Tweening.Ease.Linear):OnComplete(function()
+		self.SteamLoginCanvasGroup.interactable = false
+		self.SteamLoginCanvasGroup.ignoreParentGroups = false
+		self.SteamLoginCanvasGroup.blocksRaycasts = false
+	end):Play()
+end
+
+function LoginTapToStartView:LoginSatrtGame()
+	LoginUIController:OnClose()
+	local ProcedureChangeScene = SpringContext.GetBean("ProcedureChangeScene") or
+	CS.ZJYFrameWork.Procedure.Scene.ProcedureChangeScene
+	---跳转场景
+	ProcedureChangeScene:ChangeScene(CS.ZJYFrameWork.Constant.SceneEnum.GameMain,"GameMain")
+end
 
 return LoginTapToStartView

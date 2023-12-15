@@ -12,9 +12,14 @@ namespace ZJYFrameWork.Procedure.Scene
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
+            // SpringContext.GetBean<L>()
+#if ENABLE_LUA_START
+#else
             //初始进入
             //获取配置
             SpringContext.GetBean<IServerConfigService>().SendServerConfigService();
+#endif
+        
         }
     }
 }
