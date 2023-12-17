@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BestHTTP.WebSocket;
 using Newtonsoft.Json;
+using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
@@ -65,13 +66,20 @@ namespace ZJYFrameWork.Net.Core.Websocket
             Debug.Log("成功打开");
             Debug.Log("Connected server [{}]", ToConnectUrl());
 
+#if ENABLE_LUA_START
+            EventBus.AsyncExecute(LuaGameConstant.NetOnOpen);
+#else
             EventBus.AsyncSubmit(NetOpenEvent.ValueOf());
+#endif
         }
 
         internal void HandleOnMessage(string message)
         {
             var byteBuffer = ByteBuffer.ValueOf();
             var byteString = StringUtils.Bytes(message);
+#if ENABLE_LUA_START
+            PacketDispatcher.ReceiveString(byteString);
+#else
             byteBuffer.WriteBytes(byteString);
 
             var packet = ProtocolManager.Read(byteBuffer);
@@ -79,6 +87,8 @@ namespace ZJYFrameWork.Net.Core.Websocket
             {
                 PacketDispatcher.Receive(packet);
             }
+#endif
+
 
             // // queue it
             // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
@@ -88,14 +98,17 @@ namespace ZJYFrameWork.Net.Core.Websocket
         {
             var byteBuffer = ByteBuffer.ValueOf();
             byteBuffer.WriteBytes(content);
-            
+#if ENABLE_LUA_START
+            PacketDispatcher.ReceiveString(content);
+#else
+
             var packet = ProtocolManager.Read(byteBuffer);
             if (packet != null)
             {
                 PacketDispatcher.Receive(packet);
             }
-            // // queue it
-            // receiveQueue.Enqueue(new Message(MessageType.Data, packet));
+#endif
+
         }
 
         internal void HandleOnError(string reason)
