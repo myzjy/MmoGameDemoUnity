@@ -4,6 +4,8 @@ using ZJYFrameWork.Execution;
 using ZJYFrameWork.I18n;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Common;
+using ZJYFrameWork.XLuaScript;
+
 // using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Procedure.Scene
@@ -25,6 +27,9 @@ namespace ZJYFrameWork.Procedure.Scene
         public IEnumerator StartEnumeratorAwake()
         {
             yield return new WaitUntil(() => CommonController.Instance != null);
+#if ENABLE_LUA_START
+            SpringContext.GetBean<XLuaManager>().InitLuaEnv();
+#endif
             isLoad = true;
         }
 

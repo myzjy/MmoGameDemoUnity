@@ -29,6 +29,9 @@ function LoginNetController:InitEvents()
     GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
         LoginNetController:Connect(url)
     end)
+    GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen,function ()
+        LoginNetController:OnNetOpenEvent()
+    end)
     GlobalEventSystem:Bind(LoginConst.Event.Login, function(data)
         LoginNetController:AtLoginResponse(data)
     end)
@@ -44,6 +47,12 @@ end
 function LoginNetController:OnNetOpenEvent()
     CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
     CommonController.Instance.loadingRotate.OnClose();
+    if global.settingManager:HasSetting(GameConstant.SETTING_LOGIN_TOKEN) then
+        if Debug>0 then
+            printDebug("连接成功事件，登录服务器 登录过服务器")
+        end
+    end
+    LoginUIController:GetInstance():Open()
 end
 
 function LoginNetController:AtLoginResponse(data)
@@ -94,7 +103,6 @@ function LoginNetController:AtLoginTapToStartResponse(data)
                 end, "确定", "取消")
         return
     end
-LoginUIController:GetInstance().LoginView
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
 end
 

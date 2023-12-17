@@ -42,6 +42,7 @@ namespace ZJYFrameWork.UISerializable.Manager
 
         private static long timestamp = 0;
         public static readonly long CLICK_INTERVAL = 5 * DateTimeUtil.NANO_PER_SECOND;
+        public static Action<long> timeShowNum = null;
 
         /**
          * 使用服务器的时间戳，会有一些误差

@@ -14,6 +14,7 @@ LoginConfig = require("Game.UI.Login.LoginConfig")
 
 GameMainConfig = require("Game.UI.GameMain.ModelView.GameMainConfig")
 UINotification = require("Game.Common.UINotification")
+ require("Game.Common.GameConstant")
 ----------------end   Config----------------
 ---
 ----------------start UI Component ----------------

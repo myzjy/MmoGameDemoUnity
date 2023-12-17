@@ -8,6 +8,7 @@ local PacketDispatcher = {}
 --_receiversMap = {}
 PacketDispatcher.Event = {
     OnConnect = "PacketDispatcher.Event.OnConnect",
+    OnOpen="PacketDispatcher.Event.OnOpen",
     OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
 packetValue = nil

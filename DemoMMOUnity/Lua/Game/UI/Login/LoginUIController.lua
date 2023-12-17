@@ -15,13 +15,10 @@ function LoginUIController:Open()
 		LoginView:OnLoad()
 		return
 	end
-	if self.LoginView.reUse then
-		--- 已经打开界面
-		self.LoginView:InstanceOrReuse()
-	else
-		---界面没打开 没生成过
-		self.LoginView:OnLoad()
-	end
+	self:OnClose()
+	self.RegisterPartView:OnHide()
+	self.LoginTapToStartView:OnHide()
+	self.LoginPartView:OnShow()
 end
 
 function LoginUIController:OnClose()

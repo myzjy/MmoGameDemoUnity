@@ -79,5 +79,13 @@ namespace ZJYFrameWork.UISerializable
             //使用完需要放回池子里
             UINotificationHelp.ResUse(eventUI);
         }
+        public static Action<string, object> eventUIAction;
+
+        public static void CSDispatchEvent(string name, object body = null)
+        {
+            // var eventUI = UINotificationHelp.NewUINotification(name, body);
+
+            eventUIAction.Invoke(name, body);
+        }
     }
 }
