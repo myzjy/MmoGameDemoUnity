@@ -5,15 +5,15 @@
 local RegisterPartView = class("RegisterPartView", UIBaseView)
 
 function RegisterPartView:Build(view)
-    self.rootCanvasGroup = view:GetObjType("root_CanvasGroup") or CS.UnityEngine.CanvasGroup
-    self.rootObj = view:GetObjType("root") or CS.UnityEngine.GameObject
+    self.rootCanvasGroup = view:GetObjTypeStr("root_CanvasGroup") or CS.UnityEngine.CanvasGroup
+    self.rootObj = view:GetObjTypeStr("root") or CS.UnityEngine.GameObject
     self.root = self.rootObj.transform
-    self.registerAccountInputField = view:GetObjType("registerAccountInputField") or CS.UnityEngine.UI.InputField
-    self.registerPasswordInputField = view:GetObjType("registerPasswordInputField") or CS.UnityEngine.UI.InputField
-    self.registerAffirmPasswordInputField = view:GetObjType("registerAffirmPasswordInputField") or
+    self.registerAccountInputField = view:GetObjTypeStr("registerAccountInputField") or CS.UnityEngine.UI.InputField
+    self.registerPasswordInputField = view:GetObjTypeStr("registerPasswordInputField") or CS.UnityEngine.UI.InputField
+    self.registerAffirmPasswordInputField = view:GetObjTypeStr("registerAffirmPasswordInputField") or
         CS.UnityEngine.UI.InputField
-    self.okButton = view:GetObjType("okButton") or CS.UnityEngine.UI.Button
-    self.cancelButton = view:GetObjType("cancelButton") or CS.UnityEngine.UI.Button
+    self.okButton = view:GetObjTypeStr("okButton") or CS.UnityEngine.UI.Button
+    self.cancelButton = view:GetObjTypeStr("cancelButton") or CS.UnityEngine.UI.Button
     self:SetListener(self.okButton,function ()
         LoginService:RegisterAccount()
     end)

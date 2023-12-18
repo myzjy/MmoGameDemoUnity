@@ -37,9 +37,7 @@ function LoginView:OnInit()
 	self.LoginPartView:Build(viewPanel.LoginPart_UISerializableKeyObject)
 	self.RegisterPartView:Build(viewPanel.RegisterPart_UISerializableKeyObject)
     self.LoginTapToStartView:Build(viewPanel.LoginStart_UISerializableKeyObject)
-	LoginView.viewPanel.RegisterPartView:Build()
-	LoginView.viewPanel.LoginTapToStartView:Build(nil)
-	LoginUIController:GetInstance():Build(self, self.LoginPartView, self.RegisterPartView)
+	LoginUIController:GetInstance():Build(self, self.LoginPartView, self.RegisterPartView,self.LoginTapToStartView)
 end
 
 function LoginView:OnShow()

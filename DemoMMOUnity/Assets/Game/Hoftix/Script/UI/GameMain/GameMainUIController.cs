@@ -16,7 +16,6 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         /// GameView
         /// </summary>
         private GameMainView _view;
-        
 
 
         public void SetGameMainView(GameMainView view)
@@ -29,10 +28,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         {
             if (_view == null)
             {
-                if (SpringContext.GetBean<GameMainModelView>().GetUIView() == null)
-                {
-                    SpringContext.GetBean<GameMainModelView>().InstanceOrReuse();
-                }
+                SpringContext.GetBean<GameMainModelView>().InstanceOrReuse();
             }
             else
             {
@@ -60,7 +56,8 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
             {
                 return;
             }
-            _view.SetPhysicalPowerText(nowPhysicalPower,maxNowPhysicalPower);
+
+            _view.SetPhysicalPowerText(nowPhysicalPower, maxNowPhysicalPower);
         }
 
         public void ShowGameMainUserInfoMessage(LoginClientCacheData cacheData)
@@ -74,7 +71,7 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
                 _view.SetGoldCoinShow(SpringContext.GetBean<PlayerUserCaCheData>().goldNum);
                 _view.SetGemTextShow(SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum);
                 //刷新
-                _view.SetLvAndExpShow(cacheData.GetLv(),cacheData.GetExp(),cacheData.GetMaxExp());
+                _view.SetLvAndExpShow(cacheData.GetLv(), cacheData.GetExp(), cacheData.GetMaxExp());
                 _view.SetShowName(SpringContext.GetBean<PlayerUserCaCheData>().userName);
             }
         }

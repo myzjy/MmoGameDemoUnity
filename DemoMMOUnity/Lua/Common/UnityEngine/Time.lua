@@ -146,7 +146,6 @@ function Time:StartSynchServerTime()
                 local time_offset = unity_time.realtimeSinceStartup * 1000 - _Time.req_time
                 local server_time = server_time_info.server_time + time_offset / 2
                 Time:SetServerTime(server_time)
-                CS.UnityMMO.TimeEx.UpdateServerTime(server_time)
                 print('Cat:Time.lua[152] CS.UnityMMO.TimeEx.ServerTime', CS.UnityMMO.TimeEx.ServerTime, server_time)
                 local timer = Timer.New(function()
                     --每隔几秒就同步一次

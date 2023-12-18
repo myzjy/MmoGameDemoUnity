@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using XLua;
 using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.UISerializable
@@ -27,7 +28,7 @@ namespace ZJYFrameWork.UISerializable
         public string Path;
     }
 
-
+    [LuaCallCSharp]
     public class UISerializableKeyObject : MonoBehaviour, ISerializationCallbackReceiver
     {
         //ui组件保存
@@ -64,8 +65,11 @@ namespace ZJYFrameWork.UISerializable
             return data != null ? data as T : null;
         }
 
-        public Object GetObjType(string objKey)
+        public Object GetObjTypeStr(string objKey)
         {
+            Debug.Log($"objKey:{objKey}");
+            Debug.Log($"dataViewList:{dataViewList}");
+            Debug.Log($"dataList:{dataList}");
             ObjectsDict.TryGetValue(key: objKey, out var data);
             return data != null ? data : null;
         }

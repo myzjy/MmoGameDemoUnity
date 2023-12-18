@@ -1,4 +1,4 @@
-#if USE_UNI_LUA
+﻿#if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
 using LuaCSFunction = UniLua.CSharpFunctionDelegate;
@@ -558,6 +558,11 @@ namespace XLua
 		    if (type == typeof(System.Action<int>))
 			{
 			    return new System.Action<int>(__Gen_Delegate_Imp11);
+			}
+		
+		    if (type == typeof(System.Action<long>))
+			{
+			    return new System.Action<long>(__Gen_Delegate_Imp12);
 			}
 		
 		    if (type == typeof(UnityEngine.Events.UnityAction<long>))

@@ -27,9 +27,12 @@ namespace ZJYFrameWork.Procedure.Scene
         public IEnumerator StartEnumeratorAwake()
         {
             yield return new WaitUntil(() => CommonController.Instance != null);
+            CommonController.Instance.isLuaInit = false;
 #if ENABLE_LUA_START
             SpringContext.GetBean<XLuaManager>().InitLuaEnv();
 #endif
+            yield return new WaitUntil(() => CommonController.Instance.isLuaInit);
+
             isLoad = true;
         }
 

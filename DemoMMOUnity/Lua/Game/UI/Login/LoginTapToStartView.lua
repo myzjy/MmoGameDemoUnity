@@ -8,9 +8,9 @@ local LoginTapToStartView = class("LoginTapToStartView", UIBaseView)
 local SpringContext = require("NameSpace.ZJYFrameWork.Spring.Core.Springtext")
 
 function LoginTapToStartView:Build(view)
-	self.LoginStartButton = view:GetObjType("LoginStartButton") or CS.UnityEngine.UI.Button
-	self.LoginStartMaxButton = view:GetObjType("LoginStartMaxButton") or CS.UnityEngine.UI.Button
-	self.SteamLoginCanvasGroup = view:GetObjType("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
+	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or CS.UnityEngine.UI.Button
+	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or CS.UnityEngine.UI.Button
+	self.SteamLoginCanvasGroup = view:GetObjTypeStr("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
 
 	if self.LoginStartButton == nil then
 		if Debug > 0 then

@@ -1,4 +1,4 @@
-#if USE_UNI_LUA
+﻿#if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
 using LuaCSFunction = UniLua.CSharpFunctionDelegate;
@@ -53,11 +53,7 @@ namespace XLua.CSObjectWrap
 			    null, null, null);
 
 		    Utils.BeginClassRegister(type, L, __CreateInstance, 26, 10, 0);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "Slerp", _m_Slerp_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "SlerpUnclamped", _m_SlerpUnclamped_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "OrthoNormalize", _m_OrthoNormalize_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "RotateTowards", _m_RotateTowards_xlua_st_);
-            Utils.RegisterFunc(L, Utils.CLS_IDX, "Lerp", _m_Lerp_xlua_st_);
+			Utils.RegisterFunc(L, Utils.CLS_IDX, "Lerp", _m_Lerp_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "LerpUnclamped", _m_LerpUnclamped_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "MoveTowards", _m_MoveTowards_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "SmoothDamp", _m_SmoothDamp_xlua_st_);
@@ -76,6 +72,10 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.CLS_IDX, "SqrMagnitude", _m_SqrMagnitude_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Min", _m_Min_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Max", _m_Max_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "Slerp", _m_Slerp_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "SlerpUnclamped", _m_SlerpUnclamped_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "OrthoNormalize", _m_OrthoNormalize_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "RotateTowards", _m_RotateTowards_xlua_st_);
             
 			
             Utils.RegisterObject(L, translator, Utils.CLS_IDX, "kEpsilon", UnityEngine.Vector3.kEpsilon);
@@ -352,152 +352,6 @@ namespace XLua.CSObjectWrap
         }
         
         
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_Slerp_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Vector3 _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Vector3 _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Vector3.Slerp( _a, _b, _t );
-                        translator.PushUnityEngineVector3(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_SlerpUnclamped_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Vector3 _a;translator.Get(L, 1, out _a);
-                    UnityEngine.Vector3 _b;translator.Get(L, 2, out _b);
-                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
-                    
-                        var gen_ret = UnityEngine.Vector3.SlerpUnclamped( _a, _b, _t );
-                        translator.PushUnityEngineVector3(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_OrthoNormalize_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-			    int gen_param_count = LuaAPI.lua_gettop(L);
-            
-                if(gen_param_count == 2&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)) 
-                {
-                    UnityEngine.Vector3 _normal;translator.Get(L, 1, out _normal);
-                    UnityEngine.Vector3 _tangent;translator.Get(L, 2, out _tangent);
-                    
-                    UnityEngine.Vector3.OrthoNormalize( ref _normal, ref _tangent );
-                    translator.PushUnityEngineVector3(L, _normal);
-                        translator.UpdateUnityEngineVector3(L, 1, _normal);
-                        
-                    translator.PushUnityEngineVector3(L, _tangent);
-                        translator.UpdateUnityEngineVector3(L, 2, _tangent);
-                        
-                    
-                    
-                    
-                    return 2;
-                }
-                if(gen_param_count == 3&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)&& translator.Assignable<UnityEngine.Vector3>(L, 3)) 
-                {
-                    UnityEngine.Vector3 _normal;translator.Get(L, 1, out _normal);
-                    UnityEngine.Vector3 _tangent;translator.Get(L, 2, out _tangent);
-                    UnityEngine.Vector3 _binormal;translator.Get(L, 3, out _binormal);
-                    
-                    UnityEngine.Vector3.OrthoNormalize( ref _normal, ref _tangent, ref _binormal );
-                    translator.PushUnityEngineVector3(L, _normal);
-                        translator.UpdateUnityEngineVector3(L, 1, _normal);
-                        
-                    translator.PushUnityEngineVector3(L, _tangent);
-                        translator.UpdateUnityEngineVector3(L, 2, _tangent);
-                        
-                    translator.PushUnityEngineVector3(L, _binormal);
-                        translator.UpdateUnityEngineVector3(L, 3, _binormal);
-                        
-                    
-                    
-                    
-                    return 3;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Vector3.OrthoNormalize!");
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_RotateTowards_xlua_st_(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-            
-                
-                {
-                    UnityEngine.Vector3 _current;translator.Get(L, 1, out _current);
-                    UnityEngine.Vector3 _target;translator.Get(L, 2, out _target);
-                    float _maxRadiansDelta = (float)LuaAPI.lua_tonumber(L, 3);
-                    float _maxMagnitudeDelta = (float)LuaAPI.lua_tonumber(L, 4);
-                    
-                        var gen_ret = UnityEngine.Vector3.RotateTowards( _current, _target, _maxRadiansDelta, _maxMagnitudeDelta );
-                        translator.PushUnityEngineVector3(L, gen_ret);
-                    
-                    
-                    
-                    return 1;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_Lerp_xlua_st_(RealStatePtr L)
@@ -1305,6 +1159,152 @@ namespace XLua.CSObjectWrap
             }
             
             return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Vector3.ToString!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_Slerp_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Vector3 _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Vector3.Slerp( _a, _b, _t );
+                        translator.PushUnityEngineVector3(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_SlerpUnclamped_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _a;translator.Get(L, 1, out _a);
+                    UnityEngine.Vector3 _b;translator.Get(L, 2, out _b);
+                    float _t = (float)LuaAPI.lua_tonumber(L, 3);
+                    
+                        var gen_ret = UnityEngine.Vector3.SlerpUnclamped( _a, _b, _t );
+                        translator.PushUnityEngineVector3(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_OrthoNormalize_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 2&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)) 
+                {
+                    UnityEngine.Vector3 _normal;translator.Get(L, 1, out _normal);
+                    UnityEngine.Vector3 _tangent;translator.Get(L, 2, out _tangent);
+                    
+                    UnityEngine.Vector3.OrthoNormalize( ref _normal, ref _tangent );
+                    translator.PushUnityEngineVector3(L, _normal);
+                        translator.UpdateUnityEngineVector3(L, 1, _normal);
+                        
+                    translator.PushUnityEngineVector3(L, _tangent);
+                        translator.UpdateUnityEngineVector3(L, 2, _tangent);
+                        
+                    
+                    
+                    
+                    return 2;
+                }
+                if(gen_param_count == 3&& translator.Assignable<UnityEngine.Vector3>(L, 1)&& translator.Assignable<UnityEngine.Vector3>(L, 2)&& translator.Assignable<UnityEngine.Vector3>(L, 3)) 
+                {
+                    UnityEngine.Vector3 _normal;translator.Get(L, 1, out _normal);
+                    UnityEngine.Vector3 _tangent;translator.Get(L, 2, out _tangent);
+                    UnityEngine.Vector3 _binormal;translator.Get(L, 3, out _binormal);
+                    
+                    UnityEngine.Vector3.OrthoNormalize( ref _normal, ref _tangent, ref _binormal );
+                    translator.PushUnityEngineVector3(L, _normal);
+                        translator.UpdateUnityEngineVector3(L, 1, _normal);
+                        
+                    translator.PushUnityEngineVector3(L, _tangent);
+                        translator.UpdateUnityEngineVector3(L, 2, _tangent);
+                        
+                    translator.PushUnityEngineVector3(L, _binormal);
+                        translator.UpdateUnityEngineVector3(L, 3, _binormal);
+                        
+                    
+                    
+                    
+                    return 3;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Vector3.OrthoNormalize!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_RotateTowards_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _current;translator.Get(L, 1, out _current);
+                    UnityEngine.Vector3 _target;translator.Get(L, 2, out _target);
+                    float _maxRadiansDelta = (float)LuaAPI.lua_tonumber(L, 3);
+                    float _maxMagnitudeDelta = (float)LuaAPI.lua_tonumber(L, 4);
+                    
+                        var gen_ret = UnityEngine.Vector3.RotateTowards( _current, _target, _maxRadiansDelta, _maxMagnitudeDelta );
+                        translator.PushUnityEngineVector3(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
             
         }
         

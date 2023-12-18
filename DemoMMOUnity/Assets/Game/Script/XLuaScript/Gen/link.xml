@@ -1,10 +1,9 @@
-
+﻿
 
 <linker>
 
 	<assembly fullname="Assembly-CSharp">
 	    <type fullname="ZJYFrameWork.XLuaScript.XLuaManager" preserve="all"/>
-		<type fullname="ZJYFrameWork.Setting.SettingManager" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiRequest" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiResponse" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiHandler" preserve="all"/>
@@ -139,6 +138,12 @@
 	    <type fullname="TMPro.TextMeshProUGUI" preserve="all"/>
 		<type fullname="TMPro.TMP_InputField" preserve="all"/>
 		<type fullname="TMPro.TMP_Text" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="ZJYFrameWork.UISerializable.Common">
+	    <type fullname="ZJYFrameWork.UISerializable.UISerializableKeyObject" preserve="all"/>
+		<type fullname="ZJYFrameWork.UISerializable.UIView" preserve="all"/>
 		
 	</assembly>
 

@@ -135,8 +135,9 @@ namespace ZJYFrameWork.Hotfix.UI.GameMain
         {
             GetSelfUIView.OnShow();
             //打开GameMain 界面
-            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
+            //刷新
             SpringContext.GetBean<ILoginService>().GetServerGameMainInfo();
+
         }
     }
 }

@@ -70,15 +70,16 @@ local function main()
     else
         log.disable()
     end
-   --local handle= UpdateBeat:CreateListener(function(number)
-   --     printDebug("1111")
-   -- end,0)
-   -- UpdateBeat:AddListener(handle)
+    --local handle= UpdateBeat:CreateListener(function(number)
+    --     printDebug("1111")
+    -- end,0)
+    -- UpdateBeat:AddListener(handle)
     ----- UI 初始化
     UIComponentManager:InitUIModelComponent()
     UICommonViewController:GetInstance():OnInit()
     ProtocolManager.initProtocolManager()
     PacketDispatcher:Init()
+    CommonController.Instance.isLuaInit = true
     --local client = cs_generator(function()
     --    printDebug("执行 init 最外 86")
     --    coroutine.yield(CS.UnityEngine.WaitForSeconds(1))
@@ -96,4 +97,3 @@ main()
 --if not status then
 --    print('xpcall robot main error', status, msg)
 --end
-

@@ -556,6 +556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingRotate: {fileID: 1388594633}
   snackbar: {fileID: 861750561}
+  isLuaInit: 0
 --- !u!114 &181259482
 MonoBehaviour:
   m_ObjectHideFlags: 0

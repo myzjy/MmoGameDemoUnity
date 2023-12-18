@@ -45,8 +45,8 @@ end
 
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
-    CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
-    CommonController.Instance.loadingRotate.OnClose();
+    CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1);
+    UICommonViewController.LoadingRotate:OnClose()
     if global.settingManager:HasSetting(GameConstant.SETTING_LOGIN_TOKEN) then
         if Debug>0 then
             printDebug("连接成功事件，登录服务器 登录过服务器")

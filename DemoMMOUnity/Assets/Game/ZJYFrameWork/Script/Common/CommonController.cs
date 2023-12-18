@@ -26,8 +26,9 @@ namespace ZJYFrameWork.UISerializable.Common
 
         public LoadingRotate loadingRotate;
         public Snackbar snackbar;
+        public bool isLuaInit = false;
 
-        protected  void Init()
+        protected void Init()
         {
         }
     }

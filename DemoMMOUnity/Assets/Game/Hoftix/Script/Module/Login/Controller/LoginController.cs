@@ -7,6 +7,7 @@ using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UI.GameMain;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.Module.Login.Service;
+using ZJYFrameWork.Module.PhysicalPower.Service;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
@@ -151,6 +152,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             SpringContext.GetBean<PlayerUserCaCheData>().DiamondNum = response.GetDiamondsNum();
             SpringContext.GetBean<PlayerUserCaCheData>().PremiumDiamondNum = response.GetPaidDiamondsNum();
             SpringContext.GetBean<GameMainUIController>().ShowGameMainUserInfoMessage(LoginCacheData);
+            SpringContext.GetBean<IPhysicalPowerService>().SendPhysicalPowerRequest();
         }
 
         public void AtLoginRequest()

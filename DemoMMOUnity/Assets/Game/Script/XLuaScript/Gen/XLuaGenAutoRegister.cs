@@ -1,4 +1,4 @@
-#if USE_UNI_LUA
+﻿#if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
 using RealStatePtr = UniLua.ILuaState;
 using LuaCSFunction = UniLua.CSharpFunctionDelegate;
@@ -23,9 +23,6 @@ namespace XLua.CSObjectWrap
         {
         
             translator.DelayWrapLoader(typeof(ZJYFrameWork.XLuaScript.XLuaManager), ZJYFrameWorkXLuaScriptXLuaManagerWrap.__Register);
-        
-        
-            translator.DelayWrapLoader(typeof(ZJYFrameWork.Setting.SettingManager), ZJYFrameWorkSettingSettingManagerWrap.__Register);
         
         
             translator.DelayWrapLoader(typeof(object), SystemObjectWrap.__Register);
@@ -174,13 +171,13 @@ namespace XLua.CSObjectWrap
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.MaskableGraphic.CullStateChangedEvent), UnityEngineUIMaskableGraphicCullStateChangedEventWrap.__Register);
         
+        
+            translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect), UnityEngineUIScrollRectWrap.__Register);
+        
         }
         
         static void wrapInit1(LuaEnv luaenv, ObjectTranslator translator)
         {
-        
-            translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect), UnityEngineUIScrollRectWrap.__Register);
-        
         
             translator.DelayWrapLoader(typeof(UnityEngine.UI.ScrollRect.MovementType), UnityEngineUIScrollRectMovementTypeWrap.__Register);
         
@@ -300,6 +297,12 @@ namespace XLua.CSObjectWrap
         
         
             translator.DelayWrapLoader(typeof(System.Collections.IEnumerator), SystemCollectionsIEnumeratorWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.UISerializable.UISerializableKeyObject), ZJYFrameWorkUISerializableUISerializableKeyObjectWrap.__Register);
+        
+        
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.UISerializable.UIView), ZJYFrameWorkUISerializableUIViewWrap.__Register);
         
         
         
