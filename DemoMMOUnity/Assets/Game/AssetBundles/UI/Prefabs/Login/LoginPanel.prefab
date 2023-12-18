@@ -2334,7 +2334,7 @@ MonoBehaviour:
   - {fileID: 6157225092508190709}
   - {fileID: 4548462337066523778}
   - {fileID: 7622137904974989906}
-  - {fileID: 0}
+  - {fileID: 3095057475168958607}
   - {fileID: 7421680849228347599}
   - {fileID: 7236548743885483865}
   mSelfObj: {fileID: 1899562274783211712}
@@ -8168,7 +8168,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5afc71a43da12654bae98a3496fdfbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dataViewList: []
+  dataViewList:
+  - {fileID: 1999889696300109558}
+  - {fileID: 6926591055983717950}
+  - {fileID: 7717076792245837084}
+  - {fileID: 663313220370998969}
+  - {fileID: 4548462337066523778}
 --- !u!1 &7418065423706028953
 GameObject:
   m_ObjectHideFlags: 0

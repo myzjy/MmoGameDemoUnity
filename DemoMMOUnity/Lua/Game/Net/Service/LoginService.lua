@@ -35,7 +35,7 @@ function LoginService:LoginByAccount(account, password)
 	local packet = packetData:new(account, password)
 	local buffer = ByteBuffer:new()
 	ProtocolManager.write(buffer, packet)
-	global.netManager:SendMessage(buffer:readByte())
+	global.netManager:SendMessage(buffer:readString())
 end
 
 function LoginService:LoginTapToStart()
@@ -58,7 +58,7 @@ function LoginService:LoginTapToStart()
 	local packet = packetData:new(platform)
 	local buffer = ByteBuffer:new()
 	packetData:write(buffer, packet)
-	global.netManager:SendMessage(buffer:readByte())
+	global.netManager:SendMessage(buffer:readString())
 end
 
 ---@param account string
@@ -74,7 +74,7 @@ function LoginService:RegisterAccount(account, password, affirmPassword)
 	local packet = packetData:new(account, password, affirmPassword)
 	local buffer = ByteBuffer:new()
 	packetData:write(buffer, packet)
-	global.netManager:SendMessage(buffer:readByte())
+	global.netManager:SendMessage(buffer:readString())
 end
 
 return LoginService

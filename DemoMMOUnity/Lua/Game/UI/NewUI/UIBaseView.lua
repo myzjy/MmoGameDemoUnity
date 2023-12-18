@@ -112,6 +112,7 @@ function UIBaseView:OnInit()
 end
 
 function UIBaseView:OnShow()
+    printDebug("OnShow UIView")
     self.UIView:OnShow()
     --self.showFunc()
 end

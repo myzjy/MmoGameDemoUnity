@@ -27,30 +27,28 @@ end
 
 function LoginTapToStartView:OnShow()
 	UICommonViewController:GetInstance().LoadingRotate:OnClose()
-	self.SteamLoginCanvasGroup:DOFade(1, 1.2):SetEase(CS.DG.Tweening.Ease.Linear):OnComplete(function()
-		self.SteamLoginCanvasGroup.interactable = true
-		self.SteamLoginCanvasGroup.ignoreParentGroups = true
-		self.SteamLoginCanvasGroup.blocksRaycasts = true
-	end):Play()
+	self.SteamLoginCanvasGroup.alpha = 1
+	self.SteamLoginCanvasGroup.interactable = true
+	self.SteamLoginCanvasGroup.ignoreParentGroups = true
+	self.SteamLoginCanvasGroup.blocksRaycasts = true
 end
 
 function LoginTapToStartView:OnHide()
 	if self.SteamLoginCanvasGroup.alpha < 1 then
 		return
 	end
-	self.SteamLoginCanvasGroup:DOFade(0, 1):SetEase(CS.DG.Tweening.Ease.Linear):OnComplete(function()
-		self.SteamLoginCanvasGroup.interactable = false
-		self.SteamLoginCanvasGroup.ignoreParentGroups = false
-		self.SteamLoginCanvasGroup.blocksRaycasts = false
-	end):Play()
+	self.SteamLoginCanvasGroup.alpha = 0
+	self.SteamLoginCanvasGroup.interactable = false
+	self.SteamLoginCanvasGroup.ignoreParentGroups = false
+	self.SteamLoginCanvasGroup.blocksRaycasts = false
 end
 
 function LoginTapToStartView:LoginSatrtGame()
 	LoginUIController:OnClose()
 	local ProcedureChangeScene = SpringContext.GetBean("ProcedureChangeScene") or
-	CS.ZJYFrameWork.Procedure.Scene.ProcedureChangeScene
+		CS.ZJYFrameWork.Procedure.Scene.ProcedureChangeScene
 	---跳转场景
-	ProcedureChangeScene:ChangeScene(CS.ZJYFrameWork.Constant.SceneEnum.GameMain,"GameMain")
+	ProcedureChangeScene:ChangeScene(CS.ZJYFrameWork.Constant.SceneEnum.GameMain, "GameMain")
 end
 
 return LoginTapToStartView

@@ -16,6 +16,7 @@ function LoginUIController:Open()
 		return
 	end
 	self:OnClose()
+	self.LoginView.UIView:OnShow()
 	self.RegisterPartView:OnHide()
 	self.LoginTapToStartView:OnHide()
 	self.LoginPartView:OnShow()
@@ -54,13 +55,14 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 	self.RegisterPartView = RegisterPartView
 	---@type LoginTapToStartView|nil
 	self.LoginTapToStartView = LoginTapToStartView
+
 	self:SetListener(self.LoginPartView.LoginBtn, function()
 		printDebug(
 			"账号密码登录[account:"
-				.. self.LoginPartView.account.text
-				.. "][password:"
-				.. self.LoginPartView.password.text
-				.. "]"
+			.. self.LoginPartView.account.text
+			.. "][password:"
+			.. self.LoginPartView.password.text
+			.. "]"
 		)
 		local account = self.LoginPartView.account.text
 		local password = self.LoginPartView.password.text
@@ -70,4 +72,5 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 		self.LoginPartView:OnHide()
 		self.RegisterPartView:OnShow()
 	end)
+	
 end

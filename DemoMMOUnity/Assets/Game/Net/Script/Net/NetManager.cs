@@ -91,6 +91,7 @@ namespace ZJYFrameWork.Net
 
         public void SendMessage(string bytes)
         {
+            Debug.Log($"LUA NET message:{bytes}");
             try
             {
                 ByteBuffer byteBuffer = ByteBuffer.ValueOf();

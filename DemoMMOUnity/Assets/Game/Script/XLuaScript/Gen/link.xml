@@ -4,6 +4,7 @@
 
 	<assembly fullname="Assembly-CSharp">
 	    <type fullname="ZJYFrameWork.XLuaScript.XLuaManager" preserve="all"/>
+		<type fullname="ZJYFrameWork.Common.GameCommonUtil" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiRequest" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiResponse" preserve="all"/>
 		<type fullname="ZJYFrameWork.Net.ApiHandler" preserve="all"/>

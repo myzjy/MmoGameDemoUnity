@@ -18,7 +18,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             var selectObj = Selection.activeGameObject;
             if (keyGizmos != null)
             {
-                FlushData(keyGizmos);
+                // FlushData(keyGizmos);
                 //获取选中物体里面的所有组件
                 var coms = selectObj.GetComponents(typeof(Component));
                 string[] names = new string[coms.Length];

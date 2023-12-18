@@ -4,6 +4,14 @@
 --- DateTime: 2023/6/4 23:19
 ---
 
+------------------ service 初始化 ------------------
+
+LoginService = require("Game.Net.Service.LoginService")
+require("Game.Net.Service.PhysicalPowerService")
+
+------------------ service 初始化 end------------------
+
+
 
 ByteBuffer = require("Game.Net.LuaProtocol.Buffer.ByteBuffer")
 

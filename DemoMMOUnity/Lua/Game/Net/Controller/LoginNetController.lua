@@ -29,7 +29,7 @@ function LoginNetController:InitEvents()
     GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
         LoginNetController:Connect(url)
     end)
-    GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen,function ()
+    GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen, function()
         LoginNetController:OnNetOpenEvent()
     end)
     GlobalEventSystem:Bind(LoginConst.Event.Login, function(data)
@@ -47,10 +47,8 @@ end
 function LoginNetController:OnNetOpenEvent()
     CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1);
     UICommonViewController.LoadingRotate:OnClose()
-    if global.settingManager:HasSetting(GameConstant.SETTING_LOGIN_TOKEN) then
-        if Debug>0 then
-            printDebug("连接成功事件，登录服务器 登录过服务器")
-        end
+    if Debug > 0 then
+        printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
     end
     LoginUIController:GetInstance():Open()
 end
@@ -62,12 +60,12 @@ function LoginNetController:AtLoginResponse(data)
     local userName = response.userName;
     if Debug > 0 then
         printDebug("[user:" ..
-                userName ..
-                "][token:" ..
-                token ..
-                "]" ..
-                "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response
-                .premiumDiamondNum)
+            userName ..
+            "][token:" ..
+            token ..
+            "]" ..
+            "[uid:" .. uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response
+            .premiumDiamondNum)
     end
     PlayerUserCaCheData:SetUIDValue(uid)
     PlayerUserCaCheData:SetUseName(userName)
@@ -97,14 +95,13 @@ function LoginNetController:AtLoginTapToStartResponse(data)
     else
         --- 不能登錄
         CommonController.Instance.snackbar.OpenCommonUIPanel(DialogConfig.ButtonType.YesNo, "",
-                "当前不在登录时间..MESSAGE:" .. response.message,
-                function(res)
+            "当前不在登录时间..MESSAGE:" .. response.message,
+            function(res)
 
-                end, "确定", "取消")
+            end, "确定", "取消")
         return
     end
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
 end
 
 return LoginNetController
-

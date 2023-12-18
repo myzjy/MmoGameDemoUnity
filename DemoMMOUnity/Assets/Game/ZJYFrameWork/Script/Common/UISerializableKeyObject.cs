@@ -66,9 +66,6 @@ namespace ZJYFrameWork.UISerializable
 
         public Object GetObjTypeStr(string objKey)
         {
-            Debug.Log($"objKey:{objKey}");
-            Debug.Log($"dataViewList:{dataViewList}");
-            Debug.Log($"dataList:{dataList}");
             ObjectsDict.TryGetValue(key: objKey, out var data);
             return data != null ? data : null;
         }

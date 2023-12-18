@@ -36,14 +36,14 @@ function LoginView:OnInit()
 	local viewPanel = LoginView.viewPanel
 	self.LoginPartView:Build(viewPanel.LoginPart_UISerializableKeyObject)
 	self.RegisterPartView:Build(viewPanel.RegisterPart_UISerializableKeyObject)
-    self.LoginTapToStartView:Build(viewPanel.LoginStart_UISerializableKeyObject)
-	LoginUIController:GetInstance():Build(self, self.LoginPartView, self.RegisterPartView,self.LoginTapToStartView)
+	self.LoginTapToStartView:Build(viewPanel.LoginStart_UISerializableKeyObject)
+	LoginUIController:GetInstance():Build(self, self.LoginPartView, self.RegisterPartView, self.LoginTapToStartView)
 end
 
 function LoginView:OnShow()
 	printInfo("LoginView:OnShow line 21")
+	LoginUIController:GetInstance():Open()
 end
-
 
 function LoginView:StartLoginTip()
 	--coroutine.start()
