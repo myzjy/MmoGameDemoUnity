@@ -24,7 +24,7 @@ end
 ---@param btn
 ---@param func function
 function LuaUIObject:SetListener(btn, func)
-    CS.GameUtil.Util.SetListener(btn, func)
+    CS.GameUtil.Util.SetBtnListener(btn, func)
 end
 
 ---@param text string

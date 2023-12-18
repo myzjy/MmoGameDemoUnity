@@ -8,6 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using XLua;
 using Object = UnityEngine.Object;
 
 namespace GameUtil
@@ -24,7 +25,11 @@ namespace GameUtil
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(action);
         }
-
+        public static void SetBtnListener(Button button, UnityAction action)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(action);
+        }
         public const string NewLineCRLF = "\r\n";
         public const string NewLineCR = "\r";
         public const string NewLineLF = "\n";
