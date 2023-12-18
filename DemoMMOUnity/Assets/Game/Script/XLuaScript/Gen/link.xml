@@ -141,11 +141,4 @@
 		
 	</assembly>
 
-	<assembly fullname="ZJYFrameWork.UISerializable.Common">
-	    <type fullname="GameUtil.Util" preserve="all"/>
-		<type fullname="ZJYFrameWork.UISerializable.UISerializableKeyObject" preserve="all"/>
-		<type fullname="ZJYFrameWork.UISerializable.UIView" preserve="all"/>
-		
-	</assembly>
-
 </linker>

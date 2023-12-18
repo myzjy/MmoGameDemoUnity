@@ -28,13 +28,12 @@ namespace ZJYFrameWork.UISerializable
         public string Path;
     }
 
-    [LuaCallCSharp]
     public class UISerializableKeyObject : MonoBehaviour, ISerializationCallbackReceiver
     {
         //ui组件保存
         public List<UIKeyObjectData> dataList => dataViewList.SelectMany(a => a.KodComs).ToList();
 
-        [SerializeField] private List<ViewSignSerializableUI> dataViewList = new List<ViewSignSerializableUI>();
+        [SerializeField] public List<ViewSignSerializableUI> dataViewList = new List<ViewSignSerializableUI>();
 
         //UI组件更具我们定义的名字去保存Key
         private Dictionary<string, Object> ObjectsDict =>
@@ -73,58 +72,5 @@ namespace ZJYFrameWork.UISerializable
             ObjectsDict.TryGetValue(key: objKey, out var data);
             return data != null ? data : null;
         }
-#if UNITY_EDITOR
-        public void FlushData()
-        {
-            List<ViewSignSerializableUI> list = new List<ViewSignSerializableUI>();
-            var ssu = GetComponent<ViewSignSerializableUI>();
-            if (ssu != null && ssu.KodComs.Count > 0)
-            {
-                list.Add(ssu);
-            }
-
-            Transform tf = transform;
-
-            FindAllChild(ref list, tf);
-
-            dataViewList.Clear();
-            foreach (ViewSignSerializableUI viewSignSerializableUI in list)
-            {
-                dataViewList.Add(viewSignSerializableUI);
-            }
-
-            AssetDatabase.Refresh();
-        }
-
-
-        void FindAllChild(ref List<ViewSignSerializableUI> list, Transform selfTf)
-        {
-            Transform tf = selfTf;
-            int childCount = tf.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform childTf = tf.GetChild(i);
-                if (childTf.GetComponent<UISerializableKeyObject>() == null)
-                {
-                    var child = childTf.GetComponent<ViewSignSerializableUI>();
-                    if (child != null && child.KodComs.Count > 0)
-                    {
-                        list.Add(child);
-                    }
-
-                    FindAllChild(ref list, childTf);
-                }
-
-                if (childTf.GetComponent<UISerializableKeyObject>() != null)
-                {
-                    var child = childTf.GetComponent<ViewSignSerializableUI>();
-                    if (child != null && child.KodComs.Count > 0)
-                    {
-                        list.Add(child);
-                    }
-                }
-            }
-        }
-#endif
     }
 }

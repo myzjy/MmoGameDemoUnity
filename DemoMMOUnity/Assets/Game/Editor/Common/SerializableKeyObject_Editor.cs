@@ -10,7 +10,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-          //  return;
+            //  return;
             UISerializableKeyObject keyGizmos = target as UISerializableKeyObject;
             // EditorGUI.BeginChangeCheck();
 
@@ -18,7 +18,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             var selectObj = Selection.activeGameObject;
             if (keyGizmos != null)
             {
-                keyGizmos.FlushData();
+                FlushData(keyGizmos);
                 //获取选中物体里面的所有组件
                 var coms = selectObj.GetComponents(typeof(Component));
                 string[] names = new string[coms.Length];
@@ -49,10 +49,61 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                         EditorGUILayout.SelectableLabel(item.Path, GUILayout.Height(20));
                     }
                 }
-
             }
-            AssetDatabase.Refresh();
 
+            AssetDatabase.Refresh();
+        }
+
+        public void FlushData(UISerializableKeyObject data)
+        {
+            List<ViewSignSerializableUI> list = new List<ViewSignSerializableUI>();
+            var ssu = data.GetComponent<ViewSignSerializableUI>();
+            if (ssu != null && ssu.KodComs.Count > 0)
+            {
+                list.Add(ssu);
+            }
+
+            Transform tf = data.transform;
+
+            FindAllChild(ref list, tf);
+
+            data.dataViewList.Clear();
+            foreach (ViewSignSerializableUI viewSignSerializableUI in list)
+            {
+                data.dataViewList.Add(viewSignSerializableUI);
+            }
+
+            AssetDatabase.Refresh();
+        }
+
+
+        void FindAllChild(ref List<ViewSignSerializableUI> list, Transform selfTf)
+        {
+            Transform tf = selfTf;
+            int childCount = tf.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Transform childTf = tf.GetChild(i);
+                if (childTf.GetComponent<UISerializableKeyObject>() == null)
+                {
+                    var child = childTf.GetComponent<ViewSignSerializableUI>();
+                    if (child != null && child.KodComs.Count > 0)
+                    {
+                        list.Add(child);
+                    }
+
+                    FindAllChild(ref list, childTf);
+                }
+
+                if (childTf.GetComponent<UISerializableKeyObject>() != null)
+                {
+                    var child = childTf.GetComponent<ViewSignSerializableUI>();
+                    if (child != null && child.KodComs.Count > 0)
+                    {
+                        list.Add(child);
+                    }
+                }
+            }
         }
     }
 }

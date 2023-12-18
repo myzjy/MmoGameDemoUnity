@@ -10,7 +10,7 @@ using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
 
 using XLua;
 using System.Collections.Generic;
-using GameUtil;
+
 
 namespace XLua.CSObjectWrap
 {
@@ -21,11 +21,10 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(UnityEngine.UI.Button);
-			Utils.BeginObjectRegister(type, L, translator, 0, 3, 1, 1);
+			Utils.BeginObjectRegister(type, L, translator, 0, 2, 1, 1);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "OnPointerClick", _m_OnPointerClick);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "OnSubmit", _m_OnSubmit);
-			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetListener", _m_SetListener);
 			
 			
 			Utils.RegisterFunc(L, Utils.GETTER_IDX, "onClick", _g_get_onClick);
@@ -103,34 +102,6 @@ namespace XLua.CSObjectWrap
                     UnityEngine.EventSystems.BaseEventData _eventData = (UnityEngine.EventSystems.BaseEventData)translator.GetObject(L, 2, typeof(UnityEngine.EventSystems.BaseEventData));
                     
                     gen_to_be_invoked.OnSubmit( _eventData );
-                    
-                    
-                    
-                    return 0;
-                }
-                
-            } catch(System.Exception gen_e) {
-                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
-            }
-            
-        }
-        
-        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_SetListener(RealStatePtr L)
-        {
-		    try {
-            
-                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
-            
-            
-                UnityEngine.UI.Button gen_to_be_invoked = (UnityEngine.UI.Button)translator.FastGetCSObj(L, 1);
-            
-            
-                
-                {
-                    UnityEngine.Events.UnityAction _action = translator.GetDelegate<UnityEngine.Events.UnityAction>(L, 2);
-                    
-                    gen_to_be_invoked.SetListener( _action );
                     
                     
                     
