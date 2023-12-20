@@ -115,8 +115,8 @@ end
 
 ProtocolConfig = {
     ---@type {id:number,protocolData:fun(id:number):RegisterRequest|nil}
-    RegisterRequest={
-        id=1005,
+    RegisterRequest = {
+        id = 1005,
         protocolData = function(id)
             return ProtocolManager.getProtocol(id)
         end
@@ -137,5 +137,11 @@ ProtocolConfig = {
     },
 
 }
+ProtocolManager.ProtocolConfigEvent = {}
+
+function ProtocolManager:AddProtocolConfigEvent(id, func)
+    self.ProtocolConfigEvent[id] = func
+end
+function ProtocolManager:FireProtocolConfigEvent
 
 return ProtocolManager
