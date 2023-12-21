@@ -65,7 +65,7 @@ end
 
 function PacketDispatcher:Receive(packet)
     --packetValue = packet
-    GlobalEventSystem:Fire(packet:protocolId(), packet)
+    ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
 end
 
 return PacketDispatcher

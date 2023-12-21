@@ -142,6 +142,10 @@ ProtocolManager.ProtocolConfigEvent = {}
 function ProtocolManager:AddProtocolConfigEvent(id, func)
     self.ProtocolConfigEvent[id] = func
 end
-function ProtocolManager:FireProtocolConfigEvent
+
+function ProtocolManager:FireProtocolConfigEvent(id, ...)
+    local eventList=...
+    self.ProtocolConfigEvent[id](eventList)
+end
 
 return ProtocolManager

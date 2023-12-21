@@ -11,6 +11,7 @@ LoginConst = {
     },
     Event = {
         Login = 1001,
+        Register=1005,
         Pong = 104,
         ---登录拦截
         LoginTapTOStart = 1014,
@@ -32,13 +33,13 @@ function LoginNetController:InitEvents()
     GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen, function()
         LoginNetController:OnNetOpenEvent()
     end)
-    GlobalEventSystem:Bind(LoginConst.Event.Login, function(data)
+    ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
         LoginNetController:AtLoginResponse(data)
     end)
-    GlobalEventSystem:Bind(LoginConst.Event.Pong, function(data)
+    ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Pong, function(data)
         LoginNetController:AtPong(data)
     end)
-    GlobalEventSystem:Bind(LoginConst.Event.LoginTapTOStart, function(data)
+    ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.LoginTapTOStart, function(data)
         LoginNetController:AtLoginTapToStartResponse(data)
     end)
 end
@@ -102,6 +103,11 @@ function LoginNetController:AtLoginTapToStartResponse(data)
         return
     end
     DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
+end
+
+function LoginNetController:AtRegisterResponse(data)
+    local response = data
+    
 end
 
 return LoginNetController

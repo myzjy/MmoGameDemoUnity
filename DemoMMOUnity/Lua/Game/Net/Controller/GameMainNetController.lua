@@ -21,7 +21,7 @@ end
 
 --- GameMainNetController 事件初始化
 function GameMainNetController:InitEvent()
-    GlobalEventSystem:Bind(GameMainConst.Event.ServerData, function(response)
+    ProtocolManager:AddProtocolConfigEvent(GameMainConst.Event.ServerData, function(response)
         --- 请求服务器 部分配置表时 在打开游戏登录界面之前 必须请求完成
         GameMainNetController:AtServerConfigResponse(response)
     end)

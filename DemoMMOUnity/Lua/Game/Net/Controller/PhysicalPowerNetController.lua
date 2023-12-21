@@ -33,10 +33,10 @@ function PhysicalPowerNetController:InitEvent()
         end
         PhysicalPowerService:SendPhysicalPowerSecondsRequest()
     end)
-    GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerResponse, function(res)
+    ProtocolManager:AddProtocolConfigEvent(PhysicalConst.Event.PhysicalPowerResponse, function(res)
         PhysicalPowerNetController:AtPhysicalPowerResponse(res)
     end)
-    GlobalEventSystem:Bind(PhysicalConst.Event.PhysicalPowerUserPropsResponse, function(res)
+    ProtocolManager:AddProtocolConfigEvent(PhysicalConst.Event.PhysicalPowerUserPropsResponse, function(res)
         PhysicalPowerNetController:AtPhysicalPowerUserPropsResponse(res)
     end)
 end
