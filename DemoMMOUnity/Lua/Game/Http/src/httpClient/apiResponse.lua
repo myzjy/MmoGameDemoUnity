@@ -12,28 +12,28 @@ local apiResponse = class("apiResponse")
 -- apiResponse.Headers = nil
 -- apiResponse.RawData = nil
 function apiResponse.new(request, bhResponse, elapsedMilliseconds)
-    apiResponse.Request = request
-    apiResponse.bhResponse = bhResponse
-    apiResponse.ElapsedMilliseconds = elapsedMilliseconds
-    if type(bhResponse) == "nil" then
-        apiResponse.StatusCode = 0
-        apiResponse.StatusMessage = "Timeout"
-        apiResponse.Headers = nil
-        apiResponse.RawData = nil
-    else
-        apiResponse.StatusCode = bhResponse.StatusCode
-        apiResponse.StatusMessage = bhResponse.Message
-        apiResponse.Headers = bhResponse.Headers
-        apiResponse.RawData = bhResponse.Data
-    end
+	apiResponse.Request = request
+	apiResponse.bhResponse = bhResponse
+	apiResponse.ElapsedMilliseconds = elapsedMilliseconds
+	if type(bhResponse) == "nil" then
+		apiResponse.StatusCode = 0
+		apiResponse.StatusMessage = "Timeout"
+		apiResponse.Headers = nil
+		apiResponse.RawData = nil
+	else
+		apiResponse.StatusCode = bhResponse.StatusCode
+		apiResponse.StatusMessage = bhResponse.Message
+		apiResponse.Headers = bhResponse.Headers
+		apiResponse.RawData = bhResponse.Data
+	end
 end
 
 function apiResponse.IsSuccess()
-    return (apiResponse.StatusCode >= 200 and apiResponse.StatusCode < 300) or apiResponse.StatusCode == 304
+	return (apiResponse.StatusCode >= 200 and apiResponse.StatusCode < 300) or apiResponse.StatusCode == 304
 end
 
 function apiResponse.IsTimeout()
-    return apiResponse.StatusCode == 0
+	return apiResponse.StatusCode == 0
 end
 
 return apiResponse

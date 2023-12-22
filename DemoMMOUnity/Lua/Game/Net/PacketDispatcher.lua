@@ -7,54 +7,51 @@ printDebug("加载 PacketDispatcher.lua 文件")
 local PacketDispatcher = {}
 --_receiversMap = {}
 PacketDispatcher.Event = {
-    OnConnect = "PacketDispatcher.Event.OnConnect",
-    OnOpen="PacketDispatcher.Event.OnOpen",
-    OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
+	OnConnect = "PacketDispatcher.Event.OnConnect",
+	OnOpen = "PacketDispatcher.Event.OnOpen",
+	OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
 packetValue = nil
 PacketDispatcher.urlString = nil
 --- 链接建立通知lua
 function OnConnectServer(url)
-    PacketDispatcher.urlString = url
-    ---链接成功
-    GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
+	PacketDispatcher.urlString = url
+	---链接成功
+	GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
 end
 
 function OnDisConnectFromServer()
-    printDebug("Game server disconnected!!")
-    GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
+	printDebug("Game server disconnected!!")
+	GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
 
 function OnReceiveLineFromServer(bytes)
-    str = bytes
-    local packet = readBytes(str)
-    PacketDispatcher:Receive(packet)
+	local str = bytes
+	local packet = readBytes(str)
+	PacketDispatcher:Receive(packet)
 end
 
 function PacketDispatcher:SendMessage(bytes)
-    global.netManager:SendMessage(bytes)
+	global.netManager:SendMessage(bytes)
 end
 
 function PacketDispatcher:Init()
-    -------------------------------- start Login   pack 包 --------------------------------------
-    ---@type LoginNetController
-    local loginNetController = require("Game.Net.Controller.LoginNetController")
-    loginNetController:Init()
-    -------------------------------- end   Login    pack 包 --------------------------------------
-    ---
-    -------------------------------- start gameMain pack 包 --------------------------------------
-    ---@type GameMainNetController
-    local gameMainNetController = require("Game.Net.Controller.GameMainNetController")
-    gameMainNetController:Init()
-    -------------------------------- end   gameMain pack 包 --------------------------------------
+	-------------------------------- start Login   pack 包 --------------------------------------
+	---@type LoginNetController
+	local loginNetController = require("Game.Net.Controller.LoginNetController")
+	loginNetController:Init()
+	-------------------------------- end   Login    pack 包 --------------------------------------
+	---
+	-------------------------------- start gameMain pack 包 --------------------------------------
+	---@type GameMainNetController
+	local gameMainNetController = require("Game.Net.Controller.GameMainNetController")
+	gameMainNetController:Init()
+	-------------------------------- end   gameMain pack 包 --------------------------------------
 
-    -------------------------------- start physicalPower pack 包 --------------------------------------
-    local physicalPowerNetController=require("Game.Net.Controller.PhysicalPowerNetController")
-    physicalPowerNetController:Init()
-    -------------------------------- end physicalPower pack 包 --------------------------------------
-
-    
-    
+	-------------------------------- start physicalPower pack 包 --------------------------------------
+	local physicalPowerNetController = require("Game.Net.Controller.PhysicalPowerNetController")
+	physicalPowerNetController:Init()
+	-------------------------------- end physicalPower pack 包 --------------------------------------
 end
 
 ---function PacketDispatcher:Receive(str)
@@ -64,9 +61,8 @@ end
 --end
 
 function PacketDispatcher:Receive(packet)
-    --packetValue = packet
-    ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
+	--packetValue = packet
+	ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
 end
 
 return PacketDispatcher
-
