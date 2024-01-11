@@ -16,7 +16,7 @@ MonoBehaviour:
   spreadSheetCSVDownloadURL: REMOVED_URL
   enumFilePath: /Game/Script/Common/
   outputDataPath: Assets/Game/AssetBundles/ScriptableObject/MessageData/
-  editorLanguageData: {fileID: 0}
+  editorLanguageData: {fileID: 11400000, guid: f97e2d221d46dc344a2a9f942db22651, type: 2}
   eventSpreadSheetURL: REMOVED_URL
   eventMessageClassFilePath: /Game/Script/Event/Message/
   eventOutputDataPath: Assets/Game/AssetBundles/ScriptableObject/MessageData/Event/
