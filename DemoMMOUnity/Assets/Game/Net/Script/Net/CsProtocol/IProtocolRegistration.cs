@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol
 {
     /**
      * 协议包类注册

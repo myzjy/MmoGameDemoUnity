@@ -1,8 +1,6 @@
-﻿using DG.Tweening;
-using ZJYFrameWork.Common;
-using ZJYFrameWork.Hotfix.Common;
+﻿using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Net;
-using ZJYFrameWork.Net.CsProtocol;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Login;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Module.Register.Service

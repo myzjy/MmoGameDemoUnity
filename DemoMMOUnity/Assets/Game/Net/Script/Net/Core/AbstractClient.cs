@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using ZJYFrameWork.Collection;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.UISerializable.Manager;
 
 namespace ZJYFrameWork.Net.Core

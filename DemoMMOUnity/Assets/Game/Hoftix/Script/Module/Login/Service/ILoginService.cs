@@ -1,7 +1,4 @@
-﻿using System;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo;
-
-namespace ZJYFrameWork.Module.Login.Service
+﻿namespace ZJYFrameWork.Module.Login.Service
 {
     public interface ILoginService
     {

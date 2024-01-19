@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.ServerConfig
 {
     /// <summary>
     /// 请求服务器上面配置表

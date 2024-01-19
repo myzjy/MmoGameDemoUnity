@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Weapon
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Weapon
 {
     public class WeaponUsePlayerRequest : Model, IPacket, IReference
     {
@@ -61,6 +65,51 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Weapon
 
         public IPacket Read(ByteBuffer buffer)
         {
+            var json = StringUtils.BytesToString(buffer.ToBytes());
+            var packet = ReferenceCache.Acquire<WeaponUsePlayerRequest>();
+            packet.Clear();
+            if (string.IsNullOrEmpty(json))
+            {
+                return packet;
+            }
+
+            var dictBase = JsonConvert.DeserializeObject<Dictionary<Object, Object>>(json);
+            if (dictBase == null)
+            {
+#if UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG)
+                Debug.LogError("消息解析错误，请检查");
+#endif
+                return packet;
+            }
+
+            string keyString = string.Empty;
+            string valueString = string.Empty;
+            foreach (var (key, value) in dictBase)
+            {
+                keyString = key != null ? key.ToString() : string.Empty;
+                valueString = value != null ? value.ToString() : string.Empty;
+                switch (keyString)
+                {
+                    case "findUserId":
+                    {
+                        if (!string.IsNullOrEmpty(valueString))
+                        {
+                            packet.findUserId = long.Parse(valueString);
+                        }
+                    }
+                        break;
+
+                    case "findWeaponId":
+                    {
+                        if (!string.IsNullOrEmpty(valueString))
+                        {
+                            packet.findWeaponId = long.Parse(valueString);
+                        }
+                    }
+                        break;
+                }
+            }
+
             return null;
         }
     }

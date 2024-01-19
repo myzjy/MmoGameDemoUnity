@@ -1,6 +1,6 @@
 ﻿using ZJYFrameWork.Hotfix.UI.BagUI;
 using ZJYFrameWork.Net;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Bag.BagServer;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Hotfix.Script.Module.Bag.Service

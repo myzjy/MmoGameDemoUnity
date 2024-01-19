@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Map
 {
     /// <summary>
     /// 地图 章节数据

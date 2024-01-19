@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UI.UIModel;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol
 {
     /**
      * 协议的注册管理类

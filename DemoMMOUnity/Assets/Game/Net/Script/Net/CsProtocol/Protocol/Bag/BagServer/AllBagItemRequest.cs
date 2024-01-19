@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
-using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Bag.BagServer
 {
     public class AllBagItemRequest : Model, IPacket, IReference
     {

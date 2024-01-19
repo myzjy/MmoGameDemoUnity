@@ -5,7 +5,7 @@ using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
 {
     public class RegisterResponse : Model, IPacket, IReference
     {

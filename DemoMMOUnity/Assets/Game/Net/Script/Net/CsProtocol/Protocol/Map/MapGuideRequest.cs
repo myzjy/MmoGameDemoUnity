@@ -1,4 +1,4 @@
-﻿namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
+﻿namespace ZJYFrameWork.Net.CsProtocol.Protocol.Map
 {
     /// <summary>
     /// 地图相关

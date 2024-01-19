@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol;
 
 namespace ZJYFrameWork.Net.Core
 {

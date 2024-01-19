@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Equipment
 {
     public partial class EquipmentPrimaryConfigBaseData
     {

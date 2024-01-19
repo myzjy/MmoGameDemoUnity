@@ -1,6 +1,6 @@
 using ZJYFrameWork.Collection.Reference;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Equipment
 {
     public partial class EquipmentPrimaryConfigBaseData:Model,IPacket,IReference
     {

@@ -1,10 +1,9 @@
 // ReSharper disable once CheckNamespace
 
 using ZJYFrameWork.Net;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map;
+using ZJYFrameWork.Net.CsProtocol;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Map;
 using ZJYFrameWork.Spring.Core;
-using NotImplementedException = System.NotImplementedException;
 
 namespace ZJYFrameWork.Module.PuzzleNet.service
 {

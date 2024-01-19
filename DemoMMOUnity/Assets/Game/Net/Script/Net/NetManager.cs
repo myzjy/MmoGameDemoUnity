@@ -6,6 +6,7 @@ using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.Core.Websocket;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Spring.Core;
 

@@ -1,8 +1,9 @@
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Map
 {
     /// <summary>
     /// 地图 所有总信息 request

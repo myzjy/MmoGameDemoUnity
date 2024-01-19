@@ -1,4 +1,4 @@
-using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol.Protocol.PhysicalPower;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Hotfix.Common

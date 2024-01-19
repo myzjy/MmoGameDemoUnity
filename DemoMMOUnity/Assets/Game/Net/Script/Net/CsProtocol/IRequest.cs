@@ -1,4 +1,4 @@
-﻿namespace ZJYFrameWork.Net.CsProtocol.Buffer
+﻿namespace ZJYFrameWork.Net.CsProtocol
 {
     /// <summary>
     /// 请求

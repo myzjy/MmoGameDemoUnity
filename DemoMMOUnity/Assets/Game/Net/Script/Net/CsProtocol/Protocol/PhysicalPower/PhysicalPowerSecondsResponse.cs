@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.PhysicalPower
 {
     /// <summary>
     /// 每秒恢复体力的恢复

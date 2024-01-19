@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.UserInfo
 {
     /// <summary>
     /// 在GameMain 界面请求User 数据 Exp Lv 金币 钻石 付费钻石 角色数据

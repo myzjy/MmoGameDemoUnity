@@ -1,20 +1,15 @@
 ﻿using System;
 using DG.Tweening;
-using ZJYFrameWork.Common;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;
 using ZJYFrameWork.Hotfix.Common;
-using ZJYFrameWork.Hotfix.Module.Login.Controller;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Net.Core.Model;
-using ZJYFrameWork.Net.CsProtocol;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.UserInfo;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Login;
+using ZJYFrameWork.Net.CsProtocol.Protocol.UserInfo;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
-using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
-using ZJYFrameWork.UISerializable.Manager;
 
 
 namespace ZJYFrameWork.Module.Login.Service
@@ -22,10 +17,10 @@ namespace ZJYFrameWork.Module.Login.Service
     [Bean]
     public class LoginService : ILoginService
     {
-        [Autowired] private INetManager netManager;
+        [Autowired] private INetManager _netManager;
 
-        [Autowired] private ISettingManager settingManager;
-        [Autowired] private LoginClientCacheData LoginCacheData;
+        [Autowired] private ISettingManager _settingManager;
+        [Autowired] private LoginClientCacheData _loginCacheData;
 
         public void ConnectToGateway()
         {
@@ -33,7 +28,7 @@ namespace ZJYFrameWork.Module.Login.Service
             {
                 CommonController.Instance.loadingRotate.OnShow();
                 var webSocketGatewayUrl = SpringContext.GetBean<ISettingManager>().GetWebSocketBase();
-                netManager.Connect(webSocketGatewayUrl);
+                _netManager.Connect(webSocketGatewayUrl);
             }
             catch (Exception e)
             {
@@ -49,14 +44,14 @@ namespace ZJYFrameWork.Module.Login.Service
         /// </summary>
         public void LoginByToken()
         {
-            netManager.Send(
-                GetPlayerInfoRequest.ValueOf(settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
+            _netManager.Send(
+                GetPlayerInfoRequest.ValueOf(_settingManager.GetString(GameConstant.SETTING_LOGIN_TOKEN)));
         }
 
         public void LoginByAccount()
         {
-            LoginCacheData.loginError = false;
-            netManager.Send(LoginRequest.ValueOf(LoginCacheData.account, LoginCacheData.password));
+            _loginCacheData.loginError = false;
+            _netManager.Send(LoginRequest.ValueOf(_loginCacheData.account, _loginCacheData.password));
         }
 
         public void Logout()
@@ -67,14 +62,14 @@ namespace ZJYFrameWork.Module.Login.Service
         public void LoginTapToStart()
         {
             var startData = LoginTapToStartRequest.ValueOf();
-            netManager.Send(startData);
+            _netManager.Send(startData);
         }
 
         public void GetServerGameMainInfo()
         {
-            var UID = SpringContext.GetBean<PlayerUserCaCheData>().Uid;
-            var service = GameMainUserToInfoRequest.ValueOf(UID);
-            netManager.Send(service);
+            var uid = SpringContext.GetBean<PlayerUserCaCheData>().Uid;
+            var service = GameMainUserToInfoRequest.ValueOf(uid);
+            _netManager.Send(service);
         }
     }
 }

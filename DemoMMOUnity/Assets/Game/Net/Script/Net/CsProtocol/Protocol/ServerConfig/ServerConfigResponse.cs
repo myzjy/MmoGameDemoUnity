@@ -2,11 +2,12 @@
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Equipment;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Bag;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Equipment;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.ServerConfig
 {
     /// <summary>
     /// 系统基础配置表相关

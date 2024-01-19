@@ -1,5 +1,5 @@
 using ZJYFrameWork.Hotfix.UISerializable;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Map;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;

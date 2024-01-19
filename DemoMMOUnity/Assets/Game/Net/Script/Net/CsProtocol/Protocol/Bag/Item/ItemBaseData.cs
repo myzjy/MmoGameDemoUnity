@@ -5,8 +5,9 @@ using Newtonsoft.Json;
 using Unity.VisualScripting;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer.Protocol
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Bag
 {
     public class ItemBaseData : Model, IPacket, IReference
     {

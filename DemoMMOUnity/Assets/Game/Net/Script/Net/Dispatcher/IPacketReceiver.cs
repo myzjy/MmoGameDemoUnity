@@ -1,4 +1,4 @@
-﻿using ZJYFrameWork.Net.CsProtocol.Buffer;
+﻿using ZJYFrameWork.Net.CsProtocol;
 
 namespace ZJYFrameWork.Net.Dispatcher
 {

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.PhysicalPower
 {
     /// <summary>
     /// 使用体力

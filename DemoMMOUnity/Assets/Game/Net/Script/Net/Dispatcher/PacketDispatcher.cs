@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using ZJYFrameWork.Net.CsProtocol.Buffer;
+using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.WebRequest;

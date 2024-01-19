@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.PhysicalPower
 {
     /// <summary>
     /// 体力 Response
@@ -52,17 +53,17 @@ namespace ZJYFrameWork.Net.CsProtocol.Buffer
             residueNowTime = 0;
         }
 
-        public static PhysicalPowerSecondsResponse ValueOf()
+        public static PhysicalPowerResponse ValueOf()
         {
-            var packet = ReferenceCache.Acquire<PhysicalPowerSecondsResponse>();
+            var packet = ReferenceCache.Acquire<PhysicalPowerResponse>();
             packet.Clear();
             return packet;
         }
 
-        public static PhysicalPowerSecondsResponse ValueOf(int nowPhysicalPower, int residueTime, int maximumStrength,
+        public static PhysicalPowerResponse ValueOf(int nowPhysicalPower, int residueTime, int maximumStrength,
             int maximusResidueEndTime, int residueNowTime)
         {
-            var packet = ReferenceCache.Acquire<PhysicalPowerSecondsResponse>();
+            var packet = ReferenceCache.Acquire<PhysicalPowerResponse>();
             packet.Clear();
             packet.nowPhysicalPower = nowPhysicalPower;
             packet.residueTime = residueTime;

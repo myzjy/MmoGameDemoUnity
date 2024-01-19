@@ -3,10 +3,10 @@ using Newtonsoft.Json;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Bag.BagServer;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Bag.BagServer;
 using ZJYFrameWork.Spring.Utils;
 
-namespace ZJYFrameWork.Net.CsProtocol
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.Login
 {
     /// <summary>
     /// 游戏登录拦截

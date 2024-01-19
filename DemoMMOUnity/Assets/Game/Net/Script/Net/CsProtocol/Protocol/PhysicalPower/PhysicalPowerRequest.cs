@@ -3,8 +3,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ZJYFrameWork.Collection.Reference;
 using ZJYFrameWork.Net.Core;
+using ZJYFrameWork.Net.CsProtocol.Buffer;
 
-namespace ZJYFrameWork.Net.CsProtocol.Buffer
+namespace ZJYFrameWork.Net.CsProtocol.Protocol.PhysicalPower
 {
     /// <summary>
     /// 获取体力

@@ -3,7 +3,7 @@ using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.I18n;
 using ZJYFrameWork.Net;
-using ZJYFrameWork.Net.CsProtocol;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Login;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;

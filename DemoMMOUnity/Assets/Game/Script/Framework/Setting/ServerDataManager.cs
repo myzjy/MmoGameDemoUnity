@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.Map;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Bag;
+using ZJYFrameWork.Net.CsProtocol.Protocol.Map;
 using ZJYFrameWork.Spring.Core;
 
 namespace ZJYFrameWork.Setting

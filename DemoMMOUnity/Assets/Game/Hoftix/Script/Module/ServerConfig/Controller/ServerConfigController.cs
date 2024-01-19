@@ -1,10 +1,9 @@
 ﻿using ZJYFrameWork.Hotfix.UI.GameMain;
 using ZJYFrameWork.Hotfix.UISerializable;
-using ZJYFrameWork.Net.CsProtocol.Buffer.Protocol.ServerConfig;
+using ZJYFrameWork.Net.CsProtocol.Protocol.ServerConfig;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Setting;
 using ZJYFrameWork.Spring.Core;
-using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 
 namespace ZJYFrameWork.Module.ServerConfig.Controller
