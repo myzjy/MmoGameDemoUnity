@@ -93,6 +93,15 @@ function ProtocolManager.initProtocolManager()
     local PhysicalPowerResponse = require("Game.Net.LuaProtocol.PhysicalPower.PhysicalPowerResponse")
     --------------------------------------------------------------------------------------------------------
 
+    -----------------------------weapon------------------------------------------------------------
+    local weaponRequest = require("Game.Net.LuaProtocol.Weapon.WeaponUserPlayRequest")
+    local weaponResponse = require("Game.Net.LuaProtocol.Weapon.WeaponUserPlayResponse")
+    local weaponPlayerUserDataStruct = require("Game.Net.LuaProtocol.Weapon.WeaponPlayerUserDataStruct")
+
+
+    -----------------------------------------------------------------------------------------------
+
+
     protocols[101] = error
     protocols[104] = pong
     protocols[1000] = loginRequest
@@ -111,6 +120,9 @@ function ProtocolManager.initProtocolManager()
 
     protocols[1029] = physicalPowerSecondsRequest
     protocols[1030] = PhysicalPowerSecondsResponse
+
+    protocols[weaponRequest:protocolId()]=weaponRequest
+
 end
 
 ProtocolConfig = {
@@ -144,7 +156,7 @@ function ProtocolManager:AddProtocolConfigEvent(id, func)
 end
 
 function ProtocolManager:FireProtocolConfigEvent(id, ...)
-    local eventList=...
+    local eventList = ...
     self.ProtocolConfigEvent[id](eventList)
 end
 
