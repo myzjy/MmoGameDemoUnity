@@ -39,12 +39,12 @@ function WeaponPlayerUserDataStruct:new(id, weaponName, weaponType, nowSkills,
 end
 
 function WeaponPlayerUserDataStruct:protocolId()
-    return 1040
+    return 213
 end
 
 ---comment
 ---@param buffer ByteBuffer
----@param packet
+---@param packet WeaponPlayerUserDataStruct
 function WeaponPlayerUserDataStruct:write(buffer, packet)
     if packet == nil then
         return

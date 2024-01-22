@@ -52,6 +52,12 @@ function PacketDispatcher:Init()
 	local physicalPowerNetController = require("Game.Net.Controller.PhysicalPowerNetController")
 	physicalPowerNetController:Init()
 	-------------------------------- end physicalPower pack 包 --------------------------------------
+
+	-------------------------------- start weaponNetController pack 包 --------------------------------------
+
+	local weaponNetController = require("Game.Net.Controller.WeaponNetController")
+	weaponNetController:Init()
+	-------------------------------- end physicalPower pack 包 --------------------------------------
 end
 
 ---function PacketDispatcher:Receive(str)

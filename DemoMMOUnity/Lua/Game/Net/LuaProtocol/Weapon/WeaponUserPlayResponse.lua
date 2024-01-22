@@ -17,7 +17,7 @@ end
 
 ---comment
 ---@param buffer ByteBuffer
----@param packet
+---@param packet WeaponUserPlayResponse
 function WeaponUserPlayResponse:write(buffer, packet)
     if packet == nil then
         return

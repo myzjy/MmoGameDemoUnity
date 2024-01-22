@@ -121,8 +121,16 @@ function ProtocolManager.initProtocolManager()
     protocols[1029] = physicalPowerSecondsRequest
     protocols[1030] = PhysicalPowerSecondsResponse
 
-    protocols[weaponRequest:protocolId()]=weaponRequest
-
+    --- 武器 1039
+    protocols[weaponRequest:protocolId()] = weaponRequest
+    --- 武器 1040
+    protocols[weaponResponse:protocolId()] = weaponResponse
+    --- 武器 213
+    protocols[weaponPlayerUserDataStruct:protocolId()] = weaponPlayerUserDataStruct
+    ProtocolConfig.WeaponUserPlayRequest.id = weaponPlayerUserDataStruct:protocolId()
+    ProtocolConfig.WeaponUserPlayRequest.protocolData = function()
+        return ProtocolManager.getProtocol(ProtocolConfig.WeaponUserPlayRequest.id)
+    end
 end
 
 ProtocolConfig = {
@@ -147,7 +155,9 @@ ProtocolConfig = {
             return ProtocolManager.getProtocol(id)
         end
     },
-
+    ---@type {id:number,protocolData:fun():WeaponUserPlayRequest|nil}
+    WeaponUserPlayRequest = {
+    }
 }
 ProtocolManager.ProtocolConfigEvent = {}
 
