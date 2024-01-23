@@ -2128,8 +2128,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1400894738}
-  - component: {fileID: 1400894737}
-  - component: {fileID: 1400894736}
   m_Layer: 0
   m_Name: Reporter
   m_TagString: Untagged
@@ -2137,30 +2135,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1400894736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1400894735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2b05a9dea66f8a43a237987355a74e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1400894737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1400894735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7c30b56ab6ef1a43b84413ce9a331fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1400894738
 Transform:
   m_ObjectHideFlags: 0
