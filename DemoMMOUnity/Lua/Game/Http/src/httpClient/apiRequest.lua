@@ -38,15 +38,15 @@ function apiRequest.HandleResponse(originalBhRequest, bhResponse)
 
     if apiResponse.IsSuccess() then
         if _onSuccess ~= nil then
-            _onSuccess(apiRespnse)
+            _onSuccess(apiResponse)
         end
     else
         if _onError ~= nil then
-            _onError(apiRespnse)
+            _onError(apiResponse)
         end
     end
     if _onComplete~=nil then
-        _onComplete(apiRespnse)
+        _onComplete(apiResponse)
     end
 end
 
