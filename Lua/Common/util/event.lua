@@ -16,7 +16,7 @@ local error = error
 local traceback = debug.traceback
 local ilist = ilist
 
-event_err_handle = function(msg)
+local event_err_handle = function(msg)
 	error(msg, 2)
 end
 
