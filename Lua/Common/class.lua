@@ -1,29 +1,29 @@
 --- @class LuaDataType Lua数据类型枚举
 LuaDataType = {
-    Number   = "number",
-    String   = "string",
-    Nil      = "nil",
-    Booean   = "boolean",
-    Function = "function",
-    Table    = "table",
-    UserData = "userdata",
-    Thread   = "thread"
+	Number = "number",
+	String = "string",
+	Nil = "nil",
+	Booean = "boolean",
+	Function = "function",
+	Table = "table",
+	UserData = "userdata",
+	Thread = "thread",
 }
-tools       = {}
+tools = {}
 ---判断一个值能否通过条件
 ---@generic V
 ---@param value V
 ---@param ... fun(a:V):boolean
 ---@return boolean
 function tools.FitConditions(value, ...)
-    local args = { ... }
-    for _, func in ipairs(args) do
-        local bo = func(value)
-        if not bo then
-            return false
-        end
-    end
-    return true
+	local args = { ... }
+	for _, func in ipairs(args) do
+		local bo = func(value)
+		if not bo then
+			return false
+		end
+	end
+	return true
 end
 
 ------------------------------------------------------------------------------
@@ -32,28 +32,28 @@ end
 ---@param value number 数值
 ---@return number
 function math.RoundToInt(value)
-    return math.floor(value + 0.5)
+	return math.floor(value + 0.5)
 end
 
 ---对数值进行取小数部分
 ---@param value number 数值
 ---@return number
 function math.Frac(value)
-    return value - math.floor(value)
+	return value - math.floor(value)
 end
 
 ---角度转弧度
 ---@param angle number 角度
 ---@return number
 function math.AngleToRadian(angle)
-    return angle * math.pi / 180
+	return angle * math.pi / 180
 end
 
 ---弧度转角度
 ---@param radian number 弧度
 ---@return number
 function math.RadianToAngle(radian)
-    return radian / math.pi * 180
+	return radian / math.pi * 180
 end
 
 ------------------------------------------------------------------------------
@@ -62,20 +62,24 @@ end
 ---@param path string 文件路径
 ---@return boolean
 function io.Exists(path)
-    local file = io.open(path, "r")
-    if file then io.close(file) end
-    return file ~= nil
+	local file = io.open(path, "r")
+	if file then
+		io.close(file)
+	end
+	return file ~= nil
 end
 
 ---读取文件内容，返回包含文件内容的字符串，如果失败返回 nil
 ---@param path string 文件路径
 ---@return string|nil
 function io.ReadText(path)
-    local file = io.open(path, "r")
-    if not file then return nil end
-    local content = file:read("*a")
-    io.close(file)
-    return content
+	local file = io.open(path, "r")
+	if not file then
+		return nil
+	end
+	local content = file:read("*a")
+	io.close(file)
+	return content
 end
 
 --- 以字符串内容写入文件，成功返回 true，失败返回 false
@@ -87,12 +91,16 @@ end
 --- @param content string 内容
 --- @param mode string 模式
 function io.WriteText(path, content, mode)
-    mode = mode or "w+b"
-    local file = io.open(path, mode)
-    if not file then return false end
-    if file:write(content) == nil then return false end
-    io.close(file)
-    return true
+	mode = mode or "w+b"
+	local file = io.open(path, mode)
+	if not file then
+		return false
+	end
+	if file:write(content) == nil then
+		return false
+	end
+	io.close(file)
+	return true
 end
 
 ---拆分一个路径字符串，返回组成路径的各个部分
@@ -104,45 +112,45 @@ end
 --- @param  path string 要分拆的路径字符串
 --- @return table
 function io.PathInfo(path)
-    local pos = string.len(path)
-    local extpos = pos + 1
-    while pos > 0 do
-        local b = string.byte(path, pos)
-        if b == 46 then     -- 46 = char "."
-            extpos = pos
-        elseif b == 47 then -- 47 = char "/"
-            break
-        end
-        pos = pos - 1
-    end
+	local pos = string.len(path)
+	local extpos = pos + 1
+	while pos > 0 do
+		local b = string.byte(path, pos)
+		if b == 46 then -- 46 = char "."
+			extpos = pos
+		elseif b == 47 then -- 47 = char "/"
+			break
+		end
+		pos = pos - 1
+	end
 
-    local dirname = string.sub(path, 1, pos)
-    local filename = string.sub(path, pos + 1)
-    extpos = extpos - pos
-    local basename = string.sub(filename, 1, extpos - 1)
-    local extname = string.sub(filename, extpos)
-    return {
-        dirname = dirname,
-        filename = filename,
-        basename = basename,
-        extname = extname
-    }
+	local dirname = string.sub(path, 1, pos)
+	local filename = string.sub(path, pos + 1)
+	extpos = extpos - pos
+	local basename = string.sub(filename, 1, extpos - 1)
+	local extname = string.sub(filename, extpos)
+	return {
+		dirname = dirname,
+		filename = filename,
+		basename = basename,
+		extname = extname,
+	}
 end
 
 ---返回指定文件的大小，如果失败返回 false
 --- @param  path string 文件完全路径
 --- @return number|boolean
 function io.Filesize(path)
-    --- @type number|boolean
-    local size = false
-    local file = io.open(path, "r")
-    if file then
-        local current = file:seek()
-        size = file:seek("end")
-        file:seek("set", current)
-        io.close(file)
-    end
-    return size
+	--- @type number|boolean
+	local size = false
+	local file = io.open(path, "r")
+	if file then
+		local current = file:seek()
+		size = file:seek("end")
+		file:seek("set", current)
+		io.close(file)
+	end
+	return size
 end
 
 ------------------------------------------------------------------------------
@@ -150,25 +158,32 @@ end
 ---@param t table
 ---@return table
 function table.DeepCopy(t)
-    local SearchTable = {}
-    local function Func(object)
-        if type(object) ~= LuaDataType.Table then return object end
-        local NewTable = {}
-        SearchTable[object] = NewTable
-        for k, v in pairs(object) do
-            NewTable[Func(k)] = Func(v)
-        end
-        return setmetatable(NewTable, getmetatable(object))
-    end
+	local SearchTable = {}
+	local function Func(object)
+		if type(object) ~= LuaDataType.Table then
+			return object
+		end
+		local NewTable = {}
+		SearchTable[object] = NewTable
+		for k, v in pairs(object) do
+			NewTable[Func(k)] = Func(v)
+		end
+		return setmetatable(NewTable, getmetatable(object))
+	end
 
-    return Func(t)
+	return Func(t)
 end
 
---- 清空一个Table
----@param t table
+--- 清空一个Tabl
+---@param t table|nil
 function table.Clear(t)
-    for _, v in pairs(t) do v = nil end
-    t = nil
+	if t then
+		return
+	end
+	for _, v in pairs(t) do
+		v = nil
+	end
+	t = nil
 end
 
 --- 计算表格包含的字段数量
@@ -176,11 +191,11 @@ end
 ---@param t table
 ---@return number
 function table.GetCount(t)
-    local count = 0
-    for k, v in pairs(t) do
-        count = count + 1
-    end
-    return count
+	local count = 0
+	for k, v in pairs(t) do
+		count = count + 1
+	end
+	return count
 end
 
 --- 返回指定表格中的所有键
@@ -190,19 +205,19 @@ end
 ---@param hashtable table
 ---@return any[]
 function table.GetKeys(hashtable)
-    local keys = {}
-    for k, v in pairs(hashtable) do
-        keys[#keys + 1] = k
-    end
-    return keys
+	local keys = {}
+	for k, v in pairs(hashtable) do
+		keys[#keys + 1] = k
+	end
+	return keys
 end
 
 ---@param hashtable table
 ---@param key string
 ---@return boolean
 function table.ContainsKey(hashtable, key)
-    local t = type(hashtable)
-    return (t == LuaDataType.Table or t == LuaDataType.UserData) and hashtable[key] ~= nil
+	local t = type(hashtable)
+	return (t == LuaDataType.Table or t == LuaDataType.UserData) and hashtable[key] ~= nil
 end
 
 --- 返回指定表格中的所有值
@@ -212,11 +227,11 @@ end
 ---@param hashtable table
 ---@return any[]
 function table.GetValues(hashtable)
-    local values = {}
-    for k, v in pairs(hashtable) do
-        values[#values + 1] = v
-    end
-    return values
+	local values = {}
+	for k, v in pairs(hashtable) do
+		values[#values + 1] = v
+	end
+	return values
 end
 
 --- 将来源表格中所有键及其值复制到目标表格对象中，如果存在同名键，则覆盖其值
@@ -227,9 +242,9 @@ end
 ---@param dest table
 ---@param src table
 function table.Merge(dest, src)
-    for k, v in pairs(src) do
-        dest[k] = v
-    end
+	for k, v in pairs(src) do
+		dest[k] = v
+	end
 end
 
 --- 在目标表格的指定位置插入来源表格，如果没有指定位置则连接两个表格
@@ -245,28 +260,28 @@ end
 ---@param src V[]
 ---@param begin number
 function table.Insert(dest, src, begin)
-    local bo, begin = math.RoundToInt(begin)
-    if not bo then
-        begin = 0
-    end
-    if begin <= 0 then
-        begin = #dest + 1
-    end
-    local len = #src
-    for i = 0, len - 1 do
-        dest[i + begin] = src[i + 1]
-    end
+	local bo, begin = math.RoundToInt(begin)
+	if not bo then
+		begin = 0
+	end
+	if begin <= 0 then
+		begin = #dest + 1
+	end
+	local len = #src
+	for i = 0, len - 1 do
+		dest[i + begin] = src[i + 1]
+	end
 end
 
 ---@param tab table
 ---@param value any
 function table.GetKey(tab, value)
-    for index, _value in pairs(tab) do
-        if _value == value then
-            return index
-        end
-    end
-    return false
+	for index, _value in pairs(tab) do
+		if _value == value then
+			return index
+		end
+	end
+	return false
 end
 
 ---筛选所有符合条件的数据
@@ -277,18 +292,18 @@ end
 ---@param return_dic boolean 返回值是否采用原有的key
 ---@return table<K,V>|V[]
 function table.FindAll(tab, return_dic, ...)
-    local result = {}
-    for key, value in pairs(tab) do
-        local bo = tools.FitConditions(value, ...)
-        if bo then
-            if return_dic then
-                result[key] = value
-            else
-                table.insert(result, value)
-            end
-        end
-    end
-    return result
+	local result = {}
+	for key, value in pairs(tab) do
+		local bo = tools.FitConditions(value, ...)
+		if bo then
+			if return_dic then
+				result[key] = value
+			else
+				table.insert(result, value)
+			end
+		end
+	end
+	return result
 end
 
 ---筛选第一个符合条件的数据
@@ -298,12 +313,12 @@ end
 ---@param ... fun(a:V):boolean
 ---@return V
 function table.Find(tab, ...)
-    for key, value in pairs(tab) do
-        local bo = tools.FitConditions(value, ...)
-        if bo then
-            return value
-        end
-    end
+	for key, value in pairs(tab) do
+		local bo = tools.FitConditions(value, ...)
+		if bo then
+			return value
+		end
+	end
 end
 
 --- 对表格中每一个值执行一次指定的函数，并用函数返回值更新表格内容
@@ -311,9 +326,9 @@ end
 ---@param t table<K,V>
 ---@param func fun(key:K,Value:V):V
 function table.Map(t, func)
-    for k, v in pairs(t) do
-        t[k] = func(k, v)
-    end
+	for k, v in pairs(t) do
+		t[k] = func(k, v)
+	end
 end
 
 --- 对表格中每一个值执行一次指定的函数
@@ -321,9 +336,9 @@ end
 ---@param t table<K,V>
 ---@param func fun(key:K,Value:V)
 function table.Walk(t, func)
-    for k, v in pairs(t) do
-        func(k, v)
-    end
+	for k, v in pairs(t) do
+		func(k, v)
+	end
 end
 
 --- 对表格中每一个值执行一次指定的函数，如果该函数返回 true，则对应的值会从表格中删除
@@ -331,11 +346,11 @@ end
 ---@param t table<K,V>
 ---@param func fun(key:K,value:V):boolean
 function table.RemoveAll(t, func)
-    for k, v in pairs(t) do
-        if func(k, v) then
-            t[k] = nil
-        end
-    end
+	for k, v in pairs(t) do
+		if func(k, v) then
+			t[k] = nil
+		end
+	end
 end
 
 ---遍历表格，确保其中的值唯一
@@ -344,28 +359,28 @@ end
 ---@param bArray boolean 是否转成数组
 ---@return table<any,V>|V[]
 function table.Distinct(t, bArray)
-    local check = {}
-    local n = {}
-    local idx = 1
-    for k, v in pairs(t) do
-        if not check[v] then
-            if bArray then
-                n[idx] = v
-                idx = idx + 1
-            else
-                n[k] = v
-            end
-            check[v] = true
-        end
-    end
-    return n
+	local check = {}
+	local n = {}
+	local idx = 1
+	for k, v in pairs(t) do
+		if not check[v] then
+			if bArray then
+				n[idx] = v
+				idx = idx + 1
+			else
+				n[k] = v
+			end
+			check[v] = true
+		end
+	end
+	return n
 end
 
 ---判断一个table 是不是 空的
 ---@param table table
 ---@return boolean
 function table.IsEmpty(table)
-    return not next(table)
+	return not next(table)
 end
 
 ---反转table
@@ -373,11 +388,11 @@ end
 ---@param array V[]
 ---@return V[]
 function table.Reverse(array)
-    local var = {}
-    for i = 1, #array do
-        var[i] = table.remove(array)
-    end
-    return var
+	local var = {}
+	for i = 1, #array do
+		var[i] = table.remove(array)
+	end
+	return var
 end
 
 ---交换俩个元素
@@ -385,11 +400,11 @@ end
 ---@param i any
 ---@param j any
 function table.Swap(array, i, j)
-    if i and j and not table.IsEmpty(array) then
-        local tmp = array[i]
-        array[i] = array[j]
-        array[j] = tmp
-    end
+	if i and j and not table.IsEmpty(array) then
+		local tmp = array[i]
+		array[i] = array[j]
+		array[j] = tmp
+	end
 end
 
 ---多条件排序 第一个条件无法判断就判断后一个
@@ -397,22 +412,22 @@ end
 ---@param list V[]
 ---@param ... fun(a:V, b:V):number 比较下一个0 ;成立 1;不成立-1
 function table.Sort(list, ...)
-    local args = { ... }
-    if table.IsEmpty(args) then
-        return
-    end
-    local compare = function(a, b)
-        for _, confition in ipairs(args) do
-            local _result = confition(a, b)
-            if _result > 0 then
-                return true
-            elseif _result < 0 then
-                return false
-            end
-        end
-        return false
-    end
-    table.sort(list, compare)
+	local args = { ... }
+	if table.IsEmpty(args) then
+		return
+	end
+	local compare = function(a, b)
+		for _, confition in ipairs(args) do
+			local _result = confition(a, b)
+			if _result > 0 then
+				return true
+			elseif _result < 0 then
+				return false
+			end
+		end
+		return false
+	end
+	table.sort(list, compare)
 end
 
 ---转化一个table
@@ -424,32 +439,32 @@ end
 ---@param return_dic boolean
 ---@return table<K,Convert>|Convert[]
 function table.Convert(tab, func, return_dic)
-    local result = {}
-    for key, value in pairs(tab) do
-        local convert = func(value)
-        if return_dic then
-            result[key] = convert
-        else
-            table.insert(result, convert)
-        end
-    end
-    return result
+	local result = {}
+	for key, value in pairs(tab) do
+		local convert = func(value)
+		if return_dic then
+			result[key] = convert
+		else
+			table.insert(result, convert)
+		end
+	end
+	return result
 end
 
 ------------------------------------------------------------------------------
 
 ---@class UnitType 元对象类型枚举
 UnitType = {
-    Unit     = "Unit",
-    Type     = "Type",
-    Instance = "Instance"
+	Unit = "Unit",
+	Type = "Type",
+	Instance = "Instance",
 }
 
 ---@class ClassType class类型
 ClassType = {
-    Lua              = 0, ---纯Lua
-    CreateFirst      = 1, --需要先调用__createfirst创建实例对象
-    ExtendCSInstance = 2  --扩展CSharp实例
+	Lua = 0, ---纯Lua
+	CreateFirst = 1, --需要先调用__createfirst创建实例对象
+	ExtendCSInstance = 2, --扩展CSharp实例
 }
 
 ---@class Unit 元
@@ -464,109 +479,113 @@ ClassType = {
 
 ---@type Unit
 Unit = {
-    __unittype    = UnitType.Unit,
-    __classname   = "Unit",
-    __super       = nil,
-    __classtype   = nil,
-    __type        = nil,
-    __object      = nil,
-    __firstcreate = nil,
-    ctor          = nil
+	__unittype = UnitType.Unit,
+	__classname = "Unit",
+	__super = nil,
+	__classtype = nil,
+	__type = nil,
+	__object = nil,
+	__firstcreate = nil,
+	ctor = nil,
 }
 
 ---@param super string|Unit 名字或者一张由 class 创建出的表
 ---@return boolean
 function Unit:IsSubClassOf(super)
-    --- @type Unit
-    local _type
-    --- @type string
-    local classname
-    _type     = self.__unittype == UnitType.Instance and self.__type or self
-    classname = type(super) == LuaDataType.String and super or super.__classname
-    local tmp = _type
-    while tmp ~= nil do
-        if tmp.__classname == classname then return true end
-        tmp = tmp.__super
-    end
-    return false
+	--- @type Unit
+	local _type
+	--- @type string
+	local classname
+	_type = self.__unittype == UnitType.Instance and self.__type or self
+	classname = type(super) == LuaDataType.String and super or super.__classname
+	local tmp = _type
+	while tmp ~= nil do
+		if tmp.__classname == classname then
+			return true
+		end
+		tmp = tmp.__super
+	end
+	return false
 end
 
 ---@param instance Unit
 ---@param type Unit
 local function CopySuper(instance, type)
-    local tmp    = type
-    local supers = {}
-    while tmp ~= nil do
-        table.insert(supers, 1, tmp)
-        tmp = tmp.__super
-    end
-    for keysuper, superItem in pairs(supers) do
-        for k, v in pairs(superItem) do
-            if k ~= "__firstcreate" and k ~= "__unittype" then
-                instance[k] = v
-            end
-        end
-    end
-    supers = nil
-    return instance
+	local tmp = type
+	local supers = {}
+	while tmp ~= nil do
+		table.insert(supers, 1, tmp)
+		tmp = tmp.__super
+	end
+	for keysuper, superItem in pairs(supers) do
+		for k, v in pairs(superItem) do
+			if k ~= "__firstcreate" and k ~= "__unittype" then
+				instance[k] = v
+			end
+		end
+	end
+	supers = nil
+	return instance
 end
 
 ---@param instance Unit
 local function ExtendCSInstance(instance)
-    instance.__unittype = UnitType.Instance
-    local meta = {}
-    meta.__call = function(_, ...) error(_.__classname .. " is a instance extend from cs instance ") end
-    meta.__index = function(_t, k)
-        local selffield = rawget(_t, k)
-        if selffield then
-            return selffield
-        else
-            local fromcs = _t.__object[k]
-            if type(fromcs) == LuaDataType.Function then
-                return function(...)
-                    local args = { ... }
-                    if not table.IsEmpty(args) then
-                        local first = args[1]
-                        table.remove(args, 1)
-                    end
-                    fromcs(_t.__object, table.unpack(args))
-                end
-            else
-                return fromcs
-            end
-        end
-    end
-    meta.__newindex = function(_t, k, v)
-        local valuetype = type(v)
-        if valuetype == LuaDataType.Function then
-            rawset(_t, k, v)
-        else
-            if _t.__object[k] then
-                _t.__object[k] = v
-            else
-                rawset(_t, k, v)
-            end
-        end
-    end
-    setmetatable(instance, meta)
-    return instance
+	instance.__unittype = UnitType.Instance
+	local meta = {}
+	meta.__call = function(_, ...)
+		error(_.__classname .. " is a instance extend from cs instance ")
+	end
+	meta.__index = function(_t, k)
+		local selffield = rawget(_t, k)
+		if selffield then
+			return selffield
+		else
+			local fromcs = _t.__object[k]
+			if type(fromcs) == LuaDataType.Function then
+				return function(...)
+					local args = { ... }
+					if not table.IsEmpty(args) then
+						local first = args[1]
+						table.remove(args, 1)
+					end
+					fromcs(_t.__object, table.unpack(args))
+				end
+			else
+				return fromcs
+			end
+		end
+	end
+	meta.__newindex = function(_t, k, v)
+		local valuetype = type(v)
+		if valuetype == LuaDataType.Function then
+			rawset(_t, k, v)
+		else
+			if _t.__object[k] then
+				_t.__object[k] = v
+			else
+				rawset(_t, k, v)
+			end
+		end
+	end
+	setmetatable(instance, meta)
+	return instance
 end
 
 local function CallCtor(instance, type, ...)
-    local ctorTable = {}
-    local tmp = type
-    while tmp ~= nil do
-        table.insert(ctorTable, 1, tmp)
-        tmp = tmp.__super
-    end
-    for k, v in pairs(ctorTable) do
-        local ctor = rawget(v, "ctor")
-        if ctor then
-            ctor(instance, ...)
-        end
-    end
-    ctorTable = nil
-    return instance
+	local ctorTable = {}
+	local tmp = type
+	while tmp ~= nil do
+		table.insert(ctorTable, 1, tmp)
+		tmp = tmp.__super
+	end
+	for k, v in pairs(ctorTable) do
+		local ctor = rawget(v, "ctor")
+		if ctor then
+			ctor(instance, ...)
+		end
+	end
+	ctorTable = nil
+	return instance
 end
 
 ---创建一个类
@@ -575,68 +594,83 @@ end
 ---@param super Unit|userdata|nil 父类
 ---@return T
 class = function(classname, super)
-    assert(type(classname) == LuaDataType.String and #classname > 0)
-    ---@type Unit
-    local unitType
-    local superType      = type(super)
-    local isCSType       = super and superType == LuaDataType.Table and typeof(super)                  --判断是否是C#类
-    local isCSInstance   = super and superType == LuaDataType.UserData                                 --判断是否为C#实例
-    local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance                   --再次扩展C#实例
-    if isExCSInsAgain then error('cannot extends a c# instance multiple times.') end
-    local isFirstExCSType  = isCSType and (not super.__classtype) or superType == LuaDataType.Function --首次继承C#类
-    local isExCSTypeAgain  = super and super.__classtype == ClassType.CreateFirst                      --再次扩展C#类
-    unitType               = {}
-    unitType.__classname   = classname
-    unitType.__type        = Unit
-    unitType.__unittype    = isCSInstance and UnitType.Instance or UnitType.Type
-    unitType.__object      = isCSInstance and super or nil
-    unitType.ctor          = unitType.ctor or function(...) end
-    unitType.__classtype   = (isCSInstance and ClassType.ExtendCSInstance) or
-        ((isFirstExCSType or isExCSTypeAgain) and ClassType.CreateFirst) or ClassType.Lua
-    unitType.__super       = ((isCSInstance or isFirstExCSType) and Unit) or
-        (isExCSTypeAgain and super) or (super == nil and Unit or super)
-    unitType.__firstcreate = (isExCSTypeAgain and super.__firstcreate) or
-        ((isCSType and not super.__classtype) and function(...) return super(...) end) or
-        ((superType == LuaDataType.Function) and super) or nil
-    if isCSInstance then return ExtendCSInstance(unitType) end
-    local meta   = {}
-    meta.__index = super == nil and Unit or super
-    local __call
-    if isFirstExCSType or isExCSTypeAgain then
-        __call = function(_type, ...)
-            local instance    = {}
-            instance.__type   = _type
-            instance.__object = _type.__firstcreate(...)
-            return CallCtor(CopySuper(ExtendCSInstance(instance), _type), _type, ...)
-        end
-    else
-        __call = function(_type, ...)
-            local instance        = {}
-            instance.__unittype   = UnitType.Instance
-            instance.__type       = _type
-            local instance_meta   = {}
-            instance_meta.__index = _type
-            instance_meta.__call  = function(_, ...) error("this is a Instance of " .. _.__classname) end
-            setmetatable(instance, instance_meta)
-            return CallCtor(instance, _type, ...)
-        end
-    end
-    meta.__call = __call
-    setmetatable(unitType, meta)
-    return unitType
+	assert(type(classname) == LuaDataType.String and #classname > 0)
+	---@type Unit
+	local unitType
+	local superType = type(super)
+	local isCSType = super and superType == LuaDataType.Table and typeof(super) --判断是否是C#类
+	local isCSInstance = super and superType == LuaDataType.UserData --判断是否为C#实例
+	local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance --再次扩展C#实例
+	if isExCSInsAgain then
+		error("cannot extends a c# instance multiple times.")
+	end
+	local isFirstExCSType = isCSType and not super.__classtype or superType == LuaDataType.Function --首次继承C#类
+	local isExCSTypeAgain = super and super.__classtype == ClassType.CreateFirst --再次扩展C#类
+	unitType = {}
+	unitType.__classname = classname
+	unitType.__type = Unit
+	unitType.__unittype = isCSInstance and UnitType.Instance or UnitType.Type
+	unitType.__object = isCSInstance and super or nil
+	unitType.ctor = unitType.ctor or function(...) end
+	unitType.__classtype = (isCSInstance and ClassType.ExtendCSInstance)
+		or ((isFirstExCSType or isExCSTypeAgain) and ClassType.CreateFirst)
+		or ClassType.Lua
+	unitType.__super = ((isCSInstance or isFirstExCSType) and Unit)
+		or (isExCSTypeAgain and super)
+		or (super == nil and Unit or super)
+	unitType.__firstcreate = (isExCSTypeAgain and super.__firstcreate)
+		or ((isCSType and not super.__classtype) and function(...)
+			return super(...)
+		end)
+		or ((superType == LuaDataType.Function) and super)
+		or nil
+	if isCSInstance then
+		return ExtendCSInstance(unitType)
+	end
+	local meta = {}
+	meta.__index = super == nil and Unit or super
+	local __call
+	if isFirstExCSType or isExCSTypeAgain then
+		__call = function(_type, ...)
+			local instance = {}
+			instance.__type = _type
+			instance.__object = _type.__firstcreate(...)
+			return CallCtor(CopySuper(ExtendCSInstance(instance), _type), _type, ...)
+		end
+	else
+		__call = function(_type, ...)
+			local instance = {}
+			instance.__unittype = UnitType.Instance
+			instance.__type = _type
+			local instance_meta = {}
+			instance_meta.__index = _type
+			instance_meta.__call = function(_, ...)
+				error("this is a Instance of " .. _.__classname)
+			end
+			setmetatable(instance, instance_meta)
+			return CallCtor(instance, _type, ...)
+		end
+	end
+	meta.__call = __call
+	setmetatable(unitType, meta)
+	return unitType
 end
 ------------------------------------------------------------------------------
 _G.DefineTable, _G.UsingTable, _G.UsingStaticTable = {}, {}, {}
 ---锁住 _G
 function Lock_G()
-    if _G.__locked then return end
-    local meta = {}
-    meta.__newindex = function(_, k, v) error("attempt to add a new value to global,key: " .. k, 2) end
-    meta.__index = function(_, k)
-        return rawget(_, k) or rawget(_.DefineTable, k) or rawget(_.UsingStaticTable, k) or rawget(_.UsingTable, k)
-    end
-    _G.__locked = true
-    setmetatable(_G, meta)
+	if _G.__locked then
+		return
+	end
+	local meta = {}
+	meta.__newindex = function(_, k, v)
+		error("attempt to add a new value to global,key: " .. k, 2)
+	end
+	meta.__index = function(_, k)
+		return rawget(_, k) or rawget(_.DefineTable, k) or rawget(_.UsingStaticTable, k) or rawget(_.UsingTable, k)
+	end
+	_G.__locked = true
+	setmetatable(_G, meta)
 end
 
 --- 定义全局变量
@@ -644,20 +678,20 @@ end
 --- @param value any 值
 --- @return any value
 function Define(name, value)
-    rawset(_G.DefineTable, name, value)
-    return value
+	rawset(_G.DefineTable, name, value)
+	return value
 end
 
 -- 是否定义全局变量
 --- @param name string 名字
 --- @return boolean,any
 function IsDefine(name)
-    local result = rawget(_G.DefineTable, name)
-    return result ~= nil, result
+	local result = rawget(_G.DefineTable, name)
+	return result ~= nil, result
 end
 
 local function LoadCSType(name)
-    return load("return CS." .. name)()
+	return load("return CS." .. name)()
 end
 
 -- C# 调用方法
@@ -667,16 +701,16 @@ end
 --- @param variant string 变体，用于处理名字冲突
 --- @return any
 function Using(classname, variant)
-    if not variant then
-        local a, b, c = string.find(classname, "[^%s]+%.([^%s]+)")
-        variant = c and c or classname
-    end
-    local _target = rawget(_G.UsingTable, variant)
-    if _target == nil then
-        _target = LoadCSType(classname)
-        rawset(_G.UsingTable, variant, _target)
-    end
-    return _target
+	if not variant then
+		local a, b, c = string.find(classname, "[^%s]+%.([^%s]+)")
+		variant = c and c or classname
+	end
+	local _target = rawget(_G.UsingTable, variant)
+	if _target == nil then
+		_target = LoadCSType(classname)
+		rawset(_G.UsingTable, variant, _target)
+	end
+	return _target
 end
 
 -- C# 调用方法
@@ -685,36 +719,36 @@ end
 --- @param classname string 类型名称
 --- @return any
 function StaticUsing(classname)
-    local _target = rawget(_G.UsingStaticTable, classname)
-    if _target == nil then
-        _target = LoadCSType(classname)
-        rawset(_G.UsingStaticTable, classname, _target)
-    end
-    return _target
+	local _target = rawget(_G.UsingStaticTable, classname)
+	if _target == nil then
+		_target = LoadCSType(classname)
+		rawset(_G.UsingStaticTable, classname, _target)
+	end
+	return _target
 end
 
 -- 生成方法句柄
 --- @param method function 类型名称
 --- @return function
 function Handler(method, ...)
-    local args = { ... }
-    if table.IsEmpty(args) then
-        return function(...)
-            return method(...)
-        end
-    else
-        return function(...)
-            local args2 = { ... }
-            if table.IsEmpty(args2) then
-                return method(table.unpack(args))
-            else
-                for i = #args, 1, -1 do
-                    table.insert(args2, 1, args[i])
-                end
-                return method(table.unpack(args2))
-            end
-        end
-    end
+	local args = { ... }
+	if table.IsEmpty(args) then
+		return function(...)
+			return method(...)
+		end
+	else
+		return function(...)
+			local args2 = { ... }
+			if table.IsEmpty(args2) then
+				return method(table.unpack(args))
+			else
+				for i = #args, 1, -1 do
+					table.insert(args2, 1, args[i])
+				end
+				return method(table.unpack(args2))
+			end
+		end
+	end
 end
 
 ---@class TryBlock
@@ -724,41 +758,41 @@ end
 ---C# try
 ---@param block TryBlock
 function try(block)
-    local main = block[1]
-    local catch = block.catch
-    local finally = block.finally
+	local main = block[1]
+	local catch = block.catch
+	local finally = block.finally
 
-    local results = table.pack(pcall(main))
-    local status = results[1]
-    local e = results[2]
-    table.remove(results, 1)
-    local result = results
-    local catched = false
-    if (not status) and catch and type(catch) == LuaDataType.Function then
-        catched = true
-        local results = table.pack(pcall(catch, e))
-        if results[1] then
-            table.remove(results, 1)
-            result = results
-            e = nil
-        else
-            e = results[2]
-        end
-    end
+	local results = table.pack(pcall(main))
+	local status = results[1]
+	local e = results[2]
+	table.remove(results, 1)
+	local result = results
+	local catched = false
+	if (not status) and catch and type(catch) == LuaDataType.Function then
+		catched = true
+		local results = table.pack(pcall(catch, e))
+		if results[1] then
+			table.remove(results, 1)
+			result = results
+			e = nil
+		else
+			e = results[2]
+		end
+	end
 
-    if finally and type(finally) == LuaDataType.Function then
-        pcall(finally)
-    end
+	if finally and type(finally) == LuaDataType.Function then
+		pcall(finally)
+	end
 
-    if status then
-        return table.unpack(result)
-    elseif catched then
-        if not e then
-            return table.unpack(result)
-        else
-            error(e)
-        end
-    else
-        error(e)
-    end
+	if status then
+		return table.unpack(result)
+	elseif catched then
+		if not e then
+			return table.unpack(result)
+		else
+			error(e)
+		end
+	else
+		error(e)
+	end
 end
