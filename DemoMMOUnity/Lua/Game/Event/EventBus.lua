@@ -11,7 +11,7 @@ function EventBus:Scan()
 end
 function SyncSubmit(eventString)
     if Debug > 0 then
-        printDebug("执行事件，eventName:"..eventString)
+        printDebug("执行事件, eventName:"..eventString)
     end
     GlobalEventSystem:Fire(eventString)
 end
