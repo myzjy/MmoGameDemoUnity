@@ -32,6 +32,8 @@ events = require("Common.util.event")
 require("Common.util.timer")
 UpdateManager = require("Common.UpdateManager")
 JSON = require("Common.json")
-
+require("appliction.app.net.http.apiRequest")
+require("appliction.app.net.http.apiResponse")
+require("appliction.app.net.http.userAgent")
 -- LuaMain 脚本不从c# 端读取调用
 require("LuaMain")

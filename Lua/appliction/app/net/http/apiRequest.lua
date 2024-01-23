@@ -20,8 +20,8 @@ function apiRequest.Init(method, uri, data, onBeforeSend, onSuccess, onError, on
     apiRequest.Method = method
     _bhRequest = CS.BestHTTP.HttpRequest(apiRequest.Uri, apiRequest.Method)
     _bhRequest:SetHeader("Accept-Encoding", "gzip")
-    _bhRequest:SetHeader("App-Version", CS.UnityEngine.Application.version)
-    _bhRequest:SetHeader("User-Agent", CS.ZJYFrameWork.Net.UserAgent.Value)
+    _bhRequest:SetHeader("App-Version", UserAgent:Version())
+    _bhRequest:SetHeader("User-Agent", UserAgent:Value())
     _bhRequest:SetHeader("Content-Type", "application/json")
     _bhRequest.RawData = data
     _onBeforeSend = onBeforeSend
@@ -33,20 +33,20 @@ end
 function apiRequest.HandleResponse(originalBhRequest, bhResponse)
     apiRequest._watch.Stop()
     local elapsedMsec = apiRequest._watch.ElapsedMilliseconds
-    local apiResponse = require("Game.Http.src.httpClient.apiResponse")()
+    local apiResponse = require("appliction.app.net.http.apiResponse")()
     apiResponse.new(apiRequest, bhResponse, elapsedMsec)
 
     if apiResponse.IsSuccess() then
         if _onSuccess ~= nil then
-            _onSuccess(apiRespnse)
+            _onSuccess(apiResponse)
         end
     else
         if _onError ~= nil then
-            _onError(apiRespnse)
+            _onError(apiResponse)
         end
     end
-    if _onComplete~=nil then
-        _onComplete(apiRespnse)
+    if _onComplete ~= nil then
+        _onComplete(apiResponse)
     end
 end
 
