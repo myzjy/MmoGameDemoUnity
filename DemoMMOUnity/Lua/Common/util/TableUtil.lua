@@ -10,7 +10,7 @@
 -- 计算哈希表长度
 local function count(hashtable)
 	local count = 0
-	for _,_ in pairs(hashtable) do
+	for _, _ in pairs(hashtable) do
 		count = count + 1
 	end
 	return count
@@ -21,12 +21,12 @@ local function length(array)
 	if array.n ~= nil then
 		return array.n
 	end
-	
+
 	local count = 0
-	for i,_ in pairs(array) do
+	for i, _ in pairs(array) do
 		if count < i then
 			count = i
-		end		
+		end
 	end
 	return count
 end
@@ -38,27 +38,27 @@ end
 
 -- 获取哈希表所有键
 local function keys(hashtable)
-    local keys = {}
-    for k, v in pairs(hashtable) do
-        keys[#keys + 1] = k
-    end
-    return keys
+	local keys = {}
+	for k, v in pairs(hashtable) do
+		keys[#keys + 1] = k
+	end
+	return keys
 end
 
 -- 获取哈希表所有值
 local function values(hashtable)
-    local values = {}
-    for k, v in pairs(hashtable) do
-        values[#values + 1] = v
-    end
-    return values
+	local values = {}
+	for k, v in pairs(hashtable) do
+		values[#values + 1] = v
+	end
+	return values
 end
 
 -- 合并哈希表：将src_hashtable表合并到dest_hashtable表，相同键值执行覆盖
 local function merge(dest_hashtable, src_hashtable)
-    for k, v in pairs(src_hashtable) do
-        dest_hashtable[k] = v
-    end
+	for k, v in pairs(src_hashtable) do
+		dest_hashtable[k] = v
+	end
 end
 
 -- 合并数组：将src_array数组从begin位置开始插入到dest_array数组
@@ -77,11 +77,11 @@ end
 
 -- 从数组中查找指定值，返回其索引，没找到返回false
 local function indexof(array, value, begin)
-    for i = begin or 1, #array do
-        if array[i] == value then 
-			return i 
+	for i = begin or 1, #array do
+		if array[i] == value then
+			return i
 		end
-    end
+	end
 	return false
 end
 
@@ -90,23 +90,23 @@ end
 -- 1、containskey用hashtable[key] ~= nil快速判断
 -- 2、containsvalue由本函数返回结果是否为nil判断
 local function keyof(hashtable, value)
-    for k, v in pairs(hashtable) do
-        if v == value then 
-			return k 
+	for k, v in pairs(hashtable) do
+		if v == value then
+			return k
 		end
-    end
-    return nil
+	end
+	return nil
 end
 
 -- 从数组中删除指定值，返回删除的值的个数
 function table.removebyvalue(array, value, removeall)
-    local remove_count = 0
+	local remove_count = 0
 	for i = #array, 1, -1 do
 		if array[i] == value then
 			table.remove(array, i)
 			remove_count = remove_count + 1
-            if not removeall then 
-				break 
+			if not removeall then
+				break
 			end
 		end
 	end
@@ -115,16 +115,16 @@ end
 
 -- 遍历写：用函数返回值更新表格内容
 local function map(tb, func)
-    for k, v in pairs(tb) do
-        tb[k] = func(k, v)
-    end
+	for k, v in pairs(tb) do
+		tb[k] = func(k, v)
+	end
 end
 
 -- 遍历读：不修改表格
 local function walk(tb, func)
-    for k,v in pairs(tb) do
-        func(k, v)
-    end
+	for k, v in pairs(tb) do
+		func(k, v)
+	end
 end
 
 -- 按指定的排序方式遍历：不修改表格
@@ -141,22 +141,22 @@ end
 -- 过滤掉不符合条件的项：不对原表执行操作
 local function filter(tb, func)
 	local filter = {}
-    for k, v in pairs(tb) do
-        if not func(k, v) then 
+	for k, v in pairs(tb) do
+		if not func(k, v) then
 			filter[k] = v
 		end
-    end
+	end
 	return filter
 end
 
 -- 筛选出符合条件的项：不对原表执行操作
 local function choose(tb, func)
 	local choose = {}
-    for k, v in pairs(tb) do
-        if func(k, v) then 
+	for k, v in pairs(tb) do
+		if func(k, v) then
 			choose[k] = v
 		end
-    end
+	end
 	return choose
 end
 
@@ -180,58 +180,69 @@ local function dump(tb, dump_metatable, max_level)
 
 	local function _dump(tb, level)
 		local str = "\n" .. rep("\t", level) .. "{\n"
-		for k,v in pairs(tb) do
+		for k, v in pairs(tb) do
 			local k_is_str = type(k) == "string" and 1 or 0
 			local v_is_str = type(v) == "string" and 1 or 0
-			str = str..rep("\t", level + 1).."["..rep("\"", k_is_str)..(tostring(k) or type(k))..rep("\"", k_is_str).."]".." = "
+			str = str
+				.. rep("\t", level + 1)
+				.. "["
+				.. rep('"', k_is_str)
+				.. (tostring(k) or type(k))
+				.. rep('"', k_is_str)
+				.. "]"
+				.. " = "
 			if type(v) == "table" then
 				if not lookup_table[v] and ((not max_level) or level < max_level) then
 					lookup_table[v] = true
-					str = str.._dump(v, level + 1, dump_metatable).."\n"
+					str = str .. _dump(v, level + 1, dump_metatable) .. "\n"
 				else
-					str = str..(tostring(v) or type(v))..",\n"
+					str = str .. (tostring(v) or type(v)) .. ",\n"
 				end
 			else
-				str = str..rep("\"", v_is_str)..(tostring(v) or type(v))..rep("\"", v_is_str)..",\n"
+				str = str .. rep('"', v_is_str) .. (tostring(v) or type(v)) .. rep('"', v_is_str) .. ",\n"
 			end
 		end
 		if dump_metatable then
 			local mt = getmetatable(tb)
 			if mt ~= nil and type(mt) == "table" then
-				str = str..rep("\t", level + 1).."[\"__metatable\"]".." = "
+				str = str .. rep("\t", level + 1) .. '["__metatable"]' .. " = "
 				if not lookup_table[mt] and ((not max_level) or level < max_level) then
 					lookup_table[mt] = true
-					str = str.._dump(mt, level + 1, dump_metatable).."\n"
+					str = str .. _dump(mt, level + 1, dump_metatable) .. "\n"
 				else
-					str = str..(tostring(v) or type(v))..",\n"
+					str = str .. (tostring(v) or type(v)) .. ",\n"
 				end
 			end
 		end
-		str = str..rep("\t", level) .. "},"
+		str = str .. rep("\t", level) .. "},"
 		return str
 	end
-	
+
 	return _dump(tb, level)
 end
 
 local function get_value_in_array(array, field, fieldValue)
-	if not array then return nil end
-	for i,v in ipairs(array) do
+	if not array then
+		return nil
+	end
+	for i, v in ipairs(array) do
 		if v[field] == fieldValue then
 			return v
 		end
-	end	
+	end
 	return nil
 end
 
 local function remove_value_in_array(array, field, fieldValue)
-	if not array then return nil end
-	for i,v in ipairs(array) do
+	if not array then
+		return nil
+	end
+	for i, v in ipairs(array) do
 		if v[field] == fieldValue then
 			table.remove(array, i)
 			return
 		end
-	end	
+	end
 	return
 end
 

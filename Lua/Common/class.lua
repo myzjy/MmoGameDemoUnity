@@ -477,6 +477,7 @@ ClassType = {
 ---@field ctor function|nil 构造函数 自动调用
 ---@field __type Unit 所属类型 ，是一个 {}       __unittype == UnitType.Instance 存在
 ---@field __object any CS 对象            __classtype = ClassType.ExtendCSInstance|ClassType.CreateFirst存在
+---@field IsSubClassOf function|nil
 
 ---@type Unit
 Unit = {
@@ -488,6 +489,7 @@ Unit = {
     __object = nil,
     __firstcreate = nil,
     ctor = nil,
+    IsSubClassOf = nil
 }
 
 ---@param super string|Unit 名字或者一张由 class 创建出的表
@@ -603,10 +605,11 @@ class = function(classname, super)
     local isCSInstance = super and superType == LuaDataType.UserData                 --判断是否为C#实例
     local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance --再次扩展C#实例
     if isExCSInsAgain then
-        error("cannot extends a c# instance multiple times.")
+        printError("cannot extends a c# instance multiple times.")
     end
-    local isFirstExCSType = isCSType and not super.__classtype or superType == LuaDataType.Function --首次继承C#类
-    local isExCSTypeAgain = super and super.__classtype == ClassType.CreateFirst                    --再次扩展C#类
+    local isFirstExCSType = isCSType and super ~= nil and not super.__classtype or
+    superType == LuaDataType.Function                                                                                --首次继承C#类
+    local isExCSTypeAgain = super and super.__classtype == ClassType.CreateFirst                                     --再次扩展C#类
     unitType = {}
     unitType.__classname = classname
     unitType.__type = Unit

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
@@ -40,7 +41,6 @@ namespace ZJYFrameWork.Net
         {
             Close();
             LuaConnectAction.Invoke($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
-            Debug.Log($"开始链接服务器[url:{url}][Platform:{Application.platform}]");
             netClient = new WebsocketClient(url);
             netClient.Start();
         }
@@ -95,6 +95,32 @@ namespace ZJYFrameWork.Net
             Debug.Log($"LUA NET message:{bytes}");
             try
             {
+                ByteBuffer byteBuffer = ByteBuffer.ValueOf();
+                byteBuffer.WriteString(bytes);
+                var sendSuccess = netClient.Send(byteBuffer.ToBytes());
+                if (!sendSuccess)
+                {
+                    Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+                throw;
+            }
+        }
+
+        public Dictionary<int, Action<string>> _protocolDict = new Dictionary<int, Action<string>>();
+
+        public void SendMessageEvent(string bytes, int protocolId, Action<string> protocolAction)
+        {
+            try
+            {
+                if (!_protocolDict.TryGetValue(protocolId, out var valueAct))
+                {
+                    _protocolDict.Add(protocolId, protocolAction);
+                }
+
                 ByteBuffer byteBuffer = ByteBuffer.ValueOf();
                 byteBuffer.WriteString(bytes);
                 var sendSuccess = netClient.Send(byteBuffer.ToBytes());

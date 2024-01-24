@@ -11,13 +11,16 @@ local Time = Time
 Timer = {}
 
 local Timer = Timer
-local mt = {__index = Timer}
+local mt = { __index = Timer }
 
 --scale false 采用deltaTime计时，true 采用 unscaledDeltaTime计时
 function Timer.New(func, duration, loop, scale)
 	scale = scale or false and true
 	loop = loop or 1
-	return setmetatable({func = func, duration = duration, time = duration, loop = loop, scale = scale, running = false}, mt)
+	return setmetatable(
+		{ func = func, duration = duration, time = duration, loop = loop, scale = scale, running = false },
+		mt
+	)
 end
 
 function Timer:Start()
@@ -31,14 +34,14 @@ function Timer:Start()
 end
 
 function Timer:Reset(func, duration, loop, scale)
-	self.duration 	= duration
-	self.loop		= loop or 1
-	self.scale		= scale
-	self.func		= func
-	self.time		= duration
+	self.duration = duration
+	self.loop = loop or 1
+	self.scale = scale
+	self.func = func
+	self.time = duration
 end
 
-function Timer:SetDuration( duration )
+function Timer:SetDuration(duration)
 	self.duration = duration
 end
 
@@ -78,12 +81,12 @@ end
 FrameTimer = {}
 
 local FrameTimer = FrameTimer
-local mt2 = {__index = FrameTimer}
+local mt2 = { __index = FrameTimer }
 
 function FrameTimer.New(func, count, loop)
 	local c = Time.frameCount + count
 	loop = loop or 1
-	return setmetatable({func = func, loop = loop, duration = count, count = c, running = false}, mt2)
+	return setmetatable({ func = func, loop = loop, duration = count, count = c, running = false }, mt2)
 end
 
 function FrameTimer:Reset(func, count, loop)
@@ -133,11 +136,11 @@ end
 CoTimer = {}
 
 local CoTimer = CoTimer
-local mt3 = {__index = CoTimer}
+local mt3 = { __index = CoTimer }
 
 function CoTimer.New(func, duration, loop)
 	loop = loop or 1
-	return setmetatable({duration = duration, loop = loop, func = func, time = duration, running = false}, mt3)
+	return setmetatable({ duration = duration, loop = loop, func = func, time = duration, running = false }, mt3)
 end
 
 function CoTimer:Start()
@@ -150,10 +153,10 @@ function CoTimer:Start()
 end
 
 function CoTimer:Reset(func, duration, loop)
-	self.duration 	= duration
-	self.loop		= loop or 1
-	self.func		= func
-	self.time		= duration
+	self.duration = duration
+	self.loop = loop or 1
+	self.func = func
+	self.time = duration
 end
 
 function CoTimer:Stop()

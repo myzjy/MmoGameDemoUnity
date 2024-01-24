@@ -149,7 +149,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
         [MenuItem("Tools/UI/GenerateLuaUI")]
         private static void GenerateLuaUI()
         {
-            var outputLuaPath = $"{Application.dataPath}/../Lua/Game/GenerateScripts/UIModules/";
+            var outputLuaPath = $"{Application.dataPath}/../Lua/application/app/ui/generateScripts/UIModules/";
             var outputPathDirectoryInfo = new DirectoryInfo(outputLuaPath);
 
             if (!outputPathDirectoryInfo.Exists)

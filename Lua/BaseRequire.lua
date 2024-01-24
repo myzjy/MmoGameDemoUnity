@@ -1,5 +1,5 @@
+printDebug("require lua script start")
 --下面基础组件间的require有依赖顺序相关,闲着没事也别换顺序,要加新的往文件尾加就好
-require("global")
 require("defines.app_defines")
 require("Common.util.str")
 require("Common.util.helper")
@@ -20,7 +20,6 @@ Plane = require("Common.UnityEngine.Plane")
 Time = require("Common.UnityEngine.Time")
 Object = require("Common.UnityEngine.Object")
 
-require("Common.csSharpClassGloabl")
 require("Common.System.coroutine")
 
 require("Common.class")
@@ -32,8 +31,18 @@ events = require("Common.util.event")
 require("Common.util.timer")
 UpdateManager = require("Common.UpdateManager")
 JSON = require("Common.json")
-require("appliction.app.net.http.apiRequest")
-require("appliction.app.net.http.apiResponse")
-require("appliction.app.net.http.userAgent")
--- LuaMain 脚本不从c# 端读取调用
-require("LuaMain")
+require("application.app.net.http.userAgent")
+require("application.app.net.http.apiRequest")
+require("application.app.net.http.apiResponse")
+NetManager = require("application.app.net.webscoket.netManager")
+GlobalEventSystem = require("Common.util.EventSystem")
+require("application.app.cache.LoginCacheData")
+require("application.app.cache.playerUserCaCheData")
+ByteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffer")
+Long = require("application.app.net.webscoket.luaProtocol.buffer.long")
+ProtocolManager = require("application.app.net.webscoket.protocolManager")
+PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
+
+UIComponentManager = require("application.app.ui.UIComponentManager")
+
+printDebug("require lua script end")
