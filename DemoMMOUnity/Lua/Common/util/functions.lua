@@ -46,33 +46,19 @@ function printError(fmt, ...)
 end
 
 function printWarn(fmt, ...)
-    if Debug < 1 then
-        return
-    end
-
     printLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
 end
 
 function printWarnStack(fmt, ...)
-    if Debug < 1 then
-        return
-    end
     printLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
     print(debug.traceback("", 2))
 end
 
 function printInfo(fmt, ...)
-    if Debug < 1 then
-        return
-    end
-
     printLog("INFO", setLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
 end
 
 function printDebug(fmt, ...)
-    if Debug < 1 then
-        return
-    end
     printLog("DBG", setLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
 end
 

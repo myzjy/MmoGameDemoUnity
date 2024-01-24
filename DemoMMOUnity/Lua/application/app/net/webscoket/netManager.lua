@@ -11,6 +11,7 @@ local NetManager = class("NetManager")
 ---@param protocolId number
 ---@param protocolAction function
 function NetManager:SendMessageEvent(bytes, protocolId, protocolAction)
+    ProtocolManager:AddProtocolConfigEvent(protocolId, protocolAction)
     netManager:SendMessageEvent(bytes, protocolId, protocolAction)
 end
 

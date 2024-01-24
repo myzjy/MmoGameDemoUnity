@@ -3,39 +3,13 @@
 
 ---@class LoginService
 local LoginService = class("LoginService")
-local function LoginServiceConfig()
-	return {
-		---@type {id:number,protocolData:fun(id:number):LoginRequest|nil}
-		LoginRequest = {
-			id = 1000,
-			protocolData = function(id)
-				return ProtocolManager.getProtocol(id)
-			end,
-		},
-		---@type{id:number,protocolData:fun(id:number):LoginTapToStartRequest|nil}
-		LoginTapToStartRequest = {
-			id = 1013,
-			protocolData = function(id)
-				return ProtocolManager.getProtocol(id)
-			end,
-		},
-	}
-end
+
 ---@param account string
 ---@param password string
 function LoginService:LoginByAccount(account, password)
 	LoginCacheData:SetAccount(account)
 	LoginCacheData:SetPassword(password)
-	local id = LoginServiceConfig().LoginRequest.id
-	local packetData = LoginServiceConfig().LoginRequest.protocolData(id)
-	if packetData == nil then
-		printError("当前 LoginRequest 脚本 没有读取到 请检查")
-		return
-	end
-	local packet = packetData:new(account, password)
-	local buffer = ByteBuffer:new()
-	ProtocolManager.write(buffer, packet)
-	NetManager:SendMessageEvent(buffer:readString())
+	LoginNetController:SendLoginResponse(account, LoginCacheData)
 end
 
 function LoginService:LoginTapToStart()

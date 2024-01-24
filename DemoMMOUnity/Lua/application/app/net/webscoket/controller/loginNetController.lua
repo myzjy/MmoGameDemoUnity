@@ -31,9 +31,9 @@ function LoginNetController:InitEvents()
 	GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen, function()
 		LoginNetController:OnNetOpenEvent()
 	end)
-	ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
-		LoginNetController:AtLoginResponse(data)
-	end)
+	-- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
+	-- 	LoginNetController:AtLoginResponse(data)
+	-- end)
 	ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Pong, function(data)
 		LoginNetController:AtPong(data)
 	end)
@@ -44,7 +44,7 @@ end
 
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
-	CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1)
+	CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1)
 	UICommonViewController.LoadingRotate:OnClose()
 	if Debug > 0 then
 		printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
@@ -60,17 +60,17 @@ function LoginNetController:AtLoginResponse(data)
 	if Debug > 0 then
 		printDebug(
 			"[user:"
-				.. userName
-				.. "][token:"
-				.. token
-				.. "]"
-				.. "[uid:"
-				.. uid
-				.. "]"
-				.. "[goldNum:"
-				.. response.goldNum
-				.. "],[premiumDiamondNum:"
-				.. response.premiumDiamondNum
+			.. userName
+			.. "][token:"
+			.. token
+			.. "]"
+			.. "[uid:"
+			.. uid
+			.. "]"
+			.. "[goldNum:"
+			.. response.goldNum
+			.. "],[premiumDiamondNum:"
+			.. response.premiumDiamondNum
 		)
 	end
 	PlayerUserCaCheData:SetUIDValue(uid)
@@ -81,7 +81,7 @@ function LoginNetController:AtLoginResponse(data)
 end
 
 function LoginNetController:Connect(url)
-	printDebug("LoginNetController:Connect(url)line 46" .. type(url))
+	printDebug("LoginNetController:Connect(url)line 46" .. url)
 end
 
 function LoginNetController:AtPong(data)
@@ -100,7 +100,7 @@ function LoginNetController:AtLoginTapToStartResponse(data)
 	if response.accessGame then
 	else
 		--- 不能登錄
-		CommonController.Instance.snackbar.OpenCommonUIPanel(
+		CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar.OpenCommonUIPanel(
 			DialogConfig.ButtonType.YesNo,
 			"",
 			"当前不在登录时间..MESSAGE:" .. response.message,
@@ -116,6 +116,25 @@ end
 function LoginNetController:AtRegisterResponse(data)
 	local response = data
 	LoginUIController:GetInstance():Open()
+end
+
+---@param account string
+---@param password string
+function LoginNetController:SendLoginResponse(account, password)
+	if LoginRequest == nil then
+		printError("当前 LoginRequest 脚本 没有读取到 请检查")
+		return
+	end
+	local packet = LoginRequest:new(account, password)
+	local buffer = ByteBuffer:new()
+	ProtocolManager.write(buffer, packet)
+	ProtocolManager:AddProtocolConfigEvent(Error:protocolId(), function(data)
+		-- 错误机制
+	end)
+	NetManager:SendMessageEvent(buffer:readString(), LoginResponse:protocolId(), function(data)
+		printDebug("click start invke atLoginResponse")
+		self:AtLoginResponse(data)
+	end)
 end
 
 return LoginNetController

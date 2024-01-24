@@ -3,11 +3,21 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/19 18:44
 ---
-printDebug("加载 ProtocolManager.lua 文件")
+print("加载 ProtocolManager.lua 文件")
 
-printDebug("require service files lua script start")
+print("require service files lua script start")
 
 LoginService = require("application.app.net.webscoket.service.loginService")
+---------------------------- error 101     ----------------------------
+Error = require("application.app.net.webscoket.luaProtocol.common.error")
+-----------------------------------------------------------------------
+
+----------------------------  pong 104    ----------------------------
+Pong = require("application.app.net.webscoket.luaProtocol.common.pong")
+-----------------------------------------------------------------------
+----------------------------  login   ----------------------------
+LoginRequest = require("application.app.net.webscoket.luaProtocol.login.loginRequest")
+LoginResponse = require("application.app.net.webscoket.luaProtocol.login.loginResponse")
 
 local protocols = {}
 
@@ -55,25 +65,10 @@ function ProtocolManager.read(buffer)
 end
 
 function ProtocolManager.initProtocolManager()
-
-
-    ---------------------------- error 101     ----------------------------
-    local error = require("application.app.net.webscoket.luaProtocol.Common.Error")
-    -----------------------------------------------------------------------
-
-    ----------------------------  pong 104    ----------------------------
-    local pong = require("application.app.net.webscoket.luaProtocol.Common.Pong")
-    -----------------------------------------------------------------------
-    ----------------------------  login   ----------------------------
-    local loginRequest = require("application.app.net.webscoket.luaProtocol.login.loginRequest")
-    local loginResponse = require("application.app.net.webscoket.luaProtocol.login.loginResponse")
-
-
-
-    protocols[101] = error
-    protocols[104] = pong
-    protocols[1000] = loginRequest
-    protocols[1001] = loginResponse
+    protocols[101] = Error
+    protocols[104] = Pong
+    protocols[1000] = LoginRequest
+    protocols[1001] = LoginResponse
 end
 
 ProtocolManager.ProtocolConfigEvent = {}

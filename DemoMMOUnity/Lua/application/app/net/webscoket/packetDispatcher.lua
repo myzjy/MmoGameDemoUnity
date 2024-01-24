@@ -11,6 +11,12 @@ PacketDispatcher.Event = {
 	OnOpen = "PacketDispatcher.Event.OnOpen",
 	OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
+-------------------------------- start Login   pack 包 --------------------------------------
+---@type LoginNetController
+LoginNetController = require("application.app.net.webscoket.controller.loginNetController")
+-------------------------------- end   Login    pack 包 --------------------------------------
+
+
 packetValue = nil
 PacketDispatcher.urlString = nil
 --- 链接建立通知lua
@@ -37,11 +43,9 @@ end
 
 function PacketDispatcher:Init()
 	-------------------------------- start Login   pack 包 --------------------------------------
-	---@type LoginNetController
-	local loginNetController = require("application.app.net.webscoket.controller.loginNetController")
-	loginNetController:Init()
-	-------------------------------- end   Login    pack 包 --------------------------------------
 
+	LoginNetController:Init()
+	-------------------------------- end   Login    pack 包 --------------------------------------
 end
 
 ---function PacketDispatcher:Receive(str)

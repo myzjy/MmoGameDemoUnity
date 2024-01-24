@@ -600,57 +600,45 @@ class = function(classname, super)
     assert(type(classname) == LuaDataType.String and #classname > 0)
     ---@type Unit
     local unitType
-    local superType = type(super)
-    local isCSType = super and superType == LuaDataType.Table and typeof(super)      --判断是否是C#类
-    local isCSInstance = super and superType == LuaDataType.UserData                 --判断是否为C#实例
-    local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance --再次扩展C#实例
-    if isExCSInsAgain then
-        printError("cannot extends a c# instance multiple times.")
-    end
-    local isFirstExCSType = isCSType and super ~= nil and not super.__classtype or
-    superType == LuaDataType.Function                                                                                --首次继承C#类
-    local isExCSTypeAgain = super and super.__classtype == ClassType.CreateFirst                                     --再次扩展C#类
-    unitType = {}
-    unitType.__classname = classname
-    unitType.__type = Unit
-    unitType.__unittype = isCSInstance and UnitType.Instance or UnitType.Type
-    unitType.__object = isCSInstance and super or nil
-    unitType.ctor = unitType.ctor or function(...) end
-    unitType.__classtype = (isCSInstance and ClassType.ExtendCSInstance)
-        or ((isFirstExCSType or isExCSTypeAgain) and ClassType.CreateFirst)
-        or ClassType.Lua
-    unitType.__super = ((isCSInstance or isFirstExCSType) and Unit)
-        or (isExCSTypeAgain and super)
-        or (super == nil and Unit or super)
-    unitType.__firstcreate = (isExCSTypeAgain and super.__firstcreate)
-        or ((isCSType and not super.__classtype) and function(...)
-            return super(...)
-        end)
-        or ((superType == LuaDataType.Function) and super)
-        or nil
-    if isCSInstance then
-        return ExtendCSInstance(unitType)
-    end
-    local meta = {}
+    local superType      = type(super)
+    local isCSType       = super and superType == LuaDataType.Table and typeof(super)                  --判断是否是C#类
+    local isCSInstance   = super and superType == LuaDataType.UserData                                 --判断是否为C#实例
+    local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance                   --再次扩展C#实例
+    if isExCSInsAgain then error('cannot extends a c# instance multiple times.') end
+    local isFirstExCSType  = isCSType and (not super.__classtype) or superType == LuaDataType.Function --首次继承C#类
+    local isExCSTypeAgain  = super and super.__classtype == ClassType.CreateFirst                      --再次扩展C#类
+    unitType               = {}
+    unitType.__classname   = classname
+    unitType.__type        = Unit
+    unitType.__unittype    = isCSInstance and UnitType.Instance or UnitType.Type
+    unitType.__object      = isCSInstance and super or nil
+    unitType.ctor          = unitType.ctor or function(...) end
+    unitType.__classtype   = (isCSInstance and ClassType.ExtendCSInstance) or
+        ((isFirstExCSType or isExCSTypeAgain) and ClassType.CreateFirst) or ClassType.Lua
+    unitType.__super       = ((isCSInstance or isFirstExCSType) and Unit) or
+        (isExCSTypeAgain and super) or (super == nil and Unit or super)
+    unitType.__firstcreate = (isExCSTypeAgain and super.__firstcreate) or
+        ((isCSType and not super.__classtype) and function(...) return super(...) end) or
+        ((superType == LuaDataType.Function) and super) or nil
+    if isCSInstance then return ExtendCSInstance(unitType) end
+    local meta   = {}
     meta.__index = super == nil and Unit or super
     local __call
     if isFirstExCSType or isExCSTypeAgain then
         __call = function(_type, ...)
-            local instance = {}
-            instance.__type = _type
+            local instance    = {}
+            instance.__type   = _type
             instance.__object = _type.__firstcreate(...)
             return CallCtor(CopySuper(ExtendCSInstance(instance), _type), _type, ...)
         end
     else
         __call = function(_type, ...)
-            local instance = {}
-            instance.__unittype = UnitType.Instance
-            instance.__type = _type
-            local instance_meta = {}
+            local instance        = {}
+            instance.__unittype   = UnitType.Instance
+            instance.__type       = _type
+            local instance_meta   = {}
             instance_meta.__index = _type
-            instance_meta.__call = function(_, ...)
-                error("this is a Instance of " .. _.__classname)
-            end
+            instance_meta.__call  = function(_, ...) error("this is a Instance of " .. _.__classname) end
             setmetatable(instance, instance_meta)
             return CallCtor(instance, _type, ...)
         end
