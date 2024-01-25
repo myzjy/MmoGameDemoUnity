@@ -225,7 +225,7 @@ namespace ZJYFrameWork.I18n
                 throw new Exception("Key is invalid.");
             }
 
-            return !dictionary.TryGetValue(key, out var value) ? null : value;
+            return dictionary.GetValueOrDefault(key);
         }
 
         private void LoadAssetSuccessCallback(string assetName, UnityEngine.Object asset, float duration,
