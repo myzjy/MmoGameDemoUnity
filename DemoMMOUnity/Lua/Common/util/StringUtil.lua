@@ -75,7 +75,7 @@ local function endswith(target_string, start_pattern, plain)
     return find_pos_end == #target_string
 end
 string.empty = ""
-function string.IsNullOrEmtty(source)
+function string.IsNullOrEmpty(source)
     return source == nil or source == string.empty
 end
 
@@ -117,7 +117,7 @@ end
 function string.Split(source, delimiter)
     source    = tostring(source)
     delimiter = tostring(delimiter)
-    if string.IsNullOrEmtty(delimiter) then return false end
+    if string.IsNullOrEmpty(delimiter) then return false end
     local pos, arr = 0, {}
     -- for each divider found
     for st, sp in function()

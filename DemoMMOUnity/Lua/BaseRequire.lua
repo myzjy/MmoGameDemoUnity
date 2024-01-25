@@ -42,6 +42,7 @@ ByteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffe
 Long = require("application.app.net.webscoket.luaProtocol.buffer.long")
 ProtocolManager = require("application.app.net.webscoket.protocolManager")
 PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
+I18nManager = require("application.app.i18n.I18nManager")
 
 UIComponentManager = require("application.app.ui.UIComponentManager")
 

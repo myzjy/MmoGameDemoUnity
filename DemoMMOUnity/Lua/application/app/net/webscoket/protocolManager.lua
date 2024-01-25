@@ -18,6 +18,18 @@ Pong = require("application.app.net.webscoket.luaProtocol.common.pong")
 ----------------------------  login   ----------------------------
 LoginRequest = require("application.app.net.webscoket.luaProtocol.login.loginRequest")
 LoginResponse = require("application.app.net.webscoket.luaProtocol.login.loginResponse")
+-----------------------------------------------------------------------------------
+
+----------------------------------reigister-------------------------------------------------
+RegisterRequest = require("application.app.net.webscoket.luaProtocol.register.registerRequest")
+RegisterResponse = require("application.app.net.webscoket.luaProtocol.register.registerResponse")
+-----------------------------------------------------------------------------------------------------------
+
+----------------------------------loginTapToStart-------------------------------------------------
+LoginTapToStartRequest = require("application.app.net.webscoket.luaProtocol.loginTapToStart.loginTapToStartRequest")
+LoginTapToStartResponse = require("application.app.net.webscoket.luaProtocol.loginTapToStart.loginTapToStartResponse")
+-----------------------------------------------------------------------------------------------------------
+
 
 local protocols = {}
 
@@ -69,6 +81,12 @@ function ProtocolManager.initProtocolManager()
     protocols[104] = Pong
     protocols[1000] = LoginRequest
     protocols[1001] = LoginResponse
+
+    protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
+    protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
+
+    protocols[RegisterRequest:protocolId()] = RegisterRequest
+    protocols[RegisterResponse:protocolId()] = RegisterResponse
 end
 
 ProtocolManager.ProtocolConfigEvent = {}

@@ -4,7 +4,7 @@ local cached = string.empty
 local appVersion = string.empty
 
 function UserAgent:Value()
-    if string.IsNullOrEmtty(cached) then
+    if string.IsNullOrEmpty(cached) then
         local appName = CS.UnityEngine.Application.identifier
         local version = CS.UnityEngine.Application.version
         local operatingSystem = CS.UnityEngine.SystemInfo.operatingSystem
@@ -16,7 +16,7 @@ end
 
 ---@return string
 function UserAgent:Version()
-    if string.IsNullOrEmtty(appVersion) then
+    if string.IsNullOrEmpty(appVersion) then
         appVersion = CS.UnityEngine.Application.version
     end
     return appVersion

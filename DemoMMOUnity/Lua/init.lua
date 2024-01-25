@@ -8,6 +8,8 @@ local function Init()
     Debug = CS.ZJYFrameWork.Common.CommonManager.Instance:DebugConfig()
     ConfigurationDevice = CS.ZJYFrameWork.Common.AppConfig.configurationDevice
 end
+Init()
+
 require("Common.util.functions")
 
 
@@ -15,9 +17,17 @@ printDebug("# DEBUG                        = " .. Debug)
 printDebug("Game Main working...")
 printDebug("Game Main Init...")
 printDebug("Init Global init start")
-require("BaseRequire")
+if CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.Android then
+    printDebug("you iphone is panel android")
+elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.IPhonePlayer then
+    printDebug("you iphone is panel ios")
+elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.WindowsPlayer then
+    printDebug("you iphone is panel pc")
+else
+    printDebug("Current platform is unknown.")
+end
 
-Init()
+require("BaseRequire")
 
 function SyncSubmit(eventString)
     if Debug > 0 then

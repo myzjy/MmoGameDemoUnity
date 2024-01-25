@@ -12,10 +12,21 @@ end
 function UICommonViewController:OnInit()
     self.viewPanel = UICommonView
     self.LoadingRotate = LoadingRotate
+    self.dataloading = CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar.UIDataLoading
     self.viewPanel:OnInit(CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar.DialogPanelObject)
     self.LoadingRotate:OnInit(CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.loadingRotate)
 end
 
 function UICommonViewController:OnOpenDialog(buttonType, title, body, yesButtonText, noButtonText, onClick)
     self.viewPanel:OnOpen(buttonType, title, body, yesButtonText, noButtonText, onClick)
+end
+
+--- 转换场景的时候调用显示面板
+---@param nowDownNums number 当前进度
+---@param maxDownNums number 最大进度
+function UICommonViewController:OpenUIDataScenePanel(nowDownNums, maxDownNums)
+    if self.dataloading.GetSelfObjCanvasGroup.alpha < 1 then
+        self.dataloading.OnOpen()
+    end
+    self.dataloading:SetSceneProgress(nowDownNums, maxDownNums)
 end

@@ -44,7 +44,7 @@ end
 
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
-	CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar:OpenUIDataScenePanel(1, 1)
+	UICommonViewController:GetInstance():OpenUIDataScenePanel(1, 1)
 	UICommonViewController.LoadingRotate:OnClose()
 	if Debug > 0 then
 		printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
@@ -100,8 +100,8 @@ function LoginNetController:AtLoginTapToStartResponse(data)
 	if response.accessGame then
 	else
 		--- 不能登錄
-		UICommonViewController:OnOpenDialog(
-			DialogConfig.ButtonType.YesNo,
+		UICommonViewController:GetInstance():OnOpenDialog(
+			DialogConfig.ButtonType.YesNO,
 			"",
 			"当前不在登录时间..MESSAGE:" .. response.message,
 			"确定",
@@ -125,17 +125,23 @@ function LoginNetController:SendLoginResponse(account, password)
 		printError("当前 LoginRequest 脚本 没有读取到 请检查")
 		return
 	end
-	local packet = LoginRequest:new(account, password)
+	---@type LoginRequest|nil
+	local packetData = ProtocolManager.getProtocol(LoginRequest:protocolId())
+	if packetData == nil then
+		printError("当前 LoginRequest 脚本 没有读取到 请检查")
+		return
+	end
+	local packet = packetData:new(account, password)
 	local buffer = ByteBuffer:new()
 	ProtocolManager.write(buffer, packet)
 	ProtocolManager:AddProtocolConfigEvent(Error:protocolId(),
-		---@param data { errorCode:integer, errorMessage:string ,module:integer}
+		---@param data{ errorCode:number, errorMessage:string ,module:number}
 		function(data)
 			-- 错误机制
 			UICommonViewController:OnOpenDialog(
-				DialogConfig.ButtonType.YesNo,
+				DialogConfig.ButtonType.YesNO,
 				"",
-				data.errorMessage,
+				I18nManager:GetString(data.errorMessage),
 				"确定",
 				"取消",
 				function(res) end
