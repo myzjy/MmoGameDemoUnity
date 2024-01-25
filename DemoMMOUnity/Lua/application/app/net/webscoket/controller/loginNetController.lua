@@ -100,13 +100,13 @@ function LoginNetController:AtLoginTapToStartResponse(data)
 	if response.accessGame then
 	else
 		--- 不能登錄
-		CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.snackbar.OpenCommonUIPanel(
+		UICommonViewController:OnOpenDialog(
 			DialogConfig.ButtonType.YesNo,
 			"",
 			"当前不在登录时间..MESSAGE:" .. response.message,
-			function(res) end,
 			"确定",
-			"取消"
+			"取消",
+			function(res) end
 		)
 		return
 	end
@@ -128,9 +128,19 @@ function LoginNetController:SendLoginResponse(account, password)
 	local packet = LoginRequest:new(account, password)
 	local buffer = ByteBuffer:new()
 	ProtocolManager.write(buffer, packet)
-	ProtocolManager:AddProtocolConfigEvent(Error:protocolId(), function(data)
-		-- 错误机制
-	end)
+	ProtocolManager:AddProtocolConfigEvent(Error:protocolId(),
+		---@param data { errorCode:integer, errorMessage:string ,module:integer}
+		function(data)
+			-- 错误机制
+			UICommonViewController:OnOpenDialog(
+				DialogConfig.ButtonType.YesNo,
+				"",
+				data.errorMessage,
+				"确定",
+				"取消",
+				function(res) end
+			)
+		end)
 	NetManager:SendMessageEvent(buffer:readString(), LoginResponse:protocolId(), function(data)
 		printDebug("click start invke atLoginResponse")
 		self:AtLoginResponse(data)
