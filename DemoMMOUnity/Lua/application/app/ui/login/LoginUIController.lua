@@ -41,6 +41,15 @@ function LoginUIController:OnClose()
 	self.RegisterPartView:OnHide()
 end
 
+function LoginUIController:OpenLoginTapToStartUI()
+	if Debug > 0 then
+		printDebug("点击开始游戏之后，服务器在开启时间，可以正常进入")
+	end
+	--- 开始登录
+	self.LoginTapToStartView:OnShow()
+
+end
+
 ---comment
 ---@param LoginView LoginView|nil
 ---@param LoginPartView LoginPartView|nil
@@ -72,5 +81,4 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 		self.LoginPartView:OnHide()
 		self.RegisterPartView:OnShow()
 	end)
-	
 end

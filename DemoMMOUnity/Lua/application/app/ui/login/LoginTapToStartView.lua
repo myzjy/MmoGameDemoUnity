@@ -43,8 +43,8 @@ function LoginTapToStartView:OnHide()
 end
 
 function LoginTapToStartView:LoginSatrtGame()
-	LoginUIController:OnClose()
-	local ProcedureChangeScene = CS.ZJYFrameWork.Spring.Core.Springtex.GetBean("ProcedureChangeScene") or
+	LoginUIController:GetInstance():OnClose()
+	local ProcedureChangeScene = CS.ZJYFrameWork.Spring.Core.Springtext.GetBean("ProcedureChangeScene") or
 		CS.ZJYFrameWork.Procedure.Scene.ProcedureChangeScene
 	---跳转场景
 	ProcedureChangeScene:ChangeScene(CS.ZJYFrameWork.Constant.SceneEnum.GameMain, "GameMain")

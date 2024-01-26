@@ -78,6 +78,7 @@ function LoginNetController:AtLoginResponse(data)
 	PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
 	PlayerUserCaCheData:SetGoldNum(response.goldNum)
 	PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
+	LoginUIController:GetInstance():OpenLoginTapToStartUI()
 end
 
 function LoginNetController:Connect(url)
@@ -92,6 +93,7 @@ function LoginNetController:AtPong(data)
 end
 
 --- 是否可以登录
+---@param data {message:string,accessGame:boolean}
 function LoginNetController:AtLoginTapToStartResponse(data)
 	local response = data
 	if response.message ~= nil then
@@ -110,7 +112,7 @@ function LoginNetController:AtLoginTapToStartResponse(data)
 		)
 		return
 	end
-	DispatchEvent(LoginConfig.eventNotification.OpenLoginTapToStartUI)
+	LoginUIController:GetInstance().LoginTapToStartView:LoginSatrtGame()
 end
 
 function LoginNetController:AtRegisterResponse(data)
