@@ -35,4 +35,9 @@ end
 
 function GameMainView:OnInit()
     printDebug("call GameMainView Lua Script function to OnInit ....")
+    ---@type GameMainUIPanelView
+    local viewPanel = self.viewPanel
+
+    self.GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject:GetObjType("click") or CS.UnityEngine.UI.Button
+    self.GemsText=viewPanel.GemsTim_UISerializableKeyObject:GetObjType("numText") or CS.UnityEngine.UI.Text
 end
