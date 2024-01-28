@@ -53,7 +53,7 @@ end
 
 -- 启动
 local function Startup(self)
-	print("update manager start up")
+	printDebug("update manager start up")
 	self:Dispose()
 	self.__update_handle = UpdateBeat:CreateListener(UpdateHandle, UpdateManager:GetInstance())
 	self.__lateupdate_handle = LateUpdateBeat:CreateListener(LateUpdateHandle, UpdateManager:GetInstance())

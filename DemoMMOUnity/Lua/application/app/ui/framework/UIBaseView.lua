@@ -58,10 +58,10 @@ function UIBaseView:InstantiateGameObject(gameObject)
     self:SetPanel({ gameObject = go })
     local rectTransform = self:GetComponent("RectTransform")
 
-    rectTransform.offsetMax = Vector2.zero
-    rectTransform.offsetMin = Vector2.zero
-    rectTransform.localScale = Vector3.one
-    rectTransform.localPosition = Vector3.zero
+    rectTransform.offsetMax = UnityEngine.Vector2.zero
+    rectTransform.offsetMin = UnityEngine.Vector2.zero
+    rectTransform.localScale = UnityEngine.Vector3.one
+    rectTransform.localPosition = UnityEngine.Vector3.zero
     --- 将变换移动到本地变换列表的开头
     if self.Config.sortType == UIConfigEnum.UISortType.First then
         self.transform:SetAsFirstSibling()

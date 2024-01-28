@@ -34,6 +34,7 @@ printDebug("require UI commonUI lua scripts config end")
 printDebug("start require UI controller lua scripts ing ...")
 
 require("application.app.ui.login.LoginUIController")
+require("application.app.ui.gameMain.gameMainUIViewController")
 printDebug("end require UI controller lua scripts ing ...")
 
 
@@ -44,6 +45,7 @@ UIComponentManager.UIEventNotificationDict = {}
 function UIComponentManager:InitUIModelComponent()
     --- 创建一个新的table ，不会读取到正确 元地址
     require("application.app.ui.login.LoginView")
+    require("application.app.ui.gameMain.gameMainView")
     for _i, _v in pairs(LoginView:Notification()) do
         local uiAction = UIComponentManager.UIEventNotificationDict[_v]
         if uiAction == nil then
@@ -51,6 +53,18 @@ function UIComponentManager:InitUIModelComponent()
             --- 当前 UI事件没有存储
             UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
                 LoginView:NotificationHandler(_eventNotification)
+            end
+        else
+            printError("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")
+        end
+    end
+    for _i, _v in pairs(GameMainView:Notification()) do
+        local uiAction = UIComponentManager.UIEventNotificationDict[_v]
+        if uiAction == nil then
+            --local data = v
+            --- 当前 UI事件没有存储
+            UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
+                GameMainView:NotificationHandler(_eventNotification)
             end
         else
             printError("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")

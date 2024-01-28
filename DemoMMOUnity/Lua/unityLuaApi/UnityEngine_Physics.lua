@@ -1,0 +1,348 @@
+---@class UnityEngine.Physics
+---@field public IgnoreRaycastLayer number
+---@field public DefaultRaycastLayers number
+---@field public AllLayers number
+---@field public gravity UnityEngine.Vector3
+---@field public defaultContactOffset number
+---@field public sleepThreshold number
+---@field public queriesHitTriggers boolean
+---@field public queriesHitBackfaces boolean
+---@field public bounceThreshold number
+---@field public defaultSolverIterations number
+---@field public defaultSolverVelocityIterations number
+---@field public defaultPhysicsScene UnityEngine.PhysicsScene
+---@field public autoSimulation boolean
+---@field public autoSyncTransforms boolean
+---@field public reuseCollisionCallbacks boolean
+---@field public interCollisionDistance number
+---@field public interCollisionStiffness number
+---@field public interCollisionSettingsToggle boolean
+
+---@type UnityEngine.Physics
+UnityEngine.Physics = { }
+---@return UnityEngine.Physics
+function UnityEngine.Physics.New() end
+---@overload fun(collider1:UnityEngine.Collider, collider2:UnityEngine.Collider): void
+---@param collider1 UnityEngine.Collider
+---@param collider2 UnityEngine.Collider
+---@param ignore boolean
+function UnityEngine.Physics.IgnoreCollision(collider1, collider2, ignore) end
+---@overload fun(layer1:number, layer2:number): void
+---@param layer1 number
+---@param layer2 number
+---@param ignore boolean
+function UnityEngine.Physics.IgnoreLayerCollision(layer1, layer2, ignore) end
+---@return boolean
+---@param layer1 number
+---@param layer2 number
+function UnityEngine.Physics.GetIgnoreLayerCollision(layer1, layer2) end
+---@overload fun(ray:UnityEngine.Ray): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3): boolean
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number): boolean
+---@overload fun(ray:UnityEngine.Ray, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, maxDistance:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number, layerMask:number): boolean
+---@overload fun(ray:UnityEngine.Ray, hitInfo:UnityEngine.RaycastHit, maxDistance:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number): boolean
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(ray:UnityEngine.Ray, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number): boolean
+---@overload fun(ray:UnityEngine.Ray, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@return boolean
+---@param origin UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param hitInfo UnityEngine.RaycastHit
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.Raycast(origin, direction, hitInfo, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3): boolean
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, layerMask:number): boolean
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, layerMask:number): boolean
+---@return boolean
+---@param start UnityEngine.Vector3
+---@param ed UnityEngine.Vector3
+---@param hitInfo UnityEngine.RaycastHit
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.Linecast(start, ed, hitInfo, layerMask, queryTriggerInteraction) end
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number): boolean
+---@return boolean
+---@param point1 UnityEngine.Vector3
+---@param point2 UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param hitInfo UnityEngine.RaycastHit
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CapsuleCast(point1, point2, radius, direction, hitInfo, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(ray:UnityEngine.Ray, radius:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number, layerMask:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, hitInfo:UnityEngine.RaycastHit, maxDistance:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number): boolean
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number): boolean
+---@overload fun(ray:UnityEngine.Ray, radius:number, hitInfo:UnityEngine.RaycastHit, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@return boolean
+---@param origin UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param hitInfo UnityEngine.RaycastHit
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.SphereCast(origin, radius, direction, hitInfo, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, maxDistance:number): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, orientation:UnityEngine.Quaternion): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, maxDistance:number, layerMask:number): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, orientation:UnityEngine.Quaternion, maxDistance:number): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, maxDistance:number, layerMask:number, queryTriggerInteraction:number): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, hitInfo:UnityEngine.RaycastHit, orientation:UnityEngine.Quaternion, maxDistance:number, layerMask:number): boolean
+---@return boolean
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param hitInfo UnityEngine.RaycastHit
+---@param orientation UnityEngine.Quaternion
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.BoxCast(center, halfExtents, direction, hitInfo, orientation, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(ray:UnityEngine.Ray): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, maxDistance:number, layerMask:number, queryTriggerInteraction:number): UnityEngine.RaycastHit[]
+---@return UnityEngine.RaycastHit[]
+---@param origin UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.RaycastAll(origin, direction, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(ray:UnityEngine.Ray, results:UnityEngine.RaycastHit[]): number
+---@overload fun(ray:UnityEngine.Ray, results:UnityEngine.RaycastHit[], maxDistance:number): number
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[]): number
+---@overload fun(ray:UnityEngine.Ray, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number): number
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number): number
+---@overload fun(ray:UnityEngine.Ray, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number, queryTriggerInteraction:number): number
+---@overload fun(origin:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number): number
+---@return number
+---@param origin UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param results UnityEngine.RaycastHit[]
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.RaycastNonAlloc(origin, direction, results, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3): UnityEngine.RaycastHit[]
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@return UnityEngine.RaycastHit[]
+---@param point1 UnityEngine.Vector3
+---@param point2 UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CapsuleCastAll(point1, point2, radius, direction, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(ray:UnityEngine.Ray, radius:number): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@overload fun(ray:UnityEngine.Ray, radius:number, maxDistance:number, layerMask:number, queryTriggerInteraction:number): UnityEngine.RaycastHit[]
+---@return UnityEngine.RaycastHit[]
+---@param origin UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.SphereCastAll(origin, radius, direction, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(point0:UnityEngine.Vector3, point1:UnityEngine.Vector3, radius:number): UnityEngine.Collider[]
+---@overload fun(point0:UnityEngine.Vector3, point1:UnityEngine.Vector3, radius:number, layerMask:number): UnityEngine.Collider[]
+---@return UnityEngine.Collider[]
+---@param point0 UnityEngine.Vector3
+---@param point1 UnityEngine.Vector3
+---@param radius number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapCapsule(point0, point1, radius, layerMask, queryTriggerInteraction) end
+---@overload fun(position:UnityEngine.Vector3, radius:number): UnityEngine.Collider[]
+---@overload fun(position:UnityEngine.Vector3, radius:number, layerMask:number): UnityEngine.Collider[]
+---@return UnityEngine.Collider[]
+---@param position UnityEngine.Vector3
+---@param radius number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapSphere(position, radius, layerMask, queryTriggerInteraction) end
+---@param step number
+function UnityEngine.Physics.Simulate(step) end
+function UnityEngine.Physics.SyncTransforms() end
+---@return boolean
+---@param colliderA UnityEngine.Collider
+---@param positionA UnityEngine.Vector3
+---@param rotationA UnityEngine.Quaternion
+---@param colliderB UnityEngine.Collider
+---@param positionB UnityEngine.Vector3
+---@param rotationB UnityEngine.Quaternion
+---@param direction UnityEngine.Vector3
+---@param distance System.Single
+function UnityEngine.Physics.ComputePenetration(colliderA, positionA, rotationA, colliderB, positionB, rotationB, direction, distance) end
+---@return UnityEngine.Vector3
+---@param point UnityEngine.Vector3
+---@param collider UnityEngine.Collider
+---@param position UnityEngine.Vector3
+---@param rotation UnityEngine.Quaternion
+function UnityEngine.Physics.ClosestPoint(point, collider, position, rotation) end
+---@overload fun(position:UnityEngine.Vector3, radius:number, results:UnityEngine.Collider[]): number
+---@overload fun(position:UnityEngine.Vector3, radius:number, results:UnityEngine.Collider[], layerMask:number): number
+---@return number
+---@param position UnityEngine.Vector3
+---@param radius number
+---@param results UnityEngine.Collider[]
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapSphereNonAlloc(position, radius, results, layerMask, queryTriggerInteraction) end
+---@overload fun(position:UnityEngine.Vector3, radius:number): boolean
+---@overload fun(position:UnityEngine.Vector3, radius:number, layerMask:number): boolean
+---@return boolean
+---@param position UnityEngine.Vector3
+---@param radius number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CheckSphere(position, radius, layerMask, queryTriggerInteraction) end
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[]): number
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number): number
+---@overload fun(point1:UnityEngine.Vector3, point2:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number): number
+---@return number
+---@param point1 UnityEngine.Vector3
+---@param point2 UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param results UnityEngine.RaycastHit[]
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CapsuleCastNonAlloc(point1, point2, radius, direction, results, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(ray:UnityEngine.Ray, radius:number, results:UnityEngine.RaycastHit[]): number
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[]): number
+---@overload fun(ray:UnityEngine.Ray, radius:number, results:UnityEngine.RaycastHit[], maxDistance:number): number
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number): number
+---@overload fun(ray:UnityEngine.Ray, radius:number, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number): number
+---@overload fun(origin:UnityEngine.Vector3, radius:number, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number): number
+---@overload fun(ray:UnityEngine.Ray, radius:number, results:UnityEngine.RaycastHit[], maxDistance:number, layerMask:number, queryTriggerInteraction:number): number
+---@return number
+---@param origin UnityEngine.Vector3
+---@param radius number
+---@param direction UnityEngine.Vector3
+---@param results UnityEngine.RaycastHit[]
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.SphereCastNonAlloc(origin, radius, direction, results, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, radius:number): boolean
+---@overload fun(start:UnityEngine.Vector3, ed:UnityEngine.Vector3, radius:number, layerMask:number): boolean
+---@return boolean
+---@param start UnityEngine.Vector3
+---@param ed UnityEngine.Vector3
+---@param radius number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CheckCapsule(start, ed, radius, layerMask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, orientation:UnityEngine.Quaternion): boolean
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, layerMask:number): boolean
+---@return boolean
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param orientation UnityEngine.Quaternion
+---@param layermask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.CheckBox(center, halfExtents, orientation, layermask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3): UnityEngine.Collider[]
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, orientation:UnityEngine.Quaternion): UnityEngine.Collider[]
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, layerMask:number): UnityEngine.Collider[]
+---@return UnityEngine.Collider[]
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param orientation UnityEngine.Quaternion
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapBox(center, halfExtents, orientation, layerMask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, results:UnityEngine.Collider[]): number
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, results:UnityEngine.Collider[], orientation:UnityEngine.Quaternion): number
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, results:UnityEngine.Collider[], orientation:UnityEngine.Quaternion, mask:number): number
+---@return number
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param results UnityEngine.Collider[]
+---@param orientation UnityEngine.Quaternion
+---@param mask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapBoxNonAlloc(center, halfExtents, results, orientation, mask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[]): number
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], orientation:UnityEngine.Quaternion): number
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], orientation:UnityEngine.Quaternion, maxDistance:number): number
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, results:UnityEngine.RaycastHit[], orientation:UnityEngine.Quaternion, maxDistance:number, layerMask:number): number
+---@return number
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param results UnityEngine.RaycastHit[]
+---@param orientation UnityEngine.Quaternion
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.BoxCastNonAlloc(center, halfExtents, direction, results, orientation, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3): UnityEngine.RaycastHit[]
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion): UnityEngine.RaycastHit[]
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, maxDistance:number): UnityEngine.RaycastHit[]
+---@overload fun(center:UnityEngine.Vector3, halfExtents:UnityEngine.Vector3, direction:UnityEngine.Vector3, orientation:UnityEngine.Quaternion, maxDistance:number, layerMask:number): UnityEngine.RaycastHit[]
+---@return UnityEngine.RaycastHit[]
+---@param center UnityEngine.Vector3
+---@param halfExtents UnityEngine.Vector3
+---@param direction UnityEngine.Vector3
+---@param orientation UnityEngine.Quaternion
+---@param maxDistance number
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.BoxCastAll(center, halfExtents, direction, orientation, maxDistance, layerMask, queryTriggerInteraction) end
+---@overload fun(point0:UnityEngine.Vector3, point1:UnityEngine.Vector3, radius:number, results:UnityEngine.Collider[]): number
+---@overload fun(point0:UnityEngine.Vector3, point1:UnityEngine.Vector3, radius:number, results:UnityEngine.Collider[], layerMask:number): number
+---@return number
+---@param point0 UnityEngine.Vector3
+---@param point1 UnityEngine.Vector3
+---@param radius number
+---@param results UnityEngine.Collider[]
+---@param layerMask number
+---@param queryTriggerInteraction number
+function UnityEngine.Physics.OverlapCapsuleNonAlloc(point0, point1, radius, results, layerMask, queryTriggerInteraction) end
+---@param worldBounds UnityEngine.Bounds
+---@param subdivisions number
+function UnityEngine.Physics.RebuildBroadphaseRegions(worldBounds, subdivisions) end
+return UnityEngine.Physics

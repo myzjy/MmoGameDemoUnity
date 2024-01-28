@@ -7,11 +7,11 @@
 local LoginPartView = class("LoginPartView", UIBaseView)
 
 function LoginPartView:Build(view)
-	self.LoginPart = view:GetObjTypeStr("LoginPart") or CS.UnityEngine.GameObject
-	self.LoginBtn = view:GetObjTypeStr("LoginBtn_Button") or CS.UnityEngine.UI.Button
-	self.RegisterBtn = view:GetObjTypeStr("RegisterBtn_Button") or CS.UnityEngine.UI.Button
-	self.account = view:GetObjTypeStr("account") or CS.UnityEngine.UI.InputField
-	self.password = view:GetObjTypeStr("password") or CS.UnityEngine.UI.InputField
+	self.LoginPart = view:GetObjTypeStr("LoginPart") or UnityEngine.GameObject
+	self.LoginBtn = view:GetObjTypeStr("LoginBtn_Button") or UnityEngine.UI.Button
+	self.RegisterBtn = view:GetObjTypeStr("RegisterBtn_Button") or UnityEngine.UI.Button
+	self.account = view:GetObjTypeStr("account") or UnityEngine.UI.InputField
+	self.password = view:GetObjTypeStr("password") or UnityEngine.UI.InputField
 end
 
 function LoginPartView:OnShow()

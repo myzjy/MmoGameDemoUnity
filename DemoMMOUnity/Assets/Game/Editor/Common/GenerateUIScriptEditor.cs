@@ -146,6 +146,59 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
             }
         }
 
+        [MenuItem("Tools/XLua/GenerateLuaPath")]
+        private static void GenerateLuaUIAll()
+        {
+            var outPutLuaPath = $"{Application.dataPath}/../Lua/";
+            var outPutPathDirectoryInfo = new DirectoryInfo(outPutLuaPath);
+
+            var outputLuaPath = $"{Application.dataPath}/../Lua/luaCallUnityScript/";
+            var outputPathDirectoryInfo = new DirectoryInfo(outputLuaPath);
+            if (!outputPathDirectoryInfo.Exists)
+            {
+                Directory.CreateDirectory(outputLuaPath);
+                var notLuaFiles = Util.GetSpecifyFilesInFolder(outputLuaPath, null, true);
+                if (notLuaFiles is { Length: > 0 })
+                {
+                    foreach (var t in notLuaFiles)
+                    {
+                        Debug.Log($"file：{t}");
+                        Util.SafeDeleteFile(t);
+                    }
+                }
+            }
+
+            outputLuaPath = outputPathDirectoryInfo.FullName;
+            Debug.Log($"outputLuaPath:{outputLuaPath}");
+            var target = $"{Application.dataPath}/../Lua/unityLuaApi/";
+            var uisObjet = new DirectoryInfo(target);
+            var uiInfos = uisObjet.GetFiles("*.*", SearchOption.AllDirectories);
+            var path1 = outPutPathDirectoryInfo.FullName.Replace("\\", "/");
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in uiInfos)
+            {
+                if (item.Extension.Contains("meta"))
+                {
+                    continue;
+                }
+
+                var path = item.FullName.Replace("\\", "/");
+                path = path.Replace(path1, "");
+                Debug.Log($"{path}");
+                path = path.Replace(".lua", "");
+                path = path.Replace("/", ".");
+                sb.Append($"require(\"{path}\")\n");
+            }
+            var OutPutFileFUllPath = $"{outputLuaPath}luaScriptsAll.lua";
+            var stream = new FileStream(OutPutFileFUllPath, FileMode.Create, FileAccess.Write);
+            Encoding end = new UTF8Encoding(false);
+            var fileWrite = new StreamWriter(stream, end);
+            fileWrite.Write(sb.ToString());
+            fileWrite.Flush();
+            fileWrite.Close();
+            stream.Close();
+        }
+
         [MenuItem("Tools/UI/GenerateLuaUI")]
         private static void GenerateLuaUI()
         {
@@ -187,6 +240,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                     UnityEngine.Debug.LogError($"{path} 预制体 没有UIView组件");
                     continue;
                 }
+
                 Debug.Log($"{path}");
 
                 var UIViewDataList = UIView.dataList;
@@ -198,7 +252,7 @@ namespace ZJYFrameWork.UISerializable.UIViewEditor
                 {
                     var memberName = a.UI_Serializable_Key;
                     var typeString = a.UI_Serializable_Obj.GetType();
-                    initStr += $"\tself.{memberName} = self._UIView:GetObjType(\"{memberName}\") or CS.{typeString}\n";
+                    initStr += $"\tself.{memberName} = self._UIView:GetObjTypeStr(\"{memberName}\") or {typeString}\n";
                 });
                 string TemplateLuaCS = $"---@class {className}\n" +
                                        $"{className} = class(\"{className}\")\n" +

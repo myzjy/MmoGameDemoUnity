@@ -1,0 +1,387 @@
+---@class System.Convert
+---@field public DBNull System.Object
+
+---@type System.Convert
+System.Convert = { }
+---@return number
+---@param value System.Object
+function System.Convert.GetTypeCode(value) end
+---@return boolean
+---@param value System.Object
+function System.Convert.IsDBNull(value) end
+---@overload fun(value:System.Object, typeCode:number): System.Object
+---@overload fun(value:System.Object, conversionType:string): System.Object
+---@overload fun(value:System.Object, typeCode:number, provider:System.IFormatProvider): System.Object
+---@return System.Object
+---@param value System.Object
+---@param conversionType string
+---@param provider System.IFormatProvider
+function System.Convert.ChangeType(value, conversionType, provider) end
+---@overload fun(value:System.Object): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:string): boolean
+---@overload fun(value:uint64): boolean
+---@overload fun(value:int64): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:System.Decimal): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:boolean): boolean
+---@overload fun(value:number): boolean
+---@overload fun(value:System.DateTime): boolean
+---@overload fun(value:string, provider:System.IFormatProvider): boolean
+---@return boolean
+---@param value System.Object
+---@param provider System.IFormatProvider
+function System.Convert.ToBoolean(value, provider) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:string): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value System.Object
+---@param provider System.IFormatProvider
+function System.Convert.ToChar(value, provider) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToSByte(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToByte(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToInt16(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToUInt16(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToInt32(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@overload fun(value:string, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param fromBase number
+function System.Convert.ToUInt32(value, fromBase) end
+---@overload fun(value:System.Object): int64
+---@overload fun(value:string): int64
+---@overload fun(value:System.Decimal): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:int64): int64
+---@overload fun(value:uint64): int64
+---@overload fun(value:System.DateTime): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:number): int64
+---@overload fun(value:boolean): int64
+---@overload fun(value:number): int64
+---@overload fun(value:System.Object, provider:System.IFormatProvider): int64
+---@overload fun(value:string, provider:System.IFormatProvider): int64
+---@return int64
+---@param value string
+---@param fromBase number
+function System.Convert.ToInt64(value, fromBase) end
+---@overload fun(value:System.Object): uint64
+---@overload fun(value:string): uint64
+---@overload fun(value:System.Decimal): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:uint64): uint64
+---@overload fun(value:int64): uint64
+---@overload fun(value:System.DateTime): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:boolean): uint64
+---@overload fun(value:number): uint64
+---@overload fun(value:System.Object, provider:System.IFormatProvider): uint64
+---@overload fun(value:string, provider:System.IFormatProvider): uint64
+---@return uint64
+---@param value string
+---@param fromBase number
+function System.Convert.ToUInt64(value, fromBase) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param provider System.IFormatProvider
+function System.Convert.ToSingle(value, provider) end
+---@overload fun(value:System.Object): number
+---@overload fun(value:string): number
+---@overload fun(value:System.Decimal): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:uint64): number
+---@overload fun(value:int64): number
+---@overload fun(value:boolean): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:number): number
+---@overload fun(value:System.DateTime): number
+---@overload fun(value:System.Object, provider:System.IFormatProvider): number
+---@return number
+---@param value string
+---@param provider System.IFormatProvider
+function System.Convert.ToDouble(value, provider) end
+---@overload fun(value:System.Object): System.Decimal
+---@overload fun(value:System.Decimal): System.Decimal
+---@overload fun(value:string): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:uint64): System.Decimal
+---@overload fun(value:int64): System.Decimal
+---@overload fun(value:boolean): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:number): System.Decimal
+---@overload fun(value:System.DateTime): System.Decimal
+---@overload fun(value:string, provider:System.IFormatProvider): System.Decimal
+---@return System.Decimal
+---@param value System.Object
+---@param provider System.IFormatProvider
+function System.Convert.ToDecimal(value, provider) end
+---@overload fun(value:System.DateTime): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:boolean): System.DateTime
+---@overload fun(value:uint64): System.DateTime
+---@overload fun(value:int64): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:string): System.DateTime
+---@overload fun(value:System.Object): System.DateTime
+---@overload fun(value:number): System.DateTime
+---@overload fun(value:System.Decimal): System.DateTime
+---@overload fun(value:string, provider:System.IFormatProvider): System.DateTime
+---@return System.DateTime
+---@param value System.Object
+---@param provider System.IFormatProvider
+function System.Convert.ToDateTime(value, provider) end
+---@overload fun(value:System.Object): string
+---@overload fun(value:uint64): string
+---@overload fun(value:number): string
+---@overload fun(value:int64): string
+---@overload fun(value:number): string
+---@overload fun(value:System.Decimal): string
+---@overload fun(value:number): string
+---@overload fun(value:number): string
+---@overload fun(value:number): string
+---@overload fun(value:System.DateTime): string
+---@overload fun(value:number): string
+---@overload fun(value:string): string
+---@overload fun(value:number): string
+---@overload fun(value:number): string
+---@overload fun(value:boolean): string
+---@overload fun(value:number): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:System.Decimal, provider:System.IFormatProvider): string
+---@overload fun(value:string, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, toBase:number): string
+---@overload fun(value:number, toBase:number): string
+---@overload fun(value:System.DateTime, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:int64, provider:System.IFormatProvider): string
+---@overload fun(value:number, toBase:number): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:number, provider:System.IFormatProvider): string
+---@overload fun(value:boolean, provider:System.IFormatProvider): string
+---@overload fun(value:System.Object, provider:System.IFormatProvider): string
+---@overload fun(value:uint64, provider:System.IFormatProvider): string
+---@return string
+---@param value int64
+---@param toBase number
+function System.Convert.ToString(value, toBase) end
+---@overload fun(inArray:System.Byte[]): string
+---@overload fun(inArray:System.Byte[], options:number): string
+---@overload fun(inArray:System.Byte[], offset:number, length:number): string
+---@return string
+---@param inArray System.Byte[]
+---@param offset number
+---@param length number
+---@param options number
+function System.Convert.ToBase64String(inArray, offset, length, options) end
+---@overload fun(inArray:System.Byte[], offsetIn:number, length:number, outArray:System.Char[], offsetOut:number): number
+---@return number
+---@param inArray System.Byte[]
+---@param offsetIn number
+---@param length number
+---@param outArray System.Char[]
+---@param offsetOut number
+---@param options number
+function System.Convert.ToBase64CharArray(inArray, offsetIn, length, outArray, offsetOut, options) end
+---@return System.Byte[]
+---@param s string
+function System.Convert.FromBase64String(s) end
+---@return System.Byte[]
+---@param inArray System.Char[]
+---@param offset number
+---@param length number
+function System.Convert.FromBase64CharArray(inArray, offset, length) end
+return System.Convert

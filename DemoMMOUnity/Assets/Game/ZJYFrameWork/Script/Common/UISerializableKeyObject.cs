@@ -44,6 +44,7 @@ namespace ZJYFrameWork.UISerializable
         /// </summary>
         public void OnAfterDeserialize()
         {
+            
         }
 
         /// <summary>

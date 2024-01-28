@@ -114,6 +114,10 @@ namespace ZJYFrameWork.Net.Core.Websocket
         internal void HandleOnError(string reason)
         {
             Debug.LogError(reason);
+            if (reason.Contains("Request Aborted!"))
+            {
+                return;
+            }
             EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
         }
 
