@@ -37,9 +37,6 @@ function LoginNetController:InitEvents()
 	ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Pong, function(data)
 		LoginNetController:AtPong(data)
 	end)
-	ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.LoginTapTOStart, function(data)
-		LoginNetController:AtLoginTapToStartResponse(data)
-	end)
 end
 
 --- 网络打开

@@ -7,9 +7,9 @@
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView)
 
 function LoginTapToStartView:Build(view)
-	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or CS.UnityEngine.UI.Button
-	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or CS.UnityEngine.UI.Button
-	self.SteamLoginCanvasGroup = view:GetObjTypeStr("LoginStart_CanvasGroup") or CS.UnityEngine.CanvasGroup
+	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or UnityEngine.UI.Button
+	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button
+	self.SteamLoginCanvasGroup = view:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
 
 	if self.LoginStartButton == nil then
 		if Debug > 0 then

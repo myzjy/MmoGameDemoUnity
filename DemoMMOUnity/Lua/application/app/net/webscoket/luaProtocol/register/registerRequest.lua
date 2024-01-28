@@ -8,12 +8,13 @@ local RegisterRequest = {}
 
 function RegisterRequest:new(account, password, affirmPassword)
     local obj = {
-        account = account, -- java.lang.String
-        password = password, -- java.lang.String
+        account = account,               -- java.lang.String
+        password = password,             -- java.lang.String
         affirmPassword = affirmPassword, -- java.lang.String
     }
     setmetatable(obj, self)
     self.__index = self
+    return obj
 end
 
 function RegisterRequest:protocolId()
