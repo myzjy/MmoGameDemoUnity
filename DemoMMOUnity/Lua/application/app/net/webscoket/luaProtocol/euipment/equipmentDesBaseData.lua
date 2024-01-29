@@ -22,7 +22,7 @@ function EquipmentDesBaseData:new(quality, lv1, lv2, lv3, lv4)
 end
 
 function EquipmentDesBaseData:protocolId()
-    return 207
+    return 212
 end
 
 function EquipmentDesBaseData:write(buffer, packet)
