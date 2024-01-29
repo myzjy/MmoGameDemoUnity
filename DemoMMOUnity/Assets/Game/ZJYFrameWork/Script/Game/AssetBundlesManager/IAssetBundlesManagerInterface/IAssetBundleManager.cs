@@ -122,7 +122,7 @@ namespace ZJYFrameWork.AssetBundles.IAssetBundlesManagerInterface
         /// <param name="userData">用户自定义数据。</param>
         void UnloadScene(string sceneAssetName, UnloadSceneCallbacks unloadSceneCallbacks, object userData);
 
-        void LoadAsset(string assetBundle, System.Action<Object> loadAssetCallbacks);
+        void LoadAssetAction(string assetBundle, System.Action<Object> loadAssetCallbacks);
 
         Object LoadAsset(string assetBundle);
         GameObject LoadAssetGameObject(string assetBundle);

@@ -155,7 +155,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 #endif
             isLoad = false;
             Object obj = null;
-            LoadAsset("Base", res =>
+            LoadAssetAction("Base", res =>
             {
                 //生成
                 obj = res;
@@ -263,7 +263,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             }
         }
 
-        public void LoadAsset(string assetBundle, System.Action<Object> loadAssetCallbacks)
+        public void LoadAssetAction(string assetBundle, System.Action<Object> loadAssetCallbacks)
         {
             var abName = $"{assetBundle.ToLower()}{AssetBundleConfig.AssetBundleSuffix}";
             var obj = Resources.LoadAsset(abName);

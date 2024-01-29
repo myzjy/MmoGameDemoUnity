@@ -36,7 +36,7 @@ namespace ZJYFrameWork.Common
 
         public void LoadAsset(string assetPath, Action<Object> action)
         {
-            SpringContext.GetBean<IAssetBundleManager>().LoadAsset(assetPath, action);
+            SpringContext.GetBean<IAssetBundleManager>().LoadAssetAction(assetPath, action);
         }
 
         public GameObject LoadAssetGameObject(string assetPath)

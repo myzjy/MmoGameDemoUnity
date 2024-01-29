@@ -2,11 +2,11 @@
 local EquipmentBaseData = {}
 
 
----@param desId number
----@param quality number
----@param equipmentPosType number
----@param equipmentName string
----@param mainAttributes string
+---@param desId number 介绍id
+---@param quality number 品阶
+---@param equipmentPosType number 装备只能装配在什么位置
+---@param equipmentName string 圣遗物的名字
+---@param mainAttributes string 主属性集合可以获取那些属性
 function EquipmentBaseData:new(desId, quality, equipmentPosType, equipmentName, mainAttributes)
     local obj = {
         desId = desId,
@@ -43,10 +43,10 @@ function EquipmentBaseData:read(buffer)
     ---@type {protocolId:number,packet:{desId:number, quality:number, equipmentPosType:number,equipmentName:string,mainAttributes:string}}
     local data = JSON.decode(jsonString)
     return EquipmentBaseData:new(
-        data.packet.desId, 
-        data.packet.quality, 
+        data.packet.desId,
+        data.packet.quality,
         data.packet.equipmentPosType,
-        data.packet.equipmentName, 
+        data.packet.equipmentName,
         data.packet.mainAttributes)
 end
 

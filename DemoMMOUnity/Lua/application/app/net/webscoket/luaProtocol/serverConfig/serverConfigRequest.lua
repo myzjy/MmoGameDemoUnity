@@ -18,18 +18,20 @@ function ServerConfigRequest:write(buffer, packet)
     if packet == nil then
         return
     end
-    local data=packet or ServerConfigRequest
-    local message={
+    local data = packet or ServerConfigRequest
+    local message = {
         protocolId = data.protocolId(),
         packet = data
     }
     local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
+
 function ServerConfigRequest:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
     local data = JSON.decode(jsonString)
     return ServerConfigRequest:new()
 end
+
 return ServerConfigRequest
