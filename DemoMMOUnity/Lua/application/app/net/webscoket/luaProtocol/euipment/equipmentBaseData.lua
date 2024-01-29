@@ -50,4 +50,17 @@ function EquipmentBaseData:read(buffer)
         data.packet.mainAttributes)
 end
 
+function EquipmentBaseData:readData(buffer)
+    local jsonString = buffer:readString()
+    ---字节读取器中存放字符
+    ---@type {desId:number, quality:number, equipmentPosType:number,equipmentName:string,mainAttributes:string}
+    local data = JSON.decode(jsonString)
+    return EquipmentBaseData:new(
+        data.desId,
+        data.quality,
+        data.equipmentPosType,
+        data.equipmentName,
+        data.mainAttributes)
+end
+
 return EquipmentBaseData

@@ -73,19 +73,23 @@ function __G__TRACKBACK__(exceptionMsg)
         str = str .. debug.traceback() .. "\n"
     end
 end
+
 local function UpdateEvent()
-    
+
 end
 local function main()
     printDebug("init active main function")
     if Debug > 0 then
         printDebug("open debug log ing....")
     end
+
     UIComponentManager:InitUIModelComponent()
     UICommonViewController:GetInstance():OnInit()
     ProtocolManager.initProtocolManager()
     PacketDispatcher:Init()
-    UpdateBeat:AddListener(UpdateEvent)
+    local procedureGame = require("application.app.procedure.procedureFsmManager")
+    procedureGame:OnInit()
+    -- UpdateBeat:AddListener(UpdateEvent)
     CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.isLuaInit = true
 end
 

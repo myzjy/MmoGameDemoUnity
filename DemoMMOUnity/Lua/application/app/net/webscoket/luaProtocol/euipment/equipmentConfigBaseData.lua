@@ -52,4 +52,17 @@ function EquipmentConfigBaseData:read(buffer)
     )
 end
 
+function EquipmentConfigBaseData:readData(buffer)
+    local jsonString = buffer:readString()
+    ---字节读取器中存放字符
+    ---@type {quality:number, lv1:number, lv2:number, lv3:number, lv4:number}
+    local data = JSON.decode(jsonString)
+    return EquipmentConfigBaseData:new(
+        data.quality,
+        data.lv1,
+        data.lv2,
+        data.lv3,
+        data.lv4
+    )
+end
 return EquipmentConfigBaseData

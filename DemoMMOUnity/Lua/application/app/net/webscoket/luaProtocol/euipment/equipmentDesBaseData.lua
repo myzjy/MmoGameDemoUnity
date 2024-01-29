@@ -38,17 +38,17 @@ function EquipmentDesBaseData:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function EquipmentDesBaseData:read(buffer)
+function EquipmentDesBaseData:readData(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    ---@type {protocolId:number,packet:{quality:number, lv1:number, lv2:number, lv3:number, lv4:number,}}
+    ---@type {quality:number, lv1:number, lv2:number, lv3:number, lv4:number}
     local data = JSON.decode(jsonString)
     return EquipmentDesBaseData:new(
-        data.packet.quality,
-        data.packet.lv1,
-        data.packet.lv2,
-        data.packet.lv3,
-        data.packet.lv4
+        data.quality,
+        data.lv1,
+        data.lv2,
+        data.lv3,
+        data.lv4
     )
 end
 

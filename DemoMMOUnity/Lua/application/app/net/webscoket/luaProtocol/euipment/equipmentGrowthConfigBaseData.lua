@@ -45,5 +45,17 @@ function EquipmentGrowthConfigBaseData:read(buffer)
         data.packet.posName
     )
 end
+function EquipmentGrowthConfigBaseData:readData(buffer)
+    local jsonString = buffer:readString()
+    ---字节读取器中存放字符
+    ---@type {id:number, locationOfEquipmentType:number, posName:string}
+    local data = JSON.decode(jsonString)
+    return EquipmentGrowthConfigBaseData:new(
+        data.id,
+        data.locationOfEquipmentType,
+        data.posName
+    )
+end
+
 
 return EquipmentGrowthConfigBaseData

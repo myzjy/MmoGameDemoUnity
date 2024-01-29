@@ -30,6 +30,29 @@ LoginTapToStartRequest = require("application.app.net.webscoket.luaProtocol.logi
 LoginTapToStartResponse = require("application.app.net.webscoket.luaProtocol.loginTapToStart.loginTapToStartResponse")
 -----------------------------------------------------------------------------------------------------------
 
+----------------------------------serverConfig-------------------------------------------------
+ServerConfigRequest = require("application.app.net.webscoket.luaProtocol.serverConfig.serverConfigRequest")
+ServerConfigResponse = require("application.app.net.webscoket.luaProtocol.serverConfig.serverConfigResponse")
+-----------------------------------------------------------------------------------------------------------
+
+----------------------------------bag-------------------------------------------------
+ItemBaseData = require("application.app.net.webscoket.luaProtocol.bag.itemBaseData")
+-----------------------------------------------------------------------------------------------------------
+
+----------------------------------equipment-------------------------------------------------
+EquipmentBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentBaseData")
+EquipmentConfigBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentConfigBaseData")
+EquipmentDesBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentDesBaseData")
+EquipmentGrowthConfigBaseData = require(
+    "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
+EquipmentGrowthViceConfigBaseData = require(
+    "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
+EquipmentPrimaryConfigBaseData = require(
+    "application.app.net.webscoket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
+-----------------------------------------------------------------------------------------------------------
+
+
+
 
 local protocols = {}
 
@@ -85,8 +108,17 @@ function ProtocolManager.initProtocolManager()
     protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
     protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
 
-    protocols[RegisterRequest:protocolId()] = RegisterRequest
-    protocols[RegisterResponse:protocolId()] = RegisterResponse
+    protocols[ServerConfigRequest:protocolId()] = ServerConfigRequest
+    protocols[ServerConfigResponse:protocolId()] = ServerConfigResponse
+
+    protocols[ItemBaseData:protocolId()] = ItemBaseData
+
+    protocols[EquipmentBaseData:protocolId()] = EquipmentBaseData
+    protocols[EquipmentConfigBaseData:protocolId()] = EquipmentConfigBaseData
+    protocols[EquipmentDesBaseData:protocolId()] = EquipmentDesBaseData
+    protocols[EquipmentGrowthConfigBaseData:protocolId()] = EquipmentGrowthConfigBaseData
+    protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
+    protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
 end
 
 ProtocolManager.ProtocolConfigEvent = {}
