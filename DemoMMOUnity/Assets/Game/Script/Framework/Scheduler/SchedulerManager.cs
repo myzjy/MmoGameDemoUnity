@@ -60,7 +60,7 @@ namespace ZJYFrameWork.Scheduler
             var now = DateTimeUtil.Now() + DateTimeUtil.MILLIS_PER_SECOND;
             count = 0;
             DateTimeUtil.SetNow(now);
-            _gameMainUIController.ShowNowTime(now);
+            //_gameMainUIController.ShowNowTime(now);
             //定时
             if (now - minuteSchedulerTimestamp >= DateTimeUtil.MILLIS_PER_SECOND)
             {

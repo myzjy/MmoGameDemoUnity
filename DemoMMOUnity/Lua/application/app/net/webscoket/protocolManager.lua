@@ -102,6 +102,10 @@ end
 function ProtocolManager.initProtocolManager()
     protocols[101] = Error
     protocols[104] = Pong
+    ProtocolManager:AddProtocolConfigEvent(104, function(data)
+        Time:SetServerTime(data.time)
+        ZJYFrameWork.UISerializable.Manager.DateTimeUtil.SetNow(data.time)
+    end)
     protocols[1000] = LoginRequest
     protocols[1001] = LoginResponse
 
@@ -130,6 +134,14 @@ end
 function ProtocolManager:FireProtocolConfigEvent(id, ...)
     local eventList = ...
     self.ProtocolConfigEvent[id](eventList)
+end
+
+function ProtocolManager:RemoveProtocolConfigEvent(id)
+    local eventList = self.ProtocolConfigEvent[id]
+    if eventList == null then
+        return
+    end
+    self.ProtocolConfigEvent[id] = null
 end
 
 return ProtocolManager

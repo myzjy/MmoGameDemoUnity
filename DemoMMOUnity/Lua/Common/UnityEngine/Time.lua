@@ -106,11 +106,11 @@ end
 
 --获取服务器时间，单位毫秒
 function Time:GetServerTime()
-    return math.floor(_Time.serverTimeMSOnStart + unity_time.realtimeSinceStartup * 1000 + 0.5)
+    return _Time.serverTimeMSOnStart
 end
 
 function Time:SetServerTime(value)
-    _Time.serverTimeMSOnStart = value - unity_time.realtimeSinceStartup * 1000
+    _Time.serverTimeMSOnStart = value
 end
 
 function Time:SetFixedDelta(fixedDeltaTime)
@@ -132,31 +132,45 @@ function Time:SetTimeScale(scale)
 end
 
 function Time:GetTimestamp()
-    return gettime()
+    -- return gettime()
 end
 
 function Time:StartSynchServerTime()
-    if not _Time.is_start_synch_time then
-        _Time.is_start_synch_time = true
-        local synch_time
-        synch_time = function()
-            _Time.req_time = unity_time.realtimeSinceStartup * 1000
-            local on_server_time_ack = function(server_time_info)
-                --从请求至收到回复的时间间隔
-                local time_offset = unity_time.realtimeSinceStartup * 1000 - _Time.req_time
-                local server_time = server_time_info.server_time + time_offset / 2
-                Time:SetServerTime(server_time)
-                print('Cat:Time.lua[152] CS.UnityMMO.TimeEx.ServerTime', CS.UnityMMO.TimeEx.ServerTime, server_time)
-                local timer = Timer.New(function()
-                    --每隔几秒就同步一次
-                    synch_time()
-                end, 600)
-                timer:Start()
-            end
-            --NetDispatcher:SendMessage("account_get_server_time", nil, on_server_time_ack)
-        end
-        synch_time()
-    end
+    -- if not _Time.is_start_synch_time then
+    --     _Time.is_start_synch_time = true
+    --     local synch_time
+    --     synch_time = function()
+    --         _Time.req_time = unity_time.realtimeSinceStartup * 1000
+    --         local on_server_time_ack = function(server_time_info)
+    --             --从请求至收到回复的时间间隔
+    --             local time_offset = unity_time.realtimeSinceStartup * 1000 - _Time.req_time
+    --             local server_time = server_time_info.server_time + time_offset / 2
+    --             Time:SetServerTime(server_time)
+    --         end
+    --     end
+    --     synch_time()
+    -- end
+    -- if not _Time.is_start_synch_time then
+    --     _Time.is_start_synch_time = true
+    --     local synch_time
+    --     synch_time = function()
+    --         _Time.req_time = unity_time.realtimeSinceStartup * 1000
+    --         local on_server_time_ack = function(server_time_info)
+    --             --从请求至收到回复的时间间隔
+    --             local time_offset = unity_time.realtimeSinceStartup * 1000 - _Time.req_time
+    --             local server_time = server_time_info.server_time + time_offset / 2
+    --             Time:SetServerTime(server_time)
+    --             print('Cat:Time.lua[152] CS.UnityMMO.TimeEx.ServerTime', CS.UnityMMO.TimeEx.ServerTime, server_time)
+    --             local timer = Timer.New(function()
+    --                 --每隔几秒就同步一次
+    --                 synch_time()
+    --             end, 600)
+    --             timer:Start()
+    --         end
+    --         --NetDispatcher:SendMessage("account_get_server_time", nil, on_server_time_ack)
+    --     end
+    --     synch_time()
+    -- end
     --  do --test
     --     local show_time_func
     --     show_time_func = function()
@@ -181,4 +195,3 @@ end
 
 
 return Time
-
