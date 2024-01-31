@@ -7,7 +7,6 @@
 local I18nManager = class("I18nManager")
 local i18st = "ZJYFrameWork.I18n.I18nManager"
 function I18nManager:OnInit()
-    ---@field GetValue function
     self.i18n = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean(i18st) or
             CS.ZJYFrameWork.I18n.I18nManager
 end

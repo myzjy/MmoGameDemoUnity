@@ -41,13 +41,13 @@ function LoginTapToStartView:OnHide()
 	self.SteamLoginCanvasGroup.ignoreParentGroups = false
 	self.SteamLoginCanvasGroup.blocksRaycasts = false
 end
-
+local procedureChangeSceneStr="ZJYFrameWork.Procedure.Scene.ProcedureChangeScene"
 function LoginTapToStartView:LoginSatrtGame()
 	LoginUIController:GetInstance():OnClose()
-	local ProcedureChangeScene = CS.ZJYFrameWork.Spring.Core.Springtext.GetBean("ProcedureChangeScene") or
+	local procedureChangeScene = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean(procedureChangeSceneStr) or
 		CS.ZJYFrameWork.Procedure.Scene.ProcedureChangeScene
 	---跳转场景
-	ProcedureChangeScene:ChangeScene(CS.ZJYFrameWork.Constant.SceneEnum.GameMain, "GameMain")
+	procedureChangeScene:ChangeScene(ZJYFrameWork.Constant.SceneEnum.GameMain, "GameMain")
 end
 
 return LoginTapToStartView

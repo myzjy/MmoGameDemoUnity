@@ -21,6 +21,18 @@ function LoginUIController:Open()
 	self.LoginTapToStartView:OnHide()
 	self.LoginPartView:OnShow()
 end
+function LoginUIController:OnHide()
+	if self.LoginView == nil then
+		if Debug > 0 then
+			printError("LoginView 并未打开界面 生成")
+		end
+		return
+	end
+
+	self.LoginPartView:OnHide()
+	self.LoginTapToStartView:OnHide()
+	self.RegisterPartView:OnHide()
+end
 
 function LoginUIController:OnClose()
 	if self.LoginView == nil then

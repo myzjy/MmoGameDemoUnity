@@ -1,7 +1,7 @@
----@class ZJYFrameWork.UISerializable.UIKeyObjectData
+---@class CS.ZJYFrameWork.UISerializable.UIKeyObjectData
 ---@field public UI_Serializable_Key string
 ---@field public UI_Serializable_Obj UnityEngine.Object
 ---@field public Path string
 
----@type ZJYFrameWork.UISerializable.UIKeyObjectData
+---@type CS.ZJYFrameWork.UISerializable.UIKeyObjectData
 ZJYFrameWork.UISerializable.UIKeyObjectData={}

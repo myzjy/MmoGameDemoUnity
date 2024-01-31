@@ -1,10 +1,10 @@
----@class ZJYFrameWork.UISerializable.UISerializableKeyObject
+---@class CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 ---@field public dataList  System.Collections.Generic.List_ZJYFrameWork.UISerializable.UIKeyObjectData
 ---@field  GetObjTypeStr function
----table<number,ZJYFrameWork.UISerializable.UIKeyObjectData>
+---table<number,CS.ZJYFrameWork.UISerializable.UIKeyObjectData>
 
 
----@type ZJYFrameWork.UISerializable.UISerializableKeyObject
+---@type CS.ZJYFrameWork.UISerializable.UISerializableKeyObject
 ZJYFrameWork.UISerializable.UISerializableKeyObject = {}
 
 ---@return UnityEngine.Object

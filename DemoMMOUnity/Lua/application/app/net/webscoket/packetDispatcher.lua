@@ -12,8 +12,8 @@ PacketDispatcher.Event = {
 	OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
 -------------------------------- start Login   pack 包 --------------------------------------
----@type LoginNetController
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController")
+ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController")
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 

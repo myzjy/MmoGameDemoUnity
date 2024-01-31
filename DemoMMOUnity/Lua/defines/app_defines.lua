@@ -7,9 +7,10 @@ ZJYFrameWork = CS.ZJYFrameWork
 System = CS.System
 DG = CS.DG
 
+local assetBundleManagerBeanStr = "ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager"
 
 function GetAssetBundleManager()
-    local AssetBundleManager = ZJYFrameWork.Spring.Core.Springtext.GetBean("AssetBundleManager") or
+    local AssetBundleManager = ZJYFrameWork.Spring.Core.SpringContext.GetBean(assetBundleManagerBeanStr) or
         ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager
     return AssetBundleManager
 end

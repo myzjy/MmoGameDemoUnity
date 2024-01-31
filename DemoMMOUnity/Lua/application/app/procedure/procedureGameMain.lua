@@ -27,6 +27,7 @@ function ProcedureGameMain:AddEvent()
         NetManager:SendMessageEvent(buffer:readString(), ServerConfigResponse:protocolId(), function(packetData)
             ---@type {bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}
             local protocolData = packetData
+            ServerConfigNetController:SetItemBaseDataList(protocolData.bagItemEntityList)
             GameMainUIViewController:GetInstance():Open()
         end)
     end)
