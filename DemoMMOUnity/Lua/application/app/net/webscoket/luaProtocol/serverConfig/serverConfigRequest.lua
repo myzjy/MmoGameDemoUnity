@@ -1,8 +1,11 @@
 ---@class ServerConfigRequest
 local ServerConfigRequest = {}
 
-function ServerConfigRequest:new()
-    local obj = {}
+---@param panel string
+function ServerConfigRequest:new(panel)
+    local obj = {
+        panel = panel
+    }
     setmetatable(obj, self)
     self.__index = self
     return obj
@@ -31,7 +34,7 @@ function ServerConfigRequest:read(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
     local data = JSON.decode(jsonString)
-    return ServerConfigRequest:new()
+    return ServerConfigRequest:new(data.packet.panel)
 end
 
 return ServerConfigRequest

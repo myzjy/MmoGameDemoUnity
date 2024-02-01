@@ -44,10 +44,10 @@ function GameMainView:OnInit()
     self.GemsText = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
     --设置用户名
     self:SetTopHeadNameText(PlayerUserCaCheData:GetUseName())
-    self.GemText = viewPanel.Gem_UISerializableKeyObject.GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
-    self.GoldCoinText = viewPanel.glod_UISerializableKeyObject.GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
-    self.GoldTimButton = viewPanel.glod_UISerializableKeyObject.GetObjTypeStr("click") or CS.UnityEngine.UI.Button
-    self:OnShow()
+    self.GemText = viewPanel.Gem_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
+    self.GoldCoinText = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
+    self.GoldTimButton = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button
+    GameMainUIViewController:GetInstance():Build(self)
 end
 
 ---设置用户名
@@ -72,7 +72,6 @@ end
 
 function GameMainView:OnShow()
     printInfo("GameMainView:OnShow line 74")
-    -- UpdateBeat:AddListener(self:Update())
     GameMainUIViewController:GetInstance():Open()
 end
 
@@ -105,8 +104,4 @@ function GameMainView:NotificationHandler(_eventNotification)
     if eventSwitch then
         return switchAction(_eventNotification.eventBody)
     end
-end
-
-function GameMainView:Update()
-
 end

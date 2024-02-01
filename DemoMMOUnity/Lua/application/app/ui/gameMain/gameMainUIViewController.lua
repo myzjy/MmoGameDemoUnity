@@ -7,7 +7,7 @@ end
 function GameMainUIViewController:Open()
     if self.GameMainView == nil then
         if Debug > 0 then
-            printError("LoginView 并未打开界面 生成")
+            printError("GameMainView 并未打开界面 Open 生成")
         end
         -- 去生成界面
         GameMainView:OnLoad()
@@ -20,7 +20,7 @@ end
 function GameMainUIViewController:OnClose()
     if self.GameMainView == nil then
         if Debug > 0 then
-            printError("GameMainView 并未打开界面 生成")
+            printError("GameMainView 并未打开界面 生成 OnClose")
         end
         return
     end
@@ -28,7 +28,7 @@ function GameMainUIViewController:OnClose()
         self.GameMainView:OnHide()
     else
         if Debug > 0 then
-            printError("GameMainView 并未打开界面 生成")
+            printError("GameMainView  OnClose 并未打开界面 生成")
         end
     end
     self.GameMainView:OnHide()

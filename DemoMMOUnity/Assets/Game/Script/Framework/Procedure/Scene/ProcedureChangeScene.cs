@@ -66,7 +66,7 @@ namespace ZJYFrameWork.Procedure.Scene
             Debug.Log("Load Scene '{}' OK", eve.sceneAssetName);
 #endif
             changeSceneComplete = true;
-            UIComponentManager.DispatchEvent(UINotifEnum.CloseLoginUI);
+       //    UIComponentManager.DispatchEvent(UINotifEnum.CloseLoginUI);
             // CommonUIManager.Instance.Snackbar.OpenUIDataScenePanel(1, 1);
         }
     }

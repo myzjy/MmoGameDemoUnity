@@ -2,18 +2,16 @@
 local EquipmentDesBaseData = {}
 
 
----@param quality number 品阶
----@param lv1 number 强化到这个等级 强化获取额外属性条或者升级附属性条
----@param lv2 number 强化到这个等级 强化获取额外属性条或者升级附属性条
----@param lv3 number 强化到这个等级 强化获取额外属性条或者升级附属性条
----@param lv4 number 强化到这个等级 强化获取额外属性条或者升级附属性条
-function EquipmentDesBaseData:new(quality, lv1, lv2, lv3, lv4)
+---@param desId number 介绍id
+---@param name string 名字
+---@param desStr string 介绍
+---@param storyDesStr string 故事
+function EquipmentDesBaseData:new(desId, name, desStr,storyDesStr)
     local obj = {
-        quality = quality,
-        lv1 = lv1,
-        lv2 = lv2,
-        lv3 = lv3,
-        lv4 = lv4
+        desId = desId,
+        name = name,
+        desStr = desStr,
+        storyDesStr = storyDesStr
 
     }
     setmetatable(obj, self)
@@ -37,18 +35,28 @@ function EquipmentDesBaseData:write(buffer, packet)
     local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
-
+function EquipmentDesBaseData:read(buffer)
+    local jsonString = buffer:readString()
+    ---字节读取器中存放字符
+     ---@type {protocolId:number,packet:{desId:number,name:string,desStr:string,toryDesStr:string}}
+    local data = JSON.decode(jsonString)
+    return EquipmentDesBaseData:new(
+        data.packet.desId,
+        data.packet.name,
+        data.packet.desStr,
+        data.packet.toryDesStr
+    )
+end
 function EquipmentDesBaseData:readData(buffer)
     local jsonString = buffer:readString()
     ---字节读取器中存放字符
-    ---@type {quality:number, lv1:number, lv2:number, lv3:number, lv4:number}
+    ---@type {desId:number,name:string,desStr:string,toryDesStr:string}
     local data = JSON.decode(jsonString)
     return EquipmentDesBaseData:new(
-        data.quality,
-        data.lv1,
-        data.lv2,
-        data.lv3,
-        data.lv4
+        data.desId,
+        data.name,
+        data.desStr,
+        data.toryDesStr
     )
 end
 

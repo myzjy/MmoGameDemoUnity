@@ -24,6 +24,7 @@ require("Common.System.coroutine")
 
 require("Common.class")
 
+require("Common.util.stringUtil")
 require("Common.util.util")
 require("Common.util.luaUtil")
 list = require("Common.util.list")
