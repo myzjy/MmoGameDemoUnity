@@ -52,6 +52,8 @@ function LoginService:RegisterAccount(account, password, affirmPassword)
 	packetData:write(buffer, packet)
 	NetManager:SendMessageEvent(buffer:readString(), RegisterResponse:protocolId(), function(packetData)
 		LoginNetController:AtRegisterResponse(packetData)
+		ProtocolManager:RemoveProtocolConfigEvent(RegisterResponse:protocolId())
+
 	end)
 end
 

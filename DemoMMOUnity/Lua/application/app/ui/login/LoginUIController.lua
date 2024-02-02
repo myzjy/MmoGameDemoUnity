@@ -21,6 +21,7 @@ function LoginUIController:Open()
 	self.LoginTapToStartView:OnHide()
 	self.LoginPartView:OnShow()
 end
+
 function LoginUIController:OnHide()
 	if self.LoginView == nil then
 		if Debug > 0 then

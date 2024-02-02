@@ -1,4 +1,4 @@
-namespace ZJYFrameWork.Common {
+namespace ZJYFrameWork {
 public enum Message {
 /// <summary>
 /// Cn
@@ -40,6 +40,14 @@ error_password_length,
 /// 密码包含空格，请重新设置
 /// </summary>
 error_password_not_have_null,
+/// <summary>
+/// 登录流程内部错误，请联系客服
+/// </summary>
+error_login_process_not,
+/// <summary>
+/// UID 错误，请联系客服
+/// </summary>
+error_uid_process_not,
 MAX_NUM
 }
 }
