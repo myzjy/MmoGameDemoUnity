@@ -13,7 +13,6 @@ GameMainConfig = {
         CLOSE_GAMEMAINPANEL_UI = "CLOSE_GAMEMAINPANEL_UI",
     }
 }
-require("application.app.ui.generateScripts.UIModules.GameMainUIPanelView")
 function GameMainView:OnLoad()
     self.UIConfig = {
         Config = GameMainConfig,

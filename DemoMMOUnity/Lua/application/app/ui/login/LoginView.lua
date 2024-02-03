@@ -6,7 +6,6 @@
 
 ---@class LoginView:UIView
 LoginView = class("LoginView", UIView)
-require("application.app.ui.generateScripts.UIModules.LoginPanelView")
 LoginView.LoginPartView = require("application.app.ui.login.LoginPartView")
 LoginView.RegisterPartView = require("application.app.ui.login.RegisterPartView")
 LoginView.LoginTapToStartView = require("application.app.ui.login.LoginTapToStartView")

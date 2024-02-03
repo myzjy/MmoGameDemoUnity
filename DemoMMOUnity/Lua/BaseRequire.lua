@@ -45,6 +45,8 @@ ProtocolManager = require("application.app.net.webscoket.protocolManager")
 PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
 I18nManager = require("application.app.i18n.I18nManager")
 
+
+
 UIComponentManager = require("application.app.ui.UIComponentManager")
 
 printDebug("require lua script end")
