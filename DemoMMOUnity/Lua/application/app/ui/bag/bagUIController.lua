@@ -1,5 +1,5 @@
 ---@class BagUIController:LuaUIObject
-local BagUIController = class("BagUIController", LuaUIObject)
+BagUIController = class("BagUIController", LuaUIObject)
 function BagUIController:Open()
     if self.BagUIView == nil then
         if Debug > 0 then
@@ -9,6 +9,9 @@ function BagUIController:Open()
         DispatchEvent(BagUIConfig.eventNotification.openbaguipanel)
         return
     end
+    self.BagUIView:OnHide()
+    self.BagUIView.UIView:OnShow()
+
 end
 
 
@@ -17,4 +20,3 @@ function BagUIController:Build(bagUIView)
     self.BagUIView = bagUIView
 end
 
-return BagUIController
