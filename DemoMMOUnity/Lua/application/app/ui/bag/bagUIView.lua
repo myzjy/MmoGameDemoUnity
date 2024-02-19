@@ -11,6 +11,7 @@ local function UIConfig()
             BagUIView:OnInit()
         end,
         showFunc = function()
+            printDebug("call bagUIView lua scritpt")
             BagUIView:OnShow()
         end,
         hideFunc = function()

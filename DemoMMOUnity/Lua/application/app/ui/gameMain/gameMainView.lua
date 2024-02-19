@@ -47,6 +47,7 @@ function GameMainView:OnInit()
     self.GoldCoinText = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
     self.GoldTimButton = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button
     GameMainUIViewController:GetInstance():Build(self)
+    GameMainUIViewController:GetInstance():UIInitEvent()
 end
 
 ---设置用户名

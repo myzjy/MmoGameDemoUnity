@@ -43,7 +43,7 @@ printDebug("start require UI controller lua scripts ing ...")
 
 require("application.app.ui.login.LoginUIController")
 require("application.app.ui.gameMain.gameMainUIViewController")
-require("application.app.ui.bag.bagUIController")
+BagUIController = require("application.app.ui.bag.bagUIController")
 
 printDebug("end require UI controller lua scripts ing ...")
 
