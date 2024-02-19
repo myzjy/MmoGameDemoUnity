@@ -26,8 +26,12 @@ function BagUIView:OnLoad()
 end
 
 function BagUIView:OnInit()
-
+    BagUIController:Build(self)
 end
+function BagUIView:OnShow()
+    BagUIController:Open()
+end
+
 
 function BagUIView:Notification()
     return {
