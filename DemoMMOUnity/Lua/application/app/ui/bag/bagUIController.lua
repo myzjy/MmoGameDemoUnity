@@ -1,5 +1,6 @@
 ---@class BagUIController:LuaUIObject
 BagUIController = class("BagUIController", LuaUIObject)
+
 function BagUIController:Open()
     if self.BagUIView == nil then
         if Debug > 0 then
