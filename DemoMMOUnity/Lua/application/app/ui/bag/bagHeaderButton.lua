@@ -1,6 +1,6 @@
 --- 背包 top head button list
 ---  since: zjy
 
-local bagHeaderButton = {}
+local bagHeaderButtonList = class("bagHeaderButtonList")
 
-return bagHeaderButton
+return bagHeaderButtonList
