@@ -7,6 +7,7 @@
 ---@field public tag string
 ---@field public scene UnityEngine.SceneManagement.Scene
 ---@field public gameObject UnityEngine.GameObject
+---@field public SetActive function
 
 ---@type UnityEngine.GameObject
 UnityEngine.GameObject = { }

@@ -1,9 +1,10 @@
 ---@class LuaUIObject
 LuaUIObject = class("LuaUIObject")
 
----@param Panel
+---@param Panel {gameObject:UnityEngine.GameObject}
 function LuaUIObject:SetPanel(Panel)
     self.Panel = Panel
+
     self.gameObject = Panel.gameObject
     self.transform = Panel.gameObject.transform
     self.InstanceID = self.gameObject:GetInstanceID()
@@ -21,7 +22,7 @@ function LuaUIObject:GetComponent(type)
     return self.transform:GetComponent(type)
 end
 
----@param btn
+---@param btn UnityEngine.UI.Button
 ---@param func function
 function LuaUIObject:SetListener(btn, func)
     CS.ZJYFrameWork.Common.GameCommonUtil.SetListener(btn, func)

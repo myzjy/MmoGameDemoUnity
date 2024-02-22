@@ -9,7 +9,6 @@ local LoginService = class("LoginService")
 function LoginService:LoginByAccount(account, password)
     LoginCacheData:SetAccount(account)
     LoginCacheData:SetPassword(password)
-    MmoEvent.LoginSuccess(account, password)
 end
 
 function LoginService:LoginTapToStart()

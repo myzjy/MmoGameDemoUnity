@@ -127,6 +127,8 @@ end
 ---@param account string
 ---@param password string
 function LoginNetController:SendLoginResponse(account, password)
+    LoginCacheData:SetAccount(account)
+    LoginCacheData:SetPassword(password)
     if LoginRequest == nil then
         printError("当前 LoginRequest 脚本 没有读取到 请检查")
         return
