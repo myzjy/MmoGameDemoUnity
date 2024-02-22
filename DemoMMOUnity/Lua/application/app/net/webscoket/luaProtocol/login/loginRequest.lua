@@ -5,7 +5,8 @@
 ---
 ---@class LoginRequest
 local LoginRequest = {}
-
+function LoginRequest:ctor()
+end
 ---@param account string 用户名
 ---@param password string 密码
 function LoginRequest:new(account, password)

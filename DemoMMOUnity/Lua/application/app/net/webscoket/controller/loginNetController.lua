@@ -6,151 +6,164 @@
 ---@class LoginNetController
 local LoginNetController = class("LoginNetController")
 LoginConst = {
-	Status = {},
-	Event = {
-		Login = 1001,
-		Register = 1005,
-		Pong = 104,
-		---登录拦截
-		LoginTapTOStart = 1014,
-		NetOpen = "LoginConst.Event.NetOpenEvent",
-		StartLogin = "LoginConst.Event.StartLogin",
-		LoginSucceed = "LoginConst.Event.LoginSucceed",
-	},
+    Status = {},
+    Event = {
+        Login = 1001,
+        Register = 1005,
+        Pong = 104,
+        ---登录拦截
+        LoginTapTOStart = 1014,
+        NetOpen = "LoginConst.Event.NetOpenEvent",
+        StartLogin = "LoginConst.Event.StartLogin"
+    }
 }
 
 function LoginNetController:Init()
-	LoginNetController:InitEvents()
+    LoginNetController:InitEvents()
 end
 
 function LoginNetController:InitEvents()
-	printDebug("LoginNetController:InitEvents() line 24")
-	GlobalEventSystem:Bind(PacketDispatcher.Event.OnConnect, function(url)
-		LoginNetController:Connect(url)
-	end)
-	GlobalEventSystem:Bind(PacketDispatcher.Event.OnOpen, function()
-		LoginNetController:OnNetOpenEvent()
-	end)
-	-- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
-	-- 	LoginNetController:AtLoginResponse(data)
-	-- end)
-	ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Pong, function(data)
-		LoginNetController:AtPong(data)
-	end)
+    printDebug("LoginNetController:InitEvents() line 24")
+    GlobalEventSystem:Bind(
+        PacketDispatcher.Event.OnConnect,
+        function(url)
+            LoginNetController:Connect(url)
+        end
+    )
+    GlobalEventSystem:Bind(
+        PacketDispatcher.Event.OnOpen,
+        function()
+            LoginNetController:OnNetOpenEvent()
+        end
+    )
+    -- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
+    -- 	LoginNetController:AtLoginResponse(data)
+    -- end)
+    ProtocolManager:AddProtocolConfigEvent(
+        LoginConst.Event.Pong,
+        function(data)
+            LoginNetController:AtPong(data)
+        end
+    )
+    UIUtils.AddEventListener(MmoEvent.LoginResonse, self.AtLoginResponse, self)
+    UIUtils.AddEventListener(MmoEvent.LoginSuccess, self.SendLoginResponse, self)
 end
 
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
-	UICommonViewController:GetInstance():OpenUIDataScenePanel(1, 1)
-	UICommonViewController.LoadingRotate:OnClose()
-	if Debug > 0 then
-		printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
-	end
-	LoginUIController:GetInstance():Open()
+    UICommonViewController:GetInstance():OpenUIDataScenePanel(1, 1)
+    UICommonViewController.LoadingRotate:OnClose()
+    if Debug > 0 then
+        printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
+    end
+    LoginUIController:GetInstance():Open()
 end
 
 function LoginNetController:AtLoginResponse(data)
-	local response = data
-	local token = response.token
-	local uid = response.uid
-	local userName = response.userName
-	if Debug > 0 then
-		printDebug(
-			"[user:"
-			.. userName
-			.. "][token:"
-			.. token
-			.. "]"
-			.. "[uid:"
-			.. uid
-			.. "]"
-			.. "[goldNum:"
-			.. response.goldNum
-			.. "],[premiumDiamondNum:"
-			.. response.premiumDiamondNum
-		)
-	end
-	PlayerUserCaCheData:SetUIDValue(uid)
-	PlayerUserCaCheData:SetUseName(userName)
-	PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
-	PlayerUserCaCheData:SetGoldNum(response.goldNum)
-	PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
-	LoginUIController:GetInstance():OnHide()
-	LoginUIController:GetInstance():OpenLoginTapToStartUI()
+    local response = data
+    local token = response.token
+    local uid = response.uid
+    local userName = response.userName
+    if Debug > 0 then
+        printDebug(
+            "[user:" ..
+            userName ..
+            "][token:" ..
+            token ..
+            "]" ..
+            "[uid:" ..
+            uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum
+        )
+    end
+    PlayerUserCaCheData:SetUIDValue(uid)
+    PlayerUserCaCheData:SetUseName(userName)
+    PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
+    PlayerUserCaCheData:SetGoldNum(response.goldNum)
+    PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
+    LoginUIController:GetInstance():OnHide()
+    LoginUIController:GetInstance():OpenLoginTapToStartUI()
 end
 
 function LoginNetController:Connect(url)
-	printDebug("LoginNetController:Connect(url)line 46" .. url)
+    printDebug("LoginNetController:Connect(url)line 46" .. url)
 end
 
 function LoginNetController:AtPong(data)
-	local timeNum = string.format("%.0f", (data.time / 1000))
-	local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-	--  printDebug("当前时间" .. time)
-	-- GameMainViewController:GetInstance():ShowTime(time)
+    local timeNum = string.format("%.0f", (data.time / 1000))
+    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
+    --  printDebug("当前时间" .. time)
+    -- GameMainViewController:GetInstance():ShowTime(time)
 end
 
 --- 是否可以登录
 ---@param data {message:string,accessGame:boolean}
 function LoginNetController:AtLoginTapToStartResponse(data)
-	local response = data
-	if response.message ~= nil then
-		printDebug("可以登陆" .. JSON.encode(data.accessGame) .. "," .. response.message)
-	end
-	if response.accessGame then
-	else
-		--- 不能登錄
-		UICommonViewController:GetInstance():OnOpenDialog(
-			DialogConfig.ButtonType.YesNO,
-			"",
-			"当前不在登录时间..MESSAGE:" .. response.message,
-			"确定",
-			"取消",
-			function(res) end
-		)
-		return
-	end
-	LoginUIController:GetInstance().LoginTapToStartView:LoginSatrtGame()
+    local response = data
+    if response.message ~= nil then
+        printDebug("可以登陆" .. JSON.encode(data.accessGame) .. "," .. response.message)
+    end
+    if response.accessGame then
+    else
+        --- 不能登錄
+        UICommonViewController:GetInstance():OnOpenDialog(
+            DialogConfig.ButtonType.YesNO,
+            "",
+            "当前不在登录时间..MESSAGE:" .. response.message,
+            "确定",
+            "取消",
+            function(res)
+            end
+        )
+        return
+    end
+    LoginUIController:GetInstance().LoginTapToStartView:LoginSatrtGame()
 end
 
 function LoginNetController:AtRegisterResponse(data)
-	local response = data
-	LoginUIController:GetInstance():Open()
+    local response = data
+    LoginUIController:GetInstance():Open()
 end
 
 ---@param account string
 ---@param password string
 function LoginNetController:SendLoginResponse(account, password)
-	if LoginRequest == nil then
-		printError("当前 LoginRequest 脚本 没有读取到 请检查")
-		return
-	end
-	---@type LoginRequest|nil
-	local packetData = ProtocolManager.getProtocol(LoginRequest:protocolId())
-	if packetData == nil then
-		printError("当前 LoginRequest 脚本 没有读取到 请检查")
-		return
-	end
-	local packet = packetData:new(account, password)
-	local buffer = ByteBuffer:new()
-	ProtocolManager.write(buffer, packet)
-	ProtocolManager:AddProtocolConfigEvent(Error:protocolId(),
-		---@param data{ errorCode:number, errorMessage:string ,module:number}
-		function(data)
-			-- 错误机制
-			UICommonViewController:OnOpenDialog(
-				DialogConfig.ButtonType.YesNO,
-				"",
-				I18nManager:GetString(data.errorMessage),
-				"确定",
-				"取消",
-				function(res) end
-			)
-		end)
-	NetManager:SendMessageEvent(buffer:readString(), LoginResponse:protocolId(), function(data)
-		printDebug("click start invke atLoginResponse")
-		self:AtLoginResponse(data)
-	end)
+    if LoginRequest == nil then
+        printError("当前 LoginRequest 脚本 没有读取到 请检查")
+        return
+    end
+    ---@type LoginRequest|nil
+    local packetData = ProtocolManager.getProtocol(LoginRequest:protocolId())
+    if packetData == nil then
+        printError("当前 LoginRequest 脚本 没有读取到 请检查")
+        return
+    end
+    local packet = packetData:new(account, password)
+    local buffer = ByteBuffer:new()
+    ProtocolManager.write(buffer, packet)
+    ProtocolManager:AddProtocolConfigEvent(
+        Error:protocolId(),
+        ---@param data{ errorCode:number, errorMessage:string ,module:number}
+        function(data)
+            -- 错误机制
+            UICommonViewController:OnOpenDialog(
+                DialogConfig.ButtonType.YesNO,
+                "",
+                I18nManager:GetString(data.errorMessage),
+                "确定",
+                "取消",
+                function(res)
+                end
+            )
+        end
+    )
+    NetManager:SendMessageEvent(
+        buffer:readString(),
+        LoginResponse:protocolId(),
+        function(data)
+            printDebug("click start invke atLoginResponse")
+            MmoEvent.LoginResonse(data)
+        end
+    )
 end
 
 return LoginNetController

@@ -37,6 +37,7 @@ require("application.app.net.http.apiRequest")
 require("application.app.net.http.apiResponse")
 NetManager = require("application.app.net.webscoket.netManager")
 GlobalEventSystem = require("Common.util.EventSystem")
+require("Common.util.UIUtils")
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
 ByteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffer")
@@ -45,6 +46,7 @@ ProtocolManager = require("application.app.net.webscoket.protocolManager")
 PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
 I18nManager = require("application.app.i18n.I18nManager")
 
+MmoEvent=require("Common.exception_handler")
 
 
 UIComponentManager = require("application.app.ui.UIComponentManager")

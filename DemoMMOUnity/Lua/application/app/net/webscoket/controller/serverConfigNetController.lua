@@ -3,6 +3,10 @@ local ServerConfigNetController = class("ServerConfigNetController")
 
 local ItemBaseDataList = {}
 
+function ServerConfigNetController:RegisterEvent()
+    
+end
+
 ---@param itemBaseDataList table<integer,ItemBaseData>
 function ServerConfigNetController:SetItemBaseDataList(itemBaseDataList)
     for index, value in ipairs(itemBaseDataList) do
