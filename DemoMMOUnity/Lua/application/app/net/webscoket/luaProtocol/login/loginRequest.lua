@@ -4,20 +4,28 @@
 --- DateTime: 2023/5/23 13:38
 ---
 ---@class LoginRequest
-local LoginRequest = {}
+local LoginRequest = class("LoginRequest")
+---@type LoginRequest
+local this = LoginRequest
 function LoginRequest:ctor()
+    printDebug("call loginRequest function ctor")
+    self.account = string.empty
+    self.password = string.empty
 end
+
 ---@param account string 用户名
 ---@param password string 密码
 function LoginRequest:new(account, password)
-    local obj = {
-        account = account, -- java.lang.String
-        password = password -- java.lang.String
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    -- local obj = {
+    self.account = account   -- java.lang.String
+    self.password = password -- java.lang.String
+    -- }
+    -- setmetatable(obj, self)
+    -- self.__index = self
+    -- return obj
+    return this
 end
+
 function LoginRequest:protocolId()
     return 1000
 end
@@ -41,4 +49,5 @@ function LoginRequest:read(buffer)
     local data = JSON.decode(jsonString)
     return LoginRequest:new(data.packet.account, data.packet.password)
 end
+
 return LoginRequest

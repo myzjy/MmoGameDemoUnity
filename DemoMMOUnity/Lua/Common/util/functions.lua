@@ -80,17 +80,17 @@ function setLogColor(nColor, fmt)
 end
 
 function handle(method, obj, ...)
-    local args = {...}
+    local args = { ... }
     local newHandler = function(...)
-		local argsInvoke = {...};
-		for __idx=1,#args do
-			table.insert(argsInvoke, args[__idx]);
-		end
-		if obj then
-			return method(obj, unpack(argsInvoke));
-		else
-			return method(unpack(argsInvoke));
-		end
+        local argsInvoke = { ... };
+        for __idx = 1, #args do
+            table.insert(argsInvoke, args[__idx]);
+        end
+        if obj then
+            return method(obj, unpack(argsInvoke));
+        else
+            return method(unpack(argsInvoke));
+        end
     end
     return newHandler
 end

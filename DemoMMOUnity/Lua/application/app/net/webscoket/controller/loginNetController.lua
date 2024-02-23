@@ -17,6 +17,15 @@ LoginConst = {
         StartLogin = "LoginConst.Event.StartLogin"
     }
 }
+---@type LoginNetController
+local instance = nil
+
+function LoginNetController.GetInstance()
+    if not instance then
+        instance = LoginNetController()
+    end
+    return instance
+end
 
 function LoginNetController:Init()
     LoginNetController:InitEvents()
@@ -45,8 +54,8 @@ function LoginNetController:InitEvents()
             LoginNetController:AtPong(data)
         end
     )
-    UIUtils.AddEventListener(MmoEvent.LoginResonse, self.AtLoginResponse, self)
-    UIUtils.AddEventListener(MmoEvent.LoginSuccess, self.SendLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.LoginSuccess, self.SendLoginResponse, self)
 end
 
 --- 网络打开
@@ -67,12 +76,16 @@ function LoginNetController:AtLoginResponse(data)
     if Debug > 0 then
         printDebug(
             "[user:" ..
-            userName ..
-            "][token:" ..
-            token ..
-            "]" ..
-            "[uid:" ..
-            uid .. "]" .. "[goldNum:" .. response.goldNum .. "],[premiumDiamondNum:" .. response.premiumDiamondNum
+                userName ..
+                    "][token:" ..
+                        token ..
+                            "]" ..
+                                "[uid:" ..
+                                    uid ..
+                                        "]" ..
+                                            "[goldNum:" ..
+                                                response.goldNum ..
+                                                    "],[premiumDiamondNum:" .. response.premiumDiamondNum
         )
     end
     PlayerUserCaCheData:SetUIDValue(uid)
@@ -134,7 +147,7 @@ function LoginNetController:SendLoginResponse(account, password)
         return
     end
     ---@type LoginRequest|nil
-    local packetData = ProtocolManager.getProtocol(LoginRequest:protocolId())
+    local packetData = LoginRequest()
     if packetData == nil then
         printError("当前 LoginRequest 脚本 没有读取到 请检查")
         return
@@ -146,16 +159,12 @@ function LoginNetController:SendLoginResponse(account, password)
         Error:protocolId(),
         ---@param data{ errorCode:number, errorMessage:string ,module:number}
         function(data)
-            -- 错误机制
-            UICommonViewController:OnOpenDialog(
-                DialogConfig.ButtonType.YesNO,
-                "",
+            UIUtils.OnOpenDialog(
                 I18nManager:GetString(data.errorMessage),
-                "确定",
-                "取消",
                 function(res)
                 end
             )
+            -- 错误机制
         end
     )
     NetManager:SendMessageEvent(
@@ -163,7 +172,7 @@ function LoginNetController:SendLoginResponse(account, password)
         LoginResponse:protocolId(),
         function(data)
             printDebug("click start invke atLoginResponse")
-            MmoEvent.LoginResonse(data)
+            GameEvent.LoginResonse(data)
         end
     )
 end

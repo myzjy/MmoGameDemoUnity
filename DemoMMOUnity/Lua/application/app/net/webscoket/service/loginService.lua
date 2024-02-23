@@ -43,7 +43,7 @@ end
 ---@param password string
 ---@param affirmPassword string
 function LoginService:RegisterAccount(account, password, affirmPassword)
-    local packetData = RegisterRequest
+    local packetData = RegisterRequest()
     if packetData == nil then
         printError("当前 RegisterRequest lua 侧没有读取到 检查文件")
         return

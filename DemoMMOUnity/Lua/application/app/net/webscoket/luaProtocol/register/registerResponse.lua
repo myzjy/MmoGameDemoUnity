@@ -5,15 +5,19 @@
 ---
 
 ---@class RegisterResponse
-local RegisterResponse = {}
+local RegisterResponse = class("RegisterResponse")
+
+---@type RegisterResponse
+local this = RegisterResponse
+function RegisterResponse:ctor()
+    self.error = nil
+    self.mRegister = nil
+end
+
 function RegisterResponse:new(error, mRegister)
-    local obj = {
-        error = error, -- java.lang.String
-        mRegister = mRegister -- boolean
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.error = error             -- java.lang.String
+    self.mRegister = mRegister     -- boolean
+    return this
 end
 
 function RegisterResponse:protocolId()

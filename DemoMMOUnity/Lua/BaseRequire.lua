@@ -46,7 +46,8 @@ ProtocolManager = require("application.app.net.webscoket.protocolManager")
 PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
 I18nManager = require("application.app.i18n.I18nManager")
 
-MmoEvent=require("Common.exception_handler")
+GameEvent=require("application.app.event.gameEvent")
+GameMainEvent=require("application.app.event.gameMainEvent")
 
 
 UIComponentManager = require("application.app.ui.UIComponentManager")

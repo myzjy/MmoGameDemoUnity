@@ -1,6 +1,21 @@
 ---@class WeaponPlayerUserDataStruct
-local WeaponPlayerUserDataStruct = {}
-
+local WeaponPlayerUserDataStruct = class("WeaponPlayerUserDataStruct")
+function WeaponPlayerUserDataStruct:ctor()
+    printDebug("init WeaponPlayerUserDataStruct ctor")
+    self.id = -1                             ---java.lang.long
+    self.weaponName = string.empty           ---java.lang.string
+    self.weaponType = -1                     ---java.lang.integer
+    self.nowSkills = -1                      ---java.lang.integer
+    self.weaponMainValue = -1                ---java.lang.integer
+    self.weaponMainValueType = -1            ---java.lang.integer
+    self.haveTimeAt = string.empty           ---java.lang.string
+    self.nowLv = -1                          ---java.lang.integer
+    self.nowMaxLv = -1                       ---java.lang.integer
+    self.nowLvExp = -1                       ---java.lang.integer
+    self.nowLvMaxExp = -1                    ---java.lang.integer
+    self.weaponIcons = string.empty          ---java.lang.string
+    self.weaponModelNameIcons = string.empty ---java.lang.string
+end
 
 ---@param id number
 ---@param weaponName string
@@ -15,9 +30,20 @@ local WeaponPlayerUserDataStruct = {}
 ---@param nowLvMaxExp integer
 ---@param weaponIcons string
 ---@param weaponModelNameIcons string
-function WeaponPlayerUserDataStruct:new(id, weaponName,
-                                        weaponType, nowSkills, weaponMainValue, weaponMainValueType, haveTimeAt,
-                                        nowLv, nowMaxLv, nowLvExp, nowLvMaxExp, weaponIcons, weaponModelNameIcons)
+function WeaponPlayerUserDataStruct:new(
+    id,
+    weaponName,
+    weaponType,
+    nowSkills,
+    weaponMainValue,
+    weaponMainValueType,
+    haveTimeAt,
+    nowLv,
+    nowMaxLv,
+    nowLvExp,
+    nowLvMaxExp,
+    weaponIcons,
+    weaponModelNameIcons)
     local obj = {
         id = id,                                    ---java.lang.long
         weaponName = weaponName,                    ---java.lang.string
@@ -62,12 +88,21 @@ function WeaponPlayerUserDataStruct:read(buffer)
     ---字节读取器中存放字符
     ---@type {protocolId:number,packet:{id:number, weaponName:string, weaponType:integer, nowSkills:integer, weaponMainValue:integer, weaponMainValueType:integer, haveTimeAt:string, nowLv:integer, nowMaxLv:integer, nowLvExp:integer, nowLvMaxExp:integer, weaponIcons:string, weaponModelNameIcons:string}}
     local data = JSON.decode(jsonString)
-    return WeaponPlayerUserDataStruct:new(data.packet.id, data.packet.weaponName,
-        data.packet.weaponType, data.packet.nowSkills, data.packet.weaponMainValue,
-        data.packet.weaponMainValueType, data.packet.haveTimeAt,
-        data.packet.nowLv, data.packet.nowMaxLv,
-        data.packet.nowLvExp, data.packet.nowLvMaxExp, data.packet.weaponIcons,
-        data.packet.weaponModelNameIcons)
+    return WeaponPlayerUserDataStruct:new(
+        data.packet.id,
+        data.packet.weaponName,
+        data.packet.weaponType,
+        data.packet.nowSkills,
+        data.packet.weaponMainValue,
+        data.packet.weaponMainValueType,
+        data.packet.haveTimeAt,
+        data.packet.nowLv,
+        data.packet.nowMaxLv,
+        data.packet.nowLvExp,
+        data.packet.nowLvMaxExp,
+        data.packet.weaponIcons,
+        data.packet.weaponModelNameIcons
+    )
 end
 
 function WeaponPlayerUserDataStruct:readData(buffer)
@@ -75,12 +110,21 @@ function WeaponPlayerUserDataStruct:readData(buffer)
     ---字节读取器中存放字符
     ---@type {id:number, weaponName:string, weaponType:integer, nowSkills:integer, weaponMainValue:integer, weaponMainValueType:integer, haveTimeAt:string, nowLv:integer, nowMaxLv:integer, nowLvExp:integer, nowLvMaxExp:integer, weaponIcons:string, weaponModelNameIcons:string}
     local data = JSON.decode(jsonString)
-    return WeaponPlayerUserDataStruct:new(data.id, data.weaponName,
-        data.weaponType, data.nowSkills, data.weaponMainValue,
-        data.weaponMainValueType, data.haveTimeAt,
-        data.nowLv, data.nowMaxLv,
-        data.nowLvExp, data.nowLvMaxExp, data.weaponIcons,
-        data.weaponModelNameIcons)
+    return WeaponPlayerUserDataStruct:new(
+        data.id,
+        data.weaponName,
+        data.weaponType,
+        data.nowSkills,
+        data.weaponMainValue,
+        data.weaponMainValueType,
+        data.haveTimeAt,
+        data.nowLv,
+        data.nowMaxLv,
+        data.nowLvExp,
+        data.nowLvMaxExp,
+        data.weaponIcons,
+        data.weaponModelNameIcons
+    )
 end
 
 return WeaponPlayerUserDataStruct

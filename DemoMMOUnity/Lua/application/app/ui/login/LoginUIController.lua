@@ -88,7 +88,7 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 		)
 		local account = self.LoginPartView.account.text
 		local password = self.LoginPartView.password.text
-		MmoEvent.LoginSuccess(account, password)
+		GameEvent.LoginSuccess(account, password)
 
 		--LoginService:LoginByAccount(account, password)
 	end)

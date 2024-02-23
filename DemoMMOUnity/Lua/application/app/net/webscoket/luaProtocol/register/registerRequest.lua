@@ -4,17 +4,22 @@
 --- DateTime: 2023/5/24 0:16
 
 ---@class RegisterRequest
-local RegisterRequest = {}
+local RegisterRequest = class("RegisterRequest")
+---@type RegisterRequest
+local this = RegisterRequest
+function RegisterRequest:ctor()
+    printDebug("call lua function RegisterRequest ctor")
+    self.account = string.empty
+    self.password = string.empty
+    self.affirmPassword = string.empty
+end
 
 function RegisterRequest:new(account, password, affirmPassword)
-    local obj = {
-        account = account,               -- java.lang.String
-        password = password,             -- java.lang.String
-        affirmPassword = affirmPassword, -- java.lang.String
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.account = account               -- java.lang.String
+    self.password = password             -- java.lang.String
+    self.affirmPassword = affirmPassword -- java.lang.String
+
+    return this
 end
 
 function RegisterRequest:protocolId()
