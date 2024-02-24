@@ -9,6 +9,7 @@ local LoginService = class("LoginService")
 function LoginService:LoginByAccount(account, password)
     LoginCacheData:SetAccount(account)
     LoginCacheData:SetPassword(password)
+    LoginNetController:SendLoginResponse(account,password)
 end
 
 function LoginService:LoginTapToStart()

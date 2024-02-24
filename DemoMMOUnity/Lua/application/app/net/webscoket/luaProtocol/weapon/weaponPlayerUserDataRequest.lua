@@ -1,16 +1,19 @@
 ---@class WeaponPlayerUserDataRequest
-local WeaponPlayerUserDataRequest = {}
+local WeaponPlayerUserDataRequest = class("WeaponPlayerUserDataRequest")
+function WeaponPlayerUserDataRequest:ctor()
+    ---@type number
+    self.findUserId = 0   ---java.lang.long
+    ---@type number
+    self.findWeaponId = 0 ---java.lang.long
+end
 
 ---@param findUserId number
 ---@param findWeaponId number
 function WeaponPlayerUserDataRequest:new(findUserId, findWeaponId)
-    local obj = {
-        findUserId = findUserId,    ---java.lang.long
-        findWeaponId = findWeaponId ---java.lang.long
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.findUserId = findUserId     ---java.lang.long
+    self.findWeaponId = findWeaponId ---java.lang.long
+
+    return self
 end
 
 function WeaponPlayerUserDataRequest:protocolId()
@@ -19,17 +22,13 @@ end
 
 ---@param buffer ByteBuffer
 ---@param packet any|nil
-function WeaponPlayerUserDataRequest:write(buffer, packet)
-    if packet == nil then
-        return
-    end
-    local data = packet or WeaponPlayerUserDataRequest
+function WeaponPlayerUserDataRequest:write()
     local message = {
-        protocolId = data.protocolId(),
-        packet = data
+        protocolId = self:protocolId(),
+        packet = { findUserId = self.findUserId, findWeaponId = self.findWeaponId }
     }
     local jsonStr = JSON.encode(message)
-    buffer:writeString(jsonStr)
+    return jsonStr
 end
 
 function WeaponPlayerUserDataRequest:read(buffer)

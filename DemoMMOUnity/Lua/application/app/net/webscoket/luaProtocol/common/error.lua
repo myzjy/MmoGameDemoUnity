@@ -4,17 +4,19 @@
 --- DateTime: 2023/5/19 18:55
 ---
 ---@class Error
-local Error = {}
+local Error = class("Error")
+function Error:ctor()
+    self.errorCode = 0               -- int
+    self.errorMessage = string.empty -- java.lang.String
+    self.module = 0                  -- int
+end
 
 function Error:new(errorCode, errorMessage, module)
-    local obj = {
-        errorCode = errorCode, -- int
-        errorMessage = errorMessage, -- java.lang.String
-        module = module -- int
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.errorCode = errorCode       -- int
+    self.errorMessage = errorMessage -- java.lang.String
+    self.module = module             -- int
+
+    return self
 end
 
 function Error:protocolId()
@@ -39,4 +41,5 @@ end
 function Error:read(data)
     return Error:new(data.packet.errorCode, data.packet.errorMessage, data.packet.module)
 end
+
 return Error

@@ -34,7 +34,7 @@ function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, dia
     -- }
     -- setmetatable(obj, self)
     -- self.__index = self
-    return this
+    return self
 end
 
 function LoginResponse:protocolId()

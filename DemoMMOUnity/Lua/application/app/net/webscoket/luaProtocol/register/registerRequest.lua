@@ -22,7 +22,7 @@ function RegisterRequest:new(account, password, affirmPassword)
     self.password = password             -- java.lang.String
     self.affirmPassword = affirmPassword -- java.lang.String
 
-    return this
+    return self
 end
 
 function RegisterRequest:protocolId()
@@ -44,7 +44,6 @@ function RegisterRequest:write(packet)
         }
     }
     local jsonStr = JSON.encode(message)
-    printDebug(jsonStr)
     return jsonStr
 end
 

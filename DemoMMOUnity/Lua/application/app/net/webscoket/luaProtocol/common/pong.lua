@@ -5,7 +5,7 @@
 ---
 ---@class Pong pong
 local Pong = class("Pong")
-local this = Pong
+
 function Pong:ctor()
     ---@type number
     self.time = 0
@@ -13,7 +13,7 @@ end
 
 function Pong:new(time)
     self.time = time -- long
-    return this
+    return self
 end
 
 function Pong:protocolId()

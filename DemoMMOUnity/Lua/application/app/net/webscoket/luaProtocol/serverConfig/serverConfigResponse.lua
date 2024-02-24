@@ -1,10 +1,25 @@
 ---@class ServerConfigResponse
-local ServerConfigResponse = {}
-
+local ServerConfigResponse = class("ServerConfigResponse")
+function ServerConfigResponse:ctor()
+    ---@type  table<integer,ItemBaseData>
+    self.bagItemEntityList = nil
+    ---@type  table<integer,EquipmentBaseData>
+    self.equipmentBaseDataList = nil
+    ---@type  table<integer,EquipmentConfigBaseData>
+    self.equipmentConfigBaseDataList = nil
+    ---@type  table<integer,EquipmentPrimaryConfigBaseData>
+    self.equipmentPrimaryConfigBaseDataList = nil
+    ---@type  table<integer,EquipmentDesBaseData>
+    self.equipmentDesBaseDataList = nil
+    ---@type  table<integer,EquipmentGrowthConfigBaseData>
+    self.equipmentGrowthConfigBaseDataList = nil
+    ---@type  table<integer,EquipmentGrowthViceConfigBaseData>
+    self.equipmentGrowthViceConfigBaseDataList = nil
+end
 
 ---@param bagItemEntityList table<integer,ItemBaseData>
----@param equipmentConfigBaseDataList table<integer,EquipmentConfigBaseData>
 ---@param equipmentBaseDataList table<integer,EquipmentBaseData>
+---@param equipmentConfigBaseDataList table<integer,EquipmentConfigBaseData>
 ---@param equipmentPrimaryConfigBaseDataList table<integer,EquipmentPrimaryConfigBaseData>
 ---@param equipmentDesBaseDataList table<integer,EquipmentDesBaseData>
 ---@param equipmentGrowthConfigBaseDataList table<integer,EquipmentGrowthConfigBaseData>
@@ -18,22 +33,21 @@ function ServerConfigResponse:new(
     equipmentGrowthConfigBaseDataList,
     equipmentGrowthViceConfigBaseDataList
 )
-    local obj = {
-        bagItemEntityList = bagItemEntityList,
-        equipmentBaseDataList = equipmentBaseDataList,
-        equipmentConfigBaseDataList = equipmentConfigBaseDataList,
-        equipmentPrimaryConfigBaseDataList = equipmentPrimaryConfigBaseDataList,
-        equipmentDesBaseDataList = equipmentDesBaseDataList,
-        equipmentGrowthConfigBaseDataList = equipmentGrowthConfigBaseDataList,
-        equipmentGrowthViceConfigBaseDataList = equipmentGrowthViceConfigBaseDataList
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.bagItemEntityList = bagItemEntityList
+    self.equipmentBaseDataList = equipmentBaseDataList
+    self.equipmentConfigBaseDataList = equipmentConfigBaseDataList
+    self.equipmentPrimaryConfigBaseDataList = equipmentPrimaryConfigBaseDataList
+    self.equipmentDesBaseDataList = equipmentDesBaseDataList
+    self.equipmentGrowthConfigBaseDataList = equipmentGrowthConfigBaseDataList
+    self.equipmentGrowthViceConfigBaseDataList = equipmentGrowthViceConfigBaseDataList
+
+    return self
 end
+
 function ServerConfigResponse:protocolId()
     return 1010
 end
+
 function ServerConfigResponse:write(buffer, packet)
     if packet == nil then
         return

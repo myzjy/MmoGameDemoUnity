@@ -48,10 +48,10 @@ function LoginNetController:InitEvents()
     -- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
     -- 	LoginNetController:AtLoginResponse(data)
     -- end)
-  
+
     UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
     UIUtils.AddEventListener(GameEvent.RegisterResonse, self.AtRegisterResponse, self)
-    UIUtils.AddEventListener(GameEvent.LoginSuccess, self.SendLoginResponse, self)
+    -- UIUtils.AddEventListener(GameEvent.LoginSuccess, self.SendLoginResponse, self)
 end
 
 --- 网络打开
@@ -64,6 +64,7 @@ function LoginNetController:OnNetOpenEvent()
     LoginUIController:GetInstance():Open()
 end
 
+---@param data LoginResponse
 function LoginNetController:AtLoginResponse(data)
     local response = data
     local token = response.token
@@ -107,7 +108,7 @@ function LoginNetController:AtPong(data)
 end
 
 --- 是否可以登录
----@param data {message:string,accessGame:boolean}
+---@param data LoginTapToStartResponse
 function LoginNetController:AtLoginTapToStartResponse(data)
     local response = data
     if response.message ~= nil then
@@ -152,7 +153,7 @@ function LoginNetController:SendLoginResponse(account, password)
     end
     local packet = packetData:new(account, password)
 
-    ProtocolManager:AddProtocolConfigEvent(
+    PacketDispatcher:AddProtocolConfigEvent(
         Error:protocolId(),
         ---@param data{ errorCode:number, errorMessage:string ,module:number}
         function(data)
@@ -164,8 +165,9 @@ function LoginNetController:SendLoginResponse(account, password)
             -- 错误机制
         end
     )
+    local jsonStr = packet:write()
     NetManager:SendMessageEvent(
-        packet:write(),
+        jsonStr,
         LoginResponse:protocolId(),
         function(data)
             printDebug("click start invke atLoginResponse")

@@ -1,20 +1,23 @@
 ---@class EquipmentGrowthConfigBaseData
-local EquipmentGrowthConfigBaseData = {}
-
+local EquipmentGrowthConfigBaseData = class("EquipmentGrowthConfigBaseData")
+local this = EquipmentGrowthConfigBaseData
+function EquipmentGrowthConfigBaseData:ctor()
+    ---@type number
+    self.id = 0
+    ---@type number
+    self.locationOfEquipmentType = 0
+    ---@type string
+    self.posName = string.empty
+end
 
 ---@param id number id
 ---@param locationOfEquipmentType number 圣遗物位置
 ---@param posName string 位置的名字
 function EquipmentGrowthConfigBaseData:new(id, locationOfEquipmentType, posName)
-    local obj = {
-        id = id,
-        locationOfEquipmentType = locationOfEquipmentType,
-        posName = posName,
-
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.id = id
+    self.locationOfEquipmentType = locationOfEquipmentType
+    self.posName = posName
+    return self
 end
 
 function EquipmentGrowthConfigBaseData:protocolId()
@@ -45,17 +48,13 @@ function EquipmentGrowthConfigBaseData:read(buffer)
         data.packet.posName
     )
 end
-function EquipmentGrowthConfigBaseData:readData(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    ---@type {id:number, locationOfEquipmentType:number, posName:string}
-    local data = JSON.decode(jsonString)
+
+function EquipmentGrowthConfigBaseData:readData(data)
     return EquipmentGrowthConfigBaseData:new(
         data.id,
         data.locationOfEquipmentType,
         data.posName
     )
 end
-
 
 return EquipmentGrowthConfigBaseData

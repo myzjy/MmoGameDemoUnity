@@ -11,25 +11,21 @@ function LoginTapToStartRequest:ctor()
 end
 
 function LoginTapToStartRequest:new(clientName)
-    this.clientName = clientName
-    return this
+    self.clientName = clientName
+    return self
 end
 
 function LoginTapToStartRequest:protocolId()
     return 1013
 end
 
-function LoginTapToStartRequest:write(buffer, packet)
-    if packet == nil then
-        return
-    end
-    local data = packet or LoginTapToStartRequest
+function LoginTapToStartRequest:write(packet)
     local message = {
-        protocolId = data.protocolId(),
-        packet = data
+        protocolId = self:protocolId(),
+        packet = { clentName = self.clientName }
     }
     local jsonStr = JSON.encode(message)
-    buffer:writeString(jsonStr)
+    return jsonStr
 end
 
 function LoginTapToStartRequest:read(data)

@@ -1,21 +1,27 @@
 ---@class EquipmentGrowthViceConfigBaseData
-local EquipmentGrowthViceConfigBaseData = {}
-
+local EquipmentGrowthViceConfigBaseData = class("EquipmentGrowthViceConfigBaseData")
+local this = EquipmentGrowthViceConfigBaseData
+function EquipmentGrowthViceConfigBaseData:ctor()
+    ---@type number
+    self.viceId = 0
+    ---@type string
+    self.viceName = string.empty
+    ---@type number
+    self.posGrowthType = 0
+    ---@type table<integer,string>
+    self.initNums = nil
+end
 
 ---@param viceId number id
 ---@param viceName string 详细属性
 ---@param posGrowthType number 属性所属pos对应
 ---@param initNums table<integer,string>
 function EquipmentGrowthViceConfigBaseData:new(viceId, viceName, posGrowthType, initNums)
-    local obj = {
-        viceId = viceId,
-        viceName = viceName,
-        posGrowthType = posGrowthType,
-        initNums = initNums
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.viceId = viceId
+    self.viceName = viceName
+    self.posGrowthType = posGrowthType
+    self.initNums = initNums
+    return self
 end
 
 function EquipmentGrowthViceConfigBaseData:protocolId()
@@ -48,11 +54,7 @@ function EquipmentGrowthViceConfigBaseData:read(buffer)
     )
 end
 
-function EquipmentGrowthViceConfigBaseData:readData(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    ---@type {viceId:number, viceName:string, posGrowthType:integer,initNums:table<integer,string>}
-    local data = JSON.decode(jsonString)
+function EquipmentGrowthViceConfigBaseData:readData(data)
     return EquipmentGrowthViceConfigBaseData:new(
         data.viceId,
         data.viceName,

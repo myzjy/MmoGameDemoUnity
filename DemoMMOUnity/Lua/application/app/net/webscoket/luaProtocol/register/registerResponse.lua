@@ -17,7 +17,7 @@ end
 function RegisterResponse:new(error, mRegister)
     self.error = error             -- java.lang.String
     self.mRegister = mRegister     -- boolean
-    return this
+    return self
 end
 
 function RegisterResponse:protocolId()

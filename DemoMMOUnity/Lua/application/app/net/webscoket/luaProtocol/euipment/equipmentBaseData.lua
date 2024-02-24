@@ -1,6 +1,18 @@
 ---@class EquipmentBaseData
-local EquipmentBaseData = {}
-
+local EquipmentBaseData = class("EquipmentBaseData")
+local this = EquipmentBaseData
+function EquipmentBaseData:ctor()
+    ---@type number
+    self.desId = 0
+    ---@type number
+    self.quality = 0
+    ---@type number
+    self.equipmentPosType = 0
+    ---@type string
+    self.equipmentName = string.empty
+    ---@type string
+    self.mainAttributes = string.empty
+end
 
 ---@param desId number 介绍id
 ---@param quality number 品阶
@@ -8,16 +20,12 @@ local EquipmentBaseData = {}
 ---@param equipmentName string 圣遗物的名字
 ---@param mainAttributes string 主属性集合可以获取那些属性
 function EquipmentBaseData:new(desId, quality, equipmentPosType, equipmentName, mainAttributes)
-    local obj = {
-        desId = desId,
-        quality = quality,
-        equipmentPosType = equipmentPosType,
-        equipmentName = equipmentName,
-        mainAttributes = mainAttributes
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.desId = desId
+    self.quality = quality
+    self.equipmentPosType = equipmentPosType
+    self.equipmentName = equipmentName
+    self.mainAttributes = mainAttributes
+    return self
 end
 
 function EquipmentBaseData:protocolId()

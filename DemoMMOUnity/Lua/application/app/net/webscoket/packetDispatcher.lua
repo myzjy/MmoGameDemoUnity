@@ -12,7 +12,7 @@ PacketDispatcher.Event = {
 	OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
 }
 -------------------------------- start Login   pack 包 --------------------------------------
-LoginNetController = require("application.app.net.webscoket.controller.loginNetController")
+LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController")
 -------------------------------- end   Login    pack 包 --------------------------------------
 
@@ -43,11 +43,14 @@ end
 
 function PacketDispatcher:Init()
 	------------------------------------Inti event list-----------------------------------------
-    
-	self.msgMap={}
-	self.msgMap[RegisterResponse:protocolId()]=handle(GameEvent.RegisterResonse,self)
-	self.msgMap[LoginConst.Event.Pong]=function (data)
+
+	self.msgMap = {}
+	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
+	self.msgMap[LoginConst.Event.Pong] = function(data)
 		LoginNetController:AtPong(data)
+	end
+	self.msgMap[Error:protocolId()] = function(data)
+
 	end
 
 
@@ -60,11 +63,9 @@ function PacketDispatcher:Init()
 	-------------------------------- end   Login    pack 包 --------------------------------------
 end
 
----function PacketDispatcher:Receive(str)
---    printDebug("PacketDispatcher:Receive(packet) line 50," .. type(packet))
---    PacketDispatcher.packetValue = packet
---    GlobalEventValue:Fire(PacketDispatcher.packetValue:protocolId(), PacketDispatcher.packetValue)
---end
+function PacketDispatcher:AddProtocolConfigEvent(id, method)
+	self.msgMap[id] = method
+end
 
 function PacketDispatcher:Receive(packet)
 	self.msgMap[packet:protocolId()](packet)

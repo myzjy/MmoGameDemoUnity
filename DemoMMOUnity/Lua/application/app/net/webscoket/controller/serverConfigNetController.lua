@@ -4,7 +4,7 @@ local ServerConfigNetController = class("ServerConfigNetController")
 local ItemBaseDataList = {}
 
 function ServerConfigNetController:RegisterEvent()
-    
+
 end
 
 ---@param itemBaseDataList table<integer,ItemBaseData>
@@ -12,7 +12,10 @@ function ServerConfigNetController:SetItemBaseDataList(itemBaseDataList)
     for index, value in ipairs(itemBaseDataList) do
         ---@type {id:integer,name:string,icon:string,minNum:integer,maxNum:integer,type:integer,des:string}
         local item = value
-        ItemBaseDataList[item.id] = value
+         ---@type ItemBaseData
+         local data = ItemBaseData()
+         data = data:read(item)
+        ItemBaseDataList[item.id] = data
     end
 end
 
@@ -51,7 +54,10 @@ function ServerConfigNetController:SetEquipmentConfigBaseDataList(equipmentConfi
     for index, value in ipairs(equipmentConfigBaseDataList) do
         ---@type {quality:number, lv1:number, lv2:number, lv3:number, lv4:number}
         local item = value
-        EquipmentConfigBaseDataList[item.quality] = value
+        ---@type EquipmentConfigBaseData
+        local data = EquipmentConfigBaseData()
+        data = data:readData(item)
+        EquipmentConfigBaseDataList[item.quality] = data
     end
 end
 
@@ -82,7 +88,10 @@ function ServerConfigNetController:SetEquipmentBaseDataList(equipmentBaseDataLis
     for index, value in ipairs(equipmentBaseDataList) do
         ---@type {desId:number, quality:number, equipmentPosType:number,equipmentName:string,mainAttributes:string}
         local item = value
-        EquipmentBaseDataList[item.desId] = value
+        ---@type EquipmentBaseData
+        local data = EquipmentBaseData()
+        data = data:readData(item)
+        EquipmentBaseDataList[item.desId] = data
     end
 end
 
@@ -92,7 +101,10 @@ function ServerConfigNetController:SetEquipmentPrimaryConfigBaseDataList(equipme
     for index, value in ipairs(equipmentPrimaryConfigBaseDataList) do
         ---@type {id:integer,primaryQuality:integer,growthPosInt:integer,primaryGrowthName:string,primaryGrowthInts:string,primaryGrowthMaxInt:string,growthPosName:string}
         local item = value
-        EquipmentPrimaryConfigBaseDataList[item.id] = value
+        ---@type EquipmentPrimaryConfigBaseData
+        local data = EquipmentPrimaryConfigBaseData()
+        data = data:readData(item)
+        EquipmentPrimaryConfigBaseDataList[item.id] = data
     end
 end
 
@@ -102,7 +114,10 @@ function ServerConfigNetController:SetEquipmentDesBaseDataList(equipmentDesBaseD
     for index, value in ipairs(equipmentDesBaseDataList) do
         ---@type {desId:number,name:string,desStr:string,toryDesStr:string}
         local item = value
-        EquipmentDesBaseDataList[item.desId] = value
+        ---@type EquipmentDesBaseData
+        local data = EquipmentDesBaseData()
+        data = data:readData(item)
+        EquipmentDesBaseDataList[item.desId] = data
     end
 end
 
@@ -112,16 +127,24 @@ function ServerConfigNetController:SetEquipmentGrowthConfigBaseDataList(equipmen
     for index, value in ipairs(equipmentGrowthConfigBaseDataList) do
         ---@type {id:number, locationOfEquipmentType:number, posName:string}
         local item = value
-        EquipmentGrowthConfigBaseDataList[item.id] = value
+        ---@type EquipmentGrowthConfigBaseData
+        local data = EquipmentGrowthConfigBaseData()
+        data = data:readData(item)
+        EquipmentGrowthConfigBaseDataList[item.id] = data
     end
 end
+
 ---@param equipmentGrowthViceConfigBaseDataList table<integer,EquipmentGrowthViceConfigBaseData>
 function ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(equipmentGrowthViceConfigBaseDataList)
     EquipmentGrowthViceConfigBaseDataList = {}
     for index, value in ipairs(equipmentGrowthViceConfigBaseDataList) do
         ---@type {viceId:number, viceName:string, posGrowthType:integer,initNums:table<integer,string>}
         local item = value
-        EquipmentGrowthViceConfigBaseDataList[item.viceId] = value
+        ---@type EquipmentGrowthViceConfigBaseData
+        local data = EquipmentGrowthViceConfigBaseData()
+        data = data:readData(item)
+        EquipmentGrowthViceConfigBaseDataList[item.viceId] = data
     end
 end
+
 return ServerConfigNetController

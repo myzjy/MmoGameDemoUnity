@@ -1,6 +1,22 @@
 ---@class EquipmentPrimaryConfigBaseData
-local EquipmentPrimaryConfigBaseData = {}
-
+local EquipmentPrimaryConfigBaseData = class("EquipmentPrimaryConfigBaseData")
+local this = EquipmentPrimaryConfigBaseData
+function EquipmentPrimaryConfigBaseData:ctor()
+    ---@type number
+    self.id = 0
+    ---@type number
+    self.primaryQuality = 0
+    ---@type number
+    self.growthPosInt = 0
+    ---@type string
+    self.primaryGrowthName = string.empty
+    ---@type string
+    self.primaryGrowthInts = string.empty
+    ---@type string
+    self.primaryGrowthMaxInt = string.empty
+    ---@type string
+    self.growthPosName = string.empty
+end
 
 ---@param id integer
 ---@param primaryQuality integer
@@ -17,18 +33,14 @@ function EquipmentPrimaryConfigBaseData:new(
     primaryGrowthInts,
     primaryGrowthMaxInt,
     growthPosName)
-    local obj = {
-        id = id,
-        primaryQuality = primaryQuality,
-        growthPosInt = growthPosInt,
-        primaryGrowthName = primaryGrowthName,
-        primaryGrowthInts = primaryGrowthInts,
-        primaryGrowthMaxInt = primaryGrowthMaxInt,
-        growthPosName = growthPosName
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.id = id
+    self.primaryQuality = primaryQuality
+    self.growthPosInt = growthPosInt
+    self.primaryGrowthName = primaryGrowthName
+    self.primaryGrowthInts = primaryGrowthInts
+    self.primaryGrowthMaxInt = primaryGrowthMaxInt
+    self.growthPosName = growthPosName
+    return self
 end
 
 function EquipmentPrimaryConfigBaseData:protocolId()
@@ -53,18 +65,15 @@ function EquipmentPrimaryConfigBaseData:read(buffer)
     ---字节读取器中存放字符
     ---@type {protocolId:number,packet:{id:integer,primaryQuality:integer,growthPosInt:integer,primaryGrowthName:string,primaryGrowthInts:string,primaryGrowthMaxInt:string,growthPosName:string}}
     local data = JSON.decode(jsonString)
-    return EquipmentPrimaryConfigBaseData:new(
-        data.packet.id, data.packet.primaryQuality, data.packet.growthPosInt, data.packet.primaryGrowthName, data.packet.primaryGrowthInts,
+    return self:new(
+        data.packet.id, data.packet.primaryQuality, data.packet.growthPosInt, data.packet.primaryGrowthName,
+        data.packet.primaryGrowthInts,
         data.packet.primaryGrowthMaxInt, data.packet.growthPosName
     )
 end
 
-function EquipmentPrimaryConfigBaseData:readData(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    ---@type {id:integer,primaryQuality:integer,growthPosInt:integer,primaryGrowthName:string,primaryGrowthInts:string,primaryGrowthMaxInt:string,growthPosName:string}
-    local data = JSON.decode(jsonString)
-    return EquipmentPrimaryConfigBaseData:new(
+function EquipmentPrimaryConfigBaseData:readData(data)
+    return self:new(
         data.id, data.primaryQuality, data.growthPosInt, data.primaryGrowthName, data.primaryGrowthInts,
         data.primaryGrowthMaxInt, data.growthPosName
     )
