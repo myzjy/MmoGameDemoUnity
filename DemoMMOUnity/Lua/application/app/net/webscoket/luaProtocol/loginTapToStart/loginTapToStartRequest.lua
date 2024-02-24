@@ -19,7 +19,7 @@ function LoginTapToStartRequest:protocolId()
     return 1013
 end
 
-function LoginTapToStartRequest:write(packet)
+function LoginTapToStartRequest:write()
     local message = {
         protocolId = self:protocolId(),
         packet = { clentName = self.clientName }

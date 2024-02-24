@@ -9,7 +9,7 @@ local LoginService = class("LoginService")
 function LoginService:LoginByAccount(account, password)
     LoginCacheData:SetAccount(account)
     LoginCacheData:SetPassword(password)
-    LoginNetController:SendLoginResponse(account,password)
+    LoginNetController:SendLoginResponse(account, password)
 end
 
 function LoginService:LoginTapToStart()
@@ -23,16 +23,16 @@ function LoginService:LoginTapToStart()
     else
         printDebug("Current platform is unknown.")
     end
-    local packetData = LoginTapToStartRequest
+    local packetData = LoginTapToStartRequest()
     if packetData == nil then
         printError("当前LoginTapToStartRequest lua 侧没有读取到 检查文件")
         return
     end
     local packet = LoginTapToStartRequest:new(platform)
-    local buffer = ByteBuffer:new()
-    packetData:write(buffer, packet)
+
+    local jsonString = packet:write()
     NetManager:SendMessageEvent(
-        buffer:readString(),
+        jsonString,
         LoginTapToStartResponse:protocolId(),
         function(packetData)
             LoginNetController:AtLoginTapToStartResponse(packetData)
@@ -55,7 +55,6 @@ function LoginService:RegisterAccount(account, password, affirmPassword)
         packetData:protocolId(),
         function(packetData)
             LoginNetController:AtRegisterResponse(packetData)
-    
         end
     )
 end
