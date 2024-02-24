@@ -8,9 +8,15 @@ System = CS.System
 DG = CS.DG
 
 local assetBundleManagerBeanStr = "ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager"
+local SchedulerManagerBeanStr = "ZJYFrameWork.Scheduler.SchedulerManager"
 
 function GetAssetBundleManager()
     local AssetBundleManager = ZJYFrameWork.Spring.Core.SpringContext.GetBean(assetBundleManagerBeanStr) or
         ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager
     return AssetBundleManager
+end
+function GetSchedulerManager()
+    local SchedulerManager = ZJYFrameWork.Spring.Core.SpringContext.GetBean(SchedulerManagerBeanStr) or
+    ZJYFrameWork.Scheduler.SchedulerManager
+    return SchedulerManager
 end

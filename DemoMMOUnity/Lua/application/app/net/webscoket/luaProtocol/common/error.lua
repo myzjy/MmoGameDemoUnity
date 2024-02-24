@@ -36,10 +36,7 @@ function Error:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function Error:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function Error:read(data)
     return Error:new(data.packet.errorCode, data.packet.errorMessage, data.packet.module)
 end
 return Error

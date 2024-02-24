@@ -47,11 +47,11 @@ function ServerConfigResponse:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function ServerConfigResponse:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    ---@type {protocolId:number,packet:{bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}}
-    local data = JSON.decode(jsonString)
+function ServerConfigResponse:read(data)
+    -- local jsonString = buffer:readString()
+    -- ---字节读取器中存放字符
+    -- ---@type {protocolId:number,packet:{bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}}
+    -- local data = JSON.decode(jsonString)
     return ServerConfigResponse:new(
         data.packet.bagItemEntityList,
         data.packet.equipmentConfigBaseDataList,

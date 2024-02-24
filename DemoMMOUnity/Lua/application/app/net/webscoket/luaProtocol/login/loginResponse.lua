@@ -4,22 +4,37 @@
 --- DateTime: 2023/5/22 14:40
 ---
 ---@class LoginResponse
-local LoginResponse = {}
+local LoginResponse = class("LoginResponse")
+local this = LoginResponse
+function LoginResponse:ctor()
+    ---@type string
+    self.token = string.empty
+    ---@type number
+    self.uid = 0
+    ---@type string
+    self.userName = string.empty
+    ---@type number
+    self.goldNum = 0
+    ---@type number
+    self.premiumDiamondNum = 0
+    ---@type number
+    self.diamondNum = 0
+end
 
 ---@param userName string
 function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, diamondNum)
     --local obj = LoginResponse.New()
-    local obj = {
-        token = token, ---java.lang.String
-        uid = uid, -- long
-        userName = userName, ---java.lang.String
-        goldNum = goldNum, -- long
-        premiumDiamondNum = premiumDiamondNum, -- long
-        diamondNum = diamondNum -- long
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    -- local obj = {
+    self.token = token                         ---java.lang.String
+    self.uid = uid                             -- long
+    self.userName = userName                   ---java.lang.String
+    self.goldNum = goldNum                     -- long
+    self.premiumDiamondNum = premiumDiamondNum -- long
+    self.diamondNum = diamondNum               -- long
+    -- }
+    -- setmetatable(obj, self)
+    -- self.__index = self
+    return this
 end
 
 function LoginResponse:protocolId()
@@ -30,7 +45,7 @@ function LoginResponse:write(buffer, packet)
     if packet == nil then
         return
     end
-    local data = packet or LoginResponse
+    local data = packet
     local message = {
         protocolId = data.protocolId(),
         packet = data
@@ -38,16 +53,18 @@ function LoginResponse:write(buffer, packet)
     local jsonStr = JSON.encode(message)
     buffer:writeString(jsonStr)
 end
-function LoginResponse:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+
+function LoginResponse:read(data)
+    -- local jsonString = buffer:readString()
+    -- ---字节读取器中存放字符
+    -- local data = JSON.decode(jsonString)
     local jsonData = LoginResponse:new(data.packet.token,
-            data.packet.uid,
-            data.packet.userName,
-            data.packet.goldNum,
-            data.packet.premiumDiamondNum,
-            data.packet.diamondNum)
+        data.packet.uid,
+        data.packet.userName,
+        data.packet.goldNum,
+        data.packet.premiumDiamondNum,
+        data.packet.diamondNum)
     return jsonData
 end
+
 return LoginResponse

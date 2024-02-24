@@ -87,9 +87,9 @@ function handle(method, obj, ...)
             table.insert(argsInvoke, args[__idx]);
         end
         if obj then
-            return method(obj, unpack(argsInvoke));
+            return method(obj, table.unpack(argsInvoke));
         else
-            return method(unpack(argsInvoke));
+            return method(table.unpack(argsInvoke));
         end
     end
     return newHandler

@@ -13,11 +13,11 @@ end
 
 function LoginService:LoginTapToStart()
     local platform = "editor"
-    if CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.Android then
+    if UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android then
         platform = "android"
-    elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.IPhonePlayer then
+    elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.IPhonePlayer then
         platform = "ios"
-    elseif CS.UnityEngine.Application.platform == CS.UnityEngine.RuntimePlatform.WindowsPlayer then
+    elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPlayer then
         platform = "pc"
     else
         printDebug("Current platform is unknown.")
@@ -49,14 +49,12 @@ function LoginService:RegisterAccount(account, password, affirmPassword)
         return
     end
     local packet = packetData:new(account, password, affirmPassword)
-    local buffer = ByteBuffer:new()
-    packetData:write(buffer, packet)
     NetManager:SendMessageEvent(
-        buffer:readString(),
+        packetData:write(packet),
         packetData:protocolId(),
         function(packetData)
             LoginNetController:AtRegisterResponse(packetData)
-            ProtocolManager:RemoveProtocolConfigEvent(packetData:protocolId())
+    
         end
     )
 end

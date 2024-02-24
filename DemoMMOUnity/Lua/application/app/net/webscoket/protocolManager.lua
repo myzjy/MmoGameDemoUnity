@@ -52,8 +52,8 @@ EquipmentPrimaryConfigBaseData = require(
 -----------------------------------------------------------------------------------------------------------
 
 --------------------------------------------Weapon------------------------------------------------------------
-WeaponPlayerUserDataRequest=require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataRequest")
-WeaponPlayerUserDataResponse=require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataResponse")
+WeaponPlayerUserDataRequest = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataRequest")
+WeaponPlayerUserDataResponse = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataResponse")
 
 --------------------------------------------end Weapon------------------------------------------------------------
 
@@ -73,11 +73,14 @@ function table.mapSize(map)
     return size
 end
 
+
+---@param protocolId any
+---@return any
 function ProtocolManager.getProtocol(protocolId)
     local protocol = protocols[protocolId]
     if protocol == nil then
         printError("[protocolId:" .. protocolId .. "]协议不存在")
-        return nil
+    
     end
     return protocol
 end
@@ -95,24 +98,25 @@ function ProtocolManager.read(buffer)
     local jsonData = JSON.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId
-    local byteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffer"):new()
-    --- 把json字符串放入字节器中
-    byteBuffer:writeString(jsonString)
     local protocol = ProtocolManager.getProtocol(protocolId)
+    if protocol == NULL then
+        return nil
+    end
+    local packetData = protocol();
     --- 返回对应的结构
-    local protocolData = protocol:read(byteBuffer)
+    local protocolData = packetData:read(jsonData)
     return protocolData
 end
 
 function ProtocolManager.initProtocolManager()
     protocols[101] = Error
     protocols[104] = Pong
-    ProtocolManager:AddProtocolConfigEvent(104, function(data)
-        Time:SetServerTime(data.time)
-        ZJYFrameWork.UISerializable.Manager.DateTimeUtil.SetNow(data.time)
-    end)
+
     protocols[1000] = LoginRequest
     protocols[1001] = LoginResponse
+
+    protocols[RegisterRequest:protocolId()] = RegisterRequest
+    protocols[RegisterResponse:protocolId()] = RegisterResponse
 
     protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
     protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
@@ -130,23 +134,23 @@ function ProtocolManager.initProtocolManager()
     protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
 end
 
-ProtocolManager.ProtocolConfigEvent = {}
+-- ProtocolManager.ProtocolConfigEvent = {}
 
-function ProtocolManager:AddProtocolConfigEvent(id, func)
-    self.ProtocolConfigEvent[id] = func
-end
+-- function ProtocolManager:AddProtocolConfigEvent(id, func)
+--     self.ProtocolConfigEvent[id] = func
+-- end
 
-function ProtocolManager:FireProtocolConfigEvent(id, ...)
-    local eventList = ...
-    self.ProtocolConfigEvent[id](eventList)
-end
+-- function ProtocolManager:FireProtocolConfigEvent(id, ...)
+--     local eventList = ...
+--     self.ProtocolConfigEvent[id](eventList)
+-- end
 
-function ProtocolManager:RemoveProtocolConfigEvent(id)
-    local eventList = self.ProtocolConfigEvent[id]
-    if eventList == null then
-        return
-    end
-    self.ProtocolConfigEvent[id] = null
-end
+-- function ProtocolManager:RemoveProtocolConfigEvent(id)
+--     local eventList = self.ProtocolConfigEvent[id]
+--     if eventList == null then
+--         return
+--     end
+--     self.ProtocolConfigEvent[id] = null
+-- end
 
 return ProtocolManager

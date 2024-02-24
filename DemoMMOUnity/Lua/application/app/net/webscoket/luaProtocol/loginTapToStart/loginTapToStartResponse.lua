@@ -35,10 +35,10 @@ function LoginTapToStartResponse:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function LoginTapToStartResponse:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function LoginTapToStartResponse:read(data)
+    -- local jsonString = buffer:readString()
+    -- ---字节读取器中存放字符
+    -- local data = JSON.decode(jsonString)
     local jsonData = LoginTapToStartResponse:new(
             data.packet.message,
             data.packet.accessGame)

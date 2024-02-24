@@ -9,8 +9,11 @@ local RegisterRequest = class("RegisterRequest")
 local this = RegisterRequest
 function RegisterRequest:ctor()
     printDebug("call lua function RegisterRequest ctor")
+    ---@type string
     self.account = string.empty
+    ---@type string
     self.password = string.empty
+    ---@type string
     self.affirmPassword = string.empty
 end
 
@@ -26,23 +29,29 @@ function RegisterRequest:protocolId()
     return 1005
 end
 
-function RegisterRequest:write(buffer, packet)
+---@param packet RegisterRequest
+function RegisterRequest:write(packet)
     if packet == nil then
         return
     end
-    local data = packet or RegisterRequest
+    local data = packet
     local message = {
-        protocolId = data.protocolId(),
-        packet = data
+        protocolId = data:protocolId(),
+        packet = {
+            account = self.account,              -- java.lang.String
+            password = self.password,            -- java.lang.String
+            affirmPassword = self.affirmPassword -- java.lang.String
+        }
     }
     local jsonStr = JSON.encode(message)
-    buffer:writeString(jsonStr)
+    printDebug(jsonStr)
+    return jsonStr
 end
 
-function RegisterRequest:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function RegisterRequest:read(data)
+    -- local jsonString = buffer:readString()
+    -- ---字节读取器中存放字符
+    -- local data = JSON.decode(jsonString)
     return RegisterRequest:new(data.packet.account, data.packet.password, data.packet.affirmPassword)
 end
 

@@ -16,13 +16,8 @@ end
 ---@param account string 用户名
 ---@param password string 密码
 function LoginRequest:new(account, password)
-    -- local obj = {
     self.account = account   -- java.lang.String
     self.password = password -- java.lang.String
-    -- }
-    -- setmetatable(obj, self)
-    -- self.__index = self
-    -- return obj
     return this
 end
 
@@ -30,17 +25,14 @@ function LoginRequest:protocolId()
     return 1000
 end
 
-function LoginRequest:write(buffer, packet)
-    if packet == nil then
-        return
-    end
-    local data = packet or LoginRequest
+---@return string|nil
+function LoginRequest:write()
     local message = {
-        protocolId = data.protocolId(),
-        packet = data
+        protocolId = self:protocolId(),
+        packet = { account = self.account, password = self.password }
     }
     local jsonStr = JSON.encode(message)
-    buffer:writeString(jsonStr)
+    return jsonStr
 end
 
 function LoginRequest:read(buffer)

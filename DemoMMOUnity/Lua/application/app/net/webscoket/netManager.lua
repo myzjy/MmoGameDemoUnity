@@ -7,11 +7,10 @@ local netManager = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean("ZJYFrameWo
 local NetManager = class("NetManager")
 
 
----@param bytes string
+---@param bytes string|nil
 ---@param protocolId number
 ---@param protocolAction function
 function NetManager:SendMessageEvent(bytes, protocolId, protocolAction)
-    ProtocolManager:AddProtocolConfigEvent(protocolId, protocolAction)
     netManager:SendMessageEvent(bytes, protocolId, protocolAction)
 end
 

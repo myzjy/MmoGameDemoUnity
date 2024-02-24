@@ -4,14 +4,16 @@
 --- DateTime: 2023/5/24 10:35
 ---
 ---@class Pong pong
-local Pong = {}
+local Pong = class("Pong")
+local this = Pong
+function Pong:ctor()
+    ---@type number
+    self.time = 0
+end
+
 function Pong:new(time)
-    local obj = {
-        time = time, -- long
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    self.time = time -- long
+    return this
 end
 
 function Pong:protocolId()
@@ -33,10 +35,7 @@ function Pong:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function Pong:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function Pong:read(data)
     return Pong:new(data.packet.time)
 end
 

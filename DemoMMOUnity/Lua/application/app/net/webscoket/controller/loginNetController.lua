@@ -48,13 +48,9 @@ function LoginNetController:InitEvents()
     -- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
     -- 	LoginNetController:AtLoginResponse(data)
     -- end)
-    ProtocolManager:AddProtocolConfigEvent(
-        LoginConst.Event.Pong,
-        function(data)
-            LoginNetController:AtPong(data)
-        end
-    )
+  
     UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.RegisterResonse, self.AtRegisterResponse, self)
     UIUtils.AddEventListener(GameEvent.LoginSuccess, self.SendLoginResponse, self)
 end
 
@@ -76,16 +72,16 @@ function LoginNetController:AtLoginResponse(data)
     if Debug > 0 then
         printDebug(
             "[user:" ..
-                userName ..
-                    "][token:" ..
-                        token ..
-                            "]" ..
-                                "[uid:" ..
-                                    uid ..
-                                        "]" ..
-                                            "[goldNum:" ..
-                                                response.goldNum ..
-                                                    "],[premiumDiamondNum:" .. response.premiumDiamondNum
+            userName ..
+            "][token:" ..
+            token ..
+            "]" ..
+            "[uid:" ..
+            uid ..
+            "]" ..
+            "[goldNum:" ..
+            response.goldNum ..
+            "],[premiumDiamondNum:" .. response.premiumDiamondNum
         )
     end
     PlayerUserCaCheData:SetUIDValue(uid)
@@ -102,10 +98,12 @@ function LoginNetController:Connect(url)
 end
 
 function LoginNetController:AtPong(data)
-    local timeNum = string.format("%.0f", (data.time / 1000))
-    local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
+    -- local timeNum = string.format("%.0f", (data.time / 1000))
+    -- local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
     --  printDebug("当前时间" .. time)
     -- GameMainViewController:GetInstance():ShowTime(time)
+    GetSchedulerManager().serverTime = data.time
+    ZJYFrameWork.UISerializable.Manager.DateTimeUtil.SetNow(data.time)
 end
 
 --- 是否可以登录
@@ -153,8 +151,7 @@ function LoginNetController:SendLoginResponse(account, password)
         return
     end
     local packet = packetData:new(account, password)
-    local buffer = ByteBuffer:new()
-    ProtocolManager.write(buffer, packet)
+
     ProtocolManager:AddProtocolConfigEvent(
         Error:protocolId(),
         ---@param data{ errorCode:number, errorMessage:string ,module:number}
@@ -168,7 +165,7 @@ function LoginNetController:SendLoginResponse(account, password)
         end
     )
     NetManager:SendMessageEvent(
-        buffer:readString(),
+        packet:write(),
         LoginResponse:protocolId(),
         function(data)
             printDebug("click start invke atLoginResponse")

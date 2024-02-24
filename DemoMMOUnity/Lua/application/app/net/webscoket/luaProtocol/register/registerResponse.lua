@@ -37,10 +37,10 @@ function RegisterResponse:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function RegisterResponse:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function RegisterResponse:read(data)
+    -- local jsonString = buffer:readString()
+    -- ---字节读取器中存放字符
+    -- local data = JSON.decode(jsonString)
     return RegisterResponse:new(data.packet.error, data.packet.mRegister)
 end
 

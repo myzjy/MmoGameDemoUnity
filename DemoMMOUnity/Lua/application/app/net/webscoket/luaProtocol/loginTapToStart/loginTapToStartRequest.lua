@@ -4,15 +4,15 @@
 --- DateTime: 2023/5/24 14:35
 ---
 ---@class LoginTapToStartRequest
-local LoginTapToStartRequest = {}
+local LoginTapToStartRequest = class("LoginTapToStartRequest")
+local this = LoginTapToStartRequest
+function LoginTapToStartRequest:ctor()
+    self.clientName = string.empty
+end
 
 function LoginTapToStartRequest:new(clientName)
-    local obj = {
-        clientName = clientName
-    }
-    setmetatable(obj, self)
-    self.__index = self
-    return obj
+    this.clientName = clientName
+    return this
 end
 
 function LoginTapToStartRequest:protocolId()
@@ -32,10 +32,7 @@ function LoginTapToStartRequest:write(buffer, packet)
     buffer:writeString(jsonStr)
 end
 
-function LoginTapToStartRequest:read(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    local data = JSON.decode(jsonString)
+function LoginTapToStartRequest:read(data)
     return LoginTapToStartRequest:new()
 end
 
