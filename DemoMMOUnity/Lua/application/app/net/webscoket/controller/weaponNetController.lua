@@ -13,6 +13,7 @@ local WeaponNetController = class("WeaponNetController")
 
 function WeaponNetController:RegisterEvent()
 end
+
 ---@param findUserId number
 ---@param findWeaponId number
 function WeaponNetController:sendAllWeaponServer(findUserId, findWeaponId)
@@ -24,15 +25,8 @@ function WeaponNetController:sendAllWeaponServer(findUserId, findWeaponId)
     end
     local data = packetData:new(findUserId, findWeaponId)
     local buffer = ByteBuffer:new()
-    packetData:write(buffer, data)
-    NetManager:SendMessageEvent(
-        buffer:readString(),
-        packetData:protocolId(),
-        function(packetData)
-            --- 
-            
-        end
-    )
+    packetData:write()
+    NetManager:SendMessageEvent(buffer:readString())
 end
 
 return WeaponNetController

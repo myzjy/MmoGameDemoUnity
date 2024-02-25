@@ -5,8 +5,18 @@
 ---
 ---@class UICommonViewController
 UICommonViewController = class("UICommonViewController")
+local instance = nil
+function UICommonViewController:ctor()
+    self.viewPanel = nil
+    self.LoadingRotate = nil
+    self.dataloading = nil
+end
+
 function UICommonViewController:GetInstance()
-    return UICommonViewController
+    if not instance then
+        instance = UICommonViewController()
+    end
+    return instance
 end
 
 function UICommonViewController:OnInit()

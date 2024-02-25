@@ -1,8 +1,14 @@
 ---@class LoginUIController:LuaUIObject
-LoginUIController = class("LoginUIController", LuaUIObject)
+local LoginUIController = class("LoginUIController", LuaUIObject)
+
+---@type LoginUIController
+local instance = nil
 
 function LoginUIController:GetInstance()
-	return LoginUIController
+	if not instance then
+		instance = LoginUIController()
+	end
+	return instance
 end
 
 ---打开界面
@@ -60,7 +66,6 @@ function LoginUIController:OpenLoginTapToStartUI()
 	end
 	--- 开始登录
 	self.LoginTapToStartView:OnShow()
-
 end
 
 ---comment
@@ -88,12 +93,14 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 		)
 		local account = self.LoginPartView.account.text
 		local password = self.LoginPartView.password.text
-		-- GameEvent.LoginSuccess(account, password)
+		GameEvent.LoginByAccount(account, password)
 
-		LoginService:LoginByAccount(account, password)
+		-- LoginService:LoginByAccount(account, password)
 	end)
 	self:SetListener(self.LoginPartView.RegisterBtn, function()
 		self.LoginPartView:OnHide()
 		self.RegisterPartView:OnShow()
 	end)
 end
+
+return LoginUIController

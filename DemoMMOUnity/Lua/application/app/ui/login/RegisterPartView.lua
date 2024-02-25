@@ -18,7 +18,7 @@ function RegisterPartView:Build(view)
         local account = self.registerAccountInputField.text
         local password = self.registerPasswordInputField.text
         local affirmPassword = self.registerAffirmPasswordInputField.text
-        LoginService:RegisterAccount(account, password, affirmPassword)
+        GameEvent.RegisterAccount(account, password, affirmPassword)
     end)
     self:SetListener(self.cancelButton, function()
         LoginUIController:GetInstance():Open()

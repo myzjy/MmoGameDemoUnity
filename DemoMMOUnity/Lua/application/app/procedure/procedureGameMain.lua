@@ -21,21 +21,9 @@ function ProcedureGameMain:AddEvent()
             printError("当前 ServerConfigRequest lua 侧没有读取到 检查文件")
             return
         end
-        local packet = packetData:new("1")
-        local buffer = ByteBuffer:new()
-        packetData:write(buffer, packet)
-        NetManager:SendMessageEvent(buffer:readString(), ServerConfigResponse:protocolId(), function(packetData)
-            ---@type {bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}
-            local protocolData = packetData
-            ServerConfigNetController:SetItemBaseDataList(protocolData.bagItemEntityList)
-            ServerConfigNetController:SetEquipmentConfigBaseDataList(protocolData.equipmentConfigBaseDataList)
-            ServerConfigNetController:SetEquipmentDesBaseDataList(protocolData.equipmentDesBaseDataList)
-            ServerConfigNetController:SetEquipmentBaseDataList(protocolData.equipmentBaseDataList)
-            ServerConfigNetController:SetEquipmentGrowthConfigBaseDataList(protocolData.equipmentGrowthConfigBaseDataList)
-            ServerConfigNetController:SetEquipmentPrimaryConfigBaseDataList(protocolData.equipmentPrimaryConfigBaseDataList)
-            ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(protocolData.equipmentGrowthViceConfigBaseDataList)
-            GameMainUIViewController:GetInstance():Open()
-        end)
+        local packet = packetData():new("1")
+        local jsonString = packet:write()
+        NetManager:SendMessageEvent(jsonString)
     end)
 end
 

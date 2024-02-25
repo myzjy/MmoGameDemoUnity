@@ -7,7 +7,6 @@ print("加载 ProtocolManager.lua 文件")
 
 print("require service files lua script start")
 
-LoginService = require("application.app.net.webscoket.service.loginService")
 ---------------------------- error 101     ----------------------------
 Error = require("application.app.net.webscoket.luaProtocol.common.error")
 -----------------------------------------------------------------------

@@ -17,10 +17,10 @@ function LoginTapToStartView:Build(view)
 		end
 	end
 	self:SetListener(self.LoginStartButton, function()
-		LoginService:LoginTapToStart()
+		GameEvent.LoginTapToStart()
 	end)
 	self:SetListener(self.LoginStartMaxButton, function()
-		LoginUIController:OnClose()
+		LoginUIController:GetInstance():OnClose()
 	end)
 end
 

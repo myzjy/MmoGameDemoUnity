@@ -8,7 +8,6 @@ end
 ---@param panel string
 function ServerConfigRequest:new(panel)
     self.panel = panel
-
     return self
 end
 

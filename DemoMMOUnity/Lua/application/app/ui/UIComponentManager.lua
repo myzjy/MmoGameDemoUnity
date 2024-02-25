@@ -41,9 +41,9 @@ printDebug("require UI View Lua Scirpt end")
 
 printDebug("start require UI controller lua scripts ing ...")
 
-require("application.app.ui.login.LoginUIController")
-require("application.app.ui.gameMain.gameMainUIViewController")
-BagUIController = require("application.app.ui.bag.bagUIController")
+LoginUIController=require("application.app.ui.login.LoginUIController"):GetInstance()
+GameMainUIViewController = require("application.app.ui.gameMain.gameMainUIViewController"):GetInstance()
+BagUIController = require("application.app.ui.bag.bagUIController").GetInstance()
 
 printDebug("end require UI controller lua scripts ing ...")
 

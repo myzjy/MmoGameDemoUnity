@@ -52,7 +52,7 @@ function ServerConfigResponse:write(buffer, packet)
     if packet == nil then
         return
     end
-    local data = packet or RegisterResponse
+    local data = packet or ServerConfigResponse
     local message = {
         protocolId = data.protocolId(),
         packet = data

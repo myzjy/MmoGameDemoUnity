@@ -2,9 +2,33 @@
 local ServerConfigNetController = class("ServerConfigNetController")
 
 local ItemBaseDataList = {}
+---@type ServerConfigNetController
+local instance = nil
+
+function ServerConfigNetController.GetInstance()
+    if not instance then
+        -- body
+        instance = ServerConfigNetController()
+    end
+    return instance
+end
 
 function ServerConfigNetController:RegisterEvent()
+    PacketDispatcher:AddProtocolConfigEvent(ServerConfigRequest:protocolId(), handle(self.SetServerConfigDataList, self))
+end
 
+function ServerConfigNetController:SetServerConfigDataList(response)
+    ---@type {bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}
+    local protocolData = response
+    self:SetItemBaseDataList(protocolData.bagItemEntityList)
+    self:SetEquipmentConfigBaseDataList(protocolData.equipmentConfigBaseDataList)
+    self:SetEquipmentDesBaseDataList(protocolData.equipmentDesBaseDataList)
+    self:SetEquipmentBaseDataList(protocolData.equipmentBaseDataList)
+    self:SetEquipmentGrowthConfigBaseDataList(protocolData.equipmentGrowthConfigBaseDataList)
+    self:SetEquipmentPrimaryConfigBaseDataList(protocolData.equipmentPrimaryConfigBaseDataList)
+    self:SetEquipmentGrowthViceConfigBaseDataList(protocolData
+        .equipmentGrowthViceConfigBaseDataList)
+    GameMainUIViewController:GetInstance():Open()
 end
 
 ---@param itemBaseDataList table<integer,ItemBaseData>
@@ -12,9 +36,9 @@ function ServerConfigNetController:SetItemBaseDataList(itemBaseDataList)
     for index, value in ipairs(itemBaseDataList) do
         ---@type {id:integer,name:string,icon:string,minNum:integer,maxNum:integer,type:integer,des:string}
         local item = value
-         ---@type ItemBaseData
-         local data = ItemBaseData()
-         data = data:read(item)
+        ---@type ItemBaseData
+        local data = ItemBaseData()
+        data = data:read(item)
         ItemBaseDataList[item.id] = data
     end
 end

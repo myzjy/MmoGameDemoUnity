@@ -1,10 +1,17 @@
 ---@class GameMainUIViewController:LuaUIObject
-GameMainUIViewController = class("GameMainUIViewController", LuaUIObject)
-function GameMainUIViewController:GetInstance()
-    return GameMainUIViewController
+local GameMainUIViewController = class("GameMainUIViewController", LuaUIObject)
+---@type GameMainUIViewController
+local instance = nil
+function GameMainUIViewController:ctor()
+    self.GameMainView = nil
 end
 
-local this = GameMainUIViewController
+function GameMainUIViewController:GetInstance()
+    if not instance then
+        instance = GameMainUIViewController()
+    end
+    return instance
+end
 
 function GameMainUIViewController:Open()
     if self.GameMainView == nil then
@@ -43,9 +50,10 @@ end
 
 function GameMainUIViewController:UIInitEvent()
     ---@type GameMainUIPanelView
-    local viewPanel = this.GameMainView.viewPanel
+    local viewPanel = self.GameMainView.viewPanel
     self:SetListener(viewPanel.BagButton, function()
         -- 点击背包
         BagUIController:Open()
     end)
 end
+return GameMainUIViewController

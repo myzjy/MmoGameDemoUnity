@@ -13,7 +13,7 @@ PacketDispatcher.Event = {
 }
 -------------------------------- start Login   pack 包 --------------------------------------
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
-ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController")
+ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 
@@ -44,23 +44,28 @@ end
 function PacketDispatcher:Init()
 	------------------------------------Inti event list-----------------------------------------
 
-	self.msgMap = {}
-	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
-	self.msgMap[LoginConst.Event.Pong] = function(data)
-		LoginNetController:AtPong(data)
-	end
-	self.msgMap[Error:protocolId()] = function(data)
-
-	end
-
-
-
-
-
 	-------------------------------- start Login   pack 包 --------------------------------------
 
 	LoginNetController:Init()
 	-------------------------------- end   Login    pack 包 --------------------------------------
+
+	-------------------------------- start Login   pack 包 --------------------------------------
+	ServerConfigNetController:RegisterEvent()
+	-------------------------------- end   Login    pack 包 --------------------------------------
+
+	
+	self.msgMap = {}
+	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
+	self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
+	self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
+	self.msgMap[LoginConst.Event.Pong] = function(data)
+		LoginNetController:AtPong(data)
+	end
+
+
+
+
+
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)

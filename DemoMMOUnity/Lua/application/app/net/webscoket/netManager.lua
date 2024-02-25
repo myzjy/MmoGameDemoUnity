@@ -8,10 +8,8 @@ local NetManager = class("NetManager")
 
 
 ---@param bytes string|nil
----@param protocolId number
----@param protocolAction function
-function NetManager:SendMessageEvent(bytes, protocolId, protocolAction)
-    netManager:SendMessageEvent(bytes, protocolId, protocolAction)
+function NetManager:SendMessageEvent(bytes)
+    netManager:SendMessageEvent(bytes)
 end
 
 return NetManager

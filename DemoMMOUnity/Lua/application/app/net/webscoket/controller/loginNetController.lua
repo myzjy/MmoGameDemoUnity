@@ -17,6 +17,7 @@ LoginConst = {
         StartLogin = "LoginConst.Event.StartLogin"
     }
 }
+
 ---@type LoginNetController
 local instance = nil
 
@@ -45,13 +46,13 @@ function LoginNetController:InitEvents()
             LoginNetController:OnNetOpenEvent()
         end
     )
-    -- ProtocolManager:AddProtocolConfigEvent(LoginConst.Event.Login, function(data)
-    -- 	LoginNetController:AtLoginResponse(data)
-    -- end)
-
+    
     UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.LoginTapToStart, self.LoginTapToStart, self)
     UIUtils.AddEventListener(GameEvent.RegisterResonse, self.AtRegisterResponse, self)
-    -- UIUtils.AddEventListener(GameEvent.LoginSuccess, self.SendLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.LoginByAccount, self.LoginByAccount, self)
+    UIUtils.AddEventListener(GameEvent.LoginTapToStartResponse, self.AtLoginTapToStartResponse, self)
+    UIUtils.AddEventListener(GameEvent.RegisterAccount, self.RegisterAccount, self)
 end
 
 --- 网络打开
@@ -138,7 +139,7 @@ end
 
 ---@param account string
 ---@param password string
-function LoginNetController:SendLoginResponse(account, password)
+function LoginNetController:LoginByAccount(account, password)
     LoginCacheData:SetAccount(account)
     LoginCacheData:SetPassword(password)
     if LoginRequest == nil then
@@ -155,25 +156,51 @@ function LoginNetController:SendLoginResponse(account, password)
 
     PacketDispatcher:AddProtocolConfigEvent(
         Error:protocolId(),
-        ---@param data{ errorCode:number, errorMessage:string ,module:number}
-        function(data)
-            UIUtils.OnOpenDialog(
-                I18nManager:GetString(data.errorMessage),
-                function(res)
-                end
-            )
-            -- 错误机制
-        end
-    )
+        handle(
+        ---@param data{ errorCode:number, errorMessage:string,module:number}
+            function(data)
+                UIUtils.OnOpenDialog(
+                    I18nManager:GetString(data.errorMessage),
+                    function(res)
+                    end)
+            end, self))
     local jsonStr = packet:write()
-    NetManager:SendMessageEvent(
-        jsonStr,
-        LoginResponse:protocolId(),
-        function(data)
-            printDebug("click start invke atLoginResponse")
-            GameEvent.LoginResonse(data)
-        end
-    )
+    NetManager:SendMessageEvent(jsonStr)
+end
+
+function LoginNetController:LoginTapToStart()
+    local platform = "editor"
+    if UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android then
+        platform = "android"
+    elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.IPhonePlayer then
+        platform = "ios"
+    elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPlayer then
+        platform = "pc"
+    else
+        printDebug("Current platform is unknown.")
+    end
+    local packetData = LoginTapToStartRequest()
+    if packetData == nil then
+        printError("当前LoginTapToStartRequest lua 侧没有读取到 检查文件")
+        return
+    end
+    local packet = packetData:new(platform)
+
+    local jsonString = packet:write()
+    NetManager:SendMessageEvent(jsonString)
+end
+
+---@param account string
+---@param password string
+---@param affirmPassword string
+function LoginNetController:RegisterAccount(account, password, affirmPassword)
+    local packetData = RegisterRequest()
+    if packetData == nil then
+        printError("当前 RegisterRequest lua 侧没有读取到 检查文件")
+        return
+    end
+    local packet = packetData:new(account, password, affirmPassword)
+    NetManager:SendMessageEvent(packetData:write(packet))
 end
 
 return LoginNetController

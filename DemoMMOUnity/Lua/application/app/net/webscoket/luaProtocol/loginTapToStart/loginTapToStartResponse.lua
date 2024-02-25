@@ -17,7 +17,7 @@ end
 function LoginTapToStartResponse:new(message, accessGame)
     self.message = message       ---java.lang.String
     self.accessGame = accessGame -- boolean
-    return this
+    return self
 end
 
 function LoginTapToStartResponse:protocolId()
