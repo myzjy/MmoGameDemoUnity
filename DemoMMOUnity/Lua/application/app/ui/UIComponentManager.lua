@@ -17,7 +17,7 @@ printDebug("require ui framework lua scripts end")
 printDebug("require UI commonUI lua scripts start")
 
 require("application.app.ui.commonUI.UICommonView")
-require("application.app.ui.commonUI.UICommonViewController")
+UICommonViewController = require("application.app.ui.commonUI.UICommonViewController"):GetInstance()
 require("application.app.ui.commonUI.dialog")
 DialogConfig = require("application.app.ui.commonUI.dialogConfig")
 require("application.app.ui.commonUI.loadingRotate")
@@ -41,7 +41,7 @@ printDebug("require UI View Lua Scirpt end")
 
 printDebug("start require UI controller lua scripts ing ...")
 
-LoginUIController=require("application.app.ui.login.LoginUIController"):GetInstance()
+LoginUIController = require("application.app.ui.login.LoginUIController"):GetInstance()
 GameMainUIViewController = require("application.app.ui.gameMain.gameMainUIViewController"):GetInstance()
 BagUIController = require("application.app.ui.bag.bagUIController").GetInstance()
 

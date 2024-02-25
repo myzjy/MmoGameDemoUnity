@@ -3,11 +3,13 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/12/10 21:43
 ---
+
 ---@class LoginTapToStartView:UIBaseView
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView())
 
 function LoginTapToStartView:Build(view)
 	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or UnityEngine.UI.Button
+	---关闭按钮
 	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button
 	self.SteamLoginCanvasGroup = view:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
 

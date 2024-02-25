@@ -46,7 +46,7 @@ function LoginNetController:InitEvents()
             LoginNetController:OnNetOpenEvent()
         end
     )
-    
+
     UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
     UIUtils.AddEventListener(GameEvent.LoginTapToStart, self.LoginTapToStart, self)
     UIUtils.AddEventListener(GameEvent.RegisterResonse, self.AtRegisterResponse, self)
@@ -58,7 +58,7 @@ end
 --- 网络打开
 function LoginNetController:OnNetOpenEvent()
     UICommonViewController:GetInstance():OpenUIDataScenePanel(1, 1)
-    UICommonViewController.LoadingRotate:OnClose()
+    UICommonViewController:GetInstance().LoadingRotate:OnClose()
     if Debug > 0 then
         printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
     end
@@ -102,7 +102,7 @@ end
 function LoginNetController:AtPong(data)
     -- local timeNum = string.format("%.0f", (data.time / 1000))
     -- local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    --  printDebug("当前时间" .. time)
+    printDebug("当前时间" .. data.time)
     -- GameMainViewController:GetInstance():ShowTime(time)
     GetSchedulerManager().serverTime = data.time
     ZJYFrameWork.UISerializable.Manager.DateTimeUtil.SetNow(data.time)
@@ -154,16 +154,17 @@ function LoginNetController:LoginByAccount(account, password)
     end
     local packet = packetData:new(account, password)
 
+    ---@param data Error
+
+
     PacketDispatcher:AddProtocolConfigEvent(
-        Error:protocolId(),
-        handle(
-        ---@param data{ errorCode:number, errorMessage:string,module:number}
-            function(data)
-                UIUtils.OnOpenDialog(
-                    I18nManager:GetString(data.errorMessage),
-                    function(res)
-                    end)
-            end, self))
+        Error:protocolId(), function(data)
+            printDebug(data.errorMessage)
+            UIUtils.OnOpenDialog(
+                I18nManager:GetString(data.errorMessage),
+                function(res)
+                end)
+        end)
     local jsonStr = packet:write()
     NetManager:SendMessageEvent(jsonStr)
 end

@@ -43,6 +43,14 @@ end
 
 function PacketDispatcher:Init()
 	------------------------------------Inti event list-----------------------------------------
+	
+	self.msgMap = {}
+	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
+	self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
+	self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
+	self.msgMap[LoginConst.Event.Pong] = function(data)
+		LoginNetController:AtPong(data)
+	end
 
 	-------------------------------- start Login   pack 包 --------------------------------------
 
@@ -53,14 +61,8 @@ function PacketDispatcher:Init()
 	ServerConfigNetController:RegisterEvent()
 	-------------------------------- end   Login    pack 包 --------------------------------------
 
+
 	
-	self.msgMap = {}
-	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
-	self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
-	self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
-	self.msgMap[LoginConst.Event.Pong] = function(data)
-		LoginNetController:AtPong(data)
-	end
 
 
 

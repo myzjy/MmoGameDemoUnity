@@ -4,9 +4,11 @@
 --- DateTime: 2023/11/27 15:08
 ---
 ---@class UICommonViewController
-UICommonViewController = class("UICommonViewController")
+local UICommonViewController = class("UICommonViewController")
+---@type UICommonViewController
 local instance = nil
 function UICommonViewController:ctor()
+    printDebug("ctor UICommonViewController lua function")
     self.viewPanel = nil
     self.LoadingRotate = nil
     self.dataloading = nil
@@ -40,3 +42,4 @@ function UICommonViewController:OpenUIDataScenePanel(nowDownNums, maxDownNums)
     end
     self.dataloading:SetSceneProgress(nowDownNums, maxDownNums)
 end
+return UICommonViewController

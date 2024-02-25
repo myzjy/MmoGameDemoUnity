@@ -46,7 +46,7 @@ end
 function readBytes(bytes)
     local buffer = ByteBuffer:new()
     buffer:writeString(bytes)
-    local packet = ProtocolManager.read(buffer)
+    local packet = ProtocolManager:read(buffer)
     return packet
 end
 

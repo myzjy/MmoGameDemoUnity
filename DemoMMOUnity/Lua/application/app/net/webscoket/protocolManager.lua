@@ -72,14 +72,12 @@ function table.mapSize(map)
     return size
 end
 
-
 ---@param protocolId any
 ---@return any
 function ProtocolManager.getProtocol(protocolId)
     local protocol = protocols[protocolId]
     if protocol == nil then
         printError("[protocolId:" .. protocolId .. "]协议不存在")
-    
     end
     return protocol
 end
@@ -92,19 +90,19 @@ end
 
 ---读取
 ---@param buffer ByteBuffer 字节读取器
-function ProtocolManager.read(buffer)
+function ProtocolManager:read(buffer)
     local jsonString = buffer:readString()
     local jsonData = JSON.decode(jsonString);
     ---获取对应id
     local protocolId = jsonData.protocolId
-    local protocol = ProtocolManager.getProtocol(protocolId)
+    local protocol = protocols[protocolId]
     if protocol == NULL then
         return nil
     end
     local packetData = protocol();
     --- 返回对应的结构
-    local protocolData = packetData:read(jsonData)
-    return protocolData
+    packetData = packetData:read(jsonData)
+    return packetData
 end
 
 function ProtocolManager.initProtocolManager()
@@ -132,24 +130,5 @@ function ProtocolManager.initProtocolManager()
     protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
     protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
 end
-
--- ProtocolManager.ProtocolConfigEvent = {}
-
--- function ProtocolManager:AddProtocolConfigEvent(id, func)
---     self.ProtocolConfigEvent[id] = func
--- end
-
--- function ProtocolManager:FireProtocolConfigEvent(id, ...)
---     local eventList = ...
---     self.ProtocolConfigEvent[id](eventList)
--- end
-
--- function ProtocolManager:RemoveProtocolConfigEvent(id)
---     local eventList = self.ProtocolConfigEvent[id]
---     if eventList == null then
---         return
---     end
---     self.ProtocolConfigEvent[id] = null
--- end
 
 return ProtocolManager

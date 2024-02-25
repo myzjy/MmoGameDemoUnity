@@ -15,6 +15,7 @@ function Error:new(errorCode, errorMessage, module)
     self.errorCode = errorCode       -- int
     self.errorMessage = errorMessage -- java.lang.String
     self.module = module             -- int
+    printDebug(self.errorMessage)
 
     return self
 end
