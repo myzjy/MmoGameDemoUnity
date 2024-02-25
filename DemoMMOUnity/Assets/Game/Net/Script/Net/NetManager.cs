@@ -110,17 +110,10 @@ namespace ZJYFrameWork.Net
             }
         }
 
-        public Dictionary<int, Action<string>> _protocolDict = new Dictionary<int, Action<string>>();
-
-        public void SendMessageEvent(string bytes, int protocolId, Action<string> protocolAction)
+        public void SendMessageEvent(string bytes)
         {
             try
             {
-                if (!_protocolDict.TryGetValue(protocolId, out var valueAct))
-                {
-                    _protocolDict.Add(protocolId, protocolAction);
-                }
-
                 ByteBuffer byteBuffer = ByteBuffer.ValueOf();
                 byteBuffer.WriteString(bytes);
                 var sendSuccess = netClient.Send(byteBuffer.ToBytes());
