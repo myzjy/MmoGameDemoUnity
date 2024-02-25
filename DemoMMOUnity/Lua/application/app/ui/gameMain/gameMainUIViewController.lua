@@ -1,5 +1,5 @@
 ---@class GameMainUIViewController:LuaUIObject
-local GameMainUIViewController = class("GameMainUIViewController", LuaUIObject)
+local GameMainUIViewController = class("GameMainUIViewController", LuaUIObject())
 ---@type GameMainUIViewController
 local instance = nil
 function GameMainUIViewController:ctor()

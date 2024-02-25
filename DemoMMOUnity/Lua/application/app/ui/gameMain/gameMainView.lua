@@ -1,5 +1,5 @@
 ---@class GameMainView:UIView
-GameMainView = class("GameMainView", UIView)
+GameMainView = class("GameMainView", UIView())
 GameMainConfig = {
     prefabName = "GameMainUIPanel",
     --- 当前会生成在那一层

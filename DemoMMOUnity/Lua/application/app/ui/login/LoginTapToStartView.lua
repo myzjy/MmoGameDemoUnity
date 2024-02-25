@@ -4,7 +4,7 @@
 --- DateTime: 2023/12/10 21:43
 ---
 ---@class LoginTapToStartView:UIBaseView
-local LoginTapToStartView = class("LoginTapToStartView", UIBaseView)
+local LoginTapToStartView = class("LoginTapToStartView", UIBaseView())
 
 function LoginTapToStartView:Build(view)
 	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or UnityEngine.UI.Button
