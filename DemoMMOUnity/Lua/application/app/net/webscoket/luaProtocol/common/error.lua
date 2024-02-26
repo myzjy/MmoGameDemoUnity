@@ -43,4 +43,9 @@ function Error:read(data)
     return Error:new(data.packet.errorCode, data.packet.errorMessage, data.packet.module)
 end
 
+function Error:readJsonStringData(jsonStr)
+    local jsonData = JSON.decode(jsonStr)
+    return Error:new(jsonData.errorCode, jsonData.errorMessage, jsonData.module)
+end
+
 return Error

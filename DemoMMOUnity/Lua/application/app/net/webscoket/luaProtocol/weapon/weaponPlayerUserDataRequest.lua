@@ -19,9 +19,7 @@ end
 function WeaponPlayerUserDataRequest:protocolId()
     return 1039
 end
-
----@param buffer ByteBuffer
----@param packet any|nil
+---@return string
 function WeaponPlayerUserDataRequest:write()
     local message = {
         protocolId = self:protocolId(),

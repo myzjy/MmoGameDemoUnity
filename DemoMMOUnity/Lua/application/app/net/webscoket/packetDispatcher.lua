@@ -9,13 +9,13 @@ local PacketDispatcher = {}
 PacketDispatcher.Event = {
 	OnConnect = "PacketDispatcher.Event.OnConnect",
 	OnOpen = "PacketDispatcher.Event.OnOpen",
-	OnDisConnect = "PacketDispatcher.Event.OnDisConnect",
+	OnDisConnect = "PacketDispatcher.Event.OnDisConnect"
 }
 -------------------------------- start Login   pack 包 --------------------------------------
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
+WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
-
 
 packetValue = nil
 PacketDispatcher.urlString = nil
@@ -43,7 +43,7 @@ end
 
 function PacketDispatcher:Init()
 	------------------------------------Inti event list-----------------------------------------
-	
+
 	self.msgMap = {}
 	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
 	self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
@@ -51,23 +51,20 @@ function PacketDispatcher:Init()
 	self.msgMap[LoginConst.Event.Pong] = function(data)
 		LoginNetController:AtPong(data)
 	end
+	self.msgMap[WeaponPlayerUserDataRequest:protocolId()] = handle(GameEvent.AcquireUserIdWeaponService, self)
 
 	-------------------------------- start Login   pack 包 --------------------------------------
 
 	LoginNetController:Init()
 	-------------------------------- end   Login    pack 包 --------------------------------------
 
-	-------------------------------- start Login   pack 包 --------------------------------------
+	-------------------------------- start ServerConfig   pack 包 --------------------------------------
 	ServerConfigNetController:RegisterEvent()
-	-------------------------------- end   Login    pack 包 --------------------------------------
+	-------------------------------- end   ServerConfig    pack 包 --------------------------------------
 
-
-	
-
-
-
-
-
+	-------------------------------- start weapon   pack 包 --------------------------------------
+	WeaponNetController:RegisterEvent()
+	-------------------------------- end   weapon    pack 包 --------------------------------------
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)

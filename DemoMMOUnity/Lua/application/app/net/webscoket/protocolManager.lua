@@ -53,7 +53,7 @@ EquipmentPrimaryConfigBaseData = require(
 --------------------------------------------Weapon------------------------------------------------------------
 WeaponPlayerUserDataRequest = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataRequest")
 WeaponPlayerUserDataResponse = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataResponse")
-
+WeaponPlayerUserDataStruct = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataStruct")
 --------------------------------------------end Weapon------------------------------------------------------------
 
 

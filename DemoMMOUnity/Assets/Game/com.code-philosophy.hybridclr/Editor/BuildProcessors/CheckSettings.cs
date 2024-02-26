@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HybridCLR.Editor.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace HybridCLR.Editor.BuildProcessors
 {
@@ -23,7 +25,7 @@ namespace HybridCLR.Editor.BuildProcessors
                 if (!string.IsNullOrEmpty(oldIl2cppPath))
                 {
                     Environment.SetEnvironmentVariable("UNITY_IL2CPP_PATH", "");
-                    Debug.Log($"[CheckSettings] 清除 UNITY_IL2CPP_PATH, 旧值为:'{oldIl2cppPath}'");
+                    Debug.Log($"[CheckSettings] clean process environment variable: UNITY_IL2CPP_PATH, old vlaue:'{oldIl2cppPath}'");
                 }
             }
             else
@@ -32,37 +34,37 @@ namespace HybridCLR.Editor.BuildProcessors
                 if (curIl2cppPath != SettingsUtil.LocalIl2CppDir)
                 {
                     Environment.SetEnvironmentVariable("UNITY_IL2CPP_PATH", SettingsUtil.LocalIl2CppDir);
-                    Debug.Log($"[CheckSettings] UNITY_IL2CPP_PATH 当前值为:'{curIl2cppPath}'，更新为:'{SettingsUtil.LocalIl2CppDir}'");
+                    Debug.Log($"[CheckSettings] UNITY_IL2CPP_PATH old value:'{curIl2cppPath}'， new value:'{SettingsUtil.LocalIl2CppDir}'");
                 }
             }
             if (!globalSettings.enable)
             {
                 return;
             }
-            if (PlayerSettings.gcIncremental)
-            {
-                Debug.LogError($"[CheckSettings] HybridCLR不支持增量式GC，已经自动将该选项关闭");
-                PlayerSettings.gcIncremental = false;
-            }
-            BuildTargetGroup buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            BuildTargetGroup buildTargetGroup = BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
             ScriptingImplementation curScriptingImplementation = PlayerSettings.GetScriptingBackend(buildTargetGroup);
             ScriptingImplementation targetScriptingImplementation = ScriptingImplementation.IL2CPP;
             if (curScriptingImplementation != targetScriptingImplementation)
             {
-                Debug.LogError($"[CheckSettings] 当前ScriptingBackend是:{curScriptingImplementation}，已经自动切换为:{targetScriptingImplementation}");
+                Debug.LogError($"[CheckSettings] current ScriptingBackend:{curScriptingImplementation}，have been switched to:{targetScriptingImplementation} automatically");
                 PlayerSettings.SetScriptingBackend(buildTargetGroup, targetScriptingImplementation);
             }
 
             var installer = new Installer.InstallerController();
             if (!installer.HasInstalledHybridCLR())
             {
-                throw new BuildFailedException($"你没有初始化HybridCLR，请通过菜单'HybridCLR/Installer'安装");
+                throw new BuildFailedException($"You have not initialized HybridCLR, please install it via menu 'HybridCLR/Installer'");
+            }
+
+            if (installer.PackageVersion != installer.InstalledLibil2cppVersion)
+            {
+                throw new BuildFailedException($"You must run `HybridCLR/Installer` after upgrading package");
             }
 
             HybridCLRSettings gs = SettingsUtil.HybridCLRSettings;
             if (((gs.hotUpdateAssemblies?.Length + gs.hotUpdateAssemblyDefinitions?.Length) ?? 0) == 0)
             {
-                Debug.LogWarning("[CheckSettings] HybridCLRSettings中未配置任何热更新模块");
+                Debug.LogWarning("[CheckSettings] No hot update modules configured in HybridCLRSettings");
             }
 
         }

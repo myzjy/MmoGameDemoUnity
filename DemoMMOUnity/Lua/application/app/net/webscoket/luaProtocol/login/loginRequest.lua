@@ -16,7 +16,7 @@ end
 ---@param account string 用户名
 ---@param password string 密码
 function LoginRequest:new(account, password)
-    printDebug("account:"..account..",password:"..password)
+    printDebug("account:" .. account .. ",password:" .. password)
     self.account = account   -- java.lang.String
     self.password = password -- java.lang.String
     return self
@@ -28,8 +28,6 @@ end
 
 ---@return string|nil
 function LoginRequest:write()
-    printDebug(self.account)
-    printDebug(self.password)
     local message = {
         protocolId = self:protocolId(),
         packet = { account = self.account, password = self.password }

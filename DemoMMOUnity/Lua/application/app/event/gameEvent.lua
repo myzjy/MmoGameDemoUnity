@@ -9,6 +9,8 @@ GameEvent.RegisterResonse = event("GameEvent.RegisterResonse")
 GameEvent.LoginTapToStartResponse = event("GameEvent.LoginTapToStartResponse")
 
 
+GameEvent.AcquireUserIdWeaponService = event("GameEvent.AcquireUserIdWeaponService")
+
 
 
 return GameEvent

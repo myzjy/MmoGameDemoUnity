@@ -142,11 +142,8 @@ function WeaponPlayerUserDataStruct:read(buffer)
     )
 end
 
-function WeaponPlayerUserDataStruct:readData(buffer)
-    local jsonString = buffer:readString()
-    ---字节读取器中存放字符
-    ---@type {id:number, weaponName:string, weaponType:integer, nowSkills:integer, weaponMainValue:integer, weaponMainValueType:integer, haveTimeAt:string, nowLv:integer, nowMaxLv:integer, nowLvExp:integer, nowLvMaxExp:integer, weaponIcons:string, weaponModelNameIcons:string}
-    local data = JSON.decode(jsonString)
+function WeaponPlayerUserDataStruct:readData(data)
+
     return WeaponPlayerUserDataStruct:new(
         data.id,
         data.weaponName,
