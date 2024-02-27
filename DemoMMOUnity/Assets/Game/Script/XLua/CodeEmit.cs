@@ -20,7 +20,7 @@ using LuaCSFunction = UniLua.CSharpFunctionDelegate;
 #else
 using LuaAPI = XLua.LuaDLL.Lua;
 using RealStatePtr = System.IntPtr;
-using LuaCSFunction = XLua.LuaDLL.lua_CSFunction;
+using LuaCSFunction = XLuaBase.lua_CSFunction;
 #endif
 
 namespace XLua

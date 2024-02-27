@@ -69,7 +69,17 @@ namespace ZJYFrameWorkEditor.XLuaEditor
                     Util.SafeDeleteFile(t);
                 }
             }
-
+            var luaFiles1 = Util.GetSpecifyFilesInFolder(destination, new string[] { ".lua" }, false);
+            if (luaFiles1 is { Length: > 0 })
+            {
+                foreach (var t in luaFiles1)
+                {
+                    if (t.Contains("unityLuaApi"))
+                    {
+                        Util.SafeDeleteFile(t);
+                    }
+                }
+            }
             var luaFiles = Util.GetSpecifyFilesInFolder(destination, new string[] { ".lua" }, false);
             if (luaFiles is { Length: > 0 })
             {

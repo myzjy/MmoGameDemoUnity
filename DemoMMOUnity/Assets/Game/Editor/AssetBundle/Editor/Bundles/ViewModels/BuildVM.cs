@@ -548,7 +548,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
             }
 
-            Debug.LogFormat("Build OK.Please check the folder:{0}", dir.FullName);
+            Debug.Log($"Build OK.Please check the folder:{dir.FullName}" );
 
             if (!this.CopyToStreaming)
                 return;

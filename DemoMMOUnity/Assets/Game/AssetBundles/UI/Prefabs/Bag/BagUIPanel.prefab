@@ -481,6 +481,7 @@ MonoBehaviour:
   - {fileID: 2459721064745501563}
   - {fileID: 7004130303009925548}
   - {fileID: 331711260740738923}
+  - {fileID: 6905380497722258030}
 --- !u!222 &7024013410826107049
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2528,7 +2529,7 @@ GameObject:
   - component: {fileID: 1451650806356990832}
   - component: {fileID: 8640425910230238677}
   - component: {fileID: 2388159584435873778}
-  - component: {fileID: 5811123403044396484}
+  - component: {fileID: 6905380497722258030}
   m_Layer: 5
   m_Name: bg
   m_TagString: Untagged
@@ -2594,7 +2595,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5811123403044396484
+--- !u!114 &6905380497722258030
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2606,8 +2607,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kodComs: []
-  maskIndex: 0
+  kodComs:
+  - UI_Serializable_Key: itemBgImage
+    UI_Serializable_Obj: {fileID: 2388159584435873778}
+    Path: equipmentItem/itemCanvasGroup/bg
+  maskIndex: 4
 --- !u!1 &4353113098021209709
 GameObject:
   m_ObjectHideFlags: 0
@@ -4946,7 +4950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: itemCanvasGroup_CanvasGroup
+  - UI_Serializable_Key: itemCanvasGroup
     UI_Serializable_Obj: {fileID: 5462375037337536188}
     Path: equipmentItem/itemCanvasGroup
   maskIndex: 2
@@ -5657,7 +5661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: itemCanvasGroup_numText
+  - UI_Serializable_Key: itemNumText
     UI_Serializable_Obj: {fileID: 743994690699335607}
     Path: equipmentItem/itemCanvasGroup/numText
   maskIndex: 4
@@ -6171,7 +6175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: itemCanvasGroup_icon
+  - UI_Serializable_Key: itemIcon
     UI_Serializable_Obj: {fileID: 8671362936701183060}
     Path: equipmentItem/itemCanvasGroup/icon
   maskIndex: 4

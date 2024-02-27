@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 // using UniRx;
-using UnityEditor;
-using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using XLua;
-using Object = UnityEngine.Object;
 
 namespace GameUtil
 {
