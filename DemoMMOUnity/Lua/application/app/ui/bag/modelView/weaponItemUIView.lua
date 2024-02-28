@@ -29,6 +29,18 @@ function WeaponItemUIView:Init(thisKeyObject, weaponData)
     self.clickBtn = self.uSKeyObject:GetObjTypeStr("clickBtn") or UnityEngine.UI.Button
     self:SetListener(self.clickBtn, self:clickEvent())
     self.itemCanvasGroup.alpha = 1
+    GetAssetBundleManager():LoadAssetAction("commonUI_Atlasa", function(t)
+        local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
+        
+        self.itemBgImage.sprite = spriteAtlas:GetSprite(weaponData)
+    end)
+    GetAssetBundleManager():LoadAssetAction("weaponIcon_atlas", function(t)
+        local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
+        self.itemIcon.sprite = spriteAtlas:GetSprite(weaponData.weaponIcons)
+    end)
+    --武器默认1
+    self.itemNumText.text = 1 .. ""
+
 end
 
 --- 点击 武器 item 事件

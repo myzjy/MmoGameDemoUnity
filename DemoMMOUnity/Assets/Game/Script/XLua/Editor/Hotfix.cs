@@ -1632,23 +1632,23 @@ namespace XLua
 namespace XLua
 {
 #if UNITY_2019_1_OR_NEWER
-    // class MyCustomBuildProcessor : IPostBuildPlayerScriptDLLs
-    // {
-    //     public int callbackOrder
-    //     {
-    //         get { return 0; }
-    //     }
-    //
-    //     // public void OnPostBuildPlayerScriptDLLs(BuildReport report)
-    //     // {
-    //     //     var path = report.files.Single(file =>
-    //     //     {
-    //     //         return file.path.EndsWith("Assembly-CSharp.dll");
-    //     //     }).path;
-    //     //     var dir = Path.GetDirectoryName(path);
-    //     //     Hotfix.HotfixInject(dir);
-    //     // }
-    // }
+    class MyCustomBuildProcessor : IPostBuildPlayerScriptDLLs
+    {
+        public int callbackOrder
+        {
+            get { return 0; }
+        }
+    
+        public void OnPostBuildPlayerScriptDLLs(BuildReport report)
+        {
+            var path = report.files.Single(file =>
+            {
+                return file.path.EndsWith("Assembly-CSharp.dll");
+            }).path;
+            var dir = Path.GetDirectoryName(path);
+            Hotfix.HotfixInject(dir);
+        }
+    }
 #endif
 
     public static class Hotfix
@@ -1718,8 +1718,11 @@ namespace XLua
             }
 
             var assembly_csharp_path = Path.Combine(assemblyDir, "Assembly-CSharp.dll");
+            Debug.Log($"assembly_csharp_path:{assembly_csharp_path}");
             var id_map_file_path = CSObjectWrapEditor.GeneratorConfig.common_path + "Resources/hotfix_id_map.lua.txt";
+            Debug.Log($"id_map_file_path:{id_map_file_path}");
             var hotfix_cfg_in_editor = CSObjectWrapEditor.GeneratorConfig.common_path + "hotfix_cfg_in_editor.data";
+            Debug.Log($"hotfix_cfg_in_editor:{hotfix_cfg_in_editor}");
 
             Dictionary<string, int> editor_cfg = new Dictionary<string, int>();
             Assembly editor_assembly = typeof(Hotfix).Assembly;
@@ -1742,7 +1745,8 @@ namespace XLua
             }
 
             var genCodeAssemblyPath = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    select assembly.GetType("XLua.DelegateBridge_Wrap")).FirstOrDefault(x => x != null).Module
+                    select assembly.GetType("XLua.DelegateBridge_Wrap")).FirstOrDefault(x => x != null)
+                ?.Module
                 .FullyQualifiedName;
 
             List<string> args = new List<string>()
