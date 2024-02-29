@@ -1632,23 +1632,23 @@ namespace XLua
 namespace XLua
 {
 #if UNITY_2019_1_OR_NEWER
-    class MyCustomBuildProcessor : IPostBuildPlayerScriptDLLs
-    {
-        public int callbackOrder
-        {
-            get { return 0; }
-        }
-    
-        public void OnPostBuildPlayerScriptDLLs(BuildReport report)
-        {
-            var path = report.files.Single(file =>
-            {
-                return file.path.EndsWith("Assembly-CSharp.dll");
-            }).path;
-            var dir = Path.GetDirectoryName(path);
-            Hotfix.HotfixInject(dir);
-        }
-    }
+    // class MyCustomBuildProcessor : IPostBuildPlayerScriptDLLs
+    // {
+    //     public int callbackOrder
+    //     {
+    //         get { return 0; }
+    //     }
+    //
+    //     public void OnPostBuildPlayerScriptDLLs(BuildReport report)
+    //     {
+    //         var path = report.files.Single(file =>
+    //         {
+    //             return file.path.EndsWith("Assembly-CSharp.dll");
+    //         }).path;
+    //         var dir = Path.GetDirectoryName(path);
+    //         Hotfix.HotfixInject(dir);
+    //     }
+    // }
 #endif
 
     public static class Hotfix

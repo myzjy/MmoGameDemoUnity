@@ -7,7 +7,7 @@
 --]]
 
 ---@type Messenger
-local Messenger = require("Common.Messenger")
+local Messenger = require("commonn.Messenger")
 ---@class UpdateManager
 local UpdateManager = class("UpdateManager")
 local UpdateMsgName = "Update"
