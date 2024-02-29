@@ -416,7 +416,7 @@ namespace XLua
 #endif
 		}
         
-		public byte[] __Gen_Delegate_Imp18(ref string p0)
+		public byte[] __Gen_Delegate_Imp18(object p0, ref string p1)
 		{
 #if THREAD_SAFE || HOTFIX_ENABLE
             lock (luaEnv.luaEnvLock)
@@ -424,12 +424,13 @@ namespace XLua
 #endif
                 RealStatePtr L = luaEnv.L;
                 int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                translator.PushAny(L, p0);
+                LuaAPI.lua_pushstring(L, p1);
                 
-                LuaAPI.lua_pushstring(L, p0);
+                PCall(L, 2, 2, errFunc);
                 
-                PCall(L, 1, 2, errFunc);
-                
-                p0 = LuaAPI.lua_tostring(L, errFunc + 2);
+                p1 = LuaAPI.lua_tostring(L, errFunc + 2);
                 
                 byte[] __gen_ret = LuaAPI.lua_tobytes(L, errFunc + 1);
                 LuaAPI.lua_settop(L, errFunc - 1);

@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using ZJYFrameWork.AssetBundles.AssetBundlesManager;
+using ZJYFrameWork.AssetBundles.Bundles;
+using ZJYFrameWork.Config;
 using ZJYFrameWork.Execution;
 using ZJYFrameWork.I18n;
 using ZJYFrameWork.Spring.Core;
@@ -29,6 +32,11 @@ namespace ZJYFrameWork.Procedure.Scene
             yield return new WaitUntil(() => CommonController.Instance != null);
             CommonController.Instance.isLuaInit = false;
 #if ENABLE_LUA_START
+            IBundle bundle = null;
+            bundle = SpringContext.GetBean<AssetBundleManager>()
+                .LoadXLuaAssetBundle(AppConfig.XLuaAssetBundleName, res => { bundle = res; });
+            yield return new WaitUntil(() => bundle != null);
+            SpringContext.GetBean<XLuaManager>().bundle = bundle;
             SpringContext.GetBean<XLuaManager>().InitLuaEnv();
 #endif
             yield return new WaitUntil(() => CommonController.Instance.isLuaInit);

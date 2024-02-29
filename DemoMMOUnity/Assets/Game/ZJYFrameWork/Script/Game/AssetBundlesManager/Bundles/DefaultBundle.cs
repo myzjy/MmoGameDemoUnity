@@ -198,6 +198,11 @@ namespace ZJYFrameWork.AssetBundles.Bundles
                 return name;
             }
 
+            if (name.EndsWith(".lua", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return name;
+            }
+
             return $"{ASSETS}{name}";
         }
 

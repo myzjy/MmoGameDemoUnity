@@ -21,24 +21,26 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(ZJYFrameWork.XLuaScript.XLuaManager);
-			Utils.BeginObjectRegister(type, L, translator, 0, 5, 0, 0);
+			Utils.BeginObjectRegister(type, L, translator, 0, 6, 1, 1);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "InitLuaEnv", _m_InitLuaEnv);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLuaEnv", _m_GetLuaEnv);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "CustomLoader", _m_CustomLoader);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "LoadOutsideFile", _m_LoadOutsideFile);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SafeDoString", _m_SafeDoString);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "OnDestroy", _m_OnDestroy);
 			
 			
-			
-			
+			Utils.RegisterFunc(L, Utils.GETTER_IDX, "bundle", _g_get_bundle);
+            
+			Utils.RegisterFunc(L, Utils.SETTER_IDX, "bundle", _s_set_bundle);
+            
 			
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 2, 0, 0);
-			Utils.RegisterFunc(L, Utils.CLS_IDX, "CustomLoader", _m_CustomLoader_xlua_st_);
-            
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 1, 0, 0);
+			
 			
             
 			
@@ -133,17 +135,21 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
-        static int _m_CustomLoader_xlua_st_(RealStatePtr L)
+        static int _m_CustomLoader(RealStatePtr L)
         {
 		    try {
             
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                ZJYFrameWork.XLuaScript.XLuaManager gen_to_be_invoked = (ZJYFrameWork.XLuaScript.XLuaManager)translator.FastGetCSObj(L, 1);
             
             
                 
                 {
-                    string _filePath = LuaAPI.lua_tostring(L, 1);
+                    string _filePath = LuaAPI.lua_tostring(L, 2);
                     
-                        var gen_ret = ZJYFrameWork.XLuaScript.XLuaManager.CustomLoader( ref _filePath );
+                        var gen_ret = gen_to_be_invoked.CustomLoader( ref _filePath );
                         LuaAPI.lua_pushstring(L, gen_ret);
                     LuaAPI.lua_pushstring(L, _filePath);
                         
@@ -260,7 +266,36 @@ namespace XLua.CSObjectWrap
         
         
         
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_bundle(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                ZJYFrameWork.XLuaScript.XLuaManager gen_to_be_invoked = (ZJYFrameWork.XLuaScript.XLuaManager)translator.FastGetCSObj(L, 1);
+                translator.PushAny(L, gen_to_be_invoked.bundle);
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 1;
+        }
         
+        
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _s_set_bundle(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                ZJYFrameWork.XLuaScript.XLuaManager gen_to_be_invoked = (ZJYFrameWork.XLuaScript.XLuaManager)translator.FastGetCSObj(L, 1);
+                gen_to_be_invoked.bundle = (ZJYFrameWork.AssetBundles.Bundles.IBundle)translator.GetObject(L, 2, typeof(ZJYFrameWork.AssetBundles.Bundles.IBundle));
+            
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 0;
+        }
         
 		
 		

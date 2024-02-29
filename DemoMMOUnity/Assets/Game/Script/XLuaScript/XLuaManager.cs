@@ -49,9 +49,11 @@ namespace ZJYFrameWork.XLuaScript
             // InitLuaEnv();
         }
 
+        public IBundle bundle = null;
 
         public void InitLuaEnv()
         {
+            Debug.Log("初始化 Init Lua Env function");
             luaEnv = new LuaEnv();
             if (luaEnv != null)
             {
@@ -64,7 +66,7 @@ namespace ZJYFrameWork.XLuaScript
                 UIComponentManager.eventUIAction =
                     luaEnv.Global.Get<Action<string, object>>("DispatchEvent");
                 PacketDispatcher.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnReceiveLineFromServer"));
-                SpringContext.GetBean<NetManager>(). LuaConnectAction =
+                SpringContext.GetBean<NetManager>().LuaConnectAction =
                     luaEnv.Global.Get<Action<string>>("OnConnectServer");
                 EventBus.InstallAsyncExecute(luaEnv.Global.Get<Action<string>>("SyncSubmit"));
                 DateTimeUtil.timeShowNum = luaEnv.Global.Get<Action<long>>("SetNowTime");
@@ -76,34 +78,39 @@ namespace ZJYFrameWork.XLuaScript
             return luaEnv;
         }
 
-        public static byte[] CustomLoader(ref string filePath)
+        public byte[] CustomLoader(ref string filePath)
         {
             string scriptPath = string.Empty;
-            filePath = filePath.Replace(".", "/") + ".lua";
+            var luaFilePath = filePath.Replace(".", "/") + ".lua";
 #if UNITY_EDITOR
             if (AssetBundleConfig.IsEditorMode)
             {
                 // string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
                 // scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
                 string source =
-                    Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{filePath}");
+                    Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{luaFilePath}");
                 DirectoryInfo dirInfo = new DirectoryInfo(source);
                 scriptPath = dirInfo.FullName;
                 var textLua = Util.GetFileBytes(scriptPath);
                 return textLua;
             }
 #endif
-            IBundle bundle;
-            bundle = SpringContext.GetBean<AssetBundleManager>()
-                .LoadXLuaAssetBundle(AppConfig.XLuaAssetBundleName, res => { bundle = res; });
-            Debug.Log($"filePath:{filePath},{bundle}");
+            var files = filePath.Split(".");
+            var luaFile = files[^1];
+            // IBundle bundle;
+            // bundle = SpringContext.GetBean<AssetBundleManager>()
+            //     .LoadXLuaAssetBundle(AppConfig.XLuaAssetBundleName, res => { bundle = res; });
+            luaFile += ".lua";
+            Debug.Log($"filePath:{luaFile},{bundle}");
+            var list = bundle.LoadAllAssets<Object>();
 
-            var luaAsset = bundle.LoadAsset<TextAsset>(filePath);
-            return luaAsset.bytes;
+            var luaAsset = bundle.LoadAsset<Object>(luaFile);
+            return (luaAsset as TextAsset)?.bytes;
         }
 
         private void LoadScript(string scriptName)
         {
+            Debug.Log(scriptName);
             SafeDoString($"require('{scriptName}')");
         }
 
@@ -199,8 +206,7 @@ namespace ZJYFrameWork.XLuaScript
             typeof(Action<float, float>),
             typeof(Action<int>),
             typeof(Action<string>),
-            typeof(Action<string,object>),
-
+            typeof(Action<string, object>),
         };
 #endif
     }
