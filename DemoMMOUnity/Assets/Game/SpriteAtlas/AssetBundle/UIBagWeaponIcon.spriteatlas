@@ -1,0 +1,147 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UIBagWeaponIcon
+  serializedVersion: 2
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 0ff772de0121d234b99a0e8a7c061f8f, type: 3}
+    - {fileID: 2800000, guid: 3eed889dbae88a54ea084f2c1af84eca, type: 3}
+    - {fileID: 2800000, guid: ee26a8ac3d2c6d84fa8534b195f2d756, type: 3}
+    - {fileID: 2800000, guid: ad34d44faf7a39447aa2ed0c6a504a61, type: 3}
+    - {fileID: 2800000, guid: 5db84661efcfc744895c9fd6226e5c90, type: 3}
+    - {fileID: 2800000, guid: 3357f027123cf4949a691dbb628457be, type: 3}
+    - {fileID: 2800000, guid: 3a0bdfa950ef78c40abba94fbbc9eb44, type: 3}
+    - {fileID: 2800000, guid: d4b8ae9b629e4324abd91dae1ae1b2d1, type: 3}
+    - {fileID: 2800000, guid: 24ca6df641360bc4c86255b3fa957fe0, type: 3}
+    - {fileID: 2800000, guid: b4ad51fdb4442d8439647b4ff3eba660, type: 3}
+    - {fileID: 2800000, guid: 217b6929dcc5d284b99a899f816d8560, type: 3}
+    - {fileID: 2800000, guid: bde013a953f932846a663bc7a6c642a6, type: 3}
+    - {fileID: 2800000, guid: 291d22a334061ac4081b6123097b5d49, type: 3}
+    - {fileID: 2800000, guid: eb838c45771a48245be8928f6ed1485e, type: 3}
+    - {fileID: 2800000, guid: 85e855783e2a47347aba874c19aaa78a, type: 3}
+    - {fileID: 2800000, guid: 8a5a8e093c9fccc4c832f036c0137144, type: 3}
+    - {fileID: 2800000, guid: e2c6dca97908631449317ef591cfb159, type: 3}
+    - {fileID: 2800000, guid: 8683904d8bea5ab4ab0cef2c9b9f36c1, type: 3}
+    - {fileID: 2800000, guid: 2d859b950759e3947bc3deb8db3cf6ba, type: 3}
+    - {fileID: 2800000, guid: acaf4c7f82d671f43877d2667390f53c, type: 3}
+    - {fileID: 2800000, guid: b1672b87e7c266a409851b2c6f08c02a, type: 3}
+    - {fileID: 2800000, guid: 0bcd123698d5f524392f2ba2605ae3a9, type: 3}
+    - {fileID: 2800000, guid: 67a2c9e061996684b8b62ac9a4205477, type: 3}
+    - {fileID: 2800000, guid: deedcb0ff1a67ac46a27166f63f3c08b, type: 3}
+    - {fileID: 2800000, guid: fd63b08ef61846b47a30c8d3006186cc, type: 3}
+    - {fileID: 2800000, guid: 5f6d40b2bfbd56c4481d2425908c09cf, type: 3}
+    - {fileID: 2800000, guid: f848e7376c0f79442b8be49495688ca6, type: 3}
+    - {fileID: 2800000, guid: db52d6f4cc9304d40aa999e720821522, type: 3}
+    - {fileID: 2800000, guid: 5d0a1da756e77344ab3b322233fdaad4, type: 3}
+    - {fileID: 2800000, guid: aaa16ca5db35cd14daa309b32379712b, type: 3}
+    - {fileID: 2800000, guid: 3a617caf5e874ae449fa79ac92b38b89, type: 3}
+    - {fileID: 2800000, guid: 5c92fff030cf24f44840c7efd41cbe81, type: 3}
+    - {fileID: 2800000, guid: 001e81e84eb9eea41944fdedde57e14e, type: 3}
+    - {fileID: 2800000, guid: e875660ffa7eb7e46a13ca2e93325299, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 67a2c9e061996684b8b62ac9a4205477, type: 3}
+  - {fileID: 21300000, guid: 5c92fff030cf24f44840c7efd41cbe81, type: 3}
+  - {fileID: 21300000, guid: 5db84661efcfc744895c9fd6226e5c90, type: 3}
+  - {fileID: 21300000, guid: 5f6d40b2bfbd56c4481d2425908c09cf, type: 3}
+  - {fileID: 21300000, guid: 291d22a334061ac4081b6123097b5d49, type: 3}
+  - {fileID: 21300000, guid: db52d6f4cc9304d40aa999e720821522, type: 3}
+  - {fileID: 21300000, guid: eb838c45771a48245be8928f6ed1485e, type: 3}
+  - {fileID: 21300000, guid: 2d859b950759e3947bc3deb8db3cf6ba, type: 3}
+  - {fileID: 21300000, guid: aaa16ca5db35cd14daa309b32379712b, type: 3}
+  - {fileID: 21300000, guid: 0bcd123698d5f524392f2ba2605ae3a9, type: 3}
+  - {fileID: 21300000, guid: 24ca6df641360bc4c86255b3fa957fe0, type: 3}
+  - {fileID: 21300000, guid: 3357f027123cf4949a691dbb628457be, type: 3}
+  - {fileID: 21300000, guid: f848e7376c0f79442b8be49495688ca6, type: 3}
+  - {fileID: 21300000, guid: b1672b87e7c266a409851b2c6f08c02a, type: 3}
+  - {fileID: 21300000, guid: 5d0a1da756e77344ab3b322233fdaad4, type: 3}
+  - {fileID: 21300000, guid: 85e855783e2a47347aba874c19aaa78a, type: 3}
+  - {fileID: 21300000, guid: 001e81e84eb9eea41944fdedde57e14e, type: 3}
+  - {fileID: 21300000, guid: 8a5a8e093c9fccc4c832f036c0137144, type: 3}
+  - {fileID: 21300000, guid: 217b6929dcc5d284b99a899f816d8560, type: 3}
+  - {fileID: 21300000, guid: bde013a953f932846a663bc7a6c642a6, type: 3}
+  - {fileID: 21300000, guid: e2c6dca97908631449317ef591cfb159, type: 3}
+  - {fileID: 21300000, guid: 3a0bdfa950ef78c40abba94fbbc9eb44, type: 3}
+  - {fileID: 21300000, guid: d4b8ae9b629e4324abd91dae1ae1b2d1, type: 3}
+  - {fileID: 21300000, guid: ee26a8ac3d2c6d84fa8534b195f2d756, type: 3}
+  - {fileID: 21300000, guid: 8683904d8bea5ab4ab0cef2c9b9f36c1, type: 3}
+  - {fileID: 21300000, guid: 3eed889dbae88a54ea084f2c1af84eca, type: 3}
+  - {fileID: 21300000, guid: b4ad51fdb4442d8439647b4ff3eba660, type: 3}
+  - {fileID: 21300000, guid: fd63b08ef61846b47a30c8d3006186cc, type: 3}
+  - {fileID: 21300000, guid: 0ff772de0121d234b99a0e8a7c061f8f, type: 3}
+  - {fileID: 21300000, guid: e875660ffa7eb7e46a13ca2e93325299, type: 3}
+  - {fileID: 21300000, guid: deedcb0ff1a67ac46a27166f63f3c08b, type: 3}
+  - {fileID: 21300000, guid: ad34d44faf7a39447aa2ed0c6a504a61, type: 3}
+  - {fileID: 21300000, guid: acaf4c7f82d671f43877d2667390f53c, type: 3}
+  - {fileID: 21300000, guid: 3a617caf5e874ae449fa79ac92b38b89, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - UI_BagIcon_Sword_Exotic
+  - UI_BagIcon_Sword_Traveler
+  - UI_BagIcon_Catalyst_Fossil
+  - UI_BagIcon_Sword_Mitsurugi
+  - UI_BagIcon_Catalyst_Pulpfic
+  - UI_BagIcon_Sword_Rockkiller
+  - UI_BagIcon_Catalyst_Resurrection
+  - UI_BagIcon_Sword_Blunt
+  - UI_BagIcon_Sword_Steel
+  - UI_BagIcon_Sword_Dvalin
+  - UI_BagIcon_Catalyst_Lightnov
+  - UI_BagIcon_Catalyst_Fourwinds
+  - UI_BagIcon_Sword_Proto
+  - UI_BagIcon_Sword_Dawn
+  - UI_BagIcon_Sword_Sashimi
+  - UI_BagIcon_Catalyst_Theocrat
+  - UI_BagIcon_Sword_Troupe
+  - UI_BagIcon_Catalyst_Troupe
+  - UI_BagIcon_Catalyst_Pocket
+  - UI_BagIcon_Catalyst_Proto
+  - UI_BagIcon_Catalyst_Zephyrus
+  - UI_BagIcon_Catalyst_Intro
+  - UI_BagIcon_Catalyst_Jade
+  - UI_BagIcon_Catalyst_Dvalin
+  - UI_BagIcon_Sword_Blackrock
+  - UI_BagIcon_Catalyst_Blackrock
+  - UI_BagIcon_Catalyst_Phoney
+  - UI_BagIcon_Sword_Fossil
+  - UI_BagIcon_Catalyst_Apprentice
+  - UI_BagIcon_Sword_Zephyrus
+  - UI_BagIcon_Sword_Falcon
+  - UI_BagIcon_Catalyst_Exotic
+  - UI_BagIcon_Sword_Blunt_Awaken
+  - UI_BagIcon_Sword_Theocrat
+  m_RenderDataMap: {}
+  m_Tag: UIBagWeaponIcon
+  m_IsVariant: 0
+  m_IsPlaceholder: 0

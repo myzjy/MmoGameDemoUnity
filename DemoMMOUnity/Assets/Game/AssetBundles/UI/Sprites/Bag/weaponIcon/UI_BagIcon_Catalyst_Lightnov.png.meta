@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8a5e9535da996f94c86651fe5a3df2ee
+guid: 24ca6df641360bc4c86255b3fa957fe0
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -20,7 +20,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
-  isReadable: 1
+  isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -143,5 +143,5 @@ TextureImporter:
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: uibtnframesprites_spriteatlas.assetbundle
+  assetBundleName: uibagweaponicon_spriteatlas.assetbundle
   assetBundleVariant: 

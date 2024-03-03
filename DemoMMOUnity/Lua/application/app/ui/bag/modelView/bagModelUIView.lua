@@ -9,7 +9,8 @@ BagUIConfig = {
         openbaguipanel = "openbaguipanel",
         --- 关闭 游戏主界面
         closebaguipanel = "closebaguipanel",
-    }
+    },
+    weaponIconAtlasName="uibagweaponicon_spriteatlas"
 }
 ---武器相关 type
 local WeaponSortType

@@ -33,12 +33,14 @@ function WeaponItemUIView:Init(thisKeyObject, weaponData)
     --     local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
     --     self.itemBgImage.sprite = spriteAtlas:GetSprite(weaponData)
     -- end)
-    GetAssetBundleManager():LoadAssetAction("weaponIcon_atlas", function(t)
+    --- 设置icon
+    GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
         local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
         self.itemIcon.sprite = spriteAtlas:GetSprite(weaponData.weaponIcons)
     end)
     --武器默认1
     self.itemNumText.text = string.format("%d", 1)
+
 end
 
 --- 点击 武器 item 事件
