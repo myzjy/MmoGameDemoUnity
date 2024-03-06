@@ -1,6 +1,6 @@
 local BagUIClickMsgVP = class("BagUIClickMsgVP")
 function BagUIClickMsgVP:ctor()
-    printDebug("")
+    printDebug("init commopent")
     self:init()
 end
 
