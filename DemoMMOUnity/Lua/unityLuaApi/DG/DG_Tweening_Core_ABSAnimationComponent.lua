@@ -16,8 +16,6 @@
 ---@field public onTweenCreated UnityEngine.Events.UnityEvent
 ---@field public onRewind UnityEngine.Events.UnityEvent
 ---@field public tween DG.Tweening.Tween
-
----@type DG.Tweening.Core.ABSAnimationComponent
 DG.Tweening.Core.ABSAnimationComponent = { }
 function DG.Tweening.Core.ABSAnimationComponent:DOPlay() end
 function DG.Tweening.Core.ABSAnimationComponent:DOPlayBackwards() end

@@ -9,8 +9,6 @@
 ---@field public flipX boolean
 ---@field public flipY boolean
 ---@field public spriteSortPoint number
-
----@type UnityEngine.SpriteRenderer
 UnityEngine.SpriteRenderer = { }
 ---@return UnityEngine.SpriteRenderer
 function UnityEngine.SpriteRenderer.New() end

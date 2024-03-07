@@ -18,8 +18,6 @@
 ---@field public rootCanvas UnityEngine.Canvas
 ---@field public worldCamera UnityEngine.Camera
 ---@field public normalizedSortingGridSize number
-
----@type UnityEngine.Canvas
 UnityEngine.Canvas = { }
 ---@return UnityEngine.Canvas
 function UnityEngine.Canvas.New() end

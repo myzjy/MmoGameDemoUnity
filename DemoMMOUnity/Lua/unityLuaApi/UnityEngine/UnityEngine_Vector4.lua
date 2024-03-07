@@ -12,8 +12,6 @@
 ---@field public one UnityEngine.Vector4
 ---@field public positiveInfinity UnityEngine.Vector4
 ---@field public negativeInfinity UnityEngine.Vector4
-
----@type UnityEngine.Vector4
 UnityEngine.Vector4 = { }
 ---@overload fun(x:number, y:number): UnityEngine.Vector4
 ---@overload fun(x:number, y:number, z:number): UnityEngine.Vector4

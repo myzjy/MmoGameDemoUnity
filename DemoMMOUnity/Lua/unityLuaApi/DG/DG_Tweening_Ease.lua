@@ -38,6 +38,4 @@
 ---@field public InOutFlash number
 ---@field public INTERNAL_Zero number
 ---@field public INTERNAL_Custom number
-
----@type DG.Tweening.Ease
 DG.Tweening.Ease = { }

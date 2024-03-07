@@ -17,6 +17,4 @@
 ---@field public tvOS number
 ---@field public Switch number
 ---@field public Lumin number
-
----@type UnityEngine.RuntimePlatform
 UnityEngine.RuntimePlatform = { }

@@ -3,8 +3,6 @@
 ---@field public interactable boolean
 ---@field public blocksRaycasts boolean
 ---@field public ignoreParentGroups boolean
-
----@type UnityEngine.CanvasGroup
 UnityEngine.CanvasGroup = { }
 ---@return UnityEngine.CanvasGroup
 function UnityEngine.CanvasGroup.New() end

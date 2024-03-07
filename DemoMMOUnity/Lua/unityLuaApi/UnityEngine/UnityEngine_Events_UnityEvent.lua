@@ -1,6 +1,4 @@
 ---@class UnityEngine.Events.UnityEvent : UnityEngine.Events.UnityEventBase
-
----@type UnityEngine.Events.UnityEvent
 UnityEngine.Events.UnityEvent = { }
 ---@return UnityEngine.Events.UnityEvent
 function UnityEngine.Events.UnityEvent.New() end

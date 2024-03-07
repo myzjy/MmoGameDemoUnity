@@ -14,8 +14,6 @@
 ---@field public vertices UnityEngine.Vector2[]
 ---@field public triangles System.UInt16[]
 ---@field public uv UnityEngine.Vector2[]
-
----@type UnityEngine.Sprite
 UnityEngine.Sprite = { }
 ---@return number
 function UnityEngine.Sprite:GetPhysicsShapeCount() end

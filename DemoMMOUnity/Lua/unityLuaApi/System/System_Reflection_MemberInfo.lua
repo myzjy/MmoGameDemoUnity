@@ -6,8 +6,6 @@
 ---@field public CustomAttributes System.Collections.Generic.IEnumerable_System.Reflection.CustomAttributeData
 ---@field public MetadataToken number
 ---@field public Module System.Reflection.Module
-
----@type System.Reflection.MemberInfo
 System.Reflection.MemberInfo = { }
 ---@overload fun(inherit:boolean): System.Object[]
 ---@return System.Object[]

@@ -1,6 +1,4 @@
 ---@class UnityEngine.Events.UnityEventBase
-
----@type UnityEngine.Events.UnityEventBase
 UnityEngine.Events.UnityEventBase = { }
 ---@return number
 function UnityEngine.Events.UnityEventBase:GetPersistentEventCount() end

@@ -4,6 +4,4 @@
 ---@field public Full3D number
 ---@field public TopDown2D number
 ---@field public Sidescroller2D number
-
----@type DG.Tweening.PathMode
 DG.Tweening.PathMode = { }

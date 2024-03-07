@@ -1,6 +1,4 @@
 ---@class DG.Tweening.Tweener : DG.Tweening.Tween
-
----@type DG.Tweening.Tweener
 DG.Tweening.Tweener = { }
 ---@return DG.Tweening.Tweener
 ---@param newStartValue System.Object

@@ -8,8 +8,6 @@
 ---@field public value number
 ---@field public normalizedValue number
 ---@field public onValueChanged UnityEngine.UI.Slider.SliderEvent
-
----@type UnityEngine.UI.Slider
 UnityEngine.UI.Slider = { }
 ---@param executing number
 function UnityEngine.UI.Slider:Rebuild(executing) end

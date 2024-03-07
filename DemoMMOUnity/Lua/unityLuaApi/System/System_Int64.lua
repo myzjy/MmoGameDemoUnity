@@ -1,8 +1,6 @@
 ---@class System.Int64 : System.ValueType
 ---@field public MaxValue int64
 ---@field public MinValue int64
-
----@type System.Int64
 System.Int64 = { }
 ---@overload fun(value:System.Object): number
 ---@return number

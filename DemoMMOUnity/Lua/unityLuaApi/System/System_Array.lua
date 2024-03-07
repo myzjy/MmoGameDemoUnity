@@ -6,8 +6,6 @@
 ---@field public SyncRoot System.Object
 ---@field public Length number
 ---@field public Rank number
-
----@type System.Array
 System.Array = { }
 ---@overload fun(elementType:string, lengths:System.Int64[]): System.Array
 ---@overload fun(elementType:string, length:number): System.Array

@@ -16,8 +16,6 @@
 ---@field public defaultEaseOvershootOrAmplitude number
 ---@field public defaultEasePeriod number
 ---@field public logBehaviour number
-
----@type DG.Tweening.DOTween
 DG.Tweening.DOTween = { }
 ---@return DG.Tweening.DOTween
 function DG.Tweening.DOTween.New() end

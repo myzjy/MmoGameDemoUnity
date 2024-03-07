@@ -154,9 +154,6 @@ function LoginNetController:LoginByAccount(account, password)
     end
     local packet = packetData:new(account, password)
 
-    ---@param data Error
-
-
     PacketDispatcher:AddProtocolConfigEvent(
         Error:protocolId(), function(data)
             printDebug(data.errorMessage)

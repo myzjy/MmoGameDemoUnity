@@ -1,6 +1,4 @@
 ---@class System.Enum : System.ValueType
-
----@type System.Enum
 System.Enum = { }
 ---@overload fun(enumType:string, value:string): System.Object
 ---@return System.Object

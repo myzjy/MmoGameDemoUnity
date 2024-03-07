@@ -1,8 +1,6 @@
 ---@class System.Collections.Generic.HashSet_System.Int32
 ---@field public Count number
 ---@field public Comparer System.Collections.Generic.IEqualityComparer_System.Int32
-
----@type System.Collections.Generic.HashSet_System.Int32
 System.Collections.Generic.HashSet_System.Int32 = { }
 ---@overload fun(): System.Collections.Generic.HashSet_System.Int32
 ---@overload fun(comparer:System.Collections.Generic.IEqualityComparer_System.Int32): System.Collections.Generic.HashSet_System.Int32

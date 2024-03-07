@@ -2,8 +2,6 @@
 ---@field public unityLogger UnityEngine.ILogger
 ---@field public developerConsoleVisible boolean
 ---@field public isDebugBuild boolean
-
----@type UnityEngine.Debug
 UnityEngine.Debug = { }
 ---@return UnityEngine.Debug
 function UnityEngine.Debug.New() end

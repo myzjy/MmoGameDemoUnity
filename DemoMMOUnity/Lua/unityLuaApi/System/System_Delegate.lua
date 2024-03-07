@@ -1,8 +1,6 @@
 ---@class System.Delegate
 ---@field public Method System.Reflection.MethodInfo
 ---@field public Target System.Object
-
----@type System.Delegate
 System.Delegate = { }
 ---@overload fun(t:string, method:System.Reflection.MethodInfo): System.Delegate
 ---@overload fun(t:string, firstArgument:System.Object, method:System.Reflection.MethodInfo): System.Delegate

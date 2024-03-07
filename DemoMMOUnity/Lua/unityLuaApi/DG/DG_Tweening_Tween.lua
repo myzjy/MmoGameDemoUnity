@@ -14,7 +14,5 @@
 ---@field public easeOvershootOrAmplitude number
 ---@field public easePeriod number
 ---@field public fullPosition number
-
----@type DG.Tweening.Tween
 DG.Tweening.Tween = { }
 return DG.Tweening.Tween

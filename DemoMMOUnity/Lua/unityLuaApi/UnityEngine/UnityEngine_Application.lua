@@ -29,8 +29,6 @@
 ---@field public genuine boolean
 ---@field public genuineCheckAvailable boolean
 ---@field public isEditor boolean
-
----@type UnityEngine.Application
 UnityEngine.Application = { }
 ---@return UnityEngine.Application
 function UnityEngine.Application.New() end

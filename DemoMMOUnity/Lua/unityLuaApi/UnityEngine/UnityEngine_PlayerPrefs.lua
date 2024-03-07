@@ -1,6 +1,4 @@
 ---@class UnityEngine.PlayerPrefs
-
----@type UnityEngine.PlayerPrefs
 UnityEngine.PlayerPrefs = { }
 ---@return UnityEngine.PlayerPrefs
 function UnityEngine.PlayerPrefs.New() end

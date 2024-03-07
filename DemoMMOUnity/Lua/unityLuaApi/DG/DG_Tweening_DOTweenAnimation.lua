@@ -31,8 +31,6 @@
 ---@field public optionalRotationMode number
 ---@field public optionalScrambleMode number
 ---@field public optionalString string
-
----@type DG.Tweening.DOTweenAnimation
 DG.Tweening.DOTweenAnimation = { }
 ---@return DG.Tweening.DOTweenAnimation
 function DG.Tweening.DOTweenAnimation.New() end

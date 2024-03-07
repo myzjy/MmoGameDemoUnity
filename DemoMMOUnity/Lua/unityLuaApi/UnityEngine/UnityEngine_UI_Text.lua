@@ -23,11 +23,9 @@
 ---@field public preferredHeight number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.Text
 UnityEngine.UI.Text = { }
 function UnityEngine.UI.Text:FontTextureChanged() end
----@return UnityEngine.TextGenerationSettings
+---@return UnityEngine.TextCore.Text.TextGenerationSettings
 ---@param extents UnityEngine.Vector2
 function UnityEngine.UI.Text:GetGenerationSettings(extents) end
 ---@return UnityEngine.Vector2

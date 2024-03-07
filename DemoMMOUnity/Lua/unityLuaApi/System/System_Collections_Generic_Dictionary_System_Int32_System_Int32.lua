@@ -4,8 +4,6 @@
 ---@field public Keys System.Collections.Generic.Dictionary_System.Int32_System.Int32.KeyCollection
 ---@field public Values System.Collections.Generic.Dictionary_System.Int32_System.Int32.ValueCollection
 ---@field public Item number
-
----@type System.Collections.Generic.Dictionary_System.Int32_System.Int32
 System.Collections.Generic.Dictionary_System.Int32_System.Int32 = { }
 ---@overload fun(): System.Collections.Generic.Dictionary_System.Int32_System.Int32
 ---@overload fun(capacity:number): System.Collections.Generic.Dictionary_System.Int32_System.Int32

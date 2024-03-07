@@ -3,6 +3,4 @@
 ---@field public Restart number
 ---@field public Yoyo number
 ---@field public Incremental number
-
----@type DG.Tweening.LoopType
 DG.Tweening.LoopType = { }

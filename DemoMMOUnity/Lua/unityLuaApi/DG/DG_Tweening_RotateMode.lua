@@ -4,6 +4,4 @@
 ---@field public FastBeyond360 number
 ---@field public WorldAxisAdd number
 ---@field public LocalAxisAdd number
-
----@type DG.Tweening.RotateMode
 DG.Tweening.RotateMode = { }

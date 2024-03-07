@@ -1,8 +1,6 @@
 ---@class UnityEngine.Object
 ---@field public name string
 ---@field public hideFlags number
-
----@type UnityEngine.Object
 UnityEngine.Object = { }
 ---@return UnityEngine.Object
 function UnityEngine.Object.New() end

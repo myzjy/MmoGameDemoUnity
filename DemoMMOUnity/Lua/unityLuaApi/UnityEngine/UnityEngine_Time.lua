@@ -17,8 +17,6 @@
 ---@field public realtimeSinceStartup number
 ---@field public captureFramerate number
 ---@field public inFixedTimeStep boolean
-
----@type UnityEngine.Time
 UnityEngine.Time = { }
 ---@return UnityEngine.Time
 function UnityEngine.Time.New() end

@@ -7,8 +7,6 @@
 ---@field public animatePhysics boolean
 ---@field public cullingType number
 ---@field public localBounds UnityEngine.Bounds
-
----@type UnityEngine.Animation
 UnityEngine.Animation = { }
 ---@return UnityEngine.Animation
 function UnityEngine.Animation.New() end
