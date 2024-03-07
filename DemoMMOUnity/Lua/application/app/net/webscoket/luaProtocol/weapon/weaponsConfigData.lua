@@ -44,5 +44,55 @@ function WeaponsConfigData:new(id, weaponName, weaponType, weaponSkills, weaponI
     self.maxLv = maxLv
     return self;
 end
+function WeaponsConfigData:protocolId()
+    return 214
+end
 
+---@param buffer ByteBuffer
+---@param packet any|nil
+function WeaponsConfigData:write(buffer, packet)
+    if packet == nil then
+        return
+    end
+    local data = packet or WeaponsConfigData
+    local message = {
+        protocolId = data.protocolId(),
+        packet = data
+    }
+    local jsonStr = JSON.encode(message)
+    buffer:writeString(jsonStr)
+end
+
+function WeaponsConfigData:read(buffer)
+    local jsonString = buffer:readString()
+    ---字节读取器中存放字符
+    ---@type {protocolId:number,packet:{}}
+    local data = JSON.decode(jsonString)
+    return WeaponsConfigData:new(
+        data.packet.id,
+        data.packet.weaponName,
+        data.packet.weaponType,
+        data.packet.nowSkills,
+        data.packet.weaponMainValue,
+        data.packet.weaponMainValueType,
+        data.packet.haveTimeAt,
+        data.packet.nowLv,
+        data.packet.nowMaxLv
+    )
+end
+
+function WeaponsConfigData:readData(data)
+
+    return WeaponsConfigData:new(
+        data.id,
+        data.weaponName,
+        data.weaponType,
+        data.nowSkills,
+        data.weaponMainValue,
+        data.weaponMainValueType,
+        data.haveTimeAt,
+        data.nowLv,
+        data.nowMaxLv
+    )
+end
 return WeaponsConfigData
