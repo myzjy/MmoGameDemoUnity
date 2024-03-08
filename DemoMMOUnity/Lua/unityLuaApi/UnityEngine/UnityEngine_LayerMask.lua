@@ -1,7 +1,5 @@
 ---@class UnityEngine.LayerMask : System.ValueType
 ---@field public value number
-
----@type UnityEngine.LayerMask
 UnityEngine.LayerMask = { }
 ---@overload fun(mask:UnityEngine.LayerMask): number
 ---@return number

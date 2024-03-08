@@ -326,6 +326,4 @@
 ---@field public Joystick8Button17 number
 ---@field public Joystick8Button18 number
 ---@field public Joystick8Button19 number
-
----@type UnityEngine.KeyCode
 UnityEngine.KeyCode = { }

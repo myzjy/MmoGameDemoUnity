@@ -5,6 +5,4 @@
 ---@field public SolidColor number
 ---@field public Depth number
 ---@field public Nothing number
-
----@type UnityEngine.CameraClearFlags
 UnityEngine.CameraClearFlags = { }

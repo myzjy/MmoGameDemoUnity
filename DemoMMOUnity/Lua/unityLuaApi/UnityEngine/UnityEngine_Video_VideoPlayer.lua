@@ -44,7 +44,6 @@
 ---@field public canSetDirectAudioVolume boolean
 ---@field public sendFrameReadyEvents boolean
 
----@type UnityEngine.Video.VideoPlayer
 UnityEngine.Video.VideoPlayer = { }
 ---@return UnityEngine.Video.VideoPlayer
 function UnityEngine.Video.VideoPlayer.New() end

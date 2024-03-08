@@ -62,8 +62,6 @@
 ---@field public allCamerasCount number
 ---@field public allCameras UnityEngine.Camera[]
 ---@field public commandBufferCount number
-
----@type UnityEngine.Camera
 UnityEngine.Camera = { }
 ---@return UnityEngine.Camera
 function UnityEngine.Camera.New() end

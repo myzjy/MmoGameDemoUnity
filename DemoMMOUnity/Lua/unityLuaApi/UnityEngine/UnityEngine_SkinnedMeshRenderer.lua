@@ -7,8 +7,6 @@
 ---@field public sharedMesh UnityEngine.Mesh
 ---@field public skinnedMotionVectors boolean
 ---@field public localBounds UnityEngine.Bounds
-
----@type UnityEngine.SkinnedMeshRenderer
 UnityEngine.SkinnedMeshRenderer = { }
 ---@return UnityEngine.SkinnedMeshRenderer
 function UnityEngine.SkinnedMeshRenderer.New() end

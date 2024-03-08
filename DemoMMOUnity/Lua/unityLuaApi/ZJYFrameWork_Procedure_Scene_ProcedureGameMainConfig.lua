@@ -1,6 +1,3 @@
----@class CS.ZJYFrameWork.Procedure.Scene.ProcedureGameMainConfig
+---@class ZJYFrameWork.Procedure.Scene.ProcedureGameMainConfig
 ---@field public GameMainEnter string
-
-
----@type CS.ZJYFrameWork.Procedure.Scene.ProcedureGameMainConfig
-CS.ZJYFrameWork.Procedure.Scene.ProcedureGameMainConfig={}
+ZJYFrameWork.Procedure.Scene.ProcedureGameMainConfig={}

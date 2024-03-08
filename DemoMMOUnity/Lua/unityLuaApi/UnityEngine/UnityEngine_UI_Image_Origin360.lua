@@ -4,6 +4,4 @@
 ---@field public Right number
 ---@field public Top number
 ---@field public Left number
-
----@type UnityEngine.UI.Image.Origin360
 UnityEngine.UI.Image.Origin360 = { }

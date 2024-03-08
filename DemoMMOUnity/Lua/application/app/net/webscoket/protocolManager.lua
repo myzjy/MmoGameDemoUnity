@@ -54,6 +54,7 @@ EquipmentPrimaryConfigBaseData = require(
 WeaponPlayerUserDataRequest = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataRequest")
 WeaponPlayerUserDataResponse = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataResponse")
 WeaponPlayerUserDataStruct = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataStruct")
+WeaponsConfigData = require("application.app.net.webscoket.luaProtocol.weapon.weaponsConfigData")
 --------------------------------------------end Weapon------------------------------------------------------------
 
 
@@ -129,6 +130,8 @@ function ProtocolManager.initProtocolManager()
     protocols[EquipmentGrowthConfigBaseData:protocolId()] = EquipmentGrowthConfigBaseData
     protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
     protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
+
+    protocols[WeaponsConfigData:protocolId()] = WeaponsConfigData
 end
 
 return ProtocolManager

@@ -4,6 +4,4 @@
 ---@field public ColorTint number
 ---@field public SpriteSwap number
 ---@field public Animation number
-
----@type UnityEngine.UI.Selectable.Transition
 UnityEngine.UI.Selectable.Transition = { }

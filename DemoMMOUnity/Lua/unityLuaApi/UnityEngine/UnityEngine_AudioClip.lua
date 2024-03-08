@@ -8,8 +8,6 @@
 ---@field public ambisonic boolean
 ---@field public loadState number
 ---@field public loadInBackground boolean
-
----@type UnityEngine.AudioClip
 UnityEngine.AudioClip = { }
 ---@return boolean
 function UnityEngine.AudioClip:LoadAudioData() end

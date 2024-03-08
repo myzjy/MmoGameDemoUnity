@@ -1,6 +1,4 @@
 ---@class System.IO.File
-
----@type System.IO.File
 System.IO.File = { }
 ---@overload fun(path:string, contents:string): void
 ---@param path string

@@ -2,8 +2,6 @@
 ---@field public Empty string
 ---@field public Chars number
 ---@field public Length number
-
----@type System.String
 System.String = { }
 ---@overload fun(value:System.Char*): string
 ---@overload fun(value:System.SByte*): string

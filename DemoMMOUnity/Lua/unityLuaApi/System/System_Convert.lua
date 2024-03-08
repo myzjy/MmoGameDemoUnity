@@ -1,7 +1,5 @@
 ---@class System.Convert
 ---@field public DBNull System.Object
-
----@type System.Convert
 System.Convert = { }
 ---@return number
 ---@param value System.Object

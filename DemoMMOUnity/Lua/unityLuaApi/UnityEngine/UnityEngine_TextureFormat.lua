@@ -53,6 +53,4 @@
 ---@field public R8 number
 ---@field public ETC_RGB4Crunched number
 ---@field public ETC2_RGBA8Crunched number
-
----@type UnityEngine.TextureFormat
 UnityEngine.TextureFormat = { }

@@ -7,8 +7,6 @@
 ---@field public options System.Collections.Generic.List_UnityEngine.UI.Dropdown.OptionData
 ---@field public onValueChanged UnityEngine.UI.Dropdown.DropdownEvent
 ---@field public value number
-
----@type UnityEngine.UI.Dropdown
 UnityEngine.UI.Dropdown = { }
 function UnityEngine.UI.Dropdown:RefreshShownValue() end
 ---@overload fun(options:System.Collections.Generic.List_UnityEngine.UI.Dropdown.OptionData): void
@@ -24,4 +22,3 @@ function UnityEngine.UI.Dropdown:OnSubmit(eventData) end
 function UnityEngine.UI.Dropdown:OnCancel(eventData) end
 function UnityEngine.UI.Dropdown:Show() end
 function UnityEngine.UI.Dropdown:Hide() end
-return UnityEngine.UI.Dropdown

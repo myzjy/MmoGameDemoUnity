@@ -25,8 +25,6 @@
 ---@field public gyro UnityEngine.Gyroscope
 ---@field public touches UnityEngine.Touch[]
 ---@field public accelerationEvents UnityEngine.AccelerationEvent[]
-
----@type UnityEngine.Input
 UnityEngine.Input = { }
 ---@return UnityEngine.Input
 function UnityEngine.Input.New() end

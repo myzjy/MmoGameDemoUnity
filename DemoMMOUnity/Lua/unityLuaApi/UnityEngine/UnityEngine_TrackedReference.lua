@@ -1,6 +1,4 @@
 ---@class UnityEngine.TrackedReference
-
----@type UnityEngine.TrackedReference
 UnityEngine.TrackedReference = { }
 ---@return boolean
 ---@param x UnityEngine.TrackedReference

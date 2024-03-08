@@ -11,8 +11,6 @@
 ---@field public clip UnityEngine.AnimationClip
 ---@field public name string
 ---@field public blendMode number
-
----@type UnityEngine.AnimationState
 UnityEngine.AnimationState = { }
 ---@return UnityEngine.AnimationState
 function UnityEngine.AnimationState.New() end

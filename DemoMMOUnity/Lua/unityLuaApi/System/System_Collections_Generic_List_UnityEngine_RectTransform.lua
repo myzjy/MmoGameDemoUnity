@@ -2,8 +2,6 @@
 ---@field public Capacity number
 ---@field public Count number
 ---@field public Item UnityEngine.RectTransform
-
----@type System.Collections.Generic.List_UnityEngine.RectTransform
 System.Collections.Generic.List_UnityEngine.RectTransform = { }
 ---@overload fun(): System.Collections.Generic.List_UnityEngine.RectTransform
 ---@overload fun(capacity:number): System.Collections.Generic.List_UnityEngine.RectTransform

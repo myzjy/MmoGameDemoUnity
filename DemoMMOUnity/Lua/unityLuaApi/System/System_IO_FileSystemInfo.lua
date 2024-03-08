@@ -10,8 +10,6 @@
 ---@field public LastWriteTime System.DateTime
 ---@field public LastWriteTimeUtc System.DateTime
 ---@field public Attributes number
-
----@type System.IO.FileSystemInfo
 System.IO.FileSystemInfo = { }
 function System.IO.FileSystemInfo:Delete() end
 function System.IO.FileSystemInfo:Refresh() end

@@ -5,6 +5,4 @@
 ---@field public Discharging number
 ---@field public NotCharging number
 ---@field public Full number
-
----@type UnityEngine.BatteryStatus
 UnityEngine.BatteryStatus = { }

@@ -22,8 +22,6 @@
 ---@field public sleepThreshold number
 ---@field public maxAngularVelocity number
 ---@field public solverVelocityIterations number
-
----@type UnityEngine.Rigidbody
 UnityEngine.Rigidbody = { }
 ---@return UnityEngine.Rigidbody
 function UnityEngine.Rigidbody.New() end

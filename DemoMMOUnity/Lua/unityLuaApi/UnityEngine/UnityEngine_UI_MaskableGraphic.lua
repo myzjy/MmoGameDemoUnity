@@ -1,8 +1,6 @@
 ---@class UnityEngine.UI.MaskableGraphic : UnityEngine.UI.Graphic
 ---@field public onCullStateChanged UnityEngine.UI.MaskableGraphic.CullStateChangedEvent
 ---@field public maskable boolean
-
----@type UnityEngine.UI.MaskableGraphic
 UnityEngine.UI.MaskableGraphic = { }
 ---@return UnityEngine.Material
 ---@param baseMaterial UnityEngine.Material

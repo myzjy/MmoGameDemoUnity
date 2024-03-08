@@ -11,8 +11,6 @@
 ---@field public minMoveDistance number
 ---@field public detectCollisions boolean
 ---@field public enableOverlapRecovery boolean
-
----@type UnityEngine.CharacterController
 UnityEngine.CharacterController = { }
 ---@return UnityEngine.CharacterController
 function UnityEngine.CharacterController.New() end

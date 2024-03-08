@@ -15,8 +15,6 @@
 ---@field public right UnityEngine.Vector2
 ---@field public positiveInfinity UnityEngine.Vector2
 ---@field public negativeInfinity UnityEngine.Vector2
-
----@type UnityEngine.Vector2
 UnityEngine.Vector2 = { }
 ---@return UnityEngine.Vector2
 ---@param x number

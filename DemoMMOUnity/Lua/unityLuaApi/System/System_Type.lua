@@ -67,8 +67,6 @@
 ---@field public IsSecurityTransparent boolean
 ---@field public UnderlyingSystemType string
 ---@field public IsSZArray boolean
-
----@type System.Type
 System.Type = { }
 ---@overload fun(): string
 ---@overload fun(typeName:string): string

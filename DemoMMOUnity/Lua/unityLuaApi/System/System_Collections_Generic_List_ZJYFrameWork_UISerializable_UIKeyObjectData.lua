@@ -2,9 +2,6 @@
 ---@field public Capacity number
 ---@field public Count number
 ---@field public Item ZJYFrameWork.UISerializable.UIKeyObjectData
----
-
----@type System.Collections.Generic.List_ZJYFrameWork.UISerializable.UIKeyObjectData
 System.Collections.Generic.List_ZJYFrameWork.UISerializable.UIKeyObjectData = {}
 
 ---@overload fun(): System.Collections.Generic.List_ZJYFrameWork.UISerializable.UIKeyObjectData

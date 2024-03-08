@@ -1,6 +1,4 @@
 ---@class UnityEngine.Events.UnityEvent_System.Boolean : UnityEngine.Events.UnityEventBase
-
----@type UnityEngine.Events.UnityEvent_System.Boolean
 UnityEngine.Events.UnityEvent_System.Boolean = { }
 ---@return UnityEngine.Events.UnityEvent_System.Boolean
 function UnityEngine.Events.UnityEvent_System.Boolean.New() end

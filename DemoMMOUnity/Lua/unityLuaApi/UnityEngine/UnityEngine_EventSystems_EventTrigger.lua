@@ -1,7 +1,5 @@
 ---@class UnityEngine.EventSystems.EventTrigger : UnityEngine.MonoBehaviour
 ---@field public triggers System.Collections.Generic.List_UnityEngine.EventSystems.EventTrigger.Entry
-
----@type UnityEngine.EventSystems.EventTrigger
 UnityEngine.EventSystems.EventTrigger = { }
 ---@param eventData UnityEngine.EventSystems.PointerEventData
 function UnityEngine.EventSystems.EventTrigger:OnPointerEnter(eventData) end

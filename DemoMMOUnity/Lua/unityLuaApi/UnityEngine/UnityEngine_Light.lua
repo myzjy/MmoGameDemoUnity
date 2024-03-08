@@ -26,8 +26,6 @@
 ---@field public areaSize UnityEngine.Vector2
 ---@field public lightmapBakeType number
 ---@field public commandBufferCount number
-
----@type UnityEngine.Light
 UnityEngine.Light = { }
 ---@return UnityEngine.Light
 function UnityEngine.Light.New() end

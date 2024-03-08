@@ -19,8 +19,6 @@
 ---@field public depthBuffer UnityEngine.RenderBuffer
 ---@field public depth number
 ---@field public descriptor UnityEngine.RenderTextureDescriptor
-
----@type UnityEngine.RenderTexture
 UnityEngine.RenderTexture = { }
 ---@overload fun(desc:UnityEngine.RenderTextureDescriptor): UnityEngine.RenderTexture
 ---@overload fun(textureToCopy:UnityEngine.RenderTexture): UnityEngine.RenderTexture

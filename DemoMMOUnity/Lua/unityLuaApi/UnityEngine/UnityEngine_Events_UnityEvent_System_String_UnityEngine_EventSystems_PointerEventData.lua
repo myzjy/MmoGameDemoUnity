@@ -1,6 +1,4 @@
 ---@class UnityEngine.Events.UnityEvent_System.String_UnityEngine.EventSystems.PointerEventData : UnityEngine.Events.UnityEventBase
-
----@type UnityEngine.Events.UnityEvent_System.String_UnityEngine.EventSystems.PointerEventData
 UnityEngine.Events.UnityEvent_System.String_UnityEngine.EventSystems.PointerEventData = { }
 ---@return UnityEngine.Events.UnityEvent_System.String_UnityEngine.EventSystems.PointerEventData
 function UnityEngine.Events.UnityEvent_System.String_UnityEngine.EventSystems.PointerEventData.New() end

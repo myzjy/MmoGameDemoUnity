@@ -2,8 +2,6 @@
 ---@field public transform UnityEngine.Transform
 ---@field public gameObject UnityEngine.GameObject
 ---@field public tag string
-
----@type UnityEngine.Component
 UnityEngine.Component = { }
 ---@return UnityEngine.Component
 function UnityEngine.Component.New() end

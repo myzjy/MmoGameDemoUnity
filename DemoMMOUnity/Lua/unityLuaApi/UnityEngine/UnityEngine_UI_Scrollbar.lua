@@ -5,8 +5,6 @@
 ---@field public size number
 ---@field public numberOfSteps number
 ---@field public onValueChanged UnityEngine.UI.Scrollbar.ScrollEvent
-
----@type UnityEngine.UI.Scrollbar
 UnityEngine.UI.Scrollbar = { }
 ---@param executing number
 function UnityEngine.UI.Scrollbar:Rebuild(executing) end

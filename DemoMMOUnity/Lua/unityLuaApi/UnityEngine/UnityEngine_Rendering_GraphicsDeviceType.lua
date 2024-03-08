@@ -12,6 +12,4 @@
 ---@field public Vulkan number
 ---@field public Switch number
 ---@field public XboxOneD3D12 number
-
----@type UnityEngine.Rendering.GraphicsDeviceType
 UnityEngine.Rendering.GraphicsDeviceType = { }

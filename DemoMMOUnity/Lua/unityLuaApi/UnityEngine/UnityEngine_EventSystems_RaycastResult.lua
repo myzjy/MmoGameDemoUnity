@@ -10,8 +10,6 @@
 ---@field public screenPosition UnityEngine.Vector2
 ---@field public gameObject UnityEngine.GameObject
 ---@field public isValid boolean
-
----@type UnityEngine.EventSystems.RaycastResult
 UnityEngine.EventSystems.RaycastResult = { }
 function UnityEngine.EventSystems.RaycastResult:Clear() end
 ---@return string

@@ -11,8 +11,6 @@
 ---@field public loadingMipmapLevel number
 ---@field public loadedMipmapLevel number
 ---@field public alphaIsTransparency boolean
-
----@type UnityEngine.Texture2D
 UnityEngine.Texture2D = { }
 ---@overload fun(width:number, height:number): UnityEngine.Texture2D
 ---@overload fun(width:number, height:number, format:number, flags:number): UnityEngine.Texture2D

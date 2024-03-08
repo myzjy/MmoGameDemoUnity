@@ -27,8 +27,6 @@
 ---@field public minDistance number
 ---@field public maxDistance number
 ---@field public rolloffMode number
-
----@type UnityEngine.AudioSource
 UnityEngine.AudioSource = { }
 ---@return UnityEngine.AudioSource
 function UnityEngine.AudioSource.New() end

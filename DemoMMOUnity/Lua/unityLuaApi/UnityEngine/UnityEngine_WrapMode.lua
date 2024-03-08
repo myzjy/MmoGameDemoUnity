@@ -6,6 +6,4 @@
 ---@field public Default number
 ---@field public ClampForever number
 ---@field public Clamp number
-
----@type UnityEngine.WrapMode
 UnityEngine.WrapMode = { }

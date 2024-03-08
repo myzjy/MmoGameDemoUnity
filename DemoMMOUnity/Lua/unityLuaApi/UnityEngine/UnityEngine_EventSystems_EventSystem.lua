@@ -7,8 +7,6 @@
 ---@field public currentSelectedGameObject UnityEngine.GameObject
 ---@field public isFocused boolean
 ---@field public alreadySelecting boolean
-
----@type UnityEngine.EventSystems.EventSystem
 UnityEngine.EventSystems.EventSystem = { }
 function UnityEngine.EventSystems.EventSystem:UpdateModules() end
 ---@overload fun(selected:UnityEngine.GameObject): void

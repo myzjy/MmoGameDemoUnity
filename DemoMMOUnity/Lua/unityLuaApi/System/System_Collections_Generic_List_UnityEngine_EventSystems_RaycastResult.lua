@@ -2,8 +2,6 @@
 ---@field public Capacity number
 ---@field public Count number
 ---@field public Item UnityEngine.EventSystems.RaycastResult
-
----@type System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult
 System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult = { }
 ---@overload fun(): System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult
 ---@overload fun(capacity:number): System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult

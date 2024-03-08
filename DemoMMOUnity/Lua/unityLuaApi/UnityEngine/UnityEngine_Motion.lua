@@ -6,7 +6,5 @@
 ---@field public isLooping boolean
 ---@field public legacy boolean
 ---@field public isHumanMotion boolean
-
----@type UnityEngine.Motion
 UnityEngine.Motion = { }
 return UnityEngine.Motion

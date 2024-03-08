@@ -1,6 +1,4 @@
 ---@class System.Object
-
----@type System.Object
 System.Object = { }
 ---@return System.Object
 function System.Object.New() end

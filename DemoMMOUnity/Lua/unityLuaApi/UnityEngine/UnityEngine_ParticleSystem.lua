@@ -30,8 +30,6 @@
 ---@field public lights UnityEngine.ParticleSystem.LightsModule
 ---@field public trails UnityEngine.ParticleSystem.TrailModule
 ---@field public customData UnityEngine.ParticleSystem.CustomDataModule
-
----@type UnityEngine.ParticleSystem
 UnityEngine.ParticleSystem = { }
 ---@return UnityEngine.ParticleSystem
 function UnityEngine.ParticleSystem.New() end

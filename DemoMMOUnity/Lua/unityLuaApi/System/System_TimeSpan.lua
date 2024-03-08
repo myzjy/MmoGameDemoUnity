@@ -18,8 +18,6 @@
 ---@field public TotalMilliseconds number
 ---@field public TotalMinutes number
 ---@field public TotalSeconds number
-
----@type System.TimeSpan
 System.TimeSpan = { }
 ---@overload fun(ticks:int64): System.TimeSpan
 ---@overload fun(hours:number, minutes:number, seconds:number): System.TimeSpan

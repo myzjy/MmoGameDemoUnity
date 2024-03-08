@@ -26,8 +26,6 @@
 ---@field public Item number
 ---@field public zero UnityEngine.Matrix4x4
 ---@field public identity UnityEngine.Matrix4x4
-
----@type UnityEngine.Matrix4x4
 UnityEngine.Matrix4x4 = { }
 ---@return UnityEngine.Matrix4x4
 ---@param column0 UnityEngine.Vector4

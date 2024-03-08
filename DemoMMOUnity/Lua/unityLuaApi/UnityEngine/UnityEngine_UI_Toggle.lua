@@ -4,8 +4,6 @@
 ---@field public onValueChanged UnityEngine.UI.Toggle.ToggleEvent
 ---@field public group UnityEngine.UI.ToggleGroup
 ---@field public isOn boolean
-
----@type UnityEngine.UI.Toggle
 UnityEngine.UI.Toggle = { }
 ---@param executing number
 function UnityEngine.UI.Toggle:Rebuild(executing) end

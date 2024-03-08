@@ -2,8 +2,6 @@
 ---@field public CHANGELINE_TYPE number
 ---@field public totalTime number
 ---@field public waitTime number
-
----@type UITextTypeWriter
 UITextTypeWriter = { }
 ---@return UITextTypeWriter
 function UITextTypeWriter.New() end

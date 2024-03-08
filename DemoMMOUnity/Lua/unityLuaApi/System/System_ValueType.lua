@@ -1,6 +1,4 @@
 ---@class System.ValueType
-
----@type System.ValueType
 System.ValueType = { }
 ---@return boolean
 ---@param obj System.Object

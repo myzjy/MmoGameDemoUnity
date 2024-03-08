@@ -8,8 +8,6 @@
 ---@field public scene UnityEngine.SceneManagement.Scene
 ---@field public gameObject UnityEngine.GameObject
 ---@field public SetActive function
-
----@type UnityEngine.GameObject
 UnityEngine.GameObject = { }
 ---@overload fun(): UnityEngine.GameObject
 ---@overload fun(name:string): UnityEngine.GameObject

@@ -1,7 +1,5 @@
 ---@class UnityEngine.UI.ToggleGroup : UnityEngine.EventSystems.UIBehaviour
 ---@field public allowSwitchOff boolean
-
----@type UnityEngine.UI.ToggleGroup
 UnityEngine.UI.ToggleGroup = { }
 ---@param toggle UnityEngine.UI.Toggle
 function UnityEngine.UI.ToggleGroup:NotifyToggleOn(toggle) end

@@ -13,7 +13,5 @@
 ---@field public azimuthAngle number
 ---@field public radius number
 ---@field public radiusVariance number
-
----@type UnityEngine.Touch
 UnityEngine.Touch = { }
 return UnityEngine.Touch

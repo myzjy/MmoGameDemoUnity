@@ -13,8 +13,6 @@
 ---@field public uploadProgress number
 ---@field public url string
 ---@field public keepWaiting boolean
-
----@type UnityEngine.WWW
 UnityEngine.WWW = { }
 ---@overload fun(url:string): UnityEngine.WWW
 ---@overload fun(url:string, form:UnityEngine.WWWForm): UnityEngine.WWW

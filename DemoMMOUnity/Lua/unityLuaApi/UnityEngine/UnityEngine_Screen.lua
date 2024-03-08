@@ -13,8 +13,6 @@
 ---@field public fullScreenMode number
 ---@field public safeArea UnityEngine.Rect
 ---@field public resolutions UnityEngine.Resolution[]
-
----@type UnityEngine.Screen
 UnityEngine.Screen = { }
 ---@return UnityEngine.Screen
 function UnityEngine.Screen.New() end

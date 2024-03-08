@@ -1,7 +1,5 @@
 ---@class UnityEngine.AssetBundle : UnityEngine.Object
 ---@field public isStreamedSceneAssetBundle boolean
-
----@type UnityEngine.AssetBundle
 UnityEngine.AssetBundle = { }
 ---@param unloadAllObjects boolean
 function UnityEngine.AssetBundle.UnloadAllAssetBundles(unloadAllObjects) end

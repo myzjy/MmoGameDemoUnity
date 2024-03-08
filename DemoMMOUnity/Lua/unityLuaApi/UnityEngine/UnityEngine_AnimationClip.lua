@@ -11,8 +11,6 @@
 ---@field public hasMotionFloatCurves boolean
 ---@field public hasMotionCurves boolean
 ---@field public hasRootCurves boolean
-
----@type UnityEngine.AnimationClip
 UnityEngine.AnimationClip = { }
 ---@return UnityEngine.AnimationClip
 function UnityEngine.AnimationClip.New() end

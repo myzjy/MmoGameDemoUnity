@@ -5,6 +5,4 @@
 ---@field public Radial90 number
 ---@field public Radial180 number
 ---@field public Radial360 number
-
----@type UnityEngine.UI.Image.FillMethod
 UnityEngine.UI.Image.FillMethod = { }

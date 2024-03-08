@@ -1,6 +1,4 @@
 ---@class UnityEngine.RectTransformUtility
-
----@type UnityEngine.RectTransformUtility
 UnityEngine.RectTransformUtility = { }
 ---@overload fun(rect:UnityEngine.RectTransform, screenPoint:UnityEngine.Vector2): boolean
 ---@return boolean

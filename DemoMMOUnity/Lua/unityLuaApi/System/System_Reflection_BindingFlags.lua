@@ -20,6 +20,4 @@
 ---@field public SuppressChangeType number
 ---@field public OptionalParamBinding number
 ---@field public IgnoreReturn number
-
----@type System.Reflection.BindingFlags
 System.Reflection.BindingFlags = { }

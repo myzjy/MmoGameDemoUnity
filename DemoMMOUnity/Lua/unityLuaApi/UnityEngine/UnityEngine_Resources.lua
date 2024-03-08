@@ -1,6 +1,4 @@
 ---@class UnityEngine.Resources
-
----@type UnityEngine.Resources
 UnityEngine.Resources = { }
 ---@return UnityEngine.Resources
 function UnityEngine.Resources.New() end

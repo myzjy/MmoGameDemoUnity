@@ -17,8 +17,6 @@
 ---@field public alignment number
 ---@field public widthCurve UnityEngine.AnimationCurve
 ---@field public colorGradient UnityEngine.Gradient
-
----@type UnityEngine.TrailRenderer
 UnityEngine.TrailRenderer = { }
 ---@return UnityEngine.TrailRenderer
 function UnityEngine.TrailRenderer.New() end
@@ -43,4 +41,3 @@ function UnityEngine.TrailRenderer:SetPositions(positions) end
 function UnityEngine.TrailRenderer:AddPosition(position) end
 ---@param positions UnityEngine.Vector3[]
 function UnityEngine.TrailRenderer:AddPositions(positions) end
-return UnityEngine.TrailRenderer

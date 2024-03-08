@@ -23,7 +23,5 @@
 ---@field public haloStrength number
 ---@field public flareStrength number
 ---@field public flareFadeSpeed number
-
----@type UnityEngine.RenderSettings
 UnityEngine.RenderSettings = { }
 return UnityEngine.RenderSettings

@@ -5,6 +5,4 @@
 ---@field public Stationary number
 ---@field public Ended number
 ---@field public Canceled number
-
----@type UnityEngine.TouchPhase
 UnityEngine.TouchPhase = { }

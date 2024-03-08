@@ -1,8 +1,6 @@
 ---@class UnityEngine.Ray : System.ValueType
 ---@field public origin UnityEngine.Vector3
 ---@field public direction UnityEngine.Vector3
-
----@type UnityEngine.Ray
 UnityEngine.Ray = { }
 ---@return UnityEngine.Ray
 ---@param origin UnityEngine.Vector3

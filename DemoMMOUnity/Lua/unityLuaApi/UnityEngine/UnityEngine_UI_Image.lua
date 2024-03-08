@@ -22,8 +22,6 @@
 ---@field public preferredHeight number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.Image
 UnityEngine.UI.Image = { }
 function UnityEngine.UI.Image:OnBeforeSerialize() end
 function UnityEngine.UI.Image:OnAfterDeserialize() end

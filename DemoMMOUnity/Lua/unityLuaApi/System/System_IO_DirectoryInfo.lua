@@ -3,8 +3,6 @@
 ---@field public Name string
 ---@field public Parent System.IO.DirectoryInfo
 ---@field public Root System.IO.DirectoryInfo
-
----@type System.IO.DirectoryInfo
 System.IO.DirectoryInfo = { }
 ---@return System.IO.DirectoryInfo
 ---@param path string

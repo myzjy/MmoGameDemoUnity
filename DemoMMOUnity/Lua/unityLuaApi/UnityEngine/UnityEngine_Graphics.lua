@@ -3,8 +3,6 @@
 ---@field public activeTier number
 ---@field public activeColorBuffer UnityEngine.RenderBuffer
 ---@field public activeDepthBuffer UnityEngine.RenderBuffer
-
----@type UnityEngine.Graphics
 UnityEngine.Graphics = { }
 ---@return UnityEngine.Graphics
 function UnityEngine.Graphics.New() end

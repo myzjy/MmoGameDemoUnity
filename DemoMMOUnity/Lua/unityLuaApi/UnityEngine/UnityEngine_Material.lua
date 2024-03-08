@@ -10,8 +10,6 @@
 ---@field public enableInstancing boolean
 ---@field public passCount number
 ---@field public shaderKeywords System.String[]
-
----@type UnityEngine.Material
 UnityEngine.Material = { }
 ---@overload fun(shader:UnityEngine.Shader): UnityEngine.Material
 ---@overload fun(source:UnityEngine.Material): UnityEngine.Material

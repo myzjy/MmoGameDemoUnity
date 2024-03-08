@@ -5,6 +5,4 @@
 ---@field public RenderTexture number
 ---@field public MaterialOverride number
 ---@field public APIOnly number
-
----@type UnityEngine.Video.VideoRenderMode
 UnityEngine.Video.VideoRenderMode = { }

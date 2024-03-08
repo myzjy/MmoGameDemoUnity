@@ -1,6 +1,4 @@
 ---@class System.IO.Directory
-
----@type System.IO.Directory
 System.IO.Directory = { }
 ---@overload fun(path:string): System.String[]
 ---@overload fun(path:string, searchPattern:string): System.String[]

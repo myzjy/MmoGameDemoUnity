@@ -28,8 +28,6 @@
 ---@field public streamingTextureLoadingCount uint64
 ---@field public streamingTextureForceLoadAll boolean
 ---@field public streamingTextureDiscardUnusedMips boolean
-
----@type UnityEngine.Texture
 UnityEngine.Texture = { }
 ---@param forcedMin number
 ---@param globalMax number

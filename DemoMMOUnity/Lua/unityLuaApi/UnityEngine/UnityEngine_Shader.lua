@@ -4,8 +4,6 @@
 ---@field public isSupported boolean
 ---@field public globalRenderPipeline string
 ---@field public renderQueue number
-
----@type UnityEngine.Shader
 UnityEngine.Shader = { }
 ---@return UnityEngine.Shader
 ---@param name string

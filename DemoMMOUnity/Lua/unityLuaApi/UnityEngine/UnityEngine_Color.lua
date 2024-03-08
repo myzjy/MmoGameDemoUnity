@@ -19,8 +19,6 @@
 ---@field public gamma UnityEngine.Color
 ---@field public maxColorComponent number
 ---@field public Item number
-
----@type UnityEngine.Color
 UnityEngine.Color = { }
 ---@overload fun(r:number, g:number, b:number): UnityEngine.Color
 ---@return UnityEngine.Color

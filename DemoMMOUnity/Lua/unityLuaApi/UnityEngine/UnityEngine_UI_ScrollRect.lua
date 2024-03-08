@@ -26,8 +26,6 @@
 ---@field public preferredHeight number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.ScrollRect
 UnityEngine.UI.ScrollRect = { }
 ---@param executing number
 function UnityEngine.UI.ScrollRect:Rebuild(executing) end

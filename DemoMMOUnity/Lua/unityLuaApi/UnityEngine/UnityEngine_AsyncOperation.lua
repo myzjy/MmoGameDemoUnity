@@ -3,8 +3,6 @@
 ---@field public progress number
 ---@field public priority number
 ---@field public allowSceneActivation boolean
-
----@type UnityEngine.AsyncOperation
 UnityEngine.AsyncOperation = { }
 ---@return UnityEngine.AsyncOperation
 function UnityEngine.AsyncOperation.New() end

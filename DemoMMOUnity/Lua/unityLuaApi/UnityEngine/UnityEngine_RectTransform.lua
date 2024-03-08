@@ -8,8 +8,6 @@
 ---@field public anchoredPosition3D UnityEngine.Vector3
 ---@field public offsetMin UnityEngine.Vector2
 ---@field public offsetMax UnityEngine.Vector2
-
----@type UnityEngine.RectTransform
 UnityEngine.RectTransform = { }
 ---@return UnityEngine.RectTransform
 function UnityEngine.RectTransform.New() end

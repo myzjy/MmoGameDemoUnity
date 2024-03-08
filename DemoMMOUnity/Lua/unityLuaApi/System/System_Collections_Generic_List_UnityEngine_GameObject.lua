@@ -2,8 +2,6 @@
 ---@field public Capacity number
 ---@field public Count number
 ---@field public Item UnityEngine.GameObject
-
----@type System.Collections.Generic.List_UnityEngine.GameObject
 System.Collections.Generic.List_UnityEngine.GameObject = { }
 ---@overload fun(): System.Collections.Generic.List_UnityEngine.GameObject
 ---@overload fun(capacity:number): System.Collections.Generic.List_UnityEngine.GameObject

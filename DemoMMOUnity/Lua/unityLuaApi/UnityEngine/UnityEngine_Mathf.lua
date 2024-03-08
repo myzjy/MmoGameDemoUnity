@@ -5,8 +5,6 @@
 ---@field public Deg2Rad number
 ---@field public Rad2Deg number
 ---@field public Epsilon number
-
----@type UnityEngine.Mathf
 UnityEngine.Mathf = { }
 ---@return number
 ---@param value number

@@ -14,8 +14,6 @@
 ---@field public ResourcePriority integer
 ---@field public BundleManifest ZJYFrameWork.AssetBundles.Bundles.BundleManifest
 ---@field public AOTMetaAssemblyNames table<integer,string>
-
----@type ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager
 ZJYFrameWork.AssetBundles.AssetBundlesManager.AssetBundleManager = {}
 
 

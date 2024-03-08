@@ -2,8 +2,6 @@
 ---@field public normal UnityEngine.Vector3
 ---@field public distance number
 ---@field public flipped UnityEngine.Plane
-
----@type UnityEngine.Plane
 UnityEngine.Plane = { }
 ---@overload fun(inNormal:UnityEngine.Vector3, inPoint:UnityEngine.Vector3): UnityEngine.Plane
 ---@overload fun(inNormal:UnityEngine.Vector3, d:number): UnityEngine.Plane

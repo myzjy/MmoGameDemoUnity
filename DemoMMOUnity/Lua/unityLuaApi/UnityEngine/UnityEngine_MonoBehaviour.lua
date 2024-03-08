@@ -1,8 +1,6 @@
 ---@class UnityEngine.MonoBehaviour : UnityEngine.Behaviour
 ---@field public useGUILayout boolean
 ---@field public runInEditMode boolean
-
----@type UnityEngine.MonoBehaviour
 UnityEngine.MonoBehaviour = { }
 ---@return UnityEngine.MonoBehaviour
 function UnityEngine.MonoBehaviour.New() end

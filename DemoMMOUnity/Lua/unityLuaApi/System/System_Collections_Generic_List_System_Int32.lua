@@ -2,8 +2,6 @@
 ---@field public Capacity number
 ---@field public Count number
 ---@field public Item number
-
----@type System.Collections.Generic.List_System.Int32
 System.Collections.Generic.List_System.Int32 = { }
 ---@overload fun(): System.Collections.Generic.List_System.Int32
 ---@overload fun(capacity:number): System.Collections.Generic.List_System.Int32

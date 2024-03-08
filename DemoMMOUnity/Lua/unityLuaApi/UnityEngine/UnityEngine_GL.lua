@@ -8,8 +8,6 @@
 ---@field public sRGBWrite boolean
 ---@field public invertCulling boolean
 ---@field public modelview UnityEngine.Matrix4x4
-
----@type UnityEngine.GL
 UnityEngine.GL = { }
 ---@return UnityEngine.GL
 function UnityEngine.GL.New() end

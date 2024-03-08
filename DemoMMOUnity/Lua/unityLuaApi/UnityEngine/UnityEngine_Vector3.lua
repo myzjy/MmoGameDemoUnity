@@ -18,8 +18,6 @@
 ---@field public right UnityEngine.Vector3
 ---@field public positiveInfinity UnityEngine.Vector3
 ---@field public negativeInfinity UnityEngine.Vector3
-
----@type UnityEngine.Vector3
 UnityEngine.Vector3 = { }
 ---@overload fun(x:number, y:number): UnityEngine.Vector3
 ---@return UnityEngine.Vector3

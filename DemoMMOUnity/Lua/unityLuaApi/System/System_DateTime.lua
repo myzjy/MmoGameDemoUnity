@@ -17,8 +17,6 @@
 ---@field public TimeOfDay System.TimeSpan
 ---@field public Today System.DateTime
 ---@field public Year number
-
----@type System.DateTime
 System.DateTime = { }
 ---@overload fun(ticks:int64): System.DateTime
 ---@overload fun(ticks:int64, kind:number): System.DateTime

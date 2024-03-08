@@ -6,8 +6,6 @@
 ---@field public bounds UnityEngine.Bounds
 ---@field public sharedMaterial UnityEngine.PhysicMaterial
 ---@field public material UnityEngine.PhysicMaterial
-
----@type UnityEngine.Collider
 UnityEngine.Collider = { }
 ---@return UnityEngine.Collider
 function UnityEngine.Collider.New() end

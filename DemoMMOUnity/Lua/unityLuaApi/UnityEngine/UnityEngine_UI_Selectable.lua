@@ -9,8 +9,6 @@
 ---@field public interactable boolean
 ---@field public image UnityEngine.UI.Image
 ---@field public animator UnityEngine.Animator
-
----@type UnityEngine.UI.Selectable
 UnityEngine.UI.Selectable = { }
 ---@return boolean
 function UnityEngine.UI.Selectable:IsInteractable() end

@@ -8,8 +8,6 @@
 ---@field public preferredHeight number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.LayoutGroup
 UnityEngine.UI.LayoutGroup = { }
 function UnityEngine.UI.LayoutGroup:CalculateLayoutInputHorizontal() end
 function UnityEngine.UI.LayoutGroup:CalculateLayoutInputVertical() end

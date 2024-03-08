@@ -1,7 +1,5 @@
 ---@class UnityEngine.UI.LayoutRebuilder
 ---@field public transform UnityEngine.Transform
-
----@type UnityEngine.UI.LayoutRebuilder
 UnityEngine.UI.LayoutRebuilder = { }
 ---@return UnityEngine.UI.LayoutRebuilder
 function UnityEngine.UI.LayoutRebuilder.New() end

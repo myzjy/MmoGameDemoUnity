@@ -4,6 +4,4 @@
 ---@field public Sliced number
 ---@field public Tiled number
 ---@field public Filled number
-
----@type UnityEngine.UI.Image.Type
 UnityEngine.UI.Image.Type = { }

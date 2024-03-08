@@ -20,8 +20,6 @@
 ---@field public enterEventCamera UnityEngine.Camera
 ---@field public pressEventCamera UnityEngine.Camera
 ---@field public pointerPress UnityEngine.GameObject
-
----@type UnityEngine.EventSystems.PointerEventData
 UnityEngine.EventSystems.PointerEventData = { }
 ---@return UnityEngine.EventSystems.PointerEventData
 ---@param eventSystem UnityEngine.EventSystems.EventSystem

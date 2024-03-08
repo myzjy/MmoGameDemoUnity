@@ -7,8 +7,6 @@
 ---@field public flexibleWidth number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.LayoutElement
 UnityEngine.UI.LayoutElement = { }
 function UnityEngine.UI.LayoutElement:CalculateLayoutInputHorizontal() end
 function UnityEngine.UI.LayoutElement:CalculateLayoutInputVertical() end

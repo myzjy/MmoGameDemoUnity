@@ -10,8 +10,6 @@
 ---@field public material UnityEngine.Material
 ---@field public materialForRendering UnityEngine.Material
 ---@field public mainTexture UnityEngine.Texture
-
----@type UnityEngine.UI.Graphic
 UnityEngine.UI.Graphic = { }
 function UnityEngine.UI.Graphic:SetAllDirty() end
 function UnityEngine.UI.Graphic:SetLayoutDirty() end
@@ -56,4 +54,4 @@ function UnityEngine.UI.Graphic:UnregisterDirtyVerticesCallback(action) end
 function UnityEngine.UI.Graphic:RegisterDirtyMaterialCallback(action) end
 ---@param action (fun():void)
 function UnityEngine.UI.Graphic:UnregisterDirtyMaterialCallback(action) end
-return UnityEngine.UI.Graphic
+

@@ -4,8 +4,6 @@
 ---@field public isPlaying boolean
 ---@field public isReadyToPlay boolean
 ---@field public duration number
-
----@type UnityEngine.MovieTexture
 UnityEngine.MovieTexture = { }
 function UnityEngine.MovieTexture:Play() end
 function UnityEngine.MovieTexture:Stop() end

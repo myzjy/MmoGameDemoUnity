@@ -9,6 +9,4 @@
 ---@field public LowerLeft number
 ---@field public LowerCenter number
 ---@field public LowerRight number
-
----@type UnityEngine.TextAnchor
 UnityEngine.TextAnchor = { }

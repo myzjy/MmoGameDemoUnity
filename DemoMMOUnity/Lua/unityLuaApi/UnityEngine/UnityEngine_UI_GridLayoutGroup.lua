@@ -5,8 +5,6 @@
 ---@field public spacing UnityEngine.Vector2
 ---@field public constraint number
 ---@field public constraintCount number
-
----@type UnityEngine.UI.GridLayoutGroup
 UnityEngine.UI.GridLayoutGroup = { }
 function UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputHorizontal() end
 function UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputVertical() end

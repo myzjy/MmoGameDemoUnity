@@ -33,8 +33,6 @@
 ---@field public preferredHeight number
 ---@field public flexibleHeight number
 ---@field public layoutPriority number
-
----@type UnityEngine.UI.InputField
 UnityEngine.UI.InputField = { }
 ---@param shift boolean
 function UnityEngine.UI.InputField:MoveTextEnd(shift) end

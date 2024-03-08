@@ -4,8 +4,6 @@
 ---@field public extents UnityEngine.Vector3
 ---@field public min UnityEngine.Vector3
 ---@field public max UnityEngine.Vector3
-
----@type UnityEngine.Bounds
 UnityEngine.Bounds = { }
 ---@return UnityEngine.Bounds
 ---@param center UnityEngine.Vector3

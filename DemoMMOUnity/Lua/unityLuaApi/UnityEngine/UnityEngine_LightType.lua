@@ -6,6 +6,4 @@
 ---@field public Area number
 ---@field public Rectangle number
 ---@field public Disc number
-
----@type UnityEngine.LightType
 UnityEngine.LightType = { }

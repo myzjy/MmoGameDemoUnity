@@ -7,6 +7,4 @@
 ---@field public Thursday number
 ---@field public Friday number
 ---@field public Saturday number
-
----@type System.DayOfWeek
 System.DayOfWeek = { }

@@ -4,5 +4,5 @@
 ---@field public Loop number
 ---@field public None number
 
----@type UnityEngine.Playables.DirectorWrapMode
+
 UnityEngine.Playables.DirectorWrapMode = { }

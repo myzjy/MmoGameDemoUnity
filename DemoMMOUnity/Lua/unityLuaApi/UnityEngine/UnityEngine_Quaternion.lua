@@ -8,8 +8,6 @@
 ---@field public identity UnityEngine.Quaternion
 ---@field public eulerAngles UnityEngine.Vector3
 ---@field public normalized UnityEngine.Quaternion
-
----@type UnityEngine.Quaternion
 UnityEngine.Quaternion = { }
 ---@return UnityEngine.Quaternion
 ---@param x number

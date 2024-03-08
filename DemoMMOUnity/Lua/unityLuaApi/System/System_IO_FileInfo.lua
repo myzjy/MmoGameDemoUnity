@@ -5,8 +5,6 @@
 ---@field public Directory System.IO.DirectoryInfo
 ---@field public IsReadOnly boolean
 ---@field public Exists boolean
-
----@type System.IO.FileInfo
 System.IO.FileInfo = { }
 ---@return System.IO.FileInfo
 ---@param fileName string

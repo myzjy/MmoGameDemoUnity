@@ -3,6 +3,4 @@
 ---@field public NotReachable number
 ---@field public ReachableViaCarrierDataNetwork number
 ---@field public ReachableViaLocalAreaNetwork number
-
----@type UnityEngine.NetworkReachability
 UnityEngine.NetworkReachability = { }

@@ -42,8 +42,6 @@
 ---@field public logWarnings boolean
 ---@field public fireEvents boolean
 ---@field public keepAnimatorControllerStateOnDisable boolean
-
----@type UnityEngine.Animator
 UnityEngine.Animator = { }
 ---@return UnityEngine.Animator
 function UnityEngine.Animator.New() end

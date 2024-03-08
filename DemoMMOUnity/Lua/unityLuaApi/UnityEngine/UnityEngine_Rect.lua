@@ -13,8 +13,6 @@
 ---@field public yMin number
 ---@field public xMax number
 ---@field public yMax number
-
----@type UnityEngine.Rect
 UnityEngine.Rect = { }
 ---@overload fun(source:UnityEngine.Rect): UnityEngine.Rect
 ---@overload fun(position:UnityEngine.Vector2, size:UnityEngine.Vector2): UnityEngine.Rect

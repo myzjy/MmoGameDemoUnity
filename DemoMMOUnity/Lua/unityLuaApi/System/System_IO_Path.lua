@@ -3,8 +3,6 @@
 ---@field public DirectorySeparatorChar number
 ---@field public PathSeparator number
 ---@field public VolumeSeparatorChar number
-
----@type System.IO.Path
 System.IO.Path = { }
 ---@return string
 ---@param path string

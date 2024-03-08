@@ -35,8 +35,6 @@
 ---@field public names System.String[]
 ---@field public desiredColorSpace number
 ---@field public activeColorSpace number
-
----@type UnityEngine.QualitySettings
 UnityEngine.QualitySettings = { }
 ---@overload fun(): void
 ---@param applyExpensiveChanges boolean

@@ -17,8 +17,6 @@
 ---@field public interCollisionDistance number
 ---@field public interCollisionStiffness number
 ---@field public interCollisionSettingsToggle boolean
-
----@type UnityEngine.Physics
 UnityEngine.Physics = { }
 ---@return UnityEngine.Physics
 function UnityEngine.Physics.New() end

@@ -18,8 +18,6 @@
 ---@field public hasChanged boolean
 ---@field public hierarchyCapacity number
 ---@field public hierarchyCount number
-
----@type UnityEngine.Transform
 UnityEngine.Transform = { }
 ---@overload fun(p:UnityEngine.Transform): void
 ---@param parent UnityEngine.Transform
@@ -204,4 +202,3 @@ function UnityEngine.Transform:SetLocalRotEulerToOther(other) end
 ---@return UnityEngine.Vector2
 ---@param canvas UnityEngine.Canvas
 function UnityEngine.Transform:TransformToCanvasLocalPosition(canvas) end
-return UnityEngine.Transform

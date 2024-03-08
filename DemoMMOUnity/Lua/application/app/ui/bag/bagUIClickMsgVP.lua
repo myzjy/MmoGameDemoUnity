@@ -52,4 +52,17 @@ function BagUIClickMsgVP:init()
     self.midWeaponMainNumText = nil
 end
 
+--- 启动面板
+---@param panel UnityEngine.GameObject
+---@param type number
+function BagUIClickMsgVP:Start(panel, type)
+    self.gameObject = panel
+    self.sKeyObj=self.gameObject:GetComponent("")
+end
+
+---清空面板相关信息
+function BagUIClickMsgVP:ClosePanelMsg()
+
+end
+
 return BagUIClickMsgVP

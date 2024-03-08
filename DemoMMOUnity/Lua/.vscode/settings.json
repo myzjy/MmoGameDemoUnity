@@ -1,6 +1,10 @@
 {
     "Lua.diagnostics.globals": [
         "CS",
-        "typeof"
+        "typeof",
+        "xlua"
+    ],
+    "Lua.diagnostics.disable": [
+        "missing-return"
     ]
 }

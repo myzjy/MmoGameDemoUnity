@@ -57,8 +57,6 @@
 ---@field public supportsGPUFence boolean
 ---@field public supportsAsyncGPUReadback boolean
 ---@field public supportsMipStreaming boolean
-
----@type UnityEngine.SystemInfo
 UnityEngine.SystemInfo = { }
 ---@return UnityEngine.SystemInfo
 function UnityEngine.SystemInfo.New() end

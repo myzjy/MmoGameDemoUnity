@@ -10,8 +10,6 @@
 ---@field public down UnityEngine.Vector2Int
 ---@field public left UnityEngine.Vector2Int
 ---@field public right UnityEngine.Vector2Int
-
----@type UnityEngine.Vector2Int
 UnityEngine.Vector2Int = { }
 ---@return UnityEngine.Vector2Int
 ---@param x number

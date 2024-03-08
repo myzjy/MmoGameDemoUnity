@@ -26,8 +26,6 @@
 ---@field public material UnityEngine.Material
 ---@field public sharedMaterial UnityEngine.Material
 ---@field public sharedMaterials UnityEngine.Material[]
-
----@type UnityEngine.Renderer
 UnityEngine.Renderer = { }
 ---@return UnityEngine.Renderer
 function UnityEngine.Renderer.New() end

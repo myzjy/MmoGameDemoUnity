@@ -6,6 +6,4 @@
 ---@field public FitInside number
 ---@field public FitOutside number
 ---@field public Stretch number
-
----@type UnityEngine.Video.VideoAspectRatio
 UnityEngine.Video.VideoAspectRatio = { }
