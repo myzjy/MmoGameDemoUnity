@@ -1,6 +1,10 @@
+---@class BagUIClickMsgVP
 local BagUIClickMsgVP = class("BagUIClickMsgVP")
+---@type BagUIClickMsgVP
+local this = nil
 function BagUIClickMsgVP:ctor()
     printDebug("init commopent")
+    this = self
     self:init()
 end
 
@@ -48,8 +52,13 @@ function BagUIClickMsgVP:init()
     ---@type string
     self.midWeaponMainNumStr = string.empty
     --- 武器 副属性 具体数值  Text组件
-    ---@type UnityEngine.UI.Text
+    ---@type UnityEngine.UI.Text|UnityEngine.Object
     self.midWeaponMainNumText = nil
+end
+
+local function openShowWeaponMsg(dataCofig, weaponMsgData, uid)
+    -- body
+    this.midWeaponMainNumText = this.sKeyObj:GetObjTypeStr("midWeaponMainNumText") or UnityEngine.UI.Text;
 end
 
 --- 启动面板
@@ -57,12 +66,22 @@ end
 ---@param type number
 function BagUIClickMsgVP:Start(panel, type)
     self.gameObject = panel
-    self.sKeyObj=self.gameObject:GetComponent("")
+    ---@type ZJYFrameWork.UISerializable.UISerializableKeyObject|UnityEngine.Component
+    self.sKeyObj = self.gameObject:GetComponent("UISerializableKeyObject") or
+        ZJYFrameWork.UISerializable.UISerializableKeyObject
+
+    --根据 type 打开面板信息不一样
+    if type == 1 then
+        ---武器面板
+    end
 end
 
 ---清空面板相关信息
 function BagUIClickMsgVP:ClosePanelMsg()
-
+    self.midWeaponMainNumText.text = string.empty
+    self.midWeaponMainNumText.text = string.empty
+    self.midWeaponViceNameText.text = string.empty
+    self.midWeaponViceNumText.text = string.empty
 end
 
 return BagUIClickMsgVP
