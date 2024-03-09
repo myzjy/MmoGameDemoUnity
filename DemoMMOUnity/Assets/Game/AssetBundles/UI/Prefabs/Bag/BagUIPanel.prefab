@@ -2623,6 +2623,7 @@ GameObject:
   - component: {fileID: 1282186605014234326}
   - component: {fileID: 8166884656889528058}
   - component: {fileID: 545092390357769988}
+  - component: {fileID: 7948481546377896351}
   m_Layer: 0
   m_Name: WeaponMainName
   m_TagString: Untagged
@@ -2692,6 +2693,23 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u57FA\u7840\u653B\u51FB\u529B"
+--- !u!114 &7948481546377896351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4353113098021209709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: mid_WeaponMainName_Text
+    UI_Serializable_Obj: {fileID: 545092390357769988}
+    Path: WeaponInDetailItem/mid/midWeaponMainRoot/WeaponMainName
+  maskIndex: 4
 --- !u!1 &4559216601267653775
 GameObject:
   m_ObjectHideFlags: 0
@@ -3727,6 +3745,7 @@ MonoBehaviour:
   - {fileID: 8014906865341187600}
   - {fileID: 8553684218429948245}
   - {fileID: 1891812166080149947}
+  - {fileID: 4802438669278202045}
 --- !u!225 &4705530383992731587
 CanvasGroup:
   m_ObjectHideFlags: 0

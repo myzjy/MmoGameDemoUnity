@@ -7,7 +7,6 @@
 ---@field public tag string
 ---@field public scene UnityEngine.SceneManagement.Scene
 ---@field public gameObject UnityEngine.GameObject
----@field public SetActive function
 UnityEngine.GameObject = { }
 ---@overload fun(): UnityEngine.GameObject
 ---@overload fun(name:string): UnityEngine.GameObject
