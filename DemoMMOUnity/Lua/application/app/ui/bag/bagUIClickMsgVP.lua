@@ -1,5 +1,6 @@
 ---@class BagUIClickMsgVP
 local BagUIClickMsgVP = class("BagUIClickMsgVP")
+local WeaponStartIconObjView = require("application.app.ui.bag.modelView.weaponStartIconObjView")
 ---@type BagUIClickMsgVP
 local this = nil
 function BagUIClickMsgVP:ctor()
@@ -72,7 +73,29 @@ function BagUIClickMsgVP:init()
 
     --- 显示 武器 等级 数据
     ---@type UnityEngine.UI.Text
+    self.weaponLvShowText = nil
+    ---显示 武器 等级 数据
+    ---@type UnityEngine.GameObject
     self.weaponLvShow = nil
+    ---显示 强化到几阶
+    ---@type UnityEngine.GameObject
+    self.endTopStarList = nil
+    --- 标识 武器 强化到 几阶
+    ---@type UnityEngine.GameObject
+    self.startObj = nil;
+    ---@type ZJYFrameWork.UISerializable.UISerializableKeyObject
+    self.startObj_UISerializableKeyObject = nil
+    ---存放 生成 强化 星阶
+    ---@type table<number,WeaponStartIconObjView>
+    ---``` lua
+    --- local data =  WeaponStartIconObjView(gameObject)
+    --- local data = {
+    ---     gameObject=nil,
+    ---     icons_CanvasGroup:UnityEngine.CanvasGroup
+    --- }
+    ---```
+    self.startObjSKeyList = {}
+    self.end_refine = nil;
 end
 
 function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
@@ -89,6 +112,9 @@ function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
     self.midWeaponMainRoot = self.sKeyObj:GetObjTypeStr("mid_midWeaponMainRoot") or UnityEngine.GameObject;
     self.midWeaponMainNumText = self.sKeyObj:GetObjTypeStr("mid_WeaponMainNumText_Text") or UnityEngine.UI.Text;
     self.midWeaponMainNameText = self.sKeyObj:GetObjTypeStr("mid_WeaponMainName_Text") or UnityEngine.UI.Text;
+    self.weaponLvShowText = self.sKeyObj:GetObjTypeStr("end_top_WeaponNumText") or UnityEngine.UI.Text;
+
+    self.starObj = self.sKeyObj:GetObjTypeStr("startObj")
 end
 
 --- 启动面板
@@ -99,7 +125,9 @@ function BagUIClickMsgVP:Start(panel, type)
     self.gameObject = panel
     self.sKeyObj = self.gameObject:GetComponent("UISerializableKeyObject")
 
+    for key, value in pairs(t) do
 
+    end
     --根据 type 打开面板信息不一样
     if type == 1 then
         ---武器面板
