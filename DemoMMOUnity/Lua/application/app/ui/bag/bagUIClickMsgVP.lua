@@ -66,7 +66,7 @@ function BagUIClickMsgVP:init()
 
     --- 星星 object
     ---@type UnityEngine.GameObject
-    self.starObj = nil;
+    self.mid_icon = nil;
     ---显示 星星 数量的父物体
     ---@type UnityEngine.GameObject
     self.mid_starList = nil;
@@ -95,7 +95,21 @@ function BagUIClickMsgVP:init()
     --- }
     ---```
     self.startObjSKeyList = {}
+    --- 表示 当前武器 精炼 等阶
+    ---@type UnityEngine.GameObject
     self.end_refine = nil;
+    --- 武器 精炼到 几阶的数字
+    ---@type UnityEngine.UI.Text
+    self.end_refine_WeaponRefineNum_Text = nil;
+    --- 武器 精炼到 几阶的数字 text
+    ---@type UnityEngine.UI.Text
+    self.end_refine_WeaponRefineNumStringText = nil;
+    --- 武器技能
+    ---@type UnityEngine.GameObject
+    self.end_WeaponSkillIntroduce = nil;
+    --- 技能文本 text 组件
+    ---@type UnityEngine.UI.Text
+    self.end_WeaponSkillIntroduce_Text=nil;
 end
 
 function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
@@ -114,7 +128,15 @@ function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
     self.midWeaponMainNameText = self.sKeyObj:GetObjTypeStr("mid_WeaponMainName_Text") or UnityEngine.UI.Text;
     self.weaponLvShowText = self.sKeyObj:GetObjTypeStr("end_top_WeaponNumText") or UnityEngine.UI.Text;
 
-    self.starObj = self.sKeyObj:GetObjTypeStr("startObj")
+    self.mid_starList = self.sKeyObj:GetObjTypeStr("mid_starList") or UnityEngine.GameObject;
+    self.mid_icon = self.sKeyObj:GetObjTypeStr("mid_icon") or UnityEngine.GameObject;
+
+    self.starObj = self.sKeyObj:GetObjTypeStr("startObj") or UnityEngine.GameObject;
+    self.end_refine = self.sKeyObj:GetObjTypeStr("end_refine") or UnityEngine.GameObject;
+    self.end_refine_WeaponRefineNum_Text = self.sKeyObj:GetObjTypeStr("end_refine_WeaponRefineNum_Text") or
+        UnityEngine.UI.Text;
+    self.end_refine_WeaponRefineNumStringText = self.sKeyObj:GetObjTypeStr("end_refine_WeaponRefineNumStringText") or
+        UnityEngine.UI.Text;
 end
 
 --- 启动面板
