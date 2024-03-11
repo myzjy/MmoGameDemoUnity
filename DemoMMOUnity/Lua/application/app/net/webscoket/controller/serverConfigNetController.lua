@@ -28,6 +28,7 @@ function ServerConfigNetController:SetServerConfigDataList(response)
     self:SetEquipmentPrimaryConfigBaseDataList(protocolData.equipmentPrimaryConfigBaseDataList)
     self:SetEquipmentGrowthViceConfigBaseDataList(protocolData
         .equipmentGrowthViceConfigBaseDataList)
+    self:SetWeaponsConfigDataList(protocolData.weaponsConfigDataList)
     GameMainUIViewController:GetInstance():Open()
 end
 
@@ -171,8 +172,17 @@ function ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(equi
         EquipmentGrowthViceConfigBaseDataList[item.viceId] = data
     end
 end
+
+---@param weaponsConfigDataList table<integer,WeaponsConfigData>
 function ServerConfigNetController:SetWeaponsConfigDataList(weaponsConfigDataList)
-    
+    WeaponsConfigDataList = {}
+    for index, value in ipairs(weaponsConfigDataList) do
+        local item = value
+        ---@type WeaponsConfigData
+        local data = WeaponsConfigData()
+        data = data:readData(item)
+        WeaponsConfigDataList[item.id] = data
+    end
 end
 
 return ServerConfigNetController
