@@ -87,4 +87,4 @@ function InjectByName(moduleName, injectInfo)
 	end
 end
 
-require "commonn.System.Injection.LuaInjectionBus"
+require "System.Injection.LuaInjectionBus"

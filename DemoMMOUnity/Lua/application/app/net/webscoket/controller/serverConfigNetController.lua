@@ -18,7 +18,7 @@ function ServerConfigNetController:RegisterEvent()
 end
 
 function ServerConfigNetController:SetServerConfigDataList(response)
-    ---@type {bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}
+    ---@type ServerConfigResponse
     local protocolData = response
     self:SetItemBaseDataList(protocolData.bagItemEntityList)
     self:SetEquipmentConfigBaseDataList(protocolData.equipmentConfigBaseDataList)
@@ -105,6 +105,7 @@ local EquipmentPrimaryConfigBaseDataList = {}
 local EquipmentDesBaseDataList = {}
 local EquipmentGrowthConfigBaseDataList = {}
 local EquipmentGrowthViceConfigBaseDataList = {}
+local WeaponsConfigDataList = {}
 
 ---@param equipmentBaseDataList table<integer,EquipmentBaseData>
 function ServerConfigNetController:SetEquipmentBaseDataList(equipmentBaseDataList)
@@ -169,6 +170,9 @@ function ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(equi
         data = data:readData(item)
         EquipmentGrowthViceConfigBaseDataList[item.viceId] = data
     end
+end
+function ServerConfigNetController:SetWeaponsConfigDataList(weaponsConfigDataList)
+    
 end
 
 return ServerConfigNetController

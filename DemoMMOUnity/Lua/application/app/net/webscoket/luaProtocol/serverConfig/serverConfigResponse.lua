@@ -15,6 +15,8 @@ function ServerConfigResponse:ctor()
     self.equipmentGrowthConfigBaseDataList = nil
     ---@type  table<integer,EquipmentGrowthViceConfigBaseData>
     self.equipmentGrowthViceConfigBaseDataList = nil
+    ---@type  table<integer,WeaponsConfigData>
+    self.weaponsConfigDataList = nil
 end
 
 ---@param bagItemEntityList table<integer,ItemBaseData>
@@ -24,6 +26,7 @@ end
 ---@param equipmentDesBaseDataList table<integer,EquipmentDesBaseData>
 ---@param equipmentGrowthConfigBaseDataList table<integer,EquipmentGrowthConfigBaseData>
 ---@param equipmentGrowthViceConfigBaseDataList table<integer,EquipmentGrowthViceConfigBaseData>
+---@param weaponsConfigDataList table<integer,WeaponsConfigData>
 function ServerConfigResponse:new(
     bagItemEntityList,
     equipmentConfigBaseDataList,
@@ -31,7 +34,8 @@ function ServerConfigResponse:new(
     equipmentPrimaryConfigBaseDataList,
     equipmentDesBaseDataList,
     equipmentGrowthConfigBaseDataList,
-    equipmentGrowthViceConfigBaseDataList
+    equipmentGrowthViceConfigBaseDataList,
+    weaponsConfigDataList
 )
     self.bagItemEntityList = bagItemEntityList
     self.equipmentBaseDataList = equipmentBaseDataList
@@ -40,7 +44,7 @@ function ServerConfigResponse:new(
     self.equipmentDesBaseDataList = equipmentDesBaseDataList
     self.equipmentGrowthConfigBaseDataList = equipmentGrowthConfigBaseDataList
     self.equipmentGrowthViceConfigBaseDataList = equipmentGrowthViceConfigBaseDataList
-
+    self.weaponsConfigDataList = weaponsConfigDataList
     return self
 end
 
@@ -73,7 +77,8 @@ function ServerConfigResponse:read(data)
         data.packet.equipmentPrimaryConfigBaseDataList,
         data.packet.equipmentDesBaseDataList,
         data.packet.equipmentGrowthConfigBaseDataList,
-        data.packet.equipmentGrowthViceConfigBaseDataList
+        data.packet.equipmentGrowthViceConfigBaseDataList,
+        data.packet.weaponsConfigDataList
     )
 end
 
