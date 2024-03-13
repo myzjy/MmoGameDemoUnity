@@ -594,7 +594,7 @@ namespace AmplifyAnimationPack
 				{
 					if( end != null )
 						end();
-					Debug.LogException( ex );
+					UnityEngine.Debug.LogException( ex );
 					EditorApplication.update -= closureCallback;
 				}
 			};
