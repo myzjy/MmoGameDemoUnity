@@ -1,10 +1,11 @@
 // Amplify Animation Pack - Third-Person Character Controller
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
-
+using System;
 using UnityEditor;
-using UnityEditor.PackageManager;
+using UnityEditor.EventSystems;
 using UnityEditor.PackageManager.Requests;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 
