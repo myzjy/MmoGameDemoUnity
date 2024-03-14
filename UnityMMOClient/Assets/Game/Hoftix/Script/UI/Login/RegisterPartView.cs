@@ -1,0 +1,121 @@
+﻿using DG.Tweening;
+using GameUtil;
+using UnityEngine;
+using UnityEngine.UI;
+using ZJYFrameWork.Collection.Reference;
+using ZJYFrameWork.Constant;
+using ZJYFrameWork.Event;
+using ZJYFrameWork.Hotfix.Common;
+using ZJYFrameWork.Hotfix.UISerializable;
+using ZJYFrameWork.Module.Register.Controller;
+using ZJYFrameWork.Module.Register.Service;
+using ZJYFrameWork.Net;
+using ZJYFrameWork.Setting;
+using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.UISerializable.Common;
+using ZJYFrameWork.UISerializable.Manager;
+using ZJYFrameWork.WebRequest;
+
+namespace ZJYFrameWork.UISerializable
+{
+    public class RegisterPartView : IReference
+    {
+        /// <summary>
+        /// root节点CanvasGroup
+        /// </summary>
+        public CanvasGroup rootCanvasGroup;
+
+        /// <summary>
+        /// rootTransform
+        /// </summary>
+        public Transform root;
+
+        /// <summary>
+        /// root节点
+        /// </summary>
+        public GameObject rootObj;
+
+        /// <summary>
+        /// 输入账号
+        /// </summary>
+        public InputField registerAccountInputField;
+
+        /// <summary>
+        /// 输入密码
+        /// </summary>
+        public InputField registerPasswordInputField;
+
+        /// <summary>
+        /// 确认密码
+        /// </summary>
+        public InputField registerAffirmPasswordInputField;
+
+        /// <summary>
+        /// 确认账号注册
+        /// </summary>
+        public Button okButton;
+
+
+        public Button cancelButton;
+        private long clickLoginTime;
+        protected UISerializableKeyObject registerSerializableKeyObject { get; set; }
+
+        public void Build(UISerializableKeyObject keyObject)
+        {
+            registerSerializableKeyObject = keyObject;
+            rootCanvasGroup = registerSerializableKeyObject.GetObjType<CanvasGroup>("root_CanvasGroup");
+            rootObj = registerSerializableKeyObject.GetObjType<GameObject>("root");
+            root = rootObj.transform;
+            registerAccountInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerAccountInputField");
+            registerPasswordInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerPasswordInputField");
+            registerAffirmPasswordInputField =
+                registerSerializableKeyObject.GetObjType<InputField>("registerAffirmPasswordInputField");
+            okButton = registerSerializableKeyObject.GetObjType<Button>("okButton");
+            cancelButton = registerSerializableKeyObject.GetObjType<Button>("cancelButton");
+        }
+
+        public void OnShow()
+        {
+            rootCanvasGroup.DOKill();
+            rootCanvasGroup.DOFade(0f, 0f);
+            rootCanvasGroup.DOFade(1f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
+                .OnComplete(() =>
+                {
+                    rootCanvasGroup.interactable = true;
+                    rootCanvasGroup.blocksRaycasts = true;
+                    // PlayManager.Instance.LoadScene(Data.scene_home);
+                    rootObj.SetActive(true);
+                });
+        }
+
+        public void OnClose()
+        {
+            if (!rootObj.activeSelf)
+            {
+                return;
+            }
+
+            rootCanvasGroup.DOKill();
+            rootCanvasGroup.DOFade(0f, 0f);
+            rootCanvasGroup.DOFade(0f, 0.2f).SetEase(Ease.Linear).SetLoops(3, LoopType.Yoyo)
+                .OnComplete(() =>
+                {
+                    rootCanvasGroup.interactable = false;
+                    rootCanvasGroup.blocksRaycasts = false;
+                    // PlayManager.Instance.LoadScene(Data.scene_home);
+                    rootObj.SetActive(false);
+                    //打开登录界面
+                    SpringContext.GetBean<LoginUIController>().loginPartView.Show();
+                });
+        }
+
+        public void Clear()
+        {
+            rootCanvasGroup = null;
+            root = null;
+            
+        }
+    }
+}

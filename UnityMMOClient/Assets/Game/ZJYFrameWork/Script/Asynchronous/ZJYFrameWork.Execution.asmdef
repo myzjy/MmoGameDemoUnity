@@ -1,0 +1,17 @@
+{
+  "name": "ZJYFrameWork.Execution",
+  "rootNamespace": "",
+  "references": [
+    "ZJYFrameWork.Log",
+    "ZJYFrameWork.Spring.Utils"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

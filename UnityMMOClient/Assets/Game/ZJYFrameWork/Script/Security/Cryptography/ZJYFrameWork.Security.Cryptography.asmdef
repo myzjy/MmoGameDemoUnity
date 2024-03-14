@@ -1,0 +1,16 @@
+{
+  "name": "ZJYFrameWork.Security.Cryptography",
+  "rootNamespace": "",
+  "references": [
+    "GUID:d50e89131eca26a469b0dd3b3c3304ae"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

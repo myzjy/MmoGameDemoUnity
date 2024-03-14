@@ -1,0 +1,17 @@
+{
+  "name": "ZJYFrameWork.Log",
+  "rootNamespace": "",
+  "references": [
+    "GUID:01cc6f49cd8e7fe459cf336d67caef0a",
+    "GUID:cfc954a222077144a990b61b9b6b2f9c"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

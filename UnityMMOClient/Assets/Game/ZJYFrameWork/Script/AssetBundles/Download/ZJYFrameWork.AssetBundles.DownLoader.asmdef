@@ -1,0 +1,17 @@
+{
+  "name": "ZJYFrameWork.AssetBundles.DownLoader",
+  "rootNamespace": "",
+  "references": [
+    "GUID:bfd860e13f5ec0a4a842b81b00368eab",
+    "GUID:48ad6efc7dae75341b7fa84ac8fb08ad"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

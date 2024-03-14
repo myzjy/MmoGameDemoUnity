@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0dcf0d266bb4b16b824b2ac756bd387, type: 3}
+  m_Name: MessageDataToolSetting
+  m_EditorClassIdentifier: 
+  spreadSheetURL: REMOVED_URL
+  spreadSheetCSVDownloadURL: REMOVED_URL
+  enumFilePath: /Game/Script/Common/
+  outputDataPath: Assets/Game/AssetBundles/ScriptableObject/MessageData/
+  editorLanguageData: {fileID: 11400000, guid: f97e2d221d46dc344a2a9f942db22651, type: 2}
+  eventSpreadSheetURL: REMOVED_URL
+  eventMessageClassFilePath: /Game/Script/Event/Message/
+  eventOutputDataPath: Assets/Game/AssetBundles/ScriptableObject/MessageData/Event/
+  campaignSpreadSheetURL: REMOVED_URL
+  campaignMessageClassFilePath: /Game/Script/Campaign/Message/
+  campaignOutputDataPath: Assets/Game/AssetBundles/ScriptableObject/MessageData/Campaign/

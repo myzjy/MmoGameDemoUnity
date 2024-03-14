@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eda4c6d5308849baa3927ef35f44df7c, type: 3}
+  m_Name: SpriteAssetViewerGlobalSetting
+  m_EditorClassIdentifier: 
+  Packer2Atlas_IsCheckoutTag: 1
+  Packer2Atlas_IsTightPack: 0
+  Packer2Atlas_CompressionSetting: 1
+  packer2AtlasIsAddAtlasAbString: 1
+  packer2AtlasIsAddAtlasContentsAbString: 1
+  atlasCheckTightPackMessageType: 0
+  atlasIsTightPack: 1
+  atlasCheckCompressionSettingMessageType: 0
+  atlasCompressionSetting: 1
+  atlasCheckAddAtlasAbStringMessageType: 3
+  atlasIsAddAtlasAbString: 1
+  atlasCheckAddAtlasContentsAbStringMessageType: 3
+  atlasIsAddAtlasContentsAbString: 1
+  assetBundleFileExtension: assetbundle
+  spriteAtlasSubSavePath: Game/SpriteAtlas
