@@ -4,7 +4,7 @@ local WeaponsConfigData = class("WeaponsConfigData")
 function WeaponsConfigData:ctor()
     self.id = -1;
 
-    self.weaponNam = string.empty;
+    self.weaponName = string.empty;
 
     self.weaponType = 1;
 

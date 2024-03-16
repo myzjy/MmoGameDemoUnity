@@ -42,7 +42,7 @@ Shader "Hovl/Opaque/ParallaxIce"
 		{
 			float2 uv_texcoord;
 			float3 worldNormal;
-			INTERNAL_DATA
+			half3 internalSurfaceTtoW0; half3 internalSurfaceTtoW1; half3 internalSurfaceTtoW2;
 			float3 worldPos;
 		};
 

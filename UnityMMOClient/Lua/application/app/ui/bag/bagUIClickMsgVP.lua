@@ -1,6 +1,7 @@
 ---@class BagUIClickMsgVP
 local BagUIClickMsgVP = class("BagUIClickMsgVP")
 local WeaponStartIconObjView = require("application.app.ui.bag.modelView.weaponStartIconObjView")
+
 ---@type BagUIClickMsgVP
 local this = nil
 function BagUIClickMsgVP:ctor()
@@ -118,6 +119,7 @@ end
 ---@param weaponMsgData WeaponPlayerUserDataStruct
 ---@param uid number
 function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
+    self.startObjSKeyList = {}
     self.titleText = self.sKeyObj:GetObjTypeStr("top_topWeaponName_Text") or UnityEngine.UI.Text;
     self.weaponTypeNameText = self.sKeyObj:GetObjTypeStr("mid_WeaponTypeName_Text") or UnityEngine.UI.Text;
 
@@ -144,6 +146,9 @@ function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
         UnityEngine.UI.Text;
 
     self.end_WeaponSkillIntroduce = self.sKeyObj:GetObjTypeStr("end_WeaponSkillIntroduce") or UnityEngine.UI.Text;
+    self.end_WeaponIntroduce_Text = self.sKeyObj:GetObjTypeStr("end_WeaponSkillIntroduce") or UnityEngine.UI.Text;
+
+    self.titleText.text = dataCofig.weaponName
 end
 
 --- 启动面板

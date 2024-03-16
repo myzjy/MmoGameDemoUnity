@@ -46,6 +46,11 @@ GameMainUIViewController = require("application.app.ui.gameMain.gameMainUIViewCo
 BagUIController = require("application.app.ui.bag.bagUIController").GetInstance()
 
 printDebug("end require UI controller lua scripts ing ...")
+printDebug("loading ui or common or other lua script config")
+require("app.config.weaponConfig")
+require("app.config.gameConfig")
+
+printDebug("end loading lua scirpt config")
 
 
 

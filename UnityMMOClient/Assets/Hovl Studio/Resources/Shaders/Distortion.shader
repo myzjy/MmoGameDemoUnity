@@ -31,7 +31,7 @@ Shader "Hovl/Particles/Distortion"
 				#include "UnityCG.cginc"
 				uniform sampler2D_float _CameraDepthTexture;
 				uniform float _InvFade;
-				uniform sampler2D _GrabTexture;
+				uniform sampler2D grab_texture;
 				uniform sampler2D _NormalMap;
 				uniform float4 _NormalMap_ST;
 				uniform float _Distortionpower;	
@@ -97,7 +97,7 @@ Shader "Hovl/Particles/Distortion"
 					half clampResult89 = (abs(tex2DNode14.r) + abs(tex2DNode14.g) * 30) - 0.03;
 					screenColor29 = screenColor29 * _GrabTexture_TexelSize.xy * _Distortionpower * i.color.a;
 					i.texcoord.xy = screenColor29 * i.texcoord.z + i.texcoord.xy;
-					half4 col = tex2Dproj( _GrabTexture, UNITY_PROJ_COORD(i.texcoord));
+					half4 col = tex2Dproj( grab_texture, UNITY_PROJ_COORD(i.texcoord));
 					col.a = saturate(col.a * clampResult89);
 					return col;
 				}
