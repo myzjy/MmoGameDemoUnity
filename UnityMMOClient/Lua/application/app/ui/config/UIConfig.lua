@@ -17,4 +17,12 @@ local UIConfig = {
         Last = 1,
     }
 }
+UIConfig.BagHeaderBtnConfig = {
+    Type = {
+        WeaponType = 0
+    },
+    Name = {
+        [UIConfig.BagHeaderBtnConfig.Type.WeaponType] = "武器"
+    },
+}
 return UIConfig

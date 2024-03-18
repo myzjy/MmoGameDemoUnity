@@ -2187,6 +2187,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4011621804529026402}
+  - component: {fileID: 7587180500522035271}
+  - component: {fileID: 9133724531906544996}
   m_Layer: 5
   m_Name: ButtonPanelList
   m_TagString: Untagged
@@ -2205,16 +2207,56 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2761565993450852335}
+  m_Children: []
   m_Father: {fileID: 2180796581020689503}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -5.434082, y: 0}
   m_SizeDelta: {x: -1233.03, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7587180500522035271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3364075623214189917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 105, y: 86}
+  m_Spacing: {x: 0, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
+--- !u!114 &9133724531906544996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3364075623214189917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: TabHeadListGrid
+    UI_Serializable_Obj: {fileID: 3364075623214189917}
+    Path: BagUIPanel/TabHeadList/ButtonPanelList
+  maskIndex: 4
 --- !u!1 &3365618895307562972
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,6 +2362,7 @@ MonoBehaviour:
   - {fileID: 2830327625363189841}
   - {fileID: 8996882379030942408}
   - {fileID: 5939393062404122727}
+  - {fileID: 9133724531906544996}
   mSelfObj: {fileID: 3365618895307562972}
   MTransform: {fileID: 5313057224630772054}
   MObjCanvasGroup: {fileID: 0}
@@ -2429,6 +2472,7 @@ RectTransform:
   m_Children:
   - {fileID: 3947677652843172707}
   - {fileID: 3378066834312656566}
+  - {fileID: 2761565993450852335}
   - {fileID: 4011621804529026402}
   m_Father: {fileID: 5313057224630772054}
   m_RootOrder: 1
@@ -4640,7 +4684,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2761565993450852335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4655,13 +4699,13 @@ RectTransform:
   m_Children:
   - {fileID: 7501560741026786897}
   - {fileID: 4402979940599902659}
-  m_Father: {fileID: 4011621804529026402}
-  m_RootOrder: 0
+  m_Father: {fileID: 2180796581020689503}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -282.04202, y: 0}
-  m_SizeDelta: {x: 103.4753, y: 86}
+  m_AnchoredPosition: {x: -287.4761, y: 0}
+  m_SizeDelta: {x: 105, y: 86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1005922414813249321
 MonoBehaviour:
@@ -4759,10 +4803,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: equipmentButton
+  - UI_Serializable_Key: headerBtn
     UI_Serializable_Obj: {fileID: 1005922414813249321}
     Path: equipmentButtons
-  - UI_Serializable_Key: equipmentButtons_UISerializableKeyObject
+  - UI_Serializable_Key: headerBtn_UISerializableKeyObject
     UI_Serializable_Obj: {fileID: 5600445904960459733}
     Path: equipmentButtons
   maskIndex: 18
@@ -6254,7 +6298,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9071777910173015267}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

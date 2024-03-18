@@ -16,6 +16,10 @@ function LuaUIObject:SetActive(value)
     self.gameObject:SetActive(value)
 end
 
+function LuaUIObject:SetItemActive(item, value)
+    item:SetActive(value)
+end
+
 ---@param type string 类型
 function LuaUIObject:GetComponent(type)
     --local component = self.transform:GetComponent(type)

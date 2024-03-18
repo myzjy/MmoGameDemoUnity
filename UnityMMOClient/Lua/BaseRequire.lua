@@ -46,8 +46,9 @@ ProtocolManager = require("application.app.net.webscoket.protocolManager")
 PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
 I18nManager = require("application.app.i18n.I18nManager")
 
-GameEvent=require("application.app.event.gameEvent")
-GameMainEvent=require("application.app.event.gameMainEvent")
+GameEvent = require("application.app.event.gameEvent")
+GameMainEvent = require("application.app.event.gameMainEvent")
+UIGameEvent = require("application.app.event.uiGameEvent")
 
 
 UIComponentManager = require("application.app.ui.UIComponentManager")
