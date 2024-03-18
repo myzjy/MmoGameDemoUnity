@@ -16,3 +16,7 @@ function LuaUtils.GetGameObject(gameObject, objName)
     local obj = sKeyObj:GetObjTypeStr(objName) or UnityEngine.GameObject
     return obj
 end
+
+function LuaUtils:Set()
+    
+end

@@ -24,5 +24,6 @@ UIConfig.BagHeaderBtnConfig = {
     Name = {
         [UIConfig.BagHeaderBtnConfig.Type.WeaponType] = "武器"
     },
+    
 }
 return UIConfig
