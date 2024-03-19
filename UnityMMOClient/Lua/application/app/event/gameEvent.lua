@@ -10,6 +10,7 @@ GameEvent.LoginTapToStartResponse = event("GameEvent.LoginTapToStartResponse")
 
 
 GameEvent.AcquireUserIdWeaponService = event("GameEvent.AcquireUserIdWeaponService")
+GameEvent.AcquireWeaponBagServerList = event("GameEvent.AcquireUserIdWeaponService")
 
 
 

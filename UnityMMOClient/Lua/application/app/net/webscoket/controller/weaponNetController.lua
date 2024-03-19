@@ -40,5 +40,8 @@ function WeaponNetController:AcquireUserIdWeaponService(findUserId, findWeaponId
     local jsonString = data:write()
     NetManager:SendMessageEvent(jsonString)
 end
+function WeaponNetController:AcquireWeaponBagServerList()
+
+end
 
 return WeaponNetController

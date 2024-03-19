@@ -31,7 +31,8 @@ end
 function BagUIView:OnShow()
     BagUIController:Open()
 end
-
+function BagUIView:RegisterEvent()
+end
 
 function BagUIView:Notification()
     return {

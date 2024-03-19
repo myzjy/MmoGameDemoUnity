@@ -1,9 +1,11 @@
 ---@class BagUIController:LuaUIObject
 local BagUIController = class("BagUIController", LuaUIObject)
+---@type BagUIController
 local instance = nil
-function  BagUIController:ctor()
-    
+function BagUIController:ctor()
+
 end
+
 function BagUIController.GetInstance()
     if not instance then
         -- body
@@ -29,5 +31,6 @@ function BagUIController:Build(bagUIView)
     ---@type BagUIView
     self.BagUIView = bagUIView
 end
+
 
 return BagUIController

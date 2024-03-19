@@ -2,6 +2,7 @@
 ---  since: zjy
 ---@class BagHeaderBtnPanel :LuaUIObject
 local BagHeaderBtnPanel = class("BagHeaderBtnPanel", LuaUIObject)
+local BagHeaderItem = require("application.app.ui.bag.modelView.bagHeaderItem")
 local BagBtnConfig = {
     { type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType, icon = "UI_BagTabIcon_Weapon" }
 }
@@ -10,7 +11,7 @@ local BagBtnConfig = {
 function BagHeaderBtnPanel:ctor(gameObject)
     self.gameObject = gameObject
     ---@type UnityEngine.GameObject
-    self.headerGrids = LuaUtils.GetGameObject(self.gameObject, "TabHeadListGrid")
+    self.headerGrids = LuaUtils.GetKeyGameObject(self.gameObject, "TabHeadListGrid")
     self.headersUIGrids = LuaUtils.GetUIGrid(self.gameObject, "TabHeadListGrid")
     self.bagScene = string.empty;
     -- 存放 list button
@@ -18,8 +19,9 @@ function BagHeaderBtnPanel:ctor(gameObject)
     --- 当前 按钮配置 器
     self.bagConfig = {}
     -- 按钮
-    self.bagBtnObj = LuaUtils.GetGameObject(self.gameObject, "headerBtn")
-    self:SetItemActive(self.bagBtnObj, false)
+    ---@type UnityEngine.GameObject
+    self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtn")
+    self.bagBtnObj:SetActive(false)
 end
 
 function BagHeaderBtnPanel:CreateBagBtn()
@@ -27,6 +29,9 @@ function BagHeaderBtnPanel:CreateBagBtn()
         ---@type UnityEngine.GameObject
         local item = UnityEngine.GameObject:Instantiate(self.bagBtnObj)
         item.transform:SetParent(self.headerGrids.transform)
+        LuaUtils.SetScale(item, UnityEngine.Vector3.New(1, 1, 1))
+ 
+        self.bagButtonObjList[value.type] = BagHeaderItem(item, value)
     end
 end
 

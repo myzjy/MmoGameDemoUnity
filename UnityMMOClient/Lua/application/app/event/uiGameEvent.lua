@@ -1,7 +1,8 @@
-local UIGameEvent={}
+local UIGameEvent = {}
 
 --- 点击武器
-UIGameEvent.BagHeaderBtnWeaponHandler=event("UIGameEvent.BagHeaderBtnWeaponHandler")
+UIGameEvent.BagHeaderWeaponHandler = event("UIGameEvent.BagHeaderBtnWeaponHandler")
+UIGameEvent.BagHeaderWeaponBtnHandler = event("UIGameEvent.BagHeaderWeaponBtnHandler")
 
 
 
