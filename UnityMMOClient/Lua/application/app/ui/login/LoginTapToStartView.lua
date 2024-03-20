@@ -20,6 +20,7 @@ function LoginTapToStartView:Build(view)
 	end
 	self:SetListener(self.LoginStartButton, function()
 		GameEvent.LoginTapToStart()
+		LoginNetController:LoginTapToStart()
 	end)
 	self:SetListener(self.LoginStartMaxButton, function()
 		LoginUIController:GetInstance():OnClose()

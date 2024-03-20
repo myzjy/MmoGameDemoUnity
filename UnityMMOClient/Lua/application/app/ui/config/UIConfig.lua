@@ -24,6 +24,12 @@ UIConfig.BagHeaderBtnConfig = {
     Name = {
         [UIConfig.BagHeaderBtnConfig.Type.WeaponType] = "武器"
     },
+    IconConfig={
+        [UIConfig.BagHeaderBtnConfig.Type.WeaponType]={
+            Open="",
+            Hide=""
+        }
+    }
     
 }
 return UIConfig
