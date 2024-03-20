@@ -1,10 +1,11 @@
 ---@class BagHeaderItem:LuaUIObject
 local BagHeaderItem = class("BagHeaderItem", LuaUIObject())
 
-function BagHeaderItem:ctor(goRoot, config)
+function BagHeaderItem:ctor(goRoot, config, prefabConfig)
     self.gameObject = goRoot
     self.transform = goRoot.transform
     self.config = config
+    self.prefabConfig = prefabConfig
 end
 
 --- 点击事件

@@ -4,7 +4,20 @@
 local BagHeaderBtnPanel = class("BagHeaderBtnPanel", LuaUIObject)
 local BagHeaderItem = require("application.app.ui.bag.modelView.bagHeaderItem")
 local BagBtnConfig = {
-    { type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType, icon = "UI_BagTabIcon_Weapon",name=UIConfigEnum.BagHeaderBtnConfig.Name }
+    PrefabConfig = {
+        __hiderIcon = "headerBtnIconHide",
+        __openIcon = "headerBtnOpenIcon",
+        __headerBtnObj = "headerBtnObj",
+        __headerBtnSelectObj = "headerBtnSelectObj"
+    },
+    BagHeaderBtnConfig = {
+        {
+            type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType,
+            icon = "UI_BagTabIcon_Weapon",
+            name = UIConfigEnum.BagHeaderBtnConfig.Name,
+            openConfig = UIConfigEnum.BagHeaderBtnConfig.IconConfig
+        },
+    }
 }
 
 ---@param gameObject UnityEngine.GameObject
@@ -25,13 +38,13 @@ function BagHeaderBtnPanel:ctor(gameObject)
 end
 
 function BagHeaderBtnPanel:CreateBagBtn()
-    for index, value in ipairs(BagBtnConfig) do
+    for index, value in ipairs(BagBtnConfig.BagHeaderBtnConfig) do
         ---@type UnityEngine.GameObject
         local item = UnityEngine.GameObject:Instantiate(self.bagBtnObj)
         item.transform:SetParent(self.headerGrids.transform)
         LuaUtils.SetScale(item, UnityEngine.Vector3.New(1, 1, 1))
- 
-        self.bagButtonObjList[value.type] = BagHeaderItem(item, value)
+
+        self.bagButtonObjList[value.type] = BagHeaderItem(item, value,BagBtnConfig.PrefabConfig)
     end
 end
 
