@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb95e09514744018bca9ecd71e92e281, type: 3}
+  m_Name: SOUND_HUANLE
+  m_EditorClassIdentifier: 
+  id: 0
+  audioAsset: SOUND_HUANLE
+  priority: 0
+  intervalLimit: 0
+  volumeScale: 1
+  limitNum: 0
+  cullingType: 0
+  clip: {fileID: 8300000, guid: 57bae58d9a9a93c4caf6e1908a502e23, type: 3}
+  jingle: 0
