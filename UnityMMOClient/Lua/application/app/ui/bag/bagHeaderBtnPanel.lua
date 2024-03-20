@@ -4,7 +4,7 @@
 local BagHeaderBtnPanel = class("BagHeaderBtnPanel", LuaUIObject)
 local BagHeaderItem = require("application.app.ui.bag.modelView.bagHeaderItem")
 local BagBtnConfig = {
-    { type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType, icon = "UI_BagTabIcon_Weapon" }
+    { type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType, icon = "UI_BagTabIcon_Weapon",name=UIConfigEnum.BagHeaderBtnConfig.Name }
 }
 
 ---@param gameObject UnityEngine.GameObject
