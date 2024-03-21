@@ -28,6 +28,7 @@ function BagHeaderBtnPanel:ctor(gameObject)
     self.headersUIGrids = LuaUtils.GetUIGrid(self.gameObject, "TabHeadListGrid")
     self.bagScene = string.empty;
     -- 存放 list button
+    ---@type table<number,BagHeaderItem>
     self.bagButtonObjList = {}
     --- 当前 按钮配置 器
     self.bagConfig = {}
@@ -37,6 +38,10 @@ function BagHeaderBtnPanel:ctor(gameObject)
     self.bagBtnObj:SetActive(false)
 end
 
+function BagHeaderBtnPanel:RegisterEvent()
+    UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OnSelectHeaderBtn, self)
+end
+
 function BagHeaderBtnPanel:CreateBagBtn()
     for index, value in ipairs(BagBtnConfig.BagHeaderBtnConfig) do
         ---@type UnityEngine.GameObject
@@ -44,7 +49,20 @@ function BagHeaderBtnPanel:CreateBagBtn()
         item.transform:SetParent(self.headerGrids.transform)
         LuaUtils.SetScale(item, UnityEngine.Vector3.New(1, 1, 1))
 
-        self.bagButtonObjList[value.type] = BagHeaderItem(item, value,BagBtnConfig.PrefabConfig)
+        self.bagButtonObjList[value.type] = BagHeaderItem(item, value, BagBtnConfig.PrefabConfig)
+    end
+end
+
+--- 选择了其他 按钮
+---@param __selectIndex any
+function BagHeaderBtnPanel:OnSelectHeaderBtn(__selectIndex)
+    for index, value in ipairs(self.bagButtonObjList) do
+        if __selectIndex ~= index then
+            value:OnHide()
+        else
+            -- 明确点击的按钮
+            value:OnEnterFish()
+        end
     end
 end
 

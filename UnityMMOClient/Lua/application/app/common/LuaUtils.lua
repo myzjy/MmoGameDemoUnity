@@ -116,3 +116,8 @@ function LuaUtils.GetKeyButtonGameObject(gameObejct,objName)
     local __uiButton = LuaUtils.GetUIButton(obj)
     return __uiButton
 end
+function LuaUtils.GetKeyCanvaGroupGameObject(gameObejct,objName)
+    local obj=LuaUtils.GetKeyGameObject(gameObejct,objName)
+    local __uiButton = LuaUtils.GetUICanvaGroup(obj)
+    return __uiButton
+end

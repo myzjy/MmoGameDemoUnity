@@ -1,9 +1,11 @@
 ---@class BagUIController:LuaUIObject
-local BagUIController = class("BagUIController", LuaUIObject)
+local BagUIController = class("BagUIController", LuaUIObject())
+local BagHeaderBtnPanel = require("application.app.ui.bag.bagHeaderBtnPanel")
+
+
 ---@type BagUIController
 local instance = nil
 function BagUIController:ctor()
-
 end
 
 function BagUIController.GetInstance()
@@ -25,6 +27,7 @@ function BagUIController:Open()
     end
     self.BagUIView:OnHide()
     self.BagUIView.UIView:OnShow()
+    self.BagUIView:OnShow()
 end
 
 function BagUIController:Build(bagUIView)
@@ -32,5 +35,7 @@ function BagUIController:Build(bagUIView)
     self.BagUIView = bagUIView
 end
 
+function BagUIController:RegisterEvent()
+end
 
 return BagUIController

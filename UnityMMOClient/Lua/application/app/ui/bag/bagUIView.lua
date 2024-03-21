@@ -1,6 +1,7 @@
 ---背包 UI 相关 逻辑
 ---@class BagUIView:UIView
-local BagUIView = class("BagUIView", UIView)
+local BagUIView = class("BagUIView", UIView())
+local BagHeaderBtnPanel = require("application.app.ui.bag.bagHeaderBtnPanel")
 
 local function UIConfig()
     return {
@@ -19,6 +20,10 @@ local function UIConfig()
         end
     }
 end
+function BagUIView:ctor()
+    self.bagHeaderBtnPanel = nil
+end
+
 function BagUIView:OnLoad()
     self:Load(UIConfig())
     self:LoadUI(UIConfig())
@@ -27,10 +32,15 @@ end
 
 function BagUIView:OnInit()
     BagUIController:Build(self)
+    ---@type BagUIPanelView
+    local view = self.viewPanel
+    self.bagHeaderBtnPanel = BagHeaderBtnPanel(self.gameObject);
 end
+
 function BagUIView:OnShow()
     BagUIController:Open()
 end
+
 function BagUIView:RegisterEvent()
 end
 
