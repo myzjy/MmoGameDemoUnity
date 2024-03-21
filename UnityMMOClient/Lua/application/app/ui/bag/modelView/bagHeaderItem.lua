@@ -6,6 +6,8 @@ function BagHeaderItem:ctor(goRoot, config, prefabConfig)
     self.transform = goRoot.transform
     self.config = config
     self.prefabConfig = prefabConfig
+    self.openObj=LuaUtils.GetUICanvaGroup(self.gameObject,self.prefabConfig.__headerBtnSelectObj)
+    self.hideObj=LuaUtils.GetUICanvaGroup(self.gameObject,self.prefabConfig.__headerBtnObj)
 end
 
 --- 点击事件
