@@ -36,10 +36,11 @@ function BagHeaderBtnPanel:ctor(gameObject)
     ---@type UnityEngine.GameObject
     self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtn")
     self.bagBtnObj:SetActive(false)
+    self:RegisterEvent()
 end
 
 function BagHeaderBtnPanel:RegisterEvent()
-    UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OnSelectHeaderBtn, self)
+    UIUtils.AddEventListener(UIGameEvent.OnSelectBagHeaderBtnHandler, self.OnSelectHeaderBtn, self)
 end
 
 function BagHeaderBtnPanel:CreateBagBtn()

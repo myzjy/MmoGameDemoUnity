@@ -14,6 +14,7 @@ function BagHeaderItem:ctor(goRoot, config, prefabConfig)
     self.hideObj = LuaUtils.GetKeyCanvaGroupGameObject(self.gameObject, self.prefabConfig.__headerBtnObj)
     self.openBtn = LuaUtils.GetKeyButtonGameObject(self.gameObject, self.prefabConfig.__headerBtnSelectObj)
     self.hideBtn = LuaUtils.GetKeyButtonGameObject(self.gameObject, self.prefabConfig.__headerBtnObj)
+    self.isSelectClick = false;
     self:OnHide()
 
     self:SetListener(self.openBtn, function()
@@ -24,23 +25,21 @@ end
 --- 点击事件
 function BagHeaderItem:OnEnterFish()
     if self.config.type == 1 then
-        self:OnClickWeaponBtnHandler()
+        self:OnOpen();
+        -- 点击 背包 武器按钮
+        UIGameEvent.BagHeaderBtnWeaponHandler()
     end
 end
 
 function BagHeaderItem:OnOpen()
     self.openObj.alpha = 1
     self.hideObj.alpha = 0
+    self.isSelectClick = true;
 end
 
 function BagHeaderItem:OnHide()
     self.openObj.alpha = 0
     self.hideObj.alpha = 1
-end
-
-function BagHeaderItem:OnClickWeaponBtnHandler()
-    -- 点击 背包 武器按钮
-    UIGameEvent.BagHeaderBtnWeaponHandler()
 end
 
 return BagHeaderItem
