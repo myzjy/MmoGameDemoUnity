@@ -9,5 +9,6 @@ function BagUIPanelView:Init(view)
 	self.WeaponInDetailItem_UISerializableKeyObject = self._UIView:GetObjTypeStr("WeaponInDetailItem_UISerializableKeyObject") or ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.weaponGrid = self._UIView:GetObjTypeStr("weaponGrid") or UnityEngine.GameObject
 	self.TabHeadListGrid = self._UIView:GetObjTypeStr("TabHeadListGrid") or UnityEngine.GameObject
+	self.TabHeadListGrid = self._UIView:GetObjTypeStr("TabHeadListGrid") or UnityEngine.GameObject
 end
 

@@ -7,7 +7,7 @@
 ---@class LoginTapToStartView:UIBaseView
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView())
 
-function LoginTapToStartView:Build(view)
+function LoginTapToStartView:ctor(view)
 	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or UnityEngine.UI.Button
 	---关闭按钮
 	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button

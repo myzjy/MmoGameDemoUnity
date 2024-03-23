@@ -2267,7 +2267,6 @@ RectTransform:
   - {fileID: 169208941886144579}
   - {fileID: 1005835883573863339}
   - {fileID: 5007003511152438727}
-  - {fileID: 6531717727459058904}
   - {fileID: 4080296418995861558}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -2335,7 +2334,6 @@ MonoBehaviour:
   - {fileID: 4548462337066523778}
   - {fileID: 7622137904974989906}
   - {fileID: 3095057475168958607}
-  - {fileID: 7421680849228347599}
   - {fileID: 7236548743885483865}
   mSelfObj: {fileID: 1899562274783211712}
   MTransform: {fileID: 7960560374260678589}
@@ -7973,7 +7971,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7960560374260678589}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -9543,73 +9541,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &8598809022653625315
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6531717727459058904}
-  - component: {fileID: 7421680849228347599}
-  - component: {fileID: 4114645995840341925}
-  m_Layer: 5
-  m_Name: LoginControll
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &6531717727459058904
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8598809022653625315}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7960560374260678589}
-  m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7421680849228347599
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8598809022653625315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kodComs:
-  - UI_Serializable_Key: LoginController
-    UI_Serializable_Obj: {fileID: 4114645995840341925}
-    Path: LoginPanel/LoginControll
-  maskIndex: 2
---- !u!114 &4114645995840341925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8598809022653625315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c87f894dc8d49c08e1c34ec7f12b934, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8613637727540871330
 GameObject:
   m_ObjectHideFlags: 0

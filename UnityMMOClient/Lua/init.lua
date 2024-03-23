@@ -10,7 +10,7 @@ local function Init()
 end
 Init()
 
-require("commonn.util.functions")
+require("common.util.functions")
 _G.null = nil
 _G.NULL = nil
 

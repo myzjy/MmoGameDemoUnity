@@ -5,10 +5,10 @@
 ---
 
 ---@class LoginView:UIView
-LoginView = class("LoginView", UIView)
-LoginView.LoginPartView = require("application.app.ui.login.LoginPartView")
-LoginView.RegisterPartView = require("application.app.ui.login.RegisterPartView")
-LoginView.LoginTapToStartView = require("application.app.ui.login.LoginTapToStartView")
+local LoginView = class("LoginView", UIView)
+local loginPartView = require("application.app.ui.login.LoginPartView")
+local registerPartView = require("application.app.ui.login.RegisterPartView")
+local loginTapToStartView = require("application.app.ui.login.LoginTapToStartView")
 function LoginView:OnLoad()
 	self.UIConfig = {
 		Config = LoginConfig,
@@ -32,10 +32,10 @@ function LoginView:OnInit()
 	printInfo("LoginView:OnInit line 10")
 
 	---@type LoginPanelView
-	local viewPanel = LoginView.viewPanel
-	self.LoginPartView:Build(viewPanel.LoginPart_UISerializableKeyObject)
-	self.RegisterPartView:Build(viewPanel.RegisterPart_UISerializableKeyObject)
-	self.LoginTapToStartView:Build(viewPanel.LoginStart_UISerializableKeyObject)
+	local viewPanel = self.viewPanel
+	self.LoginPartView = loginPartView(viewPanel.LoginPart_UISerializableKeyObject)
+	self.RegisterPartView = registerPartView(viewPanel.RegisterPart_UISerializableKeyObject)
+	self.LoginTapToStartView = loginTapToStartView(viewPanel.LoginStart_UISerializableKeyObject)
 	LoginUIController:GetInstance():Build(self, self.LoginPartView, self.RegisterPartView, self.LoginTapToStartView)
 end
 
@@ -86,3 +86,5 @@ function LoginView:NotificationHandler(_eventNotification)
 		return switchAction(_eventNotification.eventBody)
 	end
 end
+
+return LoginView

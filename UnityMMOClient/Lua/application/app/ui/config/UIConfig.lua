@@ -17,17 +17,24 @@ local UIConfig = {
         Last = 1,
     }
 }
+UIConfig.FishConfig = {
+    LoginConfig = {
+        name = "Login",
+        scriptPath = "application.app.ui.login.LoginView"
+    }
+}
 UIConfig.BagHeaderBtnConfig = {
     Type = {
         WeaponType = 0
-    },
-    Name = {
-        [UIConfig.BagHeaderBtnConfig.Type.WeaponType] = "武器"
     },
     IconConfig = {
         Open = "headerBtnOpen",
         Hide = "headerBtnHide"
     }
+
+}
+UIConfig.BagHeaderBtnConfig.Name = {
+    [UIConfig.BagHeaderBtnConfig.Type.WeaponType] = "武器"
 
 }
 return UIConfig

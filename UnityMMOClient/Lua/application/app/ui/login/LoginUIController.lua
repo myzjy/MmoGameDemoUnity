@@ -1,5 +1,6 @@
 ---@class LoginUIController:LuaUIObject
-local LoginUIController = class("LoginUIController", LuaUIObject)
+local LoginUIController = class("LoginUIController", LuaUIObject())
+local loginView = require("application.app.ui.login.LoginView")
 
 ---@type LoginUIController
 local instance = nil
@@ -18,7 +19,8 @@ function LoginUIController:Open()
 			printError("LoginView 并未打开界面 生成")
 		end
 		-- 去生成界面
-		LoginView:OnLoad()
+		self.LoginView = loginView()
+		self.LoginView:OnLoad()
 		return
 	end
 	self:OnClose()
@@ -94,7 +96,7 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 		local account = self.LoginPartView.account.text
 		local password = self.LoginPartView.password.text
 		-- GameEvent.LoginByAccount(account, password)
-		LoginNetController:LoginByAccount(account,password)
+		LoginNetController:LoginByAccount(account, password)
 		-- LoginService:LoginByAccount(account, password)
 	end)
 	self:SetListener(self.LoginPartView.RegisterBtn, function()

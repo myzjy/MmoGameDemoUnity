@@ -47,8 +47,8 @@ BagUIController = require("application.app.ui.bag.bagUIController").GetInstance(
 
 printDebug("end require UI controller lua scripts ing ...")
 printDebug("loading ui or common or other lua script config")
-require("app.config.weaponConfig")
-require("app.config.gameConfig")
+require("application.app.config.weaponConfig")
+require("application.app.config.gameConfig")
 
 printDebug("end loading lua scirpt config")
 
@@ -61,16 +61,16 @@ UIComponentManager.UIEventNotificationDict = {}
 
 function UIComponentManager:InitUIModelComponent()
     --- 创建一个新的table ，不会读取到正确 元地址
-    require("application.app.ui.login.LoginView")
+    local loginView = require("application.app.ui.login.LoginView")
     require("application.app.ui.gameMain.gameMainView")
     local bagUIView = require("application.app.ui.bag.bagUIView")
-    for _i, _v in pairs(LoginView:Notification()) do
+    for _i, _v in pairs(loginView:Notification()) do
         local uiAction = UIComponentManager.UIEventNotificationDict[_v]
         if uiAction == nil then
             --local data = v
             --- 当前 UI事件没有存储
             UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
-                LoginView:NotificationHandler(_eventNotification)
+                loginView:NotificationHandler(_eventNotification)
             end
         else
             printError("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")

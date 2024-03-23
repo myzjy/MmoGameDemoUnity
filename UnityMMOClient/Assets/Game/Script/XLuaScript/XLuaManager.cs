@@ -85,12 +85,14 @@ namespace ZJYFrameWork.XLuaScript
 #if UNITY_EDITOR
             if (AssetBundleConfig.IsEditorMode)
             {
+                Debug.Log($"filePath:{luaFilePath}");
                 // string destination = Path.Combine(Application.dataPath, $"{AppConfig.GameLuaPath}");
                 // scriptPath = $"{AppConfig.AssetsGameLuaPath}{filePath}";
                 string source =
                     Path.Combine(Application.dataPath, $"../{AssetBundleConfig.luaAssetbundleAssetName}/{luaFilePath}");
                 DirectoryInfo dirInfo = new DirectoryInfo(source);
                 scriptPath = dirInfo.FullName;
+                Debug.Log($"scriptPath:{scriptPath}");
                 var textLua = Util.GetFileBytes(scriptPath);
                 return textLua;
             }
@@ -193,7 +195,13 @@ namespace ZJYFrameWork.XLuaScript
             luaEnv.Dispose();
             luaEnv = null;
         }
+
+        public void CallLuaFunction(string funcName)
+        {
+            luaEnv.LoadString(funcName);
+        }
     }
+    
 
     public class CSSharpXLua
     {

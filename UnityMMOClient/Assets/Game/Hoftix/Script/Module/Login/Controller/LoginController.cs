@@ -23,6 +23,7 @@ using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.UISerializable.Common;
 using ZJYFrameWork.UISerializable.Manager;
 using ZJYFrameWork.WebRequest;
+using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 {
@@ -79,7 +80,11 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                 Debug.Log("连接成功事件，通过Token登录服务器");
 #endif
+#if ENABLE_LUA_START
+                SpringContext.GetBean<XLuaManager>().CallLuaFunction("LoginUIController:Open()");
+#else
                 UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
+#endif
                 //loginService.LoginByToken();
             }
             else

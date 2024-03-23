@@ -2,9 +2,9 @@
 ---datetime.datetime
 ---
 ---@class RegisterPartView:UIBaseView
-local RegisterPartView = class("RegisterPartView", UIBaseView)
+local RegisterPartView = class("RegisterPartView", UIBaseView())
 
-function RegisterPartView:Build(view)
+function RegisterPartView:ctor(view)
     self.rootCanvasGroup = view:GetObjTypeStr("root_CanvasGroup") or UnityEngine.CanvasGroup
     self.rootObj = view:GetObjTypeStr("root") or UnityEngine.GameObject
     self.root = self.rootObj.transform

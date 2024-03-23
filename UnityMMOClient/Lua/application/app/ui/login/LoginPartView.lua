@@ -4,9 +4,9 @@
 --- DateTime: 2023/5/15 19:09
 ---
 ---@class LoginPartView:UIBaseView
-local LoginPartView = class("LoginPartView", UIBaseView)
+local LoginPartView = class("LoginPartView", UIBaseView())
 
-function LoginPartView:Build(view)
+function LoginPartView:ctor(view)
 	self.LoginPart = view:GetObjTypeStr("LoginPart") or UnityEngine.GameObject
 	self.LoginBtn = view:GetObjTypeStr("LoginBtn_Button") or UnityEngine.UI.Button
 	self.RegisterBtn = view:GetObjTypeStr("RegisterBtn_Button") or UnityEngine.UI.Button
