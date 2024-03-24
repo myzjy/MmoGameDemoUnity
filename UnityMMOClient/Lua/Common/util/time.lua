@@ -41,7 +41,7 @@ function time.getTimestamp(t)
             table.insert(str, tostring(v))
         end
         local msg = table.concat(str, "|")
-        printInfo("time.getTimestamp lt is nil: %s", msg)
+        PrintInfo("time.getTimestamp lt is nil: %s", msg)
         lt = 2e9
     end
 

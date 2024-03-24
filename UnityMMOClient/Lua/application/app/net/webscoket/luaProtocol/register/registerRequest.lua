@@ -8,7 +8,7 @@ local RegisterRequest = class("RegisterRequest")
 ---@type RegisterRequest
 local this = RegisterRequest
 function RegisterRequest:ctor()
-    printDebug("call lua function RegisterRequest ctor")
+    PrintDebug("call lua function RegisterRequest ctor")
     ---@type string
     self.account = string.empty
     ---@type string

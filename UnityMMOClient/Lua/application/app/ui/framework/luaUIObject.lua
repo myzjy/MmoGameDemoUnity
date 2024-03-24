@@ -29,17 +29,17 @@ end
 ---@param btn UnityEngine.UI.Button
 ---@param func function
 function LuaUIObject:SetListener(btn, func)
-    CS.ZJYFrameWork.Common.GameCommonUtil.SetListener(btn, func)
+    ZJYFrameWork.Common.GameCommonUtil.SetListener(btn, func)
 end
 
 ---@param text string
----@param textUI
+---@param textUI UnityEngine.UI.Text
 function LuaUIObject:SetText(textUI, text)
     textUI.text = text
 end
 
----@param image
----@param sprite
+---@param image UnityEngine.UI.Image
+---@param sprite UnityEngine.Sprite
 function LuaUIObject:SetSprite(image, sprite)
     image.sprite = sprite
 end

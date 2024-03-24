@@ -36,14 +36,19 @@ function BagHeaderBtnPanel:ctor(gameObject)
     ---@type UnityEngine.GameObject
     self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtn")
     self.bagBtnObj:SetActive(false)
+    self:CreateBagBtn()
     self:RegisterEvent()
 end
 
 function BagHeaderBtnPanel:RegisterEvent()
+    PrintDebug("init registerEvent add bagHeaderBtnPanel function")
     UIUtils.AddEventListener(UIGameEvent.OnSelectBagHeaderBtnHandler, self.OnSelectHeaderBtn, self)
+    UIUtils.AddEventListener(UIGameEvent.CreateBagHeaderBtnHandler, self.CreateBagBtn, self)
+    UIUtils.AddEventListener(UIGameEvent.DeleteBagHeaderBtnHandler, self.DeleteBagHeaderBtn, self)
 end
 
 function BagHeaderBtnPanel:CreateBagBtn()
+    PrintDebug("call init create BagHeader Btn function not delete gameObject list")
     for index, value in ipairs(BagBtnConfig.BagHeaderBtnConfig) do
         ---@type UnityEngine.GameObject
         local item = UnityEngine.GameObject:Instantiate(self.bagBtnObj)
@@ -54,9 +59,18 @@ function BagHeaderBtnPanel:CreateBagBtn()
     end
 end
 
+function BagHeaderBtnPanel:DeleteBagHeaderBtn()
+    PrintDebug("call init delte bagHeader Btn function is delete gameObject childs")
+    for index, value in ipairs(self.bagButtonObjList) do
+        value:OnDestroy();
+    end
+    self.bagButtonObjList = {}
+end
+
 --- 选择了其他 按钮
 ---@param __selectIndex any
 function BagHeaderBtnPanel:OnSelectHeaderBtn(__selectIndex)
+    PrintDebug("select click event handler bagHeader")
     for index, value in ipairs(self.bagButtonObjList) do
         if __selectIndex ~= index then
             value:OnHide()
@@ -65,6 +79,13 @@ function BagHeaderBtnPanel:OnSelectHeaderBtn(__selectIndex)
             value:OnEnterFish()
         end
     end
+end
+
+function BagHeaderBtnPanel:OnDestroy()
+    UIGameEvent.DeleteBagHeaderBtnHandler()
+    UIUtils.RemoveAllEventListener(UIGameEvent.OnSelectBagHeaderBtnHandler)
+    UIUtils.RemoveAllEventListener(UIGameEvent.CreateBagHeaderBtnHandle)
+    UIUtils.RemoveAllEventListener(UIGameEvent.DeleteBagHeaderBtnHandler)
 end
 
 return BagHeaderBtnPanel

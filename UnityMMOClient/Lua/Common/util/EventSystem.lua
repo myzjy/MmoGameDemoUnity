@@ -93,7 +93,7 @@ eventValues = nil
 --立即触发
 function EventSystem:Fire(event_id, ...)
     if event_id == nil then 
-        printDebug("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
+        PrintDebug("Cat:EventSystem [Try to call EventSystem:Fire() with a nil event_id] : ", debug.traceback())
         return
     end
     eventValues = ...

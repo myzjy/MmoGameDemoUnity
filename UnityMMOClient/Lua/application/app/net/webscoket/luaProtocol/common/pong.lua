@@ -21,7 +21,7 @@ function Pong:protocolId()
 end
 
 function Pong:write(buffer, packet)
-    --printError(type(packet))
+    --PrintError(type(packet))
     if packet == nil then
         --log.log(type(packet))
         return

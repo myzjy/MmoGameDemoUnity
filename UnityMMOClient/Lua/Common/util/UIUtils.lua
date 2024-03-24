@@ -17,7 +17,7 @@ function UIUtils.RemoveAllEventListener(tobj)
     for __idx = 1, #tobj.evtListenerList do
         tobj.evtListenerList[__idx].evt:RemoveListener(tobj.evtListenerList[__idx].hanlde)
     end
-    table.clear(tobj.evtListenerList)
+    table.Clear(tobj.evtListenerList)
     tobj.evtListenerList = nil
 end
 

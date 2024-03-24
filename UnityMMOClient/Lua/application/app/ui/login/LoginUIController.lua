@@ -16,7 +16,7 @@ end
 function LoginUIController:Open()
 	if self.LoginView == nil then
 		if Debug > 0 then
-			printError("LoginView 并未打开界面 生成")
+			PrintError("LoginView 并未打开界面 生成")
 		end
 		-- 去生成界面
 		self.LoginView = loginView()
@@ -30,10 +30,16 @@ function LoginUIController:Open()
 	self.LoginPartView:OnShow()
 end
 
+function LoginUIController:OnShow()
+	if self.LoginView == nil then
+		
+	end
+end
+
 function LoginUIController:OnHide()
 	if self.LoginView == nil then
 		if Debug > 0 then
-			printError("LoginView 并未打开界面 生成")
+			PrintError("LoginView 并未打开界面 生成")
 		end
 		return
 	end
@@ -46,7 +52,7 @@ end
 function LoginUIController:OnClose()
 	if self.LoginView == nil then
 		if Debug > 0 then
-			printError("LoginView 并未打开界面 生成")
+			PrintError("LoginView 并未打开界面 生成")
 		end
 		return
 	end
@@ -54,7 +60,7 @@ function LoginUIController:OnClose()
 		self.LoginView:OnHide()
 	else
 		if Debug > 0 then
-			printError("LoginView 并未打开界面 生成")
+			PrintError("LoginView 并未打开界面 生成")
 		end
 	end
 	self.LoginPartView:OnHide()
@@ -64,7 +70,7 @@ end
 
 function LoginUIController:OpenLoginTapToStartUI()
 	if Debug > 0 then
-		printDebug("点击开始游戏之后，服务器在开启时间，可以正常进入")
+		PrintDebug("点击开始游戏之后，服务器在开启时间，可以正常进入")
 	end
 	--- 开始登录
 	self.LoginTapToStartView:OnShow()
@@ -86,14 +92,16 @@ function LoginUIController:Build(LoginView, LoginPartView, RegisterPartView, Log
 	self.LoginTapToStartView = LoginTapToStartView
 
 	self:SetListener(self.LoginPartView.LoginBtn, function()
-		printDebug(
+		PrintDebug(
 			"账号密码登录[account:"
 			.. self.LoginPartView.account.text
 			.. "][password:"
 			.. self.LoginPartView.password.text
 			.. "]"
 		)
+		---@type string
 		local account = self.LoginPartView.account.text
+		---@type string
 		local password = self.LoginPartView.password.text
 		-- GameEvent.LoginByAccount(account, password)
 		LoginNetController:LoginByAccount(account, password)

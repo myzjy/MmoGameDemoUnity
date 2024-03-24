@@ -8,18 +8,20 @@
 local LoginTapToStartView = class("LoginTapToStartView", UIBaseView())
 
 function LoginTapToStartView:ctor(view)
-	self.LoginStartButton = view:GetObjTypeStr("LoginStartButton") or UnityEngine.UI.Button
+	self.LoginStartButton = LuaUtils.GetKeyButtonGameObject(view, "LoginStartButton")
 	---关闭按钮
-	self.LoginStartMaxButton = view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button
-	self.SteamLoginCanvasGroup = view:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
+	self.LoginStartMaxButton = LuaUtils.GetKeyButtonGameObject(view, "LoginStartMaxButton")
+	--  view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button
+	self.SteamLoginCanvasGroup = LuaUtils.GetKeyCanvaGroupGameObject(view, "LoginStart_CanvasGroup")
+	-- view:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
 
 	if self.LoginStartButton == nil then
 		if Debug > 0 then
-			printError("请检查[" .. view.name .. "]物体配置下面是否有[LoginStartButton]组件")
+			PrintError("请检查[" .. view.name .. "]物体配置下面是否有[LoginStartButton]组件")
 		end
 	end
 	self:SetListener(self.LoginStartButton, function()
-		GameEvent.LoginTapToStart()
+		-- #GameEvent.LoginTapToStart()
 		LoginNetController:LoginTapToStart()
 	end)
 	self:SetListener(self.LoginStartMaxButton, function()
@@ -44,7 +46,8 @@ function LoginTapToStartView:OnHide()
 	self.SteamLoginCanvasGroup.ignoreParentGroups = false
 	self.SteamLoginCanvasGroup.blocksRaycasts = false
 end
-local procedureChangeSceneStr="ZJYFrameWork.Procedure.Scene.ProcedureChangeScene"
+
+local procedureChangeSceneStr = "ZJYFrameWork.Procedure.Scene.ProcedureChangeScene"
 function LoginTapToStartView:LoginSatrtGame()
 	LoginUIController:GetInstance():OnClose()
 	local procedureChangeScene = CS.ZJYFrameWork.Spring.Core.SpringContext.GetBean(procedureChangeSceneStr) or

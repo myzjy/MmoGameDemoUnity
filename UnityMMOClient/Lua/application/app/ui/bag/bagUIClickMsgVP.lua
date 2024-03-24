@@ -5,7 +5,7 @@ local WeaponStartIconObjView = require("application.app.ui.bag.modelView.weaponS
 ---@type BagUIClickMsgVP
 local this = nil
 function BagUIClickMsgVP:ctor()
-    printDebug("init commopent")
+    PrintDebug("init commopent")
     this = self
     self:init()
 end
@@ -145,8 +145,8 @@ function BagUIClickMsgVP:openShowWeaponMsg(dataCofig, weaponMsgData, uid)
     self.end_refine_WeaponRefineNumStringText = self.sKeyObj:GetObjTypeStr("end_refine_WeaponRefineNumStringText") or
         UnityEngine.UI.Text;
 
-    self.end_WeaponSkillIntroduce = self.sKeyObj:GetObjTypeStr("end_WeaponSkillIntroduce") or UnityEngine.UI.Text;
-    self.end_WeaponIntroduce_Text = self.sKeyObj:GetObjTypeStr("end_WeaponSkillIntroduce") or UnityEngine.UI.Text;
+    self.end_WeaponSkillIntroduce = self.sKeyObj:GetObjTypeStr("end_WeaponSkillIntroduce") or UnityEngine.GameObject;
+    self.end_WeaponIntroduce_Text = self.sKeyObj:GetObjTypeStr("end_WeaponIntroduce_Text") or UnityEngine.UI.Text;
 
     self.titleText.text = dataCofig.weaponName
 end
@@ -159,13 +159,11 @@ function BagUIClickMsgVP:Start(panel, type)
     self.gameObject = panel
     self.sKeyObj = self.gameObject:GetComponent("UISerializableKeyObject")
 
-    for key, value in pairs(t) do
 
-    end
     --根据 type 打开面板信息不一样
     if type == 1 then
         ---武器面板
-        self:openShowWeaponMsg()
+        --- self:openShowWeaponMsg()
     end
 end
 

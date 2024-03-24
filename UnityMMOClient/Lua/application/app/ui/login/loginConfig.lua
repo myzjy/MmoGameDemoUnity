@@ -14,7 +14,8 @@ local LoginConfig = {
         OpenLoginTapToStartUI = "OPEN_LOGIN_TAP_TO_START_UI",
         --- 当我们登录成功之后，闪过登录账号
         ShowLoginAccountUI = "Show_Login_Account_UI"
-    }
+    },
+    scriptPath="application.app.ui.login.LoginView"
 }
 
 return LoginConfig

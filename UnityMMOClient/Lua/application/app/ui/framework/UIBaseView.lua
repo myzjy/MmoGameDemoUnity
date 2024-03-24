@@ -56,6 +56,7 @@ function UIBaseView:InstantiateGameObject(gameObject)
     local parent = self:GetPanelUIRoot(self.Config.canvasType)
     local go = CS.UnityEngine.Object.Instantiate(gameObject, parent, true) or CS.UnityEngine.GameObject
     self:SetPanel({ gameObject = go })
+    ---@type UnityEngine.RectTransform
     local rectTransform = self:GetComponent("RectTransform")
 
     rectTransform.offsetMax = UnityEngine.Vector2.zero
@@ -112,7 +113,7 @@ function UIBaseView:OnInit()
 end
 
 function UIBaseView:OnShow()
-    printDebug("OnShow UIView")
+    PrintDebug("OnShow UIView")
     self.UIView:OnShow()
     --self.showFunc()
 end

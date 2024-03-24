@@ -2,7 +2,7 @@
 ---@class WeaponPlayerUserDataStruct
 local WeaponPlayerUserDataStruct = class("WeaponPlayerUserDataStruct")
 function WeaponPlayerUserDataStruct:ctor()
-    printDebug("init WeaponPlayerUserDataStruct ctor")
+    PrintDebug("init WeaponPlayerUserDataStruct ctor")
     ---武器id
     ---@type number
     self.id = -1 ---java.lang.long

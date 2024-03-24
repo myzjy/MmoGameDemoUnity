@@ -1,12 +1,13 @@
 ﻿using ZJYFrameWork.Event;
 using ZJYFrameWork.Module.ServerConfig.Service;
 using ZJYFrameWork.Spring.Core;
+using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Procedure.Scene
 {
     public class ProcedureGameMainConfig
     {
-        public const string GameMainEnter = "Enter_ProcedureGameMain";
+        public const string GameMainEnter = "ProcedureGameMain:GameMainEnter()";
     }
 
     /// <summary>
@@ -20,7 +21,7 @@ namespace ZJYFrameWork.Procedure.Scene
             base.OnEnter(fsm);
             // SpringContext.GetBean<L>()
 #if ENABLE_LUA_START
-            EventBus.AsyncExecute(ProcedureGameMainConfig.GameMainEnter);
+            SpringContext.GetBean<XLuaManager>().CallLuaFunction(ProcedureGameMainConfig.GameMainEnter);
 #else
             //初始进入
             //获取配置

@@ -8,7 +8,7 @@ local LoginRequest = class("LoginRequest")
 ---@type LoginRequest
 local this = LoginRequest
 function LoginRequest:ctor()
-    printDebug("call loginRequest function ctor")
+    PrintDebug("call loginRequest function ctor")
     self.account = string.empty
     self.password = string.empty
 end
@@ -16,7 +16,7 @@ end
 ---@param account string 用户名
 ---@param password string 密码
 function LoginRequest:new(account, password)
-    printDebug("account:" .. account .. ",password:" .. password)
+    PrintDebug("account:" .. account .. ",password:" .. password)
     self.account = account   -- java.lang.String
     self.password = password -- java.lang.String
     return self
@@ -33,7 +33,7 @@ function LoginRequest:write()
         packet = { account = self.account, password = self.password }
     }
     local jsonStr = JSON.encode(message)
-    printDebug(jsonStr)
+    PrintDebug(jsonStr)
 
     return jsonStr
 end

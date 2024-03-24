@@ -32,7 +32,7 @@ function WeaponNetController:AcquireUserIdWeaponService(findUserId, findWeaponId
     local packetData = WeaponPlayerUserDataRequest()
     if packetData == nil then
         -- body
-        printError("当前 WeaponPlayerUserDataRequest lua 侧没有读取到 检查文件")
+        PrintError("当前 WeaponPlayerUserDataRequest lua 侧没有读取到 检查文件")
         return
     end
     local data = packetData:new(findUserId, findWeaponId)

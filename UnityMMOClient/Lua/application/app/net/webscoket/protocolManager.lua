@@ -78,7 +78,7 @@ end
 function ProtocolManager.getProtocol(protocolId)
     local protocol = protocols[protocolId]
     if protocol == nil then
-        printError("[protocolId:" .. protocolId .. "]协议不存在")
+        PrintError("[protocolId:" .. protocolId .. "]协议不存在")
     end
     return protocol
 end

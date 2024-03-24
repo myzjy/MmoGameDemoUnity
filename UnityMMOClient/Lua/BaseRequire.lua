@@ -1,4 +1,4 @@
-printDebug("require lua script start")
+PrintDebug("require lua script start")
 --下面基础组件间的require有依赖顺序相关,闲着没事也别换顺序,要加新的往文件尾加就好
 require("defines.app_defines")
 require("common.util.str")
@@ -53,4 +53,4 @@ UIGameEvent = require("application.app.event.uiGameEvent")
 
 UIComponentManager = require("application.app.ui.UIComponentManager")
 
-printDebug("require lua script end")
+PrintDebug("require lua script end")

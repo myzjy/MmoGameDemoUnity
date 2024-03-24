@@ -21,7 +21,22 @@ UIConfig.FishConfig = {
     LoginConfig = {
         name = "Login",
         scriptPath = "application.app.ui.login.LoginView"
-    }
+    },
+    BagUIConfig = {
+        prefabName = "BagUIPanel",
+        --- 当前会生成在那一层
+        canvasType = UIConfigEnum.UICanvasType.UI,
+        sortType = UIConfigEnum.UISortType.First,
+        --- 当前 UI 交互事件 消息
+        eventNotification = {
+            --- 打开游戏主界面
+            openbaguipanel = "openbaguipanel",
+            --- 关闭 游戏主界面
+            closebaguipanel = "closebaguipanel",
+        },
+        weaponIconAtlasName = "uibagweaponicon_spriteatlas",
+        viewScriptPath = "application/app/ui/bag/bagUIView"
+    },
 }
 UIConfig.BagHeaderBtnConfig = {
     Type = {

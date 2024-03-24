@@ -1,15 +1,9 @@
 ---@class ProcedureFsmManager
 local ProcedureFsmManager = {}
-
+ProcedureGameMain = require("application.app.procedure.procedureGameMain")
 
 function ProcedureFsmManager:OnInit()
-    local eventInits = {
-        "application.app.procedure.procedureGameMain"
-    }
-    for key, value in pairs(eventInits) do
-        local v = require(value)
-        v:OnInit()
-    end
+    ProcedureGameMain:OnInit();
 end
 
 return ProcedureFsmManager

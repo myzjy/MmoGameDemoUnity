@@ -1,5 +1,5 @@
 ---@class GameMainView:UIView
-GameMainView = class("GameMainView", UIView())
+local GameMainView = class("GameMainView", UIView())
 GameMainConfig = {
     prefabName = "GameMainUIPanel",
     --- 当前会生成在那一层
@@ -18,11 +18,11 @@ function GameMainView:OnLoad()
         Config = GameMainConfig,
         viewPanel = GameMainUIPanelView,
         initFunc = function()
-            printDebug("GameMainView:Init()")
+            PrintDebug("GameMainView:Init()")
             GameMainView:OnInit()
         end,
         showFunc = function()
-            printDebug("GameMainView:showUI()-->showFunc")
+            PrintDebug("GameMainView:showUI()-->showFunc")
             GameMainView:OnShow()
         end,
         hideFunc = function()
@@ -35,7 +35,7 @@ function GameMainView:OnLoad()
 end
 
 function GameMainView:OnInit()
-    printDebug("call GameMainView Lua Script function to OnInit ....")
+    PrintDebug("call GameMainView Lua Script function to OnInit ....")
     ---@type GameMainUIPanelView
     local viewPanel = self.viewPanel
 
@@ -53,7 +53,7 @@ end
 ---设置用户名
 ---@param userName string 用户名字
 function GameMainView:SetTopHeadNameText(userName)
-    printDebug("call GameMainView " ..
+    PrintDebug("call GameMainView " ..
         " Lua Script function to SetTopHeadNameText" .. " set userName value: " .. userName)
     ---@type GameMainUIPanelView
     local viewPanel = self.viewPanel
@@ -71,37 +71,9 @@ function GameMainView:SetPhysicalPowerText(noPhysicalPower, maxPhysicalPower)
 end
 
 function GameMainView:OnShow()
-    printInfo("GameMainView:OnShow line 74")
-    GameMainUIViewController:GetInstance():Open()
+    PrintInfo("GameMainView:OnShow line 74")
+    self.UIView:OnShow()
+    -- GameMainUIViewController:GetInstance():Open()
 end
 
---- UI 通知事件
-function GameMainView:Notification()
-    ---不能直接返回，直接返回在内部拿不到表
-    local data = {
-        [GameMainConfig.eventNotification.OPEN_GAMEMAINPANEL_UI] = GameMainConfig.eventNotification
-            .OPEN_GAMEMAINPANEL_UI,
-        [GameMainConfig.eventNotification.CLOSE_GAMEMAINPANEL_UI] = GameMainConfig.eventNotification
-            .CLOSE_GAMEMAINPANEL_UI
-    }
-    return data
-end
-
-function GameMainView:NotificationHandler(_eventNotification)
-    local eventSwitch = {
-        [GameMainConfig.eventNotification.OPEN_GAMEMAINPANEL_UI] = function()
-            if self.reUse then
-                self:InstanceOrReuse()
-            else
-                self:OnLoad()
-            end
-        end,
-        [GameMainConfig.eventNotification.CLOSE_GAMEMAINPANEL_UI] = function(obj)
-            GameMainView:OnHide()
-        end
-    }
-    local switchAction = eventSwitch[_eventNotification.eventName]
-    if eventSwitch then
-        return switchAction(_eventNotification.eventBody)
-    end
-end
+return GameMainView

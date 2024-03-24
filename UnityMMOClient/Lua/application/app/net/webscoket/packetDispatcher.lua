@@ -3,7 +3,7 @@
 --- Created by zhangjingyi.
 --- DateTime: 2023/5/22 13:10
 
-printDebug("加载 PacketDispatcher.lua 文件")
+PrintDebug("加载 PacketDispatcher.lua 文件")
 local PacketDispatcher = {}
 --_receiversMap = {}
 PacketDispatcher.Event = {
@@ -17,7 +17,6 @@ ServerConfigNetController = require("application.app.net.webscoket.controller.se
 WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
-packetValue = nil
 PacketDispatcher.urlString = nil
 --- 链接建立通知lua
 function OnConnectServer(url)
@@ -27,7 +26,7 @@ function OnConnectServer(url)
 end
 
 function OnDisConnectFromServer()
-	printDebug("Game server disconnected!!")
+	PrintDebug("Game server disconnected!!")
 	GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
 

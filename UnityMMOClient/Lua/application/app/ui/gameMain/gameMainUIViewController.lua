@@ -1,5 +1,6 @@
 ---@class GameMainUIViewController:LuaUIObject
-local GameMainUIViewController = class("GameMainUIViewController", LuaUIObject())
+local GameMainUIViewController = class("GameMainUIViewController", LuaUIObject)
+local gameMainView = require("application.app.ui.gameMain.gameMainView")
 ---@type GameMainUIViewController
 local instance = nil
 function GameMainUIViewController:ctor()
@@ -14,22 +15,24 @@ function GameMainUIViewController:GetInstance()
 end
 
 function GameMainUIViewController:Open()
+    PrintDebug("call function open ")
     if self.GameMainView == nil then
         if Debug > 0 then
-            printError("GameMainView 并未打开界面 Open 生成")
+            PrintError("GameMainView 并未打开界面 Open 生成")
         end
+        local viewPanel= gameMainView()
         -- 去生成界面
-        GameMainView:OnLoad()
+        viewPanel:OnLoad()
         return
     end
     self:OnClose()
-    self.GameMainView.UIView:OnShow()
+    self.GameMainView:OnShow()
 end
 
 function GameMainUIViewController:OnClose()
     if self.GameMainView == nil then
         if Debug > 0 then
-            printError("GameMainView 并未打开界面 生成 OnClose")
+            PrintError("GameMainView 并未打开界面 生成 OnClose")
         end
         return
     end
@@ -37,7 +40,7 @@ function GameMainUIViewController:OnClose()
         self.GameMainView:OnHide()
     else
         if Debug > 0 then
-            printError("GameMainView  OnClose 并未打开界面 生成")
+            PrintError("GameMainView  OnClose 并未打开界面 生成")
         end
     end
     self.GameMainView:OnHide()
@@ -56,4 +59,5 @@ function GameMainUIViewController:UIInitEvent()
         BagUIController:Open()
     end)
 end
+
 return GameMainUIViewController

@@ -9,8 +9,10 @@ function LoginPanelView:Init(view)
 	self.LoginPart = self._UIView:GetObjTypeStr("LoginPart") or UnityEngine.GameObject
 	self.LoginPart_UISerializableKeyObject = self._UIView:GetObjTypeStr("LoginPart_UISerializableKeyObject") or ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.RegisterPart_UISerializableKeyObject = self._UIView:GetObjTypeStr("RegisterPart_UISerializableKeyObject") or ZJYFrameWork.UISerializable.UISerializableKeyObject
+	self.RegisterPart = self._UIView:GetObjTypeStr("RegisterPart") or UnityEngine.GameObject
 	self.LoginStart_CanvasGroup = self._UIView:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
 	self.LoginStart_UISerializableKeyObject = self._UIView:GetObjTypeStr("LoginStart_UISerializableKeyObject") or ZJYFrameWork.UISerializable.UISerializableKeyObject
+	self.LoginStart = self._UIView:GetObjTypeStr("LoginStart") or UnityEngine.GameObject
 	self.AudioSource = self._UIView:GetObjTypeStr("AudioSource") or UnityEngine.AudioSource
 end
 

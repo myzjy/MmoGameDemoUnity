@@ -58,7 +58,7 @@ function apiRequest.Send()
     apiRequest._watch.Start()
     if _bhRequest == nil then
         if Debug > 0 then
-            printDebug("not c# set HttpRequest data")
+            PrintDebug("not c# set HttpRequest data")
         end
         return
     end

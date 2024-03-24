@@ -1,17 +1,3 @@
-BagUIConfig = {
-    prefabName = "BagUIPanel",
-    --- 当前会生成在那一层
-    canvasType = UIConfigEnum.UICanvasType.UI,
-    sortType = UIConfigEnum.UISortType.First,
-    --- 当前 UI 交互事件 消息
-    eventNotification = {
-        --- 打开游戏主界面
-        openbaguipanel = "openbaguipanel",
-        --- 关闭 游戏主界面
-        closebaguipanel = "closebaguipanel",
-    },
-    weaponIconAtlasName="uibagweaponicon_spriteatlas"
-}
 ---武器相关 type
 local WeaponSortType
 WeaponSortType = function()
@@ -21,11 +7,9 @@ WeaponSortType = function()
 end
 
 --- 背包UI model 数据相关 背包内数据操作
-BagModelUIView = class("BagModelUIView")
+---@class BagModelUIView
+local BagModelUIView = class("BagModelUIView")
 
-function BagModelUIView:GetInstance()
-    return BagModelUIView
-end
 
 local function weaponQualitySortTpe(list)
 
@@ -49,3 +33,5 @@ end
 function BagModelUIView:OnHideClearCacheDataList()
     weaponList = {}
 end
+
+return BagModelUIView

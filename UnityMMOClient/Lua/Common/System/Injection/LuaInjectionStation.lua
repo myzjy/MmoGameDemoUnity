@@ -13,7 +13,7 @@ local string = string
 local tolua_tag = tolua_tag
 local getmetatable = getmetatable
 local CSLuaInjectStation
-local bridgeInfo = require "commonn.System.Injection.InjectionBridgeInfo"
+local bridgeInfo = require "common.System.Injection.InjectionBridgeInfo"
 
 local function Check(csModule)
 	local existmt = getmetatable(csModule)
@@ -87,4 +87,4 @@ function InjectByName(moduleName, injectInfo)
 	end
 end
 
-require "commonn.System.Injection.LuaInjectionBus"
+require "common.System.Injection.LuaInjectionBus"

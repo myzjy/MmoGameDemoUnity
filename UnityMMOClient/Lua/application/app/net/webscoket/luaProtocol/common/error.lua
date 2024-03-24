@@ -15,7 +15,7 @@ function Error:new(errorCode, errorMessage, module)
     self.errorCode = errorCode       -- int
     self.errorMessage = errorMessage -- java.lang.String
     self.module = module             -- int
-    printDebug(self.errorMessage)
+    PrintDebug(self.errorMessage)
 
     return self
 end
@@ -25,7 +25,7 @@ function Error:protocolId()
 end
 
 function Error:write(buffer, packet)
-    --printError(type(packet))
+    --PrintError(type(packet))
     if packet == nil then
         --log.log(type(packet))
         return

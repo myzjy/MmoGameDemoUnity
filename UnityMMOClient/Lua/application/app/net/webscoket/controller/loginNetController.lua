@@ -33,7 +33,7 @@ function LoginNetController:Init()
 end
 
 function LoginNetController:InitEvents()
-    printDebug("LoginNetController:InitEvents() line 24")
+    PrintDebug("LoginNetController:InitEvents() line 24")
     GlobalEventSystem:Bind(
         PacketDispatcher.Event.OnConnect,
         function(url)
@@ -58,7 +58,7 @@ function LoginNetController:OnNetOpenEvent()
     UICommonViewController:GetInstance():OpenUIDataScenePanel(1, 1)
     UICommonViewController:GetInstance().LoadingRotate:OnClose()
     if Debug > 0 then
-        printDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
+        PrintDebug("连接成功事件，登录服务器 登录过服务器 打开UI")
     end
     LoginUIController:GetInstance():Open()
 end
@@ -70,7 +70,7 @@ function LoginNetController:AtLoginResponse(data)
     local uid = response.uid
     local userName = response.userName
     if Debug > 0 then
-        printDebug(
+        PrintDebug(
             "[user:" ..
             userName ..
             "][token:" ..
@@ -94,13 +94,13 @@ function LoginNetController:AtLoginResponse(data)
 end
 
 function LoginNetController:Connect(url)
-    printDebug("LoginNetController:Connect(url)line 46" .. url)
+    PrintDebug("LoginNetController:Connect(url)line 46" .. url)
 end
 
 function LoginNetController:AtPong(data)
     -- local timeNum = string.format("%.0f", (data.time / 1000))
     -- local time = os.date("%Y年%m月%d日 %H时%M分%S秒", tonumber(timeNum))
-    -- printDebug("当前时间" .. time)
+    -- PrintDebug("当前时间" .. time)
     -- GameMainViewController:GetInstance():ShowTime(time)
     GetSchedulerManager().serverTime = data.time
     ZJYFrameWork.UISerializable.Manager.DateTimeUtil.SetNow(data.time)
@@ -111,7 +111,7 @@ end
 function LoginNetController:AtLoginTapToStartResponse(data)
     local response = data
     if response.message ~= nil then
-        printDebug("可以登陆" .. JSON.encode(data.accessGame) .. "," .. response.message)
+        PrintDebug("可以登陆" .. JSON.encode(data.accessGame) .. "," .. response.message)
     end
     if response.accessGame then
     else
@@ -141,20 +141,20 @@ function LoginNetController:LoginByAccount(account, password)
     LoginCacheData:SetAccount(account)
     LoginCacheData:SetPassword(password)
     if LoginRequest == nil then
-        printError("当前 LoginRequest 脚本 没有读取到 请检查")
+        PrintError("当前 LoginRequest 脚本 没有读取到 请检查")
         return
     end
     ---@type LoginRequest|nil
     local packetData = LoginRequest()
     if packetData == nil then
-        printError("当前 LoginRequest 脚本 没有读取到 请检查")
+        PrintError("当前 LoginRequest 脚本 没有读取到 请检查")
         return
     end
     local packet = packetData:new(account, password)
 
     PacketDispatcher:AddProtocolConfigEvent(
         Error:protocolId(), function(data)
-            printDebug(data.errorMessage)
+            PrintDebug(data.errorMessage)
             UIUtils.OnOpenDialog(
                 I18nManager:GetString(data.errorMessage),
                 function(res)
@@ -173,11 +173,11 @@ function LoginNetController:LoginTapToStart()
     elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPlayer then
         platform = "pc"
     else
-        printDebug("Current platform is unknown.")
+        PrintDebug("Current platform is unknown.")
     end
     local packetData = LoginTapToStartRequest()
     if packetData == nil then
-        printError("当前LoginTapToStartRequest lua 侧没有读取到 检查文件")
+        PrintError("当前LoginTapToStartRequest lua 侧没有读取到 检查文件")
         return
     end
     local packet = packetData:new(platform)
@@ -192,7 +192,7 @@ end
 function LoginNetController:RegisterAccount(account, password, affirmPassword)
     local packetData = RegisterRequest()
     if packetData == nil then
-        printError("当前 RegisterRequest lua 侧没有读取到 检查文件")
+        PrintError("当前 RegisterRequest lua 侧没有读取到 检查文件")
         return
     end
     local packet = packetData:new(account, password, affirmPassword)

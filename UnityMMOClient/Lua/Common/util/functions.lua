@@ -30,7 +30,7 @@ CONSOLE_COLOR = {
     Light_White = "#ffffff"
 }
 
-function printLog(tag, fmt, ...)
+function PrintLog(tag, fmt, ...)
     local t = {
         "[",
         string.upper(lua_tostring(tag)),
@@ -40,39 +40,39 @@ function printLog(tag, fmt, ...)
     print(table.concat(t))
 end
 
-function printError(fmt, ...)
-    printLog("ERR", setLogColor(CONSOLE_COLOR.Light_Red, fmt), ...)
+function PrintError(fmt, ...)
+    PrintLog("ERR", setLogColor(CONSOLE_COLOR.Light_Red, fmt), ...)
 end
 
-function printWarn(fmt, ...)
+function PrintWarn(fmt, ...)
     if Debug < 1 then
         return
     end
 
-    printLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    PrintLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
 end
 
-function printWarnStack(fmt, ...)
+function PrintWarnStack(fmt, ...)
     if Debug < 1 then
         return
     end
-    printLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    PrintLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
     print(debug.traceback("", 2))
 end
 
-function printInfo(fmt, ...)
+function PrintInfo(fmt, ...)
     if Debug < 1 then
         return
     end
 
-    printLog("INFO", setLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
+    PrintLog("INFO", setLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
 end
 
-function printDebug(fmt, ...)
+function PrintDebug(fmt, ...)
     if Debug < 1 then
         return
     end
-    printLog("DBG", setLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
+    PrintLog("DBG", setLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
 end
 
 function setLogColor(nColor, fmt)

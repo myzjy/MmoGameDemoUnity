@@ -1,7 +1,7 @@
 Debug = 0
 ConfigurationDevice = {}
 
-global = {}
+Global = {}
 local __g = _G
 
 local function Init()
@@ -14,33 +14,33 @@ require("common.util.functions")
 _G.null = nil
 _G.NULL = nil
 
-printDebug("# DEBUG                        = " .. Debug)
-printDebug("Game Main working...")
-printDebug("Game Main Init...")
-printDebug("Init Global init start")
+PrintDebug("# DEBUG                        = " .. Debug)
+PrintDebug("Game Main working...")
+PrintDebug("Game Main Init...")
+PrintDebug("Init Global init start")
 require("BaseRequire")
 
 if UnityEngine.Application.platform == UnityEngine.RuntimePlatform.Android then
-    printDebug("you iphone is panel android")
+    PrintDebug("you iphone is panel android")
 elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.IPhonePlayer then
-    printDebug("you iphone is panel ios")
+    PrintDebug("you iphone is panel ios")
 elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPlayer then
-    printDebug("you iphone is panel pc")
+    PrintDebug("you iphone is panel pc")
 else
-    printDebug("Current platform is unknown.")
+    PrintDebug("Current platform is unknown.")
 end
 
 
 function SyncSubmit(eventString)
     if Debug > 0 then
-        printDebug("执行事件, eventName:" .. eventString)
+        PrintDebug("执行事件, eventName:" .. eventString)
     end
     GlobalEventSystem:Fire(eventString)
 end
 
 --读取脚本
 
-setmetatable(global, {
+setmetatable(Global, {
     __newindex = function(_, name, value)
         rawset(__g, name, value)
     end,
@@ -78,9 +78,9 @@ local function UpdateEvent()
 
 end
 local function main()
-    printDebug("init active main function")
+    PrintDebug("init active main function")
     if Debug > 0 then
-        printDebug("open debug log ing....")
+        PrintDebug("open debug log ing....")
     end
 
     UIComponentManager:InitUIModelComponent()
@@ -96,5 +96,5 @@ end
 
 local status, msg = pcall(main, __G__TRACKBACK__)
 if not status then
-    printError('xpcall robot main error' .. type(status) .. "," .. msg)
+    PrintError('xpcall robot main error' .. type(status) .. "," .. msg)
 end

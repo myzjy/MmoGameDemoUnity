@@ -8,7 +8,7 @@ local UICommonViewController = class("UICommonViewController")
 ---@type UICommonViewController
 local instance = nil
 function UICommonViewController:ctor()
-    printDebug("ctor UICommonViewController lua function")
+    PrintDebug("ctor UICommonViewController lua function")
     self.viewPanel = nil
     self.LoadingRotate = nil
     self.dataloading = nil

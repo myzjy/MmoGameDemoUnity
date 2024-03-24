@@ -3889,7 +3889,10 @@ MonoBehaviour:
   - UI_Serializable_Key: RegisterPart_UISerializableKeyObject
     UI_Serializable_Obj: {fileID: 851209164219129482}
     Path: RegisterPart
-  maskIndex: 2
+  - UI_Serializable_Key: RegisterPart
+    UI_Serializable_Obj: {fileID: 3146546060513168608}
+    Path: RegisterPart
+  maskIndex: 6
 --- !u!114 &851209164219129482
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6050,7 +6053,10 @@ MonoBehaviour:
   - UI_Serializable_Key: LoginStart_UISerializableKeyObject
     UI_Serializable_Obj: {fileID: 7494502169147901862}
     Path: LoginStart
-  maskIndex: 6
+  - UI_Serializable_Key: LoginStart
+    UI_Serializable_Obj: {fileID: 5593194841706032213}
+    Path: LoginStart
+  maskIndex: 14
 --- !u!114 &7494502169147901862
 MonoBehaviour:
   m_ObjectHideFlags: 0

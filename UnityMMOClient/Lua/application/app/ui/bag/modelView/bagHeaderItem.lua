@@ -27,7 +27,7 @@ function BagHeaderItem:OnEnterFish()
     if self.config.type == 1 then
         self:OnOpen();
         -- 点击 背包 武器按钮
-        UIGameEvent.BagHeaderBtnWeaponHandler()
+        UIGameEvent.BagHeaderWeaponBtnHandler()
     end
 end
 
@@ -40,6 +40,18 @@ end
 function BagHeaderItem:OnHide()
     self.openObj.alpha = 0
     self.hideObj.alpha = 1
+end
+
+function BagHeaderItem:OnDestroy()
+    self.transform = nil
+    self.config = nil
+    self.prefabConfig = nil
+    self.openObj = nil
+    self.hideObj = nil
+    self.openBtn = nil
+    self.hideBtn = nil
+    self.isSelectClick = nil;
+    UnityEngine.GameObject.Destroy(self.gameObject)
 end
 
 return BagHeaderItem
