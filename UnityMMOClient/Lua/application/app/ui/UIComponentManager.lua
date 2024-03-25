@@ -62,32 +62,6 @@ UIComponentManager.UIEventNotificationDict = {}
 function UIComponentManager:InitUIModelComponent()
     --- 创建一个新的table ，不会读取到正确 元地址
 
-    require("application.app.ui.gameMain.gameMainView")
-    local bagUIView = require("application.app.ui.bag.bagUIView")
-    for _i, _v in pairs(GameMainView:Notification()) do
-        local uiAction = UIComponentManager.UIEventNotificationDict[_v]
-        if uiAction == nil then
-            --local data = v
-            --- 当前 UI事件没有存储
-            UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
-                GameMainView:NotificationHandler(_eventNotification)
-            end
-        else
-            PrintError("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")
-        end
-    end
-    for _i, _v in pairs(bagUIView:Notification()) do
-        local uiAction = UIComponentManager.UIEventNotificationDict[_v]
-        if uiAction == nil then
-            --local data = v
-            --- 当前 UI事件没有存储
-            UIComponentManager.UIEventNotificationDict[_v] = function(_eventNotification)
-                bagUIView:NotificationHandler(_eventNotification)
-            end
-        else
-            PrintError("[class:" .. _i .. "]" .. "[Notification:" .. _v .. "] 有重复的事件id")
-        end
-    end
 end
 
 --- 调用事件

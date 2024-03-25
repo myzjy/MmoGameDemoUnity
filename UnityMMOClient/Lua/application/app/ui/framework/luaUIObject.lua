@@ -8,6 +8,7 @@ function LuaUIObject:SetPanel(Panel)
     self.gameObject = Panel.gameObject
     self.transform = Panel.gameObject.transform
     self.InstanceID = self.gameObject:GetInstanceID()
+    ---@type ZJYFrameWork.UISerializable.UIView
     self.UIView = self:GetComponent("UIView")
 end
 
