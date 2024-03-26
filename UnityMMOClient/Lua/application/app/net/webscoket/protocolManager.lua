@@ -36,6 +36,9 @@ ServerConfigResponse = require("application.app.net.webscoket.luaProtocol.server
 
 ----------------------------------bag-------------------------------------------------
 ItemBaseData = require("application.app.net.webscoket.luaProtocol.bag.itemBaseData")
+AllBagItemRequest = require("application.app.net.webscoket.luaProtocol.bag.allBagItemRequest")
+AllBagItemResponse = require("application.app.net.webscoket.luaProtocol.bag.allBagItemResponse")
+BagUserItemMsgData = require("application.app.net.webscoket.luaProtocol.bag.bagUserItemMsgData")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------equipment-------------------------------------------------

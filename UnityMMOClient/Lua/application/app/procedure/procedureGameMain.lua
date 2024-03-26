@@ -13,13 +13,12 @@ function ProcedureGameMain:GameMainEnter()
         PrintError("当前 ServerConfigResponse 脚本 没有读取到 请检查")
         return
     end
-    local id = ServerConfigRequest:protocolId()
-    local packetData = ProtocolManager.getProtocol(id)
+    local packetData = ServerConfigRequest()
     if packetData == nil then
         PrintError("当前 ServerConfigRequest lua 侧没有读取到 检查文件")
         return
     end
-    local packet = packetData():new("1")
+    local packet = packetData:new("1")
     ---@type string
     local jsonString = packet:write()
     NetManager:SendMessageEvent(jsonString)

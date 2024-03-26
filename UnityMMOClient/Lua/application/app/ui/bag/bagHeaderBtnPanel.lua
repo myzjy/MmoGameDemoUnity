@@ -18,7 +18,7 @@ local BagBtnConfig = {
             openConfig = UIConfigEnum.BagHeaderBtnConfig.IconConfig
         },
     }
-}
+} 
 
 ---@param gameObject UnityEngine.GameObject
 function BagHeaderBtnPanel:ctor(gameObject)

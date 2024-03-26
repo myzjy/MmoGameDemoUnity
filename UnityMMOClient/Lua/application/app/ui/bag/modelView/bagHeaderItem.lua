@@ -24,6 +24,10 @@ end
 
 --- 点击事件
 function BagHeaderItem:OnEnterFish()
+    -- 不应徐 重复进入
+    if self.isSelectClick then
+        return
+    end
     if self.config.type == 1 then
         self:OnOpen();
         -- 点击 背包 武器按钮

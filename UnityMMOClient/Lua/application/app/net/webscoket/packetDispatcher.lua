@@ -15,6 +15,7 @@ PacketDispatcher.Event = {
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
 WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
+BagNetContoller = require("application.app.net.webscoket.controller.bagNetContoller"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 PacketDispatcher.urlString = nil
