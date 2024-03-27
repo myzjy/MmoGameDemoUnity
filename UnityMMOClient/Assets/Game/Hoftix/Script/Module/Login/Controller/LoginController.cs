@@ -93,7 +93,11 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
                 Debug.Log("连接成功事件，通过账号密码登录服务器");
 #endif
                 //没有登录过，没有记录
+#if ENABLE_LUA_START
+                SpringContext.GetBean<XLuaManager>().CallLuaFunction("LoginUIController:Open()");
+#else
                 UIComponentManager.DispatchEvent(UINotifEnum.OpenLoginUI);
+#endif
             }
         }
 
