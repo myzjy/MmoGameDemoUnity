@@ -52,6 +52,7 @@ function PacketDispatcher:Init()
 		LoginNetController:AtPong(data)
 	end
 	self.msgMap[WeaponPlayerUserDataRequest:protocolId()] = handle(GameEvent.AcquireUserIdWeaponService, self)
+	self.msgMap[AllBagItemResponse:protocolId()] = handle(GameEvent.AtBagHeaderWeaponBtnService, self)
 
 	-------------------------------- start Login   pack 包 --------------------------------------
 
@@ -65,6 +66,10 @@ function PacketDispatcher:Init()
 	-------------------------------- start weapon   pack 包 --------------------------------------
 	WeaponNetController:RegisterEvent()
 	-------------------------------- end   weapon    pack 包 --------------------------------------
+
+	-------------------------------- start bag   pack 包 --------------------------------------
+	BagNetContoller:RegisterEvent()
+	-------------------------------- end   bag    pack 包 --------------------------------------
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)

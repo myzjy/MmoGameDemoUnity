@@ -11,6 +11,20 @@ GameEvent.AcquireUserIdWeaponService = event("GameEvent.AcquireUserIdWeaponServi
 GameEvent.AcquireWeaponBagServerList = event("GameEvent.AcquireUserIdWeaponService")
 
 GameEvent.ClickBagHeaderBtnHandlerServer = event("GameEvent.ClickBagHeaderBtnHandlerServer")
+--- 点击  协议号
+---``` lua
+--- function AllBagItemResponse:protocolId()
+---  return 1008
+---end
+---```
+GameEvent.AtBagHeaderWeaponBtnService = event("GameEvent.AtBagHeaderWeaponBtnService")
+--- 点击 武器 协议号 c001的回调 c002 额外协议号
+---``` lua
+--- function AllBagItemResponse:protocolId()
+---  return 1008
+---end
+---```
+GameEvent.AtBagHeaderWeaponBtnServiceHandler = event("GameEvent.AtBagHeaderWeaponBtnServiceHandler")
 
 
 

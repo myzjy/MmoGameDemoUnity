@@ -13,6 +13,9 @@ function BagNetContorller.GetInstance()
 end
 
 function BagNetContorller:RegisterEvent()
+    self.msg = {}
+    self.msg["c002"] = handle(GameEvent.AtBagHeaderWeaponBtnServiceHandler, self)
+    UIUtils.AddEventListener(GameEvent.AtBagHeaderWeaponBtnService, self.AtBagHeaderBtnHandlerServer, self)
     UIUtils.AddEventListener(GameEvent.ClickBagHeaderBtnHandlerServer, self.ClickBagHeaderBtnHandlerServer, self)
 end
 
@@ -25,6 +28,12 @@ function BagNetContorller:ClickBagHeaderBtnHandlerServer(type, msgProtocol, hand
         packet:protocolId(), handler)
     local jsonStr = packet:write()
     NetManager:SendMessageEvent(jsonStr)
+end
+
+---  头部 按钮 点击事件回调相关
+---@param packet AllBagItemResponse
+function BagNetContorller:AtBagHeaderBtnHandlerServer(packet)
+    self.msg[packet.protocolStr](packet.list)
 end
 
 return BagNetContorller

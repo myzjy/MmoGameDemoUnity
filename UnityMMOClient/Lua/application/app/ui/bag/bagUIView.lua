@@ -23,6 +23,7 @@ local function UIConfig()
 end
 function BagUIView:ctor()
     self.bagHeaderBtnPanel = nil
+    self:RegisterEvent()
     self.BagModelUIView = bagModelUIView()
 end
 
@@ -44,10 +45,14 @@ function BagUIView:OnShow()
 end
 
 function BagUIView:RegisterEvent()
-
+    UIUtils.AddEventListener(GameEvent.AtBagHeaderWeaponBtnServiceHandler, self.OpenWeaponPanel, self)
 end
 
 function BagUIView:CreateWeaponListPanel()
+end
+
+---@param weaponInfo AllBagItemResponse
+function BagUIView:OpenWeaponPanel(weaponInfo)
 
 end
 

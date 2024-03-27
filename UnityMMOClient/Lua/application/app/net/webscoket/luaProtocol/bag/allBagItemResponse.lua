@@ -4,9 +4,12 @@ local AllBagItemResponse = class("AllBagItemResponse")
 function AllBagItemResponse:ctor()
     ---@type table<integer,BagUserItemMsgData>
     self.list = nil
+    ---@type string 额外协议号
+    self.protocolStr = string.empty
 end
+
 function AllBagItemResponse:protocolId()
-    return 1007
+    return 1008
 end
 
 function AllBagItemResponse:read(data)
@@ -21,6 +24,5 @@ function AllBagItemResponse:read(data)
     end
     return self
 end
-
 
 return AllBagItemResponse
