@@ -6,5 +6,6 @@
     ],
     "Lua.diagnostics.disable": [
         "missing-return"
-    ]
+    ],
+    "lua.targetVersion": "5.3"
 }
