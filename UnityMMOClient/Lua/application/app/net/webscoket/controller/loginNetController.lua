@@ -65,10 +65,12 @@ end
 
 ---@param data LoginResponse
 function LoginNetController:AtLoginResponse(data)
-    local response = data
+    local packet = LoginResponse();
+    local response = packet:read(data)
     local token = response.token
     local uid = response.uid
     local userName = response.userName
+    local goldNum = response.goldNum
     if Debug > 0 then
         PrintDebug(
             "[user:" ..
@@ -80,8 +82,8 @@ function LoginNetController:AtLoginResponse(data)
             uid ..
             "]" ..
             "[goldNum:" ..
-            response.goldNum ..
-            "],[premiumDiamondNum:" .. response.premiumDiamondNum
+            goldNum ..
+            "]"
         )
     end
     PlayerUserCaCheData:SetUIDValue(uid)

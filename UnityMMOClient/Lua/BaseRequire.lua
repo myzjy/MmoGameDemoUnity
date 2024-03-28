@@ -38,6 +38,8 @@ require("application.app.net.http.apiResponse")
 NetManager = require("application.app.net.webscoket.netManager")
 GlobalEventSystem = require("common.util.EventSystem")
 require("common.util.UIUtils")
+require("application.app.common.LuaUtils")
+
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
 ByteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffer")

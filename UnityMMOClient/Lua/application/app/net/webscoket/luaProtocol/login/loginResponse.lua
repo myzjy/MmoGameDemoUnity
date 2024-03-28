@@ -58,12 +58,12 @@ function LoginResponse:read(data)
     -- local jsonString = buffer:readString()
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
-    local jsonData = LoginResponse:new(data.packet.token,
-        data.packet.uid,
-        data.packet.userName,
-        data.packet.goldNum,
-        data.packet.premiumDiamondNum,
-        data.packet.diamondNum)
+    local jsonData = LoginResponse:new(data.token,
+        data.uid,
+        data.userName,
+        data.goldNum,
+        data.premiumDiamondNum,
+        data.diamondNum)
     return jsonData
 end
 

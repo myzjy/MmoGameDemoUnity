@@ -38,6 +38,6 @@ function BagUIController:Build(bagUIView)
 end
 
 function BagUIController:RegisterEvent()
-
 end
+
 return BagUIController

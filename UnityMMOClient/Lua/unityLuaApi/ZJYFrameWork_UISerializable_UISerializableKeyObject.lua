@@ -3,4 +3,5 @@
 ZJYFrameWork.UISerializable.UISerializableKeyObject = {}
 
 ---@param objKey string
+---@return UnityEngine.Object
 function ZJYFrameWork.UISerializable.UISerializableKeyObject:GetObjTypeStr(objKey) end

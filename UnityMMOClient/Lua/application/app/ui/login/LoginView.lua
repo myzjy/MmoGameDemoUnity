@@ -34,7 +34,7 @@ function LoginView:OnInit()
 	---@type LoginPanelView
 	local viewPanel = self.viewPanel
 	---@type LoginPartView
-	self.LoginPartView = loginPartView(viewPanel.LoginPart)
+	self.LoginPartView = loginPartView(viewPanel.LoginPart_UISerializableKeyObject)
 	---@type RegisterPartView
 	self.RegisterPartView = registerPartView(viewPanel.RegisterPart_UISerializableKeyObject)
 	---@type LoginTapToStartView

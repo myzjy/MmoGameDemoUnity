@@ -44,8 +44,11 @@ end
 -- C#传进来的byte数组到lua里就会变成string
 ---xlua 和c# 交互，字节数组会被解密
 function readBytes(bytes)
-    local buffer = ByteBuffer:new()
-    buffer:writeString(bytes)
+    -- local buffer = ByteBuffer:new()
+    -- buffer:writeString(bytes)
+    local jsonData = JSON.decode(bytes);
+    ---获取对应id
+    local protocolId = jsonData.protocolId
     local packet = ProtocolManager:read(buffer)
     return packet
 end

@@ -25,8 +25,8 @@ UIConfig.FishConfig = {
     BagUIConfig = {
         prefabName = "BagUIPanel",
         --- 当前会生成在那一层
-        canvasType = UIConfigEnum.UICanvasType.UI,
-        sortType = UIConfigEnum.UISortType.First,
+        canvasType = UIConfig.UICanvasType.UI,
+        sortType = UIConfig.UISortType.First,
         --- 当前 UI 交互事件 消息
         eventNotification = {
             --- 打开游戏主界面

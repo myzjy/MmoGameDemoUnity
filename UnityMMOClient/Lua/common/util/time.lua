@@ -11,7 +11,7 @@ local format = string.format
 local floor = math.floor
 
 local time = {}
-global.time = time
+Global.time = time
 
 time.SERVER_TIMEKEY = "dayTime"
 

@@ -33,8 +33,14 @@ end
 
 function OnReceiveLineFromServer(bytes)
     local str = bytes
-    local packet = readBytes(str)
-    PacketDispatcher:Receive(packet)
+    -- local buffer = ByteBuffer:new()
+    -- buffer:writeString(bytes)
+    local jsonData = JSON.decode(bytes);
+    ---获取对应id
+    local protocolId = jsonData.protocolId
+
+    -- local packet = readBytes(str)
+    PacketDispatcher:ReceiveMsg(protocolId, jsonData.packet)
 end
 
 function PacketDispatcher:SendMessage(bytes)
@@ -46,7 +52,9 @@ function PacketDispatcher:Init()
 
     self.msgMap = {}
     self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
-    self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
+    self.msgMap[LoginResponse:protocolId()] = function(data)
+        GameEvent.LoginResonse(data)
+    end
     self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
     self.msgMap[LoginConst.Event.Pong] = function(data)
         LoginNetController:AtPong(data)
@@ -80,6 +88,10 @@ function PacketDispatcher:Receive(packet)
     self.msgMap[packet:protocolId()](packet)
     --packetValue = packet
     -- ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
+end
+
+function PacketDispatcher:ReceiveMsg(key, packet)
+    self.msgMap[key](packet)
 end
 
 return PacketDispatcher

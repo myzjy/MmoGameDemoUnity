@@ -19,10 +19,17 @@ function BagWeaponUIPanelView:CreateItemList()
         local itemObj = UnityEngine.GameObject.Instantiate(self.weaponItemObject) or UnityEngine.GameObject
         itemObj.transform:SetParent(self.uiGrid.transform, false)
         itemObj.transform.localScale = Vector3.one
-        local obj = weaponItemUIView(itemObj)
-        obj:Init()
+        local obj = weaponItemUIView()
+        obj:Init(itemObj, item)
         table.insert(self.gridList, obj)
     end
+end
+
+function BagWeaponUIPanelView:OnDestroy()
+
+    -- table.Clear(self.gridList)
+    -- 不需要删除 只需要 制空
+    self.gameObject = nil
 end
 
 return BagWeaponUIPanelView

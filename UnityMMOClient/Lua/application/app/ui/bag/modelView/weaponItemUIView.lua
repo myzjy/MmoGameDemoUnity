@@ -18,7 +18,7 @@ function WeaponItemUIView:ctor()
 end
 
 ---@param thisKeyObject UnityEngine.GameObject
----@param weaponData WeaponPlayerUserDataStruct
+---@param weaponData BagUserItemMsgData
 function WeaponItemUIView:Init(thisKeyObject, weaponData)
     self.gameObject = thisKeyObject
     self.gameObject:SetActive(true)
