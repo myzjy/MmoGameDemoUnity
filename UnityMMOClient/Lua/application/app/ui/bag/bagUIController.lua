@@ -39,5 +39,5 @@ end
 
 function BagUIController:RegisterEvent()
 
-
+end
 return BagUIController

@@ -26,8 +26,11 @@ function LuaUtils.GetUIText(gameObject)
 end
 
 ---@param gameObject UnityEngine.GameObject
+---@return UnityEngine.UI.Button
 function LuaUtils.GetUIButton(gameObject)
+    ---@type UnityEngine.UI.Button
     local sKeyObj = gameObject:GetComponent("Button") or UnityEngine.UI.Button
+    
     return sKeyObj
 end
 --- 获取
@@ -72,7 +75,7 @@ function LuaUtils.SetScale(gameObject, vec)
     gameObject.transform.localScale = vec
 end
 
-function LuaUtils.GetKeyUICanvaGroup(gameObject, objName)
+function LuaUtils.GetKeyUICanvasGroup(gameObject, objName)
     local sKeyObj = LuaUtils.GetUISerializableKeyObject(gameObject)
     local canvasGroup = sKeyObj:GetObjTypeStr(objName) or UnityEngine.CanvasGroup
     return canvasGroup

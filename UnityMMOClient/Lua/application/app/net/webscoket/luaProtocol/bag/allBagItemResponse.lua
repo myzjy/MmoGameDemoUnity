@@ -2,7 +2,7 @@
 local AllBagItemResponse = class("AllBagItemResponse")
 
 function AllBagItemResponse:ctor()
-    ---@type table<integer,BagUserItemMsgData>
+    ---@type table<number,BagUserItemMsgData>
     self.list = nil
     ---@type string 额外协议号
     self.protocolStr = string.empty

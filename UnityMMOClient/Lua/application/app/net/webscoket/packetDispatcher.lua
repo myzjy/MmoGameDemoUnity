@@ -7,79 +7,79 @@ PrintDebug("加载 PacketDispatcher.lua 文件")
 local PacketDispatcher = {}
 --_receiversMap = {}
 PacketDispatcher.Event = {
-	OnConnect = "PacketDispatcher.Event.OnConnect",
-	OnOpen = "PacketDispatcher.Event.OnOpen",
-	OnDisConnect = "PacketDispatcher.Event.OnDisConnect"
+    OnConnect = "PacketDispatcher.Event.OnConnect",
+    OnOpen = "PacketDispatcher.Event.OnOpen",
+    OnDisConnect = "PacketDispatcher.Event.OnDisConnect"
 }
 -------------------------------- start Login   pack 包 --------------------------------------
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
 WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
-BagNetContoller = require("application.app.net.webscoket.controller.bagNetContoller"):GetInstance()
+BagNetController = require("application.app.net.webscoket.controller.bagNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 PacketDispatcher.urlString = nil
 --- 链接建立通知lua
 function OnConnectServer(url)
-	PacketDispatcher.urlString = url
-	---链接成功
-	GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
+    PacketDispatcher.urlString = url
+    ---链接成功
+    GlobalEventSystem:Fire(PacketDispatcher.Event.OnConnect, PacketDispatcher.urlString)
 end
 
 function OnDisConnectFromServer()
-	PrintDebug("Game server disconnected!!")
-	GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
+    PrintDebug("Game server disconnected!!")
+    GlobalEventSystem:Fire(PacketDispatcher.Event.OnDisConnect)
 end
 
 function OnReceiveLineFromServer(bytes)
-	local str = bytes
-	local packet = readBytes(str)
-	PacketDispatcher:Receive(packet)
+    local str = bytes
+    local packet = readBytes(str)
+    PacketDispatcher:Receive(packet)
 end
 
 function PacketDispatcher:SendMessage(bytes)
-	-- NetManager:SendMessageEvent(bytes)
+    -- NetManager:SendMessageEvent(bytes)
 end
 
 function PacketDispatcher:Init()
-	------------------------------------Inti event list-----------------------------------------
+    ------------------------------------Inti event list-----------------------------------------
 
-	self.msgMap = {}
-	self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
-	self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
-	self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
-	self.msgMap[LoginConst.Event.Pong] = function(data)
-		LoginNetController:AtPong(data)
-	end
-	self.msgMap[WeaponPlayerUserDataRequest:protocolId()] = handle(GameEvent.AcquireUserIdWeaponService, self)
-	self.msgMap[AllBagItemResponse:protocolId()] = handle(GameEvent.AtBagHeaderWeaponBtnService, self)
+    self.msgMap = {}
+    self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
+    self.msgMap[LoginResponse:protocolId()] = handle(GameEvent.LoginResonse, self)
+    self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
+    self.msgMap[LoginConst.Event.Pong] = function(data)
+        LoginNetController:AtPong(data)
+    end
+    self.msgMap[WeaponPlayerUserDataRequest:protocolId()] = handle(GameEvent.AcquireUserIdWeaponService, self)
+    self.msgMap[AllBagItemResponse:protocolId()] = handle(GameEvent.AtBagHeaderWeaponBtnService, self)
 
-	-------------------------------- start Login   pack 包 --------------------------------------
+    -------------------------------- start Login   pack 包 --------------------------------------
 
-	LoginNetController:Init()
-	-------------------------------- end   Login    pack 包 --------------------------------------
+    LoginNetController:Init()
+    -------------------------------- end   Login    pack 包 --------------------------------------
 
-	-------------------------------- start ServerConfig   pack 包 --------------------------------------
-	ServerConfigNetController:RegisterEvent()
-	-------------------------------- end   ServerConfig    pack 包 --------------------------------------
+    -------------------------------- start ServerConfig   pack 包 --------------------------------------
+    ServerConfigNetController:RegisterEvent()
+    -------------------------------- end   ServerConfig    pack 包 --------------------------------------
 
-	-------------------------------- start weapon   pack 包 --------------------------------------
-	WeaponNetController:RegisterEvent()
-	-------------------------------- end   weapon    pack 包 --------------------------------------
+    -------------------------------- start weapon   pack 包 --------------------------------------
+    WeaponNetController:RegisterEvent()
+    -------------------------------- end   weapon    pack 包 --------------------------------------
 
-	-------------------------------- start bag   pack 包 --------------------------------------
-	BagNetContoller:RegisterEvent()
-	-------------------------------- end   bag    pack 包 --------------------------------------
+    -------------------------------- start bag   pack 包 --------------------------------------
+    BagNetController:RegisterEvent()
+    -------------------------------- end   bag    pack 包 --------------------------------------
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)
-	self.msgMap[id] = method
+    self.msgMap[id] = method
 end
 
 function PacketDispatcher:Receive(packet)
-	self.msgMap[packet:protocolId()](packet)
-	--packetValue = packet
-	-- ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
+    self.msgMap[packet:protocolId()](packet)
+    --packetValue = packet
+    -- ProtocolManager:FireProtocolConfigEvent(packet:protocolId(), packet)
 end
 
 return PacketDispatcher

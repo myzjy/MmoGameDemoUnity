@@ -1,3 +1,4 @@
+---@class WeaponItemUIView
 local WeaponItemUIView = class("WeaponItemUIView", LuaUIObject)
 function WeaponItemUIView:ctor()
     ---@type UnityEngine.GameObject

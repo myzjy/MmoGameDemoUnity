@@ -53,7 +53,7 @@ end
 
 ---@param weaponInfo AllBagItemResponse
 function BagUIView:OpenWeaponPanel(weaponInfo)
-
+    
 end
 
 return BagUIView
