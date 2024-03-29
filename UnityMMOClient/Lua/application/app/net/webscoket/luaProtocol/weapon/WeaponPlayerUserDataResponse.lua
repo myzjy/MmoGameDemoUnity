@@ -34,3 +34,5 @@ function WeaponPlayerUserDataResponse:read(data)
     end
     return self
 end
+
+return WeaponPlayerUserDataResponse

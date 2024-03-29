@@ -22,7 +22,7 @@ end
 function LoginTapToStartRequest:write()
     local message = {
         protocolId = self:protocolId(),
-        packet = { clentName = self.clientName }
+        packet = { clientName = self.clientName }
     }
     local jsonStr = JSON.encode(message)
     return jsonStr
