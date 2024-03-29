@@ -22,8 +22,8 @@ function WeaponPlayerUserDataResponse:new(usePlayerUid, weaponPlayerUserDataStru
 end
 
 function WeaponPlayerUserDataResponse:read(data)
-    local id = data.protocolId
-    local packet = data.packet
+
+    local packet = data
     self.usePlayerUid = packet.usePlayerUid
 
     for _index = 1, #packet.weaponPlayerUserDataStructList do

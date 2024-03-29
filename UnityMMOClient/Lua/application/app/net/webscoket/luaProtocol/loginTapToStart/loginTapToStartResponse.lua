@@ -42,8 +42,8 @@ function LoginTapToStartResponse:read(data)
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
     local jsonData = LoginTapToStartResponse:new(
-        data.packet.message,
-        data.packet.accessGame)
+        data.message,
+        data.accessGame)
     return jsonData
 end
 

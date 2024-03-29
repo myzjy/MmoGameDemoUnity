@@ -41,7 +41,7 @@ function RegisterResponse:read(data)
     -- local jsonString = buffer:readString()
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
-    return RegisterResponse:new(data.packet.error, data.packet.mRegister)
+    return RegisterResponse:new(data.error, data.mRegister)
 end
 
 return RegisterResponse

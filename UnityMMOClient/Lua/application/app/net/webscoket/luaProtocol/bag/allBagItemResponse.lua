@@ -13,8 +13,7 @@ function AllBagItemResponse:protocolId()
 end
 
 function AllBagItemResponse:read(data)
-    local id = data.protocolId
-    local packet = data.packet
+    local packet = data
 
     for _index = 1, #packet.list do
         local forData = packet.list[_index]

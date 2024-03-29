@@ -71,14 +71,14 @@ function ServerConfigResponse:read(data)
     -- ---@type {protocolId:number,packet:{bagItemEntityList:table<integer,ItemBaseData>,equipmentConfigBaseDataList:table<integer,EquipmentConfigBaseData>,equipmentBaseDataList:table<integer,EquipmentBaseData>,equipmentPrimaryConfigBaseDataList:table<integer,EquipmentPrimaryConfigBaseData>,equipmentDesBaseDataList:table<integer,EquipmentDesBaseData>,equipmentGrowthConfigBaseDataList:table<integer,EquipmentGrowthConfigBaseData>,equipmentGrowthViceConfigBaseDataList:table<integer,EquipmentGrowthViceConfigBaseData>}}
     -- local data = JSON.decode(jsonString)
     return ServerConfigResponse:new(
-        data.packet.bagItemEntityList,
-        data.packet.equipmentConfigBaseDataList,
-        data.packet.equipmentBaseDataList,
-        data.packet.equipmentPrimaryConfigBaseDataList,
-        data.packet.equipmentDesBaseDataList,
-        data.packet.equipmentGrowthConfigBaseDataList,
-        data.packet.equipmentGrowthViceConfigBaseDataList,
-        data.packet.weaponsConfigDataList
+        data.bagItemEntityList,
+        data.equipmentConfigBaseDataList,
+        data.equipmentBaseDataList,
+        data.equipmentPrimaryConfigBaseDataList,
+        data.equipmentDesBaseDataList,
+        data.equipmentGrowthConfigBaseDataList,
+        data.equipmentGrowthViceConfigBaseDataList,
+        data.weaponsConfigDataList
     )
 end
 
