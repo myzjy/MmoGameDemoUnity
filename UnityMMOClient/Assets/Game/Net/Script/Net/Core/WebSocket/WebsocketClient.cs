@@ -7,7 +7,9 @@ using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Net.Dispatcher;
+using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
+using ZJYFrameWork.XLuaScript;
 
 namespace ZJYFrameWork.Net.Core.Websocket
 {
@@ -68,6 +70,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
             Debug.Log("Connected server [{}]", ToConnectUrl());
 
 #if ENABLE_LUA_START
+            SpringContext.GetBean<XLuaManager>().CallLuaFunction("LoginNetController:OnNetOpenEvent()");
             EventBus.AsyncExecute(LuaGameConstant.NetOnOpen);
 #else
             EventBus.AsyncSubmit(NetOpenEvent.ValueOf());

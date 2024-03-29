@@ -19,9 +19,10 @@ namespace ZJYFrameWork.Procedure.Scene
         public override void OnEnter(IFsm<IProcedureFsmManager> fsm)
         {
             base.OnEnter(fsm);
+            Debug.Log($"调用 {ProcedureGameMainConfig.GameMainEnter}");
             // SpringContext.GetBean<L>()
 #if ENABLE_LUA_START
-            SpringContext.GetBean<XLuaManager>().CallLuaFunction(ProcedureGameMainConfig.GameMainEnter);
+            SpringContext.GetBean<XLuaManager>().CallLuaFunction("ProcedureGameMain.GameMainEnter()");
 #else
             //初始进入
             //获取配置

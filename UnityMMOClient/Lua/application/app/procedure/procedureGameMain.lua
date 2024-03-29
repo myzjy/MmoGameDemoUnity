@@ -5,6 +5,7 @@ function ProcedureGameMain:OnInit()
     
 end
 function ProcedureGameMain:GameMainEnter()
+    PrintDebug("call GameMainEnter function ing")
     if ServerConfigRequest == nil then
         PrintError("当前 ServerConfigRequest 脚本 没有读取到 请检查")
         return

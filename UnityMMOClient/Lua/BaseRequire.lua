@@ -52,6 +52,7 @@ GameEvent = require("application.app.event.gameEvent")
 GameMainEvent = require("application.app.event.gameMainEvent")
 UIGameEvent = require("application.app.event.uiGameEvent")
 
+ProcedureGame = require("application.app.procedure.procedureFsmManager")
 
 UIComponentManager = require("application.app.ui.UIComponentManager")
 

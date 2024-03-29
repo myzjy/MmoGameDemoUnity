@@ -88,8 +88,7 @@ local function main()
     ProtocolManager.initProtocolManager()
     PacketDispatcher:Init()
     I18nManager:OnInit()
-    local procedureGame = require("application.app.procedure.procedureFsmManager")
-    procedureGame:OnInit()
+    ProcedureGame:OnInit()
     -- UpdateBeat:AddListener(UpdateEvent)
     CS.ZJYFrameWork.UISerializable.Common.CommonController.Instance.isLuaInit = true
 end

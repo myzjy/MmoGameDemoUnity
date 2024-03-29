@@ -1,6 +1,7 @@
 ---@class BagUIPanelView
 BagUIPanelView = class("BagUIPanelView")
 function BagUIPanelView:Init(view)
+	---@type ZJYFrameWork.UISerializable.UIView
 	self._UIView = view:GetComponent("UIView")
 	self.equipmentItem_UISerializableKeyObject = self._UIView:GetObjTypeStr("equipmentItem_UISerializableKeyObject") or ZJYFrameWork.UISerializable.UISerializableKeyObject
 	self.topSelectTipsShowText = self._UIView:GetObjTypeStr("topSelectTipsShowText") or UnityEngine.UI.Text

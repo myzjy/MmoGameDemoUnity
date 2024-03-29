@@ -14,12 +14,14 @@ function ServerConfigNetController.GetInstance()
 end
 
 function ServerConfigNetController:RegisterEvent()
-    PacketDispatcher:AddProtocolConfigEvent(ServerConfigRequest:protocolId(), handle(self.SetServerConfigDataList, self))
+    PacketDispatcher:AddProtocolConfigEvent(ServerConfigResponse:protocolId(), handle(self.SetServerConfigDataList, self))
 end
 
 function ServerConfigNetController:SetServerConfigDataList(response)
+    local packet=ServerConfigResponse()
     ---@type ServerConfigResponse
-    local protocolData = response
+    local protocolData = packet:read(response)
+
     self:SetItemBaseDataList(protocolData.bagItemEntityList)
     self:SetEquipmentConfigBaseDataList(protocolData.equipmentConfigBaseDataList)
     self:SetEquipmentDesBaseDataList(protocolData.equipmentDesBaseDataList)

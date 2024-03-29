@@ -25,7 +25,7 @@ function LoginTapToStartView:ctor(view)
 		LoginNetController:LoginTapToStart()
 	end)
 	self:SetListener(self.LoginStartMaxButton, function()
-		LoginUIController:GetInstance():OnClose()
+		LoginNetController:LoginTapToStart()
 	end)
 end
 

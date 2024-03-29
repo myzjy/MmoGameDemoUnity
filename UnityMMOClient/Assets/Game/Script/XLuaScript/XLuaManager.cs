@@ -198,10 +198,11 @@ namespace ZJYFrameWork.XLuaScript
 
         public void CallLuaFunction(string funcName)
         {
-            luaEnv.LoadString(funcName);
+            var luaFunc = luaEnv.LoadString(funcName);
+            luaFunc.Call();
         }
     }
-    
+
 
     public class CSSharpXLua
     {

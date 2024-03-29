@@ -6,7 +6,7 @@ local bagModelUIView = require("application.app.ui.bag.modelView.bagModelUIView"
 
 local function UIConfig()
     return {
-        Config = UIConfigEnum.BagUIConfig,
+        Config = UIConfigEnum.FishConfig.BagUIConfig,
         viewPanel = BagUIPanelView,
         initFunc = function()
             PrintDebug("call bagUIView lua scirpt local function UIConfig called initFunc OnInit")

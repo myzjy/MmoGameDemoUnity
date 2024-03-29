@@ -25,7 +25,7 @@ function BagHeaderBtnPanel:ctor(gameObject)
     self.gameObject = gameObject
     ---@type UnityEngine.GameObject
     self.headerGrids = LuaUtils.GetKeyGameObject(self.gameObject, "TabHeadListGrid")
-    self.headersUIGrids = LuaUtils.GetUIGrid(self.gameObject, "TabHeadListGrid")
+    self.headersUIGrids = LuaUtils.GetKeyUIGrid(self.gameObject, "TabHeadListGrid")
     self.bagScene = string.empty;
     -- 存放 list button
     ---@type table<number,BagHeaderItem>
@@ -34,7 +34,7 @@ function BagHeaderBtnPanel:ctor(gameObject)
     self.bagConfig = {}
     -- 按钮
     ---@type UnityEngine.GameObject
-    self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtn")
+    self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtnButtons")
     self.bagBtnObj:SetActive(false)
     self:CreateBagBtn()
     self:RegisterEvent()
