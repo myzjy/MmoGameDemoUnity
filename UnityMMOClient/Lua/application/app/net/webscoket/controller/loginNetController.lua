@@ -65,8 +65,7 @@ end
 
 ---@param data LoginResponse
 function LoginNetController:AtLoginResponse(data)
-    local packet = LoginResponse();
-    local response = packet:read(data)
+    local response = data
     local token = response.token
     local uid = response.uid
     local userName = response.userName

@@ -51,16 +51,14 @@ function PacketDispatcher:Init()
     ------------------------------------Inti event list-----------------------------------------
 
     self.msgMap = {}
-    self.msgMap[RegisterResponse:protocolId()] = handle(GameEvent.RegisterResonse, self)
-    self.msgMap[LoginResponse:protocolId()] = function(data)
-        GameEvent.LoginResonse(data)
-    end
-    self.msgMap[LoginTapToStartResponse:protocolId()] = handle(GameEvent.LoginTapToStartResponse, self)
+    self.msgMap[RegisterResponse:protocolId()] = handle(self.OnRegisterResponse, self)
+    self.msgMap[LoginResponse:protocolId()] = handle(self.OnLoginResponse, self)
+    self.msgMap[LoginTapToStartResponse:protocolId()] = handle(self.OnLoginTapToStartResponse, self)
     self.msgMap[LoginConst.Event.Pong] = function(data)
         LoginNetController:AtPong(data)
     end
-    self.msgMap[WeaponPlayerUserDataRequest:protocolId()] = handle(GameEvent.AcquireUserIdWeaponService, self)
-    self.msgMap[AllBagItemResponse:protocolId()] = handle(GameEvent.AtBagHeaderWeaponBtnService, self)
+    self.msgMap[WeaponPlayerUserDataResponse:protocolId()] = handle(self.OnWeaponPlayerUserDataResponse, self)
+    self.msgMap[AllBagItemResponse:protocolId()] = handle(self.OnAllBagItemResponse, self)
 
     -------------------------------- start Login   pack 包 --------------------------------------
 
@@ -78,6 +76,36 @@ function PacketDispatcher:Init()
     -------------------------------- start bag   pack 包 --------------------------------------
     BagNetController:RegisterEvent()
     -------------------------------- end   bag    pack 包 --------------------------------------
+end
+
+function PacketDispatcher:OnLoginResponse(data)
+    local response = LoginResponse();
+    local pakcet = response:read(data)
+    GameEvent.LoginResonse(pakcet)
+end
+
+function PacketDispatcher:OnRegisterResponse(data)
+    local response = RegisterResponse()
+    local pakcet = response:read(data)
+    GameEvent.RegisterResonse(pakcet)
+end
+
+function PacketDispatcher:OnLoginTapToStartResponse(data)
+    local response = LoginTapToStartResponse()
+    local pakcet = response:read(data)
+    GameEvent.LoginTapToStartResponse(pakcet)
+end
+
+function PacketDispatcher:OnWeaponPlayerUserDataResponse(data)
+    local response = WeaponPlayerUserDataResponse()
+    local pakcet = response:read(data)
+    GameEvent.AcquireUserIdWeaponService(pakcet)
+end
+
+function PacketDispatcher:OnAllBagItemResponse(data)
+    local response = AllBagItemResponse()
+    local pakcet = response:read(data)
+    GameEvent.AtBagHeaderWeaponBtnService(pakcet)
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)
