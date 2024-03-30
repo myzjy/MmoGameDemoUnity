@@ -35,8 +35,9 @@ function BagHeaderBtnPanel:ctor(gameObject)
     -- 按钮
     ---@type UnityEngine.GameObject
     self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtnButtons")
-    self.bagBtnObj:SetActive(false)
+    print(self.bagBtnObj)
     self:CreateBagBtn()
+    self.bagBtnObj:SetActive(false)
     self:RegisterEvent()
 end
 
@@ -51,7 +52,7 @@ function BagHeaderBtnPanel:CreateBagBtn()
     PrintDebug("call init create BagHeader Btn function not delete gameObject list")
     for index, value in ipairs(BagBtnConfig.BagHeaderBtnConfig) do
         ---@type UnityEngine.GameObject
-        local item = UnityEngine.GameObject:Instantiate(self.bagBtnObj)
+        local item = UnityEngine.GameObject.Instantiate(self.bagBtnObj)
         item.transform:SetParent(self.headerGrids.transform)
         LuaUtils.SetScale(item, UnityEngine.Vector3.New(1, 1, 1))
 

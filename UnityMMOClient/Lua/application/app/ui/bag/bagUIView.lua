@@ -41,11 +41,12 @@ function BagUIView:OnInit()
 end
 
 function BagUIView:OnShow()
-
+    self:ReUse()
 end
 
 function BagUIView:RegisterEvent()
-    UIUtils.AddEventListener(GameEvent.AtBagHeaderWeaponBtnServiceHandler, self.OpenWeaponPanel, self)
+    UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OpenWeaponPanel, self)
+    -- UIUtils.AddEventListener(GameEvent.AtBagHeaderWeaponBtnServiceHandler, self.OpenWeaponPanel, self)
 end
 
 function BagUIView:CreateWeaponListPanel()
@@ -53,7 +54,7 @@ end
 
 ---@param weaponInfo AllBagItemResponse
 function BagUIView:OpenWeaponPanel(weaponInfo)
-    
+
 end
 
 return BagUIView

@@ -26,7 +26,7 @@ UIConfig.FishConfig = {
         prefabName = "BagUIPanel",
         --- 当前会生成在那一层
         canvasType = UIConfig.UICanvasType.UI,
-        sortType = UIConfig.UISortType.First,
+        sortType = UIConfig.UISortType.Last,
         --- 当前 UI 交互事件 消息
         eventNotification = {
             --- 打开游戏主界面
@@ -40,7 +40,7 @@ UIConfig.FishConfig = {
 }
 UIConfig.BagHeaderBtnConfig = {
     Type = {
-        WeaponType = 0
+        WeaponType = 1
     },
     IconConfig = {
         Open = "headerBtnOpen",

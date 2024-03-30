@@ -105,7 +105,7 @@ end
 function PacketDispatcher:OnAllBagItemResponse(data)
     local response = AllBagItemResponse()
     local pakcet = response:read(data)
-    GameEvent.AtBagHeaderWeaponBtnService(pakcet)
+    GameEvent.AtBagHeaderBtnService(pakcet)
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)

@@ -20,18 +20,22 @@ function BagHeaderItem:ctor(goRoot, config, prefabConfig)
     self:SetListener(self.openBtn, function()
         self:OnEnterFish()
     end)
+    self:SetListener(self.hideBtn, function()
+        self:OnEnterFish()
+    end)
 end
 
 --- 点击事件
 function BagHeaderItem:OnEnterFish()
+    PrintDebug("click bag header item enterFish")
     -- 不应徐 重复进入
-    if self.isSelectClick then
-        return
-    end
+    -- if self.isSelectClick then
+    --     return
+    -- end
     if self.config.type == 1 then
         self:OnOpen();
         -- 点击 背包 武器按钮
-        UIGameEvent.BagHeaderWeaponBtnHandler()
+        GameEvent.ClickBagHeaderBtnHandlerServer(self.config.type,"c001")
     end
 end
 
@@ -44,6 +48,7 @@ end
 function BagHeaderItem:OnHide()
     self.openObj.alpha = 0
     self.hideObj.alpha = 1
+    self.isSelectClick = false;
 end
 
 function BagHeaderItem:OnDestroy()

@@ -14,7 +14,7 @@ end
 
 function AllBagItemResponse:read(data)
     local packet = data
-
+    self.protocolStr = packet.protocolStr
     for _index = 1, #packet.list do
         local forData = packet.list[_index]
         ---获取到自己
