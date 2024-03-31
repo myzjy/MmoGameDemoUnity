@@ -7,6 +7,7 @@ using ZJYFrameWork.Net.Core.Model;
 using ZJYFrameWork.Net.CsProtocol;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 using ZJYFrameWork.Net.Dispatcher;
+using ZJYFrameWork.Scheduler;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.XLuaScript;
@@ -66,6 +67,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
         /// </summary>
         internal void HandleOnOpen(WebSocket ws)
         {
+            SpringContext.GetBean<SchedulerManager>().isNetOpen = true;
             Debug.Log("成功打开");
             Debug.Log("Connected server [{}]", ToConnectUrl());
 
@@ -105,14 +107,12 @@ namespace ZJYFrameWork.Net.Core.Websocket
 #if ENABLE_LUA_START
             PacketDispatcher.ReceiveString(content);
 #else
-
             var packet = ProtocolManager.Read(byteBuffer);
             if (packet != null)
             {
                 PacketDispatcher.Receive(packet);
             }
 #endif
-
         }
 
         internal void HandleOnError(string reason)
@@ -122,6 +122,7 @@ namespace ZJYFrameWork.Net.Core.Websocket
             {
                 return;
             }
+
             EventBus.AsyncSubmit(NetErrorEvent.ValueOf());
         }
 

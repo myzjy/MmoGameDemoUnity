@@ -44,7 +44,7 @@ namespace ZJYFrameWork.WebRequest
                    
                     // ApiWebSocketUrl = "ws://192.168.1.123:15000/websocket";
                     //  ApiWebSocketUrl = "ws://192.168.1.38:15000/websocket";
-                    // ApiWebSocketUrl = "ws://127.0.0.1:3010/";
+                    // ApiWebSocketUrl = "ws://127.0.0.1:10200/";
 
                     mAssetBundle = "http://192.168.0.114:5000/assetbundle/android";
                     break;

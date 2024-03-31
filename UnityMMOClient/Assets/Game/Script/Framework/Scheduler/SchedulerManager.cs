@@ -30,9 +30,15 @@ namespace ZJYFrameWork.Scheduler
 
         private byte count;
         private long minuteSchedulerTimestamp = DateTimeUtil.Now();
+        public bool isNetOpen = false;
 
         public override void Update(float elapseSeconds, float realElapseSeconds)
         {
+            if (!isNetOpen)
+            {
+                return;
+            }
+
             //会有补位
             if (++count < baseComponent.frameRate)
             {
