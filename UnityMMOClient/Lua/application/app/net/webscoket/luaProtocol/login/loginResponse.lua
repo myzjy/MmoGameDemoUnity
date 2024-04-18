@@ -58,7 +58,8 @@ function LoginResponse:read(data)
     -- local jsonString = buffer:readString()
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
-    local jsonData = LoginResponse:new(data.token,
+    local jsonData = LoginResponse:new(
+        data.token,
         data.uid,
         data.userName,
         data.goldNum,

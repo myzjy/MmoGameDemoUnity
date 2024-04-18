@@ -23,6 +23,11 @@ end
 function LoginTapToStartResponse:protocolId()
     return 1014
 end
+function LoginTapToStartResponse:new(message, accessGame)
+    self.message = message       ---java.lang.String
+    self.accessGame = accessGame -- boolean
+    return self
+end
 
 function LoginTapToStartResponse:write(buffer, packet)
     if packet == nil then
