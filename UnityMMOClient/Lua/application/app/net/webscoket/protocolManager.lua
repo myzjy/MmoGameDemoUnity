@@ -17,6 +17,8 @@ Pong = require("application.app.net.webscoket.luaProtocol.common.pong")
 ----------------------------  login   ----------------------------
 LoginRequest = require("application.app.net.webscoket.luaProtocol.login.loginRequest")
 LoginResponse = require("application.app.net.webscoket.luaProtocol.login.loginResponse")
+LoginUserServerInfoData = require("application.app.net.webscoket.luaProtocol.login.loginUserServerInfoData")
+
 -----------------------------------------------------------------------------------
 
 ----------------------------------reigister-------------------------------------------------
@@ -60,6 +62,12 @@ WeaponPlayerUserDataStruct = require("application.app.net.webscoket.luaProtocol.
 WeaponsConfigData = require("application.app.net.webscoket.luaProtocol.weapon.weaponsConfigData")
 --------------------------------------------end Weapon------------------------------------------------------------
 
+--------------------------------------------playerUser-----------------------------------------------------------
+
+PlayerSceneInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.playerSceneInfoData")
+UserMsgInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.userMsgInfoData")
+
+------------------------------------------end playerUser----------------------------------------------------------
 
 
 local protocols = {}

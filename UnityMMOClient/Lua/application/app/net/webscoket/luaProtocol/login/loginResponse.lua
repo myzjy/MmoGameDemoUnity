@@ -8,29 +8,19 @@ local LoginResponse = class("LoginResponse")
 local this = LoginResponse
 function LoginResponse:ctor()
     ---@type string
-    self.token = string.empty
+    self.token = ""                    ---java.lang.String
     ---@type number
-    self.uid = 0
-    ---@type string
-    self.userName = string.empty
-    ---@type number
-    self.goldNum = 0
-    ---@type number
-    self.premiumDiamondNum = 0
-    ---@type number
-    self.diamondNum = 0
+    self.uid = 0                       -- long
+    ---@type LoginUserServerInfoData
+    self.loginUserServerInfoData = nil -- LoginUserServerInfoData
 end
 
----@param userName string
-function LoginResponse:new(token, uid, userName, goldNum, premiumDiamondNum, diamondNum)
+function LoginResponse:new(token, uid, loginUserServerInfoData)
     --local obj = LoginResponse.New()
     -- local obj = {
-    self.token = token                         ---java.lang.String
-    self.uid = uid                             -- long
-    self.userName = userName                   ---java.lang.String
-    self.goldNum = goldNum                     -- long
-    self.premiumDiamondNum = premiumDiamondNum -- long
-    self.diamondNum = diamondNum               -- long
+    self.token = token                                     ---java.lang.String
+    self.uid = uid                                         -- long
+    self.loginUserServerInfoData = loginUserServerInfoData -- LoginUserServerInfoData
     -- }
     -- setmetatable(obj, self)
     -- self.__index = self
@@ -58,13 +48,11 @@ function LoginResponse:read(data)
     -- local jsonString = buffer:readString()
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
+    local pakcet = LoginUserServerInfoData();
+    local packetData = pakcet:read(data);
     local jsonData = LoginResponse:new(
         data.token,
-        data.uid,
-        data.userName,
-        data.goldNum,
-        data.premiumDiamondNum,
-        data.diamondNum)
+        data.uid, packetData)
     return jsonData
 end
 

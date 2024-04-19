@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using UnityEditor;
 using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.U2D;
+using ZJYFrameWork.Editors;
 using Object = UnityEngine.Object;
 
 namespace GameDataEditor.Common
@@ -76,6 +78,14 @@ namespace GameDataEditor.Common
             format = TextureImporterFormat.ASTC_4x4,
         };
 
+        protected TextureImporterPlatformSettings pcSetting = new TextureImporterPlatformSettings()
+        {
+            name = "PC,Mac & Linux Standalone",
+            overridden = true,
+            // compressionQuality = 50,
+            format = TextureImporterFormat.DXT5,
+        };
+
         public GUIStyle titleStyle;
 
         public GUIStyle descStyle;
@@ -102,6 +112,11 @@ namespace GameDataEditor.Common
             0, 50, 100
         };
 
+        protected int[] MaxSizeType = new int[]
+        {
+            32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
+        };
+
         protected int SetCount;
 
         private string setCountString;
@@ -110,6 +125,8 @@ namespace GameDataEditor.Common
 
         private string IgnoreDirString = "Editor;Plugins;Android;IOS;Ios";
 
+        protected bool defaultSetting = false;
+        protected bool pc = false;
         protected bool android = false;
 
         protected bool ios = false;
@@ -162,6 +179,11 @@ namespace GameDataEditor.Common
             windowWidth = this.position.size.x;
             scrollViewPos =
                 GUILayout.BeginScrollView(scrollViewPos, alwaysShowHorizontal: false, alwaysShowVertical: false);
+            DrawDefaultTitle();
+            Space(10);
+            DrawPCTitle();
+            DrawPCContent();
+            Space(10);
             DrawAndroidTitle();
             Space(10);
             DrawAndroidContent();
@@ -179,6 +201,25 @@ namespace GameDataEditor.Common
             GUILayout.Space(pixels);
         }
 
+        protected void DrawDefaultTitle()
+        {
+            GUILayout.BeginVertical(GUI.skin.textArea, MaxWidthLayout);
+            GUILayout.Label("Default设置", titleStyle, MaxWidthLayout);
+            Space(5);
+            GUILayout.Label("Default 只需要对 Max Size进行设置就行", descStyle,
+                MaxWidthLayout);
+            GUILayout.EndVertical();
+        }
+
+        protected void DrawPCTitle()
+        {
+            GUILayout.BeginVertical(GUI.skin.textArea, MaxWidthLayout);
+            GUILayout.Label("PC设置", titleStyle, MaxWidthLayout);
+            Space(5);
+            GUILayout.Label("只需要对 Max Size进行设置就行,DXT5压缩格式更好，DXT1只有RGB没有RGBA", descStyle,
+                MaxWidthLayout);
+            GUILayout.EndVertical();
+        }
 
         protected void DrawAndroidTitle()
         {
@@ -187,6 +228,33 @@ namespace GameDataEditor.Common
             Space(5);
             GUILayout.Label("android压缩方式有两种,Etc2与Astc4,前者兼容性好，后者压缩后展示效果好，图片长宽不是4的倍数时，只能选用后者压缩方式", descStyle,
                 MaxWidthLayout);
+            GUILayout.EndVertical();
+        }
+
+        protected virtual void DrawPCContent()
+        {
+            GUILayout.BeginVertical(GUI.skin.box, MaxWidthLayout);
+            using (new CustomScope())
+            {
+                GUILayout.BeginVertical();
+                GUILayout.Label("PC设置(只显示可能更改的设置):");
+
+                // GUILayout.BeginHorizontal();
+                // GUILayout.Label("CompressQuality:");
+                //
+                // IOSASTC4Setting.compressionQuality = EditorGUILayout.IntPopup(IOSASTC4Setting.compressionQuality,
+                //     CompressQualityDesc, CompressQualityOpetion, GUILayout.Width(200));
+                // GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("CompressFormat: ");
+                pcSetting.format =
+                    (TextureImporterFormat)EditorGUILayout.EnumPopup(pcSetting.format, GUILayout.Width(200));
+                GUILayout.EndHorizontal();
+
+                GUILayout.EndVertical();
+            }
+
             GUILayout.EndVertical();
         }
 
@@ -260,6 +328,8 @@ namespace GameDataEditor.Common
 
             GUILayout.BeginHorizontal(GUI.skin.box, MaxWidthLayout);
             GUILayout.Label("选择要操作的平台");
+            defaultSetting = GUILayout.Toggle(defaultSetting, "Default");
+            pc = GUILayout.Toggle(pc, "Pc");
             android = GUILayout.Toggle(android, "Android");
             Space(30);
             ios = GUILayout.Toggle(ios, "IOS");
@@ -276,11 +346,12 @@ namespace GameDataEditor.Common
             if (GUILayout.Button("开始压缩", MaxWidthLayout, GUILayout.Height(50)))
             {
                 GetIgnoreString();
-                if (!android && !ios)
+                if (!android && !ios && !defaultSetting & !pc)
                 {
                     EditorUtility.DisplayDialog("错误", "没有选择要操作的平台!!!", "确定");
                 }
                 else if (EditorUtility.DisplayDialog("提示", $"最后的检查\n" +
+                                                           $"PC(DXT1)选择压缩格式为  {pcSetting.format}," +
                                                            $"Android4*4(ETC2)选择压缩格式为  {AndroidETC2Setting.format}" +
                                                            $",压缩质量为  {AndroidETC2Setting.compressionQuality}\n" +
                                                            $"Android非4*4(ASTC4)选择压缩格式为  {AndroidASTC4Setting.format}" +
@@ -371,38 +442,87 @@ namespace GameDataEditor.Common
             base.OnGUI();
         }
 
-        protected override void Opetion()
+        private IEnumerator OpenIEnumerator()
         {
-            base.Opetion();
+            yield return null;
             AllFiles = new List<string>();
             GetFiles(startPath, "t:Texture", AllFiles);
             bool jump = false;
+            int count = SetCount == 0 ? AllFiles.Count : SetCount;
+            MaxSizeType = new int[]
+            {
+                32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
+            };
             for (int i = 0; i < AllFiles.Count && (SetCount == 0 ? true : settedCount < SetCount); i++)
             {
-                if (EditorUtility.DisplayCancelableProgressBar("压缩中", $"第{settedCount}张，进度显示没用", 0.5f))
+                if (EditorUtility.DisplayCancelableProgressBar("压缩中", $"第{settedCount}张，进度显示没用", i * 1.0f / count))
                 {
                     jump = true;
                 }
-
+                yield return null;
                 string filePath = AllFiles[i];
+                Debug.Log($"第{settedCount}张，进度显示没用,filePath:{filePath}");
                 bool change = false;
                 try
                 {
                     var obj = AssetDatabase.LoadAssetAtPath<Texture>(filePath);
                     AssetImporter assetImporter = AssetImporter.GetAtPath(filePath);
+                    var max = Mathf.Max(obj.width, obj.height);
+                    for (int j = 0; j < MaxSizeType.Length; j++)
+                    {
+                        if (obj.width % 4 != 0 || obj.height % 4 != 0)
+                        {
+                            if (MaxSizeType.Length > j + 1)
+                            {
+                                if (MaxSizeType[j] < max && MaxSizeType[j + 1] >= max)
+                                {
+                                    max = MaxSizeType[j + 1];
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                max = MaxSizeType[j];
+                            }
+                        }
+                        else
+                        {
+                            if (MaxSizeType.Length > j + 1)
+                            {
+                                if (MaxSizeType[j] <= max && MaxSizeType[j + 1] > max)
+                                {
+                                    max = MaxSizeType[j];
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                max = MaxSizeType[j];
+                            }
+                        }
+                    }
+
+                    TextureImporter textureImporter = (TextureImporter)AssetImporter.GetAtPath(filePath);
+
                     //在图集中，且不二次压缩,直接跳过
                     if (!AtlasSpriteCom && !string.IsNullOrEmpty(assetImporter.assetBundleName) &&
                         assetImporter.assetBundleName.EndsWith("_spriteatlas.ab"))
                     {
                         if (android)
                         {
-                            TextureImporter textureImporter = (TextureImporter)AssetImporter.GetAtPath(filePath);
                             TextureImporterPlatformSettings AndroidSettings = AndroidNoSetting;
                             AndroidSettings.maxTextureSize = textureImporter.maxTextureSize;
                             var setting = textureImporter.GetPlatformTextureSettings("Android");
 
                             if (setting.overridden == AndroidSettings.overridden)
                             {
+                                if (AndroidSettings.maxTextureSize > max)
+                                {
+                                    AndroidSettings.maxTextureSize = max;
+                                    textureImporter.SetPlatformTextureSettings(AndroidSettings);
+                                    textureImporter.SaveAndReimport();
+                                    change = true;
+                                }
                             }
                             else
                             {
@@ -414,7 +534,6 @@ namespace GameDataEditor.Common
 
                         if (ios)
                         {
-                            TextureImporter textureImporter = (TextureImporter)AssetImporter.GetAtPath(filePath);
                             TextureImporterPlatformSettings IOSSetting = IOSNoSetting;
                             IOSSetting.maxTextureSize = textureImporter.maxTextureSize;
 
@@ -422,6 +541,13 @@ namespace GameDataEditor.Common
 
                             if (setting.overridden == IOSSetting.overridden)
                             {
+                                if (IOSSetting.maxTextureSize > max)
+                                {
+                                    IOSSetting.maxTextureSize = max;
+                                    textureImporter.SetPlatformTextureSettings(IOSSetting);
+                                    textureImporter.SaveAndReimport();
+                                    change = true;
+                                }
                             }
                             else
                             {
@@ -440,9 +566,104 @@ namespace GameDataEditor.Common
                         continue;
                     }
 
+
+                    if (defaultSetting)
+                    {
+                        TextureImporterPlatformSettings DefaultSettings = new TextureImporterPlatformSettings()
+                        {
+                            name = "Default",
+                            overridden = true,
+                            compressionQuality = 50,
+                            format = TextureImporterFormat.RGBA32
+                        };
+                        var defaultTexturePlatform =
+                            textureImporter.GetPlatformTextureSettings("DefaultTexturePlatform");
+                        var setting = textureImporter.GetPlatformTextureSettings("Default");
+                        DefaultSettings.name = "DefaultTexturePlatform";
+                        if (defaultTexturePlatform.overridden == DefaultSettings.overridden &&
+                            defaultTexturePlatform.format == DefaultSettings.format &&
+                            defaultTexturePlatform.compressionQuality == DefaultSettings.compressionQuality &&
+                            defaultTexturePlatform.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
+                        {
+                        }
+                        else
+                        {
+                            DefaultSettings.maxTextureSize = max;
+                            textureImporter.maxTextureSize = max;
+                            textureImporter.SetPlatformTextureSettings(DefaultSettings);
+                            textureImporter.SaveAndReimport();
+                            change = true;
+                        }
+
+                        DefaultSettings.name = "Default";
+                        if (setting.overridden == DefaultSettings.overridden &&
+                            setting.format == DefaultSettings.format &&
+                            setting.compressionQuality == DefaultSettings.compressionQuality &&
+                            setting.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
+                        {
+                        }
+                        else
+                        {
+                            DefaultSettings.maxTextureSize = max;
+                            textureImporter.maxTextureSize = max;
+                            textureImporter.SetPlatformTextureSettings(DefaultSettings);
+                            textureImporter.mipmapEnabled = false;
+                            textureImporter.SaveAndReimport();
+                            change = true;
+                            Debug.Log($"第{i}张,filePath:{filePath}，修改默认图片设置");
+                        }
+                    }
+
+                    if (pc)
+                    {
+                        TextureImporterPlatformSettings DefSettings = pcSetting;
+
+                        var Standalone = textureImporter.GetPlatformTextureSettings("Standalone");
+                        var setting = textureImporter.GetPlatformTextureSettings("PC,Mac & Linux Standalone");
+                        DefSettings.maxTextureSize = max;
+                        DefSettings.name = "Standalone";
+                        if (Standalone.overridden == DefSettings.overridden &&
+                            Standalone.format == DefSettings.format &&
+                            Standalone.compressionQuality == DefSettings.compressionQuality &&
+                            Standalone.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
+                        {
+                        }
+                        else
+                        {
+                            textureImporter.mipmapEnabled = false;
+                            Standalone.maxTextureSize = max;
+                            textureImporter.maxTextureSize = max;
+                            textureImporter.SetPlatformTextureSettings(DefSettings);
+                            textureImporter.SaveAndReimport();
+                            change = true;
+                            Debug.Log($"第{i}张,filePath:{filePath}， Standalone修改默认图片设置");
+                        }
+
+                        DefSettings.name = "PC,Mac & Linux Standalone";
+                        if (setting.overridden == DefSettings.overridden &&
+                            setting.format == DefSettings.format &&
+                            setting.compressionQuality == DefSettings.compressionQuality &&
+                            setting.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
+                        {
+                        }
+                        else
+                        {
+                            textureImporter.mipmapEnabled = false;
+                            DefSettings.maxTextureSize = max;
+                            textureImporter.maxTextureSize = max;
+                            textureImporter.SetPlatformTextureSettings(DefSettings);
+                            textureImporter.SaveAndReimport();
+                            change = true;
+                            Debug.Log($"第{i}张,filePath:{filePath}， PC,Mac & Linux Standalone 修改默认图片设置");
+                        }
+                    }
+
                     if (android)
                     {
-                        TextureImporter textureImporter = (TextureImporter)AssetImporter.GetAtPath(filePath);
                         TextureImporterPlatformSettings AndroidSettings = null;
                         if (obj.width % 4 != 0 || obj.height % 4 != 0)
                         {
@@ -453,39 +674,50 @@ namespace GameDataEditor.Common
                             AndroidSettings = AndroidETC2Setting;
                         }
 
-                        AndroidSettings.maxTextureSize = textureImporter.maxTextureSize;
+                        // textureImporter.maxTextureSize = max;
+                        // AndroidSettings.maxTextureSize = max;
+                        // AndroidSettings.maxTextureSize = textureImporter.maxTextureSize;
                         var setting = textureImporter.GetPlatformTextureSettings("Android");
 
                         if (setting.overridden == AndroidSettings.overridden &&
                             setting.format == AndroidSettings.format &&
-                            setting.compressionQuality == AndroidSettings.compressionQuality)
+                            setting.compressionQuality == AndroidSettings.compressionQuality &&
+                            setting.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
                         {
                         }
                         else
                         {
+                            textureImporter.mipmapEnabled = false;
+                            textureImporter.maxTextureSize = max;
+                            AndroidSettings.maxTextureSize = max;
                             textureImporter.SetPlatformTextureSettings(AndroidSettings);
                             textureImporter.SaveAndReimport();
                             change = true;
+                            Debug.Log($"第{i}张,filePath:{filePath}， Android 修改默认图片设置");
                         }
                     }
 
                     if (ios)
                     {
-                        TextureImporter textureImporter = (TextureImporter)AssetImporter.GetAtPath(filePath);
                         TextureImporterPlatformSettings IOSSetting = IOSASTC4Setting;
-                        IOSSetting.maxTextureSize = textureImporter.maxTextureSize;
 
                         var setting = textureImporter.GetPlatformTextureSettings("IOS");
-
                         if (setting.overridden == IOSSetting.overridden && setting.format == IOSSetting.format &&
-                            setting.compressionQuality == IOSSetting.compressionQuality)
+                            setting.compressionQuality == IOSSetting.compressionQuality &&
+                            setting.maxTextureSize <= max && textureImporter.maxTextureSize <= max &&
+                            textureImporter.mipmapEnabled)
                         {
                         }
                         else
                         {
+                            textureImporter.mipmapEnabled = false;
+                            textureImporter.maxTextureSize = max;
+                            IOSSetting.maxTextureSize = max;
                             textureImporter.SetPlatformTextureSettings(IOSSetting);
                             textureImporter.SaveAndReimport();
                             change = true;
+                            Debug.Log($"第{i}张,filePath:{filePath}， IOS 修改默认图片设置");
                         }
                     }
 
@@ -511,6 +743,13 @@ namespace GameDataEditor.Common
             Debug.Log($"图片操作完成：{settedCount}");
             AssetDatabase.Refresh();
         }
+
+        protected override void Opetion()
+        {
+            base.Opetion();
+            EditorExecutors.RunOnCoroutine(OpenIEnumerator());
+        }
+
 
         protected override void DrawAndroidContent()
         {
@@ -670,7 +909,7 @@ namespace GameDataEditor.Common
     public class SpriteUtilEditor : Editor
     {
         private static readonly string AssetUIDataPath = $"{Application.dataPath}/Game/UI/";
-        private static string startWith = "Assets/Game/AssetBundles/UI/Sprites";
+        private static string startWith = "Assets/Mudle/";
 
         private const string IgnoreDirString = "Editor;Plugins;Android;IOS;Ios";
 
@@ -799,7 +1038,6 @@ namespace GameDataEditor.Common
                         }
                         else
                         {
-                            
                             _testureImp.SetPlatformTextureSettings(androidSettings);
 
                             _testureImp.SaveAndReimport();
@@ -899,7 +1137,7 @@ namespace GameDataEditor.Common
             //Object[] sprites = Resources.LoadAll<Sprite>(path);
 
 
-            Sprite outputSprite = (Sprite)sprites[^1];
+            Sprite outputSprite = (Sprite)sprites[sprites.Length - 1];
 
             Debug.Log(outputSprite.name);
 
@@ -964,7 +1202,7 @@ namespace GameDataEditor.Common
                 }
             }
 
-            Texture2D outputImage = AssetDatabase.LoadAssetAtPath<Texture2D>(paths[^1]);
+            Texture2D outputImage = AssetDatabase.LoadAssetAtPath<Texture2D>(paths[paths.Count - 1]);
             Debug.Log(outputImage.name);
 
             return outputImage;

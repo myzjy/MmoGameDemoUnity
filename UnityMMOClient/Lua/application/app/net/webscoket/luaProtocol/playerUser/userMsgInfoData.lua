@@ -7,9 +7,9 @@ function UserMsgInfoData:ctor()
     ---@type number 金币
     self.goldNum = 0;
     ---@type number 付费钻石 一般充值才有，付费钻石转换成普通钻石
-    self.PremiumDiamondNum = 0;
+    self.premiumDiamondNum = 0;
     ---@type number 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
-    self.DiamondNum = 0;
+    self.diamondNum = 0;
     ---@type integer 等级
     self.lv = 0;
     ---@type integer 最大等级
@@ -24,16 +24,16 @@ function UserMsgInfoData:protocolId()
     return 222
 end
 
-function UserMsgInfoData:new(sceneId, sceneStr, scenePosX, scenePosY, scenePosZ, sceneCharacterRotationX,
-                             sceneCharacterRotationY, sceneCharacterRotationZ)
-    self.sceneId = sceneId
-    self.sceneStr = sceneStr
-    self.scenePosX = scenePosX;
-    self.scenePosY = scenePosY;
-    self.scenePosZ = scenePosZ;
-    self.sceneCharacterRotationX = sceneCharacterRotationX;
-    self.sceneCharacterRotationY = sceneCharacterRotationY;
-    self.sceneCharacterRotationZ = sceneCharacterRotationZ;
+function UserMsgInfoData:new(userName, goldNum, premiumDiamondNum, diamondNum, lv, maxLv,
+                             exp, maxExp)
+    self.userName = userName
+    self.goldNum = goldNum
+    self.premiumDiamondNum = premiumDiamondNum;
+    self.diamondNum = diamondNum;
+    self.lv = lv;
+    self.maxLv = maxLv;
+    self.exp = exp;
+    self.maxExp = maxExp;
     return self
 end
 
@@ -42,14 +42,8 @@ function UserMsgInfoData:read(data)
     -- ---字节读取器中存放字符
     -- local data = JSON.decode(jsonString)
     local jsonData = UserMsgInfoData:new(
-        data.sceneId,
-        data.sceneStr,
-        data.scenePosX,
-        data.scenePosY,
-        data.scenePosZ,
-        data.sceneCharacterRotationX,
-        data.sceneCharacterRotationY,
-        data.sceneCharacterRotationZ)
+        data.userName, data.goldNum, data.premiumDiamondNum, data.diamondNum, data.lv, data.maxLv,
+        data.exp, data.maxExp)
     return jsonData
 end
 

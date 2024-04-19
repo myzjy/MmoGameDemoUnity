@@ -66,10 +66,11 @@ end
 ---@param data LoginResponse
 function LoginNetController:AtLoginResponse(data)
     local response = data
+    local userData = response.loginUserServerInfoData.userMsgInfoData
     local token = response.token
     local uid = response.uid
-    local userName = response.userName
-    local goldNum = response.goldNum
+    local userName = userData.userName
+    local goldNum = userData.goldNum
     if Debug > 0 then
         PrintDebug(
             "[user:" ..
@@ -87,9 +88,9 @@ function LoginNetController:AtLoginResponse(data)
     end
     PlayerUserCaCheData:SetUIDValue(uid)
     PlayerUserCaCheData:SetUseName(userName)
-    PlayerUserCaCheData:SetDiamondNumValue(response.diamondNum)
-    PlayerUserCaCheData:SetGoldNum(response.goldNum)
-    PlayerUserCaCheData:SetPremiumDiamondNumValue(response.premiumDiamondNum)
+    PlayerUserCaCheData:SetDiamondNumValue(userData.diamondNum)
+    PlayerUserCaCheData:SetGoldNum(userData.goldNum)
+    PlayerUserCaCheData:SetPremiumDiamondNumValue(userData.premiumDiamondNum)
     LoginUIController:GetInstance():OnHide()
     LoginUIController:GetInstance():OpenLoginTapToStartUI()
 end
