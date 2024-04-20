@@ -86,11 +86,10 @@ function LoginNetController:AtLoginResponse(data)
             "]"
         )
     end
-    PlayerUserCaCheData:SetUIDValue(uid)
-    PlayerUserCaCheData:SetUseName(userName)
-    PlayerUserCaCheData:SetDiamondNumValue(userData.diamondNum)
-    PlayerUserCaCheData:SetGoldNum(userData.goldNum)
-    PlayerUserCaCheData:SetPremiumDiamondNumValue(userData.premiumDiamondNum)
+    ServerConfigNetController:SetPlayerInfo({ token = response.token, uid = response.uid })
+    ServerConfigNetController:SetPlayerSceneInfoData(response.loginUserServerInfoData.playerSceneInfoData)
+    ServerConfigNetController:SetUserMsgInfoData(userData)
+
     LoginUIController:GetInstance():OnHide()
     LoginUIController:GetInstance():OpenLoginTapToStartUI()
 end

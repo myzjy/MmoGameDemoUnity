@@ -42,7 +42,7 @@ function GameMainView:OnInit()
     self.GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button
     self.GemsText = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
     --设置用户名
-    self:SetTopHeadNameText(PlayerUserCaCheData:GetUseName())
+    self:SetTopHeadNameText(ServerConfigNetController:GetUserMsgInfoData().userName)
     self.GemText = viewPanel.Gem_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
     self.GoldCoinText = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
     self.GoldTimButton = viewPanel.glod_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button

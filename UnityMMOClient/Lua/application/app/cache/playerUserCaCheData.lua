@@ -14,52 +14,52 @@ local Common = {
 ---@class PlayerUserCaCheData
 PlayerUserCaCheData = class("PlayerUserCaCheData")
 
-function PlayerUserCaCheData:SetUIDValue(uid)
-    Common.PlayerUserCaCheData().Uid = uid
-end
+-- function PlayerUserCaCheData:SetUIDValue(uid)
+--     Common.PlayerUserCaCheData().Uid = uid
+-- end
 
-function PlayerUserCaCheData:GetUID()
-    return Common.PlayerUserCaCheData().Uid
-end
+-- function PlayerUserCaCheData:GetUID()
+--     return Common.PlayerUserCaCheData().Uid
+-- end
 
-function PlayerUserCaCheData:GetUseName()
-    return Common.PlayerUserCaCheData().userName
-end
+-- function PlayerUserCaCheData:GetUseName()
+--     return Common.PlayerUserCaCheData().userName
+-- end
 
-function PlayerUserCaCheData:SetUseName(userName)
-    Common.PlayerUserCaCheData().userName = userName
-end
+-- function PlayerUserCaCheData:SetUseName(userName)
+--     Common.PlayerUserCaCheData().userName = userName
+-- end
 
----@return number 免费钻石
-function PlayerUserCaCheData:GetDiamondNumValue()
-    return Common.PlayerUserCaCheData().DiamondNum
-end
+-- ---@return number 免费钻石
+-- function PlayerUserCaCheData:GetDiamondNumValue()
+--     return Common.PlayerUserCaCheData().DiamondNum
+-- end
 
----@param num number 免费钻石 一般组合 为其它途径获取免费钻石加上付费钻石转换的总和
-function PlayerUserCaCheData:SetDiamondNumValue(num)
-    Common.PlayerUserCaCheData().DiamondNum = num
-end
+-- ---@param num number 免费钻石 一般组合 为其它途径获取免费钻石加上付费钻石转换的总和
+-- function PlayerUserCaCheData:SetDiamondNumValue(num)
+--     Common.PlayerUserCaCheData().DiamondNum = num
+-- end
 
----返回付费钻石数量
----@return number 付费钻石数量
-function PlayerUserCaCheData:GetPremiumDiamondNumValue()
-    return Common.PlayerUserCaCheData().PremiumDiamondNum
-end
+-- ---返回付费钻石数量
+-- ---@return number 付费钻石数量
+-- function PlayerUserCaCheData:GetPremiumDiamondNumValue()
+--     return Common.PlayerUserCaCheData().PremiumDiamondNum
+-- end
 
---- 设置付费钻石
----@param num number 付费钻石数量
-function PlayerUserCaCheData:SetPremiumDiamondNumValue(num)
-    Common.PlayerUserCaCheData().PremiumDiamondNum = num
-end
+-- --- 设置付费钻石
+-- ---@param num number 付费钻石数量
+-- function PlayerUserCaCheData:SetPremiumDiamondNumValue(num)
+--     Common.PlayerUserCaCheData().PremiumDiamondNum = num
+-- end
 
---- 返回金币数量
---- @return number 金币数量
-function PlayerUserCaCheData:GetGoldNum()
-    return Common.PlayerUserCaCheData().goldNum
-end
+-- --- 返回金币数量
+-- --- @return number 金币数量
+-- function PlayerUserCaCheData:GetGoldNum()
+--     return Common.PlayerUserCaCheData().goldNum
+-- end
 
---- 设置金币数量
----@param num number 自己的金币数量
-function PlayerUserCaCheData:SetGoldNum(num)
-    Common.PlayerUserCaCheData().goldNum = num
-end
+-- --- 设置金币数量
+-- ---@param num number 自己的金币数量
+-- function PlayerUserCaCheData:SetGoldNum(num)
+--     Common.PlayerUserCaCheData().goldNum = num
+-- end

@@ -49,7 +49,7 @@ function UIBaseView:ReUse()
             self.transform:SetAsLastSibling()
         end
     end
-    -- self:OnShow()
+    self:OnShow()
 end
 
 function UIBaseView:InstantiateGameObject(gameObject)
