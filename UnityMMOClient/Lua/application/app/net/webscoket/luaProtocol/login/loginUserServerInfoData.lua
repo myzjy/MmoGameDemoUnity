@@ -15,13 +15,14 @@ function LoginUserServerInfoData:new(playerSceneInfoData, userMsgInfoData)
     return self;
 end
 
----@param data {playerSceneInfoData:PlayerSceneInfoData,userMsgInfoData:UserMsgInfoData}
+---@param data LoginResponse
 ---@return LoginUserServerInfoData
 function LoginUserServerInfoData:read(data)
     local playerSceneInfoDataServer = PlayerSceneInfoData();
-    local playerSceneInfoData = playerSceneInfoDataServer:read(data.playerSceneInfoData);
+    local loginUserInfoData=data.loginUserServerInfoData
+    local playerSceneInfoData = playerSceneInfoDataServer:read(loginUserInfoData.playerSceneInfoData);
     local userMsgInfoDataServer = UserMsgInfoData();
-    local userMsgInfoData = userMsgInfoDataServer:read(data.userMsgInfoData)
+    local userMsgInfoData = userMsgInfoDataServer:read(loginUserInfoData.userMsgInfoData)
     local jsonData = LoginUserServerInfoData:new(playerSceneInfoData, userMsgInfoData)
     return jsonData
 end

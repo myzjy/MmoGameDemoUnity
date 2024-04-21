@@ -16,13 +16,16 @@ GameEvent.AcquireWeaponBagServerList = event("GameEvent.AcquireUserIdWeaponServi
 ---end
 ---```
 GameEvent.ClickBagHeaderBtnHandlerServer = event("GameEvent.ClickBagHeaderBtnHandlerServer")
---- 点击 头部按钮 协议号 
+--- 点击 头部按钮 协议号
 ---``` lua
 --- function AllBagItemResponse:protocolId()
 ---  return 1008
 ---end
 ---```
 GameEvent.AtBagHeaderBtnService = event("GameEvent.AtBagHeaderBtnService")
+
+-- 更新 显示金币 砖石 付费砖石
+GameEvent.UpDateGemsAndGlodInfo = event("GameEvent.UpDateGemsAndGlodInfo")
 
 
 

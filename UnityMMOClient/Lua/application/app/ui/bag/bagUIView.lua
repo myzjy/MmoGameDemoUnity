@@ -41,7 +41,7 @@ function BagUIView:OnInit()
 end
 
 function BagUIView:OnShow()
-    self:ReUse()
+  
 end
 
 function BagUIView:RegisterEvent()

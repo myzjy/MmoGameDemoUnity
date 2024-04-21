@@ -40,5 +40,7 @@ function GameMainUIPanelView:Init(view)
 	self.settingBtn = self._UIView:GetObjTypeStr("settingBtn") or UnityEngine.UI.Button
 	self.MailBtn = self._UIView:GetObjTypeStr("MailBtn") or UnityEngine.UI.Button
 	self.MailBtn_tips = self._UIView:GetObjTypeStr("MailBtn_tips") or UnityEngine.GameObject
+	self.selectCharacter = self._UIView:GetObjTypeStr("selectCharacter") or UnityEngine.GameObject
+	self.selectCharacterBtn = self._UIView:GetObjTypeStr("selectCharacterBtn") or UnityEngine.GameObject
 end
 

@@ -20,7 +20,7 @@ function GameMainUIViewController:Open()
         if Debug > 0 then
             PrintError("GameMainView 并未打开界面 Open 生成")
         end
-        local viewPanel= gameMainView()
+        local viewPanel = gameMainView()
         -- 去生成界面
         viewPanel:OnLoad()
         return
@@ -58,6 +58,18 @@ function GameMainUIViewController:UIInitEvent()
         -- 点击背包
         BagUIController:Open()
     end)
+end
+
+--- 初始化打开界面得时候，发送
+function GameMainUIViewController:InitSendEvent()
+
+end
+
+--- 打开界面得时候，发送 那些协议过去
+function GameMainUIViewController:OpenServiceSendEvent()
+    -- 更新 显示 金币 砖石 付费砖石 协议
+    
+
 end
 
 return GameMainUIViewController
