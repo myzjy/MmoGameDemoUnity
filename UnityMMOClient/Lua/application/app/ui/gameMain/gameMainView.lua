@@ -96,5 +96,8 @@ function GameMainView:OnShow()
 
 end
 
+function GameMainView:OnOpen()
+    
+end
 
 return GameMainView

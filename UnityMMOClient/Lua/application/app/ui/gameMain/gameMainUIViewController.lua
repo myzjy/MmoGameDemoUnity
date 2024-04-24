@@ -69,6 +69,7 @@ end
 function GameMainUIViewController:OpenServiceSendEvent()
     -- 更新 显示 金币 砖石 付费砖石 协议
     
+    -- 更新角色状态
 
 end
 
