@@ -41,7 +41,7 @@ function GameMainView:OnInit()
     local userMsgInfoData = ServerConfigNetController:GetUserMsgInfoData()
 
     self.GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button
-    self.GemsText = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("numText") or CS.UnityEngine.UI.Text
+    self.GemsText = LuaUtils.GetKeyUIText(viewPanel.GemsTim_UISerializableKeyObject.gameObject, "numText")
     --设置用户名
     self:SetTopHeadNameText(userMsgInfoData.userName)
     self.GemText = LuaUtils.GetKeyUIText(viewPanel.Gem_UISerializableKeyObject.gameObject, "numText")
@@ -57,6 +57,7 @@ end
 
 function GameMainView:RegisterEvent()
     UIUtils.AddEventListener(GameEvent.UpDateGemsAndGlodInfo, self.RefreshShowInfoData, self)
+    UIUtils.AddEventListener(LateUpdateBeat, self.OnUpdate)
 end
 
 ---设置用户名
@@ -84,19 +85,26 @@ function GameMainView:RefreshShowInfoData(userInfo)
     self.GoldCoinText.text = userInfo.goldNum .. ""
 end
 
+function GameMainView:RefreshShowUserInfoData(userInfo)
+    ---@type GameMainUIPanelView
+    local viewPanel = self.viewPanel
+    viewPanel.top_head_Lv_LvNum_Text.text = userInfo.lv .. ""
+    viewPanel.top_head_Lv_Image.fillAmount = (userInfo.exp / userInfo.maxExp)
+    self:SetTopHeadNameText(userInfo.userName)
+end
+
 function GameMainView:OnShow()
     PrintInfo("GameMainView:OnShow line 74")
     self.UIView:OnShow()
-    ---@type GameMainUIPanelView
-    local viewPanel = self.viewPanel
-    local userMsgInfoData = ServerConfigNetController:GetUserMsgInfoData()
-    viewPanel.top_head_Lv_LvNum_Text.text = userMsgInfoData.lv .. ""
-    viewPanel.top_head_Lv_Image.fillAmount = (userMsgInfoData.exp / userMsgInfoData.maxExp)
-    self:SetTopHeadNameText(userMsgInfoData.userName)
-
 end
 
 function GameMainView:OnOpen()
+
+end
+
+function GameMainView:OnUpdatePhysicalPowerEvent()
+    coroutine.yield(UnityEngine.WaitForSeconds(1))
+    -- 发送协议
     
 end
 
