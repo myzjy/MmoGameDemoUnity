@@ -69,8 +69,17 @@ UserMsgInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.
 
 ------------------------------------------end playerUser----------------------------------------------------------
 
+--------------------------------------------PhysicalPower-----------------------------------------------------------
 
-local protocols = {}
+PhysicalPowerRequest = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerRequest")
+PhysicalPowerResponse = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerResponse")
+
+--------------------------------------------end PhysicalPower-------------------------------------------------------
+
+
+
+
+-- local protocols = {}
 
 local ProtocolManager = {}
 
@@ -84,65 +93,65 @@ function table.mapSize(map)
     return size
 end
 
----@param protocolId any
----@return any
-function ProtocolManager.getProtocol(protocolId)
-    local protocol = protocols[protocolId]
-    if protocol == nil then
-        PrintError("[protocolId:" .. protocolId .. "]协议不存在")
-    end
-    return protocol
-end
+-- ---@param protocolId any
+-- ---@return any
+-- function ProtocolManager.getProtocol(protocolId)
+--     local protocol = protocols[protocolId]
+--     if protocol == nil then
+--         PrintError("[protocolId:" .. protocolId .. "]协议不存在")
+--     end
+--     return protocol
+-- end
 
-function ProtocolManager.write(buffer, packet)
-    local protocolId = packet:protocolId()
-    -- 写入包体
-    ProtocolManager.getProtocol(protocolId):write(buffer, packet)
-end
+-- function ProtocolManager.write(buffer, packet)
+--     local protocolId = packet:protocolId()
+--     -- 写入包体
+--     ProtocolManager.getProtocol(protocolId):write(buffer, packet)
+-- end
 
----读取
----@param buffer ByteBuffer 字节读取器
-function ProtocolManager:read(buffer)
-    local jsonString = buffer:readString()
-    local jsonData = JSON.decode(jsonString);
-    ---获取对应id
-    local protocolId = jsonData.protocolId
-    local protocol = protocols[protocolId]
-    if protocol == NULL then
-        return nil
-    end
-    local packetData = protocol();
-    --- 返回对应的结构
-    packetData = packetData:read(jsonData)
-    return packetData
-end
+-- ---读取
+-- ---@param buffer ByteBuffer 字节读取器
+-- function ProtocolManager:read(buffer)
+--     local jsonString = buffer:readString()
+--     local jsonData = JSON.decode(jsonString);
+--     ---获取对应id
+--     local protocolId = jsonData.protocolId
+--     local protocol = protocols[protocolId]
+--     if protocol == NULL then
+--         return nil
+--     end
+--     local packetData = protocol();
+--     --- 返回对应的结构
+--     packetData = packetData:read(jsonData)
+--     return packetData
+-- end
 
 function ProtocolManager.initProtocolManager()
-    protocols[101] = Error
-    protocols[104] = Pong
+    -- protocols[101] = Error
+    -- protocols[104] = Pong
 
-    protocols[1000] = LoginRequest
-    protocols[1001] = LoginResponse
+    -- protocols[1000] = LoginRequest
+    -- protocols[1001] = LoginResponse
 
-    protocols[RegisterRequest:protocolId()] = RegisterRequest
-    protocols[RegisterResponse:protocolId()] = RegisterResponse
+    -- protocols[RegisterRequest:protocolId()] = RegisterRequest
+    -- protocols[RegisterResponse:protocolId()] = RegisterResponse
 
-    protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
-    protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
+    -- protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
+    -- protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
 
-    protocols[ServerConfigRequest:protocolId()] = ServerConfigRequest
-    protocols[ServerConfigResponse:protocolId()] = ServerConfigResponse
+    -- protocols[ServerConfigRequest:protocolId()] = ServerConfigRequest
+    -- protocols[ServerConfigResponse:protocolId()] = ServerConfigResponse
 
-    protocols[ItemBaseData:protocolId()] = ItemBaseData
+    -- protocols[ItemBaseData:protocolId()] = ItemBaseData
 
-    protocols[EquipmentBaseData:protocolId()] = EquipmentBaseData
-    protocols[EquipmentConfigBaseData:protocolId()] = EquipmentConfigBaseData
-    protocols[EquipmentDesBaseData:protocolId()] = EquipmentDesBaseData
-    protocols[EquipmentGrowthConfigBaseData:protocolId()] = EquipmentGrowthConfigBaseData
-    protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
-    protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
+    -- protocols[EquipmentBaseData:protocolId()] = EquipmentBaseData
+    -- protocols[EquipmentConfigBaseData:protocolId()] = EquipmentConfigBaseData
+    -- protocols[EquipmentDesBaseData:protocolId()] = EquipmentDesBaseData
+    -- protocols[EquipmentGrowthConfigBaseData:protocolId()] = EquipmentGrowthConfigBaseData
+    -- protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
+    -- protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
 
-    protocols[WeaponsConfigData:protocolId()] = WeaponsConfigData
+    -- protocols[WeaponsConfigData:protocolId()] = WeaponsConfigData
 end
 
 return ProtocolManager

@@ -15,4 +15,39 @@ function PhysicalPowerResponse:ctor()
     self.residuNowTime = 0
 end
 
+--- 协议号
+--- @return integer
+function PhysicalPowerResponse:protocolId()
+    return 1024
+end
+
+--- 赋值
+--- @param nowPhysicalPower number
+--- @param residuTime number
+--- @param maximumStrength number
+--- @param maximusResidueEndTime number
+--- @param residuNowTime number
+--- @return PhysicalPowerResponse
+function PhysicalPowerResponse:new(nowPhysicalPower, residuTime, maximumStrength, maximusResidueEndTime, residuNowTime)
+    self.nowPhysicalPower = nowPhysicalPower
+    self.residuNowTime = residuNowTime
+    self.maximumStrength = maximumStrength
+    self.maximusResidueEndTime = maximusResidueEndTime
+    self.residuTime = residuTime
+    return self
+end
+
+--- 读取值 返回
+--- @param data PhysicalPowerResponse
+--- @return PhysicalPowerResponse
+function PhysicalPowerResponse:read(data)
+    local pakcet = self:new(data.nowPhysicalPower,
+        data.residuNowTime,
+        data.maximumStrength,
+        data.maximusResidueEndTime,
+        data.residuTime
+    )
+    return pakcet
+end
+
 return PhysicalPowerResponse

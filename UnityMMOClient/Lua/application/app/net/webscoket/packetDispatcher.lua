@@ -11,6 +11,10 @@ PacketDispatcher.Event = {
     OnOpen = "PacketDispatcher.Event.OnOpen",
     OnDisConnect = "PacketDispatcher.Event.OnDisConnect"
 }
+
+
+
+
 -------------------------------- start Login   pack 包 --------------------------------------
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
@@ -32,14 +36,9 @@ function OnDisConnectFromServer()
 end
 
 function OnReceiveLineFromServer(bytes)
-    local str = bytes
-    -- local buffer = ByteBuffer:new()
-    -- buffer:writeString(bytes)
     local jsonData = JSON.decode(bytes);
     ---获取对应id
     local protocolId = jsonData.protocolId
-
-    -- local packet = readBytes(str)
     PacketDispatcher:ReceiveMsg(protocolId, jsonData.packet)
 end
 
@@ -59,6 +58,7 @@ function PacketDispatcher:Init()
     end
     self.msgMap[WeaponPlayerUserDataResponse:protocolId()] = handle(self.OnWeaponPlayerUserDataResponse, self)
     self.msgMap[AllBagItemResponse:protocolId()] = handle(self.OnAllBagItemResponse, self)
+    self.msgMap[PhysicalPowerResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
 
     -------------------------------- start Login   pack 包 --------------------------------------
 
@@ -106,6 +106,12 @@ function PacketDispatcher:OnAllBagItemResponse(data)
     local response = AllBagItemResponse()
     local pakcet = response:read(data)
     GameEvent.AtBagHeaderBtnService(pakcet)
+end
+
+function PacketDispatcher:OnPhysicalPowerResponse(data)
+    local response = PhysicalPowerResponse()
+    local packet = response:read(data)
+    GameEvent.UpdateGamePhysicalInfo(packet)
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)
