@@ -281,6 +281,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(UnityEngine.Debug), UnityEngineDebugWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(ZJYFrameWork.Execution.Executors), ZJYFrameWorkExecutionExecutorsWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(ZJYFrameWork.Net.ApiRequest), ZJYFrameWorkNetApiRequestWrap.__Register);
         
         

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Linq;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using ZJYFrameWork.Execution;
 using ZJYFrameWork.Net;
 
 //using System.Reflection;
@@ -106,6 +107,8 @@ public static class ExampleConfig
         typeof(AxisState),
         typeof(UnityEngine.UI.ScrollRect.ScrollRectEvent),
         typeof(UnityEngine.Debug),
+        typeof(Executors),
+        
         typeof(ApiRequest),
         typeof(ApiResponse),
         typeof(ApiHandler)

@@ -136,6 +136,11 @@
 		
 	</assembly>
 
+	<assembly fullname="ZJYFrameWork.Execution">
+	    <type fullname="ZJYFrameWork.Execution.Executors" preserve="all"/>
+		
+	</assembly>
+
 	<assembly fullname="Unity.TextMeshPro">
 	    <type fullname="TMPro.TextMeshProUGUI" preserve="all"/>
 		<type fullname="TMPro.TMP_InputField" preserve="all"/>
