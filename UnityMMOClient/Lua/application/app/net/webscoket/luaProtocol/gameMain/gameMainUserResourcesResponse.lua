@@ -14,10 +14,12 @@ function GameMainUserResourcesResponse:new(userMsgInfoData)
     self.userMsgInfoData = userMsgInfoData;
     return self;
 end
-
+--- comment
+--- @param data any
+--- @return GameMainUserResourcesResponse
 function GameMainUserResourcesResponse:read(data)
-    local data = UserMsgInfoData()
-    local packetData = data:read(data.userMsgInfoData)
+    local infoData = UserMsgInfoData()
+    local packetData = infoData:read(data.userMsgInfoData)
     return self:new(packetData)
 end
 

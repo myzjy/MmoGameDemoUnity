@@ -64,6 +64,7 @@ function Round(number)
 		return intNum
 	end
 end
+
 local move_end = {}
 
 local unpack = unpack or table.unpack
@@ -96,6 +97,7 @@ function cs_generator(func, ...)
 	generator:Reset()
 	return generator
 end
+
 function coroutine_call(func)
 	return function(...)
 		local co = coroutine.create(func)
@@ -115,4 +117,20 @@ function hotfix_ex(cs, field, func)
 		return unpack(ret)
 	end
 	xlua.hotfix(cs, field, func_after)
+end
+
+function StartCoroutine(func)
+	local action = cs_generator(func)
+	local co = ZJYFrameWork.Execution.Executors.RunOnCoroutineReturn(action)
+	return co
+end
+
+function WaitForSeconds(timeout)
+	coroutine.yield(UnityEngine.WaitForSeconds(timeout))
+end
+
+function StopCoroutine(cor)
+	if cor then
+		ZJYFrameWork.Execution.Executors.StopCoroutine(cor)
+	end
 end

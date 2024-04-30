@@ -68,9 +68,8 @@ end
 --- 打开界面得时候，发送 那些协议过去
 function GameMainUIViewController:OpenServiceSendEvent()
     -- 更新 显示 金币 砖石 付费砖石 协议
-    
+    GameMainNetController:SendGameMainUIPanelRequest()
     -- 更新角色状态
-
 end
 
 return GameMainUIViewController

@@ -24,10 +24,13 @@ GameEvent.ClickBagHeaderBtnHandlerServer = event("GameEvent.ClickBagHeaderBtnHan
 ---```
 GameEvent.AtBagHeaderBtnService = event("GameEvent.AtBagHeaderBtnService")
 
--- 更新 显示金币 砖石 付费砖石
+-- 更新 显示金币 砖石 付费砖石 协议 更新  userMsgInfoData
 GameEvent.UpDateGemsAndGlodInfo = event("GameEvent.UpDateGemsAndGlodInfo")
 --- 更新体力 显示 保存得体力
 GameEvent.UpdateGamePhysicalInfo = event("GameEvent.UpdateGamePhysicalInfo")
+
+---更新 UserMsgInfoData 时 刷新
+GameEvent.UpdateGameUserResourcesResponse = event("GameEvent.UpdateGameUserResourcesResponse")
 
 
 

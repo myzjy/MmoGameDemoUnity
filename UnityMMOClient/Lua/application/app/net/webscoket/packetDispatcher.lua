@@ -20,6 +20,7 @@ LoginNetController = require("application.app.net.webscoket.controller.loginNetC
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
 WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
 BagNetController = require("application.app.net.webscoket.controller.bagNetController"):GetInstance()
+GameMainNetController = require("application.app.net.webscoket.controller.gameMainNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 PacketDispatcher.urlString = nil
@@ -59,6 +60,7 @@ function PacketDispatcher:Init()
     self.msgMap[WeaponPlayerUserDataResponse:protocolId()] = handle(self.OnWeaponPlayerUserDataResponse, self)
     self.msgMap[AllBagItemResponse:protocolId()] = handle(self.OnAllBagItemResponse, self)
     self.msgMap[PhysicalPowerResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
+    self.msgMap[GameMainUserResourcesResponse:protocolId()] = handle(self.OnGameMainUserResourcesResponse, self)
 
     -------------------------------- start Login   pack 包 --------------------------------------
 
@@ -126,6 +128,14 @@ end
 
 function PacketDispatcher:ReceiveMsg(key, packet)
     self.msgMap[key](packet)
+end
+
+function PacketDispatcher:OnGameMainUserResourcesResponse(packetData)
+    local data = GameMainUserResourcesResponse()
+    local packet = data:read(packetData)
+    ServerConfigNetController:SetUserMsgInfoData(packet.userMsgInfoData)
+    GameEvent.UpdateGameUserResourcesResponse(packet)
+    GameEvent.UpDateGemsAndGlodInfo(packet)
 end
 
 return PacketDispatcher

@@ -78,7 +78,8 @@ PhysicalPowerResponse = require("application.app.net.webscoket.luaProtocol.physi
 
 ------------------------------------------gameMain--------------------------------------------------------------------
 
-GameMainUIPanelRequest=require("application.app.net.webscoket.luaProtocol.gameMain.gameMainUIPanelRequest")
+GameMainUIPanelRequest = require("application.app.net.webscoket.luaProtocol.gameMain.gameMainUIPanelRequest")
+GameMainUserResourcesResponse = require "application.app.net.webscoket.luaProtocol.gameMain.gameMainUserResourcesResponse"
 
 ------------------------------------------end gameMain--------------------------------------------------------------------
 

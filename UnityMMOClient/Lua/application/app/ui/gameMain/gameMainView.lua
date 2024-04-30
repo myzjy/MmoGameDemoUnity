@@ -56,8 +56,15 @@ function GameMainView:OnInit()
 end
 
 function GameMainView:RegisterEvent()
+    StartCoroutine(function()
+        coroutine.yield(UnityEngine.WaitForSeconds(1))
+        -- 发送协议
+        local userInfo = ServerConfigNetController:GetPlayerInfo()
+        GameMainNetController:SendPhysicalPowerService(userInfo.uid)
+    end)
+
     UIUtils.AddEventListener(GameEvent.UpDateGemsAndGlodInfo, self.RefreshShowInfoData, self)
-    UIUtils.AddEventListener(LateUpdateBeat, self.OnUpdate)
+    -- UIUtils.AddEventListener(LateUpdateBeat, self.OnUpdate)
 end
 
 ---设置用户名
@@ -105,7 +112,9 @@ end
 function GameMainView:OnUpdatePhysicalPowerEvent()
     coroutine.yield(UnityEngine.WaitForSeconds(1))
     -- 发送协议
-    
+    local userInfo = ServerConfigNetController:GetPlayerInfo()
+    GameMainNetController:SendPhysicalPowerService(userInfo.uid)
+    coroutine.yield(self:OnUpdatePhysicalPowerEvent())
 end
 
 return GameMainView
