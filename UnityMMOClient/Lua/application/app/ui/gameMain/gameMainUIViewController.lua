@@ -72,4 +72,20 @@ function GameMainUIViewController:OpenServiceSendEvent()
     -- 更新角色状态
 end
 
+function GameMainUIViewController:SendPhysicalPowerDown()
+    local physicalPowerInfo = ServerConfigNetController:GetPhysicalPowerInfoData()
+    --- 体力 对比
+    if physicalPowerInfo:getMaximumStrength() > physicalPowerInfo:getNowPhysicalPower() then
+        StartCoroutine(function()
+            while true do
+                coroutine.yield(UnityEngine.WaitForSeconds(1))
+
+                -- 发送协议
+                local userInfo = ServerConfigNetController:GetPlayerInfo()
+                GameMainNetController:SendPhysicalPowerService(userInfo.uid)
+            end
+        end)
+    end
+end
+
 return GameMainUIViewController

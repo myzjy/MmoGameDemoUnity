@@ -36,6 +36,8 @@ function ServerConfigNetController:ctor()
     self.userMsgInfoData = nil;
     ---@type {token:string,uid:number}
     self.playerInfo = {}
+    ---@type PhysicalPowerInfoData
+    self.physicalPowerInfo = nil;
 end
 
 function ServerConfigNetController:RegisterEvent()
@@ -230,6 +232,18 @@ end
 ---@return  {token:string,uid:number}
 function ServerConfigNetController:GetPlayerInfo()
     return self.playerInfo;
+end
+
+--- comment
+--- @param physicalPowerInfoData PhysicalPowerInfoData
+function ServerConfigNetController:SetPhysicalPowerInfoData(physicalPowerInfoData)
+    self.physicalPowerInfo = physicalPowerInfoData
+end
+
+--- 体力数据
+---@return PhysicalPowerInfoData
+function ServerConfigNetController:GetPhysicalPowerInfoData()
+    return self.physicalPowerInfo;
 end
 
 return ServerConfigNetController

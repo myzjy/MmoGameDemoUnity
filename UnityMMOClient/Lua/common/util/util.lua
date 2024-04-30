@@ -126,7 +126,10 @@ function StartCoroutine(func)
 end
 
 function WaitForSeconds(timeout)
-	coroutine.yield(UnityEngine.WaitForSeconds(timeout))
+	local action = cs_generator(function()
+		coroutine.yield(UnityEngine.WaitForSeconds(timeout))
+	end)
+	StartCoroutine(action)
 end
 
 function StopCoroutine(cor)

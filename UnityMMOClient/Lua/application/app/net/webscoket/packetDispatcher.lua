@@ -113,6 +113,7 @@ end
 function PacketDispatcher:OnPhysicalPowerResponse(data)
     local response = PhysicalPowerResponse()
     local packet = response:read(data)
+    ServerConfigNetController:SetPhysicalPowerInfoData(packet:getPhysicalPowerInfoData())
     GameEvent.UpdateGamePhysicalInfo(packet)
 end
 

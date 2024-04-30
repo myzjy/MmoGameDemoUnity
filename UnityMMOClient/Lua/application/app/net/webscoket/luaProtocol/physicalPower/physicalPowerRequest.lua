@@ -4,7 +4,7 @@ local PhysicalPowerRequest = class("PhysicalPowerRequest")
 
 --- 初始化
 ---@param uid number
-function PhysicalPowerRequest:cotr(uid)
+function PhysicalPowerRequest:ctor(uid)
     ---@type number 玩家UID
     self.uid = uid
 end

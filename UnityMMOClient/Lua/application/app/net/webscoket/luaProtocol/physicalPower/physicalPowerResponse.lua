@@ -3,16 +3,8 @@
 local PhysicalPowerResponse = class("PhysicalPowerResponse")
 --- 初始化
 function PhysicalPowerResponse:ctor()
-    ---@type number 当前体力
-    self.nowPhysicalPower = 0
-    ---@type number 一点体力增长剩余时间
-    self.residuTime = 0;
-    ---@type number 最大体力 用于限制 这个值会随着 等级增长
-    self.maximumStrength = 0
-    ---@type number 我恢复到最大体力的结束时间
-    self.maximusResidueEndTime = 0
-    ---@type number 当前体力实时时间 会跟着剩余时间一起变化
-    self.residuNowTime = 0
+    ---@type PhysicalPowerInfoData 体力数据 包起来
+    self.physicalPowerInfoData = nil;
 end
 
 --- 协议号
@@ -22,31 +14,26 @@ function PhysicalPowerResponse:protocolId()
 end
 
 --- 赋值
---- @param nowPhysicalPower number
---- @param residuTime number
---- @param maximumStrength number
---- @param maximusResidueEndTime number
---- @param residuNowTime number
+--- @param physicalPowerInfoData PhysicalPowerInfoData
 --- @return PhysicalPowerResponse
-function PhysicalPowerResponse:new(nowPhysicalPower, residuTime, maximumStrength, maximusResidueEndTime, residuNowTime)
-    self.nowPhysicalPower = nowPhysicalPower
-    self.residuNowTime = residuNowTime
-    self.maximumStrength = maximumStrength
-    self.maximusResidueEndTime = maximusResidueEndTime
-    self.residuTime = residuTime
+function PhysicalPowerResponse:new(physicalPowerInfoData)
+    self.physicalPowerInfoData = physicalPowerInfoData
     return self
+end
+
+--- comment
+--- @return PhysicalPowerInfoData
+function PhysicalPowerResponse:getPhysicalPowerInfoData()
+    return self.physicalPowerInfoData
 end
 
 --- 读取值 返回
 --- @param data PhysicalPowerResponse
 --- @return PhysicalPowerResponse
 function PhysicalPowerResponse:read(data)
-    local pakcet = self:new(data.nowPhysicalPower,
-        data.residuNowTime,
-        data.maximumStrength,
-        data.maximusResidueEndTime,
-        data.residuTime
-    )
+    local physicalPowerInfo = PhysicalPowerInfoData()
+
+    local pakcet = self:new(physicalPowerInfo:read(data.physicalPowerInfoData))
     return pakcet
 end
 
