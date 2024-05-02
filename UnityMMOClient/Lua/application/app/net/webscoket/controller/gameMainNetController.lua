@@ -26,6 +26,8 @@ end
 
 function GameMainNetController:SendGameMainUIPanelRequest()
     local packet = GameMainUIPanelRequest()
+    packet.panelPath="1"
+    packet.protocolStr="*"
     local json = packet:write()
     NetManager:SendMessageEvent(json)
 end

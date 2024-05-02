@@ -38,27 +38,25 @@ function GameMainView:OnInit()
     PrintDebug("call GameMainView Lua Script function to OnInit ....")
     ---@type GameMainUIPanelView
     local viewPanel = self.viewPanel
-    local userMsgInfoData = ServerConfigNetController:GetUserMsgInfoData()
 
     self.GemsTimButton = viewPanel.GemsTim_UISerializableKeyObject:GetObjTypeStr("click") or CS.UnityEngine.UI.Button
     self.GemsText = LuaUtils.GetKeyUIText(viewPanel.GemsTim_UISerializableKeyObject.gameObject, "numText")
-    --设置用户名
-    self:SetTopHeadNameText(userMsgInfoData.userName)
     self.GemText = LuaUtils.GetKeyUIText(viewPanel.Gem_UISerializableKeyObject.gameObject, "numText")
     self.GoldCoinText = LuaUtils.GetKeyUIText(viewPanel.glod_UISerializableKeyObject.gameObject, "numText")
     self.GoldTimButton = LuaUtils.GetKeyButtonGameObject(viewPanel.glod_UISerializableKeyObject.gameObject, "click")
 
     self:RegisterEvent()
 
-    GameEvent.UpDateGemsAndGlodInfo(userMsgInfoData)
     GameMainUIViewController:GetInstance():Build(self)
     GameMainUIViewController:GetInstance():UIInitEvent()
 end
 
 function GameMainView:RegisterEvent()
-   
-
     UIUtils.AddEventListener(GameEvent.UpDateGemsAndGlodInfo, self.RefreshShowInfoData, self)
+    UIUtils.AddEventListener(GameEvent.UPdateGameMainUserInfoMsg, self.RefreshShowUserInfoData, self)
+    UIUtils.AddEventListener(GameEvent.UpdateGamePhysicalInfo, self.RefreshShowPhysicalPower, self)
+    GameMainUIViewController:SendPhysicalPowerDown()
+
     -- UIUtils.AddEventListener(LateUpdateBeat, self.OnUpdate)
 end
 
@@ -69,6 +67,10 @@ function GameMainView:SetTopHeadNameText(userName)
     ---@type GameMainUIPanelView
     local viewPanel = self.viewPanel
     viewPanel.top_head_Name_Text.text = userName
+end
+
+function GameMainView:RefreshShowPhysicalPower(userInfo)
+    self:SetPhysicalPowerText(userInfo.nowPhysicalPower, userInfo.maxPhysicalPower)
 end
 
 -- 设置显示体力
@@ -93,6 +95,7 @@ function GameMainView:RefreshShowUserInfoData(userInfo)
     viewPanel.top_head_Lv_LvNum_Text.text = userInfo.lv .. ""
     viewPanel.top_head_Lv_Image.fillAmount = (userInfo.exp / userInfo.maxExp)
     self:SetTopHeadNameText(userInfo.userName)
+    self:RefreshShowInfoData(userInfo)
 end
 
 function GameMainView:OnShow()

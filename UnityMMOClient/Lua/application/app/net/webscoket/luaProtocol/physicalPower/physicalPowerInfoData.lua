@@ -3,6 +3,7 @@
 local PhysicalPowerInfoData = class("PhysicalPowerInfoData")
 --- 初始化
 function PhysicalPowerInfoData:ctor()
+    PrintDebug("Init self PhysicalPowerInfoData ing")
     ---@type number 当前体力
     self.nowPhysicalPower = 0
     ---@type number 一点体力增长剩余时间
@@ -80,4 +81,4 @@ function PhysicalPowerInfoData:getMaximusResidueEndTime()
     return self.maximusResidueEndTime;
 end
 
-return PhysicalPowerResponse
+return PhysicalPowerInfoData

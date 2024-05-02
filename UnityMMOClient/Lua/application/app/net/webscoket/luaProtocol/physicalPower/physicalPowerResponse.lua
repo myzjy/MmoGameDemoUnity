@@ -28,12 +28,12 @@ function PhysicalPowerResponse:getPhysicalPowerInfoData()
 end
 
 --- 读取值 返回
---- @param data PhysicalPowerResponse
---- @return PhysicalPowerResponse
-function PhysicalPowerResponse:read(data)
-    local physicalPowerInfo = PhysicalPowerInfoData()
 
-    local pakcet = self:new(physicalPowerInfo:read(data.physicalPowerInfoData))
+function PhysicalPowerResponse:read(data)
+    ---@type PhysicalPowerInfoData
+    local physicalPowerInfo = PhysicalPowerInfoData()
+    local physicalPowerInfoData = physicalPowerInfo:read(data.physicalPowerInfoData)
+    local pakcet = self:new(physicalPowerInfoData)
     return pakcet
 end
 

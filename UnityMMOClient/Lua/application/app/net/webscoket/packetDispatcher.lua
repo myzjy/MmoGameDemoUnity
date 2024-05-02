@@ -111,6 +111,7 @@ function PacketDispatcher:OnAllBagItemResponse(data)
 end
 
 function PacketDispatcher:OnPhysicalPowerResponse(data)
+    ---@type PhysicalPowerResponse
     local response = PhysicalPowerResponse()
     local packet = response:read(data)
     ServerConfigNetController:SetPhysicalPowerInfoData(packet:getPhysicalPowerInfoData())
@@ -135,8 +136,7 @@ function PacketDispatcher:OnGameMainUserResourcesResponse(packetData)
     local data = GameMainUserResourcesResponse()
     local packet = data:read(packetData)
     ServerConfigNetController:SetUserMsgInfoData(packet.userMsgInfoData)
-    GameEvent.UpdateGameUserResourcesResponse(packet)
-    GameEvent.UpDateGemsAndGlodInfo(packet)
+    GameEvent.UPdateGameMainUserInfoMsg(packet.userMsgInfoData)
 end
 
 return PacketDispatcher

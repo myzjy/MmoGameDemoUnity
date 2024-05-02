@@ -58,6 +58,7 @@ function GameMainUIViewController:UIInitEvent()
         -- 点击背包
         BagUIController:Open()
     end)
+    self:OpenServiceSendEvent()
 end
 
 --- 初始化打开界面得时候，发送
@@ -76,7 +77,7 @@ function GameMainUIViewController:SendPhysicalPowerDown()
     local physicalPowerInfo = ServerConfigNetController:GetPhysicalPowerInfoData()
     --- 体力 对比
     if physicalPowerInfo:getMaximumStrength() > physicalPowerInfo:getNowPhysicalPower() then
-        StartCoroutine(function()
+        self.physicalCoro = StartCoroutine(function()
             while true do
                 coroutine.yield(UnityEngine.WaitForSeconds(1))
 
