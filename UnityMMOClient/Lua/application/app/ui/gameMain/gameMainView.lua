@@ -69,18 +69,22 @@ function GameMainView:SetTopHeadNameText(userName)
     viewPanel.top_head_Name_Text.text = userName
 end
 
+--- comment
+--- @param userInfo PhysicalPowerInfoData
 function GameMainView:RefreshShowPhysicalPower(userInfo)
-    self:SetPhysicalPowerText(userInfo.nowPhysicalPower, userInfo.maxPhysicalPower)
+    self.userPhysicalInfo = userInfo
+    self:SetPhysicalPowerText(self.userPhysicalInfo.nowPhysicalPower, self.userPhysicalInfo.maximumStrength)
 end
 
 -- 设置显示体力
----@param noPhysicalPower number 当前体力
----@param maxPhysicalPower number 最大体力
-function GameMainView:SetPhysicalPowerText(noPhysicalPower, maxPhysicalPower)
+---@param nowPhysicalPower number 当前体力
+---@param maximumStrength number 最大体力
+function GameMainView:SetPhysicalPowerText(nowPhysicalPower, maximumStrength)
     ---@type GameMainUIPanelView
     local viewPanel = self.viewPanel
-    viewPanel.physicalPowerTip_Text.text = noPhysicalPower .. "/" .. maxPhysicalPower
-    viewPanel.physicalPower_Text.text = noPhysicalPower .. ""
+
+    viewPanel.physicalPowerTip_Text.text = nowPhysicalPower .. "/" .. maximumStrength
+    viewPanel.physicalPower_Text.text = nowPhysicalPower .. ""
 end
 
 function GameMainView:RefreshShowInfoData(userInfo)

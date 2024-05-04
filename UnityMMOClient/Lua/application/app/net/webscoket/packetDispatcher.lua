@@ -60,6 +60,7 @@ function PacketDispatcher:Init()
     self.msgMap[WeaponPlayerUserDataResponse:protocolId()] = handle(self.OnWeaponPlayerUserDataResponse, self)
     self.msgMap[AllBagItemResponse:protocolId()] = handle(self.OnAllBagItemResponse, self)
     self.msgMap[PhysicalPowerResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
+    self.msgMap[PhysicalPowerSecondsResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
     self.msgMap[GameMainUserResourcesResponse:protocolId()] = handle(self.OnGameMainUserResourcesResponse, self)
 
     -------------------------------- start Login   pack 包 --------------------------------------
@@ -115,7 +116,7 @@ function PacketDispatcher:OnPhysicalPowerResponse(data)
     local response = PhysicalPowerResponse()
     local packet = response:read(data)
     ServerConfigNetController:SetPhysicalPowerInfoData(packet:getPhysicalPowerInfoData())
-    GameEvent.UpdateGamePhysicalInfo(packet)
+    GameEvent.UpdateGamePhysicalInfo(packet:getPhysicalPowerInfoData())
 end
 
 function PacketDispatcher:AddProtocolConfigEvent(id, method)

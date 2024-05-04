@@ -29,8 +29,11 @@ elseif UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPl
 else
     PrintDebug("Current platform is unknown.")
 end
+local inspect = require "common/inspect"
 
-
+function dump( t )
+	print( inspect(t) );
+end
 function SyncSubmit(eventString)
     if Debug > 0 then
         PrintDebug("执行事件, eventName:" .. eventString)

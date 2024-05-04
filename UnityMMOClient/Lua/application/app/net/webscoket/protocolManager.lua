@@ -73,6 +73,7 @@ UserMsgInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.
 
 PhysicalPowerRequest = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerRequest")
 PhysicalPowerResponse = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerResponse")
+PhysicalPowerSecondsResponse = require("application.app.net.webscoket.luaProtocol.physicalPower.PhysicalPowerSecondsResponse")
 
 PhysicalPowerInfoData = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerInfoData")
 
