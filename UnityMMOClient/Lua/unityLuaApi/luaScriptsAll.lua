@@ -9,3 +9,6 @@ ZJYFrameWork.UISerializable = {}
 
 ---@class ZJYFrameWork.Execution
 ZJYFrameWork.Execution = {}
+
+---@class void
+void = {}

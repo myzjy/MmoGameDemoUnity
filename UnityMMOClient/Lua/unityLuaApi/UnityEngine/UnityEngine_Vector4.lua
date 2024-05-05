@@ -13,19 +13,22 @@
 ---@field public positiveInfinity UnityEngine.Vector4
 ---@field public negativeInfinity UnityEngine.Vector4
 UnityEngine.Vector4 = { }
----@overload fun(x:number, y:number): UnityEngine.Vector4
----@overload fun(x:number, y:number, z:number): UnityEngine.Vector4
----@return UnityEngine.Vector4
----@param x number
----@param y number
----@param z number
----@param w number
-function UnityEngine.Vector4.New(x, y, z, w) end
----@param newX number
----@param newY number
----@param newZ number
----@param newW number
-function UnityEngine.Vector4:Set(newX, newY, newZ, newW) end
+
+-- ---@overload fun(x:number, y:number): UnityEngine.Vector4
+-- ---@overload fun(x:number, y:number, z:number): UnityEngine.Vector4
+-- ---@return UnityEngine.Vector4
+-- ---@param x number
+-- ---@param y number
+-- ---@param z number
+-- ---@param w number
+-- function UnityEngine.Vector4.New(x, y, z, w) end
+
+-- ---@param newX number
+-- ---@param newY number
+-- ---@param newZ number
+-- ---@param newW number
+-- function UnityEngine.Vector4:Set(newX, newY, newZ, newW) end
+
 ---@return UnityEngine.Vector4
 ---@param a UnityEngine.Vector4
 ---@param b UnityEngine.Vector4

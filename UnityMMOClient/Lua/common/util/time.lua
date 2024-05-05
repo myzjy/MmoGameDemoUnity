@@ -161,7 +161,7 @@ function time.getMonthStrInClock(freshHour, freshMin) -- str 20150612
 end
 
 ---获取倒计时
----@Param type 1 ret:hour:min:sec
+--- type 1 ret:hour:min:sec
 function time.getCutDown(timeNum, noNegative, ignoreSec)
     --- 负数视为0处理
     if noNegative then

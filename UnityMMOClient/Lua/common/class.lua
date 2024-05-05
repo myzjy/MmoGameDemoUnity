@@ -116,9 +116,11 @@ function io.PathInfo(path)
     local extpos = pos + 1
     while pos > 0 do
         local b = string.byte(path, pos)
-        if b == 46 then     -- 46 = char "."
+        if b == 46 then
+            -- 46 = char "."
             extpos = pos
-        elseif b == 47 then -- 47 = char "/"
+        elseif b == 47 then
+            -- 47 = char "/"
             break
         end
         pos = pos - 1
@@ -333,9 +335,11 @@ function table.Map(t, func)
 end
 
 --- 对表格中每一个值执行一次指定的函数
+---@generic K
+---@generic V
 ---@generic K,V
 ---@param t table<K,V>
----@param func fun(key:K,Value:V)
+---@param func fun(key,Value)
 function table.Walk(t, func)
     for k, v in pairs(t) do
         func(k, v)
@@ -452,6 +456,21 @@ function table.Convert(tab, func, return_dic)
     return result
 end
 
+---@generic K
+---@generic V
+---@param tab table<K,V>
+function table.getMaxIndex(tab)
+    local maxIndex = 0
+
+    for k, _ in pairs(tab) do
+        if type(k) == "number" and math.floor(k) == k and k > maxIndex then
+            maxIndex = k
+        end
+    end
+
+    return maxIndex
+end
+
 ------------------------------------------------------------------------------
 
 ---@class UnitType 元对象类型枚举
@@ -470,13 +489,13 @@ ClassType = {
 
 ---@class Unit 元
 ---@field __unittype UnitType|string 元类型
----@field __super Unit 基类型                   __unittype = UnitType.Type 存在
+---@field __super Unit|nil 基类型                   __unittype = UnitType.Type 存在
 ---@field __classname string 类型名称           __unittype = UnitType.Type 存在
----@field __classtype ClassType 类型种类        __unittype = UnitType.Type 存在
----@field __firstcreate function 创建CS实例     __classtype = ClassType.CreateFirst &&  __unittype = UnitType.Type存在
+---@field __classType ClassType|number 类型种类        __unittype = UnitType.Type 存在
+---@field __firstCreate function|Unit|nil 创建CS实例     __classType = ClassType.CreateFirst &&  __unittype = UnitType.Type存在
 ---@field ctor function|nil 构造函数 自动调用
 ---@field __type Unit 所属类型 ，是一个 {}       __unittype == UnitType.Instance 存在
----@field __object any CS 对象            __classtype = ClassType.ExtendCSInstance|ClassType.CreateFirst存在
+---@field __object any CS 对象            __classType = ClassType.ExtendCSInstance|ClassType.CreateFirst存在
 ---@field IsSubClassOf function|nil
 
 ---@type Unit
@@ -484,10 +503,10 @@ Unit = {
     __unittype = UnitType.Unit,
     __classname = "Unit",
     __super = nil,
-    __classtype = nil,
+    __classType = nil,
     __type = nil,
     __object = nil,
-    __firstcreate = nil,
+    __firstCreate = nil,
     ctor = nil,
     IsSubClassOf = nil
 }
@@ -522,7 +541,7 @@ local function CopySuper(instance, type)
     end
     for keysuper, superItem in pairs(supers) do
         for k, v in pairs(superItem) do
-            if k ~= "__firstcreate" and k ~= "__unittype" then
+            if k ~= "__firstCreate" and k ~= "__unittype" then
                 instance[k] = v
             end
         end
@@ -594,51 +613,66 @@ end
 ---创建一个类
 ---@generic T:Unit
 ---@param classname string  类名
----@param super Unit|userdata|nil 父类
+---@param super Unit|nil 父类
 ---@return T
 class = function(classname, super)
     assert(type(classname) == LuaDataType.String and #classname > 0)
     ---@type Unit
     local unitType
-    local superType      = type(super)
-    local isCSType       = super and superType == LuaDataType.Table and typeof(super)                  --判断是否是C#类
-    local isCSInstance   = super and superType == LuaDataType.UserData                                 --判断是否为C#实例
-    local isExCSInsAgain = super and super.__classtype == ClassType.ExtendCSInstance                   --再次扩展C#实例
-    if isExCSInsAgain then error('cannot extends a c# instance multiple times.') end
-    local isFirstExCSType  = isCSType and (not super.__classtype) or superType == LuaDataType.Function --首次继承C#类
-    local isExCSTypeAgain  = super and super.__classtype == ClassType.CreateFirst                      --再次扩展C#类
-    unitType               = {}
-    unitType.__classname   = classname
-    unitType.__type        = Unit
-    unitType.__unittype    = isCSInstance and UnitType.Instance or UnitType.Type
-    unitType.__object      = isCSInstance and super or nil
-    unitType.ctor          = unitType.ctor or function(...) end
-    unitType.__classtype   = (isCSInstance and ClassType.ExtendCSInstance) or
+    local superType = type(super)
+    local isCSType = super and superType == LuaDataType.Table and
+        typeof(super)                                   --判断是否是C#类
+    local isCSInstance = super and
+        superType == LuaDataType.UserData               --判断是否为C#实例
+    local isExCSInsAgain = super and
+        super.__classType == ClassType.ExtendCSInstance --再次扩展C#实例
+    if isExCSInsAgain then
+        error('cannot extends a c# instance multiple times.')
+    end
+    local isFirstExCSType = isCSType and super and (not super.__classType) or
+        superType ==
+        LuaDataType.Function                       --首次继承C#类
+    local isExCSTypeAgain = super and
+        super.__classType == ClassType.CreateFirst --再次扩展C#类
+    unitType = {}
+    unitType.__classname = classname
+    unitType.__type = Unit
+    unitType.__unittype = isCSInstance and UnitType.Instance or UnitType.Type
+    unitType.__object = isCSInstance and super or nil
+    unitType.ctor = unitType.ctor or function(...)
+    end
+    unitType.__classType = (isCSInstance and ClassType.ExtendCSInstance) or
         ((isFirstExCSType or isExCSTypeAgain) and ClassType.CreateFirst) or ClassType.Lua
-    unitType.__super       = ((isCSInstance or isFirstExCSType) and Unit) or
+    unitType.__super = ((isCSInstance or isFirstExCSType) and Unit) or
         (isExCSTypeAgain and super) or (super == nil and Unit or super)
-    unitType.__firstcreate = (isExCSTypeAgain and super.__firstcreate) or
-        ((isCSType and not super.__classtype) and function(...) return super(...) end) or
+    unitType.__firstCreate = (isExCSTypeAgain and super and super.__firstCreate) or
+        ((isCSType and super and not super.__classType) and function(...)
+            return super(...)
+        end) or
         ((superType == LuaDataType.Function) and super) or nil
-    if isCSInstance then return ExtendCSInstance(unitType) end
-    local meta   = {}
+    if isCSInstance then
+        return ExtendCSInstance(unitType)
+    end
+    local meta = {}
     meta.__index = super == nil and Unit or super
     local __call
     if isFirstExCSType or isExCSTypeAgain then
         __call = function(_type, ...)
-            local instance    = {}
-            instance.__type   = _type
-            instance.__object = _type.__firstcreate(...)
+            local instance = {}
+            instance.__type = _type
+            instance.__object = _type.__firstCreate(...)
             return CallCtor(CopySuper(ExtendCSInstance(instance), _type), _type, ...)
         end
     else
         __call = function(_type, ...)
-            local instance        = {}
-            instance.__unittype   = UnitType.Instance
-            instance.__type       = _type
-            local instance_meta   = {}
+            local instance = {}
+            instance.__unittype = UnitType.Instance
+            instance.__type = _type
+            local instance_meta = {}
             instance_meta.__index = _type
-            instance_meta.__call  = function(_, ...) error("this is a Instance of " .. _.__classname) end
+            instance_meta.__call = function(_, ...)
+                error("this is a Instance of " .. _.__classname)
+            end
             setmetatable(instance, instance_meta)
             return CallCtor(instance, _type, ...)
         end
@@ -656,7 +690,7 @@ function Lock_G()
     end
     local meta = {}
     meta.__newindex = function(_, k, v)
-        error("attempt to add a new value to global,key: " .. k, 2)
+        error("attempt to add a new value to global,key: " .. k .. ",value:" .. v, 2)
     end
     meta.__index = function(_, k)
         return rawget(_, k) or rawget(_.DefineTable, k) or rawget(_.UsingStaticTable, k) or rawget(_.UsingTable, k)

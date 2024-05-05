@@ -78,8 +78,10 @@ function Timer:Update()
 end
 
 --给协同使用的帧计数timer
+---@type FrameTimer
 FrameTimer = {}
 
+---@class FrameTimer
 local FrameTimer = FrameTimer
 local mt2 = { __index = FrameTimer }
 

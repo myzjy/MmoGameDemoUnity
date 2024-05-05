@@ -2,7 +2,8 @@
     "Lua.diagnostics.globals": [
         "CS",
         "typeof",
-        "xlua"
+        "xlua",
+        "void"
     ],
     "Lua.diagnostics.disable": [
         "missing-return"
