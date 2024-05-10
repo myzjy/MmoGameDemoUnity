@@ -39,5 +39,7 @@ end
 
 function BagUIController:RegisterEvent()
 end
-
+--- 刚打开界面的时候，发送那些协议
+function BagUIController:InitSendServerMessage()
+end
 return BagUIController

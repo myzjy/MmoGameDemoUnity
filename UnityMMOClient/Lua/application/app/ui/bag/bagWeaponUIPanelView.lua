@@ -12,7 +12,7 @@ function BagWeaponUIPanelView:ctor(weaponInfo, goConfig)
 end
 
 function BagWeaponUIPanelView:CreateItemList()
-    local list = self.weaponInfo.list
+    local list = self.weaponInfo.weaponUserList
     for i = 1, #list do
         local item = list[i]
         ---@type UnityEngine.GameObject

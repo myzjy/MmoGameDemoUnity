@@ -18,14 +18,14 @@ local BagBtnConfig = {
             openConfig = UIConfigEnum.BagHeaderBtnConfig.IconConfig
         },
     }
-} 
+}
 
 ---@param gameObject UnityEngine.GameObject
 function BagHeaderBtnPanel:ctor(gameObject)
     self.gameObject = gameObject
     ---@type UnityEngine.GameObject
-    self.headerGrids = LuaUtils.GetKeyGameObject(self.gameObject, "TabHeadListGrid")
-    self.headersUIGrids = LuaUtils.GetKeyUIGrid(self.gameObject, "TabHeadListGrid")
+    self.headerGrids = LuaUtils.GetKeyGameObject(self.gameObject, "TabHeadList")
+    self.headersUIGrids = LuaUtils.GetKeyUIGrid(self.gameObject, "TabHeadList")
     self.bagScene = string.empty;
     -- 存放 list button
     ---@type table<number,BagHeaderItem>
@@ -35,7 +35,7 @@ function BagHeaderBtnPanel:ctor(gameObject)
     -- 按钮
     ---@type UnityEngine.GameObject
     self.bagBtnObj = LuaUtils.GetKeyGameObject(self.gameObject, "headerBtnButtons")
-    print(self.bagBtnObj)
+    self:DeleteBagHeaderBtn()
     self:CreateBagBtn()
     self.bagBtnObj:SetActive(false)
     self:RegisterEvent()
@@ -84,9 +84,7 @@ end
 
 function BagHeaderBtnPanel:OnDestroy()
     UIGameEvent.DeleteBagHeaderBtnHandler()
-    UIUtils.RemoveAllEventListener(UIGameEvent.OnSelectBagHeaderBtnHandler)
-    UIUtils.RemoveAllEventListener(UIGameEvent.CreateBagHeaderBtnHandle)
-    UIUtils.RemoveAllEventListener(UIGameEvent.DeleteBagHeaderBtnHandler)
+    UIUtils.RemoveAllEventListener(self)
 end
 
 return BagHeaderBtnPanel
