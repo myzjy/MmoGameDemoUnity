@@ -8,7 +8,7 @@ LuaUtils = {}
 
 function LuaUtils.GetUISerializableKeyObject(gameObject)
     local sKeyObj = gameObject:GetComponent("UISerializableKeyObject") or
-        ZJYFrameWork.UISerializable.UISerializableKeyObject
+            ZJYFrameWork.UISerializable.UISerializableKeyObject
     return sKeyObj
 end
 
@@ -30,14 +30,14 @@ end
 function LuaUtils.GetUIButton(gameObject)
     ---@type UnityEngine.UI.Button
     local sKeyObj = gameObject:GetComponent("Button") or UnityEngine.UI.Button
-    
+
     return sKeyObj
 end
 --- 获取
 ---@param gameObject UnityEngine.GameObject
 ---@return UnityEngine.CanvasGroup
-function LuaUtils.GetUICanvaGroup(gameObject)
-    local sKeyObj = gameObject:GetComponent("CanvasGroup") or  UnityEngine.CanvasGroup
+function LuaUtils.GetUICanvasGroup(gameObject)
+    local sKeyObj = gameObject:GetComponent("CanvasGroup") or UnityEngine.CanvasGroup
     return sKeyObj
 end
 
@@ -80,22 +80,35 @@ function LuaUtils.GetKeyUICanvasGroup(gameObject, objName)
     local canvasGroup = sKeyObj:GetObjTypeStr(objName) or UnityEngine.CanvasGroup
     return canvasGroup
 end
+function LuaUtils.GetUIKeyCanvasGroup(gameObject, objName)
+    local canvasGroup = gameObject:GetObjTypeStr(objName) or UnityEngine.CanvasGroup
+    return canvasGroup
+end
 
 function LuaUtils.GetKeyUIImage(gameObject, objName)
     local sKeyObj = LuaUtils.GetUISerializableKeyObject(gameObject)
     local image = sKeyObj:GetObjTypeStr(objName) or UnityEngine.UI.Image
     return image
 end
-
+--- @param gameObject ZJYFrameWork.UISerializable.UISerializableKeyObject
+--- @param objName string
+function LuaUtils.GetUISerializableKeyImage(gameObject, objName)
+    local image = gameObject:GetObjTypeStr(objName) or UnityEngine.UI.Image
+    return image
+end
 ---@param gameObject UnityEngine.GameObject
 ---@param objName string
 ---@return UnityEngine.UI.Text
-function LuaUtils.GetKeyUIText(gameObject,objName)
+function LuaUtils.GetKeyUIText(gameObject, objName)
     local sKeyObj = LuaUtils.GetUISerializableKeyObject(gameObject)
-    local __text= sKeyObj:GetObjTypeStr(objName) or UnityEngine.UI.Text
+    local __text = sKeyObj:GetObjTypeStr(objName) or UnityEngine.UI.Text
     return __text
 end
-function LuaUtils.GetKeyUITextGameObject(gameObject,objName)
+function LuaUtils.GetUISerializableKeyText(gameObject, objName)
+    local __text = gameObject:GetObjTypeStr(objName) or UnityEngine.UI.Text
+    return __text
+end
+function LuaUtils.GetKeyUITextGameObject(gameObject, objName)
     local obj = LuaUtils.GetKeyGameObject(gameObject, objName)
     local __uiText = LuaUtils.GetUIText(obj)
     return __uiText
@@ -105,22 +118,27 @@ end
 ---@param gameObject UnityEngine.GameObject
 ---@param objName string
 ---@return UnityEngine.UI.Image
-function LuaUtils.GetKeyImageGameOject(gameObject, objName)
+function LuaUtils.GetKeyImageGameObject(gameObject, objName)
     local obj = LuaUtils.GetKeyGameObject(gameObject, objName)
     local __uiImage = LuaUtils.GetUIImage(obj)
     return __uiImage
 end
 
----@param gameObejct UnityEngine.GameObject
+---@param gameObject UnityEngine.GameObject
 ---@param objName string
 ---@return UnityEngine.UI.Button
-function LuaUtils.GetKeyButtonGameObject(gameObejct,objName)
-    local obj=LuaUtils.GetKeyGameObject(gameObejct,objName)
+function LuaUtils.GetKeyButtonGameObject(gameObject, objName)
+    local obj = LuaUtils.GetKeyGameObject(gameObject, objName)
     local __uiButton = LuaUtils.GetUIButton(obj)
     return __uiButton
 end
-function LuaUtils.GetKeyCanvaGroupGameObject(gameObejct,objName)
-    local obj=LuaUtils.GetKeyGameObject(gameObejct,objName)
-    local __uiButton = LuaUtils.GetUICanvaGroup(obj)
+
+function LuaUtils.GetUISerializableKeyButton(gameObject, objName)
+    local __uiButton = gameObject:GetObjTypeStr(objName) or UnityEngine.UI.Button;
+    return __uiButton
+end
+function LuaUtils.GetKeyCanvasGroupGameObject(gameObject, objName)
+    local obj = LuaUtils.GetKeyGameObject(gameObject, objName)
+    local __uiButton = LuaUtils.GetUICanvasGroup(obj)
     return __uiButton
 end

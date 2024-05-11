@@ -8,7 +8,7 @@ function WeaponStartIconObjView:ctor(gameObject)
     ---@type ZJYFrameWork.UISerializable.UISerializableKeyObject
     self.sKeyObj = gameObject:GetComponent("UISerializableKeyObject");
     ---@type UnityEngine.CanvasGroup
-    self.icons_CanvasGroup = self.sKeyObj:GetObjTypeStr("icons_CanvasGroup") or UnityEngine.CanvasGroup;
+    self.icons_CanvasGroup = LuaUtils.GetUIKeyCanvasGroup(self.sKeyObj, "icons_CanvasGroup");
 end
 
 --- 初始化

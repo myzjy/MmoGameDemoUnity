@@ -12,7 +12,7 @@ function LoginTapToStartView:ctor(view)
 	---关闭按钮
 	self.LoginStartMaxButton = LuaUtils.GetKeyButtonGameObject(view, "LoginStartMaxButton")
 	--  view:GetObjTypeStr("LoginStartMaxButton") or UnityEngine.UI.Button
-	self.SteamLoginCanvasGroup = LuaUtils.GetKeyCanvaGroupGameObject(view, "LoginStart_CanvasGroup")
+	self.SteamLoginCanvasGroup = LuaUtils.GetKeyCanvasGroupGameObject(view, "LoginStart_CanvasGroup")
 	-- view:GetObjTypeStr("LoginStart_CanvasGroup") or UnityEngine.CanvasGroup
 
 	if self.LoginStartButton == nil then

@@ -34,7 +34,7 @@ function BagUIView:OnLoad()
 end
 
 function BagUIView:OnInit()
-    BagUIController:Build(self)
+    --BagUIController:Build(self)
     ---@type BagUIPanelView
     local view = self.viewPanel
     self.bagHeaderBtnPanel = BagHeaderBtnPanel(self.gameObject);

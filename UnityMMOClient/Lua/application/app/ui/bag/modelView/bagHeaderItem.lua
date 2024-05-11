@@ -10,8 +10,8 @@ function BagHeaderItem:ctor(goRoot, config, prefabConfig)
     self.transform = goRoot.transform
     self.config = config
     self.prefabConfig = prefabConfig
-    self.openObj = LuaUtils.GetKeyCanvaGroupGameObject(self.gameObject, self.prefabConfig.__headerBtnSelectObj)
-    self.hideObj = LuaUtils.GetKeyCanvaGroupGameObject(self.gameObject, self.prefabConfig.__headerBtnObj)
+    self.openObj = LuaUtils.GetKeyCanvasGroupGameObject(self.gameObject, self.prefabConfig.__headerBtnSelectObj)
+    self.hideObj = LuaUtils.GetKeyCanvasGroupGameObject(self.gameObject, self.prefabConfig.__headerBtnObj)
     self.openBtn = LuaUtils.GetKeyButtonGameObject(self.gameObject, self.prefabConfig.__headerBtnSelectObj)
     self.hideBtn = LuaUtils.GetKeyButtonGameObject(self.gameObject, self.prefabConfig.__headerBtnObj)
     self.isSelectClick = false;

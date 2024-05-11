@@ -23,12 +23,12 @@ function WeaponItemUIView:Init(thisKeyObject, weaponData)
     self.gameObject = thisKeyObject
     self.gameObject:SetActive(true)
     self.uSKeyObject = self.gameObject:GetComponent("UISerializableKeyObject")
-    self.itemCanvasGroup = self.uSKeyObject:GetObjTypeStr("itemCanvasGroup") or UnityEngine.CanvasGroup
-    self.itemBgImage = self.uSKeyObject:GetObjTypeStr("itemBgImage") or UnityEngine.UI.Image
-    self.itemIcon = self.uSKeyObject:GetObjTypeStr("itemIcon") or UnityEngine.UI.Image
-    self.itemNumText = self.uSKeyObject:GetObjTypeStr("itemNumText") or UnityEngine.UI.Text
-    self.clickBtn = self.uSKeyObject:GetObjTypeStr("clickBtn") or UnityEngine.UI.Button
-    self:SetListener(self.clickBtn, self:clickEvent())
+    self.itemCanvasGroup = LuaUtils.GetUIKeyCanvasGroup(self.uSKeyObject, "itemCanvasGroup")
+    self.itemBgImage = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "itemBgImage")
+    self.itemIcon = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "itemIcon")
+    self.itemNumText = LuaUtils.GetUISerializableKeyText(self.uSKeyObject, "itemNumText")
+    self.clickBtn = LuaUtils.GetUISerializableKeyButton(self.uSKeyObject, "clickBtn")
+    LuaUIObject:SetListener(self.clickBtn, handle(self.clickEvent, self))
     self.itemCanvasGroup.alpha = 1
     -- GetAssetBundleManager():LoadAssetAction("commonUI_Atlasa", function(t)
     --     local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas

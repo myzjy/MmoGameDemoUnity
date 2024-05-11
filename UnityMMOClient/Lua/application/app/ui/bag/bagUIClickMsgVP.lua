@@ -2,11 +2,9 @@
 local BagUIClickMsgVP = class("BagUIClickMsgVP")
 local WeaponStartIconObjView = require("application.app.ui.bag.modelView.weaponStartIconObjView")
 
----@type BagUIClickMsgVP
-local this = nil
+
 function BagUIClickMsgVP:ctor()
     PrintDebug("init commopent")
-    this = self
     self:init()
 end
 
