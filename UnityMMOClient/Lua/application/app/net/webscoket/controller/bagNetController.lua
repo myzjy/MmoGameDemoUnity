@@ -4,6 +4,8 @@ local BagNetController = class("BagNetContorller")
 local instance = nil
 function BagNetController:ctor()
     self.msg = {}
+    ---@type table<number,WeaponPlayerUserDataStruct>
+    self.weaponUserDataEntityList = {}
 end
 
 function BagNetController.GetInstance()
@@ -33,11 +35,21 @@ end
 function BagNetController:AtBagHeaderWeaponBtnServiceHandler(packet)
     BagUIController.BagUIView:OpenWeaponPanel(packet)
 end
-
+--- comment
+--- @param weaponList table<number, WeaponPlayerUserDataStruct>
+function BagNetController:SetWeaponUserEntityList(weaponList)
+    self.weaponUserDataEntityList = weaponList
+end
+--- comment
+--- @return table<number, WeaponPlayerUserDataStruct>
+function BagNetController:GetWeaponUserEntityList()
+    return self.weaponUserDataEntityList
+end
 ---  头部 按钮 点击事件回调相关
 ---@param packet AllBagItemResponse
 function BagNetController:AtBagHeaderBtnHandlerServer(packet)
-    self.msg[packet.protocolStr](packet)
+    self:SetWeaponUserEntityList(packet.weaponUserList)
+    UIGameEvent.BagHeaderWeaponBtnHandler()
 end
 
 return BagNetController

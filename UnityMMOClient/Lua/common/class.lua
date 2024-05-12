@@ -194,7 +194,7 @@ end
 ---@return number
 function table.GetCount(t)
     local count = 0
-    for k, v in pairs(t) do
+    for _, _ in pairs(t) do
         count = count + 1
     end
     return count
@@ -208,7 +208,7 @@ end
 ---@return any[]
 function table.GetKeys(hashtable)
     local keys = {}
-    for k, v in pairs(hashtable) do
+    for k, _ in pairs(hashtable) do
         keys[#keys + 1] = k
     end
     return keys
@@ -230,7 +230,7 @@ end
 ---@return any[]
 function table.GetValues(hashtable)
     local values = {}
-    for k, v in pairs(hashtable) do
+    for _, v in pairs(hashtable) do
         values[#values + 1] = v
     end
     return values
@@ -262,16 +262,16 @@ end
 ---@param src V[]
 ---@param begin number
 function table.Insert(dest, src, begin)
-    local bo, begin = math.RoundToInt(begin)
+    local bo, _begin = math.RoundToInt(begin)
     if not bo then
-        begin = 0
+        _begin = 0
     end
-    if begin <= 0 then
-        begin = #dest + 1
+    if _begin <= 0 then
+        _begin = #dest + 1
     end
     local len = #src
     for i = 0, len - 1 do
-        dest[i + begin] = src[i + 1]
+        dest[i + _begin] = src[i + 1]
     end
 end
 
@@ -315,7 +315,7 @@ end
 ---@param ... fun(a:V):boolean
 ---@return V
 function table.Find(tab, ...)
-    for key, value in pairs(tab) do
+    for _, value in pairs(tab) do
         local bo = tools.FitConditions(value, ...)
         if bo then
             return value
@@ -488,19 +488,19 @@ ClassType = {
 }
 
 ---@class Unit 元
----@field __unittype UnitType|string 元类型
----@field __super Unit|nil 基类型                   __unittype = UnitType.Type 存在
----@field __classname string 类型名称           __unittype = UnitType.Type 存在
----@field __classType ClassType|number 类型种类        __unittype = UnitType.Type 存在
----@field __firstCreate function|Unit|nil 创建CS实例     __classType = ClassType.CreateFirst &&  __unittype = UnitType.Type存在
+---@field __unitType UnitType|string 元类型
+---@field __super Unit|nil 基类型                   __unitType = UnitType.Type 存在
+---@field __classname string 类型名称           __unitType = UnitType.Type 存在
+---@field __classType ClassType|number 类型种类        __unitType = UnitType.Type 存在
+---@field __firstCreate function|Unit|nil 创建CS实例     __classType = ClassType.CreateFirst &&  __unitType = UnitType.Type存在
 ---@field ctor function|nil 构造函数 自动调用
----@field __type Unit 所属类型 ，是一个 {}       __unittype == UnitType.Instance 存在
+---@field __type Unit 所属类型 ，是一个 {}       __unitType == UnitType.Instance 存在
 ---@field __object any CS 对象            __classType = ClassType.ExtendCSInstance|ClassType.CreateFirst存在
 ---@field IsSubClassOf function|nil
 
 ---@type Unit
 Unit = {
-    __unittype = UnitType.Unit,
+    __unitType = UnitType.Unit,
     __classname = "Unit",
     __super = nil,
     __classType = nil,
@@ -518,7 +518,7 @@ function Unit:IsSubClassOf(super)
     local _type
     --- @type string|Unit
     local classname
-    _type = self.__unittype == UnitType.Instance and self.__type or self
+    _type = self.__unitType == UnitType.Instance and self.__type or self
     classname = type(super) == LuaDataType.String and super or super.__classname
     local tmp = _type
     while tmp ~= nil do
@@ -539,9 +539,9 @@ local function CopySuper(instance, type)
         table.insert(supers, 1, tmp)
         tmp = tmp.__super
     end
-    for keysuper, superItem in pairs(supers) do
+    for _, superItem in pairs(supers) do
         for k, v in pairs(superItem) do
-            if k ~= "__firstCreate" and k ~= "__unittype" then
+            if k ~= "__firstCreate" and k ~= "__unitType" then
                 instance[k] = v
             end
         end
@@ -552,7 +552,7 @@ end
 
 ---@param instance Unit
 local function ExtendCSInstance(instance)
-    instance.__unittype = UnitType.Instance
+    instance.__unitType = UnitType.Instance
     local meta = {}
     meta.__call = function(_, ...)
         error(_.__classname .. " is a instance extend from cs instance ")
@@ -567,7 +567,6 @@ local function ExtendCSInstance(instance)
                 return function(...)
                     local args = { ... }
                     if not table.IsEmpty(args) then
-                        local first = args[1]
                         table.remove(args, 1)
                     end
                     fromcs(_t.__object, table.unpack(args))
@@ -600,7 +599,7 @@ local function CallCtor(instance, type, ...)
         table.insert(ctorTable, 1, tmp)
         tmp = tmp.__super
     end
-    for k, v in pairs(ctorTable) do
+    for _, v in pairs(ctorTable) do
         local ctor = rawget(v, "ctor")
         if ctor then
             ctor(instance, ...)
@@ -637,7 +636,7 @@ class = function(classname, super)
     unitType = {}
     unitType.__classname = classname
     unitType.__type = Unit
-    unitType.__unittype = isCSInstance and UnitType.Instance or UnitType.Type
+    unitType.__unitType = isCSInstance and UnitType.Instance or UnitType.Type
     unitType.__object = isCSInstance and super or nil
     unitType.ctor = unitType.ctor or function(...)
     end
@@ -666,7 +665,7 @@ class = function(classname, super)
     else
         __call = function(_type, ...)
             local instance = {}
-            instance.__unittype = UnitType.Instance
+            instance.__unitType = UnitType.Instance
             instance.__type = _type
             local instance_meta = {}
             instance_meta.__index = _type
@@ -728,7 +727,7 @@ end
 --- @return any
 function Using(classname, variant)
     if not variant then
-        local a, b, c = string.find(classname, "[^%s]+%.([^%s]+)")
+        local _, _, c = string.find(classname, "[^%s]+%.([^%s]+)")
         variant = c and c or classname
     end
     local _target = rawget(_G.UsingTable, variant)
@@ -793,16 +792,16 @@ function try(block)
     local e = results[2]
     table.remove(results, 1)
     local result = results
-    local catched = false
+    local caught = false
     if (not status) and catch and type(catch) == LuaDataType.Function then
-        catched = true
-        local results = table.pack(pcall(catch, e))
-        if results[1] then
-            table.remove(results, 1)
-            result = results
+        caught = true
+        local _results = table.pack(pcall(catch, e))
+        if _results[1] then
+            table.remove(_results, 1)
+            _results = _results
             e = nil
         else
-            e = results[2]
+            e = _results[2]
         end
     end
 
@@ -812,7 +811,7 @@ function try(block)
 
     if status then
         return table.unpack(result)
-    elseif catched then
+    elseif caught then
         if not e then
             return table.unpack(result)
         else

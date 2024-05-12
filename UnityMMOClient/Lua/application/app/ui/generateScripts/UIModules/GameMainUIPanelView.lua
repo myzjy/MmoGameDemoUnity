@@ -30,14 +30,12 @@ function GameMainUIPanelView:Init(view)
 	self.pvpBtn_Button = self._UIView:GetObjTypeStr("pvpBtn_Button") or UnityEngine.UI.Button
 	self.migongBtn_Button = self._UIView:GetObjTypeStr("migongBtn_Button") or UnityEngine.UI.Button
 	self.middle_downRight = self._UIView:GetObjTypeStr("middle_downRight") or UnityEngine.GameObject
-	---@type UnityEngine.UI.Button
 	self.TaskBtn = self._UIView:GetObjTypeStr("TaskBtn") or UnityEngine.UI.Button
 	self.UniversityBtn = self._UIView:GetObjTypeStr("UniversityBtn") or UnityEngine.UI.Button
 	self.RecruitBtn = self._UIView:GetObjTypeStr("RecruitBtn") or UnityEngine.UI.Button
 	self.HeroBtn = self._UIView:GetObjTypeStr("HeroBtn") or UnityEngine.UI.Button
 	self.ArmsBtn = self._UIView:GetObjTypeStr("ArmsBtn") or UnityEngine.UI.Button
 	self.SkillButton = self._UIView:GetObjTypeStr("SkillButton") or UnityEngine.UI.Button
-	---@type UnityEngine.UI.Button
 	self.BagButton = self._UIView:GetObjTypeStr("BagButton") or UnityEngine.UI.Button
 	self.settingBtn = self._UIView:GetObjTypeStr("settingBtn") or UnityEngine.UI.Button
 	self.MailBtn = self._UIView:GetObjTypeStr("MailBtn") or UnityEngine.UI.Button

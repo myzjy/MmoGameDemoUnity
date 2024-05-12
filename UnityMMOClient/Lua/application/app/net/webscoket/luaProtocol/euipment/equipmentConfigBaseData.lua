@@ -1,6 +1,5 @@
 ---@class EquipmentConfigBaseData
 local EquipmentConfigBaseData = class("EquipmentConfigBaseData")
-local this = EquipmentConfigBaseData
 function EquipmentConfigBaseData:ctor()
     ---@type number
     self.quality = 0

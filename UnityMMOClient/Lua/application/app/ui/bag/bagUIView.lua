@@ -2,6 +2,7 @@
 ---@class BagUIView:UIView
 local BagUIView = class("BagUIView", UIView)
 local BagHeaderBtnPanel = require("application.app.ui.bag.bagHeaderBtnPanel")
+local WeaponUIPanel = require("application.app.ui.bag.bagWeaponUIPanelView")
 local bagModelUIView = require("application.app.ui.bag.modelView.bagModelUIView")
 
 local function UIConfig()
@@ -24,7 +25,6 @@ end
 function BagUIView:ctor()
     self.bagHeaderBtnPanel = nil
     self:RegisterEvent()
-    self.BagModelUIView = bagModelUIView()
 end
 
 function BagUIView:OnLoad()
@@ -34,14 +34,16 @@ function BagUIView:OnLoad()
 end
 
 function BagUIView:OnInit()
-    --BagUIController:Build(self)
     ---@type BagUIPanelView
     local view = self.viewPanel
+    self.BagModelUIView = bagModelUIView()
+    self.weaponUIView = WeaponUIPanel(view)
     self.bagHeaderBtnPanel = BagHeaderBtnPanel(self.gameObject);
+    BagUIController:InitSendServerMessage()
 end
 
 function BagUIView:OnShow()
-  
+
 end
 
 function BagUIView:RegisterEvent()
@@ -52,8 +54,9 @@ end
 function BagUIView:CreateWeaponListPanel()
 end
 
----@param weaponInfo AllBagItemResponse
-function BagUIView:OpenWeaponPanel(weaponInfo)
+function BagUIView:OpenWeaponPanel()
+    local weaponInfo = BagNetController:GetWeaponUserEntityList()
+
 
 end
 

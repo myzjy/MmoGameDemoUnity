@@ -47,8 +47,8 @@ function LoginNetController:InitEvents()
         end
     )
 
-    UIUtils.AddEventListener(GameEvent.LoginResonse, self.AtLoginResponse, self)
-    UIUtils.AddEventListener(GameEvent.RegisterResonse, self.AtRegisterResponse, self)
+    UIUtils.AddEventListener(GameEvent.LoginResponse, self.AtLoginResponse, self)
+    UIUtils.AddEventListener(GameEvent.RegisterResponse, self.AtRegisterResponse, self)
     UIUtils.AddEventListener(GameEvent.LoginTapToStartResponse, self.AtLoginTapToStartResponse, self)
     UIUtils.AddEventListener(GameEvent.RegisterAccount, self.RegisterAccount, self)
 end

@@ -52,8 +52,8 @@ function GameMainView:OnInit()
 end
 
 function GameMainView:RegisterEvent()
-    UIUtils.AddEventListener(GameEvent.UpDateGemsAndGlodInfo, self.RefreshShowInfoData, self)
-    UIUtils.AddEventListener(GameEvent.UPdateGameMainUserInfoMsg, self.RefreshShowUserInfoData, self)
+    UIUtils.AddEventListener(GameEvent.UpDateGemsAndGoldInfo, self.RefreshShowInfoData, self)
+    UIUtils.AddEventListener(GameEvent.UpdateGameMainUserInfoMsg, self.RefreshShowUserInfoData, self)
     UIUtils.AddEventListener(GameEvent.UpdateGamePhysicalInfo, self.RefreshShowPhysicalPower, self)
     GameMainUIViewController:SendPhysicalPowerDown()
 

@@ -23,10 +23,10 @@ local function sortWeaponList(list, type)
     }
     return list
 end
---- 内部指定 武器 enetiy
+--- 内部指定 武器 entity
 local weaponList = {}
-function BagModelUIView:SetAllWeaponDataList(weaponEnetiyList)
-    weaponList = weaponEnetiyList
+function BagModelUIView:SetAllWeaponDataList(weaponEntityList)
+    weaponList = weaponEntityList
 end
 
 ---清空 换成相关 在退出界面之后 清空

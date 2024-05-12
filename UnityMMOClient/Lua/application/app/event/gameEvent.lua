@@ -2,8 +2,8 @@ local GameEvent = {}
 -----------------------------Login-------------------------
 GameEvent.RegisterAccount = event("GameEvent.RegisterAccount")
 
-GameEvent.LoginResonse = event("GameEvent.LoginResonse")
-GameEvent.RegisterResonse = event("GameEvent.RegisterResonse")
+GameEvent.LoginResponse = event("GameEvent.LoginResponse")
+GameEvent.RegisterResponse = event("GameEvent.RegisterResponse")
 GameEvent.LoginTapToStartResponse = event("GameEvent.LoginTapToStartResponse")
 
 
@@ -24,9 +24,9 @@ GameEvent.ClickBagHeaderBtnHandlerServer = event("GameEvent.ClickBagHeaderBtnHan
 ---```
 GameEvent.AtBagHeaderBtnService = event("GameEvent.AtBagHeaderBtnService")
 --- GameMainUI界面 更新玩家信息
-GameEvent.UPdateGameMainUserInfoMsg = event("GameEvent.UpdateGameMainUserInfoMsgServer")
+GameEvent.UpdateGameMainUserInfoMsg = event("GameEvent.UpdateGameMainUserInfoMsgServer")
 -- 更新 显示金币 砖石 付费砖石 协议 更新  userMsgInfoData
-GameEvent.UpDateGemsAndGlodInfo = event("GameEvent.UpDateGemsAndGlodInfo")
+GameEvent.UpDateGemsAndGoldInfo = event("GameEvent.UpDateGemsAndGoldInfo")
 --- 更新体力 显示 保存得体力
 GameEvent.UpdateGamePhysicalInfo = event("GameEvent.UpdateGamePhysicalInfo")
 

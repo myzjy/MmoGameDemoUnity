@@ -420,7 +420,7 @@ GameObject:
   - component: {fileID: 6954987891869640957}
   - component: {fileID: 7024013410826107049}
   m_Layer: 5
-  m_Name: equipmentItem
+  m_Name: weaponItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -460,10 +460,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kodComs:
-  - UI_Serializable_Key: equipmentItem_UISerializableKeyObject
+  - UI_Serializable_Key: weaponItem_UISerializableKeyObject
     UI_Serializable_Obj: {fileID: 6954987891869640957}
-    Path: equipmentItem
-  maskIndex: 2
+    Path: weaponItem
+  - UI_Serializable_Key: weaponItem
+    UI_Serializable_Obj: {fileID: 656681217209573746}
+    Path: weaponItem
+  maskIndex: 10
 --- !u!114 &6954987891869640957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2384,6 +2387,7 @@ MonoBehaviour:
   - {fileID: 8996882379030942408}
   - {fileID: 5939393062404122727}
   - {fileID: 9133724531906544996}
+  - {fileID: 6868277838396965295}
   mSelfObj: {fileID: 3365618895307562972}
   MTransform: {fileID: 5313057224630772054}
   MObjCanvasGroup: {fileID: 6758431648107558331}
@@ -3294,8 +3298,10 @@ GameObject:
   - component: {fileID: 2392661558033466290}
   - component: {fileID: 8387786739777309460}
   - component: {fileID: 8509086346232125777}
+  - component: {fileID: 8824292627740146643}
+  - component: {fileID: 6868277838396965295}
   m_Layer: 5
-  m_Name: equipmentScrollerList
+  m_Name: WeaponScrollerList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3391,6 +3397,35 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!225 &8824292627740146643
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5088566155776170110}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &6868277838396965295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5088566155776170110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d021a02209a3345a079f1cdd2f8c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kodComs:
+  - UI_Serializable_Key: WeaponListGroup
+    UI_Serializable_Obj: {fileID: 8824292627740146643}
+    Path: BagUIPanel/WeaponScrollerList
+  maskIndex: 16
 --- !u!1 &5266718382731995620
 GameObject:
   m_ObjectHideFlags: 0

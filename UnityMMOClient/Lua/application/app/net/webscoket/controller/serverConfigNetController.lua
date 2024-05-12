@@ -14,21 +14,21 @@ end
 
 function ServerConfigNetController:ctor()
     PrintDebug("init config and serverData controller")
-    ---@type  table<integer,ItemBaseData>
+    ---@type  table<number,ItemBaseData>
     self.itemBaseDataList = {}
-    ---@type  table<integer,EquipmentConfigBaseData>
+    ---@type  table<number,EquipmentConfigBaseData>
     self.equipmentConfigBaseDataList = {}
-    ---@type  table<integer,EquipmentBaseData>
+    ---@type  table<number,EquipmentBaseData>
     self.equipmentBaseDataList = {}
-    ---@type  table<integer,EquipmentPrimaryConfigBaseData>
+    ---@type  table<number,EquipmentPrimaryConfigBaseData>
     self.equipmentPrimaryConfigBaseDataList = {}
-    ---@type  table<integer,EquipmentDesBaseData>
+    ---@type  table<number,EquipmentDesBaseData>
     self.equipmentDesBaseDataList = {}
-    ---@type  table<integer,EquipmentGrowthConfigBaseData>
+    ---@type  table<number,EquipmentGrowthConfigBaseData>
     self.equipmentGrowthConfigBaseDataList = {}
-    ---@type  table<integer,EquipmentGrowthViceConfigBaseData>
+    ---@type  table<number,EquipmentGrowthViceConfigBaseData>
     self.equipmentGrowthViceConfigBaseDataList = {}
-    ---@type  table<integer,WeaponsConfigData>
+    ---@type  table<number,WeaponsConfigData>
     self.weaponsConfigDataList = {}
     ---@type PlayerSceneInfoData
     self.playerSceneInfoData = nil;
@@ -38,6 +38,8 @@ function ServerConfigNetController:ctor()
     self.playerInfo = {}
     ---@type PhysicalPowerInfoData
     self.physicalPowerInfo = nil;
+    ---@type table<number,WeaponPlayerUserDataStruct>
+    self.weaponUserDataEntityList = {}
 end
 
 function ServerConfigNetController:RegisterEvent()
@@ -56,15 +58,15 @@ function ServerConfigNetController:SetServerConfigDataList(response)
     self:SetEquipmentGrowthConfigBaseDataList(protocolData.equipmentGrowthConfigBaseDataList)
     self:SetEquipmentPrimaryConfigBaseDataList(protocolData.equipmentPrimaryConfigBaseDataList)
     self:SetEquipmentGrowthViceConfigBaseDataList(protocolData
-        .equipmentGrowthViceConfigBaseDataList)
+            .equipmentGrowthViceConfigBaseDataList)
     self:SetWeaponsConfigDataList(protocolData.weaponsConfigDataList)
     GameMainUIViewController:GetInstance():Open()
 end
 
----@param itemBaseDataList table<integer,ItemBaseData>
+---@param itemBaseDataList table<number,ItemBaseData>
 function ServerConfigNetController:SetItemBaseDataList(itemBaseDataList)
-    for index, value in ipairs(itemBaseDataList) do
-        ---@type {id:integer,name:string,icon:string,minNum:integer,maxNum:integer,type:integer,des:string}
+    for _, value in ipairs(itemBaseDataList) do
+        ---@type {id:number,name:string,icon:string,minNum:number,maxNum:number,type:number,des:string}
         local item = value
         ---@type ItemBaseData
         local data = ItemBaseData()
@@ -73,7 +75,7 @@ function ServerConfigNetController:SetItemBaseDataList(itemBaseDataList)
     end
 end
 
----@param key integer
+---@param key number
 ---@return ItemBaseData
 function ServerConfigNetController:GetItemBaseDataConfigKey(key)
     local keyData = self.itemBaseDataList[key]
@@ -100,11 +102,11 @@ function ServerConfigNetController:DeleteKeyItemBaseDataList(key)
     return true
 end
 
----@param equipmentConfigBaseDataList table<integer,EquipmentConfigBaseData>
+---@param equipmentConfigBaseDataList table<number,EquipmentConfigBaseData>
 function ServerConfigNetController:SetEquipmentConfigBaseDataList(equipmentConfigBaseDataList)
     self.equipmentConfigBaseDataList = {}
-    for index, value in ipairs(equipmentConfigBaseDataList) do
-        ---@type {quality:number, lv1:number, lv2:number, lv3:number, lv4:number}
+    for _, value in ipairs(equipmentConfigBaseDataList) do
+        ---@type EquipmentConfigBaseData
         local item = value
         ---@type EquipmentConfigBaseData
         local data = EquipmentConfigBaseData()
@@ -118,7 +120,7 @@ function ServerConfigNetController:DeleteAllEquipmentConfigBaseDataList()
     table.Clear(self.equipmentConfigBaseDataList)
 end
 
----@param key integer
+---@param key number
 ---@return EquipmentConfigBaseData
 function ServerConfigNetController:DeleteKeyEquipmentConfigBaseDataList(key)
     local keyData = self.equipmentConfigBaseDataList[key]
@@ -128,7 +130,7 @@ function ServerConfigNetController:DeleteKeyEquipmentConfigBaseDataList(key)
     return keyData
 end
 
----@param equipmentBaseDataList table<integer,EquipmentBaseData>
+---@param equipmentBaseDataList table<number,EquipmentBaseData>
 function ServerConfigNetController:SetEquipmentBaseDataList(equipmentBaseDataList)
     self.equipmentBaseDataList = {}
     for index, value in ipairs(equipmentBaseDataList) do
@@ -141,11 +143,11 @@ function ServerConfigNetController:SetEquipmentBaseDataList(equipmentBaseDataLis
     end
 end
 
----@param equipmentPrimaryConfigBaseDataList table<integer,EquipmentPrimaryConfigBaseData>
+---@param equipmentPrimaryConfigBaseDataList table<number,EquipmentPrimaryConfigBaseData>
 function ServerConfigNetController:SetEquipmentPrimaryConfigBaseDataList(equipmentPrimaryConfigBaseDataList)
     self.equipmentPrimaryConfigBaseDataList = {}
     for index, value in ipairs(equipmentPrimaryConfigBaseDataList) do
-        ---@type {id:integer,primaryQuality:integer,growthPosInt:integer,primaryGrowthName:string,primaryGrowthInts:string,primaryGrowthMaxInt:string,growthPosName:string}
+        ---@type {id:number,primaryQuality:number,growthPosInt:number,primaryGrowthName:string,primaryGrowthInts:string,primaryGrowthMaxInt:string,growthPosName:string}
         local item = value
         ---@type EquipmentPrimaryConfigBaseData
         local data = EquipmentPrimaryConfigBaseData()
@@ -154,7 +156,7 @@ function ServerConfigNetController:SetEquipmentPrimaryConfigBaseDataList(equipme
     end
 end
 
----@param equipmentDesBaseDataList table<integer,EquipmentDesBaseData>
+---@param equipmentDesBaseDataList table<number,EquipmentDesBaseData>
 function ServerConfigNetController:SetEquipmentDesBaseDataList(equipmentDesBaseDataList)
     self.equipmentDesBaseDataList = {}
     for index, value in ipairs(equipmentDesBaseDataList) do
@@ -167,7 +169,7 @@ function ServerConfigNetController:SetEquipmentDesBaseDataList(equipmentDesBaseD
     end
 end
 
----@param equipmentGrowthConfigBaseDataList table<integer,EquipmentGrowthConfigBaseData>
+---@param equipmentGrowthConfigBaseDataList table<number,EquipmentGrowthConfigBaseData>
 function ServerConfigNetController:SetEquipmentGrowthConfigBaseDataList(equipmentGrowthConfigBaseDataList)
     self.equipmentGrowthConfigBaseDataList = {}
     for index, value in ipairs(equipmentGrowthConfigBaseDataList) do
@@ -180,11 +182,11 @@ function ServerConfigNetController:SetEquipmentGrowthConfigBaseDataList(equipmen
     end
 end
 
----@param equipmentGrowthViceConfigBaseDataList table<integer,EquipmentGrowthViceConfigBaseData>
+---@param equipmentGrowthViceConfigBaseDataList table<number,EquipmentGrowthViceConfigBaseData>
 function ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(equipmentGrowthViceConfigBaseDataList)
     self.equipmentGrowthViceConfigBaseDataList = {}
     for index, value in ipairs(equipmentGrowthViceConfigBaseDataList) do
-        ---@type {viceId:number, viceName:string, posGrowthType:integer,initNums:table<integer,string>}
+        ---@type {viceId:number, viceName:string, posGrowthType:number,initNums:table<number,string>}
         local item = value
         ---@type EquipmentGrowthViceConfigBaseData
         local data = EquipmentGrowthViceConfigBaseData()
@@ -193,7 +195,7 @@ function ServerConfigNetController:SetEquipmentGrowthViceConfigBaseDataList(equi
     end
 end
 
----@param weaponsConfigDataList table<integer,WeaponsConfigData>
+---@param weaponsConfigDataList table<number,WeaponsConfigData>
 function ServerConfigNetController:SetWeaponsConfigDataList(weaponsConfigDataList)
     self.weaponsConfigDataList = {}
     for index, value in ipairs(weaponsConfigDataList) do
@@ -245,5 +247,14 @@ end
 function ServerConfigNetController:GetPhysicalPowerInfoData()
     return self.physicalPowerInfo;
 end
-
+--- comment
+--- @param weaponList table<number, WeaponPlayerUserDataStruct>
+function ServerConfigNetController:SetWeaponUserEntityList(weaponList)
+    self.weaponUserDataEntityList = weaponList
+end
+--- comment
+--- @return table<number, WeaponPlayerUserDataStruct>
+function ServerConfigNetController:GetWeaponUserEntityList()
+    return self.weaponUserDataEntityList
+end
 return ServerConfigNetController

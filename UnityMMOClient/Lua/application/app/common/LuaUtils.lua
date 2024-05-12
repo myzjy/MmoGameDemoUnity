@@ -1,3 +1,4 @@
+---@class LuaUtils
 LuaUtils = {}
 
 --------------------------------------------------------------------------------------------
@@ -58,7 +59,11 @@ function LuaUtils.GetKeyUIGrid(gameObject, objName)
     local obj = sKeyObj:GetObjTypeStr(objName) or UnityEngine.UI.GridLayoutGroup
     return obj
 end
-
+---@return UnityEngine.UI.GridLayoutGroup
+function LuaUtils.GetUISerializableKeyGrid(gameObject, objName)
+    local obj = gameObject:GetObjTypeStr(objName) or UnityEngine.UI.GridLayoutGroup
+    return obj
+end
 function LuaUtils.GetKeyGameObject(gameObject, objName)
     local sKeyObj = LuaUtils.GetUISerializableKeyObject(gameObject)
     local obj = sKeyObj:GetObjTypeStr(objName) or UnityEngine.GameObject
@@ -73,6 +78,18 @@ end
 ---@param vec UnityEngine.Vector3
 function LuaUtils.SetScale(gameObject, vec)
     gameObject.transform.localScale = vec
+end
+
+--- @param canvasGroup UnityEngine.CanvasGroup
+---@param active boolean
+function LuaUtils.OpenOrCloseCanvasGroup(canvasGroup, active)
+    if active then
+        canvasGroup.alpha = 1;
+    else
+        canvasGroup.alpha = 0;
+    end
+    canvasGroup.interactable = active;
+    canvasGroup.blocksRaycasts = active
 end
 
 function LuaUtils.GetKeyUICanvasGroup(gameObject, objName)

@@ -83,32 +83,32 @@ end
 
 function PacketDispatcher:OnLoginResponse(data)
     local response = LoginResponse();
-    local pakcet = response:read(data)
-    GameEvent.LoginResonse(pakcet)
+    local packet = response:read(data)
+    GameEvent.LoginResponse(packet)
 end
 
 function PacketDispatcher:OnRegisterResponse(data)
     local response = RegisterResponse()
-    local pakcet = response:read(data)
-    GameEvent.RegisterResonse(pakcet)
+    local packet = response:read(data)
+    GameEvent.RegisterResponse(packet)
 end
 
 function PacketDispatcher:OnLoginTapToStartResponse(data)
     local response = LoginTapToStartResponse()
-    local pakcet = response:read(data)
-    GameEvent.LoginTapToStartResponse(pakcet)
+    local packet = response:read(data)
+    GameEvent.LoginTapToStartResponse(packet)
 end
 
 function PacketDispatcher:OnWeaponPlayerUserDataResponse(data)
     local response = WeaponPlayerUserDataResponse()
-    local pakcet = response:read(data)
-    GameEvent.AcquireUserIdWeaponService(pakcet)
+    local packet = response:read(data)
+    GameEvent.AcquireUserIdWeaponService(packet)
 end
 
 function PacketDispatcher:OnAllBagItemResponse(data)
     local response = AllBagItemResponse()
-    local pakcet = response:read(data)
-    GameEvent.AtBagHeaderBtnService(pakcet)
+    local packet = response:read(data)
+    GameEvent.AtBagHeaderBtnService(packet)
 end
 
 function PacketDispatcher:OnPhysicalPowerResponse(data)
@@ -137,7 +137,7 @@ function PacketDispatcher:OnGameMainUserResourcesResponse(packetData)
     local data = GameMainUserResourcesResponse()
     local packet = data:read(packetData)
     ServerConfigNetController:SetUserMsgInfoData(packet.userMsgInfoData)
-    GameEvent.UPdateGameMainUserInfoMsg(packet.userMsgInfoData)
+    GameEvent.UpdateGameMainUserInfoMsg(packet.userMsgInfoData)
 end
 
 return PacketDispatcher

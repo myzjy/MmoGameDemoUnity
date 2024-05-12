@@ -2,10 +2,10 @@
 local BagUIController = class("BagUIController", LuaUIObject())
 local BagHeaderBtnPanel = require("application.app.ui.bag.bagHeaderBtnPanel")
 
-
 ---@type BagUIController
 local instance = nil
 function BagUIController:ctor()
+    self:RegisterEvent()
 end
 
 function BagUIController.GetInstance()
@@ -21,8 +21,9 @@ function BagUIController:Open()
         if Debug > 0 then
             PrintError("BagUIView 并未打开界面 生成")
         end
+        local bagConfig = UIConfigEnum.FishConfig.BagUIConfig
         -- 去生成界面
-        local view = require(UIConfigEnum.FishConfig.BagUIConfig.viewScriptPath)
+        local view = require(bagConfig.viewScriptPath)
         self.BagUIView = view();
         self.BagUIView:OnLoad();
         return
@@ -38,11 +39,11 @@ function BagUIController:Build(bagUIView)
 end
 
 function BagUIController:RegisterEvent()
+
 end
 --- 刚打开界面的时候，发送那些协议
 function BagUIController:InitSendServerMessage()
-    local packet = AllBagItemRequest(1, "")
-    local jsonStr = packet:write()
-    
+    BagNetController:ClickBagHeaderBtnHandlerServer(1, "")
+
 end
 return BagUIController
