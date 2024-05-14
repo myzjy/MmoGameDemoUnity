@@ -55,9 +55,9 @@ function BagUIView:CreateWeaponListPanel()
 end
 
 function BagUIView:OpenWeaponPanel()
-    local weaponInfo = BagNetController:GetWeaponUserEntityList()
-
-
+    local weaponInfo = WeaponNetController:GetWeaponUserEntityList()
+    dump(weaponInfo)
+    self.weaponUIView:CreateItemList(weaponInfo)
 end
 
 return BagUIView

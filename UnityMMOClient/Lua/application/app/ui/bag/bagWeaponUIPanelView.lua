@@ -23,6 +23,7 @@ end
 function BagWeaponUIPanelView:CreateItemList(weaponItemList)
     self.weaponInfo = weaponItemList
     local list = self.weaponInfo
+    print("长度：".. #list)
     for i = 1, #list do
         local item = list[i]
         ---@type UnityEngine.GameObject

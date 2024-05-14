@@ -17,11 +17,11 @@ end
 function AllBagItemResponse:read(data)
     local packet = data
     self.protocolStr = packet.protocolStr
-    for _index = 1, #packet.list do
-        local forData = packet.list[_index]
+    for _index = 1, #packet.weaponUserList do
+        local forData = packet.weaponUserList[_index]
         ---获取到自己
         local packetData = WeaponPlayerUserDataStruct()
-        table.insert(self.weaponUserList, packetData:read(forData))
+        table.insert(self.weaponUserList, packetData:readData(forData))
     end
     return self
 end

@@ -4,8 +4,7 @@ local BagNetController = class("BagNetContorller")
 local instance = nil
 function BagNetController:ctor()
     self.msg = {}
-    ---@type table<number,WeaponPlayerUserDataStruct>
-    self.weaponUserDataEntityList = {}
+
 end
 
 function BagNetController.GetInstance()
@@ -18,7 +17,8 @@ end
 --- 注册事件
 function BagNetController:RegisterEvent()
     self.msg = {}
-    self.msg["c002"] = handle(self.AtBagHeaderWeaponBtnServiceHandler, self)
+    -- self.msg["c002"] = handle(self.AtBagHeaderWeaponBtnServiceHandler, self)
+    -- UIUtils.AddEventListener(GameEvent.AtBagHeaderBtnService, self.SetAllBagResponse, self)
     UIUtils.AddEventListener(GameEvent.AtBagHeaderBtnService, self.AtBagHeaderBtnHandlerServer, self)
     UIUtils.AddEventListener(GameEvent.ClickBagHeaderBtnHandlerServer, self.ClickBagHeaderBtnHandlerServer, self)
 end
@@ -33,23 +33,22 @@ function BagNetController:ClickBagHeaderBtnHandlerServer(type, msgProtocol)
 end
 
 function BagNetController:AtBagHeaderWeaponBtnServiceHandler(packet)
-    BagUIController.BagUIView:OpenWeaponPanel(packet)
+    BagUIController.BagUIView:OpenWeaponPanel()
 end
---- comment
---- @param weaponList table<number, WeaponPlayerUserDataStruct>
-function BagNetController:SetWeaponUserEntityList(weaponList)
-    self.weaponUserDataEntityList = weaponList
+--- 
+--- @param response AllBagItemResponse
+function BagNetController:SetAllBagResponse(response)
+    WeaponNetController:SetWeaponUserEntityList(response.weaponUserList)
 end
---- comment
---- @return table<number, WeaponPlayerUserDataStruct>
-function BagNetController:GetWeaponUserEntityList()
-    return self.weaponUserDataEntityList
-end
+
+
 ---  头部 按钮 点击事件回调相关
 ---@param packet AllBagItemResponse
 function BagNetController:AtBagHeaderBtnHandlerServer(packet)
-    self:SetWeaponUserEntityList(packet.weaponUserList)
-    UIGameEvent.BagHeaderWeaponBtnHandler()
+    WeaponNetController:SetWeaponUserEntityList(packet.weaponUserList)
+    --UIGameEvent.BagHeaderWeaponBtnHandler()
+    self:AtBagHeaderWeaponBtnServiceHandler()
+
 end
 
 return BagNetController

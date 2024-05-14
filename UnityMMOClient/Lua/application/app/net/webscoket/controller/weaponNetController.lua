@@ -21,6 +21,10 @@ function WeaponNetController:GetInstance()
     end
     return instance
 end
+function WeaponNetController:ctor()
+    ---@type table<number,WeaponPlayerUserDataStruct>
+    self.weaponUserDataEntityList = {}
+end
 function WeaponNetController:RegisterEvent()
     UIUtils.AddEventListener(GameEvent.AcquireUserIdWeaponService, self.AcquireUserIdWeaponService, self)
 end
@@ -39,6 +43,16 @@ function WeaponNetController:AcquireUserIdWeaponService(findUserId, findWeaponId
 
     local jsonString = data:write()
     NetManager:SendMessageEvent(jsonString)
+end
+--- comment
+--- @param weaponList table<number, WeaponPlayerUserDataStruct>
+function WeaponNetController:SetWeaponUserEntityList(weaponList)
+    self.weaponUserDataEntityList = weaponList
+end
+--- comment
+--- @return table<number, WeaponPlayerUserDataStruct>
+function WeaponNetController:GetWeaponUserEntityList()
+    return self.weaponUserDataEntityList
 end
 function WeaponNetController:AcquireWeaponBagServerList()
 
