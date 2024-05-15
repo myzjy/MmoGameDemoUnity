@@ -12,10 +12,10 @@ local BagBtnConfig = {
     },
     BagHeaderBtnConfig = {
         {
-            type = UIConfigEnum.BagHeaderBtnConfig.Type.WeaponType,
+            type = UIConfig.BagHeaderBtnConfig.Type.WeaponType,
             icon = "UI_BagTabIcon_Weapon",
-            name = UIConfigEnum.BagHeaderBtnConfig.Name,
-            openConfig = UIConfigEnum.BagHeaderBtnConfig.IconConfig
+            name = UIConfig.BagHeaderBtnConfig.Name,
+            openConfig = UIConfig.BagHeaderBtnConfig.IconConfig
         },
     }
 }

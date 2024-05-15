@@ -41,11 +41,11 @@ function UIBaseView:SetReUseBool(value)
 end
 
 function UIBaseView:ReUse()
-    if self.Config.sortType == UIConfigEnum.UISortType.First then
+    if self.Config.sortType == UIConfig.UISortType.First then
         self.transform:SetAsFirstSibling()
     else
         --- 将变换移动到本地变换列表的末尾
-        if self.Config.sortType == UIConfigEnum.UISortType.Last then
+        if self.Config.sortType == UIConfig.UISortType.Last then
             self.transform:SetAsLastSibling()
         end
     end
@@ -64,11 +64,11 @@ function UIBaseView:InstantiateGameObject(gameObject)
     rectTransform.localScale = UnityEngine.Vector3.one
     rectTransform.localPosition = UnityEngine.Vector3.zero
     --- 将变换移动到本地变换列表的开头
-    if self.Config.sortType == UIConfigEnum.UISortType.First then
+    if self.Config.sortType == UIConfig.UISortType.First then
         self.transform:SetAsFirstSibling()
     else
         --- 将变换移动到本地变换列表的末尾
-        if self.Config.sortType == UIConfigEnum.UISortType.Last then
+        if self.Config.sortType == UIConfig.UISortType.Last then
             self.transform:SetAsLastSibling()
         end
     end

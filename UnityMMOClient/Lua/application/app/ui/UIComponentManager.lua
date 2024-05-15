@@ -12,7 +12,6 @@ require("application.app.ui.framework.UIView")
 
 PrintDebug("require ui framework lua scripts end")
 
-
 ---
 PrintDebug("require UI commonUI lua scripts start")
 
@@ -26,7 +25,7 @@ PrintDebug("require UI commonUI lua scripts end")
 
 PrintDebug("require UI commonUI lua scripts config start")
 
-UIConfigEnum = require("application.app.ui.config.UIConfig")
+require("application.app.ui.config.UIConfig")
 LoginConfig = require("application.app.ui.login.loginConfig")
 
 PrintDebug("require UI commonUI lua scripts config end")
@@ -51,9 +50,6 @@ require("application.app.config.weaponConfig")
 require("application.app.config.gameConfig")
 
 PrintDebug("end loading lua scirpt config")
-
-
-
 
 local UIComponentManager = {}
 

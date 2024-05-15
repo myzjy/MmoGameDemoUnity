@@ -11,7 +11,7 @@ local registerPartView = require("application.app.ui.login.RegisterPartView")
 local loginTapToStartView = require("application.app.ui.login.LoginTapToStartView")
 function LoginView:OnLoad()
 	self.UIConfig = {
-		Config = LoginConfig,
+		Config = UIEventConfig.LoginConfig,
 		viewPanel = LoginPanelView,
 		initFunc = function()
 			PrintDebug("UILoginUIPanelView:Init()")

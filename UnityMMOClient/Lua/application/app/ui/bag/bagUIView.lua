@@ -1,13 +1,14 @@
 ---背包 UI 相关 逻辑
 ---@class BagUIView:UIView
 local BagUIView = class("BagUIView", UIView)
+require("application.app.ui.bag.bagUIConfig")
 local BagHeaderBtnPanel = require("application.app.ui.bag.bagHeaderBtnPanel")
 local WeaponUIPanel = require("application.app.ui.bag.bagWeaponUIPanelView")
 local bagModelUIView = require("application.app.ui.bag.modelView.bagModelUIView")
 
 local function UIConfig()
     return {
-        Config = UIConfigEnum.FishConfig.BagUIConfig,
+        Config = UIEventConfig.BagUIConfig,
         viewPanel = BagUIPanelView,
         initFunc = function()
             PrintDebug("call bagUIView lua scirpt local function UIConfig called initFunc OnInit")
@@ -47,16 +48,17 @@ function BagUIView:OnShow()
 end
 
 function BagUIView:RegisterEvent()
-    UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OpenWeaponPanel, self)
+    -- 空的 注册事件 在BagUIController 脚本
+    --UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OpenWeaponPanel, self)
     -- UIUtils.AddEventListener(GameEvent.AtBagHeaderWeaponBtnServiceHandler, self.OpenWeaponPanel, self)
 end
 
 function BagUIView:CreateWeaponListPanel()
 end
-
+--- 打开 背包武器 面板
 function BagUIView:OpenWeaponPanel()
     local weaponInfo = WeaponNetController:GetWeaponUserEntityList()
-    dump(weaponInfo)
+    -- 创建武器
     self.weaponUIView:CreateItemList(weaponInfo)
 end
 

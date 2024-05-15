@@ -8,7 +8,7 @@ function BagUIClickMsgVP:ctor()
     self:init()
 end
 
---- bag msg click refush init
+--- bag msg click refresh init
 --- 背包界面初始化
 function BagUIClickMsgVP:init()
     ---@type ZJYFrameWork.UISerializable.UISerializableKeyObject

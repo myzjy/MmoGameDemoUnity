@@ -1,9 +1,5 @@
 local LoginConfig = {
-    ---预制体名字
-    prefabName = "LoginPanel",
-    --- 当前会生成在那一层
-    canvasType = UIConfigEnum.UICanvasType.UI,
-    sortType = UIConfigEnum.UISortType.First,
+
     --- 当前 UI 交互事件 消息
     eventNotification = {
         --- 打开登录 注册界面
@@ -15,7 +11,7 @@ local LoginConfig = {
         --- 当我们登录成功之后，闪过登录账号
         ShowLoginAccountUI = "Show_Login_Account_UI"
     },
-    scriptPath="application.app.ui.login.LoginView"
+
 }
 
 return LoginConfig

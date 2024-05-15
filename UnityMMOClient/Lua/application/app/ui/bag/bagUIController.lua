@@ -17,29 +17,33 @@ function BagUIController.GetInstance()
 end
 
 function BagUIController:Open()
-    if self.BagUIView == nil then
+    if self.bagUIView == nil then
         if Debug > 0 then
             PrintError("BagUIView 并未打开界面 生成")
         end
-        local bagConfig = UIConfigEnum.FishConfig.BagUIConfig
+        local bagConfig = UIConfig.FishConfig.BagUIConfig
         -- 去生成界面
-        local view = require(bagConfig.viewScriptPath)
-        self.BagUIView = view();
-        self.BagUIView:OnLoad();
+        local view = require(bagConfig.scriptPath)
+        self.bagUIView = view();
+        self.bagUIView:OnLoad();
         return
     end
-    self.BagUIView:OnHide()
-    self.BagUIView.UIView:OnShow()
-    self.BagUIView:OnShow()
+    self.bagUIView:OnHide()
+    self.bagUIView.UIView:OnShow()
+    self.bagUIView:OnShow()
 end
 
 function BagUIController:Build(bagUIView)
     ---@type BagUIView
-    self.BagUIView = bagUIView
+    self.bagUIView = bagUIView
 end
 
 function BagUIController:RegisterEvent()
-
+    UIUtils.AddEventListener(UIGameEvent.BagHeaderWeaponBtnHandler, self.OpenWeaponPanel, self)
+end
+--- 打开 刷新武器
+function BagUIController:OpenWeaponPanel()
+    self.bagUIView:OpenWeaponPanel()
 end
 --- 刚打开界面的时候，发送那些协议
 function BagUIController:InitSendServerMessage()

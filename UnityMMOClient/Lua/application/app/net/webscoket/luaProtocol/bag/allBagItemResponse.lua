@@ -1,3 +1,9 @@
+---``` lua
+--- weaponUserList ---- 武器 数据
+--- ctor()         ----初始 初始化 内部需要用到相关 值
+--- protocolId()   ---- 协议id
+--- red(data)          ---- 传递过来的 data 数据 赋值具体字段
+---```
 ---@class AllBagItemResponse
 local AllBagItemResponse = class("AllBagItemResponse")
 

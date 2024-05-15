@@ -32,9 +32,6 @@ function BagNetController:ClickBagHeaderBtnHandlerServer(type, msgProtocol)
     NetManager:SendMessageEvent(jsonStr)
 end
 
-function BagNetController:AtBagHeaderWeaponBtnServiceHandler(packet)
-    BagUIController.BagUIView:OpenWeaponPanel()
-end
 --- 
 --- @param response AllBagItemResponse
 function BagNetController:SetAllBagResponse(response)
@@ -46,8 +43,7 @@ end
 ---@param packet AllBagItemResponse
 function BagNetController:AtBagHeaderBtnHandlerServer(packet)
     WeaponNetController:SetWeaponUserEntityList(packet.weaponUserList)
-    --UIGameEvent.BagHeaderWeaponBtnHandler()
-    self:AtBagHeaderWeaponBtnServiceHandler()
+    UIGameEvent.BagHeaderWeaponBtnHandler()
 
 end
 

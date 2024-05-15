@@ -1,10 +1,6 @@
 ---@class GameMainView:UIView
 local GameMainView = class("GameMainView", UIView())
 GameMainConfig = {
-    prefabName = "GameMainUIPanel",
-    --- 当前会生成在那一层
-    canvasType = UIConfigEnum.UICanvasType.UI,
-    sortType = UIConfigEnum.UISortType.First,
     --- 当前 UI 交互事件 消息
     eventNotification = {
         --- 打开游戏主界面
@@ -15,7 +11,7 @@ GameMainConfig = {
 }
 function GameMainView:OnLoad()
     self.UIConfig = {
-        Config = GameMainConfig,
+        Config = UIConfig.FishConfig.GameMainConfig,
         viewPanel = GameMainUIPanelView,
         initFunc = function()
             PrintDebug("GameMainView:Init()")
