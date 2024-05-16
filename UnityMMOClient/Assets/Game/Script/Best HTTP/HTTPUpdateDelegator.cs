@@ -2,6 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
+using BestHTTP.PlatformSupport.IL2CPP;
+using BestHTTP.PlatformSupport.Threading;
+using UnityEditor;
 using UnityEngine;
 #if NETFX_CORE
     using System.Threading.Tasks;
@@ -14,7 +17,7 @@ namespace BestHTTP
     /// 将一些U3D调用路由到HTTPManager。
     /// </summary>
     [ExecuteInEditMode]
-    [PlatformSupport.IL2CPP.Il2CppEagerStaticClassConstructionAttribute]
+    [Il2CppEagerStaticClassConstruction]
     public sealed class HttpUpdateDelegator : MonoBehaviour
     {
         /// <summary>
@@ -46,10 +49,10 @@ namespace BestHTTP
         /// 在OnApplicationQuit函数中调用。如果这个函数返回False，插件将不会自动关闭。
         /// </summary>
 #pragma warning disable CS0649
-        private static System.Func<bool> _onBeforeApplicationQuit;
+        private static Func<bool> _onBeforeApplicationQuit;
 #pragma warning restore CS0649
 
-        public static System.Action<bool> OnApplicationForegroundStateChanged;
+        public static Action<bool> OnApplicationForegroundStateChanged;
 
 
         private static bool _isSetupCalled;
@@ -113,7 +116,7 @@ namespace BestHTTP
                         sb.Append($"[method:{sf.GetMethod().Name}]");
                         sb.Append($"{sf.GetMethod().Name}");
                         sb.Append($"Line:{sf.GetFileLineNumber()}");
-                        sb.Append($"[msg] Instance 为空，创建 HTTP Update Delegator 物体");
+                        sb.Append("[msg] Instance 为空，创建 HTTP Update Delegator 物体");
                         Debug.Log($"{sb}");
                     }
 #endif
@@ -128,15 +131,15 @@ namespace BestHTTP
                 IsCreated = true;
 
 #if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying)
+                if (!EditorApplication.isPlaying)
                 {
                     // UnityEditor.EditorApplication.update += Instance.Update;
-                    UnityEditor.EditorApplication.update -= Instance.Update;
+                    EditorApplication.update -= Instance.Update;
                 }
 
 #if UNITY_2017_2_OR_NEWER
-                UnityEditor.EditorApplication.playModeStateChanged += Instance.OnPlayModeStateChanged;
-                UnityEditor.EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
+                EditorApplication.playModeStateChanged += Instance.OnPlayModeStateChanged;
+                EditorApplication.playModeStateChanged -= Instance.OnPlayModeStateChanged;
 #else
                     UnityEditor.EditorApplication.playmodeStateChanged -= Instance.OnPlayModeStateChanged;
                     UnityEditor.EditorApplication.playmodeStateChanged += Instance.OnPlayModeStateChanged;
@@ -155,7 +158,7 @@ namespace BestHTTP
                     sb.Append($"[method:{sf.GetMethod().Name}]");
                     sb.Append($"{sf.GetMethod().Name}");
                     sb.Append($"Line:{sf.GetFileLineNumber()}");
-                    sb.Append($"[msg] 实例创建。");
+                    sb.Append("[msg] 实例创建。");
                     Debug.Log($"{sb}");
                 }
 #endif
@@ -172,7 +175,7 @@ namespace BestHTTP
                     sb.Append($"[method:{sf.GetMethod().Name}]");
                     sb.Append($"{sf.GetMethod().Name}");
                     sb.Append($"Line:{sf.GetFileLineNumber()}");
-                    sb.Append($"[msg] 请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!");
+                    sb.Append("[msg] 请从Unity的事件中调用BestHttp.HTTPManager.Setup()。在发送任何请求之前，请先清醒，开始)!");
                     Debug.LogError($"{sb}");
                 }
 #endif
@@ -190,7 +193,7 @@ namespace BestHTTP
             else
             {
                 IsThreaded = true;
-                PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ThreadFunc);
+                ThreadedRunner.RunLongLiving(ThreadFunc);
             }
 #endif
         }
@@ -209,13 +212,13 @@ namespace BestHTTP
 #endif
             if (IsThreaded)
             {
-                PlatformSupport.Threading.ThreadedRunner.RunLongLiving(ThreadFunc);
+                ThreadedRunner.RunLongLiving(ThreadFunc);
             }
 
             // Unity不能很好地容忍DontDestroyOnLoad在纯编辑模式下调用。因此，我们将只在播放时设置标志，或者不在编辑器中设置。
             if (!Application.isEditor || Application.isPlaying)
             {
-                DontDestroyOnLoad(this.gameObject);
+                DontDestroyOnLoad(gameObject);
             }
 #if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK
             {
@@ -312,18 +315,18 @@ namespace BestHTTP
 
 #if UNITY_EDITOR
 #if UNITY_2017_2_OR_NEWER
-        void OnPlayModeStateChanged(UnityEditor.PlayModeStateChange playMode)
+        void OnPlayModeStateChanged(PlayModeStateChange playMode)
         {
-            if (playMode == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+            if (playMode == PlayModeStateChange.EnteredPlayMode)
             {
-                UnityEditor.EditorApplication.update -= Update;
+                EditorApplication.update -= Update;
             }
-            else if (playMode == UnityEditor.PlayModeStateChange.EnteredEditMode)
+            else if (playMode == PlayModeStateChange.EnteredEditMode)
             {
-                UnityEditor.EditorApplication.update -= Update;
-                UnityEditor.EditorApplication.update += Update;
+                EditorApplication.update -= Update;
+                EditorApplication.update += Update;
 
-                HttpUpdateDelegator.ResetSetup();
+                ResetSetup();
                 HttpManager.ResetSetup();
             }
         }
@@ -355,7 +358,7 @@ namespace BestHTTP
             }
 #endif
 #if UNITY_EDITOR
-            if (UnityEditor.EditorApplication.isPlaying)
+            if (EditorApplication.isPlaying)
 #endif
             {
                 UnityApplication_WantsToQuit();
@@ -377,9 +380,9 @@ namespace BestHTTP
                 Debug.Log($"{sb}");
             }
 #endif
-            if (HttpUpdateDelegator.OnApplicationForegroundStateChanged != null)
+            if (OnApplicationForegroundStateChanged != null)
             {
-                HttpUpdateDelegator.OnApplicationForegroundStateChanged(isPaused);
+                OnApplicationForegroundStateChanged(isPaused);
             }
         }
 
@@ -420,7 +423,7 @@ namespace BestHTTP
                         return false;
                     }
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     // ignored
 #if (UNITY_EDITOR || (DEVELOP_BUILD && ENABLE_LOG))&& ENABLE_LOG_NETWORK

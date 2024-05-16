@@ -22,6 +22,7 @@ end
 function WeaponItemUIView:Init(thisKeyObject, weaponData)
     self.gameObject = thisKeyObject
     self.gameObject:SetActive(true)
+    self.weaponData = weaponData
     self.uSKeyObject = self.gameObject:GetComponent("UISerializableKeyObject")
     self.itemCanvasGroup = LuaUtils.GetUIKeyCanvasGroup(self.uSKeyObject, "itemCanvasGroup")
     self.itemBgImage = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "itemBgImage")
@@ -31,11 +32,10 @@ function WeaponItemUIView:Init(thisKeyObject, weaponData)
     LuaUIObject:SetListener(self.clickBtn, handle(self.clickEvent, self))
     self.itemCanvasGroup.alpha = 1
     --- 设置icon
-    GetAssetBundleManager():LoadAssetAction(UIConfig.FishConfig.BagUIConfig.weaponIconAtlasName, function(t)
-        dump(t)
+    GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
         local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
-        PrintDebug(string.format("当前武器Icon：%s", weaponData.weaponIcons))
-        self.itemIcon.sprite = spriteAtlas:GetSprite(weaponData.weaponIcons)
+        PrintDebug(string.format("当前武器Icon：%s", weaponData.bagWeaponIcon))
+        self.itemIcon.sprite = spriteAtlas:GetSprite(weaponData.bagWeaponIcon)
     end)
     --武器默认1
     self.itemNumText.text = string.format("%d", 1)
@@ -47,7 +47,7 @@ end
 
 --- 点击 武器 item 事件
 function WeaponItemUIView:clickEvent()
-    PrintDebug(string.format("点击武器，武器名字：%s,武器下标：%d", self.weaponData.weaponName, self.weaponData.indexData))
+    PrintDebug(string.format("点击武器，武器名字：%s,武器下标：%d", self.weaponData.weaponName, self.weaponData.id))
     --1. 打开 对应部分按钮
     --2. 打开 面板 信息详情
     --3. 针对面板 赋值 刷新面板

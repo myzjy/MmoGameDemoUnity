@@ -437,7 +437,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
 
             if (ipAddresses == null)
             {
-                throw new ArgumentNullException("ipAddresses");
+                throw new ArgumentNullException(nameof(ipAddresses));
             }
 
             List<IPAddress> addresses = new List<IPAddress>(ipAddresses);
@@ -537,7 +537,7 @@ namespace BestHTTP.PlatformSupport.TcpClient.General
                      */
                     if (i == addresses.Count - 1)
                     {
-                        throw e;
+                        throw new Exception(e.Message);
                     }
                 }
             }

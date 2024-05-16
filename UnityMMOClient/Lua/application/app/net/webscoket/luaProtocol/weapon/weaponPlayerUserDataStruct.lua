@@ -3,10 +3,8 @@
 local WeaponPlayerUserDataStruct = class("WeaponPlayerUserDataStruct")
 function WeaponPlayerUserDataStruct:ctor()
     PrintDebug("init WeaponPlayerUserDataStruct ctor")
-    --- 下标
-    ---@type number
-    self.indexData = 0
-    ---武器id
+
+    ---武器下标
     ---@type number
     self.id = -1 ---java.lang.long
 
@@ -57,9 +55,15 @@ function WeaponPlayerUserDataStruct:ctor()
     ---武器模型所属资源名
     ---@type string
     self.weaponModelNameIcons = string.empty ---java.lang.string
+    ---武器id
+    ---@type number
+    self.weaponId = 0
+    ---背包所属资源名
+    ---@type string
+    self.bagWeaponIcon = string.empty ---java.lang.string
 end
 
----@param id number 武器id
+---@param id number 武器数据库中下标
 ---@param weaponName string 武器名字
 ---@param weaponType number 武器 type 武器所属类型
 ---@param nowSkills number 当前武器所属技能
@@ -72,6 +76,8 @@ end
 ---@param nowLvMaxExp number 前等级已知的可以强化的最大经验
 ---@param weaponIcons string 武器Icon
 ---@param weaponModelNameIcons string 武器模型所属资源名
+---@param weaponId number 武器id
+---@param bagWeaponIcon string 武器在背包里面的icon
 function WeaponPlayerUserDataStruct:new(
         id,
         weaponName,
@@ -85,7 +91,9 @@ function WeaponPlayerUserDataStruct:new(
         nowLvExp,
         nowLvMaxExp,
         weaponIcons,
-        weaponModelNameIcons)
+        weaponModelNameIcons,
+        weaponId,
+        bagWeaponIcon)
     self.id = id                                          ---java.lang.long
     self.weaponName = weaponName                          ---java.lang.string
     self.weaponType = weaponType                          ---java.lang.integer
@@ -99,7 +107,8 @@ function WeaponPlayerUserDataStruct:new(
     self.nowLvMaxExp = nowLvMaxExp                        ---java.lang.integer
     self.weaponIcons = weaponIcons                        ---java.lang.string
     self.weaponModelNameIcons = weaponModelNameIcons      ---java.lang.string
-
+    self.weaponId = weaponId                              ---java.lang.integer
+    self.bagWeaponIcon = bagWeaponIcon
     return self
 end
 
@@ -159,7 +168,9 @@ function WeaponPlayerUserDataStruct:readData(data)
             data.nowLvExp,
             data.nowLvMaxExp,
             data.weaponIcons,
-            data.weaponModelNameIcons
+            data.weaponModelNameIcons,
+            data.weaponId,
+            data.bagWeaponIcon
     )
 end
 

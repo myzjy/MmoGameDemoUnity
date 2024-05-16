@@ -12,7 +12,7 @@ namespace ZJYFrameWork.Log
             switch (level)
             {
                 case Level.DEBUG:
-                    UnityEngine.Debug.Log(StringUtils.Format("<color=#888888>{}</color>", message.ToString()));
+                    UnityEngine.Debug.Log(message.ToString());
                     break;
 
                 case Level.INFO:

@@ -11,7 +11,7 @@ GameMainConfig = {
 }
 function GameMainView:OnLoad()
     self.UIConfig = {
-        Config = UIConfig.FishConfig.GameMainConfig,
+        Config = UIEventConfig.GameMainConfig,
         viewPanel = GameMainUIPanelView,
         initFunc = function()
             PrintDebug("GameMainView:Init()")

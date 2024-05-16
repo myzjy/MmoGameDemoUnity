@@ -21,7 +21,7 @@ function BagUIController:Open()
         if Debug > 0 then
             PrintError("BagUIView 并未打开界面 生成")
         end
-        local bagConfig = UIConfig.FishConfig.BagUIConfig
+        local bagConfig = UIEventConfig.BagUIConfig
         -- 去生成界面
         local view = require(bagConfig.scriptPath)
         self.bagUIView = view();

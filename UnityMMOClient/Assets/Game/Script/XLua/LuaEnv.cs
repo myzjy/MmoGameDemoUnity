@@ -4,7 +4,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
+ */
 
 #if USE_UNI_LUA
 using LuaAPI = UniLua.Lua;
@@ -37,6 +37,7 @@ namespace XLua
                 {
                     throw new InvalidOperationException("this lua env had disposed!");
                 }
+
                 return rawL;
             }
         }
@@ -52,10 +53,7 @@ namespace XLua
 
         public object luaEnvLock
         {
-            get
-            {
-                return luaLock;
-            }
+            get { return luaLock; }
         }
 #endif
 
@@ -66,11 +64,11 @@ namespace XLua
             if (LuaAPI.xlua_get_lib_version() != LIB_VERSION_EXPECT)
             {
                 throw new InvalidProgramException("wrong lib version expect:"
-                    + LIB_VERSION_EXPECT + " but got:" + LuaAPI.xlua_get_lib_version());
+                                                  + LIB_VERSION_EXPECT + " but got:" + LuaAPI.xlua_get_lib_version());
             }
 
 #if THREAD_SAFE || HOTFIX_ENABLE
-            lock(luaEnvLock)
+            lock (luaEnvLock)
 #endif
             {
                 InternalGlobals.Init();
@@ -159,6 +157,7 @@ namespace XLua
                 {
                     throw new Exception("get CS fail!");
                 }
+
                 LuaAPI.lua_rawset(rawL, LuaIndexes.LUA_REGISTRYINDEX);
 
 #if !XLUA_GENERAL && (!UNITY_WSA || UNITY_EDITOR)
@@ -169,6 +168,7 @@ namespace XLua
                 {
                     throw new Exception("get _G fail!");
                 }
+
                 translator.Get(rawL, -1, out _G);
                 LuaAPI.lua_pop(rawL, 1);
 
@@ -192,23 +192,21 @@ namespace XLua
 
         private void OnLoginOk()
         {
-            
         }
+
         public static void AddIniter(Action<LuaEnv, ObjectTranslator> initer)
         {
             if (initers == null)
             {
                 initers = new List<Action<LuaEnv, ObjectTranslator>>();
             }
+
             initers.Add(initer);
         }
 
         public LuaTable Global
         {
-            get
-            {
-                return _G;
-            }
+            get { return _G; }
         }
 
         public T LoadString<T>(byte[] chunk, string chunkName = "chunk", LuaTable env = null)
@@ -221,6 +219,7 @@ namespace XLua
                 {
                     throw new InvalidOperationException(typeof(T).Name + " is not a delegate type nor LuaFunction");
                 }
+
                 var _L = L;
                 int oldTop = LuaAPI.lua_gettop(_L);
 
@@ -306,6 +305,7 @@ namespace XLua
                 {
                     throw new Exception("Can not set searcher!");
                 }
+
                 uint len = LuaAPI.xlua_objlen(_L, -1);
                 index = index < 0 ? (int)(len + index + 2) : index;
                 for (int e = (int)len + 1; e > index; e--)
@@ -313,6 +313,7 @@ namespace XLua
                     LuaAPI.xlua_rawgeti(_L, -1, e - 1);
                     LuaAPI.xlua_rawseti(_L, -2, e);
                 }
+
                 LuaAPI.lua_pushstdcallcfunction(_L, searcher);
                 LuaAPI.xlua_rawseti(_L, -2, index);
                 LuaAPI.lua_pop(_L, 1);
@@ -333,7 +334,7 @@ namespace XLua
 
         static bool ObjectValidCheck(object obj)
         {
-            return (!(obj is UnityEngine.Object)) ||  ((obj as UnityEngine.Object) != null);
+            return (!(obj is UnityEngine.Object)) || ((obj as UnityEngine.Object) != null);
         }
 
         Func<object, bool> object_valid_checker = new Func<object, bool>(ObjectValidCheck);
@@ -355,7 +356,8 @@ namespace XLua
                     }
                 }
 #if !XLUA_GENERAL
-                last_check_point = translator.objects.Check(last_check_point, max_check_per_tick, object_valid_checker, translator.reverseMap);
+                last_check_point = translator.objects.Check(last_check_point, max_check_per_tick, object_valid_checker,
+                    translator.reverseMap);
 #endif
 #if THREAD_SAFE || HOTFIX_ENABLE
             }
@@ -414,7 +416,7 @@ namespace XLua
                 {
                     //throw new InvalidOperationException("try to dispose a LuaEnv with C# callback!");
                 }
-                
+
                 ObjectTranslatorPool.Instance.Remove(L);
 
                 LuaAPI.lua_close(L);
@@ -443,7 +445,8 @@ namespace XLua
 
                 // A non-wrapped Lua error (best interpreted as a string) - wrap it and throw it
                 if (err == null) err = "Unknown Lua Error";
-                throw new LuaException(err.ToString());
+                Debug.LogError(err.ToString());
+                throw new Exception(err.ToString());
 #if THREAD_SAFE || HOTFIX_ENABLE
             }
 #endif
@@ -618,6 +621,7 @@ namespace XLua
             {
                 throw new Exception("initer must be static and has MonoPInvokeCallback Attribute!");
             }
+
             buildin_initer.Add(name, initer);
         }
 

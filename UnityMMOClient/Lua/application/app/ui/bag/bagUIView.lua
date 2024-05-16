@@ -62,4 +62,5 @@ function BagUIView:OpenWeaponPanel()
     self.weaponUIView:CreateItemList(weaponInfo)
 end
 
+
 return BagUIView
