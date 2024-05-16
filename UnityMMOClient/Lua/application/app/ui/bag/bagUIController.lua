@@ -47,6 +47,7 @@ function BagUIController:OpenWeaponPanel()
 end
 --- 刚打开界面的时候，发送那些协议
 function BagUIController:InitSendServerMessage()
+    --- 发送 协议 AllBagItemRequest
     BagNetController:ClickBagHeaderBtnHandlerServer(1, "")
 
 end

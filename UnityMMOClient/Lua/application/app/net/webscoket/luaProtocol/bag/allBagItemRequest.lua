@@ -1,14 +1,14 @@
 ---@class AllBagItemRequest
-local AllBagItemReuqest = class("AllBagItemReuqest")
-function AllBagItemReuqest:ctor(type, msgProtocol)
+local AllBagItemRequest = class("AllBagItemReuqest")
+function AllBagItemRequest:ctor(type, msgProtocol)
     self.type = type;
     self.msgProtocol = msgProtocol;
 end
 
-function AllBagItemReuqest:protocolId()
+function AllBagItemRequest:protocolId()
     return 1007
 end
-function AllBagItemReuqest:write()
+function AllBagItemRequest:write()
     local message = {
         protocolId = self:protocolId(),
         packet = { type = self.type, msgProtocol = self.msgProtocol }
@@ -17,4 +17,4 @@ function AllBagItemReuqest:write()
     return jsonStr
 end
 
-return AllBagItemReuqest
+return AllBagItemRequest
