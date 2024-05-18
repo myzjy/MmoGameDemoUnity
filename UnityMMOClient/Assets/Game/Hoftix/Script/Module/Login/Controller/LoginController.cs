@@ -72,6 +72,8 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
         public void OnNetOpenEvent(NetOpenEvent openEvent)
         {
             reconnectCount = 0;
+            isNetError = false;
+
             LoginCacheData.loginFlag = false;
             CommonController.Instance.snackbar.OpenUIDataScenePanel(1, 1);
             CommonController.Instance.loadingRotate.OnClose();
@@ -101,10 +103,17 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
             }
         }
 
+        /**
+         * client -> server error
+         */
+        private bool isNetError = false;
+
+
         [EventReceiver]
         public void OnNetErrorEvent(NetErrorEvent errorEvent)
         {
             reconnectCount++;
+            isNetError = true;
             var sequence = DOTween.Sequence();
             sequence.OnComplete(() =>
             {
@@ -148,7 +157,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
 
             SpringContext.GetBean<LoginUIController>().loginTapToStartView.LoginStartGame();
         }
-        
+
         [PacketReceiver]
         public void AtGameMainUserToInfoResponse(GameMainUserToInfoResponse response)
         {
@@ -177,7 +186,7 @@ namespace ZJYFrameWork.Hotfix.Module.Login.Controller
                     SpringContext.GetBean<LoginClientCacheData>().loginFlag = true;
                     SpringContext.GetBean<PlayerUserCaCheData>().userName = res.UserName;
                     SpringContext.GetBean<PlayerUserCaCheData>().Uid = res.Uid;
-                    
+
 #if UNITY_EDITOR || DEVELOP_BUILD && ENABLE_LOG
                     Debug.Log("[user:{}]登录[token:{}][uid:{}]", userName, token, uid);
 #endif

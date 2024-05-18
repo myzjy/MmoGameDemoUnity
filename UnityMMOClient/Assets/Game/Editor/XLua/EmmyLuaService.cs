@@ -26,7 +26,7 @@ namespace EmmyLua
     [InitializeOnLoad]
     class EmmyLuaService
     {
-        private static Socket socket;
+        private static Socket _socket;
 
         private static Thread receiveThread;
 
@@ -91,12 +91,12 @@ namespace EmmyLua
             doTryLater = false;
             try
             {
-                if (socket != null)
-                    socket.Close();
-                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                if (_socket != null)
+                    _socket.Close();
+                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 Debug.Log($"127.0.0.1,{PORT}");
 
-                socket.BeginConnect("127.0.0.1", PORT, OnConnect, socket);
+                _socket.BeginConnect("127.0.0.1", PORT, OnConnect, _socket);
             }
             catch (Exception e)
             {
@@ -109,9 +109,9 @@ namespace EmmyLua
             Debug.Log("正在链接");
             try
             {
-                socket.EndConnect(ar);
+                _socket.EndConnect(ar);
                 connected = true;
-                SendData(socket);
+                SendData(_socket);
             }
             catch (Exception e)
             {
@@ -136,8 +136,8 @@ namespace EmmyLua
                 connected = false;
                 doTryLater = false;
 
-                if (socket != null)
-                    socket.Close();
+                if (_socket != null)
+                    _socket.Close();
             }
         }
 
@@ -197,7 +197,7 @@ namespace EmmyLua
                 try
                 {
                     var bytes = buf.GetBuffer();
-                    socket.Send(bytes, 8, SocketFlags.None);
+                    _socket.Send(bytes, 8, SocketFlags.None);
                 }
                 catch (Exception e)
                 {
@@ -276,7 +276,7 @@ namespace EmmyLua
                         where !mi.Name.StartsWith("get_") && !mi.Name.StartsWith("set_")
                         select mi).ToArray();
 
-                writer.Write(methods.Count());
+                writer.Write(methods.Length);
                 foreach (var mi in methods)
                 {
                     // name
@@ -312,14 +312,14 @@ namespace EmmyLua
                       //&& !type.IsGenericType
                       //&& !type.IsGenericTypeDefinition
                       && !type.IsNested
-                      && !IsExcluded(type)
+                      && !IsExcluded()
                 select type;
             var arr = unityTypes.ToArray();
 
             return arr;
         }
 
-        private static bool IsExcluded(Type type)
+        private static bool IsExcluded()
         {
             return false;
         }

@@ -9,34 +9,35 @@ function WeaponItemUIView:ctor()
     self.itemCanvasGroup = nil
     ---@type UnityEngine.UI.Image
     self.itemBgImage = nil
+    --- 图标
     ---@type UnityEngine.UI.Image
     self.itemIcon = nil
     ---@type UnityEngine.UI.Text
     self.itemNumText = nil
     ---@type UnityEngine.UI.Button
     self.clickBtn = nil
+    ---@type UnityEngine.UI.Image
+    self.avatarIcon = nil
 end
 
 ---@param thisKeyObject UnityEngine.GameObject
 ---@param weaponData WeaponPlayerUserDataStruct
-function WeaponItemUIView:Init(thisKeyObject, weaponData)
+function WeaponItemUIView:Init(thisKeyObject, weaponData, weaponIconAtlas)
     self.gameObject = thisKeyObject
     self.gameObject:SetActive(true)
     self.weaponData = weaponData
+    self.weaponIconAtlas = weaponIconAtlas
     self.uSKeyObject = self.gameObject:GetComponent("UISerializableKeyObject")
     self.itemCanvasGroup = LuaUtils.GetUIKeyCanvasGroup(self.uSKeyObject, "itemCanvasGroup")
     self.itemBgImage = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "itemBgImage")
     self.itemIcon = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "itemIcon")
     self.itemNumText = LuaUtils.GetUISerializableKeyText(self.uSKeyObject, "itemNumText")
     self.clickBtn = LuaUtils.GetUISerializableKeyButton(self.uSKeyObject, "clickBtn")
+    self.avatarIcon = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "avatarIcon")
     LuaUIObject:SetListener(self.clickBtn, handle(self.clickEvent, self))
     self.itemCanvasGroup.alpha = 1
-    --- 设置icon
-    GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
-        local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
-        PrintDebug(string.format("当前武器Icon：%s", weaponData.bagWeaponIcon))
-        self.itemIcon.sprite = spriteAtlas:GetSprite(weaponData.bagWeaponIcon)
-    end)
+
+    self.itemIcon.sprite = self.weaponIconAtlas:GetSprite(weaponData.bagWeaponIcon)
     --武器默认1
     self.itemNumText.text = string.format("%d", 1)
 end

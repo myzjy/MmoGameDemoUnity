@@ -23,18 +23,19 @@ end
 --- 传递武器数据创建 背包里面的 武器Item object
 ---@param weaponData WeaponPlayerUserDataStruct
 ---@return WeaponItemUIView
-function BagWeaponUIPanelView:createWeaponItem(weaponData)
+function BagWeaponUIPanelView:createWeaponItem(weaponData, weaponIconAtlas)
     ---@type UnityEngine.GameObject
     local itemObj = UnityEngine.GameObject.Instantiate(self.weaponItemObject) or UnityEngine.GameObject
     itemObj.transform:SetParent(self.uiGrid.transform, false)
     itemObj.transform.localScale = Vector3.one
     local obj = weaponItemUIView()
-    obj:Init(itemObj, weaponData)
+    obj:Init(itemObj, weaponData, weaponIconAtlas)
     return obj
 end
 --- 创建武器 物体
 ---@param weaponItemList table<number, WeaponPlayerUserDataStruct>
-function BagWeaponUIPanelView:CreateItemList(weaponItemList)
+---@param atlasData {weaponIconAtlas:any}
+function BagWeaponUIPanelView:CreateItemList(weaponItemList, atlasData)
     if Debug > 0 then
         PrintDebug("创建武器")
         dump(weaponItemList)
@@ -44,7 +45,7 @@ function BagWeaponUIPanelView:CreateItemList(weaponItemList)
     for i = 1, #list do
         local item = list[i]
         if self.gridList[item.id] == nil then
-            local obj = self:createWeaponItem(item)
+            local obj = self:createWeaponItem(item, atlasData.weaponIconAtlas)
 
             self.gridList[item.id] = obj;
         else

@@ -34,6 +34,7 @@ namespace ZJYFrameWork.UISerializable.Common
         public UIDataLoading UIDataLoading;
         public Dialog OverlayDialog;
         public GameObject DialogPanelObject;
+
         #endregion
 
         #region 进度条显示
@@ -53,10 +54,12 @@ namespace ZJYFrameWork.UISerializable.Common
 
             UIDataLoading.SetShowCount(nowDownNums, maxDownNums, downText);
         }
+
         public void CloseUIDataLoadingPanel()
         {
             UIDataLoading.Close();
         }
+
         /// <summary>
         /// 转换场景的时候调用显示面板
         /// </summary>
@@ -89,7 +92,7 @@ namespace ZJYFrameWork.UISerializable.Common
             RootLandscapeLeft.SetActive(true);
             serverLandscapeLeftError.text = message;
             serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(true);
-            serverErrorLandscapeLeftCanvasGroup.alpha = 0;
+            serverErrorLandscapeLeftCanvasGroup.alpha = 1;
             // serverErrorLandscapeLeftCanvasGroup.DOFade(1f, 0.8f).SetEase(Ease.Linear).SetLoops(1, LoopType.Yoyo);
             StartCoroutine(HideServerError(message));
         }
@@ -108,7 +111,7 @@ namespace ZJYFrameWork.UISerializable.Common
                 //         if (message.Equals(serverLandscapeLeftError.text))
                 //         {
                 serverLandscapeLeftError.text = null;
-                serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
+                // serverErrorLandscapeLeftCanvasGroup.gameObject.SetActive(false);
                 serverErrorLandscapeLeftCanvasGroup.alpha = 0;
                 //         }
                 //     });

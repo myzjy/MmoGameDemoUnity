@@ -57,10 +57,25 @@ function BagUIView:CreateWeaponListPanel()
 end
 --- 打开 背包武器 面板
 function BagUIView:OpenWeaponPanel()
-    local weaponInfo = WeaponNetController:GetWeaponUserEntityList()
-    -- 创建武器
-    self.weaponUIView:CreateItemList(weaponInfo)
-end
+    coroutine.start(function()
+        GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
+            local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
+            self.weaponIconAtlas = spriteAtlas
+        end)
+        if self.weaponIconAtlas == nil then
+            -- 等待 图集读取
+            while self.weaponIconAtlas == nil do
+                coroutine.wait(1)
+            end
+        end
+        local weaponInfo = WeaponNetController:GetWeaponUserEntityList()
+        local atlasData = {
+            weaponIconAtlas = self.weaponIconAtlas
+        }
+        -- 创建武器
+        self.weaponUIView:CreateItemList(weaponInfo, atlasData)
+    end)
 
+end
 
 return BagUIView
