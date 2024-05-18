@@ -36,7 +36,7 @@ function WeaponItemUIView:Init(thisKeyObject, weaponData, weaponIconAtlas)
     self.avatarIcon = LuaUtils.GetUISerializableKeyImage(self.uSKeyObject, "avatarIcon")
     LuaUIObject:SetListener(self.clickBtn, handle(self.clickEvent, self))
     self.itemCanvasGroup.alpha = 1
-
+    
     self.itemIcon.sprite = self.weaponIconAtlas:GetSprite(weaponData.bagWeaponIcon)
     --武器默认1
     self.itemNumText.text = string.format("%d", 1)

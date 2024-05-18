@@ -58,11 +58,12 @@ end
 --- 打开 背包武器 面板
 function BagUIView:OpenWeaponPanel()
     coroutine.start(function()
-        GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
-            local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
-            self.weaponIconAtlas = spriteAtlas
-        end)
+      
         if self.weaponIconAtlas == nil then
+            GetAssetBundleManager():LoadAssetAction(BagUIConfig.weaponIconAtlasName, function(t)
+                local spriteAtlas = t or UnityEngine.U2D.SpriteAtlas
+                self.weaponIconAtlas = spriteAtlas
+            end)
             -- 等待 图集读取
             while self.weaponIconAtlas == nil do
                 coroutine.wait(1)
