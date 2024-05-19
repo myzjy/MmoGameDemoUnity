@@ -13,12 +13,12 @@ PacketDispatcher.Event = {
 }
 
 -------------------------------- start Login   pack 包 --------------------------------------
-LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
-ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
-WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
-BagNetController = require("application.app.net.webscoket.controller.bagNetController"):GetInstance()
-GameMainNetController = require("application.app.net.webscoket.controller.gameMainNetController"):GetInstance()
-CharacterNetController = require("application.app.net.webscoket.controller.characterNetController"):GetInstance()
+LoginNetController = require("application.app.net.websocket.controller.loginNetController").GetInstance()
+ServerConfigNetController = require("application.app.net.websocket.controller.serverConfigNetController").GetInstance()
+WeaponNetController = require("application.app.net.websocket.controller.weaponNetController"):GetInstance()
+BagNetController = require("application.app.net.websocket.controller.bagNetController"):GetInstance()
+GameMainNetController = require("application.app.net.websocket.controller.gameMainNetController"):GetInstance()
+CharacterNetController = require("application.app.net.websocket.controller.characterNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 PacketDispatcher.urlString = nil

@@ -1,10 +1,8 @@
 PrintDebug("require lua script start")
 --下面基础组件间的require有依赖顺序相关,闲着没事也别换顺序,要加新的往文件尾加就好
 require("defines.app_defines")
-require("common.util.str")
--- require("Common.util.helper")
-require("common.util.time")
 
+PrintDebug("start load common\\unityEngine 文件夹下 得所有 lua scripts")
 Mathf = require("common.unityEngine.Mathf")
 Vector2 = require("common.unityEngine.Vector2")
 Vector3 = require("common.unityEngine.Vector3")
@@ -19,34 +17,44 @@ LayerMask = require("common.unityEngine.LayerMask")
 Plane = require("common.unityEngine.Plane")
 Time = require("common.unityEngine.Time")
 Object = require("common.unityEngine.Object")
+PrintDebug("end load common\\unityEngine 文件夹下 得所有 lua scripts")
 
 require("common.system.coroutine")
 
 require("common.class")
 
-require("common.util.StringUtil")
-require("common.util.TableUtil")
+PrintDebug("start load common\\util 文件夹下 得所有 lua scripts")
+require("common.util.str")
+require("common.util.time")
+GlobalEventSystem = require("common.util.event_System")
+require("common.util.string_util")
+require("common.util.table_util")
 require("common.util.util")
-require("common.util.LuaUtil")
+require("common.util.lua_util")
 list = require("common.util.list")
 events = require("common.util.event")
-require("common.util.Timer")
-UpdateManager = require("common.UpdateManager")
+require("common.util.timer")
+require("common.util.UI_utils")
+PrintDebug("end load common\\util 文件夹下 得所有 lua scripts")
+
+UpdateManager = require("common.updateManager")
 JSON = require("common.json")
+
 require("application.app.net.http.userAgent")
 require("application.app.net.http.apiRequest")
 require("application.app.net.http.apiResponse")
-NetManager = require("application.app.net.webscoket.netManager")
-GlobalEventSystem = require("common.util.EventSystem")
-require("common.util.UIUtils")
+
 require("application.app.common.LuaUtils")
 
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
-ByteBuffer = require("application.app.net.webscoket.luaProtocol.buffer.byteBuffer")
-Long = require("application.app.net.webscoket.luaProtocol.buffer.long")
-ProtocolManager = require("application.app.net.webscoket.protocolManager")
-PacketDispatcher = require("application.app.net.webscoket.packetDispatcher")
+
+NetManager = require("application.app.net.websocket.netManager")
+ByteBuffer = require("application.app.net.websocket.luaProtocol.buffer.byteBuffer")
+Long = require("application.app.net.websocket.luaProtocol.buffer.long")
+ProtocolManager = require("application.app.net.websocket.protocolManager")
+PacketDispatcher = require("application.app.net.websocket.packetDispatcher")
+
 I18nManager = require("application.app.i18n.I18nManager")
 
 GameEvent = require("application.app.event.gameEvent")

@@ -8,87 +8,87 @@ print("加载 ProtocolManager.lua 文件")
 print("require service files lua script start")
 
 ---------------------------- error 101     ----------------------------
-Error = require("application.app.net.webscoket.luaProtocol.common.error")
+Error = require("application.app.net.websocket.luaProtocol.common.error")
 -----------------------------------------------------------------------
 
 ----------------------------  pong 104    ----------------------------
-Pong = require("application.app.net.webscoket.luaProtocol.common.pong")
+Pong = require("application.app.net.websocket.luaProtocol.common.pong")
 -----------------------------------------------------------------------
 ----------------------------  login   ----------------------------
-LoginRequest = require("application.app.net.webscoket.luaProtocol.login.loginRequest")
-LoginResponse = require("application.app.net.webscoket.luaProtocol.login.loginResponse")
-LoginUserServerInfoData = require("application.app.net.webscoket.luaProtocol.login.loginUserServerInfoData")
+LoginRequest = require("application.app.net.websocket.luaProtocol.login.loginRequest")
+LoginResponse = require("application.app.net.websocket.luaProtocol.login.loginResponse")
+LoginUserServerInfoData = require("application.app.net.websocket.luaProtocol.login.loginUserServerInfoData")
 
 -----------------------------------------------------------------------------------
 
 ----------------------------------reigister-------------------------------------------------
-RegisterRequest = require("application.app.net.webscoket.luaProtocol.register.registerRequest")
-RegisterResponse = require("application.app.net.webscoket.luaProtocol.register.registerResponse")
+RegisterRequest = require("application.app.net.websocket.luaProtocol.register.registerRequest")
+RegisterResponse = require("application.app.net.websocket.luaProtocol.register.registerResponse")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------loginTapToStart-------------------------------------------------
-LoginTapToStartRequest = require("application.app.net.webscoket.luaProtocol.loginTapToStart.loginTapToStartRequest")
-LoginTapToStartResponse = require("application.app.net.webscoket.luaProtocol.loginTapToStart.loginTapToStartResponse")
+LoginTapToStartRequest = require("application.app.net.websocket.luaProtocol.loginTapToStart.loginTapToStartRequest")
+LoginTapToStartResponse = require("application.app.net.websocket.luaProtocol.loginTapToStart.loginTapToStartResponse")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------serverConfig-------------------------------------------------
-ServerConfigRequest = require("application.app.net.webscoket.luaProtocol.serverConfig.serverConfigRequest")
-ServerConfigResponse = require("application.app.net.webscoket.luaProtocol.serverConfig.serverConfigResponse")
+ServerConfigRequest = require("application.app.net.websocket.luaProtocol.serverConfig.serverConfigRequest")
+ServerConfigResponse = require("application.app.net.websocket.luaProtocol.serverConfig.serverConfigResponse")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------bag-------------------------------------------------
-ItemBaseData = require("application.app.net.webscoket.luaProtocol.bag.itemBaseData")
-AllBagItemRequest = require("application.app.net.webscoket.luaProtocol.bag.allBagItemRequest")
-AllBagItemResponse = require("application.app.net.webscoket.luaProtocol.bag.allBagItemResponse")
-BagUserItemMsgData = require("application.app.net.webscoket.luaProtocol.bag.bagUserItemMsgData")
+ItemBaseData = require("application.app.net.websocket.luaProtocol.bag.itemBaseData")
+AllBagItemRequest = require("application.app.net.websocket.luaProtocol.bag.allBagItemRequest")
+AllBagItemResponse = require("application.app.net.websocket.luaProtocol.bag.allBagItemResponse")
+BagUserItemMsgData = require("application.app.net.websocket.luaProtocol.bag.bagUserItemMsgData")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------equipment-------------------------------------------------
-EquipmentBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentBaseData")
-EquipmentConfigBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentConfigBaseData")
-EquipmentDesBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentDesBaseData")
+EquipmentBaseData = require("application.app.net.websocket.luaProtocol.euipment.equipmentBaseData")
+EquipmentConfigBaseData = require("application.app.net.websocket.luaProtocol.euipment.equipmentConfigBaseData")
+EquipmentDesBaseData = require("application.app.net.websocket.luaProtocol.euipment.equipmentDesBaseData")
 EquipmentGrowthConfigBaseData = require(
-        "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
+        "application.app.net.websocket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
 EquipmentGrowthViceConfigBaseData = require(
-        "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
+        "application.app.net.websocket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
 EquipmentPrimaryConfigBaseData = require(
-        "application.app.net.webscoket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
+        "application.app.net.websocket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
 -----------------------------------------------------------------------------------------------------------
 
 --------------------------------------------Weapon------------------------------------------------------------
-WeaponPlayerUserDataRequest = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataRequest")
-WeaponPlayerUserDataResponse = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataResponse")
-WeaponPlayerUserDataStruct = require("application.app.net.webscoket.luaProtocol.weapon.weaponPlayerUserDataStruct")
-WeaponsConfigData = require("application.app.net.webscoket.luaProtocol.weapon.weaponsConfigData")
+WeaponPlayerUserDataRequest = require("application.app.net.websocket.luaProtocol.weapon.weaponPlayerUserDataRequest")
+WeaponPlayerUserDataResponse = require("application.app.net.websocket.luaProtocol.weapon.weaponPlayerUserDataResponse")
+WeaponPlayerUserDataStruct = require("application.app.net.websocket.luaProtocol.weapon.weaponPlayerUserDataStruct")
+WeaponsConfigData = require("application.app.net.websocket.luaProtocol.weapon.weaponsConfigData")
 --------------------------------------------end Weapon------------------------------------------------------------
 
 --------------------------------------------playerUser-----------------------------------------------------------
 
-PlayerSceneInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.playerSceneInfoData")
-UserMsgInfoData = require("application.app.net.webscoket.luaProtocol.playerUser.userMsgInfoData")
+PlayerSceneInfoData = require("application.app.net.websocket.luaProtocol.playerUser.playerSceneInfoData")
+UserMsgInfoData = require("application.app.net.websocket.luaProtocol.playerUser.userMsgInfoData")
 
 ------------------------------------------end playerUser----------------------------------------------------------
 
 --------------------------------------------PhysicalPower-----------------------------------------------------------
 
-PhysicalPowerRequest = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerRequest")
-PhysicalPowerResponse = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerResponse")
-PhysicalPowerSecondsResponse = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerSecondsResponse")
+PhysicalPowerRequest = require("application.app.net.websocket.luaProtocol.physicalPower.physicalPowerRequest")
+PhysicalPowerResponse = require("application.app.net.websocket.luaProtocol.physicalPower.physicalPowerResponse")
+PhysicalPowerSecondsResponse = require("application.app.net.websocket.luaProtocol.physicalPower.physicalPowerSecondsResponse")
 
-PhysicalPowerInfoData = require("application.app.net.webscoket.luaProtocol.physicalPower.physicalPowerInfoData")
+PhysicalPowerInfoData = require("application.app.net.websocket.luaProtocol.physicalPower.physicalPowerInfoData")
 
 --------------------------------------------end PhysicalPower-------------------------------------------------------
 
 ------------------------------------------gameMain--------------------------------------------------------------------
 
-GameMainUIPanelRequest = require("application.app.net.webscoket.luaProtocol.gameMain.gameMainUIPanelRequest")
-GameMainUserResourcesResponse = require "application.app.net.webscoket.luaProtocol.gameMain.gameMainUserResourcesResponse"
+GameMainUIPanelRequest = require("application.app.net.websocket.luaProtocol.gameMain.gameMainUIPanelRequest")
+GameMainUserResourcesResponse = require "application.app.net.websocket.luaProtocol.gameMain.gameMainUserResourcesResponse"
 
 ------------------------------------------end gameMain--------------------------------------------------------------------
 
 ------------------------------------------  character  --------------------------------------------------------------------
-CharacterConfigData = require("application.app.net.webscoket.luaProtocol.character.characterConfigData")
-CharacterConfigResponse = require("application.app.net.webscoket.luaProtocol.character.characterConfigResponse")
+CharacterConfigData = require("application.app.net.websocket.luaProtocol.character.characterConfigData")
+CharacterConfigResponse = require("application.app.net.websocket.luaProtocol.character.characterConfigResponse")
 ------------------------------------------end character--------------------------------------------------------------------
 
 
