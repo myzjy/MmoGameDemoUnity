@@ -12,15 +12,13 @@ PacketDispatcher.Event = {
     OnDisConnect = "PacketDispatcher.Event.OnDisConnect"
 }
 
-
-
-
 -------------------------------- start Login   pack 包 --------------------------------------
 LoginNetController = require("application.app.net.webscoket.controller.loginNetController").GetInstance()
 ServerConfigNetController = require("application.app.net.webscoket.controller.serverConfigNetController").GetInstance()
 WeaponNetController = require("application.app.net.webscoket.controller.weaponNetController"):GetInstance()
 BagNetController = require("application.app.net.webscoket.controller.bagNetController"):GetInstance()
 GameMainNetController = require("application.app.net.webscoket.controller.gameMainNetController"):GetInstance()
+CharacterNetController = require("application.app.net.webscoket.controller.characterNetController"):GetInstance()
 -------------------------------- end   Login    pack 包 --------------------------------------
 
 PacketDispatcher.urlString = nil
@@ -62,6 +60,7 @@ function PacketDispatcher:Init()
     self.msgMap[PhysicalPowerResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
     self.msgMap[PhysicalPowerSecondsResponse:protocolId()] = handle(self.OnPhysicalPowerResponse, self)
     self.msgMap[GameMainUserResourcesResponse:protocolId()] = handle(self.OnGameMainUserResourcesResponse, self)
+    self.msgMap[CharacterConfigResponse:protocolId()] = handle(self.OnCharacterConfigResponse, self)
 
     -------------------------------- start Login   pack 包 --------------------------------------
 
@@ -139,5 +138,9 @@ function PacketDispatcher:OnGameMainUserResourcesResponse(packetData)
     ServerConfigNetController:SetUserMsgInfoData(packet.userMsgInfoData)
     GameEvent.UpdateGameMainUserInfoMsg(packet.userMsgInfoData)
 end
-
+function PacketDispatcher:OnCharacterConfigResponse(packetData)
+    local data = CharacterConfigResponse()
+    local packet = data:read(packetData)
+    CharacterNetController:SetCharacterConfigResponse(packet:GetCharacterConfigDataList())
+end
 return PacketDispatcher

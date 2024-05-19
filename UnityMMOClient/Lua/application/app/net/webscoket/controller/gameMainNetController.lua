@@ -6,7 +6,7 @@ end
 ---@type GameMainNetController
 local instance = nil
 
-function GameMainNetController.GetInstance()
+function GameMainNetController:GetInstance()
     if not instance then
         instance = GameMainNetController()
     end

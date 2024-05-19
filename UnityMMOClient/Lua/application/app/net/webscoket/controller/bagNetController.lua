@@ -1,13 +1,13 @@
----@class BagNetContorller
+---@class BagNetController
 local BagNetController = class("BagNetContorller")
----@type BagNetContorller
+---@type BagNetController
 local instance = nil
 function BagNetController:ctor()
     self.msg = {}
 
 end
 
-function BagNetController.GetInstance()
+function BagNetController:GetInstance()
     if not instance then
         instance = BagNetController()
     end

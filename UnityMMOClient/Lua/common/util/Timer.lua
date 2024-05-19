@@ -8,9 +8,8 @@ local UpdateBeat = UpdateBeat
 local CoUpdateBeat = CoUpdateBeat
 local Time = Time
 
-Timer = {}
 
-local Timer = Timer
+Timer = {}
 local mt = { __index = Timer }
 
 --scale false 采用deltaTime计时，true 采用 unscaledDeltaTime计时
@@ -18,8 +17,8 @@ function Timer.New(func, duration, loop, scale)
     scale = scale or false and true
     loop = loop or 1
     return setmetatable(
-        { func = func, duration = duration, time = duration, loop = loop, scale = scale, running = false },
-        mt
+    { func = func, duration = duration, time = duration, loop = loop, scale = scale, running = false },
+    mt
     )
 end
 
@@ -77,12 +76,10 @@ function Timer:Update()
     end
 end
 
---给协同使用的帧计数timer
----@type FrameTimer
-FrameTimer = {}
+
 
 ---@class FrameTimer
-local FrameTimer = FrameTimer
+FrameTimer = {}
 local mt2 = { __index = FrameTimer }
 
 function FrameTimer.New(func, count, loop)
@@ -135,9 +132,9 @@ function FrameTimer:Update()
     end
 end
 
-CoTimer = {}
 
-local CoTimer = CoTimer
+
+CoTimer = {}
 local mt3 = { __index = CoTimer }
 
 function CoTimer.New(func, duration, loop)

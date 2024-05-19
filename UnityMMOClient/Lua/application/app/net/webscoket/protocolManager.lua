@@ -48,11 +48,11 @@ EquipmentBaseData = require("application.app.net.webscoket.luaProtocol.euipment.
 EquipmentConfigBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentConfigBaseData")
 EquipmentDesBaseData = require("application.app.net.webscoket.luaProtocol.euipment.equipmentDesBaseData")
 EquipmentGrowthConfigBaseData = require(
-    "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
+        "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
 EquipmentGrowthViceConfigBaseData = require(
-    "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
+        "application.app.net.webscoket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
 EquipmentPrimaryConfigBaseData = require(
-    "application.app.net.webscoket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
+        "application.app.net.webscoket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
 -----------------------------------------------------------------------------------------------------------
 
 --------------------------------------------Weapon------------------------------------------------------------
@@ -85,6 +85,11 @@ GameMainUIPanelRequest = require("application.app.net.webscoket.luaProtocol.game
 GameMainUserResourcesResponse = require "application.app.net.webscoket.luaProtocol.gameMain.gameMainUserResourcesResponse"
 
 ------------------------------------------end gameMain--------------------------------------------------------------------
+
+------------------------------------------  character  --------------------------------------------------------------------
+CharacterConfigData = require("application.app.net.webscoket.luaProtocol.character.characterConfigData")
+CharacterConfigResponse = require("application.app.net.webscoket.luaProtocol.character.characterConfigResponse")
+------------------------------------------end character--------------------------------------------------------------------
 
 
 -- local protocols = {}
