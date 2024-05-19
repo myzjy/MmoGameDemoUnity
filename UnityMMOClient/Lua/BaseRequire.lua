@@ -49,11 +49,11 @@ require("application.app.common.LuaUtils")
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
 
-NetManager = require("application.app.net.websocket.netManager")
-ByteBuffer = require("application.app.net.websocket.luaProtocol.buffer.byteBuffer")
-Long = require("application.app.net.websocket.luaProtocol.buffer.long")
-ProtocolManager = require("application.app.net.websocket.protocolManager")
-PacketDispatcher = require("application.app.net.websocket.packetDispatcher")
+NetManager = require("application.app.net.webSocket.netManager")
+ByteBuffer = require("application.app.net.webSocket.luaProtocol.buffer.byteBuffer")
+Long = require("application.app.net.webSocket.luaProtocol.buffer.long")
+ProtocolManager = require("application.app.net.webSocket.protocolManager")
+PacketDispatcher = require("application.app.net.webSocket.packetDispatcher")
 
 I18nManager = require("application.app.i18n.I18nManager")
 
