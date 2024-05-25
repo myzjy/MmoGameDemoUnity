@@ -78,6 +78,9 @@ function PacketDispatcher:Init()
     -------------------------------- start bag   pack 包 --------------------------------------
     BagNetController:RegisterEvent()
     -------------------------------- end   bag    pack 包 --------------------------------------
+
+    CharacterNetController:RegisterEvent()
+
 end
 
 function PacketDispatcher:OnLoginResponse(data)

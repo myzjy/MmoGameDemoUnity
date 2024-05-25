@@ -33,7 +33,6 @@ function LoginRequest:write()
         packet = { account = self.account, password = self.password }
     }
     local jsonStr = JSON.encode(message)
-    PrintDebug(jsonStr)
 
     return jsonStr
 end

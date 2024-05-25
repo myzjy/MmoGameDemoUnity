@@ -33,7 +33,6 @@ function LoginNetController:Init()
 end
 
 function LoginNetController:InitEvents()
-    PrintDebug("LoginNetController:InitEvents() line 24")
     GlobalEventSystem:Bind(
         PacketDispatcher.Event.OnConnect,
         function(url)
@@ -95,7 +94,7 @@ function LoginNetController:AtLoginResponse(data)
 end
 
 function LoginNetController:Connect(url)
-    PrintDebug("LoginNetController:Connect(url)line 46" .. url)
+    PrintDebug(url)
 end
 
 function LoginNetController:AtPong(data)

@@ -35,11 +35,10 @@ function CharacterNetController:SetCharacterConfigResponse(characterConfigDataLi
 end
 
 ---  头部 按钮 点击事件回调相关
----@param packet AllBagItemResponse
+---@param packet table<number,CharacterConfigData>
 function CharacterNetController:AtBagHeaderBtnHandlerServer(packet)
-    WeaponNetController:SetWeaponUserEntityList(packet.weaponUserList)
+    WeaponNetController:SetWeaponUserEntityList(packet)
     UIGameEvent.BagHeaderWeaponBtnHandler()
-
 end
 
 return CharacterNetController

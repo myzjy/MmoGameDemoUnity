@@ -30,33 +30,55 @@ CONSOLE_COLOR = {
     Light_White = "#ffffff"
 }
 
-function PrintLog(tag, fmt, ...)
+function PrintLog(tag, script, fmt, ...)
     local t = {
         "[",
         string.upper(lua_tostring(tag)),
         "] ",
+        script,
         format(lua_tostring(fmt), ...)
     }
+
     print(table.concat(t))
 end
 
 function PrintError(fmt, ...)
-    PrintLog("ERR", setLogColor(CONSOLE_COLOR.Light_Red, fmt), ...)
+    local d = ""
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("ERR", d, setLogColor(CONSOLE_COLOR.Light_Red, fmt), ...)
 end
 
 function PrintWarn(fmt, ...)
     if Debug < 1 then
         return
     end
-
-    PrintLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    local d = ""
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("WARN", d, setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
 end
 
 function PrintWarnStack(fmt, ...)
     if Debug < 1 then
         return
     end
-    PrintLog("WARN", setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    local d = ""
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("WARN", d, setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
     print(debug.traceback("", 2))
 end
 
@@ -64,15 +86,28 @@ function PrintInfo(fmt, ...)
     if Debug < 1 then
         return
     end
-
-    PrintLog("INFO", setLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
+    local d = ""
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("INFO", d, setLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
 end
 
 function PrintDebug(fmt, ...)
+    local d = ""
     if Debug < 1 then
         return
     end
-    PrintLog("DBG", setLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("DBG", d, setLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
 end
 
 function setLogColor(nColor, fmt)

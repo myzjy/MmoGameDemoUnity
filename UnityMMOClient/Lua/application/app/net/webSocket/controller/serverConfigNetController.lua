@@ -38,8 +38,6 @@ function ServerConfigNetController:ctor()
     self.playerInfo = {}
     ---@type PhysicalPowerInfoData
     self.physicalPowerInfo = nil;
-    ---@type table<number,WeaponPlayerUserDataStruct>
-    self.weaponUserDataEntityList = {}
 end
 
 function ServerConfigNetController:RegisterEvent()
@@ -112,6 +110,7 @@ function ServerConfigNetController:SetEquipmentConfigBaseDataList(equipmentConfi
         local data = EquipmentConfigBaseData()
         data = data:readData(item)
         self.equipmentConfigBaseDataList[item.quality] = data
+        table.insert()
     end
 end
 
@@ -247,14 +246,5 @@ end
 function ServerConfigNetController:GetPhysicalPowerInfoData()
     return self.physicalPowerInfo;
 end
---- comment
---- @param weaponList table<number, WeaponPlayerUserDataStruct>
-function ServerConfigNetController:SetWeaponUserEntityList(weaponList)
-    self.weaponUserDataEntityList = weaponList
-end
---- comment
---- @return table<number, WeaponPlayerUserDataStruct>
-function ServerConfigNetController:GetWeaponUserEntityList()
-    return self.weaponUserDataEntityList
-end
+
 return ServerConfigNetController

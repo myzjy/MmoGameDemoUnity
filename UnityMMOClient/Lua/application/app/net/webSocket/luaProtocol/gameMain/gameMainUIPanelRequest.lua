@@ -5,7 +5,7 @@ function GameMainUIPanelRequest:ctor()
     ---@type string 打开界面名
     self.panelPath = ""
     ---@type string 内嵌协议号 希望 能返回那些协议
-    self.protocolStr = ""
+    self.protocolStr = string.empty
 end
 
 function GameMainUIPanelRequest:protocolId()

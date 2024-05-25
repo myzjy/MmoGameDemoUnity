@@ -10,13 +10,13 @@ function UserMsgInfoData:ctor()
     self.premiumDiamondNum = 0;
     ---@type number 普通钻石 由付费钻石转换成普通钻石，比例为 1:1
     self.diamondNum = 0;
-    ---@type integer 等级
+    ---@type number 等级
     self.lv = 0;
-    ---@type integer 最大等级
+    ---@type number 最大等级
     self.maxLv = 0;
-    ---@type integer 经验
+    ---@type number 经验
     self.exp = 0;
-    ---@type integer 最大经验
+    ---@type number 最大经验
     self.maxExp = 0;
 end
 
