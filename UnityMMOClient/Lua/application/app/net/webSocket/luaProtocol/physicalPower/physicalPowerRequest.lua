@@ -1,29 +1,48 @@
---- 获取体力
---- @class PhysicalPowerRequest
+---@class PhysicalPowerRequest
 local PhysicalPowerRequest = class("PhysicalPowerRequest")
-
---- 初始化
----@param uid number
-function PhysicalPowerRequest:ctor(uid)
-    ---@type number 玩家UID
-    self.uid = uid
+function PhysicalPowerRequest:ctor()
+    --- 玩家uid传过来，可能会用到
+    ---@type number
+    self.uid = 0
 end
 
---- 协议号
---- @return integer
+---@param uid number 玩家uid传过来，可能会用到
+---@return PhysicalPowerRequest
+function PhysicalPowerRequest:new(uid)
+    self.uid = uid --- long
+    return self
+end
+
+---@return number
 function PhysicalPowerRequest:protocolId()
     return 1023
 end
 
---- 将类的数据 转换成服务器需要结构 json
---- @return string 调用协议
+---@return string
 function PhysicalPowerRequest:write()
     local message = {
         protocolId = self:protocolId(),
-        packet = { uid = self.uid }
+        packet = {
+            uid = self.uid
+        }
     }
     local jsonStr = JSON.encode(message)
     return jsonStr
 end
+
+---@return PhysicalPowerRequest
+function PhysicalPowerRequest:read(data)
+
+    local packet = self:new(
+            data.uid)
+    return packet
+end
+
+--- 玩家uid传过来，可能会用到
+---@return number 玩家uid传过来，可能会用到
+function PhysicalPowerRequest:getUid()
+    return self.uid
+end
+
 
 return PhysicalPowerRequest

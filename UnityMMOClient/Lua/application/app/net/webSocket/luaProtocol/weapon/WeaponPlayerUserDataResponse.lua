@@ -1,38 +1,66 @@
 ---@class WeaponPlayerUserDataResponse
 local WeaponPlayerUserDataResponse = class("WeaponPlayerUserDataResponse")
----@type WeaponPlayerUserDataResponse
-local this = nil
 function WeaponPlayerUserDataResponse:ctor()
-    --赋值
-    this = self
-    self.usePlayerUid = -1                   ---java.lang.long
-    self.weaponPlayerUserDataStructList = {} ---java.util.list<WeaponPlayerUserDataStruct>
+    --- 当前玩家调用查询到的是谁的装备
+    ---@type number
+    self.usePlayerUid = 0
+    --- 玩家武器数据
+    ---@type  table<number,WeaponPlayerUserDataStruct>
+    self.weaponPlayerUserDataStructList = {}
 end
 
+---@param usePlayerUid number 当前玩家调用查询到的是谁的装备
+---@param weaponPlayerUserDataStructList table<number,WeaponPlayerUserDataStruct> 玩家武器数据
+---@return WeaponPlayerUserDataResponse
+function WeaponPlayerUserDataResponse:new(usePlayerUid, weaponPlayerUserDataStructList)
+    self.usePlayerUid = usePlayerUid --- long
+    self.weaponPlayerUserDataStructList = weaponPlayerUserDataStructList --- java.util.List<com.gameServer.common.protocol.weapon.WeaponPlayerUserDataStruct>
+    return self
+end
+
+---@return number
 function WeaponPlayerUserDataResponse:protocolId()
     return 1040
 end
 
----@param usePlayerUid number
----@param weaponPlayerUserDataStructList table<number,WeaponPlayerUserDataStruct>
-function WeaponPlayerUserDataResponse:new(usePlayerUid, weaponPlayerUserDataStructList)
-    self.usePlayerUid = usePlayerUid                                     ---java.lang.long
-    self.weaponPlayerUserDataStructList = weaponPlayerUserDataStructList ---java.util.list<WeaponPlayerUserDataStruct>
-    return self
+---@return string
+function WeaponPlayerUserDataResponse:write()
+    local message = {
+        protocolId = self:protocolId(),
+        packet = {
+            usePlayerUid = self.usePlayerUid,
+            weaponPlayerUserDataStructList = self.weaponPlayerUserDataStructList
+        }
+    }
+    local jsonStr = JSON.encode(message)
+    return jsonStr
 end
 
+---@return WeaponPlayerUserDataResponse
 function WeaponPlayerUserDataResponse:read(data)
-
-    local packet = data
-    self.usePlayerUid = packet.usePlayerUid
-
-    for _index = 1, #packet.weaponPlayerUserDataStructList do
-        local forData = packet.weaponPlayerUserDataStructList[_index]
-        ---获取到自己
-        local packetData = WeaponPlayerUserDataStruct()
-        table.insert(self.weaponPlayerUserDataStructList, packetData:readData(forData))
+    local weaponPlayerUserDataStructList = {}
+    for index, value in ipairs(data.weaponPlayerUserDataStructList) do
+        local weaponPlayerUserDataStructListPacket = WeaponPlayerUserDataStruct()
+        local packetData = weaponPlayerUserDataStructListPacket:read(value)
+        table.insert(weaponPlayerUserDataStructList,packetData)
     end
-    return self
+
+    local packet = self:new(
+            data.usePlayerUid,
+            weaponPlayerUserDataStructList)
+    return packet
 end
+
+--- 当前玩家调用查询到的是谁的装备
+---@return number 当前玩家调用查询到的是谁的装备
+function WeaponPlayerUserDataResponse:getUsePlayerUid()
+    return self.usePlayerUid
+end
+--- 玩家武器数据
+---@type  table<number,WeaponPlayerUserDataStruct> 玩家武器数据
+function WeaponPlayerUserDataResponse:getWeaponPlayerUserDataStructList()
+    return self.weaponPlayerUserDataStructList
+end
+
 
 return WeaponPlayerUserDataResponse

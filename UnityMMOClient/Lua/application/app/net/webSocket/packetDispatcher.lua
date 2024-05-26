@@ -144,6 +144,6 @@ end
 function PacketDispatcher:OnCharacterConfigResponse(packetData)
     local data = CharacterConfigResponse()
     local packet = data:read(packetData)
-    CharacterNetController:SetCharacterConfigResponse(packet:GetCharacterConfigDataList())
+    CharacterNetController:SetCharacterConfigResponse(packet:getCharacterConfigDataList())
 end
 return PacketDispatcher

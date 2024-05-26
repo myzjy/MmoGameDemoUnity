@@ -27,8 +27,8 @@ RegisterResponse = require("application.app.net.webSocket.luaProtocol.register.r
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------loginTapToStart-------------------------------------------------
-LoginTapToStartRequest = require("application.app.net.webSocket.luaProtocol.loginTapToStart.loginTapToStartRequest")
-LoginTapToStartResponse = require("application.app.net.webSocket.luaProtocol.loginTapToStart.loginTapToStartResponse")
+LoginTapToStartRequest = require("application.app.net.webSocket.luaProtocol.login.loginTapToStartRequest")
+LoginTapToStartResponse = require("application.app.net.webSocket.luaProtocol.login.loginTapToStartResponse")
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------serverConfig-------------------------------------------------
@@ -44,20 +44,31 @@ BagUserItemMsgData = require("application.app.net.webSocket.luaProtocol.bag.bagU
 -----------------------------------------------------------------------------------------------------------
 
 ----------------------------------equipment-------------------------------------------------
-EquipmentBaseData = require("application.app.net.webSocket.luaProtocol.euipment.equipmentBaseData")
-EquipmentConfigBaseData = require("application.app.net.webSocket.luaProtocol.euipment.equipmentConfigBaseData")
-EquipmentDesBaseData = require("application.app.net.webSocket.luaProtocol.euipment.equipmentDesBaseData")
+EquipmentAllDataRequest = require("application.app.net.webSocket.luaProtocol.equipment.equipmentAllDataRequest")
+EquipmentAllDataResponse = require("application.app.net.webSocket.luaProtocol.equipment.equipmentAllDataResponse")
+EquipmentData = require("application.app.net.webSocket.luaProtocol.equipment.equipmentData")
+EquipmentGlossaryData = require("application.app.net.webSocket.luaProtocol.equipment.equipmentGlossaryData")
+
+
+EquipmentBaseData = require("application.app.net.webSocket.luaProtocol.equipment.Base.equipmentBaseData")
+EquipmentConfigBaseData = require("application.app.net.webSocket.luaProtocol.equipment.Base.equipmentConfigBaseData")
+EquipmentDesBaseData = require("application.app.net.webSocket.luaProtocol.equipment.Base.equipmentDesBaseData")
 EquipmentGrowthConfigBaseData = require(
-        "application.app.net.webSocket.luaProtocol.euipment.equipmentGrowthConfigBaseData")
+        "application.app.net.webSocket.luaProtocol.equipment.Base.equipmentGrowthConfigBaseData")
 EquipmentGrowthViceConfigBaseData = require(
-        "application.app.net.webSocket.luaProtocol.euipment.equipmentGrowthViceConfigBaseData")
+        "application.app.net.webSocket.luaProtocol.equipment.Base.equipmentGrowthViceConfigBaseData")
 EquipmentPrimaryConfigBaseData = require(
-        "application.app.net.webSocket.luaProtocol.euipment.equipmentPrimaryConfigBaseData")
+        "application.app.net.webSocket.luaProtocol.equipment.Base.equipmentPrimaryConfigBaseData")
+
 -----------------------------------------------------------------------------------------------------------
 
 --------------------------------------------Weapon------------------------------------------------------------
 WeaponPlayerUserDataRequest = require("application.app.net.webSocket.luaProtocol.weapon.weaponPlayerUserDataRequest")
 WeaponPlayerUserDataResponse = require("application.app.net.webSocket.luaProtocol.weapon.weaponPlayerUserDataResponse")
+
+WeaponPlayerBagDataRequest = require("application.app.net.webSocket.luaProtocol.weapon.weaponPlayerBagDataRequest")
+WeaponPlayerBagDataResponse = require("application.app.net.webSocket.luaProtocol.weapon.weaponPlayerBagDataResponse")
+
 WeaponPlayerUserDataStruct = require("application.app.net.webSocket.luaProtocol.weapon.weaponPlayerUserDataStruct")
 WeaponsConfigData = require("application.app.net.webSocket.luaProtocol.weapon.weaponsConfigData")
 --------------------------------------------end Weapon------------------------------------------------------------
@@ -83,15 +94,35 @@ PhysicalPowerInfoData = require("application.app.net.webSocket.luaProtocol.physi
 
 GameMainUIPanelRequest = require("application.app.net.webSocket.luaProtocol.gameMain.gameMainUIPanelRequest")
 GameMainUserResourcesResponse = require "application.app.net.webSocket.luaProtocol.gameMain.gameMainUserResourcesResponse"
+OpenGameMainUIPanelRequest=require("application.app.net.webSocket.luaProtocol.gameMain.openGameMainUIPanelRequest")
+GetGameMainCharacterAllRequest=require("application.app.net.webSocket.luaProtocol.gameMain.getGameMainCharacterAllRequest")
+GetGameMainCharacterAllResponse=require("application.app.net.webSocket.luaProtocol.gameMain.getGameMainCharacterAllResponse")
 
 ------------------------------------------end gameMain--------------------------------------------------------------------
 
 ------------------------------------------  character  --------------------------------------------------------------------
+
+AcquireCharacterRequest = require("application.app.net.webSocket.luaProtocol.character.acquireCharacterRequest")
+AcquireCharacterResponse = require("application.app.net.webSocket.luaProtocol.character.acquireCharacterResponse")
+CharacterBaseData = require("application.app.net.webSocket.luaProtocol.character.characterBaseData")
+CharacterEquipmentIDData = require("application.app.net.webSocket.luaProtocol.character.characterEquipmentIDData")
+CharacterWeaponIDData = require("application.app.net.webSocket.luaProtocol.character.characterWeaponIDData")
+CreateCharacterRequest = require("application.app.net.webSocket.luaProtocol.character.createCharacterRequest")
+CreateCharacterResponse = require("application.app.net.webSocket.luaProtocol.character.createCharacterResponse")
+GameMainTeamCharacterIDData = require("application.app.net.webSocket.luaProtocol.character.gameMainTeamCharacterIDData")
 CharacterConfigData = require("application.app.net.webSocket.luaProtocol.character.characterConfigData")
 CharacterConfigResponse = require("application.app.net.webSocket.luaProtocol.character.characterConfigResponse")
+
 ------------------------------------------end character--------------------------------------------------------------------
 
+------------------------------------------  user  --------------------------------------------------------------------
+GameMainUserInfoToRequest = require("application.app.net.webSocket.luaProtocol.user.gameMainUserInfoToRequest")
+GameMainUserInfoToResponse = require("application.app.net.webSocket.luaProtocol.user.gameMainUserInfoToResponse")
+------------------------------------------end user--------------------------------------------------------------------
 
+------------------------------------------  resource  --------------------------------------------------------------------
+GameMainUserResourcesResponse = require("application.app.net.webSocket.luaProtocol.resources.gameMainUserResourcesResponse")
+------------------------------------------end user--------------------------------------------------------------------
 -- local protocols = {}
 
 local ProtocolManager = {}
@@ -106,65 +137,8 @@ function table.mapSize(map)
     return size
 end
 
--- ---@param protocolId any
--- ---@return any
--- function ProtocolManager.getProtocol(protocolId)
---     local protocol = protocols[protocolId]
---     if protocol == nil then
---         PrintError("[protocolId:" .. protocolId .. "]协议不存在")
---     end
---     return protocol
--- end
-
--- function ProtocolManager.write(buffer, packet)
---     local protocolId = packet:protocolId()
---     -- 写入包体
---     ProtocolManager.getProtocol(protocolId):write(buffer, packet)
--- end
-
--- ---读取
--- ---@param buffer ByteBuffer 字节读取器
--- function ProtocolManager:read(buffer)
---     local jsonString = buffer:readString()
---     local jsonData = JSON.decode(jsonString);
---     ---获取对应id
---     local protocolId = jsonData.protocolId
---     local protocol = protocols[protocolId]
---     if protocol == NULL then
---         return nil
---     end
---     local packetData = protocol();
---     --- 返回对应的结构
---     packetData = packetData:read(jsonData)
---     return packetData
--- end
-
 function ProtocolManager.initProtocolManager()
-    -- protocols[101] = Error
-    -- protocols[104] = Pong
 
-    -- protocols[1000] = LoginRequest
-    -- protocols[1001] = LoginResponse
-
-    -- protocols[RegisterRequest:protocolId()] = RegisterRequest
-    -- protocols[RegisterResponse:protocolId()] = RegisterResponse
-
-    -- protocols[LoginTapToStartRequest:protocolId()] = LoginTapToStartRequest
-    -- protocols[LoginTapToStartResponse:protocolId()] = LoginTapToStartResponse
-
-    -- protocols[ServerConfigRequest:protocolId()] = ServerConfigRequest
-    -- protocols[ServerConfigResponse:protocolId()] = ServerConfigResponse
-
-    -- protocols[ItemBaseData:protocolId()] = ItemBaseData
-
-    -- protocols[EquipmentBaseData:protocolId()] = EquipmentBaseData
-    -- protocols[EquipmentConfigBaseData:protocolId()] = EquipmentConfigBaseData
-    -- protocols[EquipmentDesBaseData:protocolId()] = EquipmentDesBaseData
-    -- protocols[EquipmentGrowthConfigBaseData:protocolId()] = EquipmentGrowthConfigBaseData
-    -- protocols[EquipmentGrowthViceConfigBaseData:protocolId()] = EquipmentGrowthViceConfigBaseData
-    -- protocols[EquipmentPrimaryConfigBaseData:protocolId()] = EquipmentPrimaryConfigBaseData
-
-    -- protocols[WeaponsConfigData:protocolId()] = WeaponsConfigData
 end
 
 return ProtocolManager

@@ -31,8 +31,8 @@ else
 end
 local inspect = require "common/inspect"
 
-function dump( t )
-	print( inspect(t) );
+function dump(t)
+    print(inspect(t));
 end
 function SyncSubmit(eventString)
     if Debug > 0 then

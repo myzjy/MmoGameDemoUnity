@@ -1,40 +1,50 @@
---- 体力 response
 ---@class PhysicalPowerSecondsResponse
 local PhysicalPowerSecondsResponse = class("PhysicalPowerSecondsResponse")
---- 初始化
 function PhysicalPowerSecondsResponse:ctor()
-    ---@type PhysicalPowerInfoData 体力数据 包起来
-    self.physicalPowerInfoData = nil;
+    --- 数据体力
+    ---@type PhysicalPowerInfoData
+    self.physicalPowerInfoData = {}
 end
 
---- 协议号
---- @return integer
+---@param physicalPowerInfoData PhysicalPowerInfoData 数据体力
+---@return PhysicalPowerSecondsResponse
+function PhysicalPowerSecondsResponse:new(physicalPowerInfoData)
+    self.physicalPowerInfoData = physicalPowerInfoData --- com.gameServer.common.protocol.physicalPower.PhysicalPowerInfoData
+    return self
+end
+
+---@return number
 function PhysicalPowerSecondsResponse:protocolId()
     return 1030
 end
 
---- 赋值
---- @param physicalPowerInfoData PhysicalPowerInfoData
---- @return PhysicalPowerSecondsResponse
-function PhysicalPowerSecondsResponse:new(physicalPowerInfoData)
-    self.physicalPowerInfoData = physicalPowerInfoData
-    return self
+---@return string
+function PhysicalPowerSecondsResponse:write()
+    local message = {
+        protocolId = self:protocolId(),
+        packet = {
+            physicalPowerInfoData = self.physicalPowerInfoData
+        }
+    }
+    local jsonStr = JSON.encode(message)
+    return jsonStr
 end
 
---- comment
---- @return PhysicalPowerInfoData
+---@return PhysicalPowerSecondsResponse
+function PhysicalPowerSecondsResponse:read(data)
+    local physicalPowerInfoDataPacket = PhysicalPowerInfoData()
+    local physicalPowerInfoData = physicalPowerInfoDataPacket:read(data.physicalPowerInfoData)
+
+    local packet = self:new(
+            physicalPowerInfoData)
+    return packet
+end
+
+--- 数据体力
+---@return PhysicalPowerInfoData 数据体力
 function PhysicalPowerSecondsResponse:getPhysicalPowerInfoData()
     return self.physicalPowerInfoData
 end
 
---- 读取值 返回
-
-function PhysicalPowerSecondsResponse:read(data)
-    ---@type PhysicalPowerInfoData
-    local physicalPowerInfo = PhysicalPowerInfoData()
-    local physicalPowerInfoData = physicalPowerInfo:read(data.physicalPowerInfoData)
-    local pakcet = self:new(physicalPowerInfoData)
-    return pakcet
-end
 
 return PhysicalPowerSecondsResponse

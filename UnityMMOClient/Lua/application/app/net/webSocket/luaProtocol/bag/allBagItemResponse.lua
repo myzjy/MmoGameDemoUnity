@@ -1,35 +1,67 @@
----``` lua
---- weaponUserList ---- 武器 数据
---- ctor()         ----初始 初始化 内部需要用到相关 值
---- protocolId()   ---- 协议id
---- red(data)          ---- 传递过来的 data 数据 赋值具体字段
----```
 ---@class AllBagItemResponse
 local AllBagItemResponse = class("AllBagItemResponse")
-
 function AllBagItemResponse:ctor()
-    ---@type table<number,WeaponPlayerUserDataStruct>
-    self.weaponUserList = {}
-    ---@type string 额外协议号
+    --- 返回协议号
+    ---@type string
     self.protocolStr = string.empty
+    --- 武器
+    ---@type  table<number,WeaponPlayerUserDataStruct>
+    self.weaponUserList = {}
 end
 
+---@param protocolStr string 返回协议号
+---@param weaponUserList table<number,WeaponPlayerUserDataStruct> 武器
+---@return AllBagItemResponse
+function AllBagItemResponse:new(protocolStr, weaponUserList)
+    self.protocolStr = protocolStr --- java.lang.String
+    self.weaponUserList = weaponUserList --- java.util.List<com.gameServer.common.protocol.weapon.WeaponPlayerUserDataStruct>
+    return self
+end
+
+---@return number
 function AllBagItemResponse:protocolId()
     return 1008
 end
---- 读取数据创建 response
---- @param data any
---- @return AllBagItemResponse
-function AllBagItemResponse:read(data)
-    local packet = data
-    self.protocolStr = packet.protocolStr
-    for _index = 1, #packet.weaponUserList do
-        local forData = packet.weaponUserList[_index]
-        ---获取到自己
-        local packetData = WeaponPlayerUserDataStruct()
-        table.insert(self.weaponUserList, packetData:readData(forData))
-    end
-    return self
+
+---@return string
+function AllBagItemResponse:write()
+    local message = {
+        protocolId = self:protocolId(),
+        packet = {
+            protocolStr = self.protocolStr,
+            weaponUserList = self.weaponUserList
+        }
+    }
+    local jsonStr = JSON.encode(message)
+    return jsonStr
 end
+
+---@return AllBagItemResponse
+function AllBagItemResponse:read(data)
+    local weaponUserList = {}
+    for index, value in ipairs(data.weaponUserList) do
+        local weaponUserListPacket = WeaponPlayerUserDataStruct()
+        local packetData = weaponUserListPacket:read(value)
+        table.insert(weaponUserList,packetData)
+    end
+
+    local packet = self:new(
+            data.protocolStr,
+            weaponUserList)
+    return packet
+end
+
+--- 返回协议号
+---@type  string 返回协议号
+function AllBagItemResponse:getProtocolStr()
+    return self.protocolStr
+end
+
+--- 武器
+---@type  table<number,WeaponPlayerUserDataStruct> 武器
+function AllBagItemResponse:getWeaponUserList()
+    return self.weaponUserList
+end
+
 
 return AllBagItemResponse
