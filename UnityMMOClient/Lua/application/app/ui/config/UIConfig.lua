@@ -41,6 +41,13 @@ UIEventConfig = {
         canvasType = UIConfig.UICanvasType.UI,
         sortType = UIConfig.UISortType.First,
         scriptPath = "application/app/ui/gameMain/gameMainView"
+    },
+    CharacterUIConfig = {
+        name = "CharacterUIPanel",
+        prefabName = "CharacterUIPanel",
+        canvasType = UIConfig.UICanvasType.UI,
+        sortType = UIConfig.UISortType.First,
+        scriptPath = "application/app/ui/character/characterUIView"
     }
 }
 UIConfig.BagHeaderBtnConfig = {

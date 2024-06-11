@@ -1,5 +1,5 @@
 ---@class GameMainView:UIView
-local GameMainView = class("GameMainView", UIView())
+local GameMainView = class("GameMainView", UIView)
 GameMainConfig = {
     --- 当前 UI 交互事件 消息
     eventNotification = {

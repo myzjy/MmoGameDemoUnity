@@ -40,16 +40,17 @@ end
 ---@param weaponSkills number 武器技能
 ---@param weaponType number 武器类型
 ---@return WeaponsConfigData
-function WeaponsConfigData:new(iconResource, id, maxLv, weaponBreakthrough, weaponInitProgress, weaponInitValue, weaponName, weaponSkills, weaponType)
-    self.iconResource = iconResource --- java.lang.String
-    self.id = id --- int
-    self.maxLv = maxLv --- int
+function WeaponsConfigData:new(iconResource, id, maxLv, weaponBreakthrough, weaponInitProgress, weaponInitValue,
+                               weaponName, weaponSkills, weaponType)
+    self.iconResource = iconResource             --- java.lang.String
+    self.id = id                                 --- int
+    self.maxLv = maxLv                           --- int
     self.weaponBreakthrough = weaponBreakthrough --- java.lang.String
     self.weaponInitProgress = weaponInitProgress --- java.lang.String
-    self.weaponInitValue = weaponInitValue --- java.lang.String
-    self.weaponName = weaponName --- java.lang.String
-    self.weaponSkills = weaponSkills --- int
-    self.weaponType = weaponType --- int
+    self.weaponInitValue = weaponInitValue       --- java.lang.String
+    self.weaponName = weaponName                 --- java.lang.String
+    self.weaponSkills = weaponSkills             --- int
+    self.weaponType = weaponType                 --- int
     return self
 end
 
@@ -80,17 +81,16 @@ end
 
 ---@return WeaponsConfigData
 function WeaponsConfigData:read(data)
-
     local packet = self:new(
-            data.iconResource,
-            data.id,
-            data.maxLv,
-            data.weaponBreakthrough,
-            data.weaponInitProgress,
-            data.weaponInitValue,
-            data.weaponName,
-            data.weaponSkills,
-            data.weaponType)
+        data.iconResource,
+        data.id,
+        data.maxLv,
+        data.weaponBreakthrough,
+        data.weaponInitProgress,
+        data.weaponInitValue,
+        data.weaponName,
+        data.weaponSkills,
+        data.weaponType)
     return packet
 end
 
@@ -105,11 +105,13 @@ end
 function WeaponsConfigData:getId()
     return self.id
 end
+
 --- 当前武器等级最大值
 ---@return number 当前武器等级最大值
 function WeaponsConfigData:getMaxLv()
     return self.maxLv
 end
+
 --- 武器升级到特定等21级会突破在之后会加数值
 ---@type  string 武器升级到特定等21级会突破在之后会加数值
 function WeaponsConfigData:getWeaponBreakthrough()
@@ -139,11 +141,11 @@ end
 function WeaponsConfigData:getWeaponSkills()
     return self.weaponSkills
 end
+
 --- 武器类型
 ---@return number 武器类型
 function WeaponsConfigData:getWeaponType()
     return self.weaponType
 end
-
 
 return WeaponsConfigData

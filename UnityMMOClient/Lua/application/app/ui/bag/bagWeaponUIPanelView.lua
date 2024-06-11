@@ -38,7 +38,6 @@ end
 function BagWeaponUIPanelView:CreateItemList(weaponItemList, atlasData)
     if Debug > 0 then
         PrintDebug("创建武器")
-        dump(weaponItemList)
     end
     self.weaponInfo = weaponItemList
     local list = self.weaponInfo
@@ -60,7 +59,6 @@ end
 function BagWeaponUIPanelView:RefreshUIPanel(weaponData)
     if Debug > 0 then
         PrintDebug("添加或者删除武器")
-        dump(weaponData)
     end
     for _, v in pairs(weaponData) do
         local item = v
