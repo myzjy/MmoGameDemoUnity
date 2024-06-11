@@ -65,7 +65,7 @@ namespace ZJYFrameWork.SkillEditor
                 {
                     ScriptableObjectCreator.ShowDialog<SkillData>("Assets/Game/AssetBundles/ScriptableObject/SkillMsgData", obj =>
                     {
-                        obj.skillDataName = obj.name;
+                        obj.skillName = obj.name;
                         base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
                     });
                 }
