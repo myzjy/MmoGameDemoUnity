@@ -6,6 +6,7 @@ using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
 using ZJYFrameWork.BattleFramework.BattleScriptObject.SkillsDataFramework;
+using ZJYFrameWorkEditor.DataScriptableObject.DataTableScript;
 
 namespace ZJYFrameWork.SkillEditor
 {
@@ -66,6 +67,14 @@ namespace ZJYFrameWork.SkillEditor
                     ScriptableObjectCreator.ShowDialog<SkillData>("Assets/Game/AssetBundles/ScriptableObject/SkillMsgData", obj =>
                     {
                         obj.skillName = obj.name;
+                        base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
+                    });
+                }
+
+                if (SirenixEditorGUI.ToolbarButton(new GUIContent("Create CSTemp")))
+                {
+                    ScriptableObjectCreator.ShowDialog<CreateDataTablesTempCS>("Assets/Game/AssetBundles/ScriptableObject/Temps", obj =>
+                    {
                         base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
                     });
                 }
