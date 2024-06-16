@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -8,7 +9,10 @@ namespace ZJYFrameWork.BattleFramework.BattleScriptObject.SkillsDataFramework
     [System.Serializable]
     public class CreateDataTablesTempCS : SerializedScriptableObject
     {
+        [HideLabel,]
+        public string filesName = String.Empty;
+
         [DictionaryDrawerSettings]
-        public List<CreateDataTableListDataTemp> CreateDataTableListData=new List<CreateDataTableListDataTemp>();
+        public List<CreateDataTableListDataTemp> CreateDataTableListData = new List<CreateDataTableListDataTemp>();
     }
 }

@@ -11,5 +11,10 @@ function GameBattleFightManager:UpdateTick()
     
 end
 
+--- 战斗结束
+function GameBattleFightManager:ExitFight()
+    
+end
+
 
 return GameBattleFightManager
