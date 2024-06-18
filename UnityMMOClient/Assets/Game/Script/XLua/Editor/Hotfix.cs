@@ -1718,11 +1718,11 @@ namespace XLua
             }
 
             var assembly_csharp_path = Path.Combine(assemblyDir, "Assembly-CSharp.dll");
-            Debug.Log($"assembly_csharp_path:{assembly_csharp_path}");
+            FrostEngine.Debug.Log($"assembly_csharp_path:{assembly_csharp_path}");
             var id_map_file_path = CSObjectWrapEditor.GeneratorConfig.common_path + "Resources/hotfix_id_map.lua.txt";
-            Debug.Log($"id_map_file_path:{id_map_file_path}");
+            FrostEngine.Debug.Log($"id_map_file_path:{id_map_file_path}");
             var hotfix_cfg_in_editor = CSObjectWrapEditor.GeneratorConfig.common_path + "hotfix_cfg_in_editor.data";
-            Debug.Log($"hotfix_cfg_in_editor:{hotfix_cfg_in_editor}");
+            FrostEngine.Debug.Log($"hotfix_cfg_in_editor:{hotfix_cfg_in_editor}");
 
             Dictionary<string, int> editor_cfg = new Dictionary<string, int>();
             Assembly editor_assembly = typeof(Hotfix).Assembly;

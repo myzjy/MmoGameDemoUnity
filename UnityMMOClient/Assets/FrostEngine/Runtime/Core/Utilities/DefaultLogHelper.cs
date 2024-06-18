@@ -150,16 +150,16 @@ namespace FrostEngine
             {
                 case ELogLevel.Info:
                 case ELogLevel.Debug:
-                    Debug.Log(logStr);
+                    UnityEngine.Debug.Log(logStr);
                     break;
                 case ELogLevel.Warning:
-                    Debug.LogWarning(logStr);
+                    UnityEngine.Debug.LogWarning(logStr);
                     break;
                 case ELogLevel.Assert:
-                    Debug.LogAssertion(logStr);
+                    UnityEngine.Debug.LogAssertion(logStr);
                     break;
                 case ELogLevel.Error:
-                    Debug.LogError(logStr);
+                    UnityEngine.Debug.LogError(logStr);
                     break;
                 case ELogLevel.Exception:
                     throw new Exception(logStr);

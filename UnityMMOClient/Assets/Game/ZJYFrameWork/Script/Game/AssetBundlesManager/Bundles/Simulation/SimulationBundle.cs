@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FrostEngine;
 using UnityEditor;
 using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
 using ZJYFrameWork.Asynchronous;

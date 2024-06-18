@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FrostEngine;
 using UnityEngine;
 using ZJYFrameWork.AssetBundles.TypeExtensions;
 
@@ -35,7 +36,7 @@ using System.Threading;
 #endif
 
 using ZJYFrameWork.Asynchronous;
-using ZJYFrameWork.Log;
+using Debug = FrostEngine.Debug;
 
 namespace ZJYFrameWork.Execution
 {
@@ -271,7 +272,7 @@ namespace ZJYFrameWork.Execution
                     if (promise != null)
                         promise.SetException(e);
 
-                    Debug.LogError(e);
+                    UnityEngine.Debug.LogError(e);
                 });
                 enumerator.RegisterFinallyBlock(() =>
                 {

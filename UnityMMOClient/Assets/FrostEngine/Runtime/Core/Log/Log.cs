@@ -3,7 +3,7 @@ using ZJYFrameWork.Spring.Utils;
 
 namespace FrostEngine
 {
-    public class FrostLog
+    public class Debug
 
     {
         /// <summary>
@@ -14,7 +14,7 @@ namespace FrostEngine
         [Conditional("ENABLE_LOG")]
         [Conditional("ENABLE_DEBUG_LOG")]
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
-        public static void Debug(object message)
+        public static void Log(object message)
         {
             GameFrameworkLog.Debug(message);
         }
@@ -27,7 +27,7 @@ namespace FrostEngine
         [Conditional("ENABLE_LOG")]
         [Conditional("ENABLE_DEBUG_LOG")]
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
-        public static void Debug(string message)
+        public static void Log(string message)
         {
             GameFrameworkLog.Debug(message);
         }
@@ -42,7 +42,7 @@ namespace FrostEngine
         [Conditional("ENABLE_LOG")]
         [Conditional("ENABLE_DEBUG_LOG")]
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
-        public static void Debug(string format, object[] arg)
+        public static void Log(string format, params object[] arg)
         {
             GameFrameworkLog.Debug(format, arg);
         }
@@ -101,7 +101,7 @@ namespace FrostEngine
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
-        public static void Warning(object message)
+        public static void LogWarning(object message)
         {
             GameFrameworkLog.Warning(message);
         }
@@ -116,7 +116,7 @@ namespace FrostEngine
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
-        public static void Warning(string message)
+        public static void LogWarning(string message)
         {
             GameFrameworkLog.Warning(message);
         }
@@ -133,7 +133,7 @@ namespace FrostEngine
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
-        public static void Warning(string format,params object[] arg)
+        public static void LogWarning(string format,params object[] arg)
         {
             GameFrameworkLog.Warning(format, arg);
         }
@@ -150,7 +150,7 @@ namespace FrostEngine
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
-        public static void Error(object message)
+        public static void LogError(object message)
         {
             GameFrameworkLog.Error(message);
         }
@@ -166,7 +166,7 @@ namespace FrostEngine
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
-        public static void Error(string message)
+        public static void LogError(string message)
         {
             GameFrameworkLog.Error(message);
         }
@@ -184,7 +184,7 @@ namespace FrostEngine
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
-        public static void Error(string format,params object[] arg)
+        public static void LogError(string format,params object[] arg)
         {
             GameFrameworkLog.Error(format, arg);
         }

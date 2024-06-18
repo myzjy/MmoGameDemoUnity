@@ -1,4 +1,16 @@
 {
-	"name": "FrostEngine.Runtime",
-	"references":[ "GUID:01cc6f49cd8e7fe459cf336d67caef0a" ]
+    "name": "FrostEngine.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:01cc6f49cd8e7fe459cf336d67caef0a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

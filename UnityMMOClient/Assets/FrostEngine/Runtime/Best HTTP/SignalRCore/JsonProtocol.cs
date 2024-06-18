@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.SignalRCore.Messages;
+using FrostEngine;
 #if NETFX_CORE || NET_4_6
 #endif
 

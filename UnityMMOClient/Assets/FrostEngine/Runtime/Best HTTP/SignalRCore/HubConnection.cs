@@ -1,5 +1,9 @@
 #if !BESTHTTP_DISABLE_SIGNALR_CORE
 
+
+using FrostEngine;
+using UnityEngine;
+using Debug = FrostEngine.Debug;
 #if CSHARP_7_OR_LATER
 using System;
 using System.Collections.Concurrent;

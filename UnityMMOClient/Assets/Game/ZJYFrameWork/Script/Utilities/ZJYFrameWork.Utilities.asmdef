@@ -2,7 +2,8 @@
   "name": "ZJYFrameWork.Utilities",
   "rootNamespace": "",
   "references": [
-    "GUID:d50e89131eca26a469b0dd3b3c3304ae"
+    "GUID:d50e89131eca26a469b0dd3b3c3304ae",
+    "GUID:b944f58b249776c49b8bab0e90abfd74"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

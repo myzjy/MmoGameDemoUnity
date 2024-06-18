@@ -23,6 +23,7 @@
  */
 
 using System;
+using FrostEngine;
 
 
 namespace ZJYFrameWork.Asynchronous
@@ -371,7 +372,7 @@ namespace ZJYFrameWork.Asynchronous
                         // }
                         // catch (Exception e)
                         // {
-                        //     Debug.LogError($"Class[{GetType()}] callback exception.Error:{e}");
+                        //     FrostLog.LogError($"Class[{GetType()}] callback exception.Error:{e}");
                         // }
                     }
                 }
@@ -405,13 +406,13 @@ namespace ZJYFrameWork.Asynchronous
                     // }
                     // catch (Exception e)
                     // {
-                    //     Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                    //     FrostLog.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
                     // }
                 }
                 // }
                 // catch (Exception e)
                 // {
-                // Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                // FrostLog.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
                 // }
             }
         }
@@ -431,7 +432,7 @@ namespace ZJYFrameWork.Asynchronous
                     // }
                     // catch (Exception e)
                     // {
-                    //     Debug.LogError($"Class[{GetType()}] callback exception.Error:{e}");
+                    //     FrostLog.LogError($"Class[{GetType()}] callback exception.Error:{e}");
                     // }
                     return;
                 }
@@ -451,13 +452,13 @@ namespace ZJYFrameWork.Asynchronous
                 {
                     // try
                     // {
-                    // Debug.Log(this.result.Progress);
-                    // Debug.Log(this.result);
+                    // FrostLog.Log(this.result.Progress);
+                    // FrostLog.Log(this.result);
                     callBack(this.result.Progress);
                     // }
                     // catch (Exception e)
                     // {
-                    //     Debug.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
+                    //     FrostLog.LogError($"Class[{GetType()}] progress callback exception.Error:{e}");
                     // }
                     return;
                 }

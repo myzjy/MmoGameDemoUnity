@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
+ using FrostEngine;
 using UnityEditor;
 using UnityEngine;
-using ZJYFrameWork.Base;
 using ZJYFrameWork.Base.Component;
-using ZJYFrameWork.Log;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.Editors.Inspector
@@ -185,7 +184,7 @@ namespace ZJYFrameWork.Editors.Inspector
                 NoneOptionName
             };
             //
-            logHelperTypeNameList.AddRange(AssemblyUtils.GetAllSubClassNames(typeof(ILogFactory)));
+            logHelperTypeNameList.AddRange(AssemblyUtils.GetAllSubClassNames(typeof(GameFrameworkLog.ILogHelper)));
             logHelperTypeNames = logHelperTypeNameList.ToArray();
             logHelperTypeNameIndex = 0;
             if (!string.IsNullOrEmpty(logHelperTypeName.stringValue))

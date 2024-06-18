@@ -25,16 +25,19 @@
 using System;
 using System.Threading;
 using System.Collections;
+using FrostEngine;
+using UnityEngine;
 
 #if NETFX_CORE
 using System.Threading.Tasks;
 #endif
 
 using ZJYFrameWork.Execution;
+using Debug = FrostEngine.Debug;
 
 namespace ZJYFrameWork.Asynchronous
 {
-    public class ProgressTask<TProgress> : IProgressTask<TProgress>
+    public class AsyncTask : IAsyncTask
     {
         private Action action;
 
@@ -44,9 +47,6 @@ namespace ZJYFrameWork.Asynchronous
         private Action postCallbackOnMainThread;
         private Action postCallbackOnWorkerThread;
 
-        private Action<TProgress> progressCallbackOnMainThread;
-        private Action<TProgress> progressCallbackOnWorkerThread;
-
         private Action<Exception> errorCallbackOnMainThread;
         private Action<Exception> errorCallbackOnWorkerThread;
 
@@ -54,28 +54,54 @@ namespace ZJYFrameWork.Asynchronous
         private Action finishCallbackOnWorkerThread;
 
         private int running = 0;
-        private ProgressResult<TProgress> result;
+        private AsyncResult result;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="runOnMainThread"></param>
+        public AsyncTask(Action task, bool runOnMainThread = false)
+        {
+            if (task == null)
+                throw new ArgumentNullException("task");
+
+            this.result = new AsyncResult();
+            if (runOnMainThread)
+            {
+                this.action = WrapAction(() =>
+                {
+                    Executors.RunOnMainThread(task, true);
+                    this.result.SetResult();
+                });
+            }
+            else
+            {
+                this.action = WrapAction(() =>
+                {
+                    task();
+                    this.result.SetResult();
+                });
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        /// <param name="cancelable"></param>
-        public ProgressTask(Action<IProgressPromise<TProgress>> task, bool runOnMainThread = false,
-            bool cancelable = false)
+        public AsyncTask(Action<IPromise> task, bool runOnMainThread = false, bool cancelable = false)
         {
             if (task == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("task");
 
-            this.result = new ProgressResult<TProgress>(!runOnMainThread && cancelable);
-            this.result.Callbackable().OnProgressCallback(OnProgressChanged);
+            this.result = new AsyncResult(!runOnMainThread && cancelable);
             if (runOnMainThread)
             {
                 this.action = WrapAction(() =>
                 {
                     Executors.RunOnMainThread(() => task(result), true);
-                    result.Synchronized().WaitForResult();
+                    this.result.Synchronized().WaitForResult();
                 });
             }
             else
@@ -83,26 +109,24 @@ namespace ZJYFrameWork.Asynchronous
                 this.action = WrapAction(() =>
                 {
                     task(result);
-                    result.Synchronized().WaitForResult();
+                    this.result.Synchronized().WaitForResult();
                 });
             }
         }
 
         /// <summary>
-        /// run on main thread.
+        /// run on main thread
         /// </summary>
         /// <param name="task"></param>
-        /// <param name="cancelable"></param>
-        public ProgressTask(Func<IProgressPromise<TProgress>, IEnumerator> task, bool cancelable = false)
+        public AsyncTask(IEnumerator task, bool cancelable = false)
         {
             if (task == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("task");
 
-            this.result = new ProgressResult<TProgress>(cancelable);
-            this.result.Callbackable().OnProgressCallback(OnProgressChanged);
+            this.result = new AsyncResult(cancelable);
             this.action = WrapAction(() =>
             {
-                Executors.RunOnCoroutine(task(this.result), this.result);
+                Executors.RunOnCoroutine(task, result);
                 this.result.Synchronized().WaitForResult();
             });
         }
@@ -127,11 +151,6 @@ namespace ZJYFrameWork.Asynchronous
             get { return this.result.IsCancelled; }
         }
 
-        public virtual TProgress Progress
-        {
-            get { return this.result.Progress; }
-        }
-
         protected virtual Action WrapAction(Action action)
         {
             Action wrapAction = () =>
@@ -140,8 +159,8 @@ namespace ZJYFrameWork.Asynchronous
                 {
                     try
                     {
-                        if (this.preCallbackOnWorkerThread != null)
-                            this.preCallbackOnWorkerThread();
+                        if (preCallbackOnWorkerThread != null)
+                            preCallbackOnWorkerThread();
                     }
                     catch (Exception e)
                     {
@@ -205,52 +224,14 @@ namespace ZJYFrameWork.Asynchronous
             return wrapAction;
         }
 
-        protected virtual IEnumerator DoUpdateProgressOnMainThread()
-        {
-            while (!result.IsDone)
-            {
-                try
-                {
-                    if (this.progressCallbackOnMainThread != null)
-                        this.progressCallbackOnMainThread(this.result.Progress);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-
-                yield return null;
-            }
-        }
-
-        protected virtual void OnProgressChanged(TProgress progress)
-        {
-            try
-            {
-                if (this.result.IsDone || this.progressCallbackOnWorkerThread == null)
-                    return;
-
-                this.progressCallbackOnWorkerThread(progress);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-            }
-        }
-
         public virtual bool Cancel()
         {
             return this.result.Cancel();
         }
 
-        public virtual IProgressCallbackable<TProgress> Callbackable()
+        public virtual ICallbackable Callbackable()
         {
             return result.Callbackable();
-        }
-
-        ICallbackable IAsyncResult.Callbackable()
-        {
-            return (result as IAsyncResult).Callbackable();
         }
 
         public virtual ISynchronizable Synchronized()
@@ -263,7 +244,7 @@ namespace ZJYFrameWork.Asynchronous
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        public IProgressTask<TProgress> OnPreExecute(Action callback, bool runOnMainThread = true)
+        public IAsyncTask OnPreExecute(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.preCallbackOnMainThread += callback;
@@ -272,7 +253,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress> OnPostExecute(Action callback, bool runOnMainThread = true)
+        public IAsyncTask OnPostExecute(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.postCallbackOnMainThread += callback;
@@ -281,7 +262,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress> OnError(Action<Exception> callback, bool runOnMainThread = true)
+        public IAsyncTask OnError(Action<Exception> callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.errorCallbackOnMainThread += callback;
@@ -290,16 +271,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress> OnProgressUpdate(Action<TProgress> callback, bool runOnMainThread = true)
-        {
-            if (runOnMainThread)
-                this.progressCallbackOnMainThread += callback;
-            else
-                this.progressCallbackOnWorkerThread += callback;
-            return this;
-        }
-
-        public IProgressTask<TProgress> OnFinish(Action callback, bool runOnMainThread = true)
+        public IAsyncTask OnFinish(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.finishCallbackOnMainThread += callback;
@@ -308,7 +280,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress> Start(int delay)
+        public IAsyncTask Start(int delay)
         {
             if (delay <= 0)
                 return this.Start();
@@ -328,17 +300,19 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress> Start()
+        public IAsyncTask Start()
         {
             if (this.IsDone)
             {
                 Debug.Log("The task has been done!");
+
                 return this;
             }
 
             if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1)
             {
                 Debug.Log("The task is running!");
+
                 return this;
             }
 
@@ -346,9 +320,6 @@ namespace ZJYFrameWork.Asynchronous
             {
                 if (this.preCallbackOnMainThread != null)
                     Executors.RunOnMainThread(this.preCallbackOnMainThread, true);
-
-                if (this.progressCallbackOnMainThread != null)
-                    Executors.RunOnCoroutineNoReturn(DoUpdateProgressOnMainThread());
             }
             catch (Exception e)
             {
@@ -361,7 +332,7 @@ namespace ZJYFrameWork.Asynchronous
         }
     }
 
-    public class ProgressTask<TProgress, TResult> : IProgressTask<TProgress, TResult>
+    public class AsyncTask<TResult> : IAsyncTask<TResult>
     {
         private Action action;
 
@@ -371,9 +342,6 @@ namespace ZJYFrameWork.Asynchronous
         private Action<TResult> postCallbackOnMainThread;
         private Action<TResult> postCallbackOnWorkerThread;
 
-        private Action<TProgress> progressCallbackOnMainThread;
-        private Action<TProgress> progressCallbackOnWorkerThread;
-
         private Action<Exception> errorCallbackOnMainThread;
         private Action<Exception> errorCallbackOnWorkerThread;
 
@@ -381,28 +349,47 @@ namespace ZJYFrameWork.Asynchronous
         private Action finishCallbackOnWorkerThread;
 
         private int running = 0;
-        private ProgressResult<TProgress, TResult> result;
+        private AsyncResult<TResult> result;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="task"></param>
         /// <param name="runOnMainThread"></param>
-        /// <param name="cancelable"></param>
-        public ProgressTask(Action<IProgressPromise<TProgress, TResult>> task, bool runOnMainThread,
-            bool cancelable = false)
+        public AsyncTask(Func<TResult> task, bool runOnMainThread = false)
         {
             if (task == null)
                 throw new ArgumentNullException();
 
-            this.result = new ProgressResult<TProgress, TResult>(!runOnMainThread && cancelable);
-            this.result.Callbackable().OnProgressCallback(OnProgressChanged);
+            this.result = new AsyncResult<TResult>();
+
+            if (runOnMainThread)
+            {
+                this.action = WrapAction(() => { return Executors.RunOnMainThread(task); });
+            }
+            else
+            {
+                this.action = WrapAction(() => task());
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="runOnMainThread"></param>
+        public AsyncTask(Action<IPromise<TResult>> task, bool runOnMainThread = false, bool cancelable = false)
+        {
+            if (task == null)
+                throw new ArgumentNullException();
+
+            this.result = new AsyncResult<TResult>(!runOnMainThread && cancelable);
 
             if (runOnMainThread)
             {
                 this.action = WrapAction(() =>
                 {
-                    Executors.RunOnMainThread(() => task(result), true);
+                    Executors.RunOnMainThread(() => task(this.result));
                     return this.result.Synchronized().WaitForResult();
                 });
             }
@@ -410,7 +397,7 @@ namespace ZJYFrameWork.Asynchronous
             {
                 this.action = WrapAction(() =>
                 {
-                    task(result);
+                    task(this.result);
                     return this.result.Synchronized().WaitForResult();
                 });
             }
@@ -420,14 +407,12 @@ namespace ZJYFrameWork.Asynchronous
         /// 
         /// </summary>
         /// <param name="task"></param>
-        /// <param name="cancelable"></param>
-        public ProgressTask(Func<IProgressPromise<TProgress, TResult>, IEnumerator> task, bool cancelable = false)
+        public AsyncTask(Func<IPromise<TResult>, IEnumerator> task, bool cancelable = false)
         {
             if (task == null)
                 throw new ArgumentNullException();
 
-            this.result = new ProgressResult<TProgress, TResult>(cancelable);
-            this.result.Callbackable().OnProgressCallback(OnProgressChanged);
+            this.result = new AsyncResult<TResult>(cancelable);
             this.action = WrapAction(() =>
             {
                 Executors.RunOnCoroutine(task(this.result), this.result);
@@ -458,11 +443,6 @@ namespace ZJYFrameWork.Asynchronous
         public virtual bool IsCancelled
         {
             get { return this.result.IsCancelled; }
-        }
-
-        public virtual TProgress Progress
-        {
-            get { return this.result.Progress; }
         }
 
         protected virtual Action WrapAction(Func<TResult> action)
@@ -539,45 +519,12 @@ namespace ZJYFrameWork.Asynchronous
             return wrapAction;
         }
 
-        protected virtual IEnumerator DoUpdateProgressOnMainThread()
-        {
-            while (!result.IsDone)
-            {
-                try
-                {
-                    if (this.progressCallbackOnMainThread != null)
-                        this.progressCallbackOnMainThread(this.result.Progress);
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                }
-
-                yield return null;
-            }
-        }
-
-        protected virtual void OnProgressChanged(TProgress progress)
-        {
-            try
-            {
-                if (this.result.IsDone || this.progressCallbackOnWorkerThread == null)
-                    return;
-
-                this.progressCallbackOnWorkerThread(progress);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-            }
-        }
-
         public virtual bool Cancel()
         {
             return this.result.Cancel();
         }
 
-        public virtual IProgressCallbackable<TProgress, TResult> Callbackable()
+        public virtual ICallbackable<TResult> Callbackable()
         {
             return result.Callbackable();
         }
@@ -592,16 +539,6 @@ namespace ZJYFrameWork.Asynchronous
             return (result as IAsyncResult).Callbackable();
         }
 
-        ICallbackable<TResult> IAsyncResult<TResult>.Callbackable()
-        {
-            return (result as IAsyncResult<TResult>).Callbackable();
-        }
-
-        IProgressCallbackable<TProgress> IProgressResult<TProgress>.Callbackable()
-        {
-            return (result as IProgressResult<TProgress>).Callbackable();
-        }
-
         ISynchronizable IAsyncResult.Synchronized()
         {
             return (result as IAsyncResult).Synchronized();
@@ -612,7 +549,7 @@ namespace ZJYFrameWork.Asynchronous
             return Executors.WaitWhile(() => !IsDone);
         }
 
-        public IProgressTask<TProgress, TResult> OnPreExecute(Action callback, bool runOnMainThread = true)
+        public IAsyncTask<TResult> OnPreExecute(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.preCallbackOnMainThread += callback;
@@ -621,7 +558,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress, TResult> OnPostExecute(Action<TResult> callback, bool runOnMainThread = true)
+        public IAsyncTask<TResult> OnPostExecute(Action<TResult> callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.postCallbackOnMainThread += callback;
@@ -630,7 +567,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress, TResult> OnError(Action<Exception> callback, bool runOnMainThread = true)
+        public IAsyncTask<TResult> OnError(Action<Exception> callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.errorCallbackOnMainThread += callback;
@@ -639,17 +576,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress, TResult> OnProgressUpdate(Action<TProgress> callback,
-            bool runOnMainThread = true)
-        {
-            if (runOnMainThread)
-                this.progressCallbackOnMainThread += callback;
-            else
-                this.progressCallbackOnWorkerThread += callback;
-            return this;
-        }
-
-        public IProgressTask<TProgress, TResult> OnFinish(Action callback, bool runOnMainThread = true)
+        public IAsyncTask<TResult> OnFinish(Action callback, bool runOnMainThread = true)
         {
             if (runOnMainThread)
                 this.finishCallbackOnMainThread += callback;
@@ -658,7 +585,7 @@ namespace ZJYFrameWork.Asynchronous
             return this;
         }
 
-        public IProgressTask<TProgress, TResult> Start(int delay)
+        public IAsyncTask<TResult> Start(int delay)
         {
             if (delay <= 0)
                 return this.Start();
@@ -675,22 +602,21 @@ namespace ZJYFrameWork.Asynchronous
 
                 this.Start();
             });
+
             return this;
         }
 
-        public IProgressTask<TProgress, TResult> Start()
+        public IAsyncTask<TResult> Start()
         {
             if (this.IsDone)
             {
                 Debug.Log("The task has been done!");
-
                 return this;
             }
 
             if (Interlocked.CompareExchange(ref this.running, 1, 0) == 1)
             {
                 Debug.Log("The task is running!");
-
                 return this;
             }
 
@@ -698,16 +624,15 @@ namespace ZJYFrameWork.Asynchronous
             {
                 if (this.preCallbackOnMainThread != null)
                     Executors.RunOnMainThread(this.preCallbackOnMainThread, true);
-
-                if (this.progressCallbackOnMainThread != null)
-                    Executors.RunOnCoroutineNoReturn(DoUpdateProgressOnMainThread());
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
+
             }
 
             Executors.RunAsync(this.action);
+
             return this;
         }
     }

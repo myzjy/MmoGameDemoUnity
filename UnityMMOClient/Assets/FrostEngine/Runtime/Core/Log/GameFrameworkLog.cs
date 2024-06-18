@@ -97,7 +97,7 @@ namespace FrostEngine
         /// <typeparam name="T">日志参数的类型。</typeparam>
         /// <param name="format">日志格式。</param>
         /// <param name="arg">日志参数。</param>
-        public static void Info<T>(string format, T arg)
+        public static void Info(string format,params object[] arg)
         {
             if (s_LogHelper == null)
             {

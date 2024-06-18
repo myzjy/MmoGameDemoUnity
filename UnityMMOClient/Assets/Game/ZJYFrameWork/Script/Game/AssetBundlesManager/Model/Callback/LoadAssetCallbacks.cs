@@ -1,4 +1,5 @@
 ﻿using System;
+using FrostEngine;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.AssetBundles.Model.Callback

@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using FrostEngine;
 using ZJYFrameWork.AssetBundles.Bundles.ILoaderBuilderInterface;
 using ZJYFrameWork.Asynchronous;
 using ZJYFrameWork.Spring.Core;

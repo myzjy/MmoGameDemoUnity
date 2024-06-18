@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using FrostEngine;
 using HybridCLR;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,7 @@ using ZJYFrameWork.Execution;
 using ZJYFrameWork.Module.Scenes.Callbacks;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.UISerializable.Common;
+using Debug = FrostEngine.Debug;
 using Object = UnityEngine.Object;
 
 namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
@@ -444,7 +446,7 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
 //                     //重新设置
 //                     SetBundleManifest(BundleManifest);
 // #if UNITY_EDITOR || DEVELOP_BUILD
-//                     Debug.Log("重新加载场景，场景已经下载完成");
+//                     FrostLog.Log("重新加载场景，场景已经下载完成");
 // #endif
 //                     LoadScene(sceneAssetName, priority, loadSceneCallbacks, userData);
 //                 }, buildInfo);
@@ -473,9 +475,9 @@ namespace ZJYFrameWork.AssetBundles.AssetBundlesManager
             loadSceneAsync.allowSceneActivation = false;
             while (!loadSceneAsync.isDone)
             {
-                // Debug.Log($"场景进度:{loadSceneAsync.progress * 100}%");
+                // FrostLog.Log($"场景进度:{loadSceneAsync.progress * 100}%");
 #if UNITY_EDITOR || DEVELOP_BUILD
-                // Debug.Log($"加载场景进度：{loadSceneAsync.progress * 100}");
+                // FrostLog.Log($"加载场景进度：{loadSceneAsync.progress * 100}");
                 loadSceneCallbacks.LoadSceneUpdateCallback(sceneName, loadSceneAsync.progress, null);
 #else
                 loadSceneCallbacks.LoadSceneUpdateCallback(sceneName,  loadSceneAsync.progress, null);

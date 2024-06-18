@@ -27,6 +27,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 using System.Diagnostics;
+using FrostEngine;
+using Debug = FrostEngine.Debug;
 
 
 // ReSharper disable once CheckNamespace
