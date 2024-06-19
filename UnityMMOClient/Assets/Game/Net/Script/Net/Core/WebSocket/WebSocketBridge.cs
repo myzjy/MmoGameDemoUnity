@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using AOT;
 using BestHTTP.WebSocket;
+using FrostEngine;
 using Newtonsoft.Json;
 using ZJYFrameWork.AssetBundles.Bundles;
 using ZJYFrameWork.Net.CsProtocol.Buffer;

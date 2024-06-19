@@ -9,6 +9,7 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Connections.HTTP2

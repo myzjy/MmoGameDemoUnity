@@ -1,3 +1,4 @@
+using FrostEngine;
 using GameUtil;
 using ZJYFrameWork.Module.Register.Controller;
 using ZJYFrameWork.Module.Register.Service;

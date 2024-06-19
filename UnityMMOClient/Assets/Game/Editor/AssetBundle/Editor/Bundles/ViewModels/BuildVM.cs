@@ -15,7 +15,8 @@ using ZJYFrameWork.AssetBundles.BundleUtils;
 using ZJYFrameWork.Attributes;
 using ZJYFrameWork.Bundles.Editors;
 using ZJYFrameWork.Security.Cryptography;
-using Path = System.IO.Path;
+using FrostEngine;
+using Path = ZJYFrameWork.AssetBundles.Bundles.Path;
 
 namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 {
@@ -282,7 +283,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             }
             catch (Exception e)
             {
-                Debug.LogWarningFormat("Loads {0} failure. Error:{1}", PATH, e);
+                FrostEngine.Debug.LogWarning("Loads {} failure. Error:{}", PATH, e);
             }
         }
 
@@ -305,7 +306,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             }
             catch (System.Exception e)
             {
-                Debug.LogWarningFormat("Write {0} failure. Error:{1}", PATH, e);
+                FrostEngine.Debug.LogWarning("Write {} failure. Error:{}", PATH, e);
             }
         }
 
@@ -342,16 +343,16 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             if (Directory.Exists(aotAssembliesDstDir))
             {
                 sw.Start();
-                Debug.Log("╔======================================╗");
-                Debug.Log($"┃     删除目录{aotAssembliesDstDir}                  ┃");
-                Debug.Log("╚======================================╝");
+                FrostEngine.Debug.Log("╔======================================╗");
+                FrostEngine.Debug.Log($"┃     删除目录{aotAssembliesDstDir}                  ┃");
+                FrostEngine.Debug.Log("╚======================================╝");
                 string[] filenames = Directory.GetFileSystemEntries(aotAssembliesDstDir);
                 if (filenames.Length > 0)
                 {
-                    Debug.Log($"当前目录下有文件,开始删除文件");
+                    FrostEngine.Debug.Log($"当前目录下有文件,开始删除文件");
                     foreach (var pathString in filenames)
                     {
-                        Debug.Log($"删除文件路径：{pathString}");
+                        FrostEngine.Debug.Log($"删除文件路径：{pathString}"); 
                         File.Delete(pathString);
                     }
                 }
@@ -359,29 +360,29 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 //移除 目录
                 Directory.Delete(aotAssembliesDstDir);
                 sw.Stop();
-                Debug.Log($"删除目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
+                FrostEngine.Debug.Log($"删除目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
                 sw = new Stopwatch();
                 sw.Start();
-                Debug.Log($"开始创建目录{aotAssembliesDstDir}");
+                FrostEngine.Debug.Log($"开始创建目录{aotAssembliesDstDir}");
                 //移除之后
                 Directory.CreateDirectory(aotAssembliesDstDir);
                 sw.Stop();
-                Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
+                FrostEngine.Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             }
             else
             {
                 //创建对应目录
                 sw = new Stopwatch();
                 sw.Start();
-                Debug.Log($"开始创建目录{aotAssembliesDstDir}");
+                FrostEngine.Debug.Log($"开始创建目录{aotAssembliesDstDir}");
                 Directory.CreateDirectory(aotAssembliesDstDir);
                 sw.Stop();
-                Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
+                FrostEngine.Debug.Log($"创建目录{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             }
 
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
-            Debug.Log($"复制aot {aotAssembliesDstDir} 下相关dll");
+            FrostEngine.Debug.Log($"复制aot {aotAssembliesDstDir} 下相关dll");
             sw = new Stopwatch();
             sw.Start();
             foreach (var dll in AOTMetaAssemblyNames)
@@ -390,7 +391,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 string srcDllPath = $"{aotAssembliesSrcDir}/{dll}";
                 if (!File.Exists(srcDllPath))
                 {
-                    Debug.LogError(
+                    FrostEngine.Debug.LogError(
                         $"ab中添加AOT补充元数据dll:{srcDllPath} 时发生错误,文件不存在。裁剪后的AOT dll在BuildPlayer时才能生成，因此需要你先构建一次游戏App后再打包。");
                     continue;
                 }
@@ -399,17 +400,17 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 var s = dll.Replace(".dll", "");
                 swCopyDll.Start();
                 string dllBytesPath = $"{aotAssembliesDstDir}/{s}.bytes";
-                Debug.Log($"复制{srcDllPath}--->{dllBytesPath}");
+                FrostEngine.Debug.Log($"复制{srcDllPath}--->{dllBytesPath}");
                 File.Copy(srcDllPath, dllBytesPath, true);
                 swCopyDll.Stop();
-                Debug.Log($"复制{srcDllPath}--->{dllBytesPath}   复制成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
-                Debug.Log($"[CopyAOTAssembliesToPath] copy AOT dll {srcDllPath} -> {dllBytesPath}");
+                FrostEngine.Debug.Log($"复制{srcDllPath}--->{dllBytesPath}   复制成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
+                FrostEngine.Debug.Log($"[CopyAOTAssembliesToPath] copy AOT dll {srcDllPath} -> {dllBytesPath}");
             }
 
             AssetDatabase.Refresh();
             AssetDatabase.SaveAssets();
             sw.Stop();
-            Debug.Log($"复制{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
+            FrostEngine.Debug.Log($"复制{aotAssembliesDstDir}成功 耗时:{sw.ElapsedMilliseconds}ms");
             //复制需要热更的dll
             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
             aotAssembliesDstDir = $"{Application.dataPath}/Game/AssetBundles/dllAb/";
@@ -421,13 +422,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 swCopyDll.Start();
                 var s = dll.Replace(".dll", "");
 
-                Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllPath:{dllPath}");
+                FrostEngine.Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllPath:{dllPath}");
                 string dllBytesPath = $"{aotAssembliesDstDir}{s}.bytes";
-                Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllBytesPath:{dllBytesPath}");
+                FrostEngine.Debug.Log($"[HotUpdateAssemblyFilesExcludePreserved] dllBytesPath:{dllBytesPath}");
                 File.Copy(dllPath, dllBytesPath, true);
                 swCopyDll.Stop();
-                Debug.Log($"复制{dllPath}--->{dllBytesPath}成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
-                Debug.Log($"[CopyHotUpdateAssembliesToDllBytesPath] copy hotfix dll {dllPath} -> {dllBytesPath}");
+                FrostEngine.Debug.Log($"复制{dllPath}--->{dllBytesPath}成功 耗时:{swCopyDll.ElapsedMilliseconds}ms");
+                FrostEngine.Debug.Log($"[CopyHotUpdateAssembliesToDllBytesPath] copy hotfix dll {dllPath} -> {dllBytesPath}");
             }
 
             AssetDatabase.Refresh();
@@ -442,19 +443,19 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 var index = dllBytesPath.IndexOf("Assets", StringComparison.Ordinal);
                 var path_last = dllBytesPath.Substring(index);
                 var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path_last);
-                Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
+                FrostEngine.Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
                 string assetPath = AssetDatabase.GetAssetPath(obj);
                 AssetImporter importer = AssetImporter.GetAtPath(assetPath);
-                Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
+                FrostEngine.Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
 
                 string assetBundleName = Path.GetFileName(dllBytesPath);
                 assetBundleName = assetBundleName.Replace(".", "_");
                 importer.assetBundleName =
                     $"{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}";
-                Debug.Log(
+                FrostEngine.Debug.Log(
                     $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
                 sw.Stop();
-                Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                FrostEngine.Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
                 EditorUtility.SetDirty(obj);
             }
 
@@ -467,19 +468,19 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
                 var index = dllBytesPath.IndexOf("Assets", StringComparison.Ordinal);
                 var path_last = dllBytesPath.Substring(index);
                 var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path_last);
-                Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
+                FrostEngine.Debug.Log($"[AOTMetaAssemblyNames]last:{path_last} AB Label dllBytesPath:{dllBytesPath} {obj}");
                 string assetPath = AssetDatabase.GetAssetPath(obj);
                 AssetImporter importer = AssetImporter.GetAtPath(assetPath);
-                Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
+                FrostEngine.Debug.Log($"[AOTMetaAssemblyNames] AB Label AssetImporter:{importer}");
 
                 string assetBundleName = Path.GetFileName(dllBytesPath);
                 assetBundleName = assetBundleName.Replace(".", "_");
                 importer.assetBundleName =
                     $"{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}";
-                Debug.Log(
+                FrostEngine.Debug.Log(
                     $"{assetBundleName},assetBundleName--->None---->{assetBundleName}{AssetBundleEditorHelper.ASSETBUNDLE_EXT}");
                 sw.Stop();
-                Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
+                FrostEngine.Debug.Log($"标签{dllBytesPath} 耗时:{swCopyDll.ElapsedMilliseconds}ms ");
                 EditorUtility.SetDirty(obj);
             }
 
@@ -489,8 +490,8 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
         public virtual void Build(bool forceRebuild)
         {
-            Debug.Log("----------------BuildAssetBundleWithCommandLineArgs------------------");
-            Debug.Log("开始执行 ab出包逻辑");
+            FrostEngine.Debug.Log("----------------BuildAssetBundleWithCommandLineArgs------------------");
+            FrostEngine.Debug.Log("开始执行 ab出包逻辑");
             string path = this.OutputPath;
             PrebuildCommand.GenerateAll();
             CopyDllAb();
@@ -499,7 +500,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
             if (string.IsNullOrEmpty(path))
             {
-                Debug.LogError("AssetBundle Build: No valid output path for build.");
+                FrostEngine.Debug.LogError("AssetBundle Build: No valid output path for build.");
                 return;
             }
 
@@ -533,7 +534,7 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 #if UNITY_5_6_OR_NEWER
             if ((options & BuildAssetBundleOptions.DryRunBuild) > 0)
             {
-                Debug.LogFormat("Dry Build OK.");
+                FrostEngine.Debug.Log("Dry Build OK.");
                 return;
             }
 #endif
@@ -548,13 +549,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
             {
             }
 
-            Debug.Log($"Build OK.Please check the folder:{dir.FullName}" );
+            FrostEngine.Debug.Log($"Build OK.Please check the folder:{dir.FullName}" );
 
             if (!this.CopyToStreaming)
                 return;
 
             this.CopyToStreamingAssets();
-            Debug.Log(" ab出包 完成 结束");
+            FrostEngine.Debug.Log(" ab出包 完成 结束");
         }
 
         protected virtual List<IBundleModifier> CreateBundleModifierChain()
@@ -636,13 +637,13 @@ namespace ZJYFrameWork.AssetBundles.EditorAssetBundle.Editors
 
                 BundleManifest manifest = builder.CopyAssetBundleAndManifest(src, dest);
                 if (manifest != null)
-                    Debug.LogFormat("Copy AssetBundles success.");
+                    FrostEngine.Debug.Log("Copy AssetBundles success.");
 
                 AssetDatabase.Refresh();
             }
             catch (Exception e)
             {
-                Debug.LogFormat("Copy AssetBundles failure. Error:{0}", e);
+                FrostEngine.Debug.Log("Copy AssetBundles failure. Error:{0}", e);
             }
             finally
             {

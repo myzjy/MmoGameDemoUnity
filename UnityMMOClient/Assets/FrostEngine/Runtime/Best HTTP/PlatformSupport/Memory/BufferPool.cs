@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using BestHTTP.PlatformSupport.Threading;
+using FrostEngine;
 #if NET_STANDARD_2_0 || NETFX_CORE
 using System.Runtime.CompilerServices;
 #endif

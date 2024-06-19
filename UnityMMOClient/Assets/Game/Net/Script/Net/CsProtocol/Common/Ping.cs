@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FrostEngine;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.Core;
 using ZJYFrameWork.Net.CsProtocol.Buffer;

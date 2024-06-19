@@ -5,6 +5,7 @@ using System.Text;
 using BestHTTP.Authentication;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 namespace BestHTTP
 {

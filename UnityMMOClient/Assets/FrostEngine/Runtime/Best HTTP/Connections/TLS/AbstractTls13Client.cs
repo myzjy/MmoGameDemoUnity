@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using BestHTTP.Logger;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto;
+using FrostEngine;
 
 namespace BestHTTP.Connections.TLS
 {

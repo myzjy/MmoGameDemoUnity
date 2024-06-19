@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using FrostEngine;
 using UnityEngine;
-using ZJYFrameWork.AssetBundles.AssetBundleToolsConfig;
-using ZJYFrameWork.AssetBundles.Bundles;
-using ZJYFrameWork.AssetBundles.Bundles.LoaderBuilders;
-using ZJYFrameWork.Base.Component;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Event;
-using ZJYFrameWork.Log;
 using ZJYFrameWork.Net.Dispatcher;
 using ZJYFrameWork.Procedure;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;
 using ZJYFrameWork.UISerializable;
 using ZJYFrameWork.WebRequest;
-// using ZJYFrameWork.XLuaScript;
+using Debug = FrostEngine.Debug;
+
 
 namespace ZJYFrameWork.Base.Component
 {
@@ -75,7 +71,6 @@ namespace ZJYFrameWork.Base.Component
         protected override void OnAwake()
         {
             DontDestroyOnLoad(this);
-            Debug.Initialize();
             InitLogHelper();
             ConverterUtils.ScreenDpi = Screen.dpi;
             if (ConverterUtils.ScreenDpi <= 0)
@@ -141,14 +136,14 @@ namespace ZJYFrameWork.Base.Component
             {
                 throw new Exception(StringUtils.Format("Can not find log helper type '{}'.", logHelperTypeName));
             }
-
-            ILogFactory logHelper = (ILogFactory)Activator.CreateInstance(logHelperType);
+            
+            GameFrameworkLog.ILogHelper logHelper = (GameFrameworkLog.ILogHelper)Activator.CreateInstance(logHelperType);
             if (logHelper == null)
             {
                 throw new Exception(StringUtils.Format("Can not create log helper instance '{}'.", logHelperTypeName));
             }
 
-            Debug.SetLogHelper(logHelper);
+            GameFrameworkLog.SetLogHelper(logHelper);
         }
 
         private void OnApplicationQuit()

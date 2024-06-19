@@ -134,20 +134,20 @@ namespace ZJYFrameWork.Debugger.Windows
 
         public void Initialize(params object[] args)
         {
-            if (Debug.logNodes.Count > 0)
-            {
-                var list = Debug.logNodes.ToArray();
-                foreach (var item in list)
-                {
-                    var logNode = LogNode.Create(item.LogType, item.LogMessage, item.StackTrack,item.LogTime,item.LogFrameCount);
-             
-                    logNodes.Enqueue(logNode);
-                }
-            }
+            // if (Debug.logNodes.Count > 0)
+            // {
+            //     var list = Debug.logNodes.ToArray();
+            //     foreach (var item in list)
+            //     {
+            //         var logNode = LogNode.Create(item.LogType, item.LogMessage, item.StackTrack,item.LogTime,item.LogFrameCount);
+            //  
+            //         logNodes.Enqueue(logNode);
+            //     }
+            // }
 
             //卸载
-            Debug.Shutdown();
-            Debug.Log(logNodes.Count);
+            // Debug.Shutdown();
+            // Debug.Log(logNodes.Count);
             Application.logMessageReceived += OnLogMessageReceived;
             // lockScroll = lastLockScroll = SpringContext.GetBean<ISettingManager>().GetBool("Debugger.Console.LockScroll", true);
             // infoFilter = lastInfoFilter = SpringContext.GetBean<ISettingManager>().GetBool("Debugger.Console.InfoFilter", true);

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using BestHTTP.Core;
 using BestHTTP.PlatformSupport.FileSystem;
+using FrostEngine;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Cookies

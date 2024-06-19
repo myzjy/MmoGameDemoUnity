@@ -5,6 +5,7 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.Timings;
+using FrostEngine;
 #if !BESTHTTP_DISABLE_CACHING
 using BestHTTP.Caching;
 #endif

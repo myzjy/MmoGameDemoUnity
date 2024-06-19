@@ -85,7 +85,7 @@ namespace ZJYFrameWork.UISerializable
             //
             // clickLoginTime = DateTimeUtil.Now() / 1_0000;
 
-            Debug.Log("账号密码登录[account:{}][password:{}]", account.text, password.text);
+            FrostEngine.Debug.Log("账号密码登录[account:{}][password:{}]", account.text, password.text);
             var accountString = account.text;
             var passwordString = password.text;
             SpringContext.GetBean<ServerDataManager>().SetCacheAccountAndPassword(accountString, passwordString);

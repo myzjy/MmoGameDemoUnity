@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using FrostEngine;
 using ZJYFrameWork.Spring.Core;
 
 #if NETFX_CORE

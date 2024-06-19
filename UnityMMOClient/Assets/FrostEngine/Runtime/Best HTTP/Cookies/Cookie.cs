@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using BestHTTP.Extensions;
+using FrostEngine;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP.Cookies

@@ -1,6 +1,7 @@
 #if (!UNITY_WEBGL || UNITY_EDITOR) && !BESTHTTP_DISABLE_ALTERNATE_SSL && !BESTHTTP_DISABLE_HTTP2
 
 
+using FrostEngine;
 #if !BESTHTTP_DISABLE_CACHING
 using System;
 using System.Collections.Generic;

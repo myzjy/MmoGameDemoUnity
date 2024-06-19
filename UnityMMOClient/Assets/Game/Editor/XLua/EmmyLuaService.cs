@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
+using FrostEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 

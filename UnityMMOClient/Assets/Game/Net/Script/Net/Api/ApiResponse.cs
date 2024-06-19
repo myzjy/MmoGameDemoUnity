@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using BestHTTP;
+using FrostEngine;
+
 // using XLua;
 namespace ZJYFrameWork.Net
 {

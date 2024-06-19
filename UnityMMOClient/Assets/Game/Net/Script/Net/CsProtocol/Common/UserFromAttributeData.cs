@@ -1,4 +1,6 @@
-﻿namespace ZJYFrameWork.Net.CsProtocol
+﻿using FrostEngine;
+
+namespace ZJYFrameWork.Net.CsProtocol
 {
     public class UserFromAttributeData
     {

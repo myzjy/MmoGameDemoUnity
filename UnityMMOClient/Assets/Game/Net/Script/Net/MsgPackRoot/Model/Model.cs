@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using FrostEngine;
 using Newtonsoft.Json;
 using ZJYFrameWork.Net.CsProtocol.Buffer;
 

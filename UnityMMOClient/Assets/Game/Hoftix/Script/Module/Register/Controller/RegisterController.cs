@@ -1,4 +1,5 @@
-﻿using ZJYFrameWork.Common;
+﻿using FrostEngine;
+using ZJYFrameWork.Common;
 using ZJYFrameWork.Hotfix.Common;
 using ZJYFrameWork.Hotfix.UISerializable;
 using ZJYFrameWork.I18n;

@@ -9,6 +9,7 @@ using UnityEngine;
 #if NETFX_CORE
     using System.Threading.Tasks;
 #endif
+using Debug = FrostEngine.Debug;
 
 // ReSharper disable once CheckNamespace
 namespace BestHTTP
@@ -295,7 +296,6 @@ namespace BestHTTP
             }
         }
 
-    
 
         private void CallOnUpdate()
         {

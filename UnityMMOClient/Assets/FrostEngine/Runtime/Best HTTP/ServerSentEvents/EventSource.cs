@@ -8,6 +8,7 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.Logger;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 #if UNITY_WEBGL && !UNITY_EDITOR
     using System.Runtime.InteropServices;
 #endif

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BestHTTP.WebSocket;
+using FrostEngine;
 using Newtonsoft.Json;
 using ZJYFrameWork.Constant;
 using ZJYFrameWork.Event;

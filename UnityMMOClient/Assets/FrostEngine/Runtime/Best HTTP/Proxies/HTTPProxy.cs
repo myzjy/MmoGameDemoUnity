@@ -8,6 +8,7 @@ using BestHTTP.Authentication;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 namespace BestHTTP
 {

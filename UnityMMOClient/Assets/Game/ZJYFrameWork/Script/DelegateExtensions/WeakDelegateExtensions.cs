@@ -25,6 +25,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using FrostEngine;
 using ZJYFrameWork.Spring.Utils;
 
 namespace ZJYFrameWork.DelegateExtensions

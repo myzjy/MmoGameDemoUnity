@@ -8,6 +8,7 @@ using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.FileSystem;
 using BestHTTP.PlatformSupport.Threading;
+using FrostEngine;
 
 //
 // Version 1: Initial release

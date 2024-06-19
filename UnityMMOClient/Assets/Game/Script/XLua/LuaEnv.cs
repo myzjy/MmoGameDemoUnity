@@ -15,6 +15,7 @@ using LuaAPI = XLua.LuaDLL.Lua;
 using RealStatePtr = System.IntPtr;
 using LuaCSFunction = XLuaBase.lua_CSFunction;
 #endif
+using FrostEngine;
 
 
 namespace XLua

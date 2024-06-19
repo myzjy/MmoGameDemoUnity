@@ -1,4 +1,6 @@
-﻿namespace ZJYFrameWork.Debugger.Windows
+﻿using FrostEngine;
+
+namespace ZJYFrameWork.Debugger.Windows
 {
     public sealed class FpsCounter
     {

@@ -4,6 +4,7 @@ using System.Text;
 using BestHTTP.Connections;
 using BestHTTP.Extensions;
 using BestHTTP.WebSocket.Frames;
+using FrostEngine;
 
 namespace BestHTTP.WebSocket
 {

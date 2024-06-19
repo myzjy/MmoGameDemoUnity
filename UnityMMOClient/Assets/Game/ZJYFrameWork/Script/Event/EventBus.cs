@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using FrostEngine;
 using ZJYFrameWork.Net;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;

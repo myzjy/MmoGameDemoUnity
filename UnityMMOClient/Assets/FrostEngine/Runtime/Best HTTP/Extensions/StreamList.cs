@@ -1,5 +1,6 @@
 using System;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 namespace BestHTTP.Extensions
 {

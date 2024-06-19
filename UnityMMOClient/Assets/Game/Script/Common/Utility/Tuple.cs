@@ -1,4 +1,6 @@
-﻿namespace ZJYFrameWork
+﻿using FrostEngine;
+
+namespace ZJYFrameWork
 {
     public static class STuple
     {

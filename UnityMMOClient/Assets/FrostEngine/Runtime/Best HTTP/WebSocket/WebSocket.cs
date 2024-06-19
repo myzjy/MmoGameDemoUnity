@@ -11,6 +11,7 @@ using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.WebSocket.Frames;
 using BestHTTP.WebSocket.Extensions;
 #endif
+using Debug = FrostEngine.Debug;
 
 namespace BestHTTP.WebSocket
 {

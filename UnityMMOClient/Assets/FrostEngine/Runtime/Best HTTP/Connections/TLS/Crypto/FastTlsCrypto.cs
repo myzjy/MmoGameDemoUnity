@@ -7,6 +7,7 @@ using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl;
 using BestHTTP.SecureProtocol.Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using FrostEngine;
 
 namespace BestHTTP.Connections.TLS.Crypto
 {

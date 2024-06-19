@@ -6,6 +6,7 @@ using System.Threading;
 using BestHTTP.Core;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 namespace BestHTTP.SignalRCore.Transports
 {

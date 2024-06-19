@@ -2,6 +2,7 @@
 using System;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
+using FrostEngine;
 
 namespace BestHTTP.SignalRCore.Transports
 {

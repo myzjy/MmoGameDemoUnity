@@ -9,6 +9,7 @@ using BestHTTP.Extensions;
 using BestHTTP.SocketIO3.Parsers;
 using BestHTTP.SocketIO3.Events;
 using BestHTTP.Logger;
+using Debug = FrostEngine.Debug;
 
 namespace BestHTTP.SocketIO3
 {

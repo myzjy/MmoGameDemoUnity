@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FrostEngine;
 using ZJYFrameWork.Base.Model;
 using ZJYFrameWork.Spring.Core;
 using ZJYFrameWork.Spring.Utils;

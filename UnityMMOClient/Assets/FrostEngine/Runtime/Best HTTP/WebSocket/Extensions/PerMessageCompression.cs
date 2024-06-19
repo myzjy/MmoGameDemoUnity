@@ -6,6 +6,7 @@ using BestHTTP.Decompression.Zlib;
 using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.WebSocket.Frames;
+using FrostEngine;
 
 namespace BestHTTP.WebSocket.Extensions
 {

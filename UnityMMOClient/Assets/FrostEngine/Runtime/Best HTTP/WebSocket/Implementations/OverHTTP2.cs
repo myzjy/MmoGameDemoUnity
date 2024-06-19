@@ -7,6 +7,7 @@ using BestHTTP.Extensions;
 using BestHTTP.PlatformSupport.Memory;
 using BestHTTP.WebSocket.Frames;
 using BestHTTP.WebSocket.Implementations.Utils;
+using FrostEngine;
 
 namespace BestHTTP.WebSocket
 {
