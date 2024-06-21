@@ -12,4 +12,9 @@ GameMainConfig.Player = {
     frostBuffer = 1
 }
 
+--- 怪物 会给 自身 上一些buff 或者给 玩家的角色附加一些buff
+GameMainConfig.Monster={
+    
+}
+
 return GameMainConfig
