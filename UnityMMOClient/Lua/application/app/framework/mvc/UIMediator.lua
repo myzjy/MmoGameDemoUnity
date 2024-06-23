@@ -20,36 +20,15 @@ end
 function UIMediator:vGetUIPath()
 
 end
-function UIMediator:Create()
+
+function UIMediator:CreateAsyncPrefab(cls)
+    if not cls then
+        PrintError(self.__classname, "UIMediator:CreateAsyncPrefab 类错误")
+    end
+    local child = cls()
 
 end
 
--- 创建 子物体
-function UIMediator:CreateChildPrefabAsync(cls)
-
-end
-function UIMediator:OnInit()
-    self:vOnInit();
-end
-function UIMediator:vOnInit()
-end
-
-function UIMediator:OnStart()
-    self:vOnStart()
-end
-
-function UIMediator:vOnStart()
-end
-
-function UIMediator:OnHide()
-    self:vOnHide()
-end
---------------------------------------------------------
---- private
---- 重写 在子类
---------------------------------------------------------
-function UIMediator:vOnHide()
-end
 --- 向下发送更新UI（只能在实例内部调用该函数，如：self:SendUpdateUI("zvlc")，与vOnUpdateUI配合使用。自己不会调vOnUpdateUI。
 --- @param id string 刷新ID标识
 --- @param argument table 参数
