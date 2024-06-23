@@ -10,6 +10,9 @@ local lua_ipairs = ipairs
 local format = string.format
 local strsub = string.sub
 local tonumber = tonumber
+FrostLog = CS.FrostEngine.Debug.Log
+FrostLogE = CS.FrostEngine.Debug.LogError
+FrostLogW = CS.FrostEngine.Debug.LogWarning
 
 CONSOLE_COLOR = {
     Dark_black = "#000000",
@@ -39,7 +42,31 @@ function PrintLog(tag, script, fmt, ...)
         format(lua_tostring(fmt), ...)
     }
 
-    print(table.concat(t))
+    FrostLog(table.concat(t))
+end
+
+function PrintLogE(tag, script, fmt, ...)
+    local t = {
+        "[",
+        string.upper(lua_tostring(tag)),
+        "] ",
+        script,
+        format(lua_tostring(fmt), ...)
+    }
+
+    FrostLogE(table.concat(t))
+end
+
+function PrintLogW(tag, script, fmt, ...)
+    local t = {
+        "[",
+        string.upper(lua_tostring(tag)),
+        "] ",
+        script,
+        format(lua_tostring(fmt), ...)
+    }
+
+    FrostLogW(table.concat(t))
 end
 
 function PrintError(fmt, ...)
@@ -50,7 +77,8 @@ function PrintError(fmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLog("ERR", d, setLogColor(CONSOLE_COLOR.Light_Red, fmt), ...)
+  
+    PrintLogE("ERR", d, setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
 end
 
 function PrintWarn(fmt, ...)
@@ -64,7 +92,7 @@ function PrintWarn(fmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLog("WARN", d, setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    PrintLogW("WARN", d, setLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
 end
 
 function PrintWarnStack(fmt, ...)
