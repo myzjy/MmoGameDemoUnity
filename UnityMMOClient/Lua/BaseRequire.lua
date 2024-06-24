@@ -49,6 +49,8 @@ require("application.app.common.LuaUtils")
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
 
+AssetService = require("application.app.framework.services.assetServices")
+
 NetManager = require("application.app.net.webSocket.netManager")
 ByteBuffer = require("application.app.net.webSocket.luaProtocol.buffer.byteBuffer")
 Long = require("application.app.net.webSocket.luaProtocol.buffer.long")

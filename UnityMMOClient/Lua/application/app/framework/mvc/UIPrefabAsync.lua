@@ -8,32 +8,44 @@
 local UIPrefabAsync = class("UIPrefabAsync")
 
 function UIPrefabAsync:ctor()
-	self._mediator = false
+    self._mediator = false
 
-	self._parentPrefab = false
-	-- 父类
-	self._parentTf = false
+    self._parentPrefab = false
+    -- 父类
+    self._parentTf = false
 
-	self._style = false
+    self._style = false
 
-	self._argument = false
-	self._prefabClassDef = false
-	self._assetName = false
+    self._argument = false
+    self._prefabClassDef = false
+    self._assetName = false
 end
 
-function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, parentClassDef, argument, style)
-	self._mediator = mediator
-	self._prefabClassDef = parentClassDef
-	self._parentTf = parentTf
-	self._argument = argument
-	self._parentPrefab = parentPrefabClass
+function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, prefabClassDef, argument, loadPriority, life, customID, style, layer, insertFirst)
+    self._mediator = mediator or false
 
-	self._style = style
+    self._parentPrefabClass = parentPrefabClass or false
+    self._parentTf = parentTf or false
 
-	self._assetName = parentClassDef:GetReourcePath(style)
+    self._prefabClassDef = prefabClassDef or false
+    self._argument = argument or false
+
+    self._customID = customID or GlobalEnum.EInvalidDefine.ID
+    self._style = style or false
+    self._layer = layer or false
+    self._insertFirst = insertFirst or false
+
+    self._assetName = prefabClassDef:GetResourcePath(style)
+    AssetService:OnLoadAssetAsync(self._assetName, handle(self.OnLoadAssetCompleted, self))
 end
+function UIPrefabAsync:OnLoadAssetCompleted(assetName, obj)
+    if assetName ~= self._assetName then
+        return
+    end
+    if self._mediator then
 
-function
+    end
+end
 
 return UIPrefabAsync
 
