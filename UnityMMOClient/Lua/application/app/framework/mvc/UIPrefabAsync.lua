@@ -8,7 +8,32 @@
 local UIPrefabAsync = class("UIPrefabAsync")
 
 function UIPrefabAsync:ctor()
-    
+	self._mediator = false
+
+	self._parentPrefab = false
+	-- 父类
+	self._parentTf = false
+
+	self._style = false
+
+	self._argument = false
+	self._prefabClassDef = false
+	self._assetName = false
 end
 
+function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, parentClassDef, argument, style)
+	self._mediator = mediator
+	self._prefabClassDef = parentClassDef
+	self._parentTf = parentTf
+	self._argument = argument
+	self._parentPrefab = parentPrefabClass
+
+	self._style = style
+
+	self._assetName = parentClassDef:GetReourcePath(style)
+end
+
+function
+
 return UIPrefabAsync
+
