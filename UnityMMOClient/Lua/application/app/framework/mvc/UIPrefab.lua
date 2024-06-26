@@ -11,8 +11,9 @@ function UIPrefab:ctor()
     -- 子物体或者子面板
     ---@type table<number,UIPrefab>
     self._childList = false
-    ---@type UIMediator 
+    ---@type UIMediator
     self._parent = false
+    self._mediator=false
 end
 
 function UIPrefab:GetUIPath(index)
@@ -21,8 +22,14 @@ end
 function UIPrefab:vGetUIPath()
 
 end
-function UIPrefab:Create()
-
+---@param mediator UIMediator
+---
+function UIPrefab:Create(mediator, parentPrefabCls, parentTF, argument)
+    local resourcePath = self:GetUIPath()
+    if not resourcePath then
+        PrintError(string.format("%s  UIPrefab.Create : resource path error",self.__classname))
+    end
+    self._uiView=AssetService:OnLoadAssetAction()
 end
 
 -- 创建 子物体

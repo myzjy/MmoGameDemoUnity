@@ -36,4 +36,44 @@ function AssetServices:OnLoadAssetAsync(inAssetBundle, tLoadAssetCallbacks)
         tLoadAssetCallbacks(inAssetBundle, obj)
     end)
 end
+
+----------------------------------------------------------------------
+--- public
+--- @param inAssetBundle string 资源名
+--- @return UnityEngine.Object
+----------------------------------------------------------------------
+function AssetServices:OnLoadAsset(inAssetBundle)
+    if not self.assetLoadServices then
+        PrintError("AssetServices:LoadAsset 错误AssetBundleManager Bean 没有注册")
+        return
+    end
+    if self.assetLoadServices.LoadAsset then
+        PrintError("AssetServices:LoadAsset AssetBundleManager 类 不存在 LoadAsset 方法")
+    end
+    local tObject = self.assetLoadServices:LoadAsset(inAssetBundle)
+    if not tObject then
+        PrintError("AssetServices:LoadAsset  %s.assetbundle not ",inAssetBundle)
+    end
+    return tObject
+end
+
+--------------------------------------------------------------------
+--- public
+---@param inAssetBundle string 资源名
+---@return UnityEngine.GameObject
+---------------------------------------------------------------------
+function AssetServices:OnLoadAssetGameObject(inAssetBundle)
+    if not self.assetLoadServices then
+        PrintError("AssetServices:LoadAsset 错误AssetBundleManager Bean 没有注册")
+        return
+    end
+    if self.assetLoadServices.LoadAsset then
+        PrintError("AssetServices:OnLoadAssetGameObject AssetBundleManager 类 不存在 LoadAsset 方法")
+    end
+    local tObject = self.assetLoadServices:LoadAssetGameObject(inAssetBundle)
+    if not tObject then
+        PrintError("AssetServices:OnLoadAssetGameObject  %s.assetbundle not ",inAssetBundle)
+    end
+    return tObject
+end
 return AssetServices
