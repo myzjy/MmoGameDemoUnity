@@ -1,6 +1,5 @@
----@class FrostComponent
-local FrostComponent = class("FrostComponent")
-
+---@class FrostComponent:FrostObject
+local FrostComponent = class("FrostComponent", FrostObject)
 ----------------------------------------------------------------
 --- 初始化
 function FrostComponent:ctor()

@@ -159,3 +159,7 @@ function LuaUtils.GetKeyCanvasGroupGameObject(gameObject, objName)
     local __uiButton = LuaUtils.GetUICanvasGroup(obj)
     return __uiButton
 end
+
+function LuaUtils.InstantiateGameObject(gameObject)
+    return CS.UnityGamesTools.InstantiateGameObject(gameObject)
+end 
