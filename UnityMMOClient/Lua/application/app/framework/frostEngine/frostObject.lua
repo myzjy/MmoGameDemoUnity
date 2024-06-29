@@ -65,4 +65,8 @@ function FrostObject:InstantiateGameObject(gameObject)
 
 end
 
+function FrostObject:vGetType()
+    return self.uObject:GetType()
+end
+
 return FrostObject
