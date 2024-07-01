@@ -4,6 +4,7 @@
 --- DateTime: 2024/6/21 下午11:57
 ---
 ---@class UIPrefab
+---@field uPrefab UnityEngine.GameObject
 local UIPrefab = class("UIPrefab")
 
 --- 初始化
@@ -13,7 +14,7 @@ function UIPrefab:ctor()
     self._childList = false
     ---@type UIMediator
     self._parent = false
-    self._mediator=false
+    self._mediator = false
 end
 
 function UIPrefab:GetUIPath(index)
@@ -27,9 +28,10 @@ end
 function UIPrefab:Create(mediator, parentPrefabCls, parentTF, argument)
     local resourcePath = self:GetUIPath()
     if not resourcePath then
-        PrintError(string.format("%s  UIPrefab.Create : resource path error",self.__classname))
+        PrintError(string.format("%s  UIPrefab.Create : resource path error", self.__classname))
     end
-    self._uiView=AssetService:OnLoadAssetAction()
+    self._uiView = AssetService:OnLoadAssetGameObject(self:GetUIPath())
+
 end
 
 -- 创建 子物体
@@ -52,6 +54,25 @@ end
 function UIPrefab:OnHide()
     self:vOnHide()
 end
+---创建ui
+---@param mediator UIMediator 可以通过SendAction传递到信息的对应中介
+---@param parentPrefabClass UIPrefab 父ui
+---@param parentTf UnityEngine.Transform UE中的父控件（即创建出的控件所要挂载的地方）
+---@param argument table 自定义参数，用于vInitialize时读取
+---@param customID string|number 自定义索引，给父UI查找用（即父UI可以通过这个ID找到这个UI）
+---@param style number ui样式索引，对应vGetPath里的资源路径
+---@param layer number parentTf为空时挂载的对应层级索引
+---@param asyncLoadID number 异步加载任务ID，用来获取资源
+---@param bNotAddLayer boolean 为true则不直接挂载到对应层级，由自己后续控制
+---@param insertFirst boolean 是否从头部插入节点
+function UIPrefab:Create(mediator, parentPrefabClass, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
+    local resourcePath = self:GetResourcePath(style)
+    if not resourcePath then
+        PrintError("[%s] UIPrefab.Create : resource path error",self.__classname)
+    end
+    
+end
+
 --------------------------------------------------------
 --- private
 --- 重写 在子类

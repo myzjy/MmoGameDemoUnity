@@ -8,20 +8,49 @@
 local UIPrefabAsync = class("UIPrefabAsync")
 
 function UIPrefabAsync:ctor()
-    self._mediator = false
-
-    self._parentPrefab = false
-    -- 父类
+    self._uiAsset = false
+    self._prefab = false
     self._parentTf = false
 
-    self._style = false
+    ---@type UIMediator
+    self._mediator = false
+    self._parent = false
+    self._child = {}
+    self._prefabClassAsync = {}
+    self._imageAsync = {}
+    self._image2AssetPath = {}
+    self._audioCfg = false
+    self._realLayer = false
 
-    self._argument = false
-    self._prefabClassDef = false
-    self._assetName = false
+    self._customID = GlobalEnum.EInvalidDefine.ID
+    self._styleIndex = 1
+    self._tagName = false
+    self._isControlInputByVisible = true -- 是否通过可见性控制 vOnInputUpdateUI 处理输入事件
+
+    self._autoPlayAnimDelay = {  -- 异步播放动画队列
+        Queue = {},
+        AccumulationTime = 0,
+        Enable = false
+    }
+    ---@type {tbl:UIPrefab, func:function, param:any}[]
+    self._preDestroyDelegates = {}
+
+end
+---获取索引对应ui样式的资源路径
+---@param style number ui样式索引
+---@return string ui样式的资源路径
+function UIPrefabAsync:GetResourcePath(style)
+    self._styleIndex = style or 1
+    local styleArray = self:vGetPath()
+    if not styleArray or #styleArray == 0 then
+        return nil
+    end
+
+    return styleArray[self._styleIndex]
 end
 
-function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, prefabClassDef, argument, loadPriority, life, customID, style, layer, insertFirst)
+
+function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
     self._mediator = mediator or false
 
     self._parentPrefabClass = parentPrefabClass or false
@@ -38,12 +67,26 @@ function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, prefabClass
     self._assetName = prefabClassDef:GetResourcePath(style)
     AssetService:OnLoadAssetAsync(self._assetName, handle(self.OnLoadAssetCompleted, self))
 end
-function UIPrefabAsync:OnLoadAssetCompleted(assetName, obj)
+
+
+function UIPrefabAsync:OnLoadAssetCompleted(assetType, assetName, obj)
+    if not assetName then
+        PrintError("[%s]  UIPrefabClassAsyn.OnLoadAssetCompleted : invalid parameter", self.__classname)
+        return
+    end
+
     if assetName ~= self._assetName then
         return
     end
-    if self._mediator then
 
+    --[[if not obj and asyncLoadID ~= 0 then
+        NGRLogE(self.__classname, "UIPrefabClassAsyn.OnLoadAssetCompleted : load widget failed. Path = " .. self._assetName)
+    end]]
+
+    if self._mediator then
+        self._mediator:CreatePrefabClassAsynCompleted(self, self._prefabClassDef, self._argument, self._customID, self._style, self._layer, -1)
+    elseif self._parentPrefabClass then
+        self._parentPrefabClass:CreateChildPrefabClassAsynCompleted(self, self._prefabClassDef, self._parentTf, self._argument, self._customID, self._style, -1, self._insertFirst)
     end
 end
 

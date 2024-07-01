@@ -162,4 +162,10 @@ end
 
 function LuaUtils.InstantiateGameObject(gameObject)
     return CS.UnityGamesTools.InstantiateGameObject(gameObject)
+end
+
+--- 判断数值是否合法
+---@param inLegal number
+function LuaUtils.GetIDLegal(inLegal)
+    return inLegal and inLegal > 0
 end 
