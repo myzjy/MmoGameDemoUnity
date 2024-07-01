@@ -9,14 +9,34 @@
 local FrostUIText = class("FrostObject", FrostGameObject)
 
 function FrostUIText:ctor()
-    self._text = false
-    self._fontData = false
-    self._textCache = false
+	self._text = false
+	---@type UnityEngine.UI.FontData
+	self._fontData = false
+	self._textCache = false
 end
 
 function FrostUIText:Init(argument)
-    self.uText = argument.text
-    self.super:Init({uGameObject=argument.text.gameObject})
+	self.uText = argument.text
+	self.__super:Init({ uGameObject = argument.text.gameObject })
+end
+
+--- public
+--- 返回字体
+---@return UnityEngine.Font
+function FrostUIText:GetFont()
+	return self._fontData.font
+end
+
+--- public
+--- 设置 字体
+-----@param fontData any
+function FrostUIText:SetFont(fontData)
+	if self._fontData.fontData == fontData then
+		return
+	end
+	self.uText.font = fontData
+	self._fontData = self.uText.font
 end
 
 return FrostUIText
+

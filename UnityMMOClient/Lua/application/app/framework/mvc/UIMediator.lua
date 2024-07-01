@@ -7,11 +7,32 @@
 local UIMediator = class("UIMediator")
 --- 初始化
 function UIMediator:ctor()
+	self.module = false
+
+	self._prefabClass = {}
+	self._prefabClassAsync = {}
+	
+	self._inStatName = false
 	-- 子物体或者子面板
 	---@type table<number,UIPrefab>
 	self._childList = false
 	---@type UIPrefab
 	self._parent = false
+end
+
+function UIMediator:Create(inModule)
+	self.module = inModule
+	
+	self:vOnInitialize()
+end
+
+function UIMediator:Destroy()
+	
+end
+
+
+--- 重载 初始化
+function UIMediator:vOnInitialize()
 end
 
 function UIMediator:GetUIPath(index) end
@@ -23,6 +44,8 @@ function UIMediator:CreateAsyncPrefabCompleted(async, cls, argument, style, obj)
 		PrintError(self.__classname, "UIMediator:CreateAsyncPrefab 类错误")
 	end
 	local child = cls()
+
+	self._childList[#self._childList + 1] = child
 end
 
 function UIMediator:CreatePrefab(cls, argument, style, obj)
@@ -41,11 +64,11 @@ end
 --- @param dummy boolean 不要管这个参数 在 UIMediatorClass 内管理
 function UIMediator:SendUpdateUI(id, argument, dummy)
 	if string.IsNullOrEmpty(id) then
-		PrintError("id", id, "错误")
+		PrintError("id:" .. id .. ",错误")
 		return
 	end
 	if not self._childList then
-		PrintError("当前", self.__classname, "没有创建子物体或者子面板")
+		PrintError("当前" .. self.__classname .. ",没有创建子物体或者子面板")
 		return
 	end
 	for _, v in pairs(self._childList) do
@@ -63,7 +86,7 @@ end
 --- @param dummy boolean 不要管这个参数
 function UIMediator:SendAction(id, argument, dummy)
 	if not self._parent then
-		PrintError(self.__classname, "当前没有通知没有父组件")
+		PrintError( self.__classname .. ",当前没有通知没有父组件")
 		return
 	end
 	if self._parent then
@@ -89,4 +112,3 @@ function UIMediator:vOnUpdateUI(id, argument) end
 function UIMediator:vOnAction(id, argument) end
 
 return UIMediator
-
