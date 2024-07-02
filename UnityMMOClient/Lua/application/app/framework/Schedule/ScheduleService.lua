@@ -8,68 +8,68 @@
 local ScheduleService = class("ScheduleService", ServiceBase)
 
 function ScheduleService:ctor()
-	self.updater = {}
-	self.timer = {}
+    self.updater = {}
+    self.timer = {}
 end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行返回类的静态配置数据
 -------------------------------------------------------------------------------------------
 function ScheduleService:vGetConfig()
-	return {
-		name = "ScheduleService",
-	}
+    return {
+        name = "ScheduleService",
+    }
 end
 
 function ScheduleService:vDeinitialize()
-	for i = 1, #self.updater do
-		if self.updater[i] ~= nil then
-			PrintError(
-				"%s  ScheduleService.Uninitialze : update is not empty",
-				self.__classname,
-				self.updater[i].obj and self.updater[i].obj.__classname or string.empty
-			)
-		end
-	end
+    for i = 1, #self.updater do
+        if self.updater[i] ~= nil then
+            PrintError(
+                    "%s  ScheduleService.Uninitialze : update is not empty",
+                    self.__classname,
+                    self.updater[i].obj and self.updater[i].obj.__classname or string.empty
+            )
+        end
+    end
 
-	for i = 1, #self.timer do
-		if self.timer[i] ~= nil then
-			PrintError(
-				"%s  ScheduleService.Uninitialze : timer is not empty",
-				self.__classname,
-				self.timer[i].obj and self.timer[i].obj.__classname or string.empty
-			)
-		end
-	end
+    for i = 1, #self.timer do
+        if self.timer[i] ~= nil then
+            PrintError(
+                    "%s  ScheduleService.Uninitialze : timer is not empty",
+                    self.__classname,
+                    self.timer[i].obj and self.timer[i].obj.__classname or string.empty
+            )
+        end
+    end
 end
 
 function ScheduleService:Update(deltaTime)
-	for i = #self.updater, 1, -1 do
-		local data = self.updater[i]
-		if data ~= nil then
+    for i = #self.updater, 1, -1 do
+        local data = self.updater[i]
+        if data ~= nil then
             data.time:Update()
-			xpcall(data.time.func, LuaUtils.HandleXPCallError, data.obj, table.unpack(data.params))
-			if data.isOnce then
-				self.updater[i] = nil
-			end
-		else
-			table.remove(self.updater, i)
-		end
-	end
+            xpcall(data.time.func, LuaUtils.HandleXPCallError, data.obj, table.unpack(data.params))
+            if data.isOnce then
+                self.updater[i] = nil
+            end
+        else
+            table.remove(self.updater, i)
+        end
+    end
 
-	for i = #self.timer, 1, -1 do
+    for i = #self.timer, 1, -1 do
         local data = self.timer[i]
         if data ~= nil then
-			data.time:Update()
-			if data.time.isStop then
-				self.timer[i] = nil
-			else
-				data.time:Start()
-			end
+            data.time:Update()
+            if data.time.isStop then
+                self.timer[i] = nil
+            else
+                data.time:Start()
+            end
         else
             table.remove(self.timer, i)
         end
-	end
+    end
 end
 
 --- 添加更新
@@ -78,46 +78,46 @@ end
 --- @param isOnce boolean 是否只执行一次update 
 --- @param ... 可选
 function ScheduleService:AddUpdater(obj, func, isOnce, ...)
-	if not obj and not func then
-		PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
-	end
+    if not obj and not func then
+        PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
+    end
 
-	for i = 1, #self.updater do
-		local data = self.updater[i]
+    for i = 1, #self.updater do
+        local data = self.updater[i]
 
-		if data ~= nilTal and data.obj == obj and data.func == func then
-			local tObjectName = obj.__classname
-			PrintDebug("%s ScheduleService.AddUpdater : duplicate add updater \t %s",self.__classname,tObjectName)
-			return
-		end
-	end
-	
-	local t = {}
-	t.obj = obj
-	t.time = Timer.New(func)
-	t.isOnce=isOnce or false
-	t.params = table.pack(...)
-	
-	self.updater[#self.updater + 1] = t
+        if data ~= nilTal and data.obj == obj and data.func == func then
+            local tObjectName = obj.__classname
+            PrintDebug("%s ScheduleService.AddUpdater : duplicate add updater \t %s", self.__classname, tObjectName)
+            return
+        end
+    end
+
+    local t = {}
+    t.obj = obj
+    t.time = Timer.New(func)
+    t.isOnce = isOnce or false
+    t.params = table.pack(...)
+
+    self.updater[#self.updater + 1] = t
 end
 
-function ScheduleService:RemoveUpdater(obj,func)
-	if not obj then
-		PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
-	end
-	
-	for i = 1, #self.updater do
-		local data = self.updater[i]
+function ScheduleService:RemoveUpdater(obj, func)
+    if not obj then
+        PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
+    end
 
-		if data ~= nilTal and data.obj == obj then
-			if not func then
-				self.updater[i] = nil
-			elseif data.time.func == func then
-				self.updater[i] = nil
-				return
-			end
-		end
-	end
+    for i = 1, #self.updater do
+        local data = self.updater[i]
+
+        if data ~= nilTal and data.obj == obj then
+            if not func then
+                self.updater[i] = nil
+            elseif data.time.func == func then
+                self.updater[i] = nil
+                return
+            end
+        end
+    end
 end
 
 -- 添加定时器
@@ -128,65 +128,67 @@ end
 -- @param execFuncAtOnce 在重复的情况下（不重复此参数无效），是否立刻执行一次函数（否则将在interval时间后第一次执行函数）（默认否）
 -- @param ... 可选，自定义参数，触发回调时按顺序传入
 function ScheduleService:AddTimer(obj, func, interval, repetition, execFuncAtOnce, ...)
-	if not obj or not func or not interval or interval < 0 then
-		NGRLogE(self.__classname, "AddTimer : invalid parameter")
-		return
-	end
-	self:_internalAddTimer(obj, func, interval, repetition, execFuncAtOnce, nil, ...)
+    if not obj or not func or not interval or interval < 0 then
+        NGRLogE(self.__classname, "AddTimer : invalid parameter")
+        return
+    end
+    self:_internalAddTimer(obj, func, interval, repetition, execFuncAtOnce, nil, ...)
 end
 
 -- 移除定时器
 -- @param tbl 接收回调的对象
 -- @param fun 接收回调的对象中的函数（为nil或者没有该参数删除跟该对象关联的所有定时器）
 function ScheduleServiceClass:RemoveTimer(obj, func)
-	if not obj then
-		NGRLogE(self.__classname, "ScheduleServiceClass.RemoveTimer : invalid parameter")
-		return
-	end
+    if not obj then
+        NGRLogE(self.__classname, "ScheduleServiceClass.RemoveTimer : invalid parameter")
+        return
+    end
 
-	for i = 1, #self._timer do
-		local data = self._timer[i]
+    for i = 1, #self._timer do
+        local data = self._timer[i]
 
-		if data ~= null and data.obj == obj then
-			if not func then
-				self._timer[i] = null
-			elseif data.func == func then
-				self._timer[i] = null
-				return
-			end
-		end
-	end
+        if data ~= null and data.obj == obj then
+            if not func then
+                self._timer[i] = null
+            elseif data.func == func then
+                self._timer[i] = null
+                return
+            end
+        end
+    end
 end
 
 function ScheduleService:DelayTime(obj, func, interval)
-	self:RemoveTimer(obj, func)
-	self:AddTimer(obj, func, interval)
+    self:RemoveTimer(obj, func)
+    self:AddTimer(obj, func, interval)
 end
 
 function ScheduleService:_internalAddTimer(obj, func, interval, repetition, execFuncAtOnce, frameNum, ...)
-	for i = 1, #self._timer do
-		local data = self._timer[i]
+    for i = 1, #self._timer do
+        local data = self._timer[i]
 
-		if data ~= null and data.obj == obj and data.func == func then
-			local tObjName = obj.__classname or obj.__name
-			PrintDebug(self.__classname.."_internalAddTimer : duplicate add timer"..tObjName)
-			return
-		end
-	end
+        if data ~= null and data.obj == obj and data.func == func then
+            local tObjName = obj.__classname or obj.__name
+            PrintDebug(self.__classname .. "_internalAddTimer : duplicate add timer" .. tObjName)
+            return
+        end
+    end
 
-	local t = {}
-	t.obj = obj
-	t.func = func
-	t.interval = interval
-	t.repetition = repetition or false
-	t.frameNum = frameNum or false
-	t.remain = interval
-	t.params = table.pack(...)
+    local t = {}
+    t.obj = obj
+    t.time = Timer.New(func, interval)
+    t.func = func
+    t.interval = interval
+    t.repetition = repetition or false
+    t.frameNum = frameNum or false
+    t.remain = interval
+    t.params = table.pack(...)
 
-	self._timer[#self._timer+1] = t
+    self._timer[#self._timer + 1] = t
 
-	if repetition and execFuncAtOnce then
-		xpcall(func, NGRHelper.HandleXPCallError, obj, table.unpack(t.params))
-	end
+    if repetition and execFuncAtOnce then
+        xpcall(func, NGRHelper.HandleXPCallError, obj, table.unpack(t.params))
+    end
 end
+
 return ScheduleService

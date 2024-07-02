@@ -819,3 +819,17 @@ function try(block)
         error(e)
     end
 end
+
+
+function IsChildOfClass(Object, ClassName)
+    local CurClass = Object
+    while CurClass ~= nil do
+        if CurClass.__classname == ClassName then
+            return true
+        end
+
+        CurClass = CurClass.__super
+    end
+
+    return false
+end 

@@ -49,7 +49,7 @@ require("application.app.common.LuaUtils")
 require("application.app.cache.LoginCacheData")
 require("application.app.cache.playerUserCaCheData")
 
-AssetService = require("application.app.framework.services.assetServices")
+
 
 NetManager = require("application.app.net.webSocket.netManager")
 ByteBuffer = require("application.app.net.webSocket.luaProtocol.buffer.byteBuffer")
@@ -66,5 +66,7 @@ UIGameEvent = require("application.app.event.uiGameEvent")
 ProcedureGame = require("application.app.procedure.procedureFsmManager")
 
 UIComponentManager = require("application.app.ui.UIComponentManager")
+
+ServiceManager = require("application.app.framework.services.serviceManger")
 
 PrintDebug("require lua script end")

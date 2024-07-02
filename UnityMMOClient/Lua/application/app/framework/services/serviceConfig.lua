@@ -5,5 +5,6 @@
 ---
 
 return {
-    "application.app.framework.Schedule.ScheduleService",  ---定时器服务
+    "application.app.framework.Schedule.ScheduleService", ---定时器服务
+    "application.app.framework.services.assetServices", --- 资源服务
 }

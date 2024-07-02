@@ -81,12 +81,17 @@ end
 local function UpdateEvent()
 
 end
+
+function LuaTick()
+    ScheduleService:Update()
+end
+
 local function main()
     PrintDebug("init active main function")
     if Debug > 0 then
         PrintDebug("open debug log ing....")
     end
-
+    ServiceManager:Initialize()
     UIComponentManager:InitUIModelComponent()
     UICommonViewController:GetInstance():OnInit()
     ProtocolManager.initProtocolManager()
