@@ -169,3 +169,7 @@ end
 function LuaUtils.GetIDLegal(inLegal)
     return inLegal and inLegal > 0
 end 
+
+function LuaUtils.HandleXPCallError(inErrorMessage)
+    PrintError("XPCallError , %s \n $s",inErrorMessage,debug.traceback())
+end 

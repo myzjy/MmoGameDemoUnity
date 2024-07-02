@@ -4,14 +4,13 @@
 --- DateTime: 2024/7/1 23:40
 ---
 
+---@class ServiceBase
 local ServiceBase = class("ServiceBase")
-
 
 ------------------------------------------------------
 --- 初始化
 ------------------------------------------------------
-function ServiceBase:ctor()
-end
+function ServiceBase:ctor() end
 
 -------------------------------------------------------------------------------------------
 --- 静态函数，返回服务的配置信息，子类覆盖vGetConfig返回自定义的数据
@@ -22,24 +21,24 @@ end
 --- }
 -------------------------------------------------------------------------------------------
 function ServiceBase:GetConfig()
-    PrintDebug(self.__classname .. "GetConfig")
-    return self:vGetConfig()
+	PrintDebug(self.__classname .. "GetConfig")
+	return self:vGetConfig()
 end
 
 -------------------------------------------------------------------------------------------
 --- 初始化，由 ServiceManager 进行调用
 -------------------------------------------------------------------------------------------
 function ServiceBase:Initialize()
-    PrintDebug(self.__classname .."Initialize")
-    self:vInitialize()
+	PrintDebug(self.__classname .. "Initialize")
+	self:vInitialize()
 end
 
 -------------------------------------------------------------------------------------------
 -- 反初始化，由 ServiceManager 进行调用
 -------------------------------------------------------------------------------------------
 function ServiceBase:Deinitialize()
-    PrintDebug(self.__classname .."Deinitialize")
-    self:vDeinitialize()
+	PrintDebug(self.__classname .. "Deinitialize")
+	self:vDeinitialize()
 end
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行返回类的静态配置数据
@@ -50,21 +49,18 @@ end
 --      isClientOnly(boolean) 可选，是否仅在Client上创建
 -- }
 -------------------------------------------------------------------------------------------
-function ServiceBase:vGetConfig()
-end
+function ServiceBase:vGetConfig() end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行初始化逻辑
 -- @param inIsRunOnServer(boolean) 当前是否允许在服务器，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function ServiceBase:vInitialize(inIsRunOnServer)
-end
+function ServiceBase:vInitialize(inIsRunOnServer) end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行反初始化逻辑
 -- @param inIsRunOnServer(boolean) 当前是否允许在服务器，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function ServiceBase:vDeinitialize(inIsRunOnServer)
-end
+function ServiceBase:vDeinitialize(inIsRunOnServer) end
 
 return ServiceBase

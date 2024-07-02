@@ -12,6 +12,7 @@ Init()
 
 require("common.util.functions")
 _G.null = nil
+_G.nilTal={}
 _G.NULL = nil
 
 PrintDebug("# DEBUG                        = " .. Debug)

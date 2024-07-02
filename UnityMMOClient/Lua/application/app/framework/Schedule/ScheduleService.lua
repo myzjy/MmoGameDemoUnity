@@ -5,23 +5,121 @@
 ---
 
 ---@class ScheduleService:ServiceBase
-local ScheduleService = class("ScheduleService",ServiceBase)
+local ScheduleService = class("ScheduleService", ServiceBase)
 
 function ScheduleService:ctor()
-    self.updater = {}
-    self.timer = {}
+	self.updater = {}
+	self.timer = {}
 end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行返回类的静态配置数据
 -------------------------------------------------------------------------------------------
 function ScheduleService:vGetConfig()
-    return
-    {
-        name = "ScheduleService",
-    }
+	return {
+		name = "ScheduleService",
+	}
 end
 
 function ScheduleService:vDeinitialize()
+	for i = 1, #self.updater do
+		if self.updater[i] ~= nil then
+			PrintError(
+				"%s  ScheduleService.Uninitialze : update is not empty",
+				self.__classname,
+				self.updater[i].obj and self.updater[i].obj.__classname or string.empty
+			)
+		end
+	end
+
+	for i = 1, #self.timer do
+		if self.timer[i] ~= nil then
+			PrintError(
+				"%s  ScheduleService.Uninitialze : timer is not empty",
+				self.__classname,
+				self.timer[i].obj and self.timer[i].obj.__classname or string.empty
+			)
+		end
+	end
+end
+
+function ScheduleService:Update(deltaTime)
+	for i = #self.updater, 1, -1 do
+		local data = self.updater[i]
+		if data ~= nil then
+            data.time:Update()
+			xpcall(data.time.func, LuaUtils.HandleXPCallError, data.obj, table.unpack(data.params))
+			if data.isOnce then
+				self.updater[i] = nil
+			end
+		else
+			table.remove(self.updater, i)
+		end
+	end
+
+	for i = #self.timer, 1, -1 do
+        local data = self.timer[i]
+        if data ~= nil then
+			data.time:Update()
+			if data.time.isStop then
+				self.timer[i] = nil
+			else
+				data.time:Start()
+			end
+        else
+            table.remove(self.timer, i)
+        end
+	end
+end
+
+--- 添加更新
+--- @param obj any 接收更新会调对象
+--- @param func function 接收更新会调对象中的函数
+--- @param isOnce boolean 是否只执行一次update 
+--- @param ... 可选
+function ScheduleService:AddUpdater(obj, func, isOnce, ...)
+	if not obj and not func then
+		PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
+	end
+
+	for i = 1, #self.updater do
+		local data = self.updater[i]
+
+		if data ~= nilTal and data.obj == obj and data.func == func then
+			local tObjectName = obj.__classname
+			PrintDebug("%s ScheduleService.AddUpdater : duplicate add updater \t %s",self.__classname,tObjectName)
+			return
+		end
+	end
+	
+	local t = {}
+	t.obj = obj
+	t.time = Timer.New(func)
+	t.isOnce=isOnce or false
+	t.params = table.pack(...)
+	
+	self.updater[#self.updater + 1] = t
+end
+
+function ScheduleService:RemoveUpdater(obj,func)
+	if not obj then
+		PrintDebug("%s \t ScheduleService.AddUpdater : Invald parameter", self.__classname)
+	end
+	
+	for i = 1, #self.updater do
+		local data = self.updater[i]
+
+		if data ~= nilTal and data.obj == obj then
+			if not func then
+				self.updater[i] = nil
+			elseif data.time.func == func then
+				self.updater[i] = nil
+				return
+			end
+		end
+	end
+end
+
+
 
 return ScheduleService

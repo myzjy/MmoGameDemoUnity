@@ -24,12 +24,14 @@ end
 
 function Timer:Start()
     self.running = true
-
-    if not self.handle then
+    self.isStop = false
+    
+    --[[if not self.handle then
         self.handle = UpdateBeat:CreateListener(self.Update, self)
     end
+    ]]--
 
-    UpdateBeat:AddListener(self.handle)
+    -- UpdateBeat:AddListener(self.handle)
 end
 
 function Timer:Reset(func, duration, loop, scale)
@@ -46,10 +48,12 @@ end
 
 function Timer:Stop()
     self.running = false
+    self.isStop = true
 
-    if self.handle then
+    --[[if self.handle then
         UpdateBeat:RemoveListener(self.handle)
     end
+    ]]--
 end
 
 function Timer:Update()
