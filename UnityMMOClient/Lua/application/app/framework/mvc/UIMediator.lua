@@ -37,114 +37,830 @@ function UIMediator:Destroy()
         self:vOnUIStateOut()
     end
     self:vOnUnInitialize()
-    if  self._scheduleTime then
-        self._scheduleTime:Stop()
+    ScheduleService:RemoveUpdater(self, self.ProcessControl_ClearPrefabClass)
+
+    self.module = false
+    for i = 1, #self._prefabClass do
+        if self._prefabClass[i] ~= nil then
+            PrintError("%s \t UIMediator.Destroy  : prefabClass \t %s of \t %s \t is living", self.__classname, self._prefabClass[i].__classname, self.__classname)
+        end
+    end
+
+    if #self._prefabClassAsync > 0 then
+        PrintError("%s \t UIMediator.Destroy  : prefabClassAsync is not empty %s ", self.__classname, self.__classname)
+        for i = 1, #self._prefabClassAsync do
+            self._prefabClassAsync[i]:Destroy()
+        end
+    end
+
+    self._belongUIStateName = false
+    self._inputBelongUIStateName = false
+end
+
+function UIMediator:DisableUIPrefabRender(prefabPath)
+    self:vDisableUIPrefabRender(prefabPath)
+end
+
+function UIMediator:ShowFullScreen(show)
+    self:vShowFullScreen(show)
+end
+
+function UIMediator:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
+    if not self._belongUIStateName or #self._belongUIStateName == 0 then
+        return
+    end
+
+    local constant = StateConstant
+
+    local inStateName = false
+    if self._belongUIStateName[1] == constant.AllState then
+        if childStateName and childStateName ~= "" then
+            inStateName = childStateName
+        elseif stateName and stateName ~= "" then
+            inStateName = stateName
+        elseif rootStateName and rootStateName ~= "" then
+            inStateName = rootStateName
+        end
+    else
+        if childStateName and childStateName ~= "" then
+            for i = 1, #self._belongUIStateName do
+                if self._belongUIStateName[i] == childStateName then
+                    inStateName = childStateName
+                    break
+                end
+            end
+        end
+
+        if not inStateName and stateName and stateName ~= "" then
+            for i = 1, #self._belongUIStateName do
+                if self._belongUIStateName[i] == stateName then
+                    inStateName = stateName
+                    break
+                end
+            end
+        end
+
+        if not inStateName and rootStateName and rootStateName ~= "" then
+            for i = 1, #self._belongUIStateName do
+                if self._belongUIStateName[i] == rootStateName then
+                    inStateName = rootStateName
+                    break
+                end
+            end
+        end
+    end
+
+    if operator == constant.Out then
+        if self._inStateName and not inStateName then
+            -- 卸载系统级别覆盖外设键位配置
+            local InputContextDTPath, bReplace, bKeepKeyStateMap = self:vGetInputActionDTPath(self._inStateName)
+            if InputContextDTPath and #InputContextDTPath > 0 then
+                -- NGRHelper.ChangeBackgroundRendering(self._inStateName, InputContextDTPath, GlobalEnum.ERenderingUpdateMode.Normal)
+                --NGRHelper.PlayWorldAudioAction(self._inStateName, InputContextDTPath, false)
+                local MainPlayerController = self:GetOwnerController()
+                if MainPlayerController then
+                    local bRemoved = false
+                    for i = 1, #InputContextDTPath do
+                        local bResult = MVCService:RemoveSystemContextData(
+                                MainPlayerController,
+                                InputContextDTPath[i],
+                                ContextLayer[i] or UE4.ENGRCInputContextLayer.ContextLayer_Max,
+                                bKeepKeyStateMap)
+                        if bResult then
+                            bRemoved = true
+                        end
+                    end
+                    if bReplace then
+                        MainPlayerController:RestoreCachedContexts()
+                    end
+                    local InputActionKeyFlushDTPath = self:vGetInputActionKeyFlushDTPath(self._inStateName)
+                    if bRemoved and InputActionKeyFlushDTPath then
+                        -- MVCService:FlushInputKeyState(MainPlayerController, InputActionKeyFlushDTPath, UE.EKeyFlushTriggerType.UnBindInputContext)
+                    end
+                end
+            end
+
+            if self.vOnInputUpdateUI then
+                MVCService:RemoveInputDelegate(self)
+            end
+            -- CNSService:BeginFlow(FlowId.All, FlowId.UIStateOut, self.__classname)
+            self:vOnUIStateOut(switchType, self._inStateName)
+            -- 动态释放
+            if self._module then
+                self._module:ReleaseLocalFilePaths()
+            end
+            -- CNSService:EndFlow(FlowId.All, FlowId.UIStateOut)
+            self._inStateName = false
+            self._inputEnable = false
+            ScheduleService:RemoveTimer(self, self.ProcessControl_ClearPrefabClass)
+            ScheduleService:AddTimer(self, self.ProcessControl_ClearPrefabClass, 1, false)
+            self._userData = false
+        end
+
+    elseif operator == constant.In then
+        if not self._inStateName and inStateName then
+            self._inStateName = inStateName
+            self._inputEnable = true
+            if self.vOnInputUpdateUI then
+                -- MVCService:AddInputDelegate(self, self.vOnInputUpdateUI)
+            end
+            return inStateName
+        end
+
+    elseif operator == constant.Stay then
+        if self._inStateName and inStateName then
+            if self._inStateName ~= inStateName then
+                self:vOnUIStateStay(switchType, self._inStateName, inStateName, userData)
+                self._inStateName = inStateName
+            else
+                self:vOnUIStateHoldon(switchType, inStateName, userData)
+            end
+            self:RefreshInputState()
+            self:vOnUIStateAfterStay()
+        end
     end
 end
 
---- 重载 初始化
+function UIMediator:SwitchUIStateIn(switchType, userData)
+    self._userData = userData or false
+    -- 加载系统级别覆盖外设键位配置
+    local InputContextDTPath, bReplace, bKeepKeyStateMap = self:vGetInputActionDTPath(self._inStateName)
+    if InputContextDTPath and #InputContextDTPath > 0 then
+        --  NGRHelper.ChangeBackgroundRendering(self._inStateName, InputContextDTPath, GlobalEnum.ERenderingUpdateMode.Freeze)
+        -- NGRHelper.PlayWorldAudioAction(self._inStateName, InputContextDTPath, true)
+        local MainPlayerController = self:GetOwnerController()
+        if MainPlayerController then
+            if bReplace then
+                MainPlayerController:CacheContexts()
+                MainPlayerController:ClearContexts()
+            end
+            local bAdded = false
+            for i = 1, #InputContextDTPath do
+                if InputContextDTPath[i] ~= "" then
+                    local bResult = MVCService:AddSystemContextData(
+                            MainPlayerController,
+                            InputContextDTPath[i],
+                            ContextLayer[i] or UE4.ENGRCInputContextLayer.ContextLayer_Max,
+                            bKeepKeyStateMap)
+                    if bResult then
+                        bAdded = true
+                    end
+                end
+            end
+            local InputActionKeyFlushDTPath = self:vGetInputActionKeyFlushDTPath(self._inStateName)
+            if bAdded and InputActionKeyFlushDTPath then
+                -- MVCService:FlushInputKeyState(MainPlayerController, InputActionKeyFlushDTPath, UE.EKeyFlushTriggerType.BindInputContext)
+            end
+        end
+    end
+
+    -- 动态require
+    if self._module then
+        self._module:LoadLocalFilePaths()
+    end
+    self:vOnUIStateIn(switchType, self._inStateName, userData)
+
+    if #self._prefabClassAsyn == 0 then
+        self:SetMaskCoveredofViewport()
+    end
+
+end
+
+function UIMediator:ActivePrefabClassCookie(active, classname, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
+    if not classname or not csInstanceID then
+        PrintError("%s \t UIMediator.ActivePrefabClassCookie : invalid parameter", self.__classname)
+        return
+    end
+
+    local cls = self._prefabClassCookie[classname]
+    if not cls then
+        return
+    end
+
+    if active then
+        local obj = cls:New()
+        obj:Create(self, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
+        self._prefabClass[#self._prefabClass + 1] = obj
+    else
+        for i = 1, #self._prefabClass do
+            local obj = self._prefabClass[i]
+            if obj ~= null and obj._csInstanceID == csInstanceID then
+                self._prefabClass[i] = null
+                obj:Destroy()
+                break
+            end
+        end
+    end
+end
+
+function UIMediator:CreatePrefabClassAsyncCompleted(async, cls, argument, customID, style, layer, asyncLoadID)
+    local prefabClass = self:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
+    async:ApplyUpdateUI(prefabClass)
+
+    for i = 1, #self._prefabClassAsync do
+        if self._prefabClassAsync[i] == asyn then
+            table.remove(self._prefabClassAsync, i)
+            break
+        end
+    end
+
+    if #self._prefabClassAsync == 0 then
+        self:SetMaskCoveredofViewport()
+    end
+
+    self:vOnCreateAsynPrefabClassCompleted(prefabClass)
+end
+
+function UIMediator:ProcessControl_ClearPrefabClass()
+    table.removeNullFromArray(self._prefabClass)
+end
+
+-------------------------------------------------------------------------------------------
+--- 脱离Mediator在执行的UWidget下创建的独立的Prefab的通知
+--- @param inPrefab(UIPrefab) 传入UIPrefab
+--- @param inAdd (boolean) 是否添加
+-------------------------------------------------------------------------------------------
+function UIMediator:UpdateDynamicPrefab(inPrefab, inAdd)
+    if not inPrefab then
+        PrintError("%s \t inPrefab is nil", self.__classname)
+        return
+    end
+    local tCustomID = inPrefab:GetCustomID()
+    if not UE4Helper.IsValidID(tCustomID) then
+        return
+    end
+    if inAdd then
+        if self._prefabClassExternal[tCustomID] then
+            PrintError("%s \t inPrefab already exist \t %s", self.__classname, inPrefab.__classname)
+            return
+        end
+        inPrefab._mediator = self --TODO 是否统一成接口
+        self._prefabClassExternal[tCustomID] = inPrefab
+    else
+        if self._prefabClassExternal[tCustomID] then
+            self._prefabClassExternal[tCustomID] = nil
+        end
+    end
+end
+
+function UIMediator:SetMaskCoveredofViewport()
+    if self and UE4.UNGRCFunctionLibrary.IsMaskCoveredofViewportAllowed() then
+        self._UIMaskMark = DatabinService:GetSingleRow(DataTableConfig.UIMaskDataTablePath, self:vGetBelongUIStateName()[1])
+        if self._UIMaskMark then
+            UE4.UNGRCFunctionLibrary.SetMaskCoveredofViewport(self._UIMaskMark.Name, self._UIMaskMark.ForceUpdate, self._UIMaskMark.WidthCount, self._UIMaskMark.HeightCount, self._UIMaskMark.UICoverArray)
+        else
+            UE4.UNGRCFunctionLibrary.SetEmptyUIMask()
+        end
+    end
+end
+
+function UIMediator:GetPrefabClassByTag(tagName, param)
+    if not param then
+        PrintError("%s \t GetPrefabClassByTag param is error, Prohibit modifying param in the process! \t %s", self.__classname, debug.traceback())
+    end
+    local outPrefabInstance = self:vGetPrefabClassByTag(tagName, param)
+    if outPrefabInstance then
+        if not outPrefabInstance:GetPrefabIsVisible() then
+            return false
+        end
+        return outPrefabInstance
+    end
+    return self:_DoEachPrefab(function(inPrefabInstance)
+        if inPrefabInstance and inPrefabInstance ~= null then
+            if (inPrefabInstance.__classname == tagName and string.isEmpty(param.CustomID))
+                    or (inPrefabInstance.__classname == tagName and not string.isEmpty(param.CustomID) and tostring(inPrefabInstance:GetCustomID()) == param.CustomID)
+                    or inPrefabInstance:GetTagName() == tagName then
+                if not inPrefabInstance:GetPrefabIsVisible() then
+                    return false
+                end
+                return inPrefabInstance
+            end
+            return inPrefabInstance:GetPrefabClassByTag(tagName, param)
+        end
+    end)
+end
+
+-- 重载
+-- 获取Mediator所属的UI状态
+-- @return 返回值1：所属的UI状态的数组，返回空标识不属于任何状态  返回值2：可单独指定当前Mediator在什么UI状态下才响应外设输入
+-- (默认与前者保持一致，只有Mediator属于多状态或者根状态的时候，才可能需要单独指定)
+function UIMediator:vGetBelongUIStateName()
+end
+
+-- 重载
+-- @return1 所属的UI状态所对应的input action context dt path, 暂时最多两层contextPath，第一位为低优先级，第二位为高优先级，相同按键高优先级将替换低优先级,如只有一层高优先级，可用""占位低优先级
+-- @return2 是否为替换关系
+-- @return3 是否保留当前的输入（如当前正在进行的长按）
+function UIMediator:vGetInputActionDTPath(stateName)
+    return false, false, false
+end
+
+-- 重载
+--@return1 返回对应UI的InputAction对应的KeyFlush的dt path, data类型为FActionKeyFlushRow
+function UIMediator:vGetInputActionKeyFlushDTPath(stateName)
+    return false
+end
+
+-- 重载
+-- 初始化
 function UIMediator:vOnInitialize()
 end
 
---- 重载
----  反初始化
-function UIMediator:vOnUnInitialize()
-end
 -- 重载
---- 切出状态
---- @param switchType any 切换类型（取值：StateConstant）
---- @param outStateName string 切出的状态名
+-- 反初始化
+function UIMediator:vOnUninitialize()
+end
+
+-- 重载
+-- 切入状态
+-- @param switchType 切换类型（取值：StateConstant）
+-- @param inStateName 切入的状态名
+-- @param userData 用户自定义数据
+function UIMediator:vOnUIStateIn(switchType, inStateName, userData)
+end
+
+-- 重载
+-- 切出状态
+-- @param switchType 切换类型（取值：StateConstant）
+-- @param outStateName 切出的状态名
 function UIMediator:vOnUIStateOut(switchType, outStateName)
 end
 
 -- 重载
---- 获取Mediator所属的UI状态
---- @return table,string 返回值1：所属的UI状态的数组，返回空标识不属于任何状态  返回值2：可单独指定当前Mediator在什么UI状态下才响应外设输入
---- (默认与前者保持一致，只有Mediator属于多状态或者根状态的时候，才可能需要单独指定)
-function UIMediator:vGetBelongUIStateName()
+-- 停留状态（状态发生了改变，Medaitor同时属于新老状态）
+-- @param switchType 切换类型（取值：StateConstant）
+-- @param outStateName 老状态名
+-- @param inStateName 新状态名
+-- @param userData 用户自定义数据
+function UIMediator:vOnUIStateStay(switchType, outStateName, inStateName, userData)
 end
 
-
-function UIMediator:GetUIPath(index)
+-- 重载
+-- 驻留状态（状态发生了改变，Mediator所属的状态没有发生改变）
+-- @param switchType 切换类型（取值：StateConstant）
+-- @param stateName 状态名
+-- @param userData 用户自定义数据
+-- @return 无
+function UIMediator:vOnUIStateHoldon(switchType, stateName, userData)
 end
 
-function UIMediator:vGetUIPath()
+function UIMediator:vOnUIStateAfterStay()
 end
 
-function UIMediator:CreateAsyncPrefabCompleted(async, cls, argument, style, obj)
-    if not cls then
-        PrintError(self.__classname, "UIMediator:CreateAsyncPrefab 类错误")
-    end
-    local child = cls()
-
-    self._childList[#self._childList + 1] = child
+---异步创建UIPrefabClass完成回调
+---@param prefabClass UIPrefab 异步创建的prefabClass
+---@return void
+function UIMediator:vOnCreateAsynPrefabClassCompleted(prefabClass)
 end
 
-function UIMediator:CreatePrefab(cls, argument, style, obj)
-    if not cls then
-        PrintError("UIMediator:CreatePrefab invalid parameter")
-    end
-    local objCls = cls()
-
-    self._prefab[#self._prefab + 1] = objCls
-    return objCls
-end
-
---- 向下发送更新UI（只能在实例内部调用该函数，如：self:SendUpdateUI("zvlc")，与vOnUpdateUI配合使用。自己不会调vOnUpdateUI。
---- @param id string 刷新ID标识
---- @param argument table 参数
---- @param dummy boolean 不要管这个参数 在 UIMediatorClass 内管理
-function UIMediator:SendUpdateUI(id, argument, dummy)
-    if string.IsNullOrEmpty(id) then
-        PrintError("id:" .. id .. ",错误")
-        return
-    end
-    if not self._childList then
-        PrintError("当前" .. self.__classname .. ",没有创建子物体或者子面板")
-        return
-    end
-    for _, v in pairs(self._childList) do
-        if dummy then
-            self:vOnUpdateUI(id, argument)
-            return
-        end
-        -- 递归 向子物体发送
-        v:SendUpdateUI(id, argument, dummy)
-    end
-end
---- 向上发送操作（只能在实例内部调用该函数，如：self:SendAction("zvlc")，与vOnAction配合使用。自己不会调vOnAction。
---- @param id string 操作ID标识
---- @param argument table 参数
---- @param dummy boolean 不要管这个参数
-function UIMediator:SendAction(id, argument, dummy)
-    if not self._parent then
-        PrintError(self.__classname .. ",当前没有通知没有父组件")
-        return
-    end
-    if self._parent then
-        if dummy then
-            self._parent:vOnAction(id, argument)
-            return
-        end
-        self._parent:SendAction(id, argument, dummy)
-    end
-end
-
---- 重载
---- 更新UI回调，以 module -> mediator -> parent UI prefab -> child UI prefab 顺序向下传递（其中任何一个都可以自主发起下发传递，不必然从module开始），与SendUpdateUI配合使用
---- @param id string|number 更新标识，推荐使用字符串和数字
---- @param argument table 自定义更新参数
---- @return boolean 是否阻断向下传递刷新，true为阻断
+-- 重载
+-- 更新UI回调
+-- @param id 更新标识，推荐使用字符串和数字
+-- @param argument 更新参数
+-- @return 是否阻断向下传递刷新
 function UIMediator:vOnUpdateUI(id, argument)
 end
---- 重载
---- 操作回调，以 child UI prefab -> parent UI prefab -> mediator -> module顺序向上传递（其中任何一个都可以自主发起下发传递，不必然从child UI prefab开始）,与SendAction配合使用
---- @param id string|number 操作标识，推荐使用字符串和数字
---- @param argument table 自定义操作参数
---- @return boolean 是否阻断向上传递操作，true为阻断
+
+-- 重载
+-- 操作回调
+-- @param id 操作标识，推荐使用字符串和数字
+-- @param argument 操作参数
+-- @return 是否阻断向上传递操作
 function UIMediator:vOnAction(id, argument)
 end
 
+-- 关闭UIPrefabClass的渲染
+-- @param prefabPath（string） 关闭渲染的UIPrefab Path（以,分割），可能为nil标识没有需要关闭的
+-- @return 无
+function UIMediator:vOnDisableUIPrefabRender(prefabPath)
+end
 
+-- 显示全屏界面回调
+-- @param show 显示/隐藏
+-- @return 无
+function UIMediator:vOnShowFullScreen(show)
+end
+
+-- 重载
+-- 获取UIPrefabClass
+-- @param tagName 类的自定义标签
+---@param param table 自定义参数
+-- @return 获取到的UIPrefabClass
+-- 说明：新手引导在使用该函数，通过TagName搜索和其匹配的UIPrefab：
+-- 1) 不同平台上UI也不同的Module（比如技能UI）中，需要Mediator返回对应平台的UIPrefabClass
+-- 2) 当UIPrefab是list列表中的一项，比如主菜单的背包按钮，需要Mediator根据tagName来查找
+function UIMediator:vGetPrefabClassByTag(tagName, param)
+    return false
+end
+
+-- 创建UIPrefabClass
+-- @param cls 创建的子UIPrefabClass类定义
+-- @param argument 自定义参数
+-- @param customID 自定义ID
+-- @param style 资源样式(索引)
+-- @param layer 指定的层级
+-- @param asyncLoadID 异步加载任务ID
+-- @return 创建的子UIPrefabClass（=nil创建失败）
+function UIMediator:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
+    if not cls then
+        PrintError( "%s \t UIMediator.CreatePrefabClass : invalid parameter",self.__classname)
+        return nil
+    end
+
+    local obj = cls:New()
+
+    obj:Create(self, nil, nil, argument, customID, style, layer, asyncLoadID)
+
+    self._prefabClass[#self._prefabClass + 1] = obj
+
+    return obj
+end
+
+-- 异步创建UIPrefabClass
+-- @param cls 创建的子UIPrefabClass类定义
+-- @param argument 自定义参数
+-- @param loadPriority 装载类型（默认为LoadPriority.SpareShow）
+-- @param life 生命周期（默认为：LifeType.Immediate）
+-- @param customID 自定义ID
+-- @param style 资源样式(索引)
+---@param layer PanelLayerConfig @指定的层级
+-- @return 无
+function UIMediator:CreateAsyncPrefabClass(cls, argument, loadPriority, life, customID, style, layer)
+    if not cls then
+        PrintError( "%s \t UIMediator.CreateAsyncPrefabClass : invalid parameter", self.__classname)
+        return
+    end
+    if customID then
+        if self:GetPrefabClassByCustomID(customID) then
+            PrintError( "%s \t UIMediator.CreateAsyncPrefabClass : already exist prefab \t %d",  self.__classname,customID)
+            return
+        end
+        if self:GetCreateAsyncPrefabClassStateByCustomID(customID) then
+            PrintError("%s \t UIMediator.CreateAsyncPrefabClass : prefab is createing \t %d", self.__classname,customID)
+            return
+        end
+    end
+    local obj = UIPrefabClassAsync()
+    self._prefabClassAsync[#self._prefabClassAsync + 1] = obj
+    obj:Create(self, nil, nil, cls, argument, loadPriority or LoadPriority.SpareShow, life or LifeType.Immediate, customID, style, layer)
+end
+
+-- 销毁UIPrefabClass
+-- @param prefab 待销毁的UIPrefabClass
+function UIMediator:DestroyPrefabClass(obj)
+    if not obj then
+        PrintError("%s \t UIMediator.DestroyPrefabClass : invalid parameter",self.__classname)
+        return
+    end
+
+    for i = 1, #self._prefabClass do
+        if self._prefabClass[i] == obj then
+            self._prefabClass[i] = null
+            break
+        end
+    end
+
+    obj:Destroy()
+end
+
+-- 销毁UIPrefabClass
+-- @param name UIPrefabClass类名
+-- @param onlyAsync 只销毁符合条件的异步子UIPrefabClass，类型：bool，默认销毁所有符合条件的
+-- @return 无
+function UIMediator:DestroyPrefabClassByName(name, onlyAsync)
+    if not name then
+        PrintError( "%s \t UIMediator.DestroyPrefabClass : invalid parameter",self.__classname)
+        return
+    end
+
+    if not onlyAsync then
+        for i = #self._prefabClass, 1, -1 do
+            local pc = self._prefabClass[i]
+            if pc ~= null and pc.__classname == name then
+                self._prefabClass[i] = null
+                pc:Destroy()
+            end
+        end
+    end
+
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
+        if pca:GetPrefabClassName() == name then
+            table.remove(self._prefabClassAsync, i)
+            pca:Destroy()
+        end
+    end
+end
+
+-- 销毁UIPrefabClass
+-- @param customID 自定义ID
+-- @param onlyAsync 只销毁符合条件的异步子UIPrefabClass，类型：bool，默认销毁所有符合条件的
+-- @return 无
+function UIMediator:DestroyPrefabClassByCustomID(customID, onlyAsync)
+    if not customID then
+        PrintError("%s \t UIMediator.DestroyPrefabClassByCustomID : invalid parameter", self.__classname)
+        return
+    end
+
+    if not onlyAsync then
+        for i = #self._prefabClass, 1, -1 do
+            local pc = self._prefabClass[i]
+            if pc ~= null and pc._customID == customID then
+                self._prefabClass[i] = null
+                pc:Destroy()
+            end
+        end
+    end
+
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
+        if pca._customID == customID then
+            table.remove(self._prefabClassAsync, i)
+            pca:Destroy()
+        end
+    end
+end
+
+-- 销毁所有UIPrefabClass
+-- @param onlyAsync 只销毁异步子UIPrefabClass，类型：bool，默认销毁所有
+function UIMediator:DestroyAllPrefabClass(onlyAsync)
+    if not onlyAsync then
+        for i = 1, #self._prefabClass do
+            local obj = self._prefabClass[i]
+            if obj ~= null then
+                self._prefabClass[i] = null
+                obj:Destroy()
+            end
+        end
+    end
+
+    local async = table.remove(self._prefabClassAsync)
+    while async do
+        async:Destroy()
+        async = table.remove(self._prefabClassAsync)
+    end
+end
+
+-- 获取UIPrefabClass
+-- @param name 类名
+-- @return 获取到的UIPrefabClass
+function UIMediator:GetPrefabClassByName(name)
+    if not name then
+        PrintError(self.__classname, "UIMediator.GetPrefabClassByName : invalid parameter")
+        return nil
+    end
+
+    for i = 1, #self._prefabClass do
+        local pc = self._prefabClass[i]
+        if pc ~= null and pc.__classname == name then
+            return pc
+        end
+    end
+
+    for _, prefab in pairs(self._prefabClassExternal) do
+        if prefab.__classname == name then
+            return prefab
+        end
+    end
+
+    return nil
+end
+
+-- 获取UIPrefabClass
+-- @param customID 自定义ID
+-- @return 获取到的UIPrefabClass
+function UIMediator:GetPrefabClassByCustomID(customID)
+    if not customID then
+        PrintError(self.__classname, "UIMediator.GetPrefabClassByCustomID : invalid parameter")
+        return nil
+    end
+
+    for i = 1, #self._prefabClass do
+        local pc = self._prefabClass[i]
+        if pc ~= null and pc._customID == customID then
+            return pc
+        end
+    end
+
+    for id, prefab in pairs(self._prefabClassExternal) do
+        if id == customID then
+            return prefab
+        end
+    end
+
+    return nil
+end
+
+-------------------------------------------------------------------------------------------
+-- 判断指定子界面是否已创建，或者正在创建
+-- @param inCustomID(*) 自定义的ID
+-- @return(#1) 如果已创建、或者正在创建，返回true
+-- @return(#2) 如果已创建，返回创建的实例
+-------------------------------------------------------------------------------------------
+function UIMediator:HasChildPrefab(inCustomID)
+    local tChildPrefab = self:GetPrefabClassByCustomID(inCustomID)
+    if not tChildPrefab then
+        return self:GetCreateAsyncPrefabClassStateByCustomID(inCustomID)
+    end
+    return true, tChildPrefab
+end
+
+-- 获取UIPrefabClass异步状态状态
+-- @param name UIPrefabClass类名
+-- @return true：异步创建中  false: 不在异步创建中
+function UIMediator:GetCreateAsynPrefabClassStateByName(name)
+    if not name then
+        PrintError(self.__classname, "UIMediator.GetCreateAsynPrefabClassStateByName : invalid parameter")
+        return
+    end
+
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
+        if pca:GetPrefabClassName() == name then
+            return true
+        end
+    end
+    return false
+end
+
+-- 获取UIPrefabClass异步状态状态
+-- @param customID 自定义ID
+-- @return true：异步创建中  false: 不在异步创建中
+function UIMediator:GetCreateAsyncPrefabClassStateByCustomID(customID)
+    if not customID then
+        PrintError(self.__classname, "UIMediator.GetCreateAsyncPrefabClassStateByCustomID : invalid parameter")
+        return
+    end
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
+        if pca._customID == customID then
+            return true
+        end
+    end
+    return false
+end
+
+-- 注册挂接C# UIPrefabClass的PrefabClassCookie
+-- @param cls UIPrefabClassCookie的派生类定义
+-- @param name 需要挂接的C# UIPrefabClass子类类名
+-- @param bind 是否绑定C# UIPrefabClass子类（特别注意，设置为true时会影响效率，没有必要不要绑定）
+-- @return 无
+function UIMediator:RegisterPrefabClassCookie(cls, name, bind)
+    if not cls or not name then
+        PrintError("%s \t UIMediator.RegisterPrefabClassCookie : invalid parameter", self.__classname)
+        return
+    end
+
+    bind = bind or false
+
+    self._prefabClassCookie[name] = cls
+    MVCService:RegisterPrefabClassCookie(name, bind)
+end
+
+-- 发送更新UI（只能在实例内部调用该函数，如：self:SendUpdateUI("zvlc")
+-- @param id 刷新ID标识
+-- @param argument 参数
+-- @param dummy 不要管这个参数
+function UIMediator:SendUpdateUI(id, argument, dummy)
+    if not id then
+        PrintError("%s \t UIMediator.SendUpdateUI : invalid parameter", self.__classname)
+        return
+    end
+
+    if dummy then
+        if self:vOnUpdateUI(id, argument) then
+            CNSService:EndFlow(FlowId.All, FlowId.SendUpdateUI)
+            return
+        end
+    end
+
+    for i = 1, #self._prefabClassAsync do
+        local async = self._prefabClassAsync[i]
+        async:SendUpdateUI(id, argument)
+    end
+
+    for _, prefab in pairs(self._prefabClassExternal) do
+        prefab:SendUpdateUI(id, argument, true)
+    end
+    -- 晚于_prefabClassAsync执行，避免为新创建的prefab添加事件
+    for i = #self._prefabClass, 1, -1 do
+        local obj = self._prefabClass[i]
+        if obj ~= null then
+            obj:SendUpdateUI(id, argument, true)
+        end
+    end
+end
+
+-- 发送操作（只能在实例内部调用该函数，如：self:SendAction("zvlc")
+-- @param id 操作ID标识
+-- @param argument 参数
+-- @param dummy 不要管这个参数
+function UIMediator:SendAction(id, argument, dummy)
+    if not id then
+        PrintError("%s \t UIMediator.SendAction : invalid parameter", self.__classname)
+        return
+    end
+
+    if dummy then
+        if self:vOnAction(id, argument) then
+            CNSService:EndFlow(FlowId.All, FlowId.SendAction)
+            return
+        end
+    end
+
+    if self._module then
+        self._module:vOnAction(id, argument)
+    end
+end
+
+function UIMediator:RefreshInputState()
+    local stateName = false
+    if self._inputBelongUIStateName then
+        stateName = self._inputBelongUIStateName
+    else
+        stateName = self._belongUIStateName
+    end
+    if stateName then
+        local curUIState = StateService:GetCurrentUIStateName()
+        local curUIChildState = StateService:GetCurrentUIChildStateName()
+        local curRootState = StateService:GetCurrentUIRootStateName()
+        self._inputEnable = false
+        for i = 1, #stateName do
+            -- if stateName[i] == curUIState or stateName[i] == curUIChildState or stateName[i] == curRootState then
+            if stateName[i] == StateConstant.AllState or stateName[i] == curUIState or stateName[i] == curUIChildState or stateName[i] == curRootState then
+                self._inputEnable = true
+                break
+            end
+        end
+    end
+end
+
+function UIMediator:IsInputEnable()
+    return self._inputEnable or not self._belongUIStateName or #self._belongUIStateName == 0 or (#self._belongUIStateName > 0 and self._belongUIStateName[1] == "")
+end
+
+-- 创建或销毁UI 例如 self._ui = SetUIVisible(self._ui, true, ClassLib.UITestClass, false) 或 self._ui = SetUIVisible(self._ui, false)
+-- @param ui ui对象
+-- @param visible 是否显示
+-- @param class UI对应的PrefabClass
+-- @param arg UI的参数
+function UIMediator:SetUIVisible(ui, visible, class, arg)
+    if visible and not ui then
+        ui = self:CreatePrefabClass(class, arg)
+    elseif not visible and ui then
+        self:DestroyPrefabClass(ui)
+        ui = false
+    end
+    return ui
+end
+
+-- 查找UIPrefab对应的PrefabClass
+-- @param uiPrefab UIPrefab对象
+-- @return 获取到的UIPrefabClass
+function UIMediator:GetPrefabClassByUIPrefab(uiPrefab)
+    for i = 1, #self._prefabClass do
+        local prefabClass = self._prefabClass[i]
+        if prefabClass ~= null and prefabClass.GetPrefabClassByUIPrefab then
+            local targetPrefabClass, autoLoadNode = prefabClass:GetPrefabClassByUIPrefab(uiPrefab)
+            if targetPrefabClass then
+                return targetPrefabClass, autoLoadNode
+            end
+        end
+    end
+    return false, nil
+end
+
+---@return DataCentreClass
+function UIMediator:GetDataCentre()
+    if self._module then
+        return self._module:GetDataCentre()
+    end
+    return DataCentre
+end
+
+-- 封装，保持和ModuleBase接口一致性
+function UIMediator:GetOwner()
+    return SceneEntityService:GetPlayerEntity()
+end
+
+-- 封装，保持和ModuleBase接口一致性
+function UIMediator:GetOwnerActor()
+    return UE4Helper.GetMainPlayerCharacter(true)
+end
+
+-- 封装，保持和ModuleBase接口一致性
+function UIMediator:GetOwnerController()
+    return UE4Helper.GetMainPlayerController(true)
+end
+
+function UIMediator:_DoEachPrefab(inFunc, ...)
+    local tReturnValue = nil
+    for tIndex = 1, #self._prefabClass do
+        tReturnValue = inFunc(self._prefabClass[tIndex], ...)
+        if nil ~= tReturnValue then
+            return tReturnValue
+        end
+    end
+end
 
 return UIMediator

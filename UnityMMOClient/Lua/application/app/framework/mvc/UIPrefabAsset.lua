@@ -25,9 +25,6 @@ end
 function UIPrefabAsset:SetAlpha(inAlpha)
     self.uPrefabView.GetSelfObjCanvasGroup.alpha = inAlpha
     self.Alpha = inAlpha
-    if not then
-        
-    end
 end
 
 ---@param inInteractable boolean 是否可以点击
