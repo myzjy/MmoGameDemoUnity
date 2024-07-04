@@ -71,7 +71,7 @@ end
 
 function UIPrefabAsync:OnLoadAssetCompleted(assetType, assetName, obj)
     if not assetName then
-        PrintError("[%s]  UIPrefabClassAsyn.OnLoadAssetCompleted : invalid parameter", self.__classname)
+        PrintError("[%s]  UIPrefabClassAsync.OnLoadAssetCompleted : invalid parameter", self.__classname)
         return
     end
 
@@ -80,7 +80,7 @@ function UIPrefabAsync:OnLoadAssetCompleted(assetType, assetName, obj)
     end
 
     --[[if not obj and asyncLoadID ~= 0 then
-        NGRLogE(self.__classname, "UIPrefabClassAsyn.OnLoadAssetCompleted : load widget failed. Path = " .. self._assetName)
+        NGRLogE(self.__classname, "UIPrefabClassAsync.OnLoadAssetCompleted : load widget failed. Path = " .. self._assetName)
     end]]
 
     if self._mediator then
@@ -92,7 +92,7 @@ end
 
 function UIPrefabAsync:SendUpdateUI(id, argument)
     if not id then
-        PrintError("%s \t  UIPrefabClassAsyn.SendUpdateUI : invalid parameter",self.__classname)
+        PrintError("%s \t  UIPrefabClassAsync.SendUpdateUI : invalid parameter",self.__classname)
     end
     local data = {
         id = id,
@@ -103,7 +103,7 @@ end
 
 function UIPrefabAsync:ApplyUpdateUI(prefabClas)
     if not prefabClas then
-        PrintError("%s \t  UIPrefabClassAsyn.ApplyUpdateUI : invalid parameter",self.__classname)
+        PrintError("%s \t  UIPrefabClassAsync.ApplyUpdateUI : invalid parameter",self.__classname)
         return
     end
 
@@ -112,7 +112,7 @@ function UIPrefabAsync:ApplyUpdateUI(prefabClas)
         if data then
             prefabClas:SendUpdateUI(data.id, data.argument, true)
         else
-            PrintError("%s \t  UIPrefabClassAsyn.ApplyUpdateUI : prefab is been destoried by last update ui, it is a dangerous logic.",prefabClas.__classname)
+            PrintError("%s \t  UIPrefabClassAsync.ApplyUpdateUI : prefab is been destoried by last update ui, it is a dangerous logic.",prefabClas.__classname)
         end
     end
     for i = #self._operation, 1, -1 do
@@ -121,4 +121,3 @@ function UIPrefabAsync:ApplyUpdateUI(prefabClas)
 end
 
 return UIPrefabAsync
-

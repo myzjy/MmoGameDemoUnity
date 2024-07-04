@@ -52,12 +52,14 @@ function AssetServices:OnLoadAsset(inAssetBundle)
     end
     local tObject = self.assetLoadServices:LoadAsset(inAssetBundle)
     if not tObject then
-        PrintError("AssetServices:LoadAsset  %s.assetbundle not ",inAssetBundle)
+        PrintError("AssetServices:LoadAsset  %s.assetbundle not ", inAssetBundle)
     end
     return tObject
 end
 function AssetServices:OnLoadUIAsset(inAssetBundle, uiGlobal)
- local tUIValue = LuaUtils.GetGlobalVariable(uiGlobal)
+    -- 获取 UI 全局变量
+    local tUIValue = LuaUtils.GetGlobalVariable(uiGlobal)
+    tUIValue()
 end
 
 --------------------------------------------------------------------
@@ -75,7 +77,7 @@ function AssetServices:OnLoadAssetGameObject(inAssetBundle)
     end
     local tObject = self.assetLoadServices:LoadAssetGameObject(inAssetBundle)
     if not tObject then
-        PrintError("AssetServices:OnLoadAssetGameObject  %s.assetbundle not ",inAssetBundle)
+        PrintError("AssetServices:OnLoadAssetGameObject  %s.assetbundle not ", inAssetBundle)
     end
     return tObject
 end
