@@ -56,6 +56,9 @@ function AssetServices:OnLoadAsset(inAssetBundle)
     end
     return tObject
 end
+function AssetServices:OnLoadUIAsset(inAssetBundle, uiGlobal)
+ local tUIValue = LuaUtils.GetGlobalVariable(uiGlobal)
+end
 
 --------------------------------------------------------------------
 --- public

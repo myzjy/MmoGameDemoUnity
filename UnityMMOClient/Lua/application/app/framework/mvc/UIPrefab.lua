@@ -129,15 +129,15 @@ end
 
 ---创建ui
 ---@param mediator UIMediator 可以通过SendAction传递到信息的对应中介
----@param parentPrefabClass UIPrefab 父ui
----@param parentTf UnityEngine.GameObject UE中的父控件（即创建出的控件所要挂载的地方）
----@param argument table 自定义参数，用于vInitialize时读取
+---@param parentPrefabClass UIPrefab|nil 父ui
+---@param parentTf UnityEngine.GameObject|nil UE中的父控件（即创建出的控件所要挂载的地方）
+---@param argument table|nil 自定义参数，用于vInitialize时读取
 ---@param customID string|number 自定义索引，给父UI查找用（即父UI可以通过这个ID找到这个UI）
 ---@param style number ui样式索引，对应vGetPath里的资源路径
----@param layer number parentTf为空时挂载的对应层级索引
----@param asyncLoadID number 异步加载任务ID，用来获取资源
----@param bNotAddLayer boolean 为true则不直接挂载到对应层级，由自己后续控制
----@param insertFirst boolean 是否从头部插入节点
+---@param layer number|nil parentTf为空时挂载的对应层级索引
+---@param asyncLoadID number|nil 异步加载任务ID，用来获取资源
+---@param bNotAddLayer boolean|nil 为true则不直接挂载到对应层级，由自己后续控制
+---@param insertFirst boolean|nil 是否从头部插入节点
 function UIPrefab:Create(mediator, parentPrefabClass, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
     local resourcePath = self:GetResourcePath(style)
     if not resourcePath then
@@ -145,7 +145,7 @@ function UIPrefab:Create(mediator, parentPrefabClass, parentTf, argument, custom
         return
     end
 
-    self._uiAsset = AssetServices:LoadUIAsset(resourcePath, LifeType.UIState, asyncLoadID)
+    self._uiAsset = AssetServices:OnLoadAsset(resourcePath, UIConfig.UICanvasType.UI, asyncLoadID)
     if not self._uiAsset then
         PrintError(self.__classname .. "\t UIPrefab.Create : load resource failed - " .. resourcePath)
         return

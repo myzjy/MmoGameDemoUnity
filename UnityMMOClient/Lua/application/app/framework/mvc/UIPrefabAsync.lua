@@ -12,7 +12,7 @@ function UIPrefabAsync:ctor()
     self._prefab = false
     self._parentTf = false
 
-    ---@type UIMediator
+    ---@type UIMediator|boolean
     self._mediator = false
     self._parent = false
     self._child = {}
@@ -34,7 +34,7 @@ function UIPrefabAsync:ctor()
     }
     ---@type {tbl:UIPrefab, func:function, param:any}[]
     self._preDestroyDelegates = {}
-
+    self._operation={}
 end
 ---获取索引对应ui样式的资源路径
 ---@param style number ui样式索引
@@ -50,7 +50,7 @@ function UIPrefabAsync:GetResourcePath(style)
 end
 
 
-function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
+function UIPrefabAsync:Create(mediator, parentPrefabClass, prefabClassDef, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
     self._mediator = mediator or false
 
     self._parentPrefabClass = parentPrefabClass or false
@@ -65,7 +65,7 @@ function UIPrefabAsync:Create(mediator, parentPrefabClass, parentTf, argument, c
     self._insertFirst = insertFirst or false
 
     self._assetName = prefabClassDef:GetResourcePath(style)
-    AssetService:OnLoadAssetAsync(self._assetName, handle(self.OnLoadAssetCompleted, self))
+    AssetServices:OnLoadAssetAsync(self._assetName, handle(self.OnLoadAssetCompleted, self))
 end
 
 
@@ -84,9 +84,39 @@ function UIPrefabAsync:OnLoadAssetCompleted(assetType, assetName, obj)
     end]]
 
     if self._mediator then
-        self._mediator:CreatePrefabClassAsynCompleted(self, self._prefabClassDef, self._argument, self._customID, self._style, self._layer, -1)
+        self._mediator:CreatePrefabClassAsyncCompleted(self, self._prefabClassDef, self._argument, self._customID, self._style, self._layer, -1)
     elseif self._parentPrefabClass then
-        self._parentPrefabClass:CreateChildPrefabClassAsynCompleted(self, self._prefabClassDef, self._parentTf, self._argument, self._customID, self._style, -1, self._insertFirst)
+        self._parentPrefabClass:CreateChildPrefabClassAsyncCompleted(self, self._prefabClassDef, self._parentTf, self._argument, self._customID, self._style, -1, self._insertFirst)
+    end
+end
+
+function UIPrefabAsync:SendUpdateUI(id, argument)
+    if not id then
+        PrintError("%s \t  UIPrefabClassAsyn.SendUpdateUI : invalid parameter",self.__classname)
+    end
+    local data = {
+        id = id,
+        argument = argument
+    }
+    self._operation[#self._operation + 1] = data
+end
+
+function UIPrefabAsync:ApplyUpdateUI(prefabClas)
+    if not prefabClas then
+        PrintError("%s \t  UIPrefabClassAsyn.ApplyUpdateUI : invalid parameter",self.__classname)
+        return
+    end
+
+    for i = 1, #self._operation do
+        local data = self._operation[i]
+        if data then
+            prefabClas:SendUpdateUI(data.id, data.argument, true)
+        else
+            PrintError("%s \t  UIPrefabClassAsyn.ApplyUpdateUI : prefab is been destoried by last update ui, it is a dangerous logic.",prefabClas.__classname)
+        end
+    end
+    for i = #self._operation, 1, -1 do
+        table.remove(self._operation,i)
     end
 end
 

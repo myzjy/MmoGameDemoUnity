@@ -253,12 +253,19 @@ function UIMediator:ActivePrefabClassCookie(active, classname, csInstanceID, roo
     end
 end
 
+---@param async UIPrefabAsync
+---@param cls UIPrefab
+---@param argument any
+---@param customID any
+---@param style any
+---@param layer any
+---@param asyncLoadID any
 function UIMediator:CreatePrefabClassAsyncCompleted(async, cls, argument, customID, style, layer, asyncLoadID)
     local prefabClass = self:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
     async:ApplyUpdateUI(prefabClass)
 
     for i = 1, #self._prefabClassAsync do
-        if self._prefabClassAsync[i] == asyn then
+        if self._prefabClassAsync[i] == async then
             table.remove(self._prefabClassAsync, i)
             break
         end
@@ -454,20 +461,21 @@ function UIMediator:vGetPrefabClassByTag(tagName, param)
 end
 
 -- 创建UIPrefabClass
--- @param cls 创建的子UIPrefabClass类定义
+--- @param cls UIPrefab 创建的子UIPrefabClass类定义
 -- @param argument 自定义参数
 -- @param customID 自定义ID
 -- @param style 资源样式(索引)
 -- @param layer 指定的层级
 -- @param asyncLoadID 异步加载任务ID
--- @return 创建的子UIPrefabClass（=nil创建失败）
+--- @return UIPrefab|nil 创建的子UIPrefabClass（=nil创建失败）
 function UIMediator:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
     if not cls then
         PrintError( "%s \t UIMediator.CreatePrefabClass : invalid parameter",self.__classname)
         return nil
     end
 
-    local obj = cls:New()
+    ---@type UIPrefab
+    local obj = cls()
 
     obj:Create(self, nil, nil, argument, customID, style, layer, asyncLoadID)
 

@@ -172,4 +172,8 @@ end
 
 function LuaUtils.HandleXPCallError(inErrorMessage)
     PrintError("XPCallError , %s \n $s",inErrorMessage,debug.traceback())
-end 
+end
+
+function LuaUtils.GetGlobalVariable(inName)
+    return _G[inName]
+end
