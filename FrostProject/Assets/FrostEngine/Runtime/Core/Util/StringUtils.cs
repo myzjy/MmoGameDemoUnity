@@ -5,7 +5,7 @@ using Unity.VisualScripting.Antlr3.Runtime.Collections;
 
 namespace FrostEngine
 {
-  public abstract class StringUtils
+    public abstract class StringUtils
     {
         [ThreadStatic] private static StringBuilder _cachedStringBuilder;
 

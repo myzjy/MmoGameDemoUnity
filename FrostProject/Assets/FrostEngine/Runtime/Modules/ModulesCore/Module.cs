@@ -3,11 +3,17 @@ using UnityEngine;
 
 namespace FrostEngine
 {
+    /// <summary>
+    /// 游戏框架模块抽象类。
+    /// </summary>
     public  abstract class Module : MonoBehaviour
     {
-        protected void Awake()
+        /// <summary>
+        /// 游戏框架模块初始化。
+        /// </summary>
+        protected virtual void Awake()
         {
-            
+            ModuleSystem.RegisterModule(this);
         }
     }
 }

@@ -83,7 +83,35 @@ namespace FrostEngine
             }
 
             _modules.Clear();
-            
+        }
+
+        /// <summary>
+        /// 注册游戏框架模块。
+        /// </summary>
+        /// <param name="module">要注册的游戏框架模块。</param>
+        internal static void RegisterModule(Module module)
+        {
+            if (module == null)
+            {
+                Debug.LogError("TEngine Module is invalid.");
+                return;
+            }
+
+            Type type = module.GetType();
+
+            LinkedListNode<Module> current = _modules.First;
+            while (current != null)
+            {
+                if (current.Value.GetType() == type)
+                {
+                    Debug.LogError("Game Framework component type '{}' is already exist.", type.FullName);
+                    return;
+                }
+
+                current = current.Next;
+            }
+
+            _modules.AddLast(module);
         }
     }
 }
