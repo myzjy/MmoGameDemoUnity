@@ -41,7 +41,7 @@ namespace FrostEngine
                 DrawItem("Game Framework Version", Version.GameFrameworkVersion);
                 DrawItem("Game Version", StringUtils.Format("{} ({})", Version.GameVersion, Version.InternalGameVersion));
                 DrawItem("Resource Version", (string.IsNullOrEmpty(_mResourceModule.ApplicableGameVersion) ? 
-                    "Unknown" : StringUtils.Format("{0} ({1})", _mResourceModule.ApplicableGameVersion, _mResourceModule.InternalResourceVersion)));
+                    "Unknown" : StringUtils.Format("{} ({})", _mResourceModule.ApplicableGameVersion, _mResourceModule.InternalResourceVersion)));
                 DrawItem("Application Version", Application.version);
                 DrawItem("Unity Version", Application.unityVersion);
                 DrawItem("Platform", Application.platform.ToString());

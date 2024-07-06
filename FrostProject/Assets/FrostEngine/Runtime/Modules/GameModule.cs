@@ -66,7 +66,13 @@ namespace FrostEngine
         public static ResourceModule Resource => _resource ??= Get<ResourceModule>();
 
         private static ResourceModule _resource;
-
+        
+        /// <summary>
+        /// 获取计时器模块。
+        /// </summary>
+        public static TimerModule Timer => _timer ??= Get<TimerModule>();
+        
+        private static TimerModule _timer;
         /// <summary>
         /// 获取配置模块。
         /// </summary>
@@ -136,7 +142,7 @@ namespace FrostEngine
             // _ui = null;
             // _localization = null;
             // _scene = null;
-            // _timer = null;
+            _timer = null;
             _resourceExt = null;
         }
         #region HandlePlayModeStateChanged
