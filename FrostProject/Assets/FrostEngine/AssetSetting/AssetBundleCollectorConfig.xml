@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root Version="v2.1">
+  <Common ShowPackageView="False" ShowEditorAlias="False" UniqueBundleName="False" />
+  <Package PackageName="DefaultPackage" PackageDesc="默认资源" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreRuleName="NormalIgnoreRule">
+    <Group GroupActiveRule="EnableGroup" GroupName="UI" GroupDesc="UI资源" AssetTags="UI">
+      <Collector CollectPath="Assets/AssetRaw/UI" CollectGUID="6d95bc2ab0996fa45948bbf366442eea" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+  </Package>
+</root>

@@ -24,8 +24,16 @@ MonoBehaviour:
     AutoCollectShaders: 1
     IgnoreRuleName: NormalIgnoreRule
     Groups:
-    - GroupName: 
-      GroupDesc: 
-      AssetTags: 
+    - GroupName: UI
+      GroupDesc: "UI\u8D44\u6E90"
+      AssetTags: UI
       ActiveRuleName: EnableGroup
-      Collectors: []
+      Collectors:
+      - CollectPath: Assets/AssetRaw/UI
+        CollectorGUID: 6d95bc2ab0996fa45948bbf366442eea
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
