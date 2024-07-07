@@ -68,6 +68,14 @@ namespace FrostEngine
         private static ResourceModule _resource;
         
         /// <summary>
+        /// 获取多语言模块。
+        /// </summary>
+        public static LocalizationModule Localization => _localization ??= Get<LocalizationModule>();
+
+        private static LocalizationModule _localization;
+
+        
+        /// <summary>
         /// 获取计时器模块。
         /// </summary>
         public static TimerModule Timer => _timer ??= Get<TimerModule>();

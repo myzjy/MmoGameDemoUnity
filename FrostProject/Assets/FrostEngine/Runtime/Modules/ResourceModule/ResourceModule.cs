@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 using YooAsset;
 
 namespace FrostEngine
@@ -16,7 +17,7 @@ namespace FrostEngine
 
         private const int DefaultPriority = 0;
 
-        private IResourceManager m_ResourceManager;
+        private IResourceManager _mResourceManager;
 
         private IServerSettings mServerSettings;
 
@@ -30,9 +31,11 @@ namespace FrostEngine
 
         private float m_LastUnloadUnusedAssetsOperationElapseSeconds = 0f;
 
-        [SerializeField] private float m_MinUnloadUnusedAssetsInterval = 60f;
+        [FormerlySerializedAs("m_MinUnloadUnusedAssetsInterval")] [SerializeField]
+        private float mMinUnloadUnusedAssetsInterval = 60f;
 
-        [SerializeField] private float m_MaxUnloadUnusedAssetsInterval = 300f;
+        [FormerlySerializedAs("m_MaxUnloadUnusedAssetsInterval")] [SerializeField]
+        private float mMaxUnloadUnusedAssetsInterval = 300f;
 
         /// <summary>
         /// 当前最新的包裹版本。
@@ -65,6 +68,7 @@ namespace FrostEngine
                 {
                     playMode = EPlayMode.OfflinePlayMode;
                 }
+
                 //运行时使用。
                 return playMode;
 #endif
@@ -76,70 +80,75 @@ namespace FrostEngine
 #endif
             }
         }
-        
-        /// <summary>
-        /// 是否支持边玩边下载。
-        /// </summary>
-        [SerializeField] private bool m_UpdatableWhilePlaying = false;
 
         /// <summary>
         /// 是否支持边玩边下载。
         /// </summary>
-        public bool UpdatableWhilePlaying => m_UpdatableWhilePlaying;
+        [FormerlySerializedAs("m_UpdatableWhilePlaying")] [SerializeField]
+        private bool mUpdatableWhilePlaying = false;
+
+        /// <summary>
+        /// 是否支持边玩边下载。
+        /// </summary>
+        public bool UpdatableWhilePlaying => mUpdatableWhilePlaying;
 
         /// <summary>
         /// 下载文件校验等级。
         /// </summary>
         public EVerifyLevel VerifyLevel = EVerifyLevel.Middle;
 
-        [SerializeField] private ReadWritePathType m_ReadWritePathType = ReadWritePathType.Unspecified;
+        [FormerlySerializedAs("m_ReadWritePathType")] [SerializeField]
+        private ReadWritePathType mReadWritePathType = ReadWritePathType.Unspecified;
 
         /// <summary>
         /// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：毫秒）
         /// </summary>
-        [SerializeField] public long Milliseconds = 30;
+        [FormerlySerializedAs("Milliseconds")] [SerializeField]
+        public long milliseconds = 30;
 
-        public int m_DownloadingMaxNum = 10;
+        [FormerlySerializedAs("m_DownloadingMaxNum")]
+        public int mDownloadingMaxNum = 10;
 
         /// <summary>
         /// 获取或设置同时最大下载数目。
         /// </summary>
         public int DownloadingMaxNum
         {
-            get => m_DownloadingMaxNum;
-            set => m_DownloadingMaxNum = value;
+            get => mDownloadingMaxNum;
+            set => mDownloadingMaxNum = value;
         }
 
-        public int m_FailedTryAgain = 3;
+        [FormerlySerializedAs("m_FailedTryAgain")]
+        public int mFailedTryAgain = 3;
 
         public int FailedTryAgain
         {
-            get => m_FailedTryAgain;
-            set => m_FailedTryAgain = value;
+            get => mFailedTryAgain;
+            set => mFailedTryAgain = value;
         }
 
         /// <summary>
         /// 获取当前资源适用的游戏版本号。
         /// </summary>
-        public string ApplicableGameVersion => m_ResourceManager.ApplicableGameVersion;
+        public string ApplicableGameVersion => _mResourceManager.ApplicableGameVersion;
 
         /// <summary>
         /// 获取当前内部资源版本号。
         /// </summary>
-        public int InternalResourceVersion => m_ResourceManager.InternalResourceVersion;
+        public int InternalResourceVersion => _mResourceManager.InternalResourceVersion;
 
         /// <summary>
         /// 获取资源读写路径类型。
         /// </summary>
-        public ReadWritePathType ReadWritePathType => m_ReadWritePathType;
+        public ReadWritePathType ReadWritePathType => mReadWritePathType;
 
         /// <summary>
         /// 获取或设置无用资源释放的最小间隔时间，以秒为单位。
         /// </summary>
         public float MinUnloadUnusedAssetsInterval
         {
-            get => m_MinUnloadUnusedAssetsInterval;
-            set => m_MinUnloadUnusedAssetsInterval = value;
+            get => mMinUnloadUnusedAssetsInterval;
+            set => mMinUnloadUnusedAssetsInterval = value;
         }
 
         /// <summary>
@@ -147,8 +156,8 @@ namespace FrostEngine
         /// </summary>
         public float MaxUnloadUnusedAssetsInterval
         {
-            get => m_MaxUnloadUnusedAssetsInterval;
-            set => m_MaxUnloadUnusedAssetsInterval = value;
+            get => mMaxUnloadUnusedAssetsInterval;
+            set => mMaxUnloadUnusedAssetsInterval = value;
         }
 
         /// <summary>
@@ -159,38 +168,32 @@ namespace FrostEngine
         /// <summary>
         /// 获取资源只读路径。
         /// </summary>
-        public string ReadOnlyPath => m_ResourceManager.ReadOnlyPath;
+        public string ReadOnlyPath => _mResourceManager.ReadOnlyPath;
 
         /// <summary>
         /// 获取资源读写路径。
         /// </summary>
-        public string ReadWritePath => m_ResourceManager.ReadWritePath;
+        public string ReadWritePath => _mResourceManager.ReadWritePath;
 
-        [SerializeField]
-        private float m_AssetAutoReleaseInterval = 60f;
+        [FormerlySerializedAs("m_AssetAutoReleaseInterval")] [SerializeField]
+        private float mAssetAutoReleaseInterval = 60f;
 
-        [SerializeField]
-        private int m_AssetCapacity = 64;
+        [FormerlySerializedAs("m_AssetCapacity")] [SerializeField]
+        private int mAssetCapacity = 64;
 
-        [SerializeField]
-        private float m_AssetExpireTime = 60f;
+        [FormerlySerializedAs("m_AssetExpireTime")] [SerializeField]
+        private float mAssetExpireTime = 60f;
 
-        [SerializeField]
-        private int m_AssetPriority = 0;
-        
+        [FormerlySerializedAs("m_AssetPriority")] [SerializeField]
+        private int mAssetPriority = 0;
+
         /// <summary>
         /// 获取或设置资源对象池自动释放可释放对象的间隔秒数。
         /// </summary>
         public float AssetAutoReleaseInterval
         {
-            get
-            {
-                return m_ResourceManager.AssetAutoReleaseInterval;
-            }
-            set
-            {
-                m_ResourceManager.AssetAutoReleaseInterval = m_AssetAutoReleaseInterval = value;
-            }
+            get => _mResourceManager.AssetAutoReleaseInterval;
+            set { _mResourceManager.AssetAutoReleaseInterval = mAssetAutoReleaseInterval = value; }
         }
 
         /// <summary>
@@ -198,14 +201,8 @@ namespace FrostEngine
         /// </summary>
         public int AssetCapacity
         {
-            get
-            {
-                return m_ResourceManager.AssetCapacity;
-            }
-            set
-            {
-                m_ResourceManager.AssetCapacity = m_AssetCapacity = value;
-            }
+            get { return _mResourceManager.AssetCapacity; }
+            set { _mResourceManager.AssetCapacity = mAssetCapacity = value; }
         }
 
         /// <summary>
@@ -213,14 +210,8 @@ namespace FrostEngine
         /// </summary>
         public float AssetExpireTime
         {
-            get
-            {
-                return m_ResourceManager.AssetExpireTime;
-            }
-            set
-            {
-                m_ResourceManager.AssetExpireTime = m_AssetExpireTime = value;
-            }
+            get { return _mResourceManager.AssetExpireTime; }
+            set { _mResourceManager.AssetExpireTime = mAssetExpireTime = value; }
         }
 
         /// <summary>
@@ -228,15 +219,10 @@ namespace FrostEngine
         /// </summary>
         public int AssetPriority
         {
-            get
-            {
-                return m_ResourceManager.AssetPriority;
-            }
-            set
-            {
-                m_ResourceManager.AssetPriority = m_AssetPriority = value;
-            }
+            get { return _mResourceManager.AssetPriority; }
+            set { _mResourceManager.AssetPriority = mAssetPriority = value; }
         }
+
         #endregion
 
         private void Start()
@@ -248,54 +234,55 @@ namespace FrostEngine
                 return;
             }
 
-            m_ResourceManager = ModuleImpSystem.GetModule<IResourceManager>();
-            if (m_ResourceManager == null)
+            _mResourceManager = ModuleImpSystem.GetModule<IResourceManager>();
+            if (_mResourceManager == null)
             {
                 Debug.Fatal("Resource module is invalid.");
                 return;
             }
 
             mServerSettings = ModuleImpSystem.GetModule<IServerSettings>();
-            if (mServerSettings==null)
+            if (mServerSettings == null)
             {
                 Debug.Fatal("ServerSetting module is invalid.");
                 return;
             }
-            
+
             if (PlayMode == EPlayMode.EditorSimulateMode)
             {
-                Debug.Info("During this run, Game Framework will use editor resource files, which you should validate first.");
+                Debug.Info(
+                    "During this run, Game Framework will use editor resource files, which you should validate first.");
 #if !UNITY_EDITOR
                 PlayMode = EPlayMode.OfflinePlayMode;
 #endif
             }
 
-            m_ResourceManager.SetReadOnlyPath(Application.streamingAssetsPath);
-            if (m_ReadWritePathType == ReadWritePathType.TemporaryCache)
+            _mResourceManager.SetReadOnlyPath(Application.streamingAssetsPath);
+            if (mReadWritePathType == ReadWritePathType.TemporaryCache)
             {
-                m_ResourceManager.SetReadWritePath(Application.temporaryCachePath);
+                _mResourceManager.SetReadWritePath(Application.temporaryCachePath);
             }
             else
             {
-                if (m_ReadWritePathType == ReadWritePathType.Unspecified)
+                if (mReadWritePathType == ReadWritePathType.Unspecified)
                 {
-                    m_ReadWritePathType = ReadWritePathType.PersistentData;
+                    mReadWritePathType = ReadWritePathType.PersistentData;
                 }
 
-                m_ResourceManager.SetReadWritePath(Application.persistentDataPath);
+                _mResourceManager.SetReadWritePath(Application.persistentDataPath);
             }
 
-            m_ResourceManager.DefaultPackageName = PackageName;
-            m_ResourceManager.PlayMode = PlayMode;
-            m_ResourceManager.VerifyLevel = VerifyLevel;
-            m_ResourceManager.Milliseconds = Milliseconds;
-            m_ResourceManager.InstanceRoot = transform;
-            m_ResourceManager.HostServerURL = mServerSettings.AssetBundleUrl;
-            m_ResourceManager.Initialize();
-            m_ResourceManager.AssetAutoReleaseInterval = m_AssetAutoReleaseInterval;
-            m_ResourceManager.AssetCapacity = m_AssetCapacity;
-            m_ResourceManager.AssetExpireTime = m_AssetExpireTime;
-            m_ResourceManager.AssetPriority = m_AssetPriority;
+            _mResourceManager.DefaultPackageName = PackageName;
+            _mResourceManager.PlayMode = PlayMode;
+            _mResourceManager.VerifyLevel = VerifyLevel;
+            _mResourceManager.Milliseconds = milliseconds;
+            _mResourceManager.InstanceRoot = transform;
+            _mResourceManager.HostServerURL = mServerSettings.AssetBundleUrl;
+            _mResourceManager.Initialize();
+            _mResourceManager.AssetAutoReleaseInterval = mAssetAutoReleaseInterval;
+            _mResourceManager.AssetCapacity = mAssetCapacity;
+            _mResourceManager.AssetExpireTime = mAssetExpireTime;
+            _mResourceManager.AssetPriority = mAssetPriority;
             Debug.Info($"ResourceComponent Run Mode：{PlayMode}");
         }
 
@@ -305,16 +292,17 @@ namespace FrostEngine
         /// <returns></returns>
         public async UniTask<InitializationOperation> InitPackage(string packageName = "")
         {
-            if (m_ResourceManager == null)
+            if (_mResourceManager == null)
             {
                 Debug.Fatal("Resource component is invalid.");
                 return null;
             }
 
-            return await m_ResourceManager.InitPackage(string.IsNullOrEmpty(packageName) ? PackageName:packageName);
+            return await _mResourceManager.InitPackage(string.IsNullOrEmpty(packageName) ? PackageName : packageName);
         }
 
         #region 版本更新
+
         /// <summary>
         /// 获取当前资源包版本。
         /// </summary>
@@ -364,12 +352,12 @@ namespace FrostEngine
                 : YooAssets.GetPackage(customPackageName);
             return package.UpdatePackageManifestAsync(packageVersion, autoSaveVersion, timeout);
         }
-        
+
         /// <summary>
         /// 资源下载器，用于下载当前资源版本所有的资源包文件。
         /// </summary>
         public ResourceDownloaderOperation Downloader { get; set; }
-        
+
         /// <summary>
         /// 创建资源下载器，用于下载当前资源版本所有的资源包文件。
         /// </summary>
@@ -389,7 +377,7 @@ namespace FrostEngine
                 return Downloader;
             }
         }
-        
+
         /// <summary>
         /// 清理包裹未使用的缓存文件。
         /// </summary>
@@ -413,9 +401,11 @@ namespace FrostEngine
                 : YooAssets.GetPackage(customPackageName);
             package.ClearPackageSandbox();
         }
+
         #endregion
 
         #region 获取资源
+
         /// <summary>
         /// 检查资源是否存在。
         /// </summary>
@@ -424,9 +414,9 @@ namespace FrostEngine
         /// <returns>检查资源是否存在的结果。</returns>
         public HasAssetResult HasAsset(string location, string customPackageName = "")
         {
-            return m_ResourceManager.HasAsset(location, packageName: customPackageName);
+            return _mResourceManager.HasAsset(location, packageName: customPackageName);
         }
-        
+
         /// <summary>
         /// 检查资源定位地址是否有效。
         /// </summary>
@@ -434,9 +424,9 @@ namespace FrostEngine
         /// <param name="customPackageName">指定资源包的名称。不传使用默认资源包</param>
         public bool CheckLocationValid(string location, string customPackageName = "")
         {
-            return m_ResourceManager.CheckLocationValid(location, packageName: customPackageName);
+            return _mResourceManager.CheckLocationValid(location, packageName: customPackageName);
         }
-        
+
         /// <summary>
         /// 获取资源信息列表。
         /// </summary>
@@ -445,7 +435,7 @@ namespace FrostEngine
         /// <returns>资源信息列表。</returns>
         public AssetInfo[] GetAssetInfos(string resTag, string customPackageName = "")
         {
-            return m_ResourceManager.GetAssetInfos(resTag, packageName: customPackageName);
+            return _mResourceManager.GetAssetInfos(resTag, packageName: customPackageName);
         }
 
         /// <summary>
@@ -456,7 +446,7 @@ namespace FrostEngine
         /// <returns>资源信息列表。</returns>
         public AssetInfo[] GetAssetInfos(string[] tags, string customPackageName = "")
         {
-            return m_ResourceManager.GetAssetInfos(tags, packageName: customPackageName);
+            return _mResourceManager.GetAssetInfos(tags, packageName: customPackageName);
         }
 
         /// <summary>
@@ -467,8 +457,9 @@ namespace FrostEngine
         /// <returns>资源信息。</returns>
         public AssetInfo GetAssetInfo(string location, string customPackageName = "")
         {
-            return m_ResourceManager.GetAssetInfo(location, packageName: customPackageName);
+            return _mResourceManager.GetAssetInfo(location, packageName: customPackageName);
         }
+
         #endregion
 
         #region 加载资源
@@ -481,7 +472,8 @@ namespace FrostEngine
         /// <param name="loadAssetCallbacks">加载资源回调函数集。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="packageName">指定资源包的名称。不传使用默认资源包。</param>
-        public void LoadAssetAsync(string location, Type assetType, LoadAssetCallbacks loadAssetCallbacks, object userData = null, string packageName = "")
+        public void LoadAssetAsync(string location, Type assetType, LoadAssetCallbacks loadAssetCallbacks,
+            object userData = null, string packageName = "")
         {
             LoadAssetAsync(location, assetType, DefaultPriority, loadAssetCallbacks, userData, packageName);
         }
@@ -495,7 +487,8 @@ namespace FrostEngine
         /// <param name="loadAssetCallbacks">加载资源回调函数集。</param>
         /// <param name="userData">用户自定义数据。</param>
         /// <param name="packageName">指定资源包的名称。不传使用默认资源包。</param>
-        public void LoadAssetAsync(string location, Type assetType, int priority, LoadAssetCallbacks loadAssetCallbacks, object userData, string packageName = "")
+        public void LoadAssetAsync(string location, Type assetType, int priority, LoadAssetCallbacks loadAssetCallbacks,
+            object userData, string packageName = "")
         {
             if (string.IsNullOrEmpty(location))
             {
@@ -503,7 +496,7 @@ namespace FrostEngine
                 return;
             }
 
-            m_ResourceManager.LoadAssetAsync(location, assetType, priority, loadAssetCallbacks, userData, packageName);
+            _mResourceManager.LoadAssetAsync(location, assetType, priority, loadAssetCallbacks, userData, packageName);
         }
 
         /// <summary>
@@ -521,7 +514,7 @@ namespace FrostEngine
                 return null;
             }
 
-            return m_ResourceManager.LoadAsset<T>(location, packageName);
+            return _mResourceManager.LoadAsset<T>(location, packageName);
         }
 
         /// <summary>
@@ -539,9 +532,9 @@ namespace FrostEngine
                 return null;
             }
 
-            return m_ResourceManager.LoadGameObject(location, parent, packageName);
+            return _mResourceManager.LoadGameObject(location, parent, packageName);
         }
-        
+
         /// <summary>
         /// 异步加载资源。
         /// </summary>
@@ -549,15 +542,16 @@ namespace FrostEngine
         /// <param name="callback">回调函数。</param>
         /// <param name="customPackageName">指定资源包的名称。不传使用默认资源包</param>
         /// <typeparam name="T">要加载资源的类型。</typeparam>
-        public void LoadAsset<T>(string location, Action<T> callback, string customPackageName = "") where T : UnityEngine.Object
+        public void LoadAsset<T>(string location, Action<T> callback, string customPackageName = "")
+            where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(location))
             {
                 Debug.LogError("Asset name is invalid.");
                 return;
             }
-            
-            m_ResourceManager.LoadAsset<T>(location, callback, packageName: customPackageName);
+
+            _mResourceManager.LoadAsset<T>(location, callback, packageName: customPackageName);
         }
 
         /// <summary>
@@ -577,7 +571,7 @@ namespace FrostEngine
                 return null;
             }
 
-            return await m_ResourceManager.LoadAssetAsync<T>(location, cancellationToken, packageName);
+            return await _mResourceManager.LoadAssetAsync<T>(location, cancellationToken, packageName);
         }
 
         /// <summary>
@@ -588,7 +582,8 @@ namespace FrostEngine
         /// <param name="cancellationToken">取消操作Token。</param>
         /// <param name="packageName">指定资源包的名称。不传使用默认资源包。</param>
         /// <returns>异步游戏物体实例。</returns>
-        public async UniTask<GameObject> LoadGameObjectAsync(string location, Transform parent = null, CancellationToken cancellationToken = default,
+        public async UniTask<GameObject> LoadGameObjectAsync(string location, Transform parent = null,
+            CancellationToken cancellationToken = default,
             string packageName = "")
         {
             if (string.IsNullOrEmpty(location))
@@ -597,7 +592,7 @@ namespace FrostEngine
                 return null;
             }
 
-            return await m_ResourceManager.LoadGameObjectAsync(location, parent, cancellationToken, packageName);
+            return await _mResourceManager.LoadGameObjectAsync(location, parent, cancellationToken, packageName);
         }
 
         internal AssetHandle LoadAssetGetOperation<T>(string location,
@@ -612,7 +607,8 @@ namespace FrostEngine
             return package.LoadAssetSync<T>(location);
         }
 
-        internal AssetHandle LoadAssetAsyncHandle<T>(string location, string packageName = "") where T : UnityEngine.Object
+        internal AssetHandle LoadAssetAsyncHandle<T>(string location, string packageName = "")
+            where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(packageName))
             {
@@ -622,6 +618,7 @@ namespace FrostEngine
             var package = YooAssets.GetPackage(packageName);
             return package.LoadAssetAsync<T>(location);
         }
+
         #endregion
 
         #region 卸载资源
@@ -636,7 +633,8 @@ namespace FrostEngine
             {
                 return;
             }
-            m_ResourceManager.UnloadAsset(asset);
+
+            _mResourceManager.UnloadAsset(asset);
         }
 
         #endregion
@@ -672,8 +670,12 @@ namespace FrostEngine
         private void Update()
         {
             m_LastUnloadUnusedAssetsOperationElapseSeconds += Time.unscaledDeltaTime;
-            if (m_AsyncOperation == null && (m_ForceUnloadUnusedAssets || m_LastUnloadUnusedAssetsOperationElapseSeconds >= m_MaxUnloadUnusedAssetsInterval ||
-                                             m_PreorderUnloadUnusedAssets && m_LastUnloadUnusedAssetsOperationElapseSeconds >= m_MinUnloadUnusedAssetsInterval))
+            if (m_AsyncOperation == null && (m_ForceUnloadUnusedAssets ||
+                                             m_LastUnloadUnusedAssetsOperationElapseSeconds >=
+                                             mMaxUnloadUnusedAssetsInterval ||
+                                             m_PreorderUnloadUnusedAssets &&
+                                             m_LastUnloadUnusedAssetsOperationElapseSeconds >=
+                                             mMinUnloadUnusedAssetsInterval))
             {
                 Debug.Info("Unload unused assets...");
                 m_ForceUnloadUnusedAssets = false;

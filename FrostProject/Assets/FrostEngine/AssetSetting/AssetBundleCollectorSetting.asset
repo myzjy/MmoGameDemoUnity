@@ -15,4 +15,17 @@ MonoBehaviour:
   ShowPackageView: 0
   ShowEditorAlias: 0
   UniqueBundleName: 0
-  Packages: []
+  Packages:
+  - PackageName: DefaultPackage
+    PackageDesc: "\u9ED8\u8BA4\u8D44\u6E90"
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
+    Groups:
+    - GroupName: 
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors: []

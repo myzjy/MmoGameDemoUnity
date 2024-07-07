@@ -82,7 +82,7 @@ namespace FrostEngine.Editor.Inspector
             {
                 if (EditorApplication.isPlaying)
                 {
-                    t.Milliseconds = milliseconds;
+                    t.milliseconds = milliseconds;
                 }
                 else
                 {
@@ -224,18 +224,18 @@ namespace FrostEngine.Editor.Inspector
         private void OnEnable()
         {
             m_PlayMode = serializedObject.FindProperty("playMode");
-            m_UpdatableWhilePlaying = serializedObject.FindProperty("m_UpdatableWhilePlaying");
+            m_UpdatableWhilePlaying = serializedObject.FindProperty("mUpdatableWhilePlaying");
             m_VerifyLevel = serializedObject.FindProperty("VerifyLevel");
-            m_Milliseconds = serializedObject.FindProperty("Milliseconds");
-            m_ReadWritePathType = serializedObject.FindProperty("m_ReadWritePathType");
-            m_MinUnloadUnusedAssetsInterval = serializedObject.FindProperty("m_MinUnloadUnusedAssetsInterval");
-            m_MaxUnloadUnusedAssetsInterval = serializedObject.FindProperty("m_MaxUnloadUnusedAssetsInterval");
-            m_AssetAutoReleaseInterval = serializedObject.FindProperty("m_AssetAutoReleaseInterval");
-            m_AssetCapacity = serializedObject.FindProperty("m_AssetCapacity");
-            m_AssetExpireTime = serializedObject.FindProperty("m_AssetExpireTime");
-            m_AssetPriority = serializedObject.FindProperty("m_AssetPriority");
-            m_DownloadingMaxNum = serializedObject.FindProperty("m_DownloadingMaxNum");
-            m_FailedTryAgain = serializedObject.FindProperty("m_FailedTryAgain");
+            m_Milliseconds = serializedObject.FindProperty("milliseconds");
+            m_ReadWritePathType = serializedObject.FindProperty("mReadWritePathType");
+            m_MinUnloadUnusedAssetsInterval = serializedObject.FindProperty("mMinUnloadUnusedAssetsInterval");
+            m_MaxUnloadUnusedAssetsInterval = serializedObject.FindProperty("mMaxUnloadUnusedAssetsInterval");
+            m_AssetAutoReleaseInterval = serializedObject.FindProperty("mAssetAutoReleaseInterval");
+            m_AssetCapacity = serializedObject.FindProperty("mAssetCapacity");
+            m_AssetExpireTime = serializedObject.FindProperty("mAssetExpireTime");
+            m_AssetPriority = serializedObject.FindProperty("mAssetPriority");
+            m_DownloadingMaxNum = serializedObject.FindProperty("mDownloadingMaxNum");
+            m_FailedTryAgain = serializedObject.FindProperty("mFailedTryAgain");
 
             RefreshModes();
             RefreshTypeNames();

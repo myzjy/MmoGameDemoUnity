@@ -12,7 +12,7 @@ namespace FrostEngine.Editor.Inspector
         private static readonly float[] GameSpeed = new float[] { 0f, 0.01f, 0.1f, 0.25f, 0.5f, 1f, 1.5f, 2f, 4f, 8f };
         private static readonly string[] GameSpeedForDisplay = new string[] { "0x", "0.01x", "0.1x", "0.25x", "0.5x", "1x", "1.5x", "2x", "4x", "8x" };
 
-        // private SerializedProperty m_EditorLanguage = null;
+        private SerializedProperty m_EditorLanguage = null;
         private SerializedProperty m_TextHelperTypeName = null;
         private SerializedProperty m_VersionHelperTypeName = null;
         private SerializedProperty m_LogHelperTypeName = null;
@@ -42,7 +42,7 @@ namespace FrostEngine.Editor.Inspector
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlayingOrWillChangePlaymode);
             {
-                // EditorGUILayout.PropertyField(m_EditorLanguage);
+                EditorGUILayout.PropertyField(m_EditorLanguage);
                 
                 EditorGUILayout.BeginVertical("box");
                 {
@@ -154,7 +154,7 @@ namespace FrostEngine.Editor.Inspector
 
         private void OnEnable()
         {
-            // m_EditorLanguage = serializedObject.FindProperty("m_EditorLanguage");
+            m_EditorLanguage = serializedObject.FindProperty("m_EditorLanguage");
             m_TextHelperTypeName = serializedObject.FindProperty("m_TextHelperTypeName");
             m_VersionHelperTypeName = serializedObject.FindProperty("m_VersionHelperTypeName");
             m_LogHelperTypeName = serializedObject.FindProperty("m_LogHelperTypeName");

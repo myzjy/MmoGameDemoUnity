@@ -3,12 +3,17 @@ using UnityEngine;
 
 namespace FrostEngine
 {
+    /// <summary>
+    /// 基础模块。
+    /// </summary>
     [DisallowMultipleComponent]
     public sealed class RootModules : Module
     {
         private const int DefaultDpi = 96; // default windows dpi
 
         private float m_GameSpeedBeforePause = 1f;
+        [SerializeField]
+        private Language m_EditorLanguage = Language.Unspecified;
 
         [SerializeField] private string m_TextHelperTypeName = "FrostEngine.DefaultTextHelper";
 
@@ -25,7 +30,14 @@ namespace FrostEngine
         [SerializeField] private bool m_RunInBackground = true;
 
         [SerializeField] private bool m_NeverSleep = true;
-        
+        /// <summary>
+        /// 获取或设置编辑器语言（仅编辑器内有效）。
+        /// </summary>
+        public Language EditorLanguage
+        {
+            get => m_EditorLanguage;
+            set => m_EditorLanguage = value;
+        }
         /// <summary>
         /// 获取或设置游戏帧率。
         /// </summary>
