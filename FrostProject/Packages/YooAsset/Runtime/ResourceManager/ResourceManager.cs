@@ -447,17 +447,11 @@ namespace YooAsset
         }
         private BundleLoaderBase TryGetAssetBundleLoader(string bundleName)
         {
-            if (_loaderDic.TryGetValue(bundleName, out BundleLoaderBase value))
-                return value;
-            else
-                return null;
+            return _loaderDic.GetValueOrDefault(bundleName);
         }
         private ProviderBase TryGetProvider(string providerGUID)
         {
-            if (_providerDic.TryGetValue(providerGUID, out ProviderBase value))
-                return value;
-            else
-                return null;
+            return _providerDic.GetValueOrDefault(providerGUID);
         }
 
         #region 调试信息

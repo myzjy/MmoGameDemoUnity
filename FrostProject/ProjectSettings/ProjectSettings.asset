@@ -816,7 +816,12 @@ PlayerSettings:
   webGLDecompressionFallback: 0
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_VALIDATOR;ODIN_VALIDATOR_3_1
+    Android: ENABLE_HYBRIDCLR
+    PS5: ENABLE_HYBRIDCLR
+    Standalone: ODIN_INSPECTOR;ODIN_INSPECTOR_3;ODIN_INSPECTOR_3_1;ODIN_VALIDATOR;ODIN_VALIDATOR_3_1;ENABLE_HYBRIDCLR
+    WebGL: ENABLE_HYBRIDCLR
+    Windows Store Apps: ENABLE_HYBRIDCLR
+    iPhone: ENABLE_HYBRIDCLR
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}
