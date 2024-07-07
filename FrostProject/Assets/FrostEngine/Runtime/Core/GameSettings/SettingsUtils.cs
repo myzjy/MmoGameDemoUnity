@@ -42,6 +42,23 @@ namespace FrostEngine
             return FrameworkGlobalSettings.EnableUpdateData;
         }
         
+        public static string GetUpdateDataUrl()
+        {
+            string url = null;
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            url = FrameworkGlobalSettings.WindowsUpdateDataUrl;
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+            url = FrameworkGlobalSettings.MacOSUpdateDataUrl;
+#elif UNITY_IOS
+            url = FrameworkGlobalSettings.IOSUpdateDataUrl;
+#elif UNITY_ANDROID
+            url = FrameworkGlobalSettings.AndroidUpdateDataUrl;
+#elif UNITY_WEBGL
+            url = FrameworkGlobalSettings.WebGLUpdateDataUrl;
+#endif
+            return url;
+        }
+        
         private static T GetSingletonAssetsByResources<T>(string assetsPath) where T : ScriptableObject, new()
         {
             string assetType = typeof(T).Name;
@@ -65,6 +82,15 @@ namespace FrostEngine
             }
 
             return customGlobalSettings;
+        }
+        public static List<ScriptGenerateRuler> GetScriptGenerateRule()
+        {
+            return FrameworkGlobalSettings.ScriptGenerateRule;
+        }
+
+        public static string GetUINameSpace()
+        {
+            return FrameworkGlobalSettings.NameSpace;
         }
     }
 }

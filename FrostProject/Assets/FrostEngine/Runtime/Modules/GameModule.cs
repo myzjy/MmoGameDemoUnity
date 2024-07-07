@@ -74,7 +74,13 @@ namespace FrostEngine
         public static LocalizationModule Localization => _localization ??= Get<LocalizationModule>();
 
         private static LocalizationModule _localization;
+        
+        /// <summary>
+        /// 获取UI模块。
+        /// </summary>
+        public static UIModule UI => _ui ??= Get<UIModule>();
 
+        private static UIModule _ui;
         
         /// <summary>
         /// 获取计时器模块。

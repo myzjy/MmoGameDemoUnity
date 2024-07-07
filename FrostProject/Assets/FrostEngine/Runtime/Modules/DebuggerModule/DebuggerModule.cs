@@ -158,6 +158,7 @@ namespace FrostEngine
         }
         private bool _eventSystemActive = true;
         private GameObject _eventSystem;
+        public DebuggerActiveWindowType ActiveWindowType => activeWindow;
 
         protected override void Awake()
         {

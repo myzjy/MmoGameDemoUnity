@@ -344,5 +344,57 @@ namespace FrostEngine
 
             return builder.ToString();
         }
+
+        public static string GetLengthString(long length)
+        {
+            if (length < 1024)
+            {
+                return $"{length.ToString()} Bytes";
+            }
+
+            if (length < 1024 * 1024)
+            {
+                return $"{(length / 1024f):F2} KB";
+            }
+
+            return length < 1024 * 1024 * 1024
+                ? $"{(length / 1024f / 1024f):F2} MB"
+                : $"{(length / 1024f / 1024f / 1024f):F2} GB";
+        }
+
+        public static string GetByteLengthString(long byteLength)
+        {
+            if (byteLength < 1024L) // 2 ^ 10
+            {
+                return Format("{} Bytes", byteLength.ToString());
+            }
+
+            if (byteLength < 1048576L) // 2 ^ 20
+            {
+                return Format("{} KB", (byteLength / 1024f).ToString("F2"));
+            }
+
+            if (byteLength < 1073741824L) // 2 ^ 30
+            {
+                return Format("{} MB", (byteLength / 1048576f).ToString("F2"));
+            }
+
+            if (byteLength < 1099511627776L) // 2 ^ 40
+            {
+                return Format("{} GB", (byteLength / 1073741824f).ToString("F2"));
+            }
+
+            if (byteLength < 1125899906842624L) // 2 ^ 50
+            {
+                return Format("{} TB", (byteLength / 1099511627776f).ToString("F2"));
+            }
+
+            if (byteLength < 1152921504606846976L) // 2 ^ 60
+            {
+                return Format("{} PB", (byteLength / 1125899906842624f).ToString("F2"));
+            }
+
+            return Format("{} EB", (byteLength / 1152921504606846976f).ToString("F2"));
+        }
     }
 }

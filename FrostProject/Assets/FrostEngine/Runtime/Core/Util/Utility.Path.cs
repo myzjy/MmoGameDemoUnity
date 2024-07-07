@@ -1,7 +1,32 @@
+using System.IO;
+
 namespace FrostEngine
 {
     public class Utility
     {
+        public static byte[] GetFileBytes(string inFile)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(inFile))
+                {
+                    return null;
+                }
+
+                if (!File.Exists(inFile))
+                {
+                    return null;
+                }
+
+                return File.ReadAllBytes(inFile);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"SafeReadAllBytes failed! path = {inFile} with err = {ex.Message}");
+                return null;
+            }
+        }
+        
         public static class Path
         {
             public static string GetExtension(string path)

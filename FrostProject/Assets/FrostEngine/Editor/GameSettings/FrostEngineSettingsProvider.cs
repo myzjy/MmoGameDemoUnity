@@ -8,7 +8,7 @@ namespace FrostEngine.Editor.GameSettings
 {
     public class FrostEngineSettingsProvider : SettingsProvider
     {
-        const string k_SettingsPath = "Assets/FrostEngine/ResRaw/Resources/TEngineGlobalSettings.asset";
+        const string k_SettingsPath = "Assets/FrostEngine/ResRaw/Resources/FrostEngineGlobalSettings.asset";
         private const string headerName = "FrostEngine/FrostEngineSettings";
         private SerializedObject m_CustomSettings;
 
@@ -87,7 +87,7 @@ namespace FrostEngine.Editor.GameSettings
             else
             {
                 Debug.LogError(
-                    $"Open TEngine Settings error,Please Create TEngine TEngineGlobalSettings.assets File in Path FrostEngine/ResRaw/Resources/");
+                    $"Open FrostEngine Settings error,Please Create FrostEngine FrostEngineSettings.assets File in Path FrostEngine/ResRaw/Resources/");
             }
 
             return null;
