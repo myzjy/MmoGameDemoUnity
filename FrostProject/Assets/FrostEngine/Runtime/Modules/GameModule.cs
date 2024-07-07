@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace FrostEngine
 {
+    [AddComponentMenu("GameFameWork/Modules/Game")]
     public class GameModule : MonoBehaviour
     {
         private static readonly Dictionary<Type, Module> _moduleMaps = new(ModuleImpSystem.DesignModuleCount);

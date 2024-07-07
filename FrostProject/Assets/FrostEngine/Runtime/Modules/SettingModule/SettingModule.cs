@@ -8,6 +8,7 @@ namespace FrostEngine
     /// 游戏配置模块。
     /// </summary>
     [DisallowMultipleComponent]
+    [AddComponentMenu("GameFameWork/Modules/Setting")]
     public sealed class SettingModule : Module
     {
         private ISettingManager m_SettingManager = null;

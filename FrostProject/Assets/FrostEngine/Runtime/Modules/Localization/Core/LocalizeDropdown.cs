@@ -44,9 +44,9 @@ namespace FrostEngine.Localization
             var _Dropdown = GetComponent<Dropdown>();
             if (_Dropdown == null && I2Utils.IsPlaying())
             {
-                #if TextMeshPro
-                    FillValuesTMPro();
-                #endif
+                // #if TextMeshPro
+                //     FillValuesTMPro();
+                // #endif
                 return;
             }
 
@@ -61,9 +61,9 @@ namespace FrostEngine.Localization
 			var _Dropdown = GetComponent<Dropdown>();
             if (_Dropdown == null)
             {
-                #if TextMeshPro
-                    UpdateLocalizationTMPro();
-                #endif
+                // #if TextMeshPro
+                //     UpdateLocalizationTMPro();
+                // #endif
                 return;
             }
 			
@@ -76,34 +76,34 @@ namespace FrostEngine.Localization
             _Dropdown.RefreshShownValue();
 		}
 
-        #if TextMeshPro
-        public void UpdateLocalizationTMPro()
-        {
-            var _Dropdown = GetComponent<TMP_Dropdown>();
-            if (_Dropdown == null)
-                return;
-
-            _Dropdown.options.Clear();
-            foreach (var term in _Terms)
-            {
-                var translation = LocalizationManager.GetTranslation(term);
-                _Dropdown.options.Add(new TMP_Dropdown.OptionData(translation));
-            }
-            _Dropdown.RefreshShownValue();
-        }
-
-        void FillValuesTMPro()
-        {
-            var _Dropdown = GetComponent<TMP_Dropdown>();
-            if (_Dropdown == null)
-                return;
-
-            foreach (var term in _Dropdown.options)
-            {
-                _Terms.Add(term.text);
-            }
-        }
-#endif
+        // #if TextMeshPro
+        // public void UpdateLocalizationTMPro()
+        // {
+        //     var _Dropdown = GetComponent<TMP_Dropdown>();
+        //     if (_Dropdown == null)
+        //         return;
+        //
+        //     _Dropdown.options.Clear();
+        //     foreach (var term in _Terms)
+        //     {
+        //         var translation = LocalizationManager.GetTranslation(term);
+        //         _Dropdown.options.Add(new TMP_Dropdown.OptionData(translation));
+        //     }
+        //     _Dropdown.RefreshShownValue();
+        // }
+        //
+        // void FillValuesTMPro()
+        // {
+        //     var _Dropdown = GetComponent<TMP_Dropdown>();
+        //     if (_Dropdown == null)
+        //         return;
+        //
+        //     foreach (var term in _Dropdown.options)
+        //     {
+        //         _Terms.Add(term.text);
+        //     }
+        // }
+		// #endif
 
     }
 #endif

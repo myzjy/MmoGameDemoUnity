@@ -11,6 +11,7 @@ namespace FrostEngine
     /// 资源组件。
     /// </summary>
     [DisallowMultipleComponent]
+    [AddComponentMenu("GameFameWork/Modules/Resource")]
     public class ResourceModule : Module
     {
         #region Propreties

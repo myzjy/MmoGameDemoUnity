@@ -7,6 +7,7 @@ namespace FrostEngine
     /// 基础模块。
     /// </summary>
     [DisallowMultipleComponent]
+    [AddComponentMenu("GameFameWork/Modules/Root")]
     public sealed class RootModules : Module
     {
         private const int DefaultDpi = 96; // default windows dpi
