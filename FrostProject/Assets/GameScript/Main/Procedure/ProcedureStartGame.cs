@@ -12,6 +12,7 @@ namespace GameMain
         {
             base.OnEnter(procedureOwner);
             StartGame().Forget();
+            ChangeState<ProcedureXLuaStart>(procedureOwner);
         }
 
         private async UniTaskVoid StartGame()

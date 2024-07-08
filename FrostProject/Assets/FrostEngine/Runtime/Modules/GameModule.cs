@@ -60,48 +60,52 @@ namespace FrostEngine
         public static ObjectPoolModule ObjectPool => _objectPool ??= Get<ObjectPoolModule>();
 
         private static ObjectPoolModule _objectPool;
-        
+
         /// <summary>
         /// 获取资源模块。
         /// </summary>
         public static ResourceModule Resource => _resource ??= Get<ResourceModule>();
 
         private static ResourceModule _resource;
-        
+
         /// <summary>
         /// 获取多语言模块。
         /// </summary>
         public static LocalizationModule Localization => _localization ??= Get<LocalizationModule>();
 
         private static LocalizationModule _localization;
-        
+
         /// <summary>
         /// 获取UI模块。
         /// </summary>
         public static UIModule UI => _ui ??= Get<UIModule>();
 
         private static UIModule _ui;
-        
+
         /// <summary>
         /// 获取计时器模块。
         /// </summary>
         public static TimerModule Timer => _timer ??= Get<TimerModule>();
-        
+
         private static TimerModule _timer;
+
         /// <summary>
         /// 获取配置模块。
         /// </summary>
         public static SettingModule Setting => _setting ??= Get<SettingModule>();
 
         private static SettingModule _setting;
-        
+
         /// <summary>
         /// 资源组件拓展。
         /// </summary>
         public static ResourceExtComponent ResourceExt => _resourceExt ??= Get<ResourceExtComponent>();
-        
+
         private static ResourceExtComponent _resourceExt;
-        
+
+        public static XLuaModule XLuaModule => _xLuaModule ??= Get<XLuaModule>();
+        private static XLuaModule _xLuaModule;
+
         #endregion
 
         /// <summary>
@@ -127,7 +131,7 @@ namespace FrostEngine
 
             return module;
         }
-        
+
         private void Start()
         {
             Debug.Info("GameModule Active");
@@ -135,7 +139,7 @@ namespace FrostEngine
             _gameModuleRoot = gameObject;
             DontDestroyOnLoad(gameObject);
         }
-        
+
         public static void Shutdown(ShutdownType shutdownType)
         {
             Debug.Info("GameModule Shutdown");
@@ -144,8 +148,9 @@ namespace FrostEngine
                 Destroy(_gameModuleRoot);
                 _gameModuleRoot = null;
             }
+
             _moduleMaps.Clear();
-            
+
             _base = null;
             _debugger = null;
             _fsm = null;
@@ -160,7 +165,9 @@ namespace FrostEngine
             _timer = null;
             _resourceExt = null;
         }
+
         #region HandlePlayModeStateChanged
+
         private void OnEnable()
         {
 #if UNITY_EDITOR
@@ -185,6 +192,7 @@ namespace FrostEngine
             }
         }
 #endif
+
         #endregion
     }
 }

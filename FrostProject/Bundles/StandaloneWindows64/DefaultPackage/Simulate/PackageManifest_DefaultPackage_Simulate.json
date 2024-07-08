@@ -1,0 +1,33 @@
+{
+    "FileVersion": "2.0.0",
+    "EnableAddressable": true,
+    "LocationToLower": false,
+    "IncludeAssetGUID": false,
+    "OutputNameStyle": 0,
+    "BuildPipeline": "BuiltinBuildPipeline",
+    "PackageName": "DefaultPackage",
+    "PackageVersion": "Simulate",
+    "AssetList": [
+        {
+            "Address": "main.lua",
+            "AssetPath": "Assets/AssetRaw/Lua/main.lua.bytes",
+            "AssetGUID": "",
+            "AssetTags": [
+                "Lua"
+            ],
+            "BundleID": 0
+        }
+    ],
+    "BundleList": [
+        {
+            "BundleName": "assets_assetraw_lua.bundle",
+            "UnityCRC": 0,
+            "FileHash": "bb19385462697492c0fcbb1970e24c09",
+            "FileCRC": "00000000",
+            "FileSize": 1056,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        }
+    ]
+}

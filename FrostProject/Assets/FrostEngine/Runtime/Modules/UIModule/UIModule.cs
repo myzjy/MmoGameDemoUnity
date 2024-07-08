@@ -12,7 +12,9 @@ namespace FrostEngine
     [DisallowMultipleComponent]
     public sealed partial class UIModule : Module
     {
-        [SerializeField] private Transform m_InstanceRoot = null;
+        [SerializeField] private Transform m_BgInstanceRoot = null;
+        [SerializeField] private Transform m_UIInstanceRoot = null;
+        [SerializeField] private Transform m_TipsInstanceRoot = null;
 
         [SerializeField] private bool m_dontDestroyUIRoot = true;
 
@@ -30,7 +32,7 @@ namespace FrostEngine
         /// <summary>
         /// UI根节点。
         /// </summary>
-        public Transform UIRoot => m_InstanceRoot;
+        public Transform UIRoot => m_UIInstanceRoot;
 
         public static Transform UIRootStatic;
 
@@ -55,19 +57,19 @@ namespace FrostEngine
             _uiModuleImpl = ModuleImpSystem.GetModule<UIModuleImpl>();
             _uiModuleImpl.Initialize(_stack);
 
-            if (m_InstanceRoot == null)
+            if (m_UIInstanceRoot == null)
             {
-                m_InstanceRoot = new GameObject("UI Form Instances").transform;
-                m_InstanceRoot.SetParent(gameObject.transform);
-                m_InstanceRoot.localScale = Vector3.one;
+                m_UIInstanceRoot = new GameObject("UI Form Instances").transform;
+                m_UIInstanceRoot.SetParent(gameObject.transform);
+                m_UIInstanceRoot.localScale = Vector3.one;
             }
             else if (m_dontDestroyUIRoot)
             {
-                DontDestroyOnLoad(m_InstanceRoot.parent != null ? m_InstanceRoot.parent : m_InstanceRoot);
+                DontDestroyOnLoad(m_UIInstanceRoot.parent != null ? m_UIInstanceRoot.parent : m_UIInstanceRoot);
             }
 
-            m_InstanceRoot.gameObject.layer = LayerMask.NameToLayer("UI");
-            UIRootStatic = m_InstanceRoot;
+            m_UIInstanceRoot.gameObject.layer = LayerMask.NameToLayer("UI");
+            UIRootStatic = m_UIInstanceRoot;
             
             switch (GameModule.Debugger.ActiveWindowType)
             {
@@ -101,9 +103,9 @@ namespace FrostEngine
                 _errorLogger = null;
             }
             CloseAll();
-            if (m_InstanceRoot != null && m_InstanceRoot.parent != null)
+            if (m_UIInstanceRoot != null && m_UIInstanceRoot.parent != null)
             {
-                Destroy(m_InstanceRoot.parent.gameObject);
+                Destroy(m_UIInstanceRoot.parent.gameObject);
             }
         }
 

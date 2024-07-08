@@ -92,5 +92,16 @@ namespace FrostEngine
         {
             return FrameworkGlobalSettings.NameSpace;
         }
+        
+        public static int DebugConfig()
+        {
+#if UNITY_EDITOR
+            return 1;
+#elif DEVELOP_BUILD && ENABLE_LOG
+            return 2;
+#else
+            return 0;
+#endif
+        }
     }
 }

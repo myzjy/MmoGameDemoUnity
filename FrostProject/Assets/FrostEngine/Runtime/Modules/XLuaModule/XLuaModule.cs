@@ -63,7 +63,7 @@ namespace FrostEngine
             if (_mResourceManager.PlayMode == EPlayMode.EditorSimulateMode)
             {
                 Debug.Log($"Load file lua script:{luaFilePath}");
-                string source = Path.Combine(Application.dataPath, $"/GameScript/Lua/{luaFilePath}");
+                string source = Path.Combine(Application.dataPath, $"../Lua/{luaFilePath}");
                 DirectoryInfo dirInfo = new DirectoryInfo(source);
                 scriptPath = dirInfo.FullName;
                 Debug.Log($"scriptPath:{scriptPath}");

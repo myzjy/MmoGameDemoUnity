@@ -113,28 +113,28 @@ namespace GameMain
         private void AllAssemblyLoadComplete()
         {
             ChangeState<ProcedureStartGame>(m_procedureOwner);
-#if UNITY_EDITOR
-            m_MainLogicAssembly = GetMainLogicAssembly();
-#endif
-            if (m_MainLogicAssembly == null)
-            {
-                Debug.Fatal($"Main logic assembly missing.");
-                return;
-            }
-            var appType = m_MainLogicAssembly.GetType("GameApp");
-            if (appType == null)
-            {
-                Debug.Fatal($"Main logic type 'GameMain' missing.");
-                return;
-            }
-            var entryMethod = appType.GetMethod("Entrance");
-            if (entryMethod == null)
-            {
-                Debug.Fatal($"Main logic entry method 'Entrance' missing.");
-                return;
-            }
-            object[] objects = new object[] { new object[] { m_HotfixAssemblys } };
-            entryMethod.Invoke(appType, objects);
+// #if UNITY_EDITOR
+//             m_MainLogicAssembly = GetMainLogicAssembly();
+// #endif
+//             if (m_MainLogicAssembly == null)
+//             {
+//                 Debug.Fatal($"Main logic assembly missing.");
+//                 return;
+//             }
+//             var appType = m_MainLogicAssembly.GetType("GameApp");
+//             if (appType == null)
+//             {
+//                 Debug.Fatal($"Main logic type 'GameMain' missing.");
+//                 return;
+//             }
+//             var entryMethod = appType.GetMethod("Entrance");
+//             if (entryMethod == null)
+//             {
+//                 Debug.Fatal($"Main logic entry method 'Entrance' missing.");
+//                 return;
+//             }
+//             object[] objects = new object[] { new object[] { m_HotfixAssemblys } };
+//             entryMethod.Invoke(appType, objects);
         }
 
         private Assembly GetMainLogicAssembly()

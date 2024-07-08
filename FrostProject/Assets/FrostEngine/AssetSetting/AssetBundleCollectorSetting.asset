@@ -37,3 +37,16 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: Lua
+      GroupDesc: "Lua\u4EE3\u7801\u8D44\u6E90"
+      AssetTags: Lua
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/AssetRaw/Lua
+        CollectorGUID: 2011f7ddfc4accf4aa0e8f12a789ef1f
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
