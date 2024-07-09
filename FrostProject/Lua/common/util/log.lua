@@ -4,7 +4,9 @@
 -- @author zjy
 -- @DateTime 2024/7/8 下午11:17
 -------------------------------------------------------------------------------
-
+Log = {
+    
+}
 local lua_type = type
 local lua_tostring = tostring
 local lua_pairs = pairs
@@ -12,9 +14,9 @@ local lua_ipairs = ipairs
 local format = string.format
 local strsub = string.sub
 local tonumber = tonumber
-FrostLog = CS.FrostEngine.Debug.Log
-FrostLogE = CS.FrostEngine.Debug.LogError
-FrostLogW = CS.FrostEngine.Debug.LogWarning
+FrostLuaLog = CS.FrostEngine.Debug.Log
+FrostLuaLogE = CS.FrostEngine.Debug.LogError
+FrostLuaLogW = CS.FrostEngine.Debug.LogWarning
 
 CONSOLE_COLOR = {
     Dark_black = "#000000",
@@ -35,43 +37,62 @@ CONSOLE_COLOR = {
     Light_White = "#ffffff"
 }
 
-function PrintLog(tag, script, fmt, ...)
+function PrintLog(inTag, inScript, inFmt)
     local t = {
         "[",
-        string.upper(lua_tostring(tag)),
+        string.upper(lua_tostring(inTag)),
         "] ",
-        script,
-        format(lua_tostring(fmt), ...)
+        inScript,
+        lua_tostring(inFmt)
     }
 
-    FrostLog(table.concat(t))
+    FrostLuaLog(table.concat(t))
 end
 
-function PrintLogE(tag, script, fmt, ...)
+function PrintLogE(inTag, inScript, inFmt)
     local t = {
         "[",
-        string.upper(lua_tostring(tag)),
+        string.upper(lua_tostring(inTag)),
         "] ",
-        script,
-        format(lua_tostring(fmt), ...)
+        inScript,
+        lua_tostring(inFmt)
     }
 
-    FrostLogE(table.concat(t))
+    FrostLuaLogE(table.concat(t))
 end
 
-function PrintLogW(tag, script, fmt, ...)
+function PrintLogW(inTag, inScript, inFmt)
     local t = {
         "[",
-        string.upper(lua_tostring(tag)),
+        string.upper(lua_tostring(inTag)),
         "] ",
-        script,
-        format(lua_tostring(fmt), ...)
+        inScript,
+        lua_tostring(inFmt)
     }
 
-    FrostLogW(table.concat(t))
+    FrostLuaLogW(table.concat(t))
 end
 
-function PrintError(fmt, ...)
+function FrostLogD(...)
+    local tArguments = {...}
+    local tFmt = table.concat(tArguments,"\t")
+    local d = ""
+    if Debug < 1 then
+        return
+    end
+    if Debug >= 1 then
+        local info = debug.getinfo(2, "Sln");
+        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
+            d = info.short_src .. ":" .. info.currentline .. ":"
+        end
+    end
+    PrintLog("DBG", d, SetLogColor(CONSOLE_COLOR.Light_Blue_Green, tFmt))
+end
+
+
+function FrostLogE(...)
+    local tArguments = {...}
+    local tFmt = table.concat(tArguments,"\t")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");
@@ -80,13 +101,15 @@ function PrintError(fmt, ...)
         end
     end
   
-    PrintLogE("ERR", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    PrintLogE("ERR", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
-function PrintWarn(fmt, ...)
+function FrostLogW(...)
     if Debug < 1 then
         return
     end
+    local tArguments = {...}
+    local tFmt = table.concat(tArguments,"\t")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");
@@ -94,13 +117,16 @@ function PrintWarn(fmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLogW("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
+    PrintLogW("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
-function PrintWarnStack(fmt, ...)
+
+function FrostLogI(inFmt, ...)
     if Debug < 1 then
         return
     end
+    local tArguments = {...}
+    local tFmt = table.concat(tArguments,"\t")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");
@@ -108,40 +134,11 @@ function PrintWarnStack(fmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLog("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, fmt), ...)
-    print(debug.traceback("", 2))
+    PrintLog("INFO", d, SetLogColor(CONSOLE_COLOR.Light_Green, tFmt))
 end
 
-function PrintInfo(fmt, ...)
-    if Debug < 1 then
-        return
-    end
-    local d = ""
-    if Debug >= 1 then
-        local info = debug.getinfo(2, "Sln");
-        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
-            d = info.short_src .. ":" .. info.currentline .. ":"
-        end
-    end
-    PrintLog("INFO", d, SetLogColor(CONSOLE_COLOR.Light_Green, fmt), ...)
-end
-
-function PrintDebug(fmt, ...)
-    local d = ""
-    if Debug < 1 then
-        return
-    end
-    if Debug >= 1 then
-        local info = debug.getinfo(2, "Sln");
-        if info ~= nil and info.short_src ~= nil and info.currentline ~= nil then
-            d = info.short_src .. ":" .. info.currentline .. ":"
-        end
-    end
-    PrintLog("DBG", d, SetLogColor(CONSOLE_COLOR.Light_Blue_Green, fmt), ...)
-end
-
-function SetLogColor(nColor, fmt)
-    return "<color=" .. nColor .. ">" .. fmt .. "</color>"
+function SetLogColor(nColor, inFmt)
+    return "<color=" .. nColor .. ">" .. inFmt .. "</color>"
 end
 
 function Handle(method, obj, ...)
@@ -159,3 +156,14 @@ function Handle(method, obj, ...)
     end
     return newHandler
 end
+
+
+------------------------------------------------------------
+function _DisableLuaLogInterface(...) 
+    local tArguments = { ... }
+    
+end
+
+print = function(...)  end
+error = function(...)  end
+warn =  function(...)  end

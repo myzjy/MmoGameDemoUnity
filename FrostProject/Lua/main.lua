@@ -43,5 +43,6 @@ if not status then
 end
 
 function LuaInit()
+    require("common.include")
     
 end

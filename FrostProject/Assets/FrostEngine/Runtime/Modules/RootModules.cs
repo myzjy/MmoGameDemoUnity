@@ -97,9 +97,9 @@ namespace FrostEngine
             
             InitVersionHelper();
             InitLogHelper();
-            Debug.Info("TEngine Version: {0}", Version.GameFrameworkVersion);
-            Debug.Info("Game Version: {0} ({1})", Version.GameVersion, Version.InternalGameVersion);
-            Debug.Info("Unity Version: {0}", Application.unityVersion);
+            Debug.Info("FrostEngine Version: {}", Version.GameFrameworkVersion);
+            Debug.Info("Game Version: {} ({})", Version.GameVersion, Version.InternalGameVersion);
+            Debug.Info("Unity Version: {}", Application.unityVersion);
 
             ConverterUtils.ScreenDpi = Screen.dpi;
             if (ConverterUtils.ScreenDpi <= 0)

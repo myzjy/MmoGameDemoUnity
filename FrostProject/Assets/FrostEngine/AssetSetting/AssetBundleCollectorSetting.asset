@@ -29,8 +29,8 @@ MonoBehaviour:
       AssetTags: UI
       ActiveRuleName: EnableGroup
       Collectors:
-      - CollectPath: Assets/AssetRaw/UI
-        CollectorGUID: 6d95bc2ab0996fa45948bbf366442eea
+      - CollectPath: Assets/AssetRaw/UIRaw/UI
+        CollectorGUID: 42b3e8e394e0842d8be6568c63e891f0
         CollectorType: 0
         AddressRuleName: AddressByFileName
         PackRuleName: PackDirectory
