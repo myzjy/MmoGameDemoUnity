@@ -23,9 +23,9 @@
 -------------------------------------------------------------------------------
 
 ---@class Messenger
-local Messenger = class("Messenger")
+local Messenger = Class("Messenger")
 
-function Messenger:Constructor()
+function Messenger:ctor()
 	self.events = {}
 end
 
@@ -42,21 +42,21 @@ function Messenger:AddListener(e_type, e_listener, ...)
 	
 	for k, v in pairs(event) do
 		if k == e_listener then
-			error("Aready cotains listener : "..tostring(e_listener))
+			FrostLogE("Aready cotains listener : "..tostring(e_listener))
 			return
 		end
 	end
 	
-	event[e_listener] = setmetatable(SafePack(...), {__mode = "kv"}) 
+	event[e_listener] = setmetatable(LuaHelp.SafePack(...), {__mode = "kv"}) 
 	self.events[e_type] = event;
 end
 
 function Messenger:Bind(e_type, call_back, obj)	
 	local handler = nil
 	if obj then
-		handler = BindCallback(obj, call_back)
+		handler = LuaHelp.BindCallback(obj, call_back)
 	else
-		handler = Bind(nil, call_back)
+		handler = LuaHelp.Bind(nil, call_back)
 	end
     self:AddListener(e_type, handler)
     return handler
@@ -69,8 +69,8 @@ function Messenger:Fire(e_type, ...)
 	end
 	for k, v in pairs(event) do
 		assert(k ~= nil)
-		local args = LuaHelp.ConcatSafePack(v, SafePack(...))
-		k(SafeUnpack(args))
+		local args = LuaHelp.ConcatSafePack(v, LuaHelp.SafePack(...))
+		k(LuaHelp.SafeUnpack(args))
 	end
 end
 

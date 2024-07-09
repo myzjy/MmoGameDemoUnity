@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace FrostEngine.Localization
 {
+	using MessageType = UnityEditor.MessageType;
 	public class ParsedTerm
 	{
 		public string Category, Term, FullTerm;

@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace FrostEngine.Editor.Inspector
 {
+    using MessageType = UnityEditor.MessageType;
+
     [CustomEditor(typeof(ProcedureModule))]
     internal sealed class ProcedureModuleInspector : GameFrameworkInspector
     {

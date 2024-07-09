@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace FrostEngine.Editor
 {
-      internal sealed class HelperInfo<T> where T : MonoBehaviour
+    using MessageType = UnityEditor.MessageType;
+
+    internal sealed class HelperInfo<T> where T : MonoBehaviour
     {
         private const string CustomOptionName = "<Custom>";
 
@@ -35,7 +37,8 @@ namespace FrostEngine.Editor
         public void Draw()
         {
             string displayName = FieldNameForDisplay(m_Name);
-            int selectedIndex = EditorGUILayout.Popup(StringUtils.Format("{} Helper", displayName), m_HelperTypeNameIndex, m_HelperTypeNames);
+            int selectedIndex = EditorGUILayout.Popup(StringUtils.Format("{} Helper", displayName),
+                m_HelperTypeNameIndex, m_HelperTypeNames);
             if (selectedIndex != m_HelperTypeNameIndex)
             {
                 m_HelperTypeNameIndex = selectedIndex;
@@ -47,7 +50,8 @@ namespace FrostEngine.Editor
                 EditorGUILayout.PropertyField(m_CustomHelper);
                 if (m_CustomHelper.objectReferenceValue == null)
                 {
-                    EditorGUILayout.HelpBox(StringUtils.Format("You must set Custom {} Helper.", displayName), MessageType.Error);
+                    EditorGUILayout.HelpBox(StringUtils.Format("You must set Custom {} Helper.", displayName),
+                        MessageType.Error);
                 }
             }
         }

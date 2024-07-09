@@ -8,6 +8,7 @@ using FrostEngine.Localization.SimpleJSON;
 
 namespace FrostEngine.Localization
 {
+	using MessageType = UnityEditor.MessageType;
 	public partial class LocalizationEditor
 	{
 		#region Variables

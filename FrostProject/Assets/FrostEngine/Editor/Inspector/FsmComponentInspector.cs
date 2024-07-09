@@ -11,7 +11,7 @@ namespace FrostEngine.Editor.Inspector
 
             if (!EditorApplication.isPlaying)
             {
-                EditorGUILayout.HelpBox("Available during runtime only.", MessageType.Info);
+                EditorGUILayout.HelpBox("Available during runtime only.", UnityEditor.MessageType.Info);
                 return;
             }
 

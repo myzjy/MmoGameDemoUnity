@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace FrostEngine.Localization
 {
+	using MessageType = UnityEditor.MessageType;
 	public partial class LocalizationEditor
 	{
 		void OnGUI_Warning_SourceInScene()
