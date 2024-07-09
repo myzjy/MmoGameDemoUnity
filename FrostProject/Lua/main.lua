@@ -5,6 +5,7 @@
 ---
 Debug = 0
 ConfigurationDevice = {}
+CS = CS
 local function Init()
     Debug = CS.FrostEngine.SettingsUtils.DebugConfig()
 end

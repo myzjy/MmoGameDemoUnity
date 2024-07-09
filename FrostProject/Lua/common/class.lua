@@ -3,6 +3,9 @@
    DateTime: 2024/7/9 下午2:37
 --]]
 
+CS = CS
+TypeOf = CS.typeof
+
 --- @class LuaDataType Lua数据类型枚举
 LuaDataType = {
     Number = "number",
@@ -168,8 +171,9 @@ end
 ---创建一个类
 ---@generic T:Unit
 ---@param inClassName string  类名
+---@param inSuper any|nil
 ---@return T
-class = function(inClassName, inSuper)
+Class = function(inClassName, inSuper)
     assert(type(inClassName) == LuaDataType.String and #inClassName > 0)
     ---@type Unit
     local tUnitType = {
@@ -184,7 +188,7 @@ class = function(inClassName, inSuper)
         IsSubClassOf = nil,
     }
     local tSuperType = type(inSuper)
-    local tIsCSType = inSuper and tSuperType == LuaDataType.Table and typeof(inSuper)      --判断是否是C#类
+    local tIsCSType = inSuper and tSuperType == LuaDataType.Table and TypeOf(inSuper)      --判断是否是C#类
     local tIsCSInstance = inSuper and tSuperType == LuaDataType.UserData                 --判断是否为C#实例
     local tIsExCSInsAgain = inSuper and inSuper.__classType == ClassType.ExtendCSInstance --再次扩展C#实例
     if tIsExCSInsAgain then

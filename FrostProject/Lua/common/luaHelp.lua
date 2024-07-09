@@ -66,7 +66,7 @@ function LuaHelp.BindCallback(...)
 	elseif type(params[1]) == "function" then
 		bindFunc = LuaHelp.Bind(nil, ...)
 	else
-		PrintError("LuaHelp BindCallback : error params list!")
+		FrostLogE("LuaHelp BindCallback : error params list!")
 	end
 	return bindFunc
 end
@@ -84,7 +84,7 @@ end
 --- @return boolean 返回是否注册成功
 function LuaHelp.Define(inName, inValue)
 	if _G[inName] and inValue then
-		PrintError("LuaHelp \t register global variable failed, with duplicate name %s", inName)
+		FrostLogE("LuaHelp \t register global variable failed, with duplicate name %s", inName)
 		return false
 	end
 	_G[inName] = inValue

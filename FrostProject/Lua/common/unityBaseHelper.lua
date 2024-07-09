@@ -3,7 +3,7 @@
     DateTime: 2024/7/9 下午3:11
 --]]
 
-tools = {}
+Tools = {}
 
 ------------------------------------------------------------
 ---判断一个值能否通过条件
@@ -12,7 +12,7 @@ tools = {}
 --- @param ... fun(a:V):boolean
 --- @return boolean
 ------------------------------------------------------------
-function tools.FitConditions(inValue, ...)
+function Tools.FitConditions(inValue, ...)
     local tArgs = { ... }
     for _, tValueFunc in ipairs(tArgs) do
         local tIsExist = tValueFunc(inValue)
@@ -128,7 +128,7 @@ function io.PathInfo(inFilePath)
         if tFileByte == 46 then
             -- 46 = char "."
             inExtPos = inIndex
-        elseif b == 47 then
+        elseif tFileByte == 47 then
             -- 47 = char "/"
             break
         end
@@ -178,8 +178,8 @@ function table.DeepCopy(inTab)
             return inObject
         end
         local tNewTable = {}
-        tSearchTable[tObject] = tNewTable
-        for tIndex, tObjValue in pairs(tObject) do
+        tSearchTable[inObject] = tNewTable
+        for tIndex, tObjValue in pairs(inObject) do
             tNewTable[tFunc(tIndex)] = tFunc(tObjValue)
         end
         return setmetatable(tNewTable, getmetatable(inObject))
@@ -326,7 +326,7 @@ end
 function table.FindAll(inTabs, inReturnDic, ...)
     local tResultTabs = {}
     for tKey, tValue in pairs(inTabs) do
-        local bo = tools.FitConditions(tValue, ...)
+        local bo = Tools.FitConditions(tValue, ...)
         if bo then
             if inReturnDic then
                 tResultTabs[tKey] = tValue
@@ -348,7 +348,7 @@ end
 ------------------------------------------------------------
 function table.Find(inTabs, ...)
     for _, tValue in pairs(inTabs) do
-        local bo = tools.FitConditions(tValue, ...)
+        local bo = Tools.FitConditions(tValue, ...)
         if bo then
             return tValue
         end
