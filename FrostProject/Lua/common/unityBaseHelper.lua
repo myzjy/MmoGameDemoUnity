@@ -524,3 +524,13 @@ function table.getMaxIndex(inTabs)
 end
 
 ------------------------------------------------------------------------------
+
+function table.removeNullFromArray(tbl)
+    local nul = null
+    
+    for i = #tbl, 1, -1 do
+        if tbl[i] == nul then
+            table.remove(tbl, i)
+        end
+    end
+end

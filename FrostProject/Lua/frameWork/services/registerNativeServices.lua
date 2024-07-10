@@ -1,0 +1,1 @@
+NetworkNativeService = CS.FrostEngine.ModuleSystem.GetModule("NetManager")  -- 网络控制

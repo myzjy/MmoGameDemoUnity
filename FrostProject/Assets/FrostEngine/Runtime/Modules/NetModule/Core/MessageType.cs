@@ -1,6 +1,6 @@
 namespace FrostEngine
 {
-    public enum MessageType
+    public enum NetMessageType
     {
         Connected,
         Data,

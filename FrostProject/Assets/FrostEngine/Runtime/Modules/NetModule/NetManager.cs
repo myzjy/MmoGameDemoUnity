@@ -4,11 +4,15 @@ namespace FrostEngine
 {
     internal sealed  class NetManager : ModuleImp, INetManager
     {
-        private WebsocketClient WebsocketClient;
+        /// <summary>
+        /// 网络客户端
+        /// </summary>
+        private AbstractClient netClient;
         private  Action<byte[]> receiveAction;
 
         public  void ReceiveString(byte[] bytes)
         {
+            receiveAction.Invoke(bytes);
         }
 
         internal override void Shutdown()
@@ -18,18 +22,36 @@ namespace FrostEngine
 
         public void Connect(string url)
         {
-            WebsocketClient = new WebsocketClient(url);
-            WebsocketClient.Start();
+            netClient = new WebsocketClient(url);
+            netClient.Start();
         }
 
         public void Close()
         {
-            throw new System.NotImplementedException();
+            if (netClient != null)
+            {
+                netClient.Close();
+                netClient = null;
+            }
         }
 
         public void SendMessage(string bytes)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                ByteBuffer byteBuffer = ByteBuffer.ValueOf();
+                byteBuffer.WriteString(bytes);
+                var sendSuccess = netClient.Send(byteBuffer.ToBytes());
+                if (!sendSuccess)
+                {
+                    Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+                throw;
+            }
         }
         
         public  void ReceiveStringAction(Action<byte[]> receiveAction)

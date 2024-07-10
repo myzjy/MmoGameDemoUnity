@@ -5,10 +5,10 @@ namespace FrostEngine
     [StructLayout(LayoutKind.Auto)]
     public struct Message
     {
-        public readonly MessageType messageType;
+        public readonly NetMessageType messageType;
         public readonly string packet;
 
-        public Message(MessageType messageType, string packet)
+        public Message(NetMessageType messageType, string packet)
         {
             this.messageType = messageType;
             this.packet = packet;

@@ -1,5 +1,6 @@
 require("common.util.log")
 require("common.class")
+list = require("common.util.list")
 require("common.luaHelp")
 Messenger = require("common.message")
 require("common.json")
