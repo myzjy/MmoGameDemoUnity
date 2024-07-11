@@ -8,8 +8,18 @@
 local NetMessageService = Class("NetMessageService", ServiceBase)
 
 function NetMessageService:ctor()
-    self._GlobalEvents = event()
+    self._GlobalEvents = EventClass()
 end
 
+function NetMessageService:vGetConfig()
+    return
+    {
+        name = "NetMessageService",
+    }
+end
+
+function NetMessageService:vInitialize()
+    
+end
 
 return NetMessageService

@@ -37,7 +37,11 @@ CONSOLE_COLOR = {
     Light_White = "#ffffff"
 }
 
-function PrintLog(inTag, inScript, inFmt)
+ Log = {
+     
+ }
+
+function Log:PrintLog(inTag, inScript, inFmt)
     local t = {
         "[",
         string.upper(lua_tostring(inTag)),
@@ -49,7 +53,7 @@ function PrintLog(inTag, inScript, inFmt)
     FrostLuaLog(table.concat(t))
 end
 
-function PrintLogE(inTag, inScript, inFmt)
+function Log:PrintLogE(inTag, inScript, inFmt)
     local t = {
         "[",
         string.upper(lua_tostring(inTag)),
@@ -61,7 +65,7 @@ function PrintLogE(inTag, inScript, inFmt)
     FrostLuaLogE(table.concat(t))
 end
 
-function PrintLogW(inTag, inScript, inFmt)
+function Log:PrintLogW(inTag, inScript, inFmt)
     local t = {
         "[",
         string.upper(lua_tostring(inTag)),
@@ -86,7 +90,7 @@ function FrostLogD(...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLog("DBG", d, SetLogColor(CONSOLE_COLOR.Light_Blue_Green, tFmt))
+    Log:PrintLog("DBG", d, SetLogColor(CONSOLE_COLOR.Light_Blue_Green, tFmt))
 end
 
 
@@ -100,8 +104,8 @@ function FrostLogE(...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-  
-    PrintLogE("ERR", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
+
+    Log:PrintLogE("ERR", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
 function FrostLogW(...)
@@ -117,7 +121,7 @@ function FrostLogW(...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLogW("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
+    Log:PrintLogW("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
 
@@ -134,10 +138,10 @@ function FrostLogI(inFmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    PrintLog("INFO", d, SetLogColor(CONSOLE_COLOR.Light_Green, tFmt))
+    Log:PrintLog("INFO", d, SetLogColor(CONSOLE_COLOR.Light_Green, tFmt))
 end
 
-function SetLogColor(nColor, inFmt)
+function Log:SetLogColor(nColor, inFmt)
     return "<color=" .. nColor .. ">" .. inFmt .. "</color>"
 end
 

@@ -4,6 +4,7 @@
 --]]
 
 null = nil
+nullTbl = {}
 CS = CS
 TypeOf = CS.typeof
 

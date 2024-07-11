@@ -208,9 +208,9 @@ local function dump(tb, dump_metatable, max_level)
 				str = str .. rep("\t", level + 1) .. '["__metatable"]' .. " = "
 				if not lookup_table[mt] and ((not max_level) or level < max_level) then
 					lookup_table[mt] = true
-					str = str .. _dump(mt, level + 1, dump_metatable) .. "\n"
+					str = str .. _dump(mt, level + 1) .. "\n"
 				else
-					str = str .. (tostring(v) or type(v)) .. ",\n"
+					str = str .. (tostring(mt) or type(mt)) .. ",\n"
 				end
 			end
 		end
