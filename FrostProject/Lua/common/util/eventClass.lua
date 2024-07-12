@@ -7,7 +7,8 @@
 --]]
 -----------------------------------------------------------------------------------------
 
-
+---@class EventClass
+---@field __classname string
 local EventClass = Class("EventClass")
 
 function EventClass:ctor()

@@ -26,6 +26,11 @@ namespace FrostEngine
             netClient.Start();
         }
 
+        public bool IsConnect()
+        {
+            return netClient.Connected();
+        }
+
         public void Close()
         {
             if (netClient != null)

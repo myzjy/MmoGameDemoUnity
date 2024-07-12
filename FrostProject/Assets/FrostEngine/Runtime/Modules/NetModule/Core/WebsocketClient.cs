@@ -7,6 +7,7 @@ namespace FrostEngine
         private string url;
         private WebSocketBridge _webSocketBridge = new WebSocketBridge();
         private NetManager NetManager;
+        private bool _isConnect = false;
         public WebsocketClient(string url)
         {
             this.url = url;
@@ -18,11 +19,12 @@ namespace FrostEngine
             NetManager = ModuleImpSystem.GetModule<NetManager>();
             _webSocketBridge.WebSocketClose();
             _webSocketBridge.WebSocketConnect(url);
+            _isConnect = false;
         }
 
         public override bool Connected()
         {
-            throw new System.NotImplementedException();
+            return _isConnect;
         }
 
         public override void Close()
@@ -59,7 +61,7 @@ namespace FrostEngine
             // SpringContext.GetBean<SchedulerManager>().isNetOpen = true;
             Debug.Log("成功打开");
             Debug.Log("Connected server [{}]", ToConnectUrl());
-
+            _isConnect = true; 
 // #if ENABLE_LUA_START
 //             SpringContext.GetBean<XLuaManager>().CallLuaFunction("LoginNetController:OnNetOpenEvent()");
 //             EventBus.AsyncExecute(LuaGameConstant.NetOnOpen);
