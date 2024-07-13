@@ -26,6 +26,7 @@ function NetMessageService:vInitialize()
 end
 
 local function OnNetDataRecieved(inMsgData)
+    NetMessageService:OnReceiveMessage(inMsgData)
 end
 
 function NetMessageService:Connect(url)
@@ -103,6 +104,10 @@ function NetMessageService:_GetEventByObject()
     return self._GlobalEvents
 end
 
+function NetMessageService:OnReceiveMessage(inMessage)
+    self:ReceiveData(inMessage)
+end
+
 function NetMessageService:ReceiveData(inMessage)
     local tMsgInfo = JSON.decode(inMessage)
     if not tMsgInfo then
@@ -111,7 +116,9 @@ function NetMessageService:ReceiveData(inMessage)
     end
     local msgId = tMsgInfo.protocolId
     local tEvent = self:_GetEventByObject()
-
+    tEvent:SendEvent(msgId,tMsgInfo,nil)
 end
+
+_G.OnNetDataRecieved = OnNetDataRecieved
 
 return NetMessageService
