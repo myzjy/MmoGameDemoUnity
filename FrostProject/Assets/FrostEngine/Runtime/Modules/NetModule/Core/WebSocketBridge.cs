@@ -279,5 +279,10 @@ namespace FrostEngine
             Debug.Log(reason);
             websocketClient.HandleOnClose(code, message);
         }
+
+        public bool IsConnect()
+        {
+            return _webSocket.IsOpen;
+        }
     }
 }

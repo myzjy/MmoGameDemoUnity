@@ -2,7 +2,7 @@ namespace FrostEngine
 {
     public interface INetManager
     {
-        void Connect(string url);
+        bool Connect(string url);
 
         void Close();
         

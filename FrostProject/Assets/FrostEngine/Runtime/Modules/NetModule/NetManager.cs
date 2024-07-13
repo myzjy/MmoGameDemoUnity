@@ -20,10 +20,11 @@ namespace FrostEngine
             throw new System.NotImplementedException();
         }
 
-        public void Connect(string url)
+        public bool Connect(string url)
         {
             netClient = new WebsocketClient(url);
             netClient.Start();
+            return netClient.Connected();
         }
 
         public bool IsConnect()

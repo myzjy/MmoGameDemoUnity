@@ -384,6 +384,7 @@ function json.decode(str)
     end
     return res
 end
+JSON = json
 
 return json
 

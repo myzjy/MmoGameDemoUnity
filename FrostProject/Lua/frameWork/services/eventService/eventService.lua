@@ -6,6 +6,7 @@
 *******************************************************************--]]
 
 ---@class EventService:ServiceBase
+---@field __classname string
 local EventService = Class("EventService", ServiceBase)
 
 function EventService:ctor()

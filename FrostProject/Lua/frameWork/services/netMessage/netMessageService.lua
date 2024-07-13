@@ -2,13 +2,16 @@
     Copyright 2024 - 2026 Tencent. All Rights Reserved
     Author : zhangjingyi
     brief :  网络收发协议
---]]--------------------------------------------
+--]]
+--------------------------------------------
 
 --- @class NetMessageService : ServiceBase
 local NetMessageService = Class("NetMessageService", ServiceBase)
 
 function NetMessageService:ctor()
     self._GlobalEvents = EventClass()
+    -- 是否 回调成功
+    self._IsConnected = false
 end
 
 function NetMessageService:vGetConfig()
@@ -19,13 +22,49 @@ function NetMessageService:vGetConfig()
 end
 
 function NetMessageService:vInitialize()
-    
+
 end
+
+local function OnNetDataRecieved(inMsgData)
+end
+
 function NetMessageService:Connect(url)
-    local function ConnectHandler(inIsConnected)
-        
+    self._IsConnected = NetworkNativeService:Connect(url)
+    if self._IsConnected then
+        FrostLogD(self.__classname, "NetMessageService.Connect Failed! url = ", url)
+    else
+        FrostLogE(self.__classname, "NetMessageService.Connect url = ", url)
     end
-    NetworkNativeService:Connect(url)
+    return self._IsConnected
+end
+
+------------------------------------------------------------------
+--- 向cs发送协议
+---@param inMsgId number 协议id
+---@param inMessage any
+------------------------------------------------------------------
+function NetMessageService:Send(inMsgId, inMessage)
+    if inMsgId == 0 or inMsgId == nil then
+        FrostLogE(self.__classname, "NetMessageService.Send , message is none")
+        return false
+    end
+
+    local strMsg = JSON.encode(inMessage)
+
+    if string.IsNullOrEmpty(strMsg) then
+        FrostLogE(self.__classname, "NetMessageService.Send Fail MsgId = ", inMsgId, ", Message", inMessage)
+        return false
+    end
+
+    self:SendData(inMsgId, strMsg, true)
+    return true
+end
+
+function NetMessageService:SendData(inMsgId, inStrMsg, inMsgSize)
+    local tLogTag = self.__classname
+    FrostLogD(tLogTag, "With SendRawData", inMsgId)
+    NetworkNativeService:SendMessage(inStrMsg)
+    return true
 end
 
 ----------------------------------------------------------------------------------------------------------------
@@ -34,13 +73,13 @@ end
 --- @param inListener any (LuaTable) object 网络协议监听者，收到inNetMessageID 后 执行 inListener的 inListenFunction
 --- @param inListenFunction function inListener 的函数， 收到inNetMessageID 后 执行 inListener的 inListenFunction
 ----------------------------------------------------------------------------------------------------------------
-function NetMessageService:ListenMessage(inNetMessageID,inListener,inListenFunction)
+function NetMessageService:ListenMessage(inNetMessageID, inListener, inListenFunction)
     if not inListener or not inListenFunction then
-        FrostLogE(self.__classname,"Invalid listener parameter", inNetMessageID)
-        return   
+        FrostLogE(self.__classname, "Invalid listener parameter", inNetMessageID)
+        return
     end
     local tEvent = self:_GetEventByObject()
-    tEvent:AddEvent(inNetMessageID,inListener,inListenFunction)
+    tEvent:AddEvent(inNetMessageID, inListener, inListenFunction)
 end
 
 ----------------------------------------------------------------
@@ -49,8 +88,8 @@ end
 --- @param inNetMessageID number 网络消息id
 function NetMessageService:RemoveListener(inListener, inNetMessageID)
     if not inListener then
-        FrostLogE(self.__classname,"not Invalid to remove", inNetMessageID)
-        return   
+        FrostLogE(self.__classname, "not Invalid to remove", inNetMessageID)
+        return
     end
     local tEvent = self:_GetEventByObject()
     tEvent:RemoveEvent(inListener, inNetMessageID)
@@ -62,6 +101,17 @@ end
 ----------------------------------------------------------------
 function NetMessageService:_GetEventByObject()
     return self._GlobalEvents
+end
+
+function NetMessageService:ReceiveData(inMessage)
+    local tMsgInfo = JSON.decode(inMessage)
+    if not tMsgInfo then
+        FrostLogE(self.__classname,  "NetMessageService.ReceiveData Decode Fail, MsgName = ", inMessage)
+        return
+    end
+    local msgId = tMsgInfo.protocolId
+    local tEvent = self:_GetEventByObject()
+
 end
 
 return NetMessageService

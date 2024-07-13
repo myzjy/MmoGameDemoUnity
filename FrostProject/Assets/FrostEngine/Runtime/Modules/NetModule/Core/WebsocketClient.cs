@@ -24,7 +24,7 @@ namespace FrostEngine
 
         public override bool Connected()
         {
-            return _isConnect;
+            return _webSocketBridge.IsConnect();
         }
 
         public override void Close()
