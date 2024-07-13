@@ -17,10 +17,12 @@ local __g = _G
 function __G__TRACKBACK__(exceptionMsg)
     local msg = string.format("[%d] %s\n", handleLuaExceptionIdx, tostring(exceptionMsg))
     local str = "LUA ERROR: " .. msg
-    print("----------------------------------------")
-    print(str)
-    print(debug.traceback())
-    print("----------------------------------------")
+    local strMsg="----------------------------------------\n"..str.."\n"..debug.traceback().."\n----------------------------------------"
+    if FrostLogE then
+        FrostLogE(strMsg)
+    else
+        print(strMsg)
+    end
 
     -- 若报错信息与上一条相同，忽略显示
     --if lastLuaExceptionMsg == exceptionMsg then

@@ -12,6 +12,7 @@ function NetMessageService:ctor()
     self._GlobalEvents = EventClass()
     -- 是否 回调成功
     self._IsConnected = false
+    self._NetMsgDataMap = {}
 end
 
 function NetMessageService:vGetConfig()
@@ -50,7 +51,10 @@ function NetMessageService:Send(inMsgId, inMessage)
         return false
     end
 
-    local strMsg = JSON.encode(inMessage)
+    local strMsg = JSON.encode({
+        protocolId = inMsgId,
+        packet = inMessage
+    })
 
     if string.IsNullOrEmpty(strMsg) then
         FrostLogE(self.__classname, "NetMessageService.Send Fail MsgId = ", inMsgId, ", Message", inMessage)
@@ -70,8 +74,8 @@ end
 
 ----------------------------------------------------------------------------------------------------------------
 --- 添加对指定网络消息的监听
---- @param inNetMessageID number (MSG_NET_CODE) 网络消息id
---- @param inListener any (LuaTable) object 网络协议监听者，收到inNetMessageID 后 执行 inListener的 inListenFunction
+--- @param inNetMessageID number MSG_NET_CODE) 网络消息id
+--- @param inListener any LuaTable) object 网络协议监听者，收到inNetMessageID 后 执行 inListener的 inListenFunction
 --- @param inListenFunction function inListener 的函数， 收到inNetMessageID 后 执行 inListener的 inListenFunction
 ----------------------------------------------------------------------------------------------------------------
 function NetMessageService:ListenMessage(inNetMessageID, inListener, inListenFunction)
@@ -85,7 +89,7 @@ end
 
 ----------------------------------------------------------------
 --- 移除监听者对指定网络消息的监听
---- @param inListener any (LuaTabel) 网络协议监听者
+--- @param inListener any LuaTabel) 网络协议监听者
 --- @param inNetMessageID number 网络消息id
 function NetMessageService:RemoveListener(inListener, inNetMessageID)
     if not inListener then
