@@ -66,5 +66,20 @@ end
 function ServiceBase:vDeinitialize(inIsRunOnServer)
 end
 
+-------------------------------------------------------------------------------------------
+-- 响应玩家进入游戏，可以初始化与玩家数据相关的逻辑
+-- @param inPlayerEntity(Entity) 进入游戏的玩家Entity
+-------------------------------------------------------------------------------------------
+function ServiceBase:OnEnterGame(inPlayerEntity)
+    NGRLogD(self.__classname, "OnEnterGame", inPlayerEntity:GetGuid())
+    self:vOnEnterGame(inPlayerEntity)
+end
+
+-------------------------------------------------------------------------------------------
+-- 子类覆盖，响应玩家进入游戏，可以初始化与玩家数据相关的逻辑
+-- @param inPlayerEntity(Entity) 进入游戏的玩家Entity
+-------------------------------------------------------------------------------------------
+function ServiceBase:vOnEnterGame(inPlayerEntity)
+end
 
 return ServiceBase

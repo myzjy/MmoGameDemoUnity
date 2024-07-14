@@ -248,7 +248,7 @@ namespace FrostEngine
                 Debug.Fatal("ServerSetting module is invalid.");
                 return;
             }
-
+            mServerSettings.Load();
             if (PlayMode == EPlayMode.EditorSimulateMode)
             {
                 Debug.Info(

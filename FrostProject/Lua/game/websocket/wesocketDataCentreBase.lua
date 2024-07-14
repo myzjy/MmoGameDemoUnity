@@ -5,20 +5,40 @@
 ---
 
 ---@class WebSocketDataCentreBase
-local WebSocketDataCentreBase = require("WebSocketDataCentreBase")
+local WebSocketDataCentreBase = Class("WebSocketDataCentreBase")
 
 function WebSocketDataCentreBase:ctor()
     --- 数据中心服务
     self._dataCenterService = false
 end
 
----------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
 --- 初始化 
---- @param inDataCenter
----------------------------------------------------------------------
+--- @param inDataCenter DataCentreService
+-------------------------------------------------------------------------------------------
 function WebSocketDataCentreBase:Initialize(inDataCenter)
     self._dataCenterService = inDataCenter
+    self:vInitialize()
 end
 
-_G.WebSocketDataCentreBase = WebSocketDataCentreBase
+function WebSocketDataCentreBase:SetDataCentre(dataCentre)
+    self._dataCentre = dataCentre
+end
+
+---@return DataCentreService
+function WebSocketDataCentreBase:GetDataCentre()
+    return self._dataCentre
+end
+
+-------------------------------------------------------------------------------------------
+--- 子类覆盖，进行初始化逻辑
+-------------------------------------------------------------------------------------------
+function WebSocketDataCentreBase:vInitialize()
+end
+
+-------------------------------------------------------------------------------------------
+-- 子类覆盖，进行反初始化逻辑
+-------------------------------------------------------------------------------------------
+function WebSocketDataCentreBase:vDeinitialize()
+end
 return WebSocketDataCentreBase

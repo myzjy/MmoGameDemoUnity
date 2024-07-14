@@ -29,7 +29,8 @@ namespace FrostEngine
                 return m_SettingManager.Count;
             }
         }
-
+        private IServerSettings mServerSettings;
+        public IServerSettings ServerSettings => mServerSettings;
         /// <summary>
         /// 游戏框架模块初始化。
         /// </summary>
@@ -50,7 +51,8 @@ namespace FrostEngine
                 Debug.LogError("Can not create setting helper.");
                 return;
             }
-
+            mServerSettings = ModuleImpSystem.GetModule<IServerSettings>();
+            mServerSettings.Load();
             settingHelper.name = "Setting Helper";
             Transform transform = settingHelper.transform;
             transform.SetParent(this.transform);

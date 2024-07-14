@@ -20,8 +20,8 @@ function DataCentreService:IsValidConfig(inInstance, inConfig)
     
 end
 function addDataCenter(inInstance, inName, inConfig)
-    for _, v in pairs(inConfig.Paths) do
-        _G[v.ClassName] = require(v.Path)
+    for _, v in pairs(inConfig.Paths) do 
+        require(v)
     end
     local tClass = _G[inName]
     if not tClass then
@@ -38,7 +38,7 @@ function DataCentreService:ctor()
     -- 当前数据中心管理的子类实例名称
     self._listDataCentre = {}
     for tName, tConfig in pairs(gArrayDataCentreConfig) do
-        xpcall(addDataCentre, __G__TRACKBACK__, self, tName, tConfig)
+        xpcall(addDataCenter, __G__TRACKBACK__, self, tName, tConfig)
     end
 end
 
@@ -54,9 +54,8 @@ end
 
 -------------------------------------------------------------------------------------------
 -- 加载配置，创建所有的数据中心
--- @param inIsRunOnServer(boolean) 当前是否运行在服务器上，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function DataCentreService:vInitialize(inIsRunOnServer)
+function DataCentreService:vInitialize()
     NGRLogD(self.__classname, "vInitialize")
     for tIndex, tName in pairs(self._listDataCentreNames) do
         xpcall(self._initDataCentre, __G__TRACKBACK__, self, tName)
@@ -64,13 +63,12 @@ function DataCentreService:vInitialize(inIsRunOnServer)
 end
 -------------------------------------------------------------------------------------------
 -- 释放所有的数据中心
--- @param inIsRunOnServer(boolean) 当前是否运行在服务器上，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function DataCentreService:vDeinitialize(inIsRunOnServer)
+function DataCentreService:vDeinitialize()
     FrostLogD(self.__classname, "vDeinitialize")
     for tIndex, tName in pairs(self._listDataCentreNames) do
         FrostLogD(self.__classname, "Start uninit data centre", tName)
-        self[tName]:Deinitialize(inIsRunOnServer)
+        self[tName]:Deinitialize()
         FrostLogD(self.__classname, "End uninit data centre", tName)
     end
     table.clear(self._listDataCentreNames)

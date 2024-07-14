@@ -169,6 +169,25 @@ local function CallCtor(inInstance, inType, ...)
     ctorTable = nil
     return inInstance
 end
+local function OnUserFirstExCSCallCtor(inType, ...)
+    local tInstance = {}
+    tInstance.__type = inType
+    tInstance.__object = inType.__firstCreate(...)
+    return CallCtor(CopySuper(ExtendCSInstance(tInstance), inType), inType, ...)
+end
+
+local function OnFirstExCSCallCtor(inType, ...)
+    local tInstance = {}
+    tInstance.__unitType = UnitType.Instance
+    tInstance.__type = inType
+    local tInstanceMeta = {}
+    tInstanceMeta.__index = inType
+    tInstanceMeta.__call = function(_, ...)
+        FrostLogE( _.__classname, "this is a Instance of " , _.__classname)
+    end
+    setmetatable(tInstance, tInstanceMeta)
+    return CallCtor(tInstance, inType, ...)
+end
 
 ---创建一个类
 ---@generic T:Unit
@@ -194,7 +213,7 @@ Class = function(inClassName, inSuper)
     local tIsCSInstance = inSuper and tSuperType == LuaDataType.UserData                 --判断是否为C#实例
     local tIsExCSInsAgain = inSuper and inSuper.__classType == ClassType.ExtendCSInstance --再次扩展C#实例
     if tIsExCSInsAgain then
-        error('cannot extends a c# instance multiple times.')
+        FrostLogE('cannot extends a c# instance multiple times.')
     end
     local tIsFirstExCSType = tIsCSType and inSuper and (not inSuper.__classType) or tSuperType == LuaDataType.Function                       --首次继承C#类
     local tIsExCSTypeAgain = inSuper and inSuper.__classType == ClassType.CreateFirst --再次扩展C#类
@@ -218,27 +237,13 @@ Class = function(inClassName, inSuper)
     tMeta.__index = inSuper == nil and Unit or inSuper
     local __call
     if tIsFirstExCSType or tIsExCSTypeAgain then
-        __call = function(inType, ...)
-            local tInstance = {}
-            tInstance.__type = inType
-            tInstance.__object = inType.__firstCreate(...)
-            return CallCtor(CopySuper(ExtendCSInstance(tInstance), inType), inType, ...)
-        end
+        __call = OnUserFirstExCSCallCtor
     else
-        __call = function(inType, ...)
-            local tInstance = {}
-            tInstance.__unitType = UnitType.Instance
-            tInstance.__type = inType
-            local tInstanceMeta = {}
-            tInstanceMeta.__index = inType
-            tInstanceMeta.__call = function(_, ...)
-                error("this is a Instance of " .. _.__classname)
-            end
-            setmetatable(tInstance, tInstanceMeta)
-            return CallCtor(tInstance, inType, ...)
-        end
+        __call = OnFirstExCSCallCtor
     end
     tMeta.__call = __call
     setmetatable(tUnitType, tMeta)
+    -- 注册 全局变量
+    _G[inClassName] = tUnitType
     return tUnitType
 end

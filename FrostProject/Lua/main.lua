@@ -46,6 +46,10 @@ if not status then
 end
 
 function LuaInit()
-    require("common.include")
-    
+    GameModule = CS.FrostEngine.GameModule
+    math.randomseed(os.time())
+    require("game.Include")
+end
+
+function LuaTick()
 end

@@ -11,17 +11,15 @@ local DataCenterConfig = {
     --    IsGlobal = boolean, 是否为全局数据
     --    Paths = -- All files this data centre needed
     --    {
-    --          {
-    --             ClassName = "TemplateDataCentreClassName",
-    --             Path = "Game.Data.Template.TemplateCentreFile1",
-    --          }
+    --          "Game.Data.Template.TemplateCentreFile1",
+    --          "Game.Data.Template.TemplateCentreFile2",
     --    }
     --},
     --
     LoginData = {
         ClassName = "LoginData",
         Paths = {
-            
+            "game.websocket.login.LoginData"
         }
     }
 }

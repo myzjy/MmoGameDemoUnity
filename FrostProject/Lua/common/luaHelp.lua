@@ -90,3 +90,21 @@ function LuaHelp.Define(inName, inValue)
 	_G[inName] = inValue
     return true
 end
+
+----------------------------------------------------------------
+--- 查询对应类的父类 是否继承对应类
+--- @param inObj any
+--- @param inClassName string
+--- @return boolean
+function LuaHelp.IsChildOfClass(inObj, inClassName)
+	local tCurClass = _G[inObj.__classname]
+	while tCurClass ~= nil do
+		if tCurClass.__classname == inClassName then
+			return true
+		end
+		tCurClass = tCurClass.__super
+	end
+	
+	-- error
+	return false
+end

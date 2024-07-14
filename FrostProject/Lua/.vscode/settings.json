@@ -1,0 +1,6 @@
+{
+    "Lua.diagnostics.globals": [
+        "ServiceBase"
+    ],
+    "lua.targetVersion": "5.3"
+}

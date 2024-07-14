@@ -127,5 +127,7 @@ function EventService:AddEventListener(event, func, inObj)
     table.insert(inObj.evtListenerList, {evt = event, hanlde = handle})
 end
 
+---@type EventService
+_G.EventService = EventService()
 
 return EventService

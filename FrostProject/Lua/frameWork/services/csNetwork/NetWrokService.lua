@@ -24,6 +24,9 @@ function NetWorkConnectionService:vGetConfig()
     }
 end
 
+function NetWorkConnectionService:Initialize()
+end
+
 function NetWorkConnectionService:TryToConnect()
     FrostLogD(self.__classname, "TryToConnect: ServerIP|Port=", self._serverSettings.ApiWebSocketUrl)
     local ret = NetMessageService:Connect(self._serverSettings.ApiWebSocketUrl)

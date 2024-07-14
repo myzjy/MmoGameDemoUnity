@@ -5,4 +5,10 @@
 --- DateTime: 2024/7/13 下午11:40
 --]]
 
-local LoginData = 
+---@class LoginData:WebSocketDataCentreBase
+local LoginData = Class("LoginData", _G.WebSocketDataCentreBase)
+
+function LoginData:ctor()
+end
+
+return LoginData

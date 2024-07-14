@@ -76,7 +76,7 @@ _Time.__newindex = function(t, k, v)
 end
 
 
-local Time = {}
+local Time = Class("Time")
 local counter = 1
 
 function Time:SetDeltaTime(deltaTime, unscaledDeltaTime)

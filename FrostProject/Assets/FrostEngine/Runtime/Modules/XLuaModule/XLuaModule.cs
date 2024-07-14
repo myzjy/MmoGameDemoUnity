@@ -54,7 +54,7 @@ namespace FrostEngine
             }
 
             LoadScript("main");
-             luaEnv.Global.Get<Action>("LuaInit").Invoke();
+            luaEnv.Global.Get<Action>("LuaInit").Invoke();
         }
 
         public byte[] CustomLoader(ref string filePath)

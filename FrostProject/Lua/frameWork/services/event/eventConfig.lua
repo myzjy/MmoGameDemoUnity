@@ -6,5 +6,5 @@
 
 
 EventConfig = {
-    
+    LoginEvent = "Event.LoginEvent"
 }
