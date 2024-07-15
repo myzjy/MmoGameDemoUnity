@@ -6,6 +6,7 @@ namespace FrostEngine
     [UpdateModule]
     internal sealed partial class SchedulerManager : ModuleImp
     {
+        
         internal override void Update(float elapseSeconds, float realElapseSeconds)
         {
         }

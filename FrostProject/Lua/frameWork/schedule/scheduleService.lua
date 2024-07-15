@@ -32,8 +32,26 @@ function ScheduleService:vDeinitialize()
 end
 
 function ScheduleService:Update(deltaTime)
-    
+    -- 帧率
+    local curFrameCount = RootModules.FrameRate
+    for i = #self._updater, 1, -1 do
+        local tUpdateData = self._updater[i]
 
+        if tUpdateData ~= nullTbl then
+            if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (curFrameCount > tUpdateData.frameNum)) then
+                xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
+                if tUpdateData.isOnce then
+                    self._updater[i] = nullTbl
+                end
+            end
+        else
+            table.remove(self._updater, i)
+        end
+    end
+
+    for i = #self._timer, 10 do
+        local tTimes= self._timer[i]
+    end
 end
 
 return ScheduleService

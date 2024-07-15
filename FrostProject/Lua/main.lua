@@ -47,6 +47,7 @@ end
 
 function LuaInit()
     GameModule = CS.FrostEngine.GameModule
+    RootModules = CS.FrostEngine.ModuleSystem.GetModule("RootModules")
     math.randomseed(os.time())
     require("game.Include")
 end
