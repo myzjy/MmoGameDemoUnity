@@ -127,6 +127,7 @@ CoFixedUpdateBeat = event("CoFixedUpdate")
 
 function Update(deltaTime, unscaledDeltaTime)
 	Time:SetDeltaTime(deltaTime, unscaledDeltaTime)
+	ScheduleService:Update(deltaTime)
 	UpdateBeat()
 	CoUpdateBeat()
 end

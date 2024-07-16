@@ -108,3 +108,25 @@ function LuaHelp.IsChildOfClass(inObj, inClassName)
 	-- error
 	return false
 end
+
+----------------------------------------------------------------------------------
+-- 获取指定名称的全局变量
+-- @param inName(string) 全局变量名称
+-- @return(*) 全局变量的值
+----------------------------------------------------------------------------------
+function LuaHelp.GetGlobalVariable(inName)
+	return _G[inName]
+end
+----------------------------------------------------------------------------------
+-- 获取指定名称的全局变量
+-- @param inName(string) 全局变量名称
+-- @param inValue(*) 全局变量的值
+----------------------------------------------------------------------------------
+function LuaHelp.RegisterGlobalVariable(inName,inValue)
+	if _G[inName] and inValue then
+		FrostLogE("LuaHelper", "Register global variable failed, with duplicate name", inName)
+		return false
+	end
+	_G[inName] = inValue
+	return true
+end 

@@ -1,4 +1,6 @@
 require("common.include")
+require("define.Include")
 require("frameWork.services.serviceBase")
 require("frameWork.services.eventService.eventService")
 require("frameWork.services.registerNativeServices")
+require("frameWork.services.serviceManager")

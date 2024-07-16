@@ -47,9 +47,12 @@ end
 
 function LuaInit()
     GameModule = CS.FrostEngine.GameModule
+    SettingModule = CS.FrostEngine.ModuleSystem.GetModule("SettingModule")
     RootModules = CS.FrostEngine.ModuleSystem.GetModule("RootModules")
     math.randomseed(os.time())
     require("game.Include")
+    ServiceManager:Initialize()
+    NetMessageService:Connect(SettingModule.mServerSettings.ApiWebSocketUrl)
 end
 
 function LuaTick()

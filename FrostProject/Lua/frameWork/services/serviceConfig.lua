@@ -9,8 +9,11 @@
 ---------------------------------------------------------------------
 
 return {
-    "frameWorker.csNetwork.NetWrokService",
-    "frameWork.schedule.scheduleService",  -- 定时器服务
-    "frameWorker.netMessage.NetMessageService", -- 网络
-    "frameWorker.csNetwork.NetWrokService", -- 网络服务
+
+    "frameWork.schedule.scheduleService",       -- 定时器服务
+    "frameWork.services.netMessage.NetMessageService",   -- 网络
+    "frameWork.services.gameStage.gameStageService",     -- 游戏阶段服务
+
+    "frameWork.services.gameTime.gameTimeService",       -- 时间服务
+    "frameWork.services.csNetwork.NetWrokService",       -- 网络服务
 }

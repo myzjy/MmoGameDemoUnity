@@ -90,7 +90,7 @@ function FrostLogD(...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    Log:PrintLog("DBG", d, SetLogColor(CONSOLE_COLOR.Light_Blue_Green, tFmt))
+    Log:PrintLog("DBG", d, Log:SetLogColor(CONSOLE_COLOR.Light_Blue_Green, tFmt))
 end
 
 
@@ -105,7 +105,7 @@ function FrostLogE(...)
         end
     end
 
-    Log:PrintLogE("ERR", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
+    Log:PrintLogE("ERR", d, Log:SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
 function FrostLogW(...)
@@ -121,7 +121,7 @@ function FrostLogW(...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    Log:PrintLogW("WARN", d, SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
+    Log:PrintLogW("WARN", d, Log:SetLogColor(CONSOLE_COLOR.Light_Yellow, tFmt))
 end
 
 
@@ -138,7 +138,7 @@ function FrostLogI(inFmt, ...)
             d = info.short_src .. ":" .. info.currentline .. ":"
         end
     end
-    Log:PrintLog("INFO", d, SetLogColor(CONSOLE_COLOR.Light_Green, tFmt))
+    Log:PrintLog("INFO", d, Log:SetLogColor(CONSOLE_COLOR.Light_Green, tFmt))
 end
 
 function Log:SetLogColor(nColor, inFmt)
