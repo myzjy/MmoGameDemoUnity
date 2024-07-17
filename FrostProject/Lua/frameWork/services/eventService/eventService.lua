@@ -7,7 +7,7 @@
 
 ---@class EventService:ServiceBase
 ---@field __classname string
-local EventService = Class("EventService", ServiceBase)
+local EventService = Class("EventService", ClassLibraryMap.ServiceBase)
 
 function EventService:ctor()
     self._eventNameData = {}

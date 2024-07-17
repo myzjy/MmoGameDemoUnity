@@ -7,7 +7,7 @@ null = nil
 nullTbl = {}
 CS = CS
 TypeOf = CS.typeof
-
+ClassLibraryMap = {}
 --- @class LuaDataType Lua数据类型枚举
 LuaDataType = {
     Number = "number",
@@ -244,6 +244,6 @@ Class = function(inClassName, inSuper)
     tMeta.__call = __call
     setmetatable(tUnitType, tMeta)
     -- 注册 全局变量
-    _G[inClassName] = tUnitType
+    ClassLibraryMap[inClassName] = tUnitType
     return tUnitType
 end

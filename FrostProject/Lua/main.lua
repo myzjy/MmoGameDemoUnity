@@ -3,6 +3,7 @@
 --- Created by Administrator.
 --- DateTime: 2024/7/7 下午8:47
 ---
+require("debug.luaPanda").start()
 Debug = 0
 ConfigurationDevice = {}
 CS = CS
@@ -52,7 +53,7 @@ function LuaInit()
     math.randomseed(os.time())
     require("game.Include")
     ServiceManager:Initialize()
-    NetMessageService:Connect(SettingModule.mServerSettings.ApiWebSocketUrl)
+    NetMessageService:Connect(SettingModule.ServerSettings.ApiWebSocketUrl)
 end
 
 function LuaTick()

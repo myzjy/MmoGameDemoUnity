@@ -8,7 +8,7 @@
 --]]---------------------------------------------------------------------------------------
 
 ---@class GameStageService:ServiceBase
-local GameStageService = Class("GameStageService", _G.ServiceBase)
+local GameStageService = Class("GameStageService", ClassLibraryMap.ServiceBase)
 local EStage = GlobalEnum.EState  -- 游戏阶段Enum
 local LuaGameStageConfigList = require("frameWork.services.gameStage.gameStageConfig")
 function GameStageService:ctor()

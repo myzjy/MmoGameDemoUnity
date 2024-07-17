@@ -7,5 +7,6 @@ namespace FrostEngine
         void Close();
         
         void SendMessage(string bytes);
+        bool IsConnect();
     }
 }

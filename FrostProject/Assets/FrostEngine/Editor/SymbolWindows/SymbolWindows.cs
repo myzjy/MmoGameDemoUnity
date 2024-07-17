@@ -41,7 +41,7 @@ public class SymbolWindows : EditorWindow
         new SymbolData("ASSET_BUNDLE_DEVELOP_EDITOR", "AssetBundles编辑模式"),
         new SymbolData("HOTFIX_ENABLE", "xlua"),
         new SymbolData("ENABLE_LOG_NETWORK", "网络相关 log"),
-        new SymbolData("HTTP_SEND_OPEN", "开启Http 请求"),
+        new SymbolData("HTTP_SEND_OPEN", "开启Http 请求")
     };
 
 

@@ -5,10 +5,10 @@
 ---
 
 --- @class GameTimeService:ServiceBase
-local GameTimeService = Class("GameTimeService", ServiceBase)
+local GameTimeService = Class("GameTimeService", ClassLibraryMap.ServiceBase)
 
 function GameTimeService:ctor()
-    self.time = Time
+    self.time = ClassLibraryMap.Time
     -- 是否在发送 ping 
     self._IsSendPingStop = false
 end
@@ -39,6 +39,7 @@ function GameTimeService:OnPongResponse(inMsgData)
 end
 
 function GameTimeService:SendPingData()
+    FrostLogD(self.__classname, "GameTimeService:SendPingData",MSG_NET_CODE.MSG_NET_CODE_CSPingReq)
     NetMessageService:Send(MSG_NET_CODE.MSG_NET_CODE_CSPingReq, {})
 end
 

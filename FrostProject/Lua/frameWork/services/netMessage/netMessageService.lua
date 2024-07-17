@@ -6,12 +6,14 @@
 --------------------------------------------
 
 --- @class NetMessageService : ServiceBase
-local NetMessageService = Class("NetMessageService", ServiceBase)
+local NetMessageService = Class("NetMessageService", ClassLibraryMap.ServiceBase)
 
 function NetMessageService:ctor()
-    self._GlobalEvents = EventClass()
+    ---@type EventClass
+    self._GlobalEvents = ClassLibraryMap.EventClass()
     -- 是否 回调成功
     self._IsConnected = false
+    self._LastConnectedUrl = ""
     self._NetMsgDataMap = {}
 end
 
@@ -23,7 +25,19 @@ function NetMessageService:vGetConfig()
 end
 
 function NetMessageService:vInitialize()
+    -- EventService:ListenEvent("")
+    -- open
+    FrostLogD(self.__classname, "NetMessageService:vInitialize")
 
+    CS.FrostEngine.GameEvent.AddEventListener(101,function()
+        self._IsConnected = NetworkNativeService:IsConnect()
+        if self._IsConnected then
+            FrostLogD(self.__classname, "NetMessageService.Connect url = ", self._LastConnectedUrl)
+            GameTimeService:OnConnected()
+        else
+            FrostLogE(self.__classname, "NetMessageService.Connect Failed!  url = ", self._LastConnectedUrl)
+        end
+    end)
 end
 
 local function OnNetDataRecieved(inMsgData)
@@ -31,14 +45,8 @@ local function OnNetDataRecieved(inMsgData)
 end
 
 function NetMessageService:Connect(url)
+    self._LastConnectedUrl = url
     self._IsConnected = NetworkNativeService:Connect(url)
-    if self._IsConnected then
-        FrostLogD(self.__classname, "NetMessageService.Connect Failed! url = ", url)
-        GameTimeService:OnConnected()
-    else
-        FrostLogE(self.__classname, "NetMessageService.Connect url = ", url)
-    end
-    return self._IsConnected
 end
 
 ------------------------------------------------------------------

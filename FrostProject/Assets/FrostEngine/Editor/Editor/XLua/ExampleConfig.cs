@@ -96,6 +96,7 @@ public static class ExampleConfig
         typeof(RenderTexture),
         typeof(UnityEngine.UI.ScrollRect.ScrollRectEvent),
         typeof(UnityEngine.Debug),
+        typeof(GameEvent),
         typeof(Executors),
     };
 

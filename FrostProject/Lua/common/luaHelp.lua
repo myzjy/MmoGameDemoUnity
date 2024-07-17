@@ -97,7 +97,7 @@ end
 --- @param inClassName string
 --- @return boolean
 function LuaHelp.IsChildOfClass(inObj, inClassName)
-	local tCurClass = _G[inObj.__classname]
+	local tCurClass = ClassLibraryMap[inObj.__classname]
 	while tCurClass ~= nil do
 		if tCurClass.__classname == inClassName then
 			return true
@@ -117,6 +117,11 @@ end
 function LuaHelp.GetGlobalVariable(inName)
 	return _G[inName]
 end
+
+function LuaHelp.RefreshGlobalVar(inName,inValue)
+	_G[inName] = inValue
+end
+
 ----------------------------------------------------------------------------------
 -- 获取指定名称的全局变量
 -- @param inName(string) 全局变量名称

@@ -1,3 +1,4 @@
+--- @class ServiceManager
 local ServiceManager = Class("ServiceManager")
 
 function ServiceManager:ctor()
@@ -68,7 +69,7 @@ function ServiceManager:Deinitialize()
     table.Clear(self._listServiceNames)
     table.Clear(self._mapServiceInstance)
 end
-
+---@type ServiceManager
 _G.ServiceManager = ServiceManager()
 
 return ServiceManager

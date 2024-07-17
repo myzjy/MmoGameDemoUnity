@@ -29,7 +29,7 @@ namespace FrostEngine
                 return m_SettingManager.Count;
             }
         }
-        private IServerSettings mServerSettings;
+        private IServerSettings mServerSettings = null;
         public IServerSettings ServerSettings => mServerSettings;
         /// <summary>
         /// 游戏框架模块初始化。

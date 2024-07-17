@@ -87,7 +87,7 @@ namespace FrostEngine
                 Screen.sleepTimeout = value ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
             }
         }
-
+        public  INetManager NetManager;
         /// <summary>
         /// 游戏框架模块初始化。
         /// </summary>
@@ -111,7 +111,7 @@ namespace FrostEngine
             Time.timeScale = m_GameSpeed;
             Application.runInBackground = m_RunInBackground;
             Screen.sleepTimeout = m_NeverSleep ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
-
+            NetManager = ModuleImpSystem.GetModule<INetManager>();
             Application.lowMemory += OnLowMemory;
             GameTime.StartFrame();
         }

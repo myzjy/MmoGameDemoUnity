@@ -1,6 +1,7 @@
 {
     "Lua.diagnostics.globals": [
-        "ServiceBase"
+        "ServiceBase",
+        "GameTimeService"
     ],
     "lua.targetVersion": "5.3"
 }

@@ -55,8 +55,9 @@ namespace FrostEngine
 
             LoadScript("main");
             luaEnv.Global.Get<Action>("LuaInit").Invoke();
+            luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
         }
-
+        
         public byte[] CustomLoader(ref string filePath)
         {
             string scriptPath = string.Empty;
@@ -159,6 +160,13 @@ namespace FrostEngine
         public void CallLuaFunction(string funcName)
         {
             var luaFunc = luaEnv.LoadString(funcName);
+            luaFunc.Call();
+        }
+
+        public void CallLuaFunction(string funcName, LuaTable table)
+        {
+            var luaFunc = luaEnv.LoadString(funcName);
+            luaFunc.SetEnv(table);
             luaFunc.Call();
         }
     }

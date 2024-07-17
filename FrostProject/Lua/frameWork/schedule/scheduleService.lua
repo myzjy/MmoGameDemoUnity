@@ -4,7 +4,7 @@
 --]]--------------------------------------------------------------------------------------
 
 ---@class ScheduleService:ServiceBase
-local ScheduleService = Class("ScheduleService", ServiceBase)
+local ScheduleService = Class("ScheduleService", ClassLibraryMap.ServiceBase)
 
 function ScheduleService:ctor()
     self._updater = {}
@@ -60,10 +60,10 @@ function ScheduleService:Update(deltaTime)
                 xpcall(tTimes.func,__G__TRACKBACK__, tTimes.obj, table.unpack(data.params))
             end
         else
-            data.remain = data.remain - deltaTime
+            tTimes.remain = tTimes.remain - deltaTime
 
-            if data.remain <= 0 then
-                xpcall(tTimes.func, __G__TRACKBACK__, tTimes.obj, table.unpack(data.params))
+            if tTimes.remain <= 0 then
+                xpcall(tTimes.func, __G__TRACKBACK__, tTimes.obj, table.unpack(tTimes.params))
 
                 tTimes = self._timer[i]
                 if tTimes ~= null then
@@ -85,7 +85,7 @@ end
 --- @param inDelayFrameNum number  延迟n帧执行 delayFrameNum > 0 有效
 --- @param ... table 自定义参数，触发回调时按顺序传入
 function ScheduleService:AddUpdater(inObj, inFunc, inIsOnce, inDelayFrameNum, ...)
-    if not obj or not func then
+    if not inObj or not inFunc then
         FrostLogD(self.__classname, "ScheduleServiceClass.AddUpdator : invald parameter")
         return
     end
@@ -93,22 +93,22 @@ function ScheduleService:AddUpdater(inObj, inFunc, inIsOnce, inDelayFrameNum, ..
     for i = 1, #self._updater do
         local data = self._updater[i]
 
-        if data ~= null and data.obj == obj and data.func == func then
-            local tObjName = obj.__classname or obj.__name
+        if data ~= null and data.obj == inObj and data.func == inFunc then
+            local tObjName = inObj.__classname or inObj.__name
             FrostLogD(self.__classname, "ScheduleServiceClass.AddUpdater : duplicate add updater", tObjName)
             return
         end
     end
 
     local t = { }
-    t.obj = obj
-    t.func = func
-    if delayFrameNum and delayFrameNum > 0 then
-        t.frameNum = RootModules.FrameRate + delayFrameNum - 1
+    t.obj = inObj
+    t.func = inFunc
+    if inDelayFrameNum and inDelayFrameNum > 0 then
+        t.frameNum = RootModules.FrameRate + inDelayFrameNum - 1
     else
         t.frameNum = false
     end
-    t.isOnce = isOnce or false
+    t.isOnce = inIsOnce or false
     t.params = table.pack(...)
 
     self._updater[#self._updater + 1] = t
@@ -216,7 +216,7 @@ function ScheduleService:_internalAddTimer(obj, func, interval, repetition, exec
     self._timer[#self._timer+1] = t
 
     if repetition and execFuncAtOnce then
-        xpcall(func, NGRHelper.HandleXPCallError, obj, table.unpack(t.params))
+        xpcall(func, __G__TRACKBACK__, obj, table.unpack(t.params))
     end
 end
 

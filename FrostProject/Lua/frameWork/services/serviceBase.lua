@@ -54,16 +54,14 @@ end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行初始化逻辑
--- @param inIsRunOnServer(boolean) 当前是否允许在服务器，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function ServiceBase:vInitialize(inIsRunOnServer)
+function ServiceBase:vInitialize()
 end
 
 -------------------------------------------------------------------------------------------
 -- 子类覆盖，进行反初始化逻辑
--- @param inIsRunOnServer(boolean) 当前是否允许在服务器，由 UE4Helper.IsRunOnServer() 决定
 -------------------------------------------------------------------------------------------
-function ServiceBase:vDeinitialize(inIsRunOnServer)
+function ServiceBase:vDeinitialize()
 end
 
 -------------------------------------------------------------------------------------------

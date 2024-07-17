@@ -98,7 +98,7 @@ namespace FrostEngine
             _procedureManager.Initialize(ModuleImpSystem.GetModule<IFsmManager>(), procedures);
 
             yield return new WaitForEndOfFrame();
-
+            yield return new WaitForSeconds(1);
             _procedureManager.StartProcedure(_entranceProcedure.GetType());
         }
 

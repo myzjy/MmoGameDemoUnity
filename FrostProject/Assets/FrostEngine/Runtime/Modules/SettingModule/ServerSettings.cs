@@ -36,9 +36,10 @@ namespace FrostEngine
                 case HostType.Test:
                     ApiHttpsBaseUrl = "http://127.0.0.1:8000";
                     // ApiWebSocketUrl = "ws://192.168.52.109:15000/websocket";
-                    ApiWebSocketUrl = "ws://192.168.0.113:15000/websocket";
+                    // ApiWebSocketUrl = "ws://192.168.0.113:15000/websocket";
                     // ApiWebSocketUrl = "ws://172.27.48.1:15000/websocket";
                     // ApiWebSocketUrl = "ws://172.17.208.1:15000/websocket";
+                    ApiWebSocketUrl = "ws://172.20.10.5:15000/websocket";
 
                     // ApiWebSocketUrl = "ws://192.168.1.123:15000/websocket";
                     //  ApiWebSocketUrl = "ws://192.168.1.38:15000/websocket";
@@ -57,7 +58,7 @@ namespace FrostEngine
         public void Load()
         {
 #if UNITY_EDITOR
-            HostType type = (HostType)UnityEditor.EditorPrefs.GetInt("Tools/Skip Server Select/", (int)HostType.Test);
+            HostType type = (HostType)UnityEditor.EditorPrefs.GetInt("FrostEngine/Tools/Skip Server Select/", (int)HostType.Test);
             if (type == HostType.None)
             {
                 type = HostType.Test;

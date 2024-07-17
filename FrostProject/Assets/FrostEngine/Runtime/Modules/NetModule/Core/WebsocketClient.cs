@@ -61,7 +61,9 @@ namespace FrostEngine
             // SpringContext.GetBean<SchedulerManager>().isNetOpen = true;
             Debug.Log("成功打开");
             Debug.Log("Connected server [{}]", ToConnectUrl());
-            _isConnect = true; 
+            _isConnect = true;
+            GameEvent.Send(101);
+
 // #if ENABLE_LUA_START
 //             SpringContext.GetBean<XLuaManager>().CallLuaFunction("LoginNetController:OnNetOpenEvent()");
 //             EventBus.AsyncExecute(LuaGameConstant.NetOnOpen);

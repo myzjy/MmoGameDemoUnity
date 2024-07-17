@@ -11,7 +11,7 @@
 return {
 
     "frameWork.schedule.scheduleService",       -- 定时器服务
-    "frameWork.services.netMessage.NetMessageService",   -- 网络
+    "frameWork.services.netMessage.netMessageService",   -- 网络
     "frameWork.services.gameStage.gameStageService",     -- 游戏阶段服务
 
     "frameWork.services.gameTime.gameTimeService",       -- 时间服务

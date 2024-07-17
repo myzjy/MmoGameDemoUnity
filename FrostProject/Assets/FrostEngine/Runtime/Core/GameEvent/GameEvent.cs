@@ -1,10 +1,12 @@
 using System;
+using XLua;
 
 namespace FrostEngine
 {
     /// <summary>
     /// 游戏全局事件类。
     /// </summary>
+    [LuaCallCSharp]
     public static class GameEvent
     {
         /// <summary>

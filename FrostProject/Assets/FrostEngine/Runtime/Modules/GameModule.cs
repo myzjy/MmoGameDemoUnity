@@ -105,6 +105,7 @@ namespace FrostEngine
 
         public static XLuaModule XLuaModule => _xLuaModule ??= Get<XLuaModule>();
         private static XLuaModule _xLuaModule;
+        
 
         #endregion
 

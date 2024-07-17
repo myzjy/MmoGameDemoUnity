@@ -126,7 +126,7 @@ CoLateUpdateBeat = event("CoLateUpdate")
 CoFixedUpdateBeat = event("CoFixedUpdate")
 
 function Update(deltaTime, unscaledDeltaTime)
-	Time:SetDeltaTime(deltaTime, unscaledDeltaTime)
+	ClassLibraryMap.Time:SetDeltaTime(deltaTime, unscaledDeltaTime)
 	ScheduleService:Update(deltaTime)
 	UpdateBeat()
 	CoUpdateBeat()
@@ -138,7 +138,7 @@ function LateUpdate()
 end
 
 function FixedUpdate(fixedDeltaTime)
-	Time:SetFixedDelta(fixedDeltaTime)
+	ClassLibraryMap.Time:SetFixedDelta(fixedDeltaTime)
 	FixedUpdateBeat()
 	CoFixedUpdateBeat()
 end
