@@ -14,7 +14,7 @@ local assert = assert
 local rawget = rawget
 local error = error
 local traceback = debug.traceback
-local ilist = ilist
+local ilist = UList
 
 local event_err_handle = function(msg)
 	error(msg, 2)

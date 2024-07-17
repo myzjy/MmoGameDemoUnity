@@ -35,7 +35,8 @@ namespace FrostEngine
             switch (level)
             {
                 case GameFrameworkLogLevel.Debug:
-                    LogImp(ELogLevel.Debug, StringUtils.Format("<color=#888888>{}</color>", message));
+                    string str = StringUtils.Format("<color=#888888>{}</color>", message);
+                    LogImp(ELogLevel.Debug,str);
                     break;
 
                 case GameFrameworkLogLevel.Info:

@@ -35,12 +35,12 @@ end
 function GameTimeService:OnPongResponse(inMsgData)
     self.time:SetServerTime(inMsgData.time)
     ScheduleService:RemoveTimer(self,self.SendPingData)
-    ScheduleService:AddTimer(self,self.SendPingData, 1)
+    ScheduleService:AddTimer(self,self.SendPingData, 1, false)
 end
 
 function GameTimeService:SendPingData()
     FrostLogD(self.__classname, "GameTimeService:SendPingData",MSG_NET_CODE.MSG_NET_CODE_CSPingReq)
-    NetMessageService:Send(MSG_NET_CODE.MSG_NET_CODE_CSPingReq, {})
+    NetMessageService:Send(MSG_NET_CODE.MSG_NET_CODE_CSPingReq,{})
 end
 
 return GameTimeService

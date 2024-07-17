@@ -49,7 +49,7 @@ function ScheduleService:Update(deltaTime)
         end
     end
 
-    for i = #self._timer, 10 do
+    for i = #self._timer, 1, -1 do
         local tTimes= self._timer[i]
 
         if tTimes == null then

@@ -2,15 +2,16 @@ using System;
 
 namespace FrostEngine
 {
-    internal sealed  class NetManager : ModuleImp, INetManager
+    internal sealed class NetManager : ModuleImp, INetManager
     {
         /// <summary>
         /// 网络客户端
         /// </summary>
         private AbstractClient netClient;
-        private  Action<byte[]> receiveAction;
 
-        public  void ReceiveString(byte[] bytes)
+        private Action<byte[]> receiveAction;
+
+        public void ReceiveString(byte[] bytes)
         {
             receiveAction.Invoke(bytes);
         }
@@ -59,11 +60,10 @@ namespace FrostEngine
                 throw;
             }
         }
-        
-        public  void ReceiveStringAction(Action<byte[]> receiveAction)
+
+        public void ReceiveStringAction(Action<byte[]> receiveAction)
         {
             this.receiveAction = receiveAction;
         }
-
     }
 }

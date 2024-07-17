@@ -185,4 +185,5 @@ RUlist = function(_list)
 end
 
 setmetatable(list, { __call = list.new })
+ilist = list:new()
 return list

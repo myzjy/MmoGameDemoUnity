@@ -1,3 +1,5 @@
+using System;
+
 namespace FrostEngine
 {
     public interface INetManager
@@ -8,5 +10,7 @@ namespace FrostEngine
         
         void SendMessage(string bytes);
         bool IsConnect();
+        void ReceiveString(byte[] bytes);
+        void ReceiveStringAction(Action<byte[]> receiveAction);
     }
 }

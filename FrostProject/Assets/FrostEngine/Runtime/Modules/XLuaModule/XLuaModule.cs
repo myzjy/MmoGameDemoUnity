@@ -19,6 +19,7 @@ namespace FrostEngine
         LuaEnv luaEnv = null;
 
         private ResourceModule _mResourceManager;
+        private NetManager _netManager;
 
         public void Start()
         {
@@ -36,6 +37,7 @@ namespace FrostEngine
                 return;
             }
 
+            _netManager = ModuleImpSystem.GetModule<NetManager>();
             luaEnv = new LuaEnv();
             luaEnv.AddLoader(CustomLoader);
         }
@@ -56,6 +58,7 @@ namespace FrostEngine
             LoadScript("main");
             luaEnv.Global.Get<Action>("LuaInit").Invoke();
             luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
+            _netManager.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnNetDataRecieved"));
         }
         
         public byte[] CustomLoader(ref string filePath)

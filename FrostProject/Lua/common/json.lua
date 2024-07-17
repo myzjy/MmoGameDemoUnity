@@ -86,6 +86,9 @@ local function encode_table(val, stack)
             table.insert(res, encode(v, stack))
         end
         stack[val] = nil
+        if #res < 1 then
+            return "{}"
+        end
         return "[" .. table.concat(res, ",") .. "]"
     else
         -- Treat as an object

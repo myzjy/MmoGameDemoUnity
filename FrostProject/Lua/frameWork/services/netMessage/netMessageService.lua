@@ -29,7 +29,7 @@ function NetMessageService:vInitialize()
     -- open
     FrostLogD(self.__classname, "NetMessageService:vInitialize")
 
-    CS.FrostEngine.GameEvent.AddEventListener(101,function()
+    CS.FrostEngine.GameEvent.AddEventListener(101, function()
         self._IsConnected = NetworkNativeService:IsConnect()
         if self._IsConnected then
             FrostLogD(self.__classname, "NetMessageService.Connect url = ", self._LastConnectedUrl)
@@ -41,7 +41,7 @@ function NetMessageService:vInitialize()
 end
 
 local function OnNetDataRecieved(inMsgData)
-    NetMessageService:OnReceiveMessage(inMsgData)
+    _G.NetMessageService:OnReceiveMessage(inMsgData)
 end
 
 function NetMessageService:Connect(url)
@@ -124,12 +124,12 @@ end
 function NetMessageService:ReceiveData(inMessage)
     local tMsgInfo = JSON.decode(inMessage)
     if not tMsgInfo then
-        FrostLogE(self.__classname,  "NetMessageService.ReceiveData Decode Fail, MsgName = ", inMessage)
+        FrostLogE(self.__classname, "NetMessageService.ReceiveData Decode Fail, MsgName = ", inMessage)
         return
     end
     local msgId = tMsgInfo.protocolId
     local tEvent = self:_GetEventByObject()
-    tEvent:SendEvent(msgId,tMsgInfo.packet,nil)
+    tEvent:SendEvent(msgId, tMsgInfo.packet, nil)
 end
 
 _G.OnNetDataRecieved = OnNetDataRecieved
