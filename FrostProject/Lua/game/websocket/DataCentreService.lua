@@ -7,7 +7,7 @@
 --]]-------------------------------------------------------------
 
 ---@class DataCentreService:ServiceBase
-local DataCentreService = Class("DataCentreService", ServiceBase)
+local DataCentreService = Class("DataCentreService", ClassLibraryMap.ServiceBase)
 -- 缓存静态的数据中心配置
 local gArrayDataCentreConfig = require("game.websocket.dataCenterConfig")
 

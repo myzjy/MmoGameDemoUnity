@@ -6,7 +6,7 @@
 --------------------------------------------
 
 ---@class NetWorkConnectionService:ServiceBase
-local NetWorkConnectionService = Class("NetWorkConnectionService", ServiceBase)
+local NetWorkConnectionService = Class("NetWorkConnectionService", ClassLibraryMap.ServiceBase)
 
 function NetWorkConnectionService:ctor()
     self._SendHeartBeatInterval = 2500   -- 单位：ms
