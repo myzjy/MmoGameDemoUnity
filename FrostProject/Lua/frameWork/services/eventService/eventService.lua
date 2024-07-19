@@ -137,6 +137,46 @@ function EventService:ListenEvent(eventName, obj, func, time, target, source)
     return handle
 end
 
+function EventService:UnListenEvent(obj, eventName)
+    FrostLogD(self.__classname, "UnListenEvent", eventName)
+    if not obj then
+        FrostLogE(self.__classname, "EventServiceClass:ListenEvent : invalid parameter", eventName)
+        return
+    end
+    local handle = {}
+    if eventName then
+        local data = self._eventNameData[eventName]
+        if not data then
+            data = {}
+            return
+        end
+
+        for i = 1, #data, 1 do
+            local tD = data[i]
+            if tD.obj == obj then
+                handle[#handle + 1] = tD.handle
+            end
+        end
+    else
+        local data = self._objData[obj]
+        if not data then
+            data = {}
+            return
+        end
+        for i = 1, #data, 1 do
+            local tD = data[i]
+            if tD.obj == obj then
+                handle[#handle + 1] = tD.handle
+            end
+        end
+    end
+    for index = 1, #handle, 1 do
+        self._removeEventListener(handle[index])
+    end
+
+    handle = {}
+end
+
 function EventService:SendEvent(id, sender, target, ...)
     FrostLogD(self.__classname, "SendEvent", id, ...)
     if not id then

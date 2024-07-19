@@ -109,6 +109,10 @@ function LuaHelp.IsChildOfClass(inObj, inClassName)
 	return false
 end
 
+function LuaHelp.IsValidObject(inObject)
+	return inObject ~= null
+end
+
 ----------------------------------------------------------------------------------
 -- 获取指定名称的全局变量
 -- @param inName(string) 全局变量名称
