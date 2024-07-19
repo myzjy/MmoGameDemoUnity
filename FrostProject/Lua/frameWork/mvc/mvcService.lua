@@ -512,7 +512,6 @@ end
 
 --- 销毁通过 CreateAsyncWidgetChildPrefab 创建的实例
 --- @param customID number CreateAsyncWidgetChildPrefab的返回值
---- @return
 function MVCService:DestroyWidgetChildPrefabByAsyncId(customID)
     if not customID then
         FrostLogE(self.__classname, "MVCService.DestroyWidgetChildPrefabByAsyncId : invalid parameter")
