@@ -1,3 +1,4 @@
+require("frameWork.library.ClassLibraryMap")
 require("common.include")
 require("define.Include")
 require("frameWork.services.serviceBase")

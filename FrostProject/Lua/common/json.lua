@@ -64,7 +64,7 @@ local function encode_table(val, stack)
 
     -- Circular reference?
     if stack[val] then
-        error("circular reference")
+        FrostLogE("circular reference")
     end
 
     stack[val] = true
@@ -74,12 +74,12 @@ local function encode_table(val, stack)
         local n = 0
         for k in pairs(val) do
             if type(k) ~= "number" then
-                error("invalid table: mixed or invalid key types")
+                FrostLogE("invalid table: mixed or invalid key types")
             end
             n = n + 1
         end
         if n ~= #val then
-            error("invalid table: sparse array")
+            FrostLogE("invalid table: sparse array")
         end
         -- Encode
         for i, v in ipairs(val) do
@@ -94,7 +94,7 @@ local function encode_table(val, stack)
         -- Treat as an object
         for k, v in pairs(val) do
             if type(k) ~= "string" then
-                error("invalid table: mixed or invalid key types")
+                FrostLogE("invalid table: mixed or invalid key types")
             end
             table.insert(res, encode(k, stack) .. ":" .. encode(v, stack))
         end
@@ -110,7 +110,7 @@ end
 local function encode_number(val)
     -- Check for NaN, -inf and inf
     if val ~= val or val <= -math.huge or val >= math.huge then
-        error("unexpected number value '" .. tostring(val) .. "'")
+        FrostLogE("unexpected number value '" .. tostring(val) .. "'")
     end
     return string.format("%.14g", val)
 end
@@ -129,7 +129,7 @@ encode = function(val, stack)
     if f then
         return f(val, stack)
     end
-    error("unexpected type '" .. t .. "'")
+    FrostLogE("unexpected type '" .. t .. "'")
 end
 
 function json.encode(val)
@@ -170,7 +170,7 @@ local function next_char(str, idx, set, negate)
     return #str + 1
 end
 
-local function decode_error(str, idx, msg)
+local function decode_FrostLogE(str, idx, msg)
     local line_count = 1
     local col_count = 1
     for i = 1, idx - 1 do
@@ -180,7 +180,7 @@ local function decode_error(str, idx, msg)
             col_count = 1
         end
     end
-    error(string.format("%s at line %d col %d", msg, line_count, col_count))
+    FrostLogE(string.format("%s at line %d col %d", msg, line_count, col_count))
 end
 
 local function codepoint_to_utf8(n)
@@ -196,7 +196,7 @@ local function codepoint_to_utf8(n)
         return string.char(f(n / 262144) + 240, f(n % 262144 / 4096) + 128,
                 f(n % 4096 / 64) + 128, n % 64 + 128)
     end
-    error(string.format("invalid unicode codepoint '%x'", n))
+    FrostLogE(string.format("invalid unicode codepoint '%x'", n))
 end
 
 local function parse_unicode_escape(s)
@@ -219,7 +219,7 @@ local function parse_string(str, i)
         local x = str:byte(j)
 
         if x < 32 then
-            decode_error(str, j, "control character in string")
+            decode_FrostLogE(str, j, "control character in string")
         elseif x == 92 then
             -- `\`: Escape
             res = res .. str:sub(k, j - 1)
@@ -228,12 +228,12 @@ local function parse_string(str, i)
             if c == "u" then
                 local hex = str:match("^[dD][89aAbB]%x%x\\u%x%x%x%x", j + 1)
                         or str:match("^%x%x%x%x", j + 1)
-                        or decode_error(str, j - 1, "invalid unicode escape in string")
+                        or decode_FrostLogE(str, j - 1, "invalid unicode escape in string")
                 res = res .. parse_unicode_escape(hex)
                 j = j + #hex
             else
                 if not escape_chars[c] then
-                    decode_error(str, j - 1, "invalid escape char '" .. c .. "' in string")
+                    decode_FrostLogE(str, j - 1, "invalid escape char '" .. c .. "' in string")
                 end
                 res = res .. escape_char_map_inv[c]
             end
@@ -247,7 +247,7 @@ local function parse_string(str, i)
         j = j + 1
     end
 
-    decode_error(str, i, "expected closing quote for string")
+    decode_FrostLogE(str, i, "expected closing quote for string")
 end
 
 local function parse_number(str, i)
@@ -255,7 +255,7 @@ local function parse_number(str, i)
     local s = str:sub(i, x - 1)
     local n = tonumber(s)
     if not n then
-        decode_error(str, i, "invalid number '" .. s .. "'")
+        decode_FrostLogE(str, i, "invalid number '" .. s .. "'")
     end
     return n, x
 end
@@ -264,7 +264,7 @@ local function parse_literal(str, i)
     local x = next_char(str, i, delim_chars)
     local word = str:sub(i, x - 1)
     if not literals[word] then
-        decode_error(str, i, "invalid literal '" .. word .. "'")
+        decode_FrostLogE(str, i, "invalid literal '" .. word .. "'")
     end
     return literal_map[word], x
 end
@@ -293,7 +293,7 @@ local function parse_array(str, i)
             break
         end
         if chr ~= "," then
-            decode_error(str, i, "expected ']' or ','")
+            decode_FrostLogE(str, i, "expected ']' or ','")
         end
     end
     return res, i
@@ -312,13 +312,13 @@ local function parse_object(str, i)
         end
         -- Read key
         if str:sub(i, i) ~= '"' then
-            decode_error(str, i, "expected string for key")
+            decode_FrostLogE(str, i, "expected string for key")
         end
         key, i = parse(str, i)
         -- Read ':' delimiter
         i = next_char(str, i, space_chars, true)
         if str:sub(i, i) ~= ":" then
-            decode_error(str, i, "expected ':' after key")
+            decode_FrostLogE(str, i, "expected ':' after key")
         end
         i = next_char(str, i + 1, space_chars, true)
         -- Read value
@@ -333,7 +333,7 @@ local function parse_object(str, i)
             break
         end
         if chr ~= "," then
-            decode_error(str, i, "expected '}' or ','")
+            decode_FrostLogE(str, i, "expected '}' or ','")
         end
     end
     return res, i
@@ -365,7 +365,7 @@ parse = function(str, idx)
     if f then
         return f(str, idx)
     end
-    decode_error(str, idx, "unexpected character '" .. chr .. "'")
+    decode_FrostLogE(str, idx, "unexpected character '" .. chr .. "'")
 end
 
 ---加载json文本
@@ -373,12 +373,12 @@ end
 ---@return any 返回lua对象
 function json.decode(str)
     if type(str) ~= "string" then
-        error("expected argument of type string, got " .. type(str))
+        FrostLogE("expected argument of type string, got " .. type(str))
     end
     local res, idx = parse(str, next_char(str, 1, space_chars, true))
     idx = next_char(str, idx, space_chars, true)
     if idx <= #str then
-        decode_error(str, idx, "trailing garbage")
+        decode_FrostLogE(str, idx, "trailing garbage")
     end
     return res
 end

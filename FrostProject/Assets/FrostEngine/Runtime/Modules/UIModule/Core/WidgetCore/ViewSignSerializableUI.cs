@@ -164,7 +164,7 @@ namespace FrostEngine
                 sb.Append(str);
             }
 #if UNITY_EDITOR
-            UnityEngine.Debug.Log(sb.ToString());
+            Debug.Log(sb.ToString());
 #endif
             return sb.ToString();
         }

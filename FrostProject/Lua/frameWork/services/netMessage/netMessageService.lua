@@ -33,7 +33,7 @@ function NetMessageService:vInitialize()
         self._IsConnected = NetworkNativeService:IsConnect()
         if self._IsConnected then
             FrostLogD(self.__classname, "NetMessageService.Connect url = ", self._LastConnectedUrl)
-            GameTimeService:OnConnected()
+            _G.GameTimeService:OnConnected()
         else
             FrostLogE(self.__classname, "NetMessageService.Connect Failed!  url = ", self._LastConnectedUrl)
         end
@@ -41,7 +41,7 @@ function NetMessageService:vInitialize()
 end
 
 local function OnNetDataRecieved(inMsgData)
-    _G.NetMessageService:OnReceiveMessage(inMsgData)
+    NetMessageService:OnReceiveMessage(inMsgData)
 end
 
 function NetMessageService:Connect(url)

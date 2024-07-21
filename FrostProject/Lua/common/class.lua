@@ -7,7 +7,7 @@ null = nil
 nullTbl = {}
 CS = CS
 TypeOf = CS.typeof
-ClassLibraryMap = {}
+
 --- @class LuaDataType Lua数据类型枚举
 LuaDataType = {
     Number = "number",

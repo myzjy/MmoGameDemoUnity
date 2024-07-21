@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FrostEngine
@@ -6,6 +7,7 @@ namespace FrostEngine
     /// UIWidget 区别框架侧的UIWidget 这个是挂载在UI上面
     /// </summary>
     [RequireComponent(typeof(CanvasGroup))]
+    [RequireComponent(typeof(CanvasRenderer))]
     [DisallowMultipleComponent]
     public class UUIWidget : MonoBehaviour
     {
@@ -36,5 +38,11 @@ namespace FrostEngine
             CanvasGroup.blocksRaycasts = false;
             CanvasGroup.interactable = false;
         }
+#if UNITY_EDITOR
+        public virtual void Reset()
+        {
+            mCanvasGroup = GetComponent<CanvasGroup>();
+        }
+#endif
     }
 }
