@@ -18,5 +18,9 @@ GlobalEnum = {
         Rookie = 5,
         GameWorld = 6,
         Exit = 7, -- 主要用于退出清理
+    },
+
+    EInvalidDefine = {
+        ID = -1,  --- 使用接口 UnityHelper.IsValidID(inID) 进行检查
     }
 }

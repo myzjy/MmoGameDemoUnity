@@ -35,5 +35,90 @@ function UIPrefabClassAsync:ctor()
     -- 操作参数
     self._operation = {}
 end
+function UIPrefabClassAsync:Create(mediator, parentPrefabClass, parentTf, prefabClassDef, argument, loadPriority, life, customID, style, layer, insertFirst)
+    self._mediator = mediator or false
+    
+    self._parentPrefabClass = parentPrefabClass or false
+    self._parentTf = parentTf or false
+    
+    self._prefabClassDef = prefabClassDef or false
+    self._argument = argument or false
+    
+    self._customID = customID or GlobalEnum.EInvalidDefine.ID
+    self._style = style or false
+    self._layer = layer or false
+    self._insertFirst = insertFirst or false
+    
+    self._assetName = prefabClassDef.__vtbl:GetResourcePath(style)
+    AssetService:LoadAssetAsync(loadPriority, self, TypeOf(CS.UnityEngine.Object), self._assetName)
+end
+function UIPrefabClassAsync:Destroy()
+    self._mediator = false
+
+    self._parentPrefabClass = false
+    self._parentTf = false
+
+    self._prefabClassDef = false
+    self._argument = false
+    self._assetName = false
+    for i = #self._operation, 1, -1 do
+        UPool:DestroyTable(self._operation[i])
+        table.remove(self._operation, i)
+    end
+end
+
+function UIPrefabClassAsync:GetPrefabClassName()
+    return self._prefabClassDef.__classname
+end
+
+function UIPrefabClassAsync:SendUpdateUI(id, argument)
+    if not id then
+        FrostLogE(self.__classname, "UIPrefabClassAsyn.SendUpdateUI : invalid parameter")
+        return
+    end
+
+    local data = UPool:CreateTable()
+    data.id = id
+    data.argument = argument
+    self._operation[#self._operation+1] = data
+end
+
+function UIPrefabClassAsync:ApplyUpdateUI(prefabClass)
+    if not prefabClass then
+        FrostLogE(self.__classname, "UIPrefabClassAsyn.ApplyUpdateUI : invalid parameter")
+        return
+    end
+
+    for i = 1, #self._operation do
+        local data = self._operation[i]
+        if data then
+            prefabClass:SendUpdateUI(data.id, data.argument, true)
+        else
+            FrostLogE(prefabClass.__classname, "UIPrefabClassAsyn.ApplyUpdateUI : Prefab 已被上次更新 UI 所设计，这是一个危险的逻辑.")
+        end
+    end
+
+    for i = #self._operation, 1, -1 do
+        UPool:DestroyTable(self._operation[i])
+        table.remove(self._operation, i)
+    end
+end
+
+function UIPrefabClassAsync:OnLoadAssetCompleted(asyncLoadID, assetType, assetName, obj)
+    if not assetName then
+        FrostLogE(self.__classname, "UIPrefabClassAsyn.OnLoadAssetCompleted : invalid parameter")
+        return
+    end
+
+    if assetName ~= self._assetName then
+        return
+    end
+
+    if self._mediator then
+        self._mediator:CreatePrefabClassAsynCompleted(self, self._prefabClassDef, self._argument, self._customID, self._style, self._layer, asyncLoadID)
+    elseif self._parentPrefabClass then
+        self._parentPrefabClass:CreateChildPrefabClassAsynCompleted(self, self._prefabClassDef, self._parentTf, self._argument, self._customID, self._style, asyncLoadID, self._insertFirst)
+    end
+end
 
 return UIPrefabClassAsync

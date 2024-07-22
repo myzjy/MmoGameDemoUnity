@@ -49,7 +49,7 @@ end
 ---@param inSlateVisibility ESlateVisibility 可见性类型
 function UIPrefab:SetVisibility(inSlateVisibility)
     if not self._prefab then
-        NGRLogE(self.__classname, "SetVisibility invalid prefab")
+        FrostLogE(self.__classname, "SetVisibility invalid prefab")
         return
     end
     local tOldVisibility = self._prefab:GetVisibility()
@@ -130,7 +130,7 @@ end
 ---@param parentPrefabClass UIPrefab 父ui
 ---@param parentTf UPanelWidget UE中的父控件（即创建出的控件所要挂载的地方）
 ---@param argument table 自定义参数，用于vInitialize时读取
----@param customID string|number 自定义索引，给父UI查找用（即父UI可以通过这个ID找到这个UI）
+---@param customID number 自定义索引，给父UI查找用（即父UI可以通过这个ID找到这个UI）
 ---@param style number ui样式索引，对应vGetPath里的资源路径
 ---@param layer number parentTf为空时挂载的对应层级索引
 ---@param asyncLoadID number 异步加载任务ID，用来获取资源
@@ -139,13 +139,13 @@ end
 function UIPrefab:Create(mediator, parentPrefabClass, parentTf, argument, customID, style, layer, asyncLoadID, bNotAddLayer, insertFirst)
     local resourcePath = self:GetResourcePath(style)
     if not resourcePath then
-        NGRLogE(self.__classname, "UIPrefab.Create : resource path error")
+        FrostLogE(self.__classname, "UIPrefab.Create : resource path error")
         return
     end
 
     self._uiAsset = AssetService:LoadUIAsset(resourcePath, LifeType.UIState, asyncLoadID)
     if not self._uiAsset then
-        NGRLogE(self.__classname, "UIPrefab.Create : load resource failed - ", resourcePath)
+        FrostLogE(self.__classname, "UIPrefab.Create : load resource failed - ", resourcePath)
         return
     end
 
@@ -227,13 +227,13 @@ function UIPrefab:Destroy()
     if #self._child > 0 then
         for i = 1, #self._child do
             if self._child[i] ~= null then
-                NGRLogE(self.__classname, "UIPrefab.Destroy : prefabClass ", self._child[i].__classname, " of ", self.__classname, " is living")
+                FrostLogE(self.__classname, "UIPrefab.Destroy : prefabClass ", self._child[i].__classname, " of ", self.__classname, " is living")
             end
         end
     end
 
     if #self._prefabClassAsyn > 0 then
-        NGRLogE(self.__classname, "UIPrefab.Destroy : prefabClassAsyn is not empty" .. self.__classname)
+        FrostLogE(self.__classname, "UIPrefab.Destroy : prefabClassAsyn is not empty" .. self.__classname)
 
         for i = 1, #self._prefabClassAsyn do
             self._prefabClassAsyn[i]:Destroy()
@@ -308,7 +308,7 @@ end
 --- @param bIsSetDefault boolean 是否设置默认图片（透明图），true则未加载完成时对应图标控件显示透明
 function UIPrefab:SetAsynIcon(image, assetName, bIsSetDefault)
     if not image or (not image:GetClass():IsChildOf(UE4.UImage) and not image:GetClass():IsChildOf(UE4.UCMProgressBar)) then
-        NGRLogE(self.__classname, "UIPrefab.SetAsynIcon : image param error ")
+        FrostLogE(self.__classname, "UIPrefab.SetAsynIcon : image param error ")
         return
     end
     local assetPath = GlobalEnum.EInvalidDefine.SoftObjectPath
@@ -325,7 +325,7 @@ function UIPrefab:SetAsynIcon(image, assetName, bIsSetDefault)
     end
 
     if not UE4Helper.IsValidPath(assetPath) then
-        NGRLogE(self.__classname, "UIPrefab.SetAsynIcon : assetName param error ", assetPath)
+        FrostLogE(self.__classname, "UIPrefab.SetAsynIcon : assetName param error ", assetPath)
         return
     end
 
@@ -415,7 +415,7 @@ function UIPrefab:GetPrefabIsVisible()
 end
 function UIPrefab:GetPrefabClassByTag(tagName, param)
     if not param then
-        NGRLogE(self.__classname, "GetPrefabClassByTag param is error, Prohibit modifying param in the process!", debug.traceback())
+        FrostLogE(self.__classname, "GetPrefabClassByTag param is error, Prohibit modifying param in the process!", debug.traceback())
     end
     local outPrefabInstance = self:vGetPrefabClassByTag(tagName, param)
     if outPrefabInstance then
@@ -426,7 +426,7 @@ function UIPrefab:GetPrefabClassByTag(tagName, param)
     end
     return self:_DoEachChildPrefab(function(inPrefabInstance)
         if inPrefabInstance and inPrefabInstance ~= null then
-            -- NGRLogE("NewbieGuide UIPrefab ", self.__classname, inPrefabInstance.__classname, inPrefabInstance:GetCustomID(), tagName, tostring(param.CustomID))
+            -- FrostLogE("NewbieGuide UIPrefab ", self.__classname, inPrefabInstance.__classname, inPrefabInstance:GetCustomID(), tagName, tostring(param.CustomID))
             if not inPrefabInstance:GetPrefabIsVisible() then
                 -- 简单拦截，因为也有可能在更上层进行的隐藏，
                 if inPrefabInstance.__classname == ClassLib.CMGridClass.__classname then
@@ -693,14 +693,14 @@ function UIPrefab:GetStyleIndex()
 end
 
 --- 获取自定义索引（customID）
---- @return string|number
+--- @return number
 function UIPrefab:GetCustomID()
     return self._customID
 end
 
 -------------------------------------------------------------------------------------------
 --- 设置自定义索引（customID）
---- @param inCustomID string|number 自定义索引
+--- @param inCustomID number 自定义索引
 -------------------------------------------------------------------------------------------
 function UIPrefab:SetCustomID(inCustomID)
     self._customID = inCustomID or GlobalEnum.EInvalidDefine.ID
@@ -753,12 +753,12 @@ end
 --- @param insertFirst boolean 是否从头部插入节点
 function UIPrefab:CreateChildPrefabClass(cls, parentTf, argument, customID, style, asyncLoadID, insertFirst)
     if not cls then
-        NGRLogE(self.__classname, "CreateChildPrefabClass failed, Can not found UIPrefab nil")
+        FrostLogE(self.__classname, "CreateChildPrefabClass failed, Can not found UIPrefab nil")
         return nil
     end
 
     if not parentTf then
-        NGRLogE(self.__classname, "CreateChildPrefabClass failed, Can not found parent nil", cls.__classname)
+        FrostLogE(self.__classname, "CreateChildPrefabClass failed, Can not found parent nil", cls.__classname)
         return nil
     end
 
@@ -781,16 +781,16 @@ end
 --- @return void
 function UIPrefab:CreateAsynChildPrefabClass(cls, parentTf, argument, loadPriority, life, customID, style, insertFirst)
     if not cls or not parentTf then
-        NGRLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : invalid parameter")
         return
     end
     if customID then
         if self:GetPrefabClassByCustomID(customID) then
-            NGRLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : already exist prefab", customID)
+            FrostLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : already exist prefab", customID)
             return
         end
         if self:GetCreateAsynChildPrefabClassStateByCustomID(customID) then
-            NGRLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : prefab is createing", customID)
+            FrostLogE(self.__classname, "UIPrefab.CreateAsynChildPrefabClass : prefab is createing", customID)
             return
         end
     end
@@ -822,7 +822,7 @@ end
 --- @return void
 function UIPrefab:DestroyChildPrefabClassByName(name, onlyAsyn)
     if not name then
-        NGRLogE(self.__classname, "UIPrefab.DestroyChildPrefabClassByName : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.DestroyChildPrefabClassByName : invalid parameter")
         return
     end
 
@@ -851,7 +851,7 @@ end
 --- @return void
 function UIPrefab:DestroyChildPrefabClassByCustomID(customID, onlyAsyn)
     if not customID then
-        NGRLogE(self.__classname, "UIPrefab.DestroyChildPrefabClassByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.DestroyChildPrefabClassByCustomID : invalid parameter")
         return
     end
 
@@ -899,7 +899,7 @@ end
 --- @return UIPrefab 获取到的子UIPrefabClass
 function UIPrefab:GetPrefabClassByName(name)
     if not name then
-        NGRLogE(self.__classname, "UIPrefab.GetPrefabClassByName : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.GetPrefabClassByName : invalid parameter")
         return nil
     end
 
@@ -918,7 +918,7 @@ end
 --- @return UIPrefab 获取到的UIPrefabClass
 function UIPrefab:GetPrefabClassByCustomID(customID)
     if not customID then
-        NGRLogE(self.__classname, "UIPrefab.GetPrefabClassByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.GetPrefabClassByCustomID : invalid parameter")
         return nil
     end
 
@@ -937,7 +937,7 @@ end
 --- @return boolean true：异步创建中  false: 不在异步创建中
 function UIPrefab:GetCreateAsynChildPrefabClassStateByName(name)
     if not name then
-        NGRLogE(self.__classname, "UIPrefab.GetCreateAsynChildPrefabClassStateByName : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.GetCreateAsynChildPrefabClassStateByName : invalid parameter")
         return
     end
 
@@ -955,7 +955,7 @@ end
 --- @return boolean true：异步创建中  false: 不在异步创建中
 function UIPrefab:GetCreateAsynChildPrefabClassStateByCustomID(customID)
     if not customID then
-        NGRLogE(self.__classname, "UIPrefab.GetCreateAsynChildPrefabClassStateByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIPrefab.GetCreateAsynChildPrefabClassStateByCustomID : invalid parameter")
         return
     end
     for i = #self._prefabClassAsyn, 1, -1 do

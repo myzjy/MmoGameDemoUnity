@@ -206,7 +206,7 @@ function MVCService:AddRemoveSpecialAndroidBackCallback(add,tbl,func)
             end
         end
         
-        local data = Pool:CreateTable()
+        local data = UPool:CreateTable()
         data.tbl = tbl
         data.func = func
         self._specialAndroidBackCallback[#self._specialAndroidBackCallback + 1] = data
@@ -387,7 +387,7 @@ function MVCService:AddRemoveModalCloseCallback(add, tbl, func)
             end
         end
         
-        local data = Pool:CreateTable()
+        local data = UPool:CreateTable()
         data.tbl = tbl
         data.func = func
         self._modalCloseCallback[#self._modalCloseCallback + 1] = data
@@ -395,7 +395,7 @@ function MVCService:AddRemoveModalCloseCallback(add, tbl, func)
         for i, v in ipairs(self._modalCloseCallback) do
             if v ~= null and v.tbl == tbl then
                 self._modalCloseCallback[i] = null
-                Pool:DestroyTable(v)
+                UPool:DestroyTable(v)
                 return
             end
         end
@@ -421,7 +421,7 @@ function MVCService:CreateWidgetChildPrefab(inUIPrefabClass, inParentWidget, inA
         return
     end
     local tPrefab = inUIPrefabClass:New()
-    self._prefabClass[#self._prefabClass+1] = tPrefab
+    self._prefabClass[#self._prefabClass + 1] = tPrefab
     tPrefab:Create(nil, nil, inParentWidget, inArgument, customID, inStyle, inLayer,asyncLoadID)
     return tPrefab
 end
@@ -450,7 +450,7 @@ function MVCService:CreateAsyncWidgetChildPrefab(inUIPrefabClass, inParentWidget
     local customID = self._prefabCustomID
     self._prefabCustomID = self._prefabCustomID + 1
 
-    local obj = ClassLibraryMap.UIPrefabClassAsyn:New()
+    local obj = ClassLibraryMap.UIPrefabClassAsync()
     self._asyncPrefabInfo[#self._asyncPrefabInfo+1] = {
         AsyncPrefab = obj,
         CallBackTbl = inCallBackTbl,
@@ -463,7 +463,7 @@ function MVCService:CreateAsyncWidgetChildPrefab(inUIPrefabClass, inParentWidget
 end
 
 ---异步加载ui成功
----@param async UIPrefabClassAsyn 异步ui处理
+---@param async UIPrefabClassAsync 异步ui处理
 ---@param cls UIPrefab UI界面类定义
 ---@param parentTf UPanelWidget UE中的父控件（即创建出的控件所要挂载的地方）
 ---@param argument table 自定义参数，用于vInitialize时读取
@@ -683,7 +683,7 @@ function MVCService:AddUIStatePreChangeDelegate(tbl, func)
         end
     end
     
-    local data = Pool:CreateTable()
+    local data = UPool:CreateTable()
     data.tbl = tbl
     data.func = func
     self._uiStatePreChangeDelegate[#self._uiStatePreChangeDelegate+1] = data
@@ -703,7 +703,7 @@ function MVCService:RemoveUIStatePreChangeDelegate(tbl, func)
         local data = self._uiStatePreChangeDelegate[i]
         if data ~= null and data.tbl == tbl and (not func or data.func == func) then
             self._uiStatePreChangeDelegate[i] = null
-            Pool:DestroyTable(data)
+            UPool:DestroyTable(data)
         end
     end
 end

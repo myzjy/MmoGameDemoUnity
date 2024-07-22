@@ -22,6 +22,7 @@
 -- SOFTWARE.
 --
 
+---@class JSON
 local json = Class("JSON")
 json._version = "0.1.2"
 

@@ -71,7 +71,7 @@ function UIMediator:Destroy()
     for id, prefab in pairs(self._prefabClassExternal) do
         FrostLogE(self.__classname, "UIMediator.Destroy : _prefabClassExternal ", prefab.__classname, " of ", self.__classname, " is living")
     end
-    table.clear(self._prefabClassExternal)
+    table.Clear(self._prefabClassExternal)
 
     self._belongUIStateName = false
     self._inputBelongUIStateName = false
@@ -92,7 +92,7 @@ end
 --- @param rootStateName string 根状态名
 --- @param childStateName string 子状态名
 --- @param userData any 配置参数或者自定义数据
-function UIMediatorClass:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
+function UIMediator:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
     if not self._belongUIStateName or #self._belongUIStateName == 0 then
         return
     end
@@ -202,7 +202,7 @@ function UIMediatorClass:SwitchUIState(operator, switchType, rootStateName, stat
     end
 end
 
-function UIMediatorClass:SwitchUIStateIn(switchType, userData)
+function UIMediator:SwitchUIStateIn(switchType, userData)
     self._userData = userData or false
     -- 加载系统级别覆盖外设键位配置
     local InputContextDTPath, bReplace, bKeepKeyStateMap = self:vGetInputActionDTPath(self._inStateName)
@@ -247,9 +247,9 @@ function UIMediatorClass:SwitchUIStateIn(switchType, userData)
     end
 end
 
-function UIMediatorClass:ActivePrefabClassCookie(active, classname, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
+function UIMediator:ActivePrefabClassCookie(active, classname, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
     if not classname or not csInstanceID then
-        NGRLogE(self.__classname, "UIMediatorClass.ActivePrefabClassCookie : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.ActivePrefabClassCookie : invalid parameter")
         return
     end
 
@@ -274,7 +274,7 @@ function UIMediatorClass:ActivePrefabClassCookie(active, classname, csInstanceID
     end
 end
 
-function UIMediatorClass:CreatePrefabClassAsynCompleted(asyn, cls, argument, customID, style, layer, asyncLoadID)
+function UIMediator:CreatePrefabClassAsynCompleted(asyn, cls, argument, customID, style, layer, asyncLoadID)
     local prefabClass = self:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
     asyn:ApplyUpdateUI(prefabClass)
 
@@ -292,7 +292,7 @@ function UIMediatorClass:CreatePrefabClassAsynCompleted(asyn, cls, argument, cus
     self:vOnCreateAsynPrefabClassCompleted(prefabClass)
 end
 
-function UIMediatorClass:ProcessControl_ClearPrefabClass()
+function UIMediator:ProcessControl_ClearPrefabClass()
     table.removeNullFromArray(self._prefabClass)
 end
 
@@ -302,18 +302,18 @@ end
 --- @param inAdd(bool) 是否添加
 --- @param inUserData 用户自定义数据
 -------------------------------------------------------------------------------------------
-function UIMediatorClass:UpdateDynamicPrefab(inPrefab, inAdd, inUserData)
+function UIMediator:UpdateDynamicPrefab(inPrefab, inAdd, inUserData)
     if not inPrefab then
-        NGRLogE(self.__classname, "inPrefab is nil")
+        FrostLogE(self.__classname, "inPrefab is nil")
         return
     end
     local tCustomID = inPrefab:GetCustomID()
-    if not UE4Helper.IsValidID(tCustomID) then
+    if not UnityHelper.IsValidID(tCustomID) then
         return
     end
     if inAdd then
         if self._prefabClassExternal[tCustomID] then
-            NGRLogE(self.__classname, "inPrefab already exist", inPrefab.__classname)
+            FrostLogE(self.__classname, "inPrefab already exist", inPrefab.__classname)
             return
         end
         inPrefab._mediator = self --TODO 是否统一成接口
@@ -326,7 +326,7 @@ function UIMediatorClass:UpdateDynamicPrefab(inPrefab, inAdd, inUserData)
     self:vUpdateDynamicPrefab(inPrefab, inAdd, inUserData)
 end
 
-function UIMediatorClass:SetMaskCoveredofViewport()
+function UIMediator:SetMaskCoveredofViewport()
     if self and UE4.UNGRCFunctionLibrary.IsMaskCoveredofViewportAllowed() then
         self._UIMaskMark = DatabinService:GetSingleRow(DataTableConfig.UIMaskDataTablePath, self:vGetBelongUIStateName()[1])
         if self._UIMaskMark then
@@ -337,9 +337,9 @@ function UIMediatorClass:SetMaskCoveredofViewport()
     end
 end
 
-function UIMediatorClass:GetPrefabClassByTag(tagName, param)
+function UIMediator:GetPrefabClassByTag(tagName, param)
     if not param then
-        NGRLogE(self.__classname, "GetPrefabClassByTag param is error, Prohibit modifying param in the process!", debug.traceback())
+        FrostLogE(self.__classname, "GetPrefabClassByTag param is error, Prohibit modifying param in the process!", debug.traceback())
     end
     local outPrefabInstance = self:vGetPrefabClassByTag(tagName, param)
     if outPrefabInstance then
@@ -350,8 +350,8 @@ function UIMediatorClass:GetPrefabClassByTag(tagName, param)
     end
     return self:_DoEachPrefab(function(inPrefabInstance)
         if inPrefabInstance and inPrefabInstance ~= null then
-            if (inPrefabInstance.__classname == tagName and string.isEmpty(param.CustomID))
-                    or (inPrefabInstance.__classname == tagName and not string.isEmpty(param.CustomID) and tostring(inPrefabInstance:GetCustomID()) == param.CustomID)
+            if (inPrefabInstance.__classname == tagName and string.IsNullOrEmpty(param.CustomID))
+                    or (inPrefabInstance.__classname == tagName and not string.IsNullOrEmpty(param.CustomID) and tostring(inPrefabInstance:GetCustomID()) == param.CustomID)
                     or inPrefabInstance:GetTagName() == tagName then
                 if not inPrefabInstance:GetPrefabIsVisible() then
                     return false
@@ -366,30 +366,30 @@ end
 -- 获取Mediator所属的UI状态
 -- @return 返回值1：所属的UI状态的数组，返回空标识不属于任何状态  返回值2：可单独指定当前Mediator在什么UI状态下才响应外设输入
 -- (默认与前者保持一致，只有Mediator属于多状态或者根状态的时候，才可能需要单独指定)
-function UIMediatorClass:vGetBelongUIStateName()
+function UIMediator:vGetBelongUIStateName()
 end
 
 -- 重载
 -- @return1 所属的UI状态所对应的input action context dt path, 暂时最多两层contextPath，第一位为低优先级，第二位为高优先级，相同按键高优先级将替换低优先级,如只有一层高优先级，可用""占位低优先级
 -- @return2 是否为替换关系
 -- @return3 是否保留当前的输入（如当前正在进行的长按）
-function UIMediatorClass:vGetInputActionDTPath(stateName)
+function UIMediator:vGetInputActionDTPath(stateName)
     return false, false, false
 end
 
 -- 重载
 --@return1 返回对应UI的InputAction对应的KeyFlush的dt path, data类型为FActionKeyFlushRow
-function UIMediatorClass:vGetInputActionKeyFlushDTPath(stateName)
+function UIMediator:vGetInputActionKeyFlushDTPath(stateName)
     return false
 end
 
 -- 重载
 -- 初始化
-function UIMediatorClass:vOnInitialize()
+function UIMediator:vOnInitialize()
 end
 -- 重载
 -- 反初始化
-function UIMediatorClass:vOnUninitialize()
+function UIMediator:vOnUninitialize()
 end
 
 -- 重载
@@ -397,14 +397,14 @@ end
 -- @param switchType 切换类型（取值：StateConstant）
 -- @param inStateName 切入的状态名
 -- @param userData 用户自定义数据
-function UIMediatorClass:vOnUIStateIn(switchType, inStateName, userData)
+function UIMediator:vOnUIStateIn(switchType, inStateName, userData)
 end
 
 -- 重载
 -- 切出状态
 -- @param switchType 切换类型（取值：StateConstant）
 -- @param outStateName 切出的状态名
-function UIMediatorClass:vOnUIStateOut(switchType, outStateName)
+function UIMediator:vOnUIStateOut(switchType, outStateName)
 end
 
 -- 重载
@@ -413,7 +413,7 @@ end
 -- @param outStateName 老状态名
 -- @param inStateName 新状态名
 -- @param userData 用户自定义数据
-function UIMediatorClass:vOnUIStateStay(switchType, outStateName, inStateName, userData)
+function UIMediator:vOnUIStateStay(switchType, outStateName, inStateName, userData)
 end
 
 -- 重载
@@ -422,23 +422,23 @@ end
 -- @param stateName 状态名
 -- @param userData 用户自定义数据
 -- @return 无
-function UIMediatorClass:vOnUIStateHoldon(switchType, stateName, userData)
+function UIMediator:vOnUIStateHoldon(switchType, stateName, userData)
 end
 
-function UIMediatorClass:vOnUIStateAfterStay()
+function UIMediator:vOnUIStateAfterStay()
 end
 
 ---异步创建UIPrefabClass完成回调
 ---@param prefabClass UIPrefab 异步创建的prefabClass
 ---@return void
-function UIMediatorClass:vOnCreateAsynPrefabClassCompleted(prefabClass)
+function UIMediator:vOnCreateAsynPrefabClassCompleted(prefabClass)
 end
 
 --- 脱离Mediator在执行的UWidget下创建的独立的Prefab的通知
 --- @param inPrefab(UIPrefab) 传入UIPrefab
 --- @param inAdd(bool) 是否添加
 --- @param inUserData 用户自定义数据
-function UIMediatorClass:vUpdateDynamicPrefab(inPrefab, inAdd, inUserData)
+function UIMediator:vUpdateDynamicPrefab(inPrefab, inAdd, inUserData)
 end
 
 -- 重载
@@ -446,7 +446,7 @@ end
 -- @param id 更新标识，推荐使用字符串和数字
 -- @param argument 更新参数
 -- @return 是否阻断向下传递刷新
-function UIMediatorClass:vOnUpdateUI(id, argument)
+function UIMediator:vOnUpdateUI(id, argument)
 end
 
 -- 重载
@@ -454,18 +454,18 @@ end
 -- @param id 操作标识，推荐使用字符串和数字
 -- @param argument 操作参数
 -- @return 是否阻断向上传递操作
-function UIMediatorClass:vOnAction(id, argument)
+function UIMediator:vOnAction(id, argument)
 end
 -- 关闭UIPrefabClass的渲染
 -- @param prefabPath（string） 关闭渲染的UIPrefab Path（以,分割），可能为nil标识没有需要关闭的
 -- @return 无
-function UIMediatorClass:vOnDisableUIPrefabRender(prefabPath)
+function UIMediator:vOnDisableUIPrefabRender(prefabPath)
 end
 
 -- 显示全屏界面回调
 -- @param show 显示/隐藏
 -- @return 无
-function UIMediatorClass:vOnShowFullScreen(show)
+function UIMediator:vOnShowFullScreen(show)
 end
 
 -- 重载
@@ -476,7 +476,7 @@ end
 -- 说明：新手引导在使用该函数，通过TagName搜索和其匹配的UIPrefab：
 -- 1) 不同平台上UI也不同的Module（比如技能UI）中，需要Mediator返回对应平台的UIPrefabClass
 -- 2) 当UIPrefab是list列表中的一项，比如主菜单的背包按钮，需要Mediator根据tagName来查找
-function UIMediatorClass:vGetPrefabClassByTag(tagName, param)
+function UIMediator:vGetPrefabClassByTag(tagName, param)
     return false
 end
 -- 创建UIPrefabClass
@@ -487,9 +487,9 @@ end
 -- @param layer 指定的层级
 -- @param asyncLoadID 异步加载任务ID
 -- @return 创建的子UIPrefabClass（=nil创建失败）
-function UIMediatorClass:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
+function UIMediator:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
     if not cls then
-        NGRLogE(self.__classname, "UIMediatorClass.CreatePrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.CreatePrefabClass : invalid parameter")
         return nil
     end
 
@@ -510,18 +510,18 @@ end
 -- @param style 资源样式(索引)
 ---@param layer PanelLayerConfig @指定的层级
 -- @return 无
-function UIMediatorClass:CreateAsynPrefabClass(cls, argument, loadPriority, life, customID, style, layer)
+function UIMediator:CreateAsynPrefabClass(cls, argument, loadPriority, life, customID, style, layer)
     if not cls then
-        NGRLogE(self.__classname, "UIMediatorClass.CreateAsynPrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : invalid parameter")
         return
     end
     if customID then
         if self:GetPrefabClassByCustomID(customID) then
-            NGRLogE(self.__classname, "UIMediatorClass.CreateAsynPrefabClass : already exist prefab", customID)
+            FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : already exist prefab", customID)
             return
         end
         if self:GetCreateAsynPrefabClassStateByCustomID(customID) then
-            NGRLogE(self.__classname, "UIMediatorClass.CreateAsynPrefabClass : prefab is createing", customID)
+            FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : prefab is createing", customID)
             return
         end
     end
@@ -532,9 +532,9 @@ end
 
 -- 销毁UIPrefabClass
 -- @param prefab 待销毁的UIPrefabClass
-function UIMediatorClass:DestroyPrefabClass(obj)
+function UIMediator:DestroyPrefabClass(obj)
     if not obj then
-        NGRLogE(self.__classname, "UIMediatorClass.DestroyPrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.DestroyPrefabClass : invalid parameter")
         return
     end
 
@@ -553,9 +553,9 @@ end
 -- @param name UIPrefabClass类名
 -- @param onlyAsyn 只销毁符合条件的异步子UIPrefabClass，类型：bool，默认销毁所有符合条件的
 -- @return 无
-function UIMediatorClass:DestroyPrefabClassByName(name, onlyAsyn)
+function UIMediator:DestroyPrefabClassByName(name, onlyAsyn)
     if not name then
-        NGRLogE(self.__classname, "UIMediatorClass.DestroyPrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.DestroyPrefabClass : invalid parameter")
         return
     end
 
@@ -582,9 +582,9 @@ end
 -- @param customID 自定义ID
 -- @param onlyAsyn 只销毁符合条件的异步子UIPrefabClass，类型：bool，默认销毁所有符合条件的
 -- @return 无
-function UIMediatorClass:DestroyPrefabClassByCustomID(customID, onlyAsyn)
+function UIMediator:DestroyPrefabClassByCustomID(customID, onlyAsyn)
     if not customID then
-        NGRLogE(self.__classname, "UIMediatorClass.DestroyPrefabClassByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.DestroyPrefabClassByCustomID : invalid parameter")
         return
     end
 
@@ -609,7 +609,7 @@ end
 
 -- 销毁所有UIPrefabClass
 -- @param onlyAsyn 只销毁异步子UIPrefabClass，类型：bool，默认销毁所有
-function UIMediatorClass:DestroyAllPrefabClass(onlyAsyn)
+function UIMediator:DestroyAllPrefabClass(onlyAsyn)
     if not onlyAsyn then
         for i = 1, #self._prefabClass do
             local obj = self._prefabClass[i]
@@ -630,9 +630,9 @@ end
 -- 获取UIPrefabClass
 -- @param name 类名
 -- @return 获取到的UIPrefabClass
-function UIMediatorClass:GetPrefabClassByName(name)
+function UIMediator:GetPrefabClassByName(name)
     if not name then
-        NGRLogE(self.__classname, "UIMediatorClass.GetPrefabClassByName : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.GetPrefabClassByName : invalid parameter")
         return nil
     end
 
@@ -655,9 +655,9 @@ end
 -- 获取UIPrefabClass
 -- @param customID 自定义ID
 -- @return 获取到的UIPrefabClass
-function UIMediatorClass:GetPrefabClassByCustomID(customID)
+function UIMediator:GetPrefabClassByCustomID(customID)
     if not customID then
-        NGRLogE(self.__classname, "UIMediatorClass.GetPrefabClassByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.GetPrefabClassByCustomID : invalid parameter")
         return nil
     end
 
@@ -683,7 +683,7 @@ end
 -- @return(#1) 如果已创建、或者正在创建，返回true
 -- @return(#2) 如果已创建，返回创建的实例
 -------------------------------------------------------------------------------------------
-function UIMediatorClass:HasChildPrefab(inCustomID)
+function UIMediator:HasChildPrefab(inCustomID)
     local tChildPrefab = self:GetPrefabClassByCustomID(inCustomID)
     if not tChildPrefab then
         return self:GetCreateAsynPrefabClassStateByCustomID(inCustomID)
@@ -694,9 +694,9 @@ end
 -- 获取UIPrefabClass异步状态状态
 -- @param name UIPrefabClass类名
 -- @return true：异步创建中  false: 不在异步创建中
-function UIMediatorClass:GetCreateAsynPrefabClassStateByName(name)
+function UIMediator:GetCreateAsynPrefabClassStateByName(name)
     if not name then
-        NGRLogE(self.__classname, "UIMediatorClass.GetCreateAsynPrefabClassStateByName : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.GetCreateAsynPrefabClassStateByName : invalid parameter")
         return
     end
 
@@ -712,9 +712,9 @@ end
 -- 获取UIPrefabClass异步状态状态
 -- @param customID 自定义ID
 -- @return true：异步创建中  false: 不在异步创建中
-function UIMediatorClass:GetCreateAsynPrefabClassStateByCustomID(customID)
+function UIMediator:GetCreateAsynPrefabClassStateByCustomID(customID)
     if not customID then
-        NGRLogE(self.__classname, "UIMediatorClass.GetCreateAsynPrefabClassStateByCustomID : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.GetCreateAsynPrefabClassStateByCustomID : invalid parameter")
         return
     end
     for i = #self._prefabClassAsyn, 1, -1 do
@@ -731,9 +731,9 @@ end
 -- @param name 需要挂接的C# UIPrefabClass子类类名
 -- @param bind 是否绑定C# UIPrefabClass子类（特别注意，设置为true时会影响效率，没有必要不要绑定）
 -- @return 无
-function UIMediatorClass:RegisterPrefabClassCookie(cls, name, bind)
+function UIMediator:RegisterPrefabClassCookie(cls, name, bind)
     if not cls or not name then
-        NGRLogE(self.__classname, "UIMediatorClass.RegisterPrefabClassCookie : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.RegisterPrefabClassCookie : invalid parameter")
         return
     end
 
@@ -747,9 +747,9 @@ end
 -- @param id 刷新ID标识
 -- @param argument 参数
 -- @param dummy 不要管这个参数
-function UIMediatorClass:SendUpdateUI(id, argument, dummy)
+function UIMediator:SendUpdateUI(id, argument, dummy)
     if not id then
-        NGRLogE(self.__classname, "UIMediatorClass.SendUpdateUI : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.SendUpdateUI : invalid parameter")
         return
     end
 
@@ -783,9 +783,9 @@ end
 -- @param id 操作ID标识
 -- @param argument 参数
 -- @param dummy 不要管这个参数
-function UIMediatorClass:SendAction(id, argument, dummy)
+function UIMediator:SendAction(id, argument, dummy)
     if not id then
-        NGRLogE(self.__classname, "UIMediatorClass.SendAction : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.SendAction : invalid parameter")
         return
     end
 
@@ -803,7 +803,7 @@ function UIMediatorClass:SendAction(id, argument, dummy)
     end
 end
 
-function UIMediatorClass:RefreshInputState()
+function UIMediator:RefreshInputState()
     local stateName = false
     if self._inputBelongUIStateName then
         stateName = self._inputBelongUIStateName
@@ -825,7 +825,7 @@ function UIMediatorClass:RefreshInputState()
     end
 end
 
-function UIMediatorClass:IsInputEnable()
+function UIMediator:IsInputEnable()
     return self._inputEnable or not self._belongUIStateName or #self._belongUIStateName == 0 or (#self._belongUIStateName > 0 and self._belongUIStateName[1] == "")
 end
 
@@ -834,7 +834,7 @@ end
 -- @param visible 是否显示
 -- @param class UI对应的PrefabClass
 -- @param arg UI的参数
-function UIMediatorClass:SetUIVisible(ui, visible, class, arg)
+function UIMediator:SetUIVisible(ui, visible, class, arg)
     if visible and not ui then
         ui = self:CreatePrefabClass(class, arg)
     elseif not visible and ui then
@@ -847,7 +847,7 @@ end
 -- 查找UIPrefab对应的PrefabClass
 -- @param uiPrefab UIPrefab对象
 -- @return 获取到的UIPrefabClass
-function UIMediatorClass:GetPrefabClassByUIPrefab(uiPrefab)
+function UIMediator:GetPrefabClassByUIPrefab(uiPrefab)
     for i = 1, #self._prefabClass do
         local prefabClass = self._prefabClass[i]
         if prefabClass ~= null and prefabClass.GetPrefabClassByUIPrefab then
@@ -861,7 +861,7 @@ function UIMediatorClass:GetPrefabClassByUIPrefab(uiPrefab)
 end
 
 ---@return DataCentreService
-function UIMediatorClass:GetDataCentre()
+function UIMediator:GetDataCentre()
     if self._module then
         return self._module:GetDataCentre()
     end
@@ -869,21 +869,21 @@ function UIMediatorClass:GetDataCentre()
 end
 
 -- 封装，保持和ModuleBase接口一致性
-function UIMediatorClass:GetOwner()
+function UIMediator:GetOwner()
     return SceneEntityService:GetPlayerEntity()
 end
 
 -- 封装，保持和ModuleBase接口一致性
-function UIMediatorClass:GetOwnerActor()
+function UIMediator:GetOwnerActor()
     return UE4Helper.GetMainPlayerCharacter(true)
 end
 
 -- 封装，保持和ModuleBase接口一致性
-function UIMediatorClass:GetOwnerController()
+function UIMediator:GetOwnerController()
     return UE4Helper.GetMainPlayerController(true)
 end
 
-function UIMediatorClass:_DoEachPrefab(inFunc, ...)
+function UIMediator:_DoEachPrefab(inFunc, ...)
     local tReturnValue = nil
     for tIndex = 1, #self._prefabClass do
         tReturnValue = inFunc(self._prefabClass[tIndex], ...)
