@@ -29,7 +29,7 @@ function NetMessageService:vInitialize()
     -- open
     FrostLogD(self.__classname, "NetMessageService:vInitialize")
 
-    CS.FrostEngine.GameEvent.AddEventListener(101, function()
+    CS.FrostEngine.GameEvent.AddEventListener(101,nil, function()
         self._IsConnected = NetworkNativeService:IsConnect()
         if self._IsConnected then
             FrostLogD(self.__classname, "NetMessageService.Connect url = ", self._LastConnectedUrl)

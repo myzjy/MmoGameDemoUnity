@@ -12,9 +12,6 @@ local EventService = Class("EventService", ClassLibraryMap.ServiceBase)
 function EventService:ctor()
     self._eventNameData = {}
     self._objData = {}
-    self._addEventListener = CS.FrostEngine.GameEvent.AddEventListener
-    self._sendEventFunc = CS.FrostEngine.GameEvent.Send
-    self._removeEventListener = CS.FrostEngine.GameEvent.RemoveEventListener
 end
 
 function EventService:OnEvent(eventName, handle, ...)
@@ -111,7 +108,7 @@ function EventService:ListenEvent(eventName, obj, func, time, target, source)
         end
     end
 
-    self._addEventListener(eventName, obj, func)
+    CS.FrostEngine.GameEvent.AddEventListener(eventName, obj, func)
     local handle = event(eventName)
 
     local handleData = {}
@@ -171,7 +168,7 @@ function EventService:UnListenEvent(obj, eventName)
         end
     end
     for index = 1, #handle, 1 do
-        self._removeEventListener(handle[index])
+        CS.FrostEngine.GameEvent.RemoveEventListener(handle[index])
     end
 
     handle = {}
@@ -184,11 +181,11 @@ function EventService:SendEvent(id, sender, target, ...)
         return
     end
 
-    if not self._sendEventFunc then
+    if not CS.FrostEngine.GameEvent.Send then
         FrostLogE(self.__classname, "EventService:SendEvent : not initialized", id)
         return
     end
-    self._sendEventFunc(id, ...)
+    CS.FrostEngine.GameEvent.Send(id, ...)
 end
 
 function EventService:AddEventListener(event, func, inObj)

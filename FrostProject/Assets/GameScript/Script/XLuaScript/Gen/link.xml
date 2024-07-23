@@ -122,7 +122,8 @@
 	</assembly>
 
 	<assembly fullname="FrostEngine.Runtime">
-	    <type fullname="FrostEngine.Executors" preserve="all"/>
+	    <type fullname="FrostEngine.GameEvent" preserve="all"/>
+		<type fullname="FrostEngine.Executors" preserve="all"/>
 		
 	</assembly>
 

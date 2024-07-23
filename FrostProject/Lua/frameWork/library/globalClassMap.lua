@@ -8,3 +8,5 @@
 ---@field UPool UPoolClass
 ---@field DataCentreService DataCentreService
 ---@field AssetService AssetService
+
+---@class GameModule

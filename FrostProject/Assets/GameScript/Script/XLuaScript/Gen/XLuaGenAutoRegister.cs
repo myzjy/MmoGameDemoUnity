@@ -269,6 +269,9 @@ namespace XLua.CSObjectWrap
             translator.DelayWrapLoader(typeof(UnityEngine.Debug), UnityEngineDebugWrap.__Register);
         
         
+            translator.DelayWrapLoader(typeof(FrostEngine.GameEvent), FrostEngineGameEventWrap.__Register);
+        
+        
             translator.DelayWrapLoader(typeof(FrostEngine.Executors), FrostEngineExecutorsWrap.__Register);
         
         

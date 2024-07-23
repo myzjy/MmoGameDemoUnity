@@ -20,4 +20,5 @@
 ---@field UpdateManager UpdateManager
 ---@field EventClass EventClass
 ---@field DataTableService DataTableService
+---@field GameBaseStage GameBaseStage
 ClassLibraryMap = {}

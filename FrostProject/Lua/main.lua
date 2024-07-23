@@ -47,6 +47,7 @@ if not status then
 end
 
 function LuaInit()
+    ---@type GameModule
     GameModule = CS.FrostEngine.GameModule
     SettingModule = CS.FrostEngine.ModuleSystem.GetModule("SettingModule")
     RootModules = CS.FrostEngine.ModuleSystem.GetModule("RootModules")

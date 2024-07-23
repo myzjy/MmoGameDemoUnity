@@ -105,7 +105,13 @@ namespace FrostEngine
 
         public static XLuaModule XLuaModule => _xLuaModule ??= Get<XLuaModule>();
         private static XLuaModule _xLuaModule;
+
+        /// <summary>
+        /// 获取场景模块。
+        /// </summary>
+        public static SceneModule Scene => _scene ??= Get<SceneModule>();
         
+        private static SceneModule _scene;
 
         #endregion
 
