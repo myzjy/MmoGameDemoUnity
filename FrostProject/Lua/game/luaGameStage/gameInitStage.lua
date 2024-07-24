@@ -9,7 +9,7 @@ local GameInitStage = Class("GameInitStage", ClassLibraryMap.GameBaseStage)
 
 function GameInitStage:ctor()
     FrostLogD(self.__classname, ">>>> ctor")
-    self.StageType = GlobalEnum.EStage.Init
+    self.NowGameStageType = GlobalEnum.EStage.Init
 end
 
 -------------------------------------------------------------------------------------------

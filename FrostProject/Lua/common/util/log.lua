@@ -79,7 +79,7 @@ end
 
 function FrostLogD(...)
     local tArguments = {...}
-    local tFmt = table.concat(tArguments,"\t")
+    local tFmt = table.concat(tArguments,"\t ")
     local d = ""
     if Debug < 1 then
         return
@@ -96,7 +96,7 @@ end
 
 function FrostLogE(...)
     local tArguments = {...}
-    local tFmt = table.concat(tArguments,"\t")
+    local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");
@@ -113,7 +113,7 @@ function FrostLogW(...)
         return
     end
     local tArguments = {...}
-    local tFmt = table.concat(tArguments,"\t")
+    local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");
@@ -130,7 +130,7 @@ function FrostLogI(inFmt, ...)
         return
     end
     local tArguments = {...}
-    local tFmt = table.concat(tArguments,"\t")
+    local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
         local info = debug.getinfo(2, "Sln");

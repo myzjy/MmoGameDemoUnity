@@ -9,7 +9,7 @@
 
 ---@class GameStageService:ServiceBase
 local GameStageService = Class("GameStageService", ClassLibraryMap.ServiceBase)
-local EStage = GlobalEnum.EState  -- 游戏阶段Enum
+local EStage = GlobalEnum.EStage  -- 游戏阶段Enum
 function GameStageService:ctor()
     -- 当前的阶段实例
     self._curStageInstance = false
@@ -63,15 +63,15 @@ function GameStageService:_refreshRegisterGameStageConfig(inStageClass)
     local tGameStageClass = inStageClass()
     local tGameStageType = tGameStageClass.NowGameStageType
     if tGameStageType == GlobalEnum.EStage.None then
-        FrostLogE(self.__classname, "跳过注册阶段", tStageType, inStageClass.__classname)
+        FrostLogE(self.__classname, "跳过注册阶段", tGameStageType, inStageClass.__classname)
         return
     end
-    FrostLogD(self.__classname, "Register stage with", tStageType, inStageClass.__classname)
-    if self._mapStage[tStageType] then
-        FrostLogE(self.__classname, "Already register stage with", tStageType, inStageClass.__classname)
+    FrostLogD(self.__classname, "Register stage with", tGameStageType, inStageClass.__classname)
+    if self._mapStage[tGameStageType] then
+        FrostLogE(self.__classname, "Already register stage with", tGameStageType, inStageClass.__classname)
         return
     end
-    self._mapStage[tStageType] = tStageInstance
+    self._mapStage[tGameStageType] = tGameStageClass
 end
 
 function GameStageService:vDeinitialize()
@@ -110,7 +110,7 @@ function GameStageService:_changeStage(inChangeContext)
     self._curStageInstance = tNextStageInstance
     self._pendingStageType = EStage.None
     -- 2. 触发新阶段的回调，在回调中可能立即切换新的阶段
-    tNextStageInstance:OnEnter(tPreStageType, inChangeContext)
+    tNextStageInstance:Enter(tPreStageType, inChangeContext)
 end
 
 -------------------------------------------------------------------------------------------
@@ -136,6 +136,43 @@ function GameStageService:OnStagePostLoadMap(inWorld)
     if not tCurStageInstance then return end
     FrostLogD(self.__classname, "OnStagePostLoadMap", inWorld:GetName(), "in", tCurStageInstance.__classname, tCurStageInstance.StageType)
     tCurStageInstance:PostLoadMap(inWorld)
+end
+
+-------------------------------------------------------------------------------------------
+-- 设置即将变更的阶段，下一帧进行实际切换
+-- @param inStageType(EStage) 目标阶段类型
+-- @param inChangeContext(*) 切换的上下文，会传递给新的阶段实例
+-- {
+--     mapID(number) 切换地图的目标地图ID（DT_Map)
+--     playerPos(FVector) 可选，切换到地图之后的角色位置
+--     playerRotation(FRotator) 可选，切换到地图之后的角色旋转
+-- }
+-- @param inIsImmediately(boolean) 是否立即切换
+-------------------------------------------------------------------------------------------
+function GameStageService:SetPendingStage(inStageType, inChangeContext, inIsImmediately)
+    if inChangeContext and inIsImmediately ~= nil then
+        FrostLogD(self.__classname, "SetPendingStage", inStageType, JSON.encode(inChangeContext), inIsImmediately)
+    else
+        FrostLogD(self.__classname, "SetPendingStage", inStageType, "nil", "nil")
+    end
+    if self._pendingStageType ~= EStage.None then
+        FrostLogE(self.__classname, "Already has pending stage", self._pendingStageType)
+        return
+    end
+    if self:GetCurStage() == inStageType then
+        FrostLogW(self.__classname, "Already in stage", inStageType)
+        return
+    end
+    if not self._mapStage[inStageType] then
+        FrostLogE(self.__classname, "Stage has not yet registered", inStageType)
+        return
+    end
+    self._pendingStageType = inStageType
+    if inIsImmediately then
+        self:_changeStage(inChangeContext)
+    else
+        ScheduleService:AddTimerOnNextFrame(self, self._changeStage, inChangeContext)
+    end
 end
 
 return GameStageService

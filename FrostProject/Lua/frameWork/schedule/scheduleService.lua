@@ -50,14 +50,14 @@ function ScheduleService:Update(deltaTime)
     end
 
     for i = #self._timer, 1, -1 do
-        local tTimes= self._timer[i]
+        local tTimes = self._timer[i]
 
         if tTimes == null then
             table.remove(self._timer, i)
         elseif tTimes.frameNum then
-            if curFrameCount > data.frameNum then
+            if curFrameCount > tTimes.frameNum then
                 self._timer[i] = null
-                xpcall(tTimes.func,__G__TRACKBACK__, tTimes.obj, table.unpack(data.params))
+                xpcall(tTimes.func,__G__TRACKBACK__, tTimes.obj, table.unpack(tTimes.params))
             end
         else
             tTimes.remain = tTimes.remain - deltaTime
@@ -190,7 +190,7 @@ function ScheduleService:AddTimerOnNextFrame(obj, func, ...)
         return
     end
 
-    self:_internalAddTimer(obj, func, nil, nil, nil, UE4.UKismetSystemLibrary.GetFrameCount(), ...)
+    self:_internalAddTimer(obj, func, nil, nil, nil, CS.UnityEngine.Time.frameCount, ...)
 end
 
 function ScheduleService:_internalAddTimer(obj, func, interval, repetition, execFuncAtOnce, frameNum, ...)

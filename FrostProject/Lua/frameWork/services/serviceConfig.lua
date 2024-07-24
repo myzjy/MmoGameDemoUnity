@@ -16,4 +16,6 @@ return {
 
     "frameWork.services.gameTime.gameTimeService",       -- 时间服务
     "frameWork.services.csNetwork.NetWrokService",       -- 网络服务
+    "frameWork.services.sceneMap.sceneMapService",       -- 地图
+
 }

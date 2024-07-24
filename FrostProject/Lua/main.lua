@@ -3,7 +3,6 @@
 --- Created by Administrator.
 --- DateTime: 2024/7/7 下午8:47
 ---
-require("debug.luaPanda").start()
 Debug = 0
 ConfigurationDevice = {}
 CS = CS
@@ -47,7 +46,7 @@ if not status then
 end
 
 function LuaInit()
-    ---@type GameModule
+    ---@type CS.FrostEngine.GameModule
     GameModule = CS.FrostEngine.GameModule
     SettingModule = CS.FrostEngine.ModuleSystem.GetModule("SettingModule")
     RootModules = CS.FrostEngine.ModuleSystem.GetModule("RootModules")
@@ -56,7 +55,9 @@ function LuaInit()
     ServiceManager:Initialize()
     NetMessageService:Connect(SettingModule.ServerSettings.ApiWebSocketUrl)
 end
-
+function LuaMain()
+    GameStageService:SetPendingStage(GlobalEnum.EStage.Init, nil, true)
+end
 function LuaTick()
     
 end

@@ -5,5 +5,6 @@
 --]]---------------------------------------------------------------------------------------
 
 return {
-    
+    "game.luaGameStage.gameInitStage",
+    "game.luaGameStage.LoginStage",
 }

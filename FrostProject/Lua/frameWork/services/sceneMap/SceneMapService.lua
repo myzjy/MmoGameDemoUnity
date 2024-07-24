@@ -11,7 +11,7 @@
                 5.3 Map.PlayHasEntered（玩家组装完成，关闭加载界面）
 --]]---------------------------------------------------------------------------------------
 
-
+---@class SceneMapService:ServiceBase
 local SceneMapService = Class("SceneMapService", ClassLibraryMap.ServiceBase)
 
 --------------------------------------------------------------------------
@@ -20,6 +20,20 @@ local SceneMapService = Class("SceneMapService", ClassLibraryMap.ServiceBase)
 function SceneMapService:ctor()
     ---@type CS.FrostEngine.SceneModule
     self._sceneModule = GameModule.Scene
+end
+
+function SceneMapService:vGetConfig()
+    return {
+        name = "SceneMapService"
+    }
+end
+
+function SceneMapService:vInitialize()
+end
+
+function SceneMapService:vDeinitialize()
+    NetMessageService:RemoveListener(self)
+    EventService:UnListenEvent(self)
 end
 
 ---@param location string

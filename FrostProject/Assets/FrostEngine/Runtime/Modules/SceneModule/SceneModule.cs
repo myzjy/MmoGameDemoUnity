@@ -7,9 +7,10 @@ namespace FrostEngine
     /// <summary>
     /// 场景管理模块。
     /// </summary>
-    public sealed class SceneModule: Module
+    public sealed class SceneModule : Module
     {
         private ISceneModule _sceneModule;
+
         private void Start()
         {
             RootModules baseComponent = ModuleSystem.GetModule<RootModules>();
@@ -26,11 +27,12 @@ namespace FrostEngine
                 return;
             }
         }
+
         /// <summary>
         /// 当前主场景名称。
         /// </summary>
         public string CurrentMainSceneName => _sceneModule.CurrentMainSceneName;
-        
+
         /// <summary>
         /// 加载场景。
         /// </summary>
@@ -41,12 +43,15 @@ namespace FrostEngine
         /// <param name="callBack">加载回调。</param>
         /// <param name="gcCollect">加载主场景是否回收垃圾。</param>
         /// <param name="progressCallBack">加载进度回调。</param>
-        public SceneHandle LoadScene(string location, LoadSceneMode sceneMode = LoadSceneMode.Single, bool suspendLoad = false, int priority = 100,
+        public SceneHandle LoadScene(string location, LoadSceneMode sceneMode = LoadSceneMode.Single,
+            bool suspendLoad = false, int priority = 100,
             Action<SceneHandle> callBack = null, bool gcCollect = true, Action<float> progressCallBack = null)
         {
-            return _sceneModule.LoadScene(location, sceneMode, suspendLoad, priority, callBack, gcCollect, progressCallBack);
+            return _sceneModule.LoadScene(location, sceneMode, suspendLoad, priority, callBack, gcCollect,
+                progressCallBack);
         }
-                /// <summary>
+
+        /// <summary>
         /// 加载子场景。
         /// </summary>
         /// <param name="location">场景的定位地址</param>
@@ -58,7 +63,8 @@ namespace FrostEngine
         public SceneHandle LoadSubScene(string location, bool suspendLoad = false, int priority = 100,
             Action<SceneHandle> callBack = null, bool gcCollect = true, Action<float> progressCallBack = null)
         {
-            return _sceneModule.LoadScene(location, LoadSceneMode.Additive, suspendLoad, priority, callBack, gcCollect, progressCallBack);
+            return _sceneModule.LoadScene(location, LoadSceneMode.Additive, suspendLoad, priority, callBack, gcCollect,
+                progressCallBack);
         }
 
         /// <summary>

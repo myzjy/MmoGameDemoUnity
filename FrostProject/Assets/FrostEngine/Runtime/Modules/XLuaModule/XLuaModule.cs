@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 using XLua;
@@ -54,11 +55,48 @@ namespace FrostEngine
                 Debug.Fatal("luaEnv  is invalid.");
                 return;
             }
-
+#if UNITY_EDITOR_WIN
+            //链接rider和vscode的lua调试器
+            //这里改路径
+            var path = "C:/Users/Administrator.DESKTOP-RJIHOV7/.vscode/extensions/tangzx.emmylua-0.8.12-win32-x64/debugger/emmy/windows/x64/emmy_core.dll";
+            if (File.Exists(path))
+            {
+                path = path.Replace("emmy_core.dll", "?.dll");
+                bool openDebugFinish = true;
+                try
+                {
+                    luaEnv.DoString(
+                        $"package.cpath = package.cpath .. ';{path}'" +
+                        "local dbg = require('emmy_core')" +
+                        "dbg.tcpConnect('localhost', 8456)"// 这里改端口号
+                    );
+                }
+                catch (Exception e)
+                {
+                    openDebugFinish = false;
+                    Debug.LogError("不需要调试请忽略>>>>>\t调试server未能连接:\n" + e.Message);
+                }
+                finally
+                {
+                    if (openDebugFinish)
+                    {
+                        Debug.LogError("成功连接调试server\n" + path);
+                    }
+                }
+            }
+#endif
             LoadScript("main");
+
             luaEnv.Global.Get<Action>("LuaInit").Invoke();
             luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
             _netManager.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnNetDataRecieved"));
+            luaEnv.Global.Get<Action>("LuaMain").Invoke(); 
+        }
+
+        private IEnumerator StartMain()
+        {
+            yield return new WaitForSeconds(5);
+            luaEnv.Global.Get<Action>("LuaMain").Invoke();
         }
         
         public byte[] CustomLoader(ref string filePath)

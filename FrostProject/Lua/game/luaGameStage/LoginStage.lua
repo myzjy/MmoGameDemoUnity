@@ -8,7 +8,7 @@
 local LoginStage = Class("LoginStage", ClassLibraryMap.GameBaseStage)
 function LoginStage:ctor()
     FrostLogD(self.__classname, "ctor")
-    self.StageType = GlobalEnum.EStage.Login
+    self.NowGameStageType = GlobalEnum.EStage.Login
     self._mapID = GConfig.MapID.Login
     self.bOfflineMode = false
 end

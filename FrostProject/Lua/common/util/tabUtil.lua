@@ -269,7 +269,21 @@ local function deep_copy(object)
 
 	return _copy(object)
 end
-
+---@overload fun(list:table):string
+---@overload fun(list:table, sep:string):string
+---@overload fun(list:table, sep:string, i:number):string
+local function concat(list, sep, i, j)
+	local tConcat = ""
+	for i = 1, #list do
+		if list[i] ~= nil then
+			tConcat = tConcat.. sep .. list[i]
+		else
+			tConcat = tConcat .. sep .. "nil"
+		end
+	end
+	return tConcat
+end
+table.concat = concat
 table.count = count
 table.length = length
 table.setlen = setlen

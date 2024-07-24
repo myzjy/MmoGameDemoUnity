@@ -11,9 +11,9 @@ function GameBaseStage:ctor()
     FrostLogD(self.__classname,"in GameBaseStage:ctor")
 
     -- 阶段类型 上一个
-    self.PreGameStageType = GlobalEnum.EState.None
+    self.PreGameStageType = GlobalEnum.EStage.None
     -- 当前游戏阶段类型
-    self.NowGameStageType = GlobalEnum.EState.None
+    self.NowGameStageType = GlobalEnum.EStage.None
     -- 当前阶段绑定的地图ID，进入到当前阶段后自动加载此地图
     self._mapID = GlobalEnum.EInvalidDefine.ID
     -- 切换至当前状态的上下文
@@ -43,10 +43,10 @@ end
 -- @param inChangeContext(*) 切换的上下文，会传递给新的阶段实例，字段信息参考 self._changeContext
 -------------------------------------------------------------------------------------------
 function GameBaseStage:Enter(inPreGameStageType, inChangeContext)
-    FrostLogD(self.__classname,"Enter".. self.__classname,"PreStage is", inPreStageType, "with", inChangeContext)
+    FrostLogD(self.__classname,"Enter".. self.__classname,"PreStage is", inPreGameStageType, "with", inChangeContext)
     -- 1. 由于Stage的实例是复用的，所以此处需要清理缓存
-    table.clear(self._changeContext)
-    self.PreStageType = inPreStageType
+    table.Clear(self._changeContext)
+    self.PreStageType = inPreGameStageType
     self._changeContext = inChangeContext or self._changeContext
     -- 2. 先进入阶段, 收集阶段实例要执行的预载处理和目标地图
     self:OnStage_Enter(self.PreStageType, self._changeContext)
@@ -59,7 +59,7 @@ end
 -- @param inMapPath(string) 地图路径
 -------------------------------------------------------------------------------------------
 function GameBaseStage:PreMapLoad(inMapPath)
-    NGRLogD(self.__classname, "PreMapLoad", inMapPath)
+    FrostLogD(self.__classname, "PreMapLoad", inMapPath)
     self:OnStage_PreMapLoad(inMapPath)
 end
 
@@ -68,7 +68,7 @@ end
 -- @param inWorld(UWorld) 加载完的主关卡
 -------------------------------------------------------------------------------------------
 function GameBaseStage:PostLoadMap(inWorld)
-    NGRLogD(self.__classname, "PostLoadMap " .. self.__classname, inWorld)
+    FrostLogD(self.__classname, "PostLoadMap " .. self.__classname, inWorld)
     -- 尝试关闭与加载阶段打开的加载界面
     self:_closePreLoadUI(GlobalEnum.EStagePreLoadCloseLoadingMode.PostLoadMap)
     self:OnStage_PostLoadMap(inWorld)
@@ -81,7 +81,7 @@ end
 -- @param inMapType(EMapType) 地图类型
 -------------------------------------------------------------------------------------------
 function GameBaseStage:PlayerEnterWorld(inPlayerCharacter, inMapID, inMapType)
-    NGRLogD(self.__classname, "PlayerEnterWorld " .. self.__classname, inMapID, inMapType)
+    FrostLogD(self.__classname, "PlayerEnterWorld " .. self.__classname, inMapID, inMapType)
     -- 尝试关闭与加载阶段打开的加载界面
     self:_closePreLoadUI(GlobalEnum.EStagePreLoadCloseLoadingMode.PlayerEnterWorld)
     self:OnStage_PlayerEnterWorld(inPlayerCharacter, inMapID, inMapType)
@@ -91,12 +91,12 @@ end
 -- 阶段退出的时机
 -------------------------------------------------------------------------------------------
 function GameBaseStage:Leave()
-    NGRLogD(self.__classname, "Leave " .. self.__classname)
+    FrostLogD(self.__classname, "Leave " .. self.__classname)
     self:OnStage_Leave()
 end
 
 function GameBaseStage:PlayerLogout(inPlayerController)
-    NGRLogD(self.__classname, "PlayerLogout", inPlayerController)
+    FrostLogD(self.__classname, "PlayerLogout", inPlayerController)
     self:OnStage_PlayerLogout(inPlayerController)
 end
 

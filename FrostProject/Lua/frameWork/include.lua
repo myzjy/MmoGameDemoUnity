@@ -1,6 +1,7 @@
 require("frameWork.library.ClassLibraryMap")
 require("common.include")
 require("define.Include")
+require("frameWork.gameStage.gameBaseStage")
 require("frameWork.services.serviceBase")
 require("frameWork.services.eventService.eventService")
 require("frameWork.services.registerNativeServices")
