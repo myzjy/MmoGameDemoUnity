@@ -113,4 +113,29 @@ function GameStageService:_changeStage(inChangeContext)
     tNextStageInstance:OnEnter(tPreStageType, inChangeContext)
 end
 
+-------------------------------------------------------------------------------------------
+-- 地图加载前的回调
+-- @param inMapPath(string) 地图的路径
+-------------------------------------------------------------------------------------------
+function GameStageService:OnStagePreLoadMap(inMapPath)
+    local tCurStageInstance = self._curStageInstance
+    if not tCurStageInstance then return end
+    FrostLogD(self.__classname, "OnStagePreLoadMap", inMapPath, "in", tCurStageInstance.__classname, tCurStageInstance.StageType)
+    tCurStageInstance:PreMapLoad(inMapPath)
+    if self._pendingStageType ~= EStage.None then
+        tCurStageInstance:Leave()
+    end
+end
+
+-------------------------------------------------------------------------------------------
+-- 地图加载后的回调
+-- @param inWorld(UWorld) 加载后的地图实例
+-------------------------------------------------------------------------------------------
+function GameStageService:OnStagePostLoadMap(inWorld)
+    local tCurStageInstance = self._curStageInstance
+    if not tCurStageInstance then return end
+    FrostLogD(self.__classname, "OnStagePostLoadMap", inWorld:GetName(), "in", tCurStageInstance.__classname, tCurStageInstance.StageType)
+    tCurStageInstance:PostLoadMap(inWorld)
+end
+
 return GameStageService
