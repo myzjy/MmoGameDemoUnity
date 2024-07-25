@@ -103,7 +103,7 @@ function GameStageService:_changeStage(inChangeContext)
     FrostLogD(self.__classname, "change stage from", tPreStageInstance and tPreStageInstance.__classname or "NoPreStage", "to", tNextStageInstance.__classname)
     local tPreStageType = EStage.None
     if tPreStageInstance then
-        tPreStageType = tPreStageInstance.StageType
+        tPreStageType = tPreStageInstance.NowGameStageType
         tPreStageInstance:Leave()
     end
     -- 1. 先更新缓存，兼容新阶段的进入处理立即切换下一个阶段的情况

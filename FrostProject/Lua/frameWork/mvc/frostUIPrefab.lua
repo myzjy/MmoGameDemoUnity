@@ -541,7 +541,7 @@ function UIPrefab:_PlayAutoAnim(autoPlayMode)
                     if not self._autoPlayAnimDelay.Enable then
                         self._autoPlayAnimDelay.AccumulationTime = 0
                         self._autoPlayAnimDelay.Enable = true
-                        ScheduleService:AddUpdater(self, self._DelayPlayAnimationTick)
+                        -- ScheduleService:AddUpdater(self, self._DelayPlayAnimationTick)
                     end
                 else
                     UIUtility:PlayUIAnimation(self._prefab, setting.AnimName, animParam)

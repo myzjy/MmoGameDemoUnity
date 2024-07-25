@@ -168,6 +168,6 @@ function _DisableLuaLogInterface(...)
     
 end
 
-print = function(...)  end
-error = function(...)  end
-warn =  function(...)  end
+-- print = function(...)  end
+-- error = function(...)  end
+-- warn =  function(...)  end

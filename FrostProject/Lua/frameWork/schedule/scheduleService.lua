@@ -7,6 +7,7 @@
 local ScheduleService = Class("ScheduleService", ClassLibraryMap.ServiceBase)
 
 function ScheduleService:ctor()
+    self.curFrameCount = RootModules.FrameRate
     self._updater = {}
     self._timer = {}
 end
@@ -33,29 +34,31 @@ end
 
 function ScheduleService:Update(deltaTime)
     -- 帧率
-    local curFrameCount = RootModules.FrameRate
-    for i = #self._updater, 1, -1 do
-        local tUpdateData = self._updater[i]
 
-        if tUpdateData ~= nullTbl then
-            if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (curFrameCount > tUpdateData.frameNum)) then
-                xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
-                if tUpdateData.isOnce then
-                    self._updater[i] = nullTbl
-                end
-            end
-        else
-            table.remove(self._updater, i)
-        end
-    end
+    -- for i = #self._updater, 1, -1 do
+    --     FrostLogD(self.__classname, "_updater call" , i)
+    --     local tUpdateData = self._updater[i]
+
+    --     if tUpdateData ~= nullTbl then
+    --         if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (self.curFrameCount > tUpdateData.frameNum)) then
+    --             xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
+    --             if tUpdateData.isOnce then
+    --                 self._updater[i] = nullTbl
+    --             end
+    --         end
+    --     else
+    --         table.remove(self._updater, i)
+    --     end
+    -- end
 
     for i = #self._timer, 1, -1 do
         local tTimes = self._timer[i]
+        FrostLogD(self.__classname, "_timer call" , i)
 
         if tTimes == null then
             table.remove(self._timer, i)
         elseif tTimes.frameNum then
-            if curFrameCount > tTimes.frameNum then
+            if self.curFrameCount > tTimes.frameNum then
                 self._timer[i] = null
                 xpcall(tTimes.func,__G__TRACKBACK__, tTimes.obj, table.unpack(tTimes.params))
             end

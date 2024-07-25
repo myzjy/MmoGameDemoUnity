@@ -116,12 +116,17 @@ local function encode_number(val)
     return string.format("%.14g", val)
 end
 
+local function encode_function(val)
+    return type(val)
+end
+
 local type_func_map = {
     ["nil"] = encode_nil,
     ["table"] = encode_table,
     ["string"] = encode_string,
     ["number"] = encode_number,
     ["boolean"] = tostring,
+    ["function"] = encode_function,
 }
 
 encode = function(val, stack)

@@ -429,7 +429,7 @@ namespace FrostEngine
         /// <typeparam name="TArg1">事件参数1类型。</typeparam>
         /// <typeparam name="TArg2">事件参数2类型。</typeparam>
         /// <typeparam name="TArg3">事件参数3类型。</typeparam>
-        public static void Send<TArg1, TArg2, TArg3>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3)
+        public static void Send3<TArg1, TArg2, TArg3>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3)
         {
             _eventMgr.Dispatcher.Send(eventType, arg1, arg2, arg3);
         }
@@ -446,7 +446,7 @@ namespace FrostEngine
         /// <typeparam name="TArg2">事件参数2类型。</typeparam>
         /// <typeparam name="TArg3">事件参数3类型。</typeparam>
         /// <typeparam name="TArg4">事件参数4类型。</typeparam>
-        public static void Send<TArg1, TArg2, TArg3, TArg4>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3,
+        public static void Send4<TArg1, TArg2, TArg3, TArg4>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3,
             TArg4 arg4)
         {
             _eventMgr.Dispatcher.Send(eventType, arg1, arg2, arg3, arg4);
@@ -466,7 +466,7 @@ namespace FrostEngine
         /// <typeparam name="TArg3">事件参数3类型。</typeparam>
         /// <typeparam name="TArg4">事件参数4类型。</typeparam>
         /// <typeparam name="TArg5">事件参数5类型。</typeparam>
-        public static void Send<TArg1, TArg2, TArg3, TArg4, TArg5>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3,
+        public static void Send5<TArg1, TArg2, TArg3, TArg4, TArg5>(object eventType, TArg1 arg1, TArg2 arg2, TArg3 arg3,
             TArg4 arg4, TArg5 arg5)
         {
             _eventMgr.Dispatcher.Send(eventType, arg1, arg2, arg3, arg4, arg5);

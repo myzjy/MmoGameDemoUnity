@@ -3,7 +3,7 @@
 --- Created by Administrator.
 --- DateTime: 2024/7/24 下午9:59
 
----@class CS.UnityEngine.SceneManagement.LoadSceneMode 在播放器中加载场景时使用。
+---@class UnityEngine.SceneManagement.LoadSceneMode 在播放器中加载场景时使用。
 CS.UnityEngine.SceneManagement.LoadSceneMode = {
     ---@type number 关闭所有当前加载的场景并加载一个场景。
     Single = CS.UnityEngine.SceneManagement.LoadSceneMode.Single,

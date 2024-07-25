@@ -10,32 +10,18 @@ local function Init()
     Debug = CS.FrostEngine.SettingsUtils.DebugConfig()
 end
 Init()
-Global = {}
-local __g = _G
-
+handleLuaExceptionIdx = 0
 
 function __G__TRACKBACK__(exceptionMsg)
     local msg = string.format("[%d] %s\n", handleLuaExceptionIdx, tostring(exceptionMsg))
     local str = "LUA ERROR: " .. msg
-    local strMsg="----------------------------------------\n"..str.."\n"..debug.traceback().."\n----------------------------------------"
+    local strMsg = "----------------------------------------\n"..str.."\n"..debug.traceback().."\n----------------------------------------"
     if FrostLogE then
         FrostLogE(strMsg)
     else
         print(strMsg)
     end
-
-    -- 若报错信息与上一条相同，忽略显示
-    --if lastLuaExceptionMsg == exceptionMsg then
-    --    return
-    --end
-    lastLuaExceptionMsg = exceptionMsg
     handleLuaExceptionIdx = handleLuaExceptionIdx + 1
-
-    --handleLuaException(msg)
-    if Debug < 1 then
-        -- 正式线上不显示详细信息
-        str = str .. debug.traceback() .. "\n"
-    end
 end
 local function main()
     print("main 函数")
@@ -46,7 +32,7 @@ if not status then
 end
 
 function LuaInit()
-    ---@type CS.FrostEngine.GameModule
+    ---@type FrostEngine.GameModule
     GameModule = CS.FrostEngine.GameModule
     SettingModule = CS.FrostEngine.ModuleSystem.GetModule("SettingModule")
     RootModules = CS.FrostEngine.ModuleSystem.GetModule("RootModules")
@@ -58,6 +44,6 @@ end
 function LuaMain()
     GameStageService:SetPendingStage(GlobalEnum.EStage.Init, nil, true)
 end
-function LuaTick()
-    
+function LuaTick(deltaTime)
+    ScheduleService:Update(deltaTime)
 end

@@ -127,7 +127,6 @@ CoFixedUpdateBeat = event("CoFixedUpdate")
 
 function Update(deltaTime, unscaledDeltaTime)
 	ClassLibraryMap.Time:SetDeltaTime(deltaTime, unscaledDeltaTime)
-	ScheduleService:Update(deltaTime)
 	UpdateBeat()
 	CoUpdateBeat()
 end

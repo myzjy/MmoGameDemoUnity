@@ -21,4 +21,5 @@
 ---@field EventClass EventClass
 ---@field DataTableService DataTableService
 ---@field GameBaseStage GameBaseStage
+---@field Messenger Messenger
 ClassLibraryMap = {}

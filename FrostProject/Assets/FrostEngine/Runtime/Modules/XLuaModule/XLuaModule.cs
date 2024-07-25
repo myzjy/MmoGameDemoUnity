@@ -11,6 +11,7 @@ namespace FrostEngine
     public sealed class XLuaModule : Module
     {
         Action<float, float> luaUpdate = null;
+        Action<float> luaTick = null;
         Action luaLateUpdate = null;
         Action<float> luaFixedUpdate = null;
 
@@ -40,7 +41,6 @@ namespace FrostEngine
 
             _netManager = ModuleImpSystem.GetModule<NetManager>();
             luaEnv = new LuaEnv();
-            luaEnv.AddLoader(CustomLoader);
         }
 
         public LuaEnv GetLuaEnv()
@@ -85,12 +85,15 @@ namespace FrostEngine
                 }
             }
 #endif
+            luaEnv.AddLoader(CustomLoader);
+
             LoadScript("main");
 
             luaEnv.Global.Get<Action>("LuaInit").Invoke();
             luaUpdate = luaEnv.Global.Get<Action<float, float>>("Update");
             _netManager.ReceiveStringAction(luaEnv.Global.Get<Action<byte[]>>("OnNetDataRecieved"));
             luaEnv.Global.Get<Action>("LuaMain").Invoke(); 
+            luaTick = luaEnv.Global.Get<Action<float>>("LuaTick"); 
         }
 
         private IEnumerator StartMain()
@@ -156,6 +159,11 @@ namespace FrostEngine
                     {
                         Debug.LogError("luaUpdate err : " + ex.Message + "\n" + ex.StackTrace);
                     }
+                }
+
+                if (luaTick!=null)
+                {
+                    luaTick(Time.deltaTime);
                 }
             }
         }

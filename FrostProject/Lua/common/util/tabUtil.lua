@@ -283,7 +283,7 @@ local function concat(list, sep, i, j)
 	end
 	return tConcat
 end
-table.concat = concat
+-- table.concat = concat
 table.count = count
 table.length = length
 table.setlen = setlen

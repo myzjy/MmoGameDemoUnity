@@ -23,7 +23,7 @@ end
 local function Constructor(self)
     -- 成员变量
     -- 消息中心
-    self.ui_message_center = Messenger()
+    self.ui_message_center = ClassLibraryMap.Messenger()
     -- Update
     self.__update_handle = nil
     -- LateUpdate

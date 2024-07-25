@@ -4,5 +4,5 @@
 --- DateTime: 2024/7/24 下午10:12
 ---
 
----@class CS.YooAsset.SceneHandle
+---@class YooAsset.SceneHandle
 CS.YooAsset.SceneHandle = {}

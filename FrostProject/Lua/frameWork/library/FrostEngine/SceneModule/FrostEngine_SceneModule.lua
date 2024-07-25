@@ -1,4 +1,4 @@
----@class CS.FrostEngine.SceneModule
+---@class FrostEngine.SceneModule
 CS.FrostEngine.SceneModule = {
     ---@type string 当前主场景名称。
     CurrentMainSceneName = "",
@@ -6,13 +6,13 @@ CS.FrostEngine.SceneModule = {
 
 --- 加载场景
 ---@param location string 场景的定位地址
----@param sceneMode CS.UnityEngine.SceneManagement.LoadSceneMode 场景加载模式
+---@param sceneMode UnityEngine.SceneManagement.LoadSceneMode 场景加载模式
 ---@param suspendLoad boolean 加载完毕时是否主动挂起
 ---@param priority number 优先级
----@param callBack fun(parame: CS.YooAsset.SceneHandle) 加载回调
+---@param callBack fun(parame: YooAsset.SceneHandle) 加载回调
 ---@param gcCollect boolean 加载主场景是否回收垃圾
 ---@param progressCallBack fun(parame: number) 加载进度回调
----@return CS.YooAsset.SceneHandle
+---@return YooAsset.SceneHandle
 function CS.FrostEngine.SceneModule:LoadScene(location, sceneMode, suspendLoad, priority, callBack, gcCollect, progressCallBack)
     return {}
 end
@@ -21,10 +21,10 @@ end
 ---@param location string 场景的定位地址
 ---@param suspendLoad boolean 加载完毕时是否主动挂起
 ---@param priority number 优先级
----@param callBack fun(parame: CS.YooAsset.SceneHandle) 加载回调
+---@param callBack fun(parame: YooAsset.SceneHandle) 加载回调
 ---@param gcCollect boolean 加载主场景是否回收垃圾
 ---@param progressCallBack fun(parame: number) 加载进度回调
----@return CS.YooAsset.SceneHandle
+---@return YooAsset.SceneHandle
 function CS.FrostEngine.SceneModule:LoadSubScene(location,suspendLoad,priority,callBack,gcCollect,progressCallBack)
     return {}
 end

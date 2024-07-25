@@ -4,5 +4,5 @@
 --- DateTime: 2024/7/24 下午10:10
 ---
 
----@class CS.YooAsset.UnloadSceneOperation
+---@class YooAsset.UnloadSceneOperation
 CS.YooAsset.UnloadSceneOperation = {}
