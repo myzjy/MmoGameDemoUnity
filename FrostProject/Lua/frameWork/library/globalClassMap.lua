@@ -8,6 +8,6 @@
 ---@field UPool UPoolClass
 ---@field DataCentreService DataCentreService
 ---@field AssetService AssetService
-
+---@field SceneMapService SceneMapService
 
 

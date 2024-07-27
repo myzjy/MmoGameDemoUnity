@@ -35,21 +35,21 @@ end
 function ScheduleService:Update(deltaTime)
     -- 帧率
 
-    -- for i = #self._updater, 1, -1 do
-    --     FrostLogD(self.__classname, "_updater call" , i)
-    --     local tUpdateData = self._updater[i]
+    for i = #self._updater, 1, -1 do
+        FrostLogD(self.__classname, "_updater call" , i)
+        local tUpdateData = self._updater[i]
 
-    --     if tUpdateData ~= nullTbl then
-    --         if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (self.curFrameCount > tUpdateData.frameNum)) then
-    --             xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
-    --             if tUpdateData.isOnce then
-    --                 self._updater[i] = nullTbl
-    --             end
-    --         end
-    --     else
-    --         table.remove(self._updater, i)
-    --     end
-    -- end
+        if tUpdateData ~= nullTbl then
+            if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (self.curFrameCount > tUpdateData.frameNum)) then
+                xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
+                if tUpdateData.isOnce then
+                    self._updater[i] = nullTbl
+                end
+            end
+        else
+            table.remove(self._updater, i)
+        end
+    end
 
     for i = #self._timer, 1, -1 do
         local tTimes = self._timer[i]

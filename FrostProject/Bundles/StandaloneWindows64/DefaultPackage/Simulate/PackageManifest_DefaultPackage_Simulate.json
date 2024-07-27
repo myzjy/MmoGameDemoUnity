@@ -9,22 +9,125 @@
     "PackageVersion": "Simulate",
     "AssetList": [
         {
+            "Address": "Btn_GameStart_Widget",
+            "AssetPath": "Assets/AssetRaw/UI/Login/Btn_GameStart_Widget.prefab",
+            "AssetGUID": "",
+            "AssetTags": [
+                "UI"
+            ],
+            "BundleID": 0
+        },
+        {
+            "Address": "Btn_GroupBtn_Widget",
+            "AssetPath": "Assets/AssetRaw/UI/Login/Btn_GroupBtn_Widget.prefab",
+            "AssetGUID": "",
+            "AssetTags": [
+                "UI"
+            ],
+            "BundleID": 0
+        },
+        {
+            "Address": "LoginPanel",
+            "AssetPath": "Assets/AssetRaw/UI/Login/LoginPanel.prefab",
+            "AssetGUID": "",
+            "AssetTags": [
+                "UI"
+            ],
+            "BundleID": 0
+        },
+        {
+            "Address": "LoginUIPanel",
+            "AssetPath": "Assets/AssetRaw/UI/Login/LoginUIPanel.prefab",
+            "AssetGUID": "",
+            "AssetTags": [
+                "UI"
+            ],
+            "BundleID": 0
+        },
+        {
             "Address": "main.lua",
             "AssetPath": "Assets/AssetRaw/Lua/main.lua.bytes",
             "AssetGUID": "",
             "AssetTags": [
                 "Lua"
             ],
-            "BundleID": 0
+            "BundleID": 1
+        },
+        {
+            "Address": "LoginLighing",
+            "AssetPath": "Assets/AssetRaw/Scenes/LoginLighing.lighting",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 2
+        },
+        {
+            "Address": "LoginScene",
+            "AssetPath": "Assets/AssetRaw/Scenes/LoginScene.unity",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 2
+        },
+        {
+            "Address": "SampleScene",
+            "AssetPath": "Assets/AssetRaw/Scenes/SampleScene.unity",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 2
+        },
+        {
+            "Address": "UIScene",
+            "AssetPath": "Assets/AssetRaw/Scenes/UIScene.unity",
+            "AssetGUID": "",
+            "AssetTags": [],
+            "BundleID": 2
+        },
+        {
+            "Address": "MyShaderVariants",
+            "AssetPath": "Assets/AssetRaw/Shaders/MyShaderVariants.shadervariants",
+            "AssetGUID": "",
+            "AssetTags": [
+                "Shaders"
+            ],
+            "BundleID": 3
         }
     ],
     "BundleList": [
+        {
+            "BundleName": "assets_assetraw_ui_login.bundle",
+            "UnityCRC": 0,
+            "FileHash": "b254f4a62fb4ccda29ee689263d4cf26",
+            "FileCRC": "00000000",
+            "FileSize": 409003,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        },
         {
             "BundleName": "assets_assetraw_lua.bundle",
             "UnityCRC": 0,
             "FileHash": "bb19385462697492c0fcbb1970e24c09",
             "FileCRC": "00000000",
             "FileSize": 1056,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        },
+        {
+            "BundleName": "assets_assetraw_scenes.bundle",
+            "UnityCRC": 0,
+            "FileHash": "edf891e35bf16f6b20697d1c759fcaf4",
+            "FileCRC": "00000000",
+            "FileSize": 427922,
+            "Encrypted": false,
+            "Tags": [],
+            "DependIDs": []
+        },
+        {
+            "BundleName": "unityshaders.bundle",
+            "UnityCRC": 0,
+            "FileHash": "21a3bad951c5b995ab3a7b715def7dad",
+            "FileCRC": "00000000",
+            "FileSize": 5384,
             "Encrypted": false,
             "Tags": [],
             "DependIDs": []

@@ -25,10 +25,15 @@ function NetMessageService:vGetConfig()
 end
 
 function NetMessageService:vInitialize()
+   
+    -- 是否 回调成功
+    self._IsConnected = false
+    self._LastConnectedUrl = ""
+    self._NetMsgDataMap = {}
     -- EventService:ListenEvent("")
     -- open
     FrostLogD(self.__classname, "NetMessageService:vInitialize")
-
+    local eventGlobal = self:_GetEventByObject()
     CS.FrostEngine.GameEvent.AddEventListener(101,nil, function()
         self._IsConnected = NetworkNativeService:IsConnect()
         if self._IsConnected then
@@ -41,7 +46,7 @@ function NetMessageService:vInitialize()
 end
 
 local function OnNetDataRecieved(inMsgData)
-    NetMessageService:OnReceiveMessage(inMsgData)
+    _G.NetMessageService:OnReceiveMessage(inMsgData)
 end
 
 function NetMessageService:Connect(url)

@@ -31,7 +31,7 @@ end
 --- 初始化相关 监听事件、初始化Config
 ------------------------------------------------------------------------------
 function GameStageService:vInitialize()
-    --EventService:ListenEvent("LuaEventID.OnSatgePreLoadMap", self, self)
+    EventService:ListenEvent("LuaEventID.OnSatgePreLoadMap", self, self.OnStagePostLoadMap)
     self:_loadLuaGameStageConfig()
 end
 

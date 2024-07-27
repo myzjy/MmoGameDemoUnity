@@ -5,7 +5,7 @@
 ---
 
 ---@class FrostEngine.GameModule
-CS.FrostEngine.GameModule = {
+FrostEngine.GameModule = {
     Base = {},
     Fsm = {},
     Resource = {},

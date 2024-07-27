@@ -23,3 +23,12 @@
 ---@field GameBaseStage GameBaseStage
 ---@field Messenger Messenger
 ClassLibraryMap = {}
+
+---@class CS
+CS = CS
+
+---@class UnityEngine
+UnityEngine = CS.UnityEngine
+
+---@class FrostEngine
+FrostEngine = CS.FrostEngine

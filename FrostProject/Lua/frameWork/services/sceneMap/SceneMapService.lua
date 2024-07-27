@@ -58,7 +58,7 @@ end
 ---@return YooAsset.SceneHandle
 function SceneMapService:LoadSubScene(location, callBack, progressCallBack)
     self:OnStagePreLoadMap(location)
-    return self._sceneModule:LoadSubScene(location, true, 1, callBack, true, progressCallBack)
+    return self._sceneModule:LoadSubScene(location, false, 1, callBack, true, progressCallBack)
 end
 -------------------------------------------------------------------------------------------
 -- 地图加载前的回调

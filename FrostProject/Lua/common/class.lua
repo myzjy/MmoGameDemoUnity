@@ -169,25 +169,6 @@ local function CallCtor(inInstance, inType, ...)
     ctorTable = nil
     return inInstance
 end
-local function OnUserFirstExCSCallCtor(inType, ...)
-    local tInstance = {}
-    tInstance.__type = inType
-    tInstance.__object = inType.__firstCreate(...)
-    return CallCtor(CopySuper(ExtendCSInstance(tInstance), inType), inType, ...)
-end
-
-local function OnFirstExCSCallCtor(inType, ...)
-    local tInstance = {}
-    tInstance.__unitType = UnitType.Instance
-    tInstance.__type = inType
-    local tInstanceMeta = {}
-    tInstanceMeta.__index = inType
-    tInstanceMeta.__call = function(_, ...)
-        FrostLogE( _.__classname, "this is a Instance of " , _.__classname)
-    end
-    setmetatable(tInstance, tInstanceMeta)
-    return CallCtor(tInstance, inType, ...)
-end
 
 ---创建一个类
 ---@generic T:Unit
@@ -237,9 +218,25 @@ Class = function(inClassName, inSuper)
     tMeta.__index = inSuper == nil and Unit or inSuper
     local __call
     if tIsFirstExCSType or tIsExCSTypeAgain then
-        __call = OnUserFirstExCSCallCtor
+        __call = function(inType, ...)
+            local tInstance = {}
+            tInstance.__type = inType
+            tInstance.__object = inType.__firstCreate(...)
+            return CallCtor(CopySuper(ExtendCSInstance(tInstance), inType), inType, ...)
+        end
     else
-        __call = OnFirstExCSCallCtor
+        __call = function(inType, ...)
+            local tInstance = {}
+            tInstance.__unitType = UnitType.Instance
+            tInstance.__type = inType
+            local tInstanceMeta = {}
+            tInstanceMeta.__index = inType
+            tInstanceMeta.__call = function(_, ...)
+                FrostLogE( _.__classname, "this is a Instance of " , _.__classname)
+            end
+            setmetatable(tInstance, tInstanceMeta)
+            return CallCtor(tInstance, inType, ...)
+        end
     end
     tMeta.__call = __call
     setmetatable(tUnitType, tMeta)

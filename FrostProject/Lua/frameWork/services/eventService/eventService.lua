@@ -17,7 +17,7 @@ end
 function EventService:OnEvent(eventName, handle, ...)
     FrostLogD(self.__classname,"OnEvent",eventName)
     if not eventName then
-		FrostLogE(self.__classname, "EventServiceClass.OnEvent : invalid parameter")
+        FrostLogE(self.__classname, "EventServiceClass.OnEvent : invalid parameter")
         return
     end
 
@@ -38,7 +38,7 @@ end
 function EventService:OnRemoveEvent(eventName, handle)
     FrostLogD(self.__classname, "OnRemoveEvent", eventName, handle)
     if not eventName or not handle then
-		FrostLogE(self.__classname, "EventServiceClass.OnRemoveEvent : invalid parameter", eventName)
+        FrostLogE(self.__classname, "EventServiceClass.OnRemoveEvent : invalid parameter", eventName)
         return
     end
 
@@ -80,7 +80,7 @@ function EventService:OnRemoveEvent(eventName, handle)
         end
     end
 
-   handleData = {}
+    handleData = {}
 end
 
 --- 侦听事件
@@ -97,8 +97,10 @@ function EventService:ListenEvent(eventName, obj, func, time, target, source)
         return
     end
 
-    local data = self._eventNameData[eventName]
-    if data then
+    local evenData = self._eventNameData[eventName]
+    local data = false
+    if evenData then
+        data = evenData.data
         for index = 1, #data, 1 do
             local d = data[index]
             if d.obj == obj then
@@ -107,30 +109,40 @@ function EventService:ListenEvent(eventName, obj, func, time, target, source)
             end
         end
     end
-
-    CS.FrostEngine.GameEvent.AddEventListener(eventName, obj, func)
-    local handle = event(eventName)
+    if not evenData then
+        evenData = {}
+    end
 
     local handleData = {}
-    handleData.obj = obj
-    handleData.func = func
-    handleData.handler = handle
-
     if not data then
         data = {}
-        self._eventNameData[eventName] = data
+        local handle = event(eventName)
+        handleData.obj = obj
+        handleData.func = func
+        handleData.handler = handle
+        self:AddEventListener(handle, obj, func)
+        data[#data + 1] = handleData
+        evenData.event = handle
+        self._eventNameData[eventName] = {event = handle, data = data}
+    else
+        handleData.obj = obj
+        handleData.func = func
+        handleData.handler = evenData.event
+        self:AddEventListener(evenData.event, obj, func)
+
+        data[#data + 1] = handleData
+        self._eventNameData[eventName] = {event = evenData.event, data = data}
     end
 
-    data[#data + 1] = handleData
 
-    data = self._objData[obj]
-    if not data then
-        data = {}
-        self._objData[obj] = data
+   local objData = self._objData[obj]
+    if not objData then
+        objData = {}
+        self._objData[obj] = objData
+    else
+        self._objData[obj] = {event = evenData.event, data = data}
     end
 
-    data[#data + 1] = handleData
-    
     return handle
 end
 
@@ -141,13 +153,16 @@ function EventService:UnListenEvent(obj, eventName)
         return
     end
     local handle = {}
+    local evenData = false
     if eventName then
-        local data = self._eventNameData[eventName]
-        if not data then
-            data = {}
+        evenData = self._eventNameData[eventName]
+        local data = false
+        if not evenData then
+            evenData = {}
+            data = false
             return
         end
-
+        data = evenData.data
         for i = 1, #data, 1 do
             local tD = data[i]
             if tD.obj == obj then
@@ -155,11 +170,14 @@ function EventService:UnListenEvent(obj, eventName)
             end
         end
     else
-        local data = self._objData[obj]
-        if not data then
-            data = {}
+        evenData = self._objData[obj]
+        local data = false
+        if not evenData then
+            evenData = {}
+            data = false
             return
         end
+        data = evenData.data
         for i = 1, #data, 1 do
             local tD = data[i]
             if tD.obj == obj then
@@ -168,7 +186,7 @@ function EventService:UnListenEvent(obj, eventName)
         end
     end
     for index = 1, #handle, 1 do
-        CS.FrostEngine.GameEvent.RemoveEventListener(handle[index])
+        evenData.event:RemoveListener(handle[index])
     end
 
     handle = {}
@@ -180,15 +198,15 @@ function EventService:SendEvent(id, sender, target, ...)
         FrostLogE(self.__classname, "EventService:SendEvent : invalid parameter")
         return
     end
-
-    if not CS.FrostEngine.GameEvent.Send then
+    local eventData = self._eventNameData[id]
+    if not eventData  then
         FrostLogE(self.__classname, "EventService:SendEvent : not initialized", id)
         return
     end
-    CS.FrostEngine.GameEvent.Send(id, ...)
+    eventData.event(id, ...)
 end
 
-function EventService:AddEventListener(event, func, inObj)
+function EventService:AddEventListener(event, inObj, func)
     if not inObj.evtListenerList then
         inObj.evtListenerList = {}
     end
@@ -202,3 +220,4 @@ end
 _G.EventService = EventService()
 
 return EventService
+
