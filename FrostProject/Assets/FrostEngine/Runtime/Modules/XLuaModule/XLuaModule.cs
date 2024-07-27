@@ -105,14 +105,16 @@ namespace FrostEngine
         public byte[] CustomLoader(ref string filePath)
         {
             string scriptPath = string.Empty;
-            var luaFilePath = filePath.Replace(".", "/") + ".lua";
+            filePath = filePath.Replace(".", "/") + ".lua";
             if (_mResourceManager.PlayMode == EPlayMode.EditorSimulateMode)
             {
-                Debug.Log($"Load file lua script:{luaFilePath}");
-                string source = Path.Combine(Application.dataPath, $"../Lua/{luaFilePath}");
-                DirectoryInfo dirInfo = new DirectoryInfo(source);
-                scriptPath = dirInfo.FullName;
+                Debug.Log($"Load file lua script:{filePath}");
+               ;
+                scriptPath = System.IO.Path.Combine(Application.dataPath, "../Lua");
+                Debug.Log($"Load file lua scriptPath:{scriptPath}");
+                scriptPath = System.IO.Path.Combine(scriptPath, filePath); //Path.GetFullPath( Application.dataPath.Replace("Assets","")+$"Lua/{luaFilePath}" );
                 Debug.Log($"scriptPath:{scriptPath}");
+                // filePath = scriptPath;
                 var textLua = Utility.GetFileBytes(scriptPath);
                 return textLua;
             }

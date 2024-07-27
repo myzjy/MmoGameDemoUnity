@@ -1,7 +1,9 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using FrostEngine;
+using UnityEngine;
 using ProcedureOwner = FrostEngine.IFsm<FrostEngine.IProcedureManager>;
+using Debug = FrostEngine.Debug;
 
 namespace GameMain
 {
@@ -39,8 +41,12 @@ namespace GameMain
         private async UniTaskVoid OnInitResourcesComplete()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(1f));
-            m_InitResourcesComplete = true;
             Debug.Info("Init resources complete.");
+            GameModule.Resource.LoadAsset<ShaderVariantCollection>("MyShaderVariants", res =>
+            {
+                res.WarmUp();
+                m_InitResourcesComplete = true;
+            });
         }
     }
 }
