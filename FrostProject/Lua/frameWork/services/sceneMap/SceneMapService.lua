@@ -18,7 +18,7 @@ local SceneMapService = Class("SceneMapService", ClassLibraryMap.ServiceBase)
 --- 初始化 类
 --------------------------------------------------------------------------
 function SceneMapService:ctor()
-    ---@type FrostEngine.SceneModule
+    ---@type CS.FrostEngine.SceneModule
     self._sceneModule = GameModule.Scene
     self.MapID = 0
     self.MapPath = string.empty
@@ -40,22 +40,22 @@ end
 
 --- 加载场景
 ---@param location string 场景的定位地址
----@param sceneMode UnityEngine.SceneManagement.LoadSceneMode 场景加载模式
+---@param sceneMode CS.UnityEngine.SceneManagement.LoadSceneMode 场景加载模式
 ---@param suspendLoad boolean 加载完毕时是否主动挂起
 ---@param priority number 优先级
----@param callBack fun(inParam: YooAsset.SceneHandle) 加载回调
+---@param callBack fun(inParam: CS.YooAsset.SceneHandle) 加载回调
 ---@param gcCollect boolean 加载主场景是否回收垃圾
 ---@param progressCallBack fun(inProgress: number) 加载进度回调
----@return YooAsset.SceneHandle
+---@return CS.YooAsset.SceneHandle
 function SceneMapService:LoadScene(location, sceneMode, suspendLoad, priority, callBack, gcCollect, progressCallBack)
     self:OnStagePreLoadMap(location)
     return self._sceneModule:LoadScene(location, sceneMode, suspendLoad, priority, callBack, gcCollect, progressCallBack)
 end
 
 ---@param location string
----@param callBack fun(inParam: YooAsset.SceneHandle) 加载回调
+---@param callBack fun(inParam: CS.YooAsset.SceneHandle) 加载回调
 ---@param progressCallBack fun(inProgress:number)
----@return YooAsset.SceneHandle
+---@return CS.YooAsset.SceneHandle
 function SceneMapService:LoadSubScene(location, callBack, progressCallBack)
     self:OnStagePreLoadMap(location)
     return self._sceneModule:LoadSubScene(location, false, 1, callBack, true, progressCallBack)
@@ -72,10 +72,10 @@ end
 
 -------------------------------------------------------------------------------------------
 -- 地图加载后的回调
---- @param inWorld(YooAsset.SceneHandle) 加载后的地图实例
+--- @param inWorld(CS.YooAsset.SceneHandle) 加载后的地图实例
 -------------------------------------------------------------------------------------------
 function SceneMapService:OnStagePostLoadMap(inWorld)
-    FrostLogD(self.__classname, "OnStagePostLoadMap", inWorld)
+    FrostLogD(self.__classname, "OnStagePostLoadMap", JSON.encode(inWorld))
     --self:OnPostLoadMap(inWorld)
     EventService:SendEvent("LuaEventID.OnStagePostLoadMap", nil, nil, inWorld)
 end

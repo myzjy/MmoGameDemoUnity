@@ -42,7 +42,7 @@ end
 -------------------------------------------------------------------------------------------
 function LoginStage:OnStage_PostLoadMap()
     FrostLogD(self.__classname, "OnStage_PostLoadMap")
-    --StateService:ChangeGameState(GameState.LoginStateID, nil, nil, "LoginProcedure")
+    StateService:ChangeGameState(GameState.LoginStateID, nil, nil, "LoginProcedure")
 end
 
 return LoginStage

@@ -1,3 +1,3 @@
----@class System.IFormatProvider
+---@class CS.System.IFormatProvider
 ---@field public GetFormat function
-System.IFormatProvider={}
+CS.System.IFormatProvider={}

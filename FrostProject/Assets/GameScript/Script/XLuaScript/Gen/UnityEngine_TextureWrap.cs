@@ -21,7 +21,7 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(UnityEngine.Texture);
-			Utils.BeginObjectRegister(type, L, translator, 0, 2, 15, 10);
+			Utils.BeginObjectRegister(type, L, translator, 0, 2, 16, 10);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetNativeTexturePtr", _m_GetNativeTexturePtr);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "IncrementUpdateCount", _m_IncrementUpdateCount);
@@ -42,6 +42,7 @@ namespace XLua.CSObjectWrap
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "mipMapBias", _g_get_mipMapBias);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "texelSize", _g_get_texelSize);
             Utils.RegisterFunc(L, Utils.GETTER_IDX, "updateCount", _g_get_updateCount);
+            Utils.RegisterFunc(L, Utils.GETTER_IDX, "isDataSRGB", _g_get_isDataSRGB);
             
 			Utils.RegisterFunc(L, Utils.SETTER_IDX, "width", _s_set_width);
             Utils.RegisterFunc(L, Utils.SETTER_IDX, "height", _s_set_height);
@@ -439,6 +440,20 @@ namespace XLua.CSObjectWrap
 			
                 UnityEngine.Texture gen_to_be_invoked = (UnityEngine.Texture)translator.FastGetCSObj(L, 1);
                 LuaAPI.xlua_pushuint(L, gen_to_be_invoked.updateCount);
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            return 1;
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _g_get_isDataSRGB(RealStatePtr L)
+        {
+		    try {
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+			
+                UnityEngine.Texture gen_to_be_invoked = (UnityEngine.Texture)translator.FastGetCSObj(L, 1);
+                LuaAPI.lua_pushboolean(L, gen_to_be_invoked.isDataSRGB);
             } catch(System.Exception gen_e) {
                 return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
             }

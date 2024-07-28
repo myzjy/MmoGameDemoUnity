@@ -1,56 +1,56 @@
----@class UnityEngine.Bounds : System.ValueType
----@field public center UnityEngine.Vector3
----@field public size UnityEngine.Vector3
----@field public extents UnityEngine.Vector3
----@field public min UnityEngine.Vector3
----@field public max UnityEngine.Vector3
-UnityEngine.Bounds = { }
----@return UnityEngine.Bounds
----@param center UnityEngine.Vector3
----@param size UnityEngine.Vector3
-function UnityEngine.Bounds.New(center, size) end
+---@class CS.UnityEngine.Bounds : CS.System.ValueType
+---@field public center CS.UnityEngine.Vector3
+---@field public size CS.UnityEngine.Vector3
+---@field public extents CS.UnityEngine.Vector3
+---@field public min CS.UnityEngine.Vector3
+---@field public max CS.UnityEngine.Vector3
+CS.UnityEngine.Bounds = { }
+---@return CS.UnityEngine.Bounds
+---@param center CS.UnityEngine.Vector3
+---@param size CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds.New(center, size) end
 ---@return number
-function UnityEngine.Bounds:GetHashCode() end
----@overload fun(other:System.Object): boolean
+function CS.UnityEngine.Bounds:GetHashCode() end
+---@overload fun(other:CS.System.Object): boolean
 ---@return boolean
----@param other UnityEngine.Bounds
-function UnityEngine.Bounds:Equals(other) end
+---@param other CS.UnityEngine.Bounds
+function CS.UnityEngine.Bounds:Equals(other) end
 ---@return boolean
----@param lhs UnityEngine.Bounds
----@param rhs UnityEngine.Bounds
-function UnityEngine.Bounds.op_Equality(lhs, rhs) end
+---@param lhs CS.UnityEngine.Bounds
+---@param rhs CS.UnityEngine.Bounds
+function CS.UnityEngine.Bounds.op_Equality(lhs, rhs) end
 ---@return boolean
----@param lhs UnityEngine.Bounds
----@param rhs UnityEngine.Bounds
-function UnityEngine.Bounds.op_Inequality(lhs, rhs) end
----@param min UnityEngine.Vector3
----@param max UnityEngine.Vector3
-function UnityEngine.Bounds:SetMinMax(min, max) end
----@overload fun(point:UnityEngine.Vector3): void
----@param bounds UnityEngine.Bounds
-function UnityEngine.Bounds:Encapsulate(bounds) end
+---@param lhs CS.UnityEngine.Bounds
+---@param rhs CS.UnityEngine.Bounds
+function CS.UnityEngine.Bounds.op_Inequality(lhs, rhs) end
+---@param min CS.UnityEngine.Vector3
+---@param max CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds:SetMinMax(min, max) end
+---@overload fun(point:CS.UnityEngine.Vector3): void
+---@param bounds CS.UnityEngine.Bounds
+function CS.UnityEngine.Bounds:Encapsulate(bounds) end
 ---@overload fun(amount:number): void
----@param amount UnityEngine.Vector3
-function UnityEngine.Bounds:Expand(amount) end
+---@param amount CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds:Expand(amount) end
 ---@return boolean
----@param bounds UnityEngine.Bounds
-function UnityEngine.Bounds:Intersects(bounds) end
----@overload fun(ray:UnityEngine.Ray): boolean
+---@param bounds CS.UnityEngine.Bounds
+function CS.UnityEngine.Bounds:Intersects(bounds) end
+---@overload fun(ray:CS.UnityEngine.Ray): boolean
 ---@return boolean
----@param ray UnityEngine.Ray
----@param distance System.Single
-function UnityEngine.Bounds:IntersectRay(ray, distance) end
+---@param ray CS.UnityEngine.Ray
+---@param distance CS.System.Single
+function CS.UnityEngine.Bounds:IntersectRay(ray, distance) end
 ---@overload fun(): string
 ---@return string
 ---@param format string
-function UnityEngine.Bounds:ToString(format) end
+function CS.UnityEngine.Bounds:ToString(format) end
 ---@return boolean
----@param point UnityEngine.Vector3
-function UnityEngine.Bounds:Contains(point) end
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds:Contains(point) end
 ---@return number
----@param point UnityEngine.Vector3
-function UnityEngine.Bounds:SqrDistance(point) end
----@return UnityEngine.Vector3
----@param point UnityEngine.Vector3
-function UnityEngine.Bounds:ClosestPoint(point) end
-return UnityEngine.Bounds
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds:SqrDistance(point) end
+---@return CS.UnityEngine.Vector3
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Bounds:ClosestPoint(point) end
+return CS.UnityEngine.Bounds

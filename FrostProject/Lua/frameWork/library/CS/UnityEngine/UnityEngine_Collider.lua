@@ -1,23 +1,23 @@
----@class UnityEngine.Collider : UnityEngine.Component
+---@class CS.UnityEngine.Collider : CS.UnityEngine.Component
 ---@field public enabled boolean
----@field public attachedRigidbody UnityEngine.Rigidbody
+---@field public attachedRigidbody CS.UnityEngine.Rigidbody
 ---@field public isTrigger boolean
 ---@field public contactOffset number
----@field public bounds UnityEngine.Bounds
----@field public sharedMaterial UnityEngine.PhysicMaterial
----@field public material UnityEngine.PhysicMaterial
-UnityEngine.Collider = { }
----@return UnityEngine.Collider
-function UnityEngine.Collider.New() end
----@return UnityEngine.Vector3
----@param position UnityEngine.Vector3
-function UnityEngine.Collider:ClosestPoint(position) end
+---@field public bounds CS.UnityEngine.Bounds
+---@field public sharedMaterial CS.UnityEngine.PhysicMaterial
+---@field public material CS.UnityEngine.PhysicMaterial
+CS.UnityEngine.Collider = { }
+---@return CS.UnityEngine.Collider
+function CS.UnityEngine.Collider.New() end
+---@return CS.UnityEngine.Vector3
+---@param position CS.UnityEngine.Vector3
+function CS.UnityEngine.Collider:ClosestPoint(position) end
 ---@return boolean
----@param ray UnityEngine.Ray
----@param hitInfo UnityEngine.RaycastHit
+---@param ray CS.UnityEngine.Ray
+---@param hitInfo CS.UnityEngine.RaycastHit
 ---@param maxDistance number
-function UnityEngine.Collider:Raycast(ray, hitInfo, maxDistance) end
----@return UnityEngine.Vector3
----@param position UnityEngine.Vector3
-function UnityEngine.Collider:ClosestPointOnBounds(position) end
-return UnityEngine.Collider
+function CS.UnityEngine.Collider:Raycast(ray, hitInfo, maxDistance) end
+---@return CS.UnityEngine.Vector3
+---@param position CS.UnityEngine.Vector3
+function CS.UnityEngine.Collider:ClosestPointOnBounds(position) end
+return CS.UnityEngine.Collider

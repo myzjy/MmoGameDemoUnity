@@ -32,6 +32,7 @@ end
 ------------------------------------------------------------------------------
 function GameStageService:vInitialize()
     EventService:ListenEvent("LuaEventID.OnSatgePreLoadMap", self, self.OnStagePostLoadMap)
+    EventService:ListenEvent("LuaEventID.OnStagePostLoadMap", self, self.OnStagePostLoadMap)
     self:_loadLuaGameStageConfig()
 end
 
@@ -134,7 +135,7 @@ end
 function GameStageService:OnStagePostLoadMap(inWorld)
     local tCurStageInstance = self._curStageInstance
     if not tCurStageInstance then return end
-    FrostLogD(self.__classname, "OnStagePostLoadMap", inWorld:GetName(), "in", tCurStageInstance.__classname, tCurStageInstance.StageType)
+    FrostLogD(self.__classname, "OnStagePostLoadMap",inWorld.SceneName,"in", tCurStageInstance.__classname, tCurStageInstance.StageType)
     tCurStageInstance:PostLoadMap(inWorld)
 end
 

@@ -1,5 +1,5 @@
----@class UnityEngine.WaitForEndOfFrame : UnityEngine.YieldInstruction
-UnityEngine.WaitForEndOfFrame = { }
----@return UnityEngine.WaitForEndOfFrame
-function UnityEngine.WaitForEndOfFrame.New() end
-return UnityEngine.WaitForEndOfFrame
+---@class CS.UnityEngine.WaitForEndOfFrame : CS.UnityEngine.YieldInstruction
+CS.UnityEngine.WaitForEndOfFrame = { }
+---@return CS.UnityEngine.WaitForEndOfFrame
+function CS.UnityEngine.WaitForEndOfFrame.New() end
+return CS.UnityEngine.WaitForEndOfFrame

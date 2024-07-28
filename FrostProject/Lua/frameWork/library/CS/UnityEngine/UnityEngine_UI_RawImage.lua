@@ -1,7 +1,7 @@
----@class UnityEngine.UI.RawImage : UnityEngine.UI.MaskableGraphic
----@field public mainTexture UnityEngine.Texture
----@field public texture UnityEngine.Texture
----@field public uvRect UnityEngine.Rect
-UnityEngine.UI.RawImage = { }
-function UnityEngine.UI.RawImage:SetNativeSize() end
-return UnityEngine.UI.RawImage
+---@class CS.UnityEngine.UI.RawImage : CS.UnityEngine.UI.MaskableGraphic
+---@field public mainTexture CS.UnityEngine.Texture
+---@field public texture CS.UnityEngine.Texture
+---@field public uvRect CS.UnityEngine.Rect
+CS.UnityEngine.UI.RawImage = { }
+function CS.UnityEngine.UI.RawImage:SetNativeSize() end
+return CS.UnityEngine.UI.RawImage

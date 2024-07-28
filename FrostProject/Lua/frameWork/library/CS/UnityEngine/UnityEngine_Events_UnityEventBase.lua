@@ -1,22 +1,22 @@
----@class UnityEngine.Events.UnityEventBase
-UnityEngine.Events.UnityEventBase = { }
+---@class CS.UnityEngine.Events.UnityEventBase
+CS.UnityEngine.Events.UnityEventBase = { }
 ---@return number
-function UnityEngine.Events.UnityEventBase:GetPersistentEventCount() end
----@return UnityEngine.Object
+function CS.UnityEngine.Events.UnityEventBase:GetPersistentEventCount() end
+---@return CS.UnityEngine.Object
 ---@param index number
-function UnityEngine.Events.UnityEventBase:GetPersistentTarget(index) end
+function CS.UnityEngine.Events.UnityEventBase:GetPersistentTarget(index) end
 ---@return string
 ---@param index number
-function UnityEngine.Events.UnityEventBase:GetPersistentMethodName(index) end
+function CS.UnityEngine.Events.UnityEventBase:GetPersistentMethodName(index) end
 ---@param index number
 ---@param state number
-function UnityEngine.Events.UnityEventBase:SetPersistentListenerState(index, state) end
-function UnityEngine.Events.UnityEventBase:RemoveAllListeners() end
+function CS.UnityEngine.Events.UnityEventBase:SetPersistentListenerState(index, state) end
+function CS.UnityEngine.Events.UnityEventBase:RemoveAllListeners() end
 ---@return string
-function UnityEngine.Events.UnityEventBase:ToString() end
----@return System.Reflection.MethodInfo
----@param obj System.Object
+function CS.UnityEngine.Events.UnityEventBase:ToString() end
+---@return CS.System.Reflection.MethodInfo
+---@param obj CS.System.Object
 ---@param functionName string
----@param argumentTypes System.Type[]
-function UnityEngine.Events.UnityEventBase.GetValidMethodInfo(obj, functionName, argumentTypes) end
-return UnityEngine.Events.UnityEventBase
+---@param argumentTypes CS.System.Type[]
+function CS.UnityEngine.Events.UnityEventBase.GetValidMethodInfo(obj, functionName, argumentTypes) end
+return CS.UnityEngine.Events.UnityEventBase

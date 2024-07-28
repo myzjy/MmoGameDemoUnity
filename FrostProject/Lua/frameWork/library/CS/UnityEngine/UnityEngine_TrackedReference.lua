@@ -1,19 +1,19 @@
----@class UnityEngine.TrackedReference
-UnityEngine.TrackedReference = { }
+---@class CS.UnityEngine.TrackedReference
+CS.UnityEngine.TrackedReference = { }
 ---@return boolean
----@param x UnityEngine.TrackedReference
----@param y UnityEngine.TrackedReference
-function UnityEngine.TrackedReference.op_Equality(x, y) end
+---@param x CS.UnityEngine.TrackedReference
+---@param y CS.UnityEngine.TrackedReference
+function CS.UnityEngine.TrackedReference.op_Equality(x, y) end
 ---@return boolean
----@param x UnityEngine.TrackedReference
----@param y UnityEngine.TrackedReference
-function UnityEngine.TrackedReference.op_Inequality(x, y) end
+---@param x CS.UnityEngine.TrackedReference
+---@param y CS.UnityEngine.TrackedReference
+function CS.UnityEngine.TrackedReference.op_Inequality(x, y) end
 ---@return boolean
----@param o System.Object
-function UnityEngine.TrackedReference:Equals(o) end
+---@param o CS.System.Object
+function CS.UnityEngine.TrackedReference:Equals(o) end
 ---@return number
-function UnityEngine.TrackedReference:GetHashCode() end
+function CS.UnityEngine.TrackedReference:GetHashCode() end
 ---@return boolean
----@param exists UnityEngine.TrackedReference
-function UnityEngine.TrackedReference.op_Implicit(exists) end
-return UnityEngine.TrackedReference
+---@param exists CS.UnityEngine.TrackedReference
+function CS.UnityEngine.TrackedReference.op_Implicit(exists) end
+return CS.UnityEngine.TrackedReference

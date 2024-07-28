@@ -173,5 +173,10 @@ namespace FrostEngine
                 throw new Exception(StringUtils.Format("Unexpected reflection exception - [{}]", e.GetType().Name, e));
             }
         }
+
+        public static string GetTypeName(Type luaUserData)
+        {
+            return luaUserData.Name;
+        }
     }
 }

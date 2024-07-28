@@ -1,7 +1,7 @@
----@class UnityEngine.EventSystems.UIBehaviour : UnityEngine.MonoBehaviour
-UnityEngine.EventSystems.UIBehaviour = { }
+---@class CS.UnityEngine.EventSystems.UIBehaviour : CS.UnityEngine.MonoBehaviour
+CS.UnityEngine.EventSystems.UIBehaviour = { }
 ---@return boolean
-function UnityEngine.EventSystems.UIBehaviour:IsActive() end
+function CS.UnityEngine.EventSystems.UIBehaviour:IsActive() end
 ---@return boolean
-function UnityEngine.EventSystems.UIBehaviour:IsDestroyed() end
-return UnityEngine.EventSystems.UIBehaviour
+function CS.UnityEngine.EventSystems.UIBehaviour:IsDestroyed() end
+return CS.UnityEngine.EventSystems.UIBehaviour

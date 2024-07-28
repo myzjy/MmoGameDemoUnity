@@ -1,2 +1,2 @@
----@class UnityEngine.UI.Button.ButtonClickedEvent:UnityEngine.Events.UnityEvent
-UnityEngine.UI.Button.ButtonClickedEvent = {}
+---@class CS.UnityEngine.UI.Button.ButtonClickedEvent:CS.UnityEngine.Events.UnityEvent
+CS.UnityEngine.UI.Button.ButtonClickedEvent = {}

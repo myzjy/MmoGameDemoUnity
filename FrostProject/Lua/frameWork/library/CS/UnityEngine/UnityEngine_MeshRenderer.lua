@@ -1,7 +1,7 @@
----@class UnityEngine.MeshRenderer : UnityEngine.Renderer
----@field public additionalVertexStreams UnityEngine.Mesh
+---@class CS.UnityEngine.MeshRenderer : CS.UnityEngine.Renderer
+---@field public additionalVertexStreams CS.UnityEngine.Mesh
 ---@field public subMeshStartIndex number
-UnityEngine.MeshRenderer = { }
----@return UnityEngine.MeshRenderer
-function UnityEngine.MeshRenderer.New() end
-return UnityEngine.MeshRenderer
+CS.UnityEngine.MeshRenderer = { }
+---@return CS.UnityEngine.MeshRenderer
+function CS.UnityEngine.MeshRenderer.New() end
+return CS.UnityEngine.MeshRenderer

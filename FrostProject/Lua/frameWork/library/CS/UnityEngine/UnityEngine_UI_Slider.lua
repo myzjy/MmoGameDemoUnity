@@ -1,35 +1,35 @@
----@class UnityEngine.UI.Slider : UnityEngine.UI.Selectable
----@field public fillRect UnityEngine.RectTransform
----@field public handleRect UnityEngine.RectTransform
+---@class CS.UnityEngine.UI.Slider : CS.UnityEngine.UI.Selectable
+---@field public fillRect CS.UnityEngine.RectTransform
+---@field public handleRect CS.UnityEngine.RectTransform
 ---@field public direction number
 ---@field public minValue number
 ---@field public maxValue number
 ---@field public wholeNumbers boolean
 ---@field public value number
 ---@field public normalizedValue number
----@field public onValueChanged UnityEngine.UI.Slider.SliderEvent
-UnityEngine.UI.Slider = { }
+---@field public onValueChanged CS.UnityEngine.UI.Slider.SliderEvent
+CS.UnityEngine.UI.Slider = { }
 ---@param executing number
-function UnityEngine.UI.Slider:Rebuild(executing) end
-function UnityEngine.UI.Slider:LayoutComplete() end
-function UnityEngine.UI.Slider:GraphicUpdateComplete() end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Slider:OnPointerDown(eventData) end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Slider:OnDrag(eventData) end
----@param eventData UnityEngine.EventSystems.AxisEventData
-function UnityEngine.UI.Slider:OnMove(eventData) end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Slider:FindSelectableOnLeft() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Slider:FindSelectableOnRight() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Slider:FindSelectableOnUp() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Slider:FindSelectableOnDown() end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Slider:OnInitializePotentialDrag(eventData) end
+function CS.UnityEngine.UI.Slider:Rebuild(executing) end
+function CS.UnityEngine.UI.Slider:LayoutComplete() end
+function CS.UnityEngine.UI.Slider:GraphicUpdateComplete() end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Slider:OnPointerDown(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Slider:OnDrag(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.AxisEventData
+function CS.UnityEngine.UI.Slider:OnMove(eventData) end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Slider:FindSelectableOnLeft() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Slider:FindSelectableOnRight() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Slider:FindSelectableOnUp() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Slider:FindSelectableOnDown() end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Slider:OnInitializePotentialDrag(eventData) end
 ---@param direction number
 ---@param includeRectLayouts boolean
-function UnityEngine.UI.Slider:SetDirection(direction, includeRectLayouts) end
-return UnityEngine.UI.Slider
+function CS.UnityEngine.UI.Slider:SetDirection(direction, includeRectLayouts) end
+return CS.UnityEngine.UI.Slider

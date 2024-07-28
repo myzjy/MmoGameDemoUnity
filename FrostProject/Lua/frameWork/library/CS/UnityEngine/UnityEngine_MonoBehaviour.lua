@@ -1,34 +1,34 @@
----@class UnityEngine.MonoBehaviour : UnityEngine.Behaviour
+---@class CS.UnityEngine.MonoBehaviour : CS.UnityEngine.Behaviour
 ---@field public useGUILayout boolean
 ---@field public runInEditMode boolean
-UnityEngine.MonoBehaviour = { }
----@return UnityEngine.MonoBehaviour
-function UnityEngine.MonoBehaviour.New() end
+CS.UnityEngine.MonoBehaviour = { }
+---@return CS.UnityEngine.MonoBehaviour
+function CS.UnityEngine.MonoBehaviour.New() end
 ---@overload fun(): boolean
 ---@return boolean
 ---@param methodName string
-function UnityEngine.MonoBehaviour:IsInvoking(methodName) end
+function CS.UnityEngine.MonoBehaviour:IsInvoking(methodName) end
 ---@overload fun(): void
 ---@param methodName string
-function UnityEngine.MonoBehaviour:CancelInvoke(methodName) end
+function CS.UnityEngine.MonoBehaviour:CancelInvoke(methodName) end
 ---@param methodName string
 ---@param time number
-function UnityEngine.MonoBehaviour:Invoke(methodName, time) end
+function CS.UnityEngine.MonoBehaviour:Invoke(methodName, time) end
 ---@param methodName string
 ---@param time number
 ---@param repeatRate number
-function UnityEngine.MonoBehaviour:InvokeRepeating(methodName, time, repeatRate) end
----@overload fun(methodName:string): UnityEngine.Coroutine
----@overload fun(routine:System.Collections.IEnumerator): UnityEngine.Coroutine
----@return UnityEngine.Coroutine
+function CS.UnityEngine.MonoBehaviour:InvokeRepeating(methodName, time, repeatRate) end
+---@overload fun(methodName:string): CS.UnityEngine.Coroutine
+---@overload fun(routine:CS.System.Collections.IEnumerator): CS.UnityEngine.Coroutine
+---@return CS.UnityEngine.Coroutine
 ---@param methodName string
----@param value System.Object
-function UnityEngine.MonoBehaviour:StartCoroutine(methodName, value) end
----@overload fun(routine:System.Collections.IEnumerator): void
----@overload fun(routine:UnityEngine.Coroutine): void
+---@param value CS.System.Object
+function CS.UnityEngine.MonoBehaviour:StartCoroutine(methodName, value) end
+---@overload fun(routine:CS.System.Collections.IEnumerator): void
+---@overload fun(routine:CS.UnityEngine.Coroutine): void
 ---@param methodName string
-function UnityEngine.MonoBehaviour:StopCoroutine(methodName) end
-function UnityEngine.MonoBehaviour:StopAllCoroutines() end
----@param message System.Object
-function UnityEngine.MonoBehaviour.print(message) end
-return UnityEngine.MonoBehaviour
+function CS.UnityEngine.MonoBehaviour:StopCoroutine(methodName) end
+function CS.UnityEngine.MonoBehaviour:StopAllCoroutines() end
+---@param message CS.System.Object
+function CS.UnityEngine.MonoBehaviour.print(message) end
+return CS.UnityEngine.MonoBehaviour

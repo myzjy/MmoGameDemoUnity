@@ -1,8 +1,8 @@
----@class UnityEngine.CustomYieldInstruction
+---@class CS.UnityEngine.CustomYieldInstruction
 ---@field public keepWaiting boolean
----@field public Current System.Object
-UnityEngine.CustomYieldInstruction = { }
+---@field public Current CS.System.Object
+CS.UnityEngine.CustomYieldInstruction = { }
 ---@return boolean
-function UnityEngine.CustomYieldInstruction:MoveNext() end
-function UnityEngine.CustomYieldInstruction:Reset() end
-return UnityEngine.CustomYieldInstruction
+function CS.UnityEngine.CustomYieldInstruction:MoveNext() end
+function CS.UnityEngine.CustomYieldInstruction:Reset() end
+return CS.UnityEngine.CustomYieldInstruction

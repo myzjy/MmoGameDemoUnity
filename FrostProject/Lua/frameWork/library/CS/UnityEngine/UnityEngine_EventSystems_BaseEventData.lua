@@ -1,8 +1,8 @@
----@class UnityEngine.EventSystems.BaseEventData : UnityEngine.EventSystems.AbstractEventData
----@field public currentInputModule UnityEngine.EventSystems.BaseInputModule
----@field public selectedObject UnityEngine.GameObject
-UnityEngine.EventSystems.BaseEventData = { }
----@return UnityEngine.EventSystems.BaseEventData
----@param eventSystem UnityEngine.EventSystems.EventSystem
-function UnityEngine.EventSystems.BaseEventData.New(eventSystem) end
-return UnityEngine.EventSystems.BaseEventData
+---@class CS.UnityEngine.EventSystems.BaseEventData : CS.UnityEngine.EventSystems.AbstractEventData
+---@field public currentInputModule CS.UnityEngine.EventSystems.BaseInputModule
+---@field public selectedObject CS.UnityEngine.GameObject
+CS.UnityEngine.EventSystems.BaseEventData = { }
+---@return CS.UnityEngine.EventSystems.BaseEventData
+---@param eventSystem CS.UnityEngine.EventSystems.EventSystem
+function CS.UnityEngine.EventSystems.BaseEventData.New(eventSystem) end
+return CS.UnityEngine.EventSystems.BaseEventData

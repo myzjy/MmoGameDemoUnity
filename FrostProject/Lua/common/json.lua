@@ -120,6 +120,13 @@ local function encode_function(val)
     return type(val)
 end
 
+local function encode_userdata(val)
+    local valueType = val:GetType()
+
+    local valueTypeName = CS.FrostEngine.AssemblyUtils.GetTypeName(valueType)
+    return string.format("%s", valueTypeName)
+end
+
 local type_func_map = {
     ["nil"] = encode_nil,
     ["table"] = encode_table,
@@ -127,6 +134,7 @@ local type_func_map = {
     ["number"] = encode_number,
     ["boolean"] = tostring,
     ["function"] = encode_function,
+    ["userdata"] = encode_userdata
 }
 
 encode = function(val, stack)

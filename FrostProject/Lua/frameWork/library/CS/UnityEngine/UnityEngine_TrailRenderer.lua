@@ -1,4 +1,4 @@
----@class UnityEngine.TrailRenderer : UnityEngine.Renderer
+---@class CS.UnityEngine.TrailRenderer : CS.UnityEngine.Renderer
 ---@field public time number
 ---@field public startWidth number
 ---@field public endWidth number
@@ -8,36 +8,36 @@
 ---@field public numCornerVertices number
 ---@field public numCapVertices number
 ---@field public minVertexDistance number
----@field public startColor UnityEngine.Color
----@field public endColor UnityEngine.Color
+---@field public startColor CS.UnityEngine.Color
+---@field public endColor CS.UnityEngine.Color
 ---@field public positionCount number
 ---@field public shadowBias number
 ---@field public generateLightingData boolean
 ---@field public textureMode number
 ---@field public alignment number
----@field public widthCurve UnityEngine.AnimationCurve
----@field public colorGradient UnityEngine.Gradient
-UnityEngine.TrailRenderer = { }
----@return UnityEngine.TrailRenderer
-function UnityEngine.TrailRenderer.New() end
+---@field public widthCurve CS.UnityEngine.AnimationCurve
+---@field public colorGradient CS.UnityEngine.Gradient
+CS.UnityEngine.TrailRenderer = { }
+---@return CS.UnityEngine.TrailRenderer
+function CS.UnityEngine.TrailRenderer.New() end
 ---@param index number
----@param position UnityEngine.Vector3
-function UnityEngine.TrailRenderer:SetPosition(index, position) end
----@return UnityEngine.Vector3
+---@param position CS.UnityEngine.Vector3
+function CS.UnityEngine.TrailRenderer:SetPosition(index, position) end
+---@return CS.UnityEngine.Vector3
 ---@param index number
-function UnityEngine.TrailRenderer:GetPosition(index) end
-function UnityEngine.TrailRenderer:Clear() end
----@overload fun(mesh:UnityEngine.Mesh, useTransform:boolean): void
----@param mesh UnityEngine.Mesh
----@param camera UnityEngine.Camera
+function CS.UnityEngine.TrailRenderer:GetPosition(index) end
+function CS.UnityEngine.TrailRenderer:Clear() end
+---@overload fun(mesh:CS.UnityEngine.Mesh, useTransform:boolean): void
+---@param mesh CS.UnityEngine.Mesh
+---@param camera CS.UnityEngine.Camera
 ---@param useTransform boolean
-function UnityEngine.TrailRenderer:BakeMesh(mesh, camera, useTransform) end
+function CS.UnityEngine.TrailRenderer:BakeMesh(mesh, camera, useTransform) end
 ---@return number
----@param positions UnityEngine.Vector3[]
-function UnityEngine.TrailRenderer:GetPositions(positions) end
----@param positions UnityEngine.Vector3[]
-function UnityEngine.TrailRenderer:SetPositions(positions) end
----@param position UnityEngine.Vector3
-function UnityEngine.TrailRenderer:AddPosition(position) end
----@param positions UnityEngine.Vector3[]
-function UnityEngine.TrailRenderer:AddPositions(positions) end
+---@param positions CS.UnityEngine.Vector3[]
+function CS.UnityEngine.TrailRenderer:GetPositions(positions) end
+---@param positions CS.UnityEngine.Vector3[]
+function CS.UnityEngine.TrailRenderer:SetPositions(positions) end
+---@param position CS.UnityEngine.Vector3
+function CS.UnityEngine.TrailRenderer:AddPosition(position) end
+---@param positions CS.UnityEngine.Vector3[]
+function CS.UnityEngine.TrailRenderer:AddPositions(positions) end

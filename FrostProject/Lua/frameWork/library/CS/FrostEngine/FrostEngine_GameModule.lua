@@ -4,13 +4,14 @@
 --- DateTime: 2024/7/24 下午10:14
 ---
 
----@class FrostEngine.GameModule
-FrostEngine.GameModule = {
+---@class CS.FrostEngine.GameModule
+CS.FrostEngine.GameModule = {
     Base = {},
     Fsm = {},
+    ---@type CS.FrostEngine.ResourceModule
     Resource = {},
     UI = {},
     Setting = {},
-    ---@type FrostEngine.SceneModule
+    ---@type CS.FrostEngine.SceneModule
     Scene = {},
 }

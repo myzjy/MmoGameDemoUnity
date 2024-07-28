@@ -1,2 +1,2 @@
----@class UnityEngine.UI.RaycastImage : UnityEngine.UI.MaskableGraphic
-UnityEngine.UI.RaycastImage = { }
+---@class CS.UnityEngine.UI.RaycastImage : CS.UnityEngine.UI.MaskableGraphic
+CS.UnityEngine.UI.RaycastImage = { }

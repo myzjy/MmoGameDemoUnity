@@ -1,23 +1,23 @@
----@class UnityEngine.UI.LayoutRebuilder
----@field public transform UnityEngine.Transform
-UnityEngine.UI.LayoutRebuilder = { }
----@return UnityEngine.UI.LayoutRebuilder
-function UnityEngine.UI.LayoutRebuilder.New() end
+---@class CS.UnityEngine.UI.LayoutRebuilder
+---@field public transform CS.UnityEngine.Transform
+CS.UnityEngine.UI.LayoutRebuilder = { }
+---@return CS.UnityEngine.UI.LayoutRebuilder
+function CS.UnityEngine.UI.LayoutRebuilder.New() end
 ---@return boolean
-function UnityEngine.UI.LayoutRebuilder:IsDestroyed() end
----@param layoutRoot UnityEngine.RectTransform
-function UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(layoutRoot) end
+function CS.UnityEngine.UI.LayoutRebuilder:IsDestroyed() end
+---@param layoutRoot CS.UnityEngine.RectTransform
+function CS.UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(layoutRoot) end
 ---@param executing number
-function UnityEngine.UI.LayoutRebuilder:Rebuild(executing) end
----@param rect UnityEngine.RectTransform
-function UnityEngine.UI.LayoutRebuilder.MarkLayoutForRebuild(rect) end
-function UnityEngine.UI.LayoutRebuilder:LayoutComplete() end
-function UnityEngine.UI.LayoutRebuilder:GraphicUpdateComplete() end
+function CS.UnityEngine.UI.LayoutRebuilder:Rebuild(executing) end
+---@param rect CS.UnityEngine.RectTransform
+function CS.UnityEngine.UI.LayoutRebuilder.MarkLayoutForRebuild(rect) end
+function CS.UnityEngine.UI.LayoutRebuilder:LayoutComplete() end
+function CS.UnityEngine.UI.LayoutRebuilder:GraphicUpdateComplete() end
 ---@return number
-function UnityEngine.UI.LayoutRebuilder:GetHashCode() end
+function CS.UnityEngine.UI.LayoutRebuilder:GetHashCode() end
 ---@return boolean
----@param obj System.Object
-function UnityEngine.UI.LayoutRebuilder:Equals(obj) end
+---@param obj CS.System.Object
+function CS.UnityEngine.UI.LayoutRebuilder:Equals(obj) end
 ---@return string
-function UnityEngine.UI.LayoutRebuilder:ToString() end
-return UnityEngine.UI.LayoutRebuilder
+function CS.UnityEngine.UI.LayoutRebuilder:ToString() end
+return CS.UnityEngine.UI.LayoutRebuilder

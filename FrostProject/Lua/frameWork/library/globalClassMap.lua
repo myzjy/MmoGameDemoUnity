@@ -9,5 +9,6 @@
 ---@field DataCentreService DataCentreService
 ---@field AssetService AssetService
 ---@field SceneMapService SceneMapService
+---@field StateService StateService
 
 

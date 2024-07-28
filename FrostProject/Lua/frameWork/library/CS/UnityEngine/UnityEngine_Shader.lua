@@ -1,113 +1,113 @@
----@class UnityEngine.Shader : UnityEngine.Object
+---@class CS.UnityEngine.Shader : CS.UnityEngine.Object
 ---@field public maximumLOD number
 ---@field public globalMaximumLOD number
 ---@field public isSupported boolean
 ---@field public globalRenderPipeline string
 ---@field public renderQueue number
-UnityEngine.Shader = { }
----@return UnityEngine.Shader
+CS.UnityEngine.Shader = { }
+---@return CS.UnityEngine.Shader
 ---@param name string
-function UnityEngine.Shader.Find(name) end
+function CS.UnityEngine.Shader.Find(name) end
 ---@param keyword string
-function UnityEngine.Shader.EnableKeyword(keyword) end
+function CS.UnityEngine.Shader.EnableKeyword(keyword) end
 ---@param keyword string
-function UnityEngine.Shader.DisableKeyword(keyword) end
+function CS.UnityEngine.Shader.DisableKeyword(keyword) end
 ---@return boolean
 ---@param keyword string
-function UnityEngine.Shader.IsKeywordEnabled(keyword) end
-function UnityEngine.Shader.WarmupAllShaders() end
+function CS.UnityEngine.Shader.IsKeywordEnabled(keyword) end
+function CS.UnityEngine.Shader.WarmupAllShaders() end
 ---@return number
 ---@param name string
-function UnityEngine.Shader.PropertyToID(name) end
+function CS.UnityEngine.Shader.PropertyToID(name) end
 ---@overload fun(name:string, value:number): void
 ---@param nameID number
 ---@param value number
-function UnityEngine.Shader.SetGlobalFloat(nameID, value) end
+function CS.UnityEngine.Shader.SetGlobalFloat(nameID, value) end
 ---@overload fun(name:string, value:number): void
 ---@param nameID number
 ---@param value number
-function UnityEngine.Shader.SetGlobalInt(nameID, value) end
----@overload fun(name:string, value:UnityEngine.Vector4): void
+function CS.UnityEngine.Shader.SetGlobalInt(nameID, value) end
+---@overload fun(name:string, value:CS.UnityEngine.Vector4): void
 ---@param nameID number
----@param value UnityEngine.Vector4
-function UnityEngine.Shader.SetGlobalVector(nameID, value) end
----@overload fun(name:string, value:UnityEngine.Color): void
+---@param value CS.UnityEngine.Vector4
+function CS.UnityEngine.Shader.SetGlobalVector(nameID, value) end
+---@overload fun(name:string, value:CS.UnityEngine.Color): void
 ---@param nameID number
----@param value UnityEngine.Color
-function UnityEngine.Shader.SetGlobalColor(nameID, value) end
----@overload fun(name:string, value:UnityEngine.Matrix4x4): void
+---@param value CS.UnityEngine.Color
+function CS.UnityEngine.Shader.SetGlobalColor(nameID, value) end
+---@overload fun(name:string, value:CS.UnityEngine.Matrix4x4): void
 ---@param nameID number
----@param value UnityEngine.Matrix4x4
-function UnityEngine.Shader.SetGlobalMatrix(nameID, value) end
----@overload fun(name:string, value:UnityEngine.Texture): void
+---@param value CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Shader.SetGlobalMatrix(nameID, value) end
+---@overload fun(name:string, value:CS.UnityEngine.Texture): void
 ---@param nameID number
----@param value UnityEngine.Texture
-function UnityEngine.Shader.SetGlobalTexture(nameID, value) end
----@overload fun(name:string, value:UnityEngine.ComputeBuffer): void
+---@param value CS.UnityEngine.Texture
+function CS.UnityEngine.Shader.SetGlobalTexture(nameID, value) end
+---@overload fun(name:string, value:CS.UnityEngine.ComputeBuffer): void
 ---@param nameID number
----@param value UnityEngine.ComputeBuffer
-function UnityEngine.Shader.SetGlobalBuffer(nameID, value) end
----@overload fun(name:string, values:System.Collections.Generic.List_System.Single): void
----@overload fun(nameID:number, values:System.Collections.Generic.List_System.Single): void
----@overload fun(name:string, values:System.Single[]): void
+---@param value CS.UnityEngine.ComputeBuffer
+function CS.UnityEngine.Shader.SetGlobalBuffer(nameID, value) end
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_System.Single): void
+---@overload fun(nameID:number, values:CS.System.Collections.Generic.List_System.Single): void
+---@overload fun(name:string, values:CS.System.Single[]): void
 ---@param nameID number
----@param values System.Single[]
-function UnityEngine.Shader.SetGlobalFloatArray(nameID, values) end
----@overload fun(name:string, values:System.Collections.Generic.List_UnityEngine.Vector4): void
----@overload fun(nameID:number, values:System.Collections.Generic.List_UnityEngine.Vector4): void
----@overload fun(name:string, values:UnityEngine.Vector4[]): void
+---@param values CS.System.Single[]
+function CS.UnityEngine.Shader.SetGlobalFloatArray(nameID, values) end
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_UnityEngine.Vector4): void
+---@overload fun(nameID:number, values:CS.System.Collections.Generic.List_UnityEngine.Vector4): void
+---@overload fun(name:string, values:CS.UnityEngine.Vector4[]): void
 ---@param nameID number
----@param values UnityEngine.Vector4[]
-function UnityEngine.Shader.SetGlobalVectorArray(nameID, values) end
----@overload fun(name:string, values:System.Collections.Generic.List_UnityEngine.Matrix4x4): void
----@overload fun(nameID:number, values:System.Collections.Generic.List_UnityEngine.Matrix4x4): void
----@overload fun(name:string, values:UnityEngine.Matrix4x4[]): void
+---@param values CS.UnityEngine.Vector4[]
+function CS.UnityEngine.Shader.SetGlobalVectorArray(nameID, values) end
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_UnityEngine.Matrix4x4): void
+---@overload fun(nameID:number, values:CS.System.Collections.Generic.List_UnityEngine.Matrix4x4): void
+---@overload fun(name:string, values:CS.UnityEngine.Matrix4x4[]): void
 ---@param nameID number
----@param values UnityEngine.Matrix4x4[]
-function UnityEngine.Shader.SetGlobalMatrixArray(nameID, values) end
+---@param values CS.UnityEngine.Matrix4x4[]
+function CS.UnityEngine.Shader.SetGlobalMatrixArray(nameID, values) end
 ---@overload fun(name:string): number
 ---@return number
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalFloat(nameID) end
+function CS.UnityEngine.Shader.GetGlobalFloat(nameID) end
 ---@overload fun(name:string): number
 ---@return number
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalInt(nameID) end
----@overload fun(name:string): UnityEngine.Vector4
----@return UnityEngine.Vector4
+function CS.UnityEngine.Shader.GetGlobalInt(nameID) end
+---@overload fun(name:string): CS.UnityEngine.Vector4
+---@return CS.UnityEngine.Vector4
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalVector(nameID) end
----@overload fun(name:string): UnityEngine.Color
----@return UnityEngine.Color
+function CS.UnityEngine.Shader.GetGlobalVector(nameID) end
+---@overload fun(name:string): CS.UnityEngine.Color
+---@return CS.UnityEngine.Color
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalColor(nameID) end
----@overload fun(name:string): UnityEngine.Matrix4x4
----@return UnityEngine.Matrix4x4
+function CS.UnityEngine.Shader.GetGlobalColor(nameID) end
+---@overload fun(name:string): CS.UnityEngine.Matrix4x4
+---@return CS.UnityEngine.Matrix4x4
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalMatrix(nameID) end
----@overload fun(name:string): UnityEngine.Texture
----@return UnityEngine.Texture
+function CS.UnityEngine.Shader.GetGlobalMatrix(nameID) end
+---@overload fun(name:string): CS.UnityEngine.Texture
+---@return CS.UnityEngine.Texture
 ---@param nameID number
-function UnityEngine.Shader.GetGlobalTexture(nameID) end
----@overload fun(name:string): System.Single[]
----@overload fun(nameID:number): System.Single[]
----@overload fun(name:string, values:System.Collections.Generic.List_System.Single): void
----@return System.Single[]
+function CS.UnityEngine.Shader.GetGlobalTexture(nameID) end
+---@overload fun(name:string): CS.System.Single[]
+---@overload fun(nameID:number): CS.System.Single[]
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_System.Single): void
+---@return CS.System.Single[]
 ---@param nameID number
----@param values System.Collections.Generic.List_System.Single
-function UnityEngine.Shader.GetGlobalFloatArray(nameID, values) end
----@overload fun(name:string): UnityEngine.Vector4[]
----@overload fun(nameID:number): UnityEngine.Vector4[]
----@overload fun(name:string, values:System.Collections.Generic.List_UnityEngine.Vector4): void
----@return UnityEngine.Vector4[]
+---@param values CS.System.Collections.Generic.List_System.Single
+function CS.UnityEngine.Shader.GetGlobalFloatArray(nameID, values) end
+---@overload fun(name:string): CS.UnityEngine.Vector4[]
+---@overload fun(nameID:number): CS.UnityEngine.Vector4[]
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_UnityEngine.Vector4): void
+---@return CS.UnityEngine.Vector4[]
 ---@param nameID number
----@param values System.Collections.Generic.List_UnityEngine.Vector4
-function UnityEngine.Shader.GetGlobalVectorArray(nameID, values) end
----@overload fun(name:string): UnityEngine.Matrix4x4[]
----@overload fun(nameID:number): UnityEngine.Matrix4x4[]
----@overload fun(name:string, values:System.Collections.Generic.List_UnityEngine.Matrix4x4): void
----@return UnityEngine.Matrix4x4[]
+---@param values CS.System.Collections.Generic.List_UnityEngine.Vector4
+function CS.UnityEngine.Shader.GetGlobalVectorArray(nameID, values) end
+---@overload fun(name:string): CS.UnityEngine.Matrix4x4[]
+---@overload fun(nameID:number): CS.UnityEngine.Matrix4x4[]
+---@overload fun(name:string, values:CS.System.Collections.Generic.List_UnityEngine.Matrix4x4): void
+---@return CS.UnityEngine.Matrix4x4[]
 ---@param nameID number
----@param values System.Collections.Generic.List_UnityEngine.Matrix4x4
-function UnityEngine.Shader.GetGlobalMatrixArray(nameID, values) end
-return UnityEngine.Shader
+---@param values CS.System.Collections.Generic.List_UnityEngine.Matrix4x4
+function CS.UnityEngine.Shader.GetGlobalMatrixArray(nameID, values) end
+return CS.UnityEngine.Shader

@@ -1,4 +1,4 @@
----@class UnityEngine.RenderTexture : UnityEngine.Texture
+---@class CS.UnityEngine.RenderTexture : CS.UnityEngine.Texture
 ---@field public width number
 ---@field public height number
 ---@field public dimension number
@@ -14,59 +14,59 @@
 ---@field public enableRandomWrite boolean
 ---@field public useDynamicScale boolean
 ---@field public isPowerOfTwo boolean
----@field public active UnityEngine.RenderTexture
----@field public colorBuffer UnityEngine.RenderBuffer
----@field public depthBuffer UnityEngine.RenderBuffer
+---@field public active CS.UnityEngine.RenderTexture
+---@field public colorBuffer CS.UnityEngine.RenderBuffer
+---@field public depthBuffer CS.UnityEngine.RenderBuffer
 ---@field public depth number
----@field public descriptor UnityEngine.RenderTextureDescriptor
-UnityEngine.RenderTexture = { }
----@overload fun(desc:UnityEngine.RenderTextureDescriptor): UnityEngine.RenderTexture
----@overload fun(textureToCopy:UnityEngine.RenderTexture): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depth:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depth:number, format:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depth:number, format:number): UnityEngine.RenderTexture
----@return UnityEngine.RenderTexture
+---@field public descriptor CS.UnityEngine.RenderTextureDescriptor
+CS.UnityEngine.RenderTexture = { }
+---@overload fun(desc:CS.UnityEngine.RenderTextureDescriptor): CS.UnityEngine.RenderTexture
+---@overload fun(textureToCopy:CS.UnityEngine.RenderTexture): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depth:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depth:number, format:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depth:number, format:number): CS.UnityEngine.RenderTexture
+---@return CS.UnityEngine.RenderTexture
 ---@param width number
 ---@param height number
 ---@param depth number
 ---@param format number
 ---@param readWrite number
-function UnityEngine.RenderTexture.New(width, height, depth, format, readWrite) end
+function CS.UnityEngine.RenderTexture.New(width, height, depth, format, readWrite) end
 ---@return number
-function UnityEngine.RenderTexture:GetNativeDepthBufferPtr() end
+function CS.UnityEngine.RenderTexture:GetNativeDepthBufferPtr() end
 ---@overload fun(): void
 ---@param discardColor boolean
 ---@param discardDepth boolean
-function UnityEngine.RenderTexture:DiscardContents(discardColor, discardDepth) end
-function UnityEngine.RenderTexture:MarkRestoreExpected() end
+function CS.UnityEngine.RenderTexture:DiscardContents(discardColor, discardDepth) end
+function CS.UnityEngine.RenderTexture:MarkRestoreExpected() end
 ---@overload fun(): void
----@param target UnityEngine.RenderTexture
-function UnityEngine.RenderTexture:ResolveAntiAliasedSurface(target) end
+---@param target CS.UnityEngine.RenderTexture
+function CS.UnityEngine.RenderTexture:ResolveAntiAliasedSurface(target) end
 ---@param propertyName string
-function UnityEngine.RenderTexture:SetGlobalShaderProperty(propertyName) end
+function CS.UnityEngine.RenderTexture:SetGlobalShaderProperty(propertyName) end
 ---@return boolean
-function UnityEngine.RenderTexture:Create() end
-function UnityEngine.RenderTexture:Release() end
+function CS.UnityEngine.RenderTexture:Create() end
+function CS.UnityEngine.RenderTexture:Release() end
 ---@return boolean
-function UnityEngine.RenderTexture:IsCreated() end
-function UnityEngine.RenderTexture:GenerateMips() end
----@param equirect UnityEngine.RenderTexture
+function CS.UnityEngine.RenderTexture:IsCreated() end
+function CS.UnityEngine.RenderTexture:GenerateMips() end
+---@param equirect CS.UnityEngine.RenderTexture
 ---@param eye number
-function UnityEngine.RenderTexture:ConvertToEquirect(equirect, eye) end
+function CS.UnityEngine.RenderTexture:ConvertToEquirect(equirect, eye) end
 ---@return boolean
----@param rt UnityEngine.RenderTexture
-function UnityEngine.RenderTexture.SupportsStencil(rt) end
----@param temp UnityEngine.RenderTexture
-function UnityEngine.RenderTexture.ReleaseTemporary(temp) end
----@overload fun(desc:UnityEngine.RenderTextureDescriptor): UnityEngine.RenderTexture
----@overload fun(width:number, height:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number, format:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number, memorylessMode:number): UnityEngine.RenderTexture
----@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number, memorylessMode:number, vrUsage:number): UnityEngine.RenderTexture
----@return UnityEngine.RenderTexture
+---@param rt CS.UnityEngine.RenderTexture
+function CS.UnityEngine.RenderTexture.SupportsStencil(rt) end
+---@param temp CS.UnityEngine.RenderTexture
+function CS.UnityEngine.RenderTexture.ReleaseTemporary(temp) end
+---@overload fun(desc:CS.UnityEngine.RenderTextureDescriptor): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number, format:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number, memorylessMode:number): CS.UnityEngine.RenderTexture
+---@overload fun(width:number, height:number, depthBuffer:number, format:number, readWrite:number, antiAliasing:number, memorylessMode:number, vrUsage:number): CS.UnityEngine.RenderTexture
+---@return CS.UnityEngine.RenderTexture
 ---@param width number
 ---@param height number
 ---@param depthBuffer number
@@ -76,5 +76,5 @@ function UnityEngine.RenderTexture.ReleaseTemporary(temp) end
 ---@param memorylessMode number
 ---@param vrUsage number
 ---@param useDynamicScale boolean
-function UnityEngine.RenderTexture.GetTemporary(width, height, depthBuffer, format, readWrite, antiAliasing, memorylessMode, vrUsage, useDynamicScale) end
-return UnityEngine.RenderTexture
+function CS.UnityEngine.RenderTexture.GetTemporary(width, height, depthBuffer, format, readWrite, antiAliasing, memorylessMode, vrUsage, useDynamicScale) end
+return CS.UnityEngine.RenderTexture

@@ -1,5 +1,5 @@
----@class UnityEngine.Renderer : UnityEngine.Component
----@field public bounds UnityEngine.Bounds
+---@class CS.UnityEngine.Renderer : CS.UnityEngine.Component
+---@field public bounds CS.UnityEngine.Bounds
 ---@field public enabled boolean
 ---@field public isVisible boolean
 ---@field public shadowCastingMode number
@@ -14,35 +14,35 @@
 ---@field public sortingOrder number
 ---@field public allowOcclusionWhenDynamic boolean
 ---@field public isPartOfStaticBatch boolean
----@field public worldToLocalMatrix UnityEngine.Matrix4x4
----@field public localToWorldMatrix UnityEngine.Matrix4x4
----@field public lightProbeProxyVolumeOverride UnityEngine.GameObject
----@field public probeAnchor UnityEngine.Transform
+---@field public worldToLocalMatrix CS.UnityEngine.Matrix4x4
+---@field public localToWorldMatrix CS.UnityEngine.Matrix4x4
+---@field public lightProbeProxyVolumeOverride CS.UnityEngine.GameObject
+---@field public probeAnchor CS.UnityEngine.Transform
 ---@field public lightmapIndex number
 ---@field public realtimeLightmapIndex number
----@field public lightmapScaleOffset UnityEngine.Vector4
----@field public realtimeLightmapScaleOffset UnityEngine.Vector4
----@field public materials UnityEngine.Material[]
----@field public material UnityEngine.Material
----@field public sharedMaterial UnityEngine.Material
----@field public sharedMaterials UnityEngine.Material[]
-UnityEngine.Renderer = { }
----@return UnityEngine.Renderer
-function UnityEngine.Renderer.New() end
+---@field public lightmapScaleOffset CS.UnityEngine.Vector4
+---@field public realtimeLightmapScaleOffset CS.UnityEngine.Vector4
+---@field public materials CS.UnityEngine.Material[]
+---@field public material CS.UnityEngine.Material
+---@field public sharedMaterial CS.UnityEngine.Material
+---@field public sharedMaterials CS.UnityEngine.Material[]
+CS.UnityEngine.Renderer = { }
+---@return CS.UnityEngine.Renderer
+function CS.UnityEngine.Renderer.New() end
 ---@return boolean
-function UnityEngine.Renderer:HasPropertyBlock() end
----@overload fun(properties:UnityEngine.MaterialPropertyBlock): void
----@param properties UnityEngine.MaterialPropertyBlock
+function CS.UnityEngine.Renderer:HasPropertyBlock() end
+---@overload fun(properties:CS.UnityEngine.MaterialPropertyBlock): void
+---@param properties CS.UnityEngine.MaterialPropertyBlock
 ---@param materialIndex number
-function UnityEngine.Renderer:SetPropertyBlock(properties, materialIndex) end
----@overload fun(properties:UnityEngine.MaterialPropertyBlock): void
----@param properties UnityEngine.MaterialPropertyBlock
+function CS.UnityEngine.Renderer:SetPropertyBlock(properties, materialIndex) end
+---@overload fun(properties:CS.UnityEngine.MaterialPropertyBlock): void
+---@param properties CS.UnityEngine.MaterialPropertyBlock
 ---@param materialIndex number
-function UnityEngine.Renderer:GetPropertyBlock(properties, materialIndex) end
----@param m System.Collections.Generic.List_UnityEngine.Material
-function UnityEngine.Renderer:GetMaterials(m) end
----@param m System.Collections.Generic.List_UnityEngine.Material
-function UnityEngine.Renderer:GetSharedMaterials(m) end
----@param result System.Collections.Generic.List_UnityEngine.Rendering.ReflectionProbeBlendInfo
-function UnityEngine.Renderer:GetClosestReflectionProbes(result) end
-return UnityEngine.Renderer
+function CS.UnityEngine.Renderer:GetPropertyBlock(properties, materialIndex) end
+---@param m CS.System.Collections.Generic.List_UnityEngine.Material
+function CS.UnityEngine.Renderer:GetMaterials(m) end
+---@param m CS.System.Collections.Generic.List_UnityEngine.Material
+function CS.UnityEngine.Renderer:GetSharedMaterials(m) end
+---@param result CS.System.Collections.Generic.List_UnityEngine.Rendering.ReflectionProbeBlendInfo
+function CS.UnityEngine.Renderer:GetClosestReflectionProbes(result) end
+return CS.UnityEngine.Renderer

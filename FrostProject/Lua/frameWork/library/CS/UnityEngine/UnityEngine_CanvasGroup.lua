@@ -1,13 +1,13 @@
----@class UnityEngine.CanvasGroup : UnityEngine.Behaviour
+---@class CS.UnityEngine.CanvasGroup : CS.UnityEngine.Behaviour
 ---@field public alpha number
 ---@field public interactable boolean
 ---@field public blocksRaycasts boolean
 ---@field public ignoreParentGroups boolean
-UnityEngine.CanvasGroup = { }
----@return UnityEngine.CanvasGroup
-function UnityEngine.CanvasGroup.New() end
+CS.UnityEngine.CanvasGroup = { }
+---@return CS.UnityEngine.CanvasGroup
+function CS.UnityEngine.CanvasGroup.New() end
 ---@return boolean
----@param sp UnityEngine.Vector2
----@param eventCamera UnityEngine.Camera
-function UnityEngine.CanvasGroup:IsRaycastLocationValid(sp, eventCamera) end
-return UnityEngine.CanvasGroup
+---@param sp CS.UnityEngine.Vector2
+---@param eventCamera CS.UnityEngine.Camera
+function CS.UnityEngine.CanvasGroup:IsRaycastLocationValid(sp, eventCamera) end
+return CS.UnityEngine.CanvasGroup

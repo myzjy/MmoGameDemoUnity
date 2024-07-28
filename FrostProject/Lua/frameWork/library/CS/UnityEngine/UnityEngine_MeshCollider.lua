@@ -1,8 +1,8 @@
----@class UnityEngine.MeshCollider : UnityEngine.Collider
----@field public sharedMesh UnityEngine.Mesh
+---@class CS.UnityEngine.MeshCollider : CS.UnityEngine.Collider
+---@field public sharedMesh CS.UnityEngine.Mesh
 ---@field public convex boolean
 ---@field public cookingOptions number
-UnityEngine.MeshCollider = { }
----@return UnityEngine.MeshCollider
-function UnityEngine.MeshCollider.New() end
-return UnityEngine.MeshCollider
+CS.UnityEngine.MeshCollider = { }
+---@return CS.UnityEngine.MeshCollider
+function CS.UnityEngine.MeshCollider.New() end
+return CS.UnityEngine.MeshCollider

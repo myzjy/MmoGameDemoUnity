@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a24c5442-ae8f-4870-9959-b7448ad91267" name="更改" comment="ui框架">
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/AssetRaw/Actor.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/AssetRaw/Materials.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/AssetRaw/Shaders.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/AssetRaw/UI.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Core/Util/NonDrawingGrphic.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Core/Util/NonDrawingGrphic.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Extension.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Lua/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/library/ClassLibraryMap.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/library/globalClassMap.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/services/dataTable/dataTableConfig.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/services/dataTable/dataTableService.lua" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/UserSettings/Layouts/CurrentMaximizeLayout.dwlt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../FrostProject/UserSettings/Search.settings" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/.idea.UnityMMOClient/.idea/indexLayout.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/UUIButtonWidget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/UUIButtonWidget.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/UUIWidget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/UUIWidget.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/ViewSignSerializableUI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Assets/FrostEngine/Runtime/Modules/UIModule/Core/WidgetCore/ViewSignSerializableUI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Assets/Scenes/UIScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Assets/Scenes/UIScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/.idea/Lua.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Lua/.vscode/settings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/common/class.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Lua/common/class.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/common/json.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Lua/common/json.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/include.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/include.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/services/netMessage/netMessageService.lua" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/Lua/frameWork/services/netMessage/netMessageService.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../FrostProject/UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../../FrostProject/UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Ball01.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Ball01.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Floor.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Floor.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Object2.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Materials/Object2.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Model/Materials/Texture.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouch/Examples/4.X/_Medias/Model/Materials/Texture.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/gun.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/gun.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierArms.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierArms.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierBody.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierBody.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierHead.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierHead.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierHelmet.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierHelmet.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierLenses.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Cartoon Soldier/Materials/soldier/soldierLenses.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Materials/Cube.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Materials/Cube.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Materials/Texture.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Materials/Texture.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Models/Gun/Materials/MachineGun_01 [AlbedoM].mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/EasyTouchBundle/EasyTouchControls/Examples/_Medias/Models/Gun/Materials/MachineGun_01 [AlbedoM].mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/Game/StylizedWater2/_Demo/DemoAssets/Terrain/SWS_DemoRiverTerrain.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/Game/StylizedWater2/_Demo/DemoAssets/Terrain/SWS_DemoRiverTerrain.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Assets/SineVFX/TopDownEffects/Environment/EnvMaterials/PrototypeGridQuadV2_02.mat" beforeDir="false" afterPath="$PROJECT_DIR$/../Assets/SineVFX/TopDownEffects/Environment/EnvMaterials/PrototypeGridQuadV2_02.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Lua.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.idea.UnityMMOClient/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../UserSettings/EditorUserSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../UserSettings/EditorUserSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../UserSettings/Layouts/default-2021.dwlt" beforeDir="false" afterPath="$PROJECT_DIR$/../UserSettings/Layouts/default-2021.dwlt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="NewLua" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2YkWxpFtQ8x6MIJL7T05MExisiO" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/xiangmu/MmoGameDemoUnity/FrostProject/Lua&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Lua" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Lua" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="a24c5442-ae8f-4870-9959-b7448ad91267" name="更改" comment="" />
+      <created>1701070307229</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701070307229</updated>
+      <workItem from="1701070308235" duration="8919000" />
+      <workItem from="1702361066481" duration="1240000" />
+      <workItem from="1702388199386" duration="951000" />
+      <workItem from="1702395528621" duration="904000" />
+      <workItem from="1702481102413" duration="907000" />
+      <workItem from="1706199437276" duration="1596000" />
+      <workItem from="1706724863129" duration="66000" />
+      <workItem from="1706724936287" duration="467000" />
+      <workItem from="1708356218912" duration="4000" />
+      <workItem from="1714900119042" duration="1680000" />
+      <workItem from="1719845760768" duration="4151000" />
+      <workItem from="1719981475921" duration="3650000" />
+      <workItem from="1720049849868" duration="1635000" />
+      <workItem from="1720109234787" duration="192000" />
+      <workItem from="1720248030155" duration="801000" />
+      <workItem from="1720621491974" duration="25000" />
+      <workItem from="1720881942877" duration="99000" />
+      <workItem from="1721551232117" duration="637000" />
+      <workItem from="1721552213011" duration="16000" />
+    </task>
+    <task id="LOCAL-00001" summary="ui框架">
+      <created>1720022296100</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1720022296100</updated>
+    </task>
+    <task id="LOCAL-00002" summary="ui框架">
+      <created>1720109420280</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720109420280</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ui框架" />
+    <option name="LAST_COMMIT_MESSAGE" value="ui框架" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

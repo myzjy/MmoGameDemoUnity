@@ -1,4 +1,4 @@
----@class DG.Tweening.PathMode : System.Enum
+---@class DG.Tweening.PathMode : CS.System.Enum
 ---@field public value__ number
 ---@field public Ignore number
 ---@field public Full3D number

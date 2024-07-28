@@ -1,4 +1,4 @@
----@class UnityEngine.Time
+---@class CS.UnityEngine.Time
 ---@field public time number
 ---@field public timeSinceLevelLoad number
 ---@field public deltaTime number
@@ -17,7 +17,7 @@
 ---@field public realtimeSinceStartup number
 ---@field public captureFramerate number
 ---@field public inFixedTimeStep boolean
-UnityEngine.Time = { }
----@return UnityEngine.Time
-function UnityEngine.Time.New() end
-return UnityEngine.Time
+CS.UnityEngine.Time = { }
+---@return CS.UnityEngine.Time
+function CS.UnityEngine.Time.New() end
+return CS.UnityEngine.Time

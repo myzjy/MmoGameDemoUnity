@@ -1,2 +1,2 @@
----@class UnityEngine.UI
-UnityEngine.UI={}
+---@class CS.UnityEngine.UI
+CS.UnityEngine.UI={}

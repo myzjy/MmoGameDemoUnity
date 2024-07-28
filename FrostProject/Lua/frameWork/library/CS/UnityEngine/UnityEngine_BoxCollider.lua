@@ -1,7 +1,7 @@
----@class UnityEngine.BoxCollider : UnityEngine.Collider
----@field public center UnityEngine.Vector3
----@field public size UnityEngine.Vector3
-UnityEngine.BoxCollider = { }
----@return UnityEngine.BoxCollider
-function UnityEngine.BoxCollider.New() end
-return UnityEngine.BoxCollider
+---@class CS.UnityEngine.BoxCollider : CS.UnityEngine.Collider
+---@field public center CS.UnityEngine.Vector3
+---@field public size CS.UnityEngine.Vector3
+CS.UnityEngine.BoxCollider = { }
+---@return CS.UnityEngine.BoxCollider
+function CS.UnityEngine.BoxCollider.New() end
+return CS.UnityEngine.BoxCollider

@@ -1,4 +1,4 @@
----@class UnityEngine.SystemInfo
+---@class CS.UnityEngine.SystemInfo
 ---@field public unsupportedIdentifier string
 ---@field public batteryLevel number
 ---@field public batteryStatus number
@@ -57,20 +57,20 @@
 ---@field public supportsGPUFence boolean
 ---@field public supportsAsyncGPUReadback boolean
 ---@field public supportsMipStreaming boolean
-UnityEngine.SystemInfo = { }
----@return UnityEngine.SystemInfo
-function UnityEngine.SystemInfo.New() end
+CS.UnityEngine.SystemInfo = { }
+---@return CS.UnityEngine.SystemInfo
+function CS.UnityEngine.SystemInfo.New() end
 ---@return boolean
 ---@param format number
-function UnityEngine.SystemInfo.SupportsRenderTextureFormat(format) end
+function CS.UnityEngine.SystemInfo.SupportsRenderTextureFormat(format) end
 ---@return boolean
 ---@param format number
-function UnityEngine.SystemInfo.SupportsBlendingOnRenderTextureFormat(format) end
+function CS.UnityEngine.SystemInfo.SupportsBlendingOnRenderTextureFormat(format) end
 ---@return boolean
 ---@param format number
-function UnityEngine.SystemInfo.SupportsTextureFormat(format) end
+function CS.UnityEngine.SystemInfo.SupportsTextureFormat(format) end
 ---@return boolean
 ---@param format number
 ---@param usage number
-function UnityEngine.SystemInfo.IsFormatSupported(format, usage) end
-return UnityEngine.SystemInfo
+function CS.UnityEngine.SystemInfo.IsFormatSupported(format, usage) end
+return CS.UnityEngine.SystemInfo

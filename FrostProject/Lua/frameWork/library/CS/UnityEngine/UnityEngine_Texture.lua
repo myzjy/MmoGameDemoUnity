@@ -1,4 +1,4 @@
----@class UnityEngine.Texture : UnityEngine.Object
+---@class CS.UnityEngine.Texture : CS.UnityEngine.Object
 ---@field public masterTextureLimit number
 ---@field public anisotropicFiltering number
 ---@field public width number
@@ -12,9 +12,9 @@
 ---@field public filterMode number
 ---@field public anisoLevel number
 ---@field public mipMapBias number
----@field public texelSize UnityEngine.Vector2
+---@field public texelSize CS.UnityEngine.Vector2
 ---@field public updateCount number
----@field public imageContentsHash UnityEngine.Hash128
+---@field public imageContentsHash CS.UnityEngine.Hash128
 ---@field public totalTextureMemory uint64
 ---@field public desiredTextureMemory uint64
 ---@field public targetTextureMemory uint64
@@ -28,12 +28,12 @@
 ---@field public streamingTextureLoadingCount uint64
 ---@field public streamingTextureForceLoadAll boolean
 ---@field public streamingTextureDiscardUnusedMips boolean
-UnityEngine.Texture = { }
+CS.UnityEngine.Texture = { }
 ---@param forcedMin number
 ---@param globalMax number
-function UnityEngine.Texture.SetGlobalAnisotropicFilteringLimits(forcedMin, globalMax) end
+function CS.UnityEngine.Texture.SetGlobalAnisotropicFilteringLimits(forcedMin, globalMax) end
 ---@return number
-function UnityEngine.Texture:GetNativeTexturePtr() end
-function UnityEngine.Texture:IncrementUpdateCount() end
-function UnityEngine.Texture.SetStreamingTextureMaterialDebugProperties() end
-return UnityEngine.Texture
+function CS.UnityEngine.Texture:GetNativeTexturePtr() end
+function CS.UnityEngine.Texture:IncrementUpdateCount() end
+function CS.UnityEngine.Texture.SetStreamingTextureMaterialDebugProperties() end
+return CS.UnityEngine.Texture

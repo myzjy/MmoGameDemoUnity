@@ -1,4 +1,4 @@
----@class UnityEngine.Matrix4x4 : System.ValueType
+---@class CS.UnityEngine.Matrix4x4 : CS.System.ValueType
 ---@field public m00 number
 ---@field public m10 number
 ---@field public m20 number
@@ -15,126 +15,126 @@
 ---@field public m13 number
 ---@field public m23 number
 ---@field public m33 number
----@field public rotation UnityEngine.Quaternion
----@field public lossyScale UnityEngine.Vector3
+---@field public rotation CS.UnityEngine.Quaternion
+---@field public lossyScale CS.UnityEngine.Vector3
 ---@field public isIdentity boolean
 ---@field public determinant number
----@field public decomposeProjection UnityEngine.FrustumPlanes
----@field public inverse UnityEngine.Matrix4x4
----@field public transpose UnityEngine.Matrix4x4
+---@field public decomposeProjection CS.UnityEngine.FrustumPlanes
+---@field public inverse CS.UnityEngine.Matrix4x4
+---@field public transpose CS.UnityEngine.Matrix4x4
 ---@field public Item number
 ---@field public Item number
----@field public zero UnityEngine.Matrix4x4
----@field public identity UnityEngine.Matrix4x4
-UnityEngine.Matrix4x4 = { }
----@return UnityEngine.Matrix4x4
----@param column0 UnityEngine.Vector4
----@param column1 UnityEngine.Vector4
----@param column2 UnityEngine.Vector4
----@param column3 UnityEngine.Vector4
-function UnityEngine.Matrix4x4.New(column0, column1, column2, column3) end
+---@field public zero CS.UnityEngine.Matrix4x4
+---@field public identity CS.UnityEngine.Matrix4x4
+CS.UnityEngine.Matrix4x4 = { }
+---@return CS.UnityEngine.Matrix4x4
+---@param column0 CS.UnityEngine.Vector4
+---@param column1 CS.UnityEngine.Vector4
+---@param column2 CS.UnityEngine.Vector4
+---@param column3 CS.UnityEngine.Vector4
+function CS.UnityEngine.Matrix4x4.New(column0, column1, column2, column3) end
 ---@return boolean
-function UnityEngine.Matrix4x4:ValidTRS() end
+function CS.UnityEngine.Matrix4x4:ValidTRS() end
 ---@return number
----@param m UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4.Determinant(m) end
----@return UnityEngine.Matrix4x4
----@param pos UnityEngine.Vector3
----@param q UnityEngine.Quaternion
----@param s UnityEngine.Vector3
-function UnityEngine.Matrix4x4.TRS(pos, q, s) end
----@param pos UnityEngine.Vector3
----@param q UnityEngine.Quaternion
----@param s UnityEngine.Vector3
-function UnityEngine.Matrix4x4:SetTRS(pos, q, s) end
----@return UnityEngine.Matrix4x4
----@param m UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4.Inverse(m) end
----@return UnityEngine.Matrix4x4
----@param m UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4.Transpose(m) end
----@return UnityEngine.Matrix4x4
+---@param m CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.Determinant(m) end
+---@return CS.UnityEngine.Matrix4x4
+---@param pos CS.UnityEngine.Vector3
+---@param q CS.UnityEngine.Quaternion
+---@param s CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4.TRS(pos, q, s) end
+---@param pos CS.UnityEngine.Vector3
+---@param q CS.UnityEngine.Quaternion
+---@param s CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4:SetTRS(pos, q, s) end
+---@return CS.UnityEngine.Matrix4x4
+---@param m CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.Inverse(m) end
+---@return CS.UnityEngine.Matrix4x4
+---@param m CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.Transpose(m) end
+---@return CS.UnityEngine.Matrix4x4
 ---@param left number
 ---@param right number
 ---@param bottom number
 ---@param top number
 ---@param zNear number
 ---@param zFar number
-function UnityEngine.Matrix4x4.Ortho(left, right, bottom, top, zNear, zFar) end
----@return UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.Ortho(left, right, bottom, top, zNear, zFar) end
+---@return CS.UnityEngine.Matrix4x4
 ---@param fov number
 ---@param aspect number
 ---@param zNear number
 ---@param zFar number
-function UnityEngine.Matrix4x4.Perspective(fov, aspect, zNear, zFar) end
----@return UnityEngine.Matrix4x4
----@param from UnityEngine.Vector3
----@param to UnityEngine.Vector3
----@param up UnityEngine.Vector3
-function UnityEngine.Matrix4x4.LookAt(from, to, up) end
----@overload fun(fp:UnityEngine.FrustumPlanes): UnityEngine.Matrix4x4
----@return UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.Perspective(fov, aspect, zNear, zFar) end
+---@return CS.UnityEngine.Matrix4x4
+---@param from CS.UnityEngine.Vector3
+---@param to CS.UnityEngine.Vector3
+---@param up CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4.LookAt(from, to, up) end
+---@overload fun(fp:CS.UnityEngine.FrustumPlanes): CS.UnityEngine.Matrix4x4
+---@return CS.UnityEngine.Matrix4x4
 ---@param left number
 ---@param right number
 ---@param bottom number
 ---@param top number
 ---@param zNear number
 ---@param zFar number
-function UnityEngine.Matrix4x4.Frustum(left, right, bottom, top, zNear, zFar) end
+function CS.UnityEngine.Matrix4x4.Frustum(left, right, bottom, top, zNear, zFar) end
 ---@return number
-function UnityEngine.Matrix4x4:GetHashCode() end
----@overload fun(other:System.Object): boolean
+function CS.UnityEngine.Matrix4x4:GetHashCode() end
+---@overload fun(other:CS.System.Object): boolean
 ---@return boolean
----@param other UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4:Equals(other) end
----@overload fun(lhs:UnityEngine.Matrix4x4, rhs:UnityEngine.Matrix4x4): UnityEngine.Matrix4x4
----@return UnityEngine.Matrix4x4
----@param lhs UnityEngine.Matrix4x4
----@param vector UnityEngine.Vector4
-function UnityEngine.Matrix4x4.op_Multiply(lhs, vector) end
+---@param other CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4:Equals(other) end
+---@overload fun(lhs:CS.UnityEngine.Matrix4x4, rhs:CS.UnityEngine.Matrix4x4): CS.UnityEngine.Matrix4x4
+---@return CS.UnityEngine.Matrix4x4
+---@param lhs CS.UnityEngine.Matrix4x4
+---@param vector CS.UnityEngine.Vector4
+function CS.UnityEngine.Matrix4x4.op_Multiply(lhs, vector) end
 ---@return boolean
----@param lhs UnityEngine.Matrix4x4
----@param rhs UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4.op_Equality(lhs, rhs) end
+---@param lhs CS.UnityEngine.Matrix4x4
+---@param rhs CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.op_Equality(lhs, rhs) end
 ---@return boolean
----@param lhs UnityEngine.Matrix4x4
----@param rhs UnityEngine.Matrix4x4
-function UnityEngine.Matrix4x4.op_Inequality(lhs, rhs) end
----@return UnityEngine.Vector4
+---@param lhs CS.UnityEngine.Matrix4x4
+---@param rhs CS.UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4.op_Inequality(lhs, rhs) end
+---@return CS.UnityEngine.Vector4
 ---@param index number
-function UnityEngine.Matrix4x4:GetColumn(index) end
----@return UnityEngine.Vector4
+function CS.UnityEngine.Matrix4x4:GetColumn(index) end
+---@return CS.UnityEngine.Vector4
 ---@param index number
-function UnityEngine.Matrix4x4:GetRow(index) end
+function CS.UnityEngine.Matrix4x4:GetRow(index) end
 ---@param index number
----@param column UnityEngine.Vector4
-function UnityEngine.Matrix4x4:SetColumn(index, column) end
+---@param column CS.UnityEngine.Vector4
+function CS.UnityEngine.Matrix4x4:SetColumn(index, column) end
 ---@param index number
----@param row UnityEngine.Vector4
-function UnityEngine.Matrix4x4:SetRow(index, row) end
----@return UnityEngine.Vector3
----@param point UnityEngine.Vector3
-function UnityEngine.Matrix4x4:MultiplyPoint(point) end
----@return UnityEngine.Vector3
----@param point UnityEngine.Vector3
-function UnityEngine.Matrix4x4:MultiplyPoint3x4(point) end
----@return UnityEngine.Vector3
----@param vector UnityEngine.Vector3
-function UnityEngine.Matrix4x4:MultiplyVector(vector) end
----@return UnityEngine.Plane
----@param plane UnityEngine.Plane
-function UnityEngine.Matrix4x4:TransformPlane(plane) end
----@return UnityEngine.Matrix4x4
----@param vector UnityEngine.Vector3
-function UnityEngine.Matrix4x4.Scale(vector) end
----@return UnityEngine.Matrix4x4
----@param vector UnityEngine.Vector3
-function UnityEngine.Matrix4x4.Translate(vector) end
----@return UnityEngine.Matrix4x4
----@param q UnityEngine.Quaternion
-function UnityEngine.Matrix4x4.Rotate(q) end
+---@param row CS.UnityEngine.Vector4
+function CS.UnityEngine.Matrix4x4:SetRow(index, row) end
+---@return CS.UnityEngine.Vector3
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4:MultiplyPoint(point) end
+---@return CS.UnityEngine.Vector3
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4:MultiplyPoint3x4(point) end
+---@return CS.UnityEngine.Vector3
+---@param vector CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4:MultiplyVector(vector) end
+---@return CS.UnityEngine.Plane
+---@param plane CS.UnityEngine.Plane
+function CS.UnityEngine.Matrix4x4:TransformPlane(plane) end
+---@return CS.UnityEngine.Matrix4x4
+---@param vector CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4.Scale(vector) end
+---@return CS.UnityEngine.Matrix4x4
+---@param vector CS.UnityEngine.Vector3
+function CS.UnityEngine.Matrix4x4.Translate(vector) end
+---@return CS.UnityEngine.Matrix4x4
+---@param q CS.UnityEngine.Quaternion
+function CS.UnityEngine.Matrix4x4.Rotate(q) end
 ---@overload fun(): string
 ---@return string
 ---@param format string
-function UnityEngine.Matrix4x4:ToString(format) end
-return UnityEngine.Matrix4x4
+function CS.UnityEngine.Matrix4x4:ToString(format) end
+return CS.UnityEngine.Matrix4x4

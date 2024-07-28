@@ -79,6 +79,7 @@ end
 
 function FrostLogD(...)
     local tArguments = {...}
+    tArguments = TableConcat(tArguments)
     local tFmt = table.concat(tArguments,"\t ")
     local d = ""
     if Debug < 1 then
@@ -96,6 +97,7 @@ end
 
 function FrostLogE(...)
     local tArguments = {...}
+    tArguments = TableConcat(tArguments)
     local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
@@ -113,6 +115,7 @@ function FrostLogW(...)
         return
     end
     local tArguments = {...}
+    tArguments = TableConcat(tArguments)
     local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
@@ -130,6 +133,7 @@ function FrostLogI(inFmt, ...)
         return
     end
     local tArguments = {...}
+    tArguments = TableConcat(tArguments)
     local tFmt = table.concat(tArguments,"\t",1,#tArguments, "nil")
     local d = ""
     if Debug >= 1 then
@@ -160,6 +164,21 @@ function Handle(method, obj, ...)
     end
     return newHandler
 end
+function TableConcat(inArguments)
+    local tTabMap = {}
+    local tTypeStr = string.empty
+    for tIndex, tValue in pairs(inArguments) do
+        tTypeStr = type(tValue)
+        if tTypeStr == "userdata" then
+            table.insert(tTabMap, JSON.encode(tValue))
+        elseif tTypeStr =="table" then
+            table.insert(tTabMap, JSON.encode(tValue))
+        else
+            table.insert(tTabMap, tValue)
+        end
+    end
+    return tTabMap
+end
 
 
 ------------------------------------------------------------
@@ -168,6 +187,6 @@ function _DisableLuaLogInterface(...)
     
 end
 
--- print = function(...)  end
--- error = function(...)  end
--- warn =  function(...)  end
+print = function(...)  end
+error = function(...)  end
+warn =  function(...)  end

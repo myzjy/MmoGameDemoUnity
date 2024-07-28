@@ -1,6 +1,6 @@
----@class UnityEngine.WaitForSeconds : UnityEngine.YieldInstruction
-UnityEngine.WaitForSeconds = { }
----@return UnityEngine.WaitForSeconds
+---@class CS.UnityEngine.WaitForSeconds : CS.UnityEngine.YieldInstruction
+CS.UnityEngine.WaitForSeconds = { }
+---@return CS.UnityEngine.WaitForSeconds
 ---@param seconds number
-function UnityEngine.WaitForSeconds.New(seconds) end
-return UnityEngine.WaitForSeconds
+function CS.UnityEngine.WaitForSeconds.New(seconds) end
+return CS.UnityEngine.WaitForSeconds

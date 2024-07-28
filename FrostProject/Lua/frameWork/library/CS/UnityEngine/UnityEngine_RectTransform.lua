@@ -1,30 +1,30 @@
----@class UnityEngine.RectTransform : UnityEngine.Transform
----@field public rect UnityEngine.Rect
----@field public anchorMin UnityEngine.Vector2
----@field public anchorMax UnityEngine.Vector2
----@field public anchoredPosition UnityEngine.Vector2
----@field public sizeDelta UnityEngine.Vector2
----@field public pivot UnityEngine.Vector2
----@field public anchoredPosition3D UnityEngine.Vector3
----@field public offsetMin UnityEngine.Vector2
----@field public offsetMax UnityEngine.Vector2
-UnityEngine.RectTransform = { }
----@return UnityEngine.RectTransform
-function UnityEngine.RectTransform.New() end
----@param value (fun(driven:UnityEngine.RectTransform):void)
-function UnityEngine.RectTransform.add_reapplyDrivenProperties(value) end
----@param value (fun(driven:UnityEngine.RectTransform):void)
-function UnityEngine.RectTransform.remove_reapplyDrivenProperties(value) end
-function UnityEngine.RectTransform:ForceUpdateRectTransforms() end
----@param fourCornersArray UnityEngine.Vector3[]
-function UnityEngine.RectTransform:GetLocalCorners(fourCornersArray) end
----@param fourCornersArray UnityEngine.Vector3[]
-function UnityEngine.RectTransform:GetWorldCorners(fourCornersArray) end
+---@class CS.UnityEngine.RectTransform : CS.UnityEngine.Transform
+---@field public rect CS.UnityEngine.Rect
+---@field public anchorMin CS.UnityEngine.Vector2
+---@field public anchorMax CS.UnityEngine.Vector2
+---@field public anchoredPosition CS.UnityEngine.Vector2
+---@field public sizeDelta CS.UnityEngine.Vector2
+---@field public pivot CS.UnityEngine.Vector2
+---@field public anchoredPosition3D CS.UnityEngine.Vector3
+---@field public offsetMin CS.UnityEngine.Vector2
+---@field public offsetMax CS.UnityEngine.Vector2
+CS.UnityEngine.RectTransform = { }
+---@return CS.UnityEngine.RectTransform
+function CS.UnityEngine.RectTransform.New() end
+---@param value (fun(driven:CS.UnityEngine.RectTransform):void)
+function CS.UnityEngine.RectTransform.add_reapplyDrivenProperties(value) end
+---@param value (fun(driven:CS.UnityEngine.RectTransform):void)
+function CS.UnityEngine.RectTransform.remove_reapplyDrivenProperties(value) end
+function CS.UnityEngine.RectTransform:ForceUpdateRectTransforms() end
+---@param fourCornersArray CS.UnityEngine.Vector3[]
+function CS.UnityEngine.RectTransform:GetLocalCorners(fourCornersArray) end
+---@param fourCornersArray CS.UnityEngine.Vector3[]
+function CS.UnityEngine.RectTransform:GetWorldCorners(fourCornersArray) end
 ---@param edge number
 ---@param inset number
 ---@param size number
-function UnityEngine.RectTransform:SetInsetAndSizeFromParentEdge(edge, inset, size) end
+function CS.UnityEngine.RectTransform:SetInsetAndSizeFromParentEdge(edge, inset, size) end
 ---@param axis number
 ---@param size number
-function UnityEngine.RectTransform:SetSizeWithCurrentAnchors(axis, size) end
-return UnityEngine.RectTransform
+function CS.UnityEngine.RectTransform:SetSizeWithCurrentAnchors(axis, size) end
+return CS.UnityEngine.RectTransform

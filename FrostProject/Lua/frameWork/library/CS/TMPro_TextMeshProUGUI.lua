@@ -1,9 +1,9 @@
 -- ---@class TMPro.TextMeshProUGUI : TMPro.TMP_Text
--- ---@field public materialForRendering UnityEngine.Material
+-- ---@field public materialForRendering CS.UnityEngine.Material
 -- ---@field public autoSizeTextContainer boolean
--- ---@field public mesh UnityEngine.Mesh
--- ---@field public canvasRenderer UnityEngine.CanvasRenderer
--- ---@field public maskOffset UnityEngine.Vector4
+-- ---@field public mesh CS.UnityEngine.Mesh
+-- ---@field public canvasRenderer CS.UnityEngine.CanvasRenderer
+-- ---@field public maskOffset CS.UnityEngine.Vector4
 
 -- ---@type TMPro.TextMeshProUGUI
 -- TMPro.TextMeshProUGUI = { }
@@ -17,12 +17,12 @@
 -- function TMPro.TextMeshProUGUI:SetAllDirty() end
 -- ---@param update number
 -- function TMPro.TextMeshProUGUI:Rebuild(update) end
--- ---@return UnityEngine.Material
--- ---@param baseMaterial UnityEngine.Material
+-- ---@return CS.UnityEngine.Material
+-- ---@param baseMaterial CS.UnityEngine.Material
 -- function TMPro.TextMeshProUGUI:GetModifiedMaterial(baseMaterial) end
 -- function TMPro.TextMeshProUGUI:RecalculateClipping() end
 -- function TMPro.TextMeshProUGUI:RecalculateMasking() end
--- ---@param clipRect UnityEngine.Rect
+-- ---@param clipRect CS.UnityEngine.Rect
 -- ---@param validRect boolean
 -- function TMPro.TextMeshProUGUI:Cull(clipRect, validRect) end
 -- function TMPro.TextMeshProUGUI:UpdateMeshPadding() end
@@ -33,7 +33,7 @@
 -- ---@param text string
 -- function TMPro.TextMeshProUGUI:GetTextInfo(text) end
 -- function TMPro.TextMeshProUGUI:ClearMesh() end
--- ---@param mesh UnityEngine.Mesh
+-- ---@param mesh CS.UnityEngine.Mesh
 -- ---@param index number
 -- function TMPro.TextMeshProUGUI:UpdateGeometry(mesh, index) end
 -- ---@overload fun(): void

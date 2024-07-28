@@ -1,4 +1,4 @@
----@class UnityEngine.QualitySettings : UnityEngine.Object
+---@class CS.UnityEngine.QualitySettings : CS.UnityEngine.Object
 ---@field public pixelLightCount number
 ---@field public shadows number
 ---@field public shadowProjection number
@@ -8,7 +8,7 @@
 ---@field public shadowmaskMode number
 ---@field public shadowNearPlaneOffset number
 ---@field public shadowCascade2Split number
----@field public shadowCascade4Split UnityEngine.Vector3
+---@field public shadowCascade4Split CS.UnityEngine.Vector3
 ---@field public lodBias number
 ---@field public anisotropicFiltering number
 ---@field public masterTextureLimit number
@@ -32,20 +32,20 @@
 ---@field public streamingMipmapsAddAllCameras boolean
 ---@field public streamingMipmapsMaxFileIORequests number
 ---@field public maxQueuedFrames number
----@field public names System.String[]
+---@field public names CS.System.String[]
 ---@field public desiredColorSpace number
 ---@field public activeColorSpace number
-UnityEngine.QualitySettings = { }
+CS.UnityEngine.QualitySettings = { }
 ---@overload fun(): void
 ---@param applyExpensiveChanges boolean
-function UnityEngine.QualitySettings.IncreaseLevel(applyExpensiveChanges) end
+function CS.UnityEngine.QualitySettings.IncreaseLevel(applyExpensiveChanges) end
 ---@overload fun(): void
 ---@param applyExpensiveChanges boolean
-function UnityEngine.QualitySettings.DecreaseLevel(applyExpensiveChanges) end
+function CS.UnityEngine.QualitySettings.DecreaseLevel(applyExpensiveChanges) end
 ---@overload fun(index:number): void
 ---@param index number
 ---@param applyExpensiveChanges boolean
-function UnityEngine.QualitySettings.SetQualityLevel(index, applyExpensiveChanges) end
+function CS.UnityEngine.QualitySettings.SetQualityLevel(index, applyExpensiveChanges) end
 ---@return number
-function UnityEngine.QualitySettings.GetQualityLevel() end
-return UnityEngine.QualitySettings
+function CS.UnityEngine.QualitySettings.GetQualityLevel() end
+return CS.UnityEngine.QualitySettings

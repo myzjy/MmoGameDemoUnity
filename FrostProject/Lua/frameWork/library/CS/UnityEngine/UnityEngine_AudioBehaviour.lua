@@ -1,5 +1,5 @@
----@class UnityEngine.AudioBehaviour : UnityEngine.Behaviour
-UnityEngine.AudioBehaviour = { }
----@return UnityEngine.AudioBehaviour
-function UnityEngine.AudioBehaviour.New() end
-return UnityEngine.AudioBehaviour
+---@class CS.UnityEngine.AudioBehaviour : CS.UnityEngine.Behaviour
+CS.UnityEngine.AudioBehaviour = { }
+---@return CS.UnityEngine.AudioBehaviour
+function CS.UnityEngine.AudioBehaviour.New() end
+return CS.UnityEngine.AudioBehaviour

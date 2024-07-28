@@ -203,7 +203,7 @@ function EventService:SendEvent(id, sender, target, ...)
         FrostLogE(self.__classname, "EventService:SendEvent : not initialized", id)
         return
     end
-    eventData.event(id, ...)
+    eventData.event(...)
 end
 
 function EventService:AddEventListener(event, inObj, func)

@@ -1,13 +1,13 @@
----@class UnityEngine.UI.GridLayoutGroup : UnityEngine.UI.LayoutGroup
+---@class CS.UnityEngine.UI.GridLayoutGroup : CS.UnityEngine.UI.LayoutGroup
 ---@field public startCorner number
 ---@field public startAxis number
----@field public cellSize UnityEngine.Vector2
----@field public spacing UnityEngine.Vector2
+---@field public cellSize CS.UnityEngine.Vector2
+---@field public spacing CS.UnityEngine.Vector2
 ---@field public constraint number
 ---@field public constraintCount number
-UnityEngine.UI.GridLayoutGroup = { }
-function UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputHorizontal() end
-function UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputVertical() end
-function UnityEngine.UI.GridLayoutGroup:SetLayoutHorizontal() end
-function UnityEngine.UI.GridLayoutGroup:SetLayoutVertical() end
-return UnityEngine.UI.GridLayoutGroup
+CS.UnityEngine.UI.GridLayoutGroup = { }
+function CS.UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputHorizontal() end
+function CS.UnityEngine.UI.GridLayoutGroup:CalculateLayoutInputVertical() end
+function CS.UnityEngine.UI.GridLayoutGroup:SetLayoutHorizontal() end
+function CS.UnityEngine.UI.GridLayoutGroup:SetLayoutVertical() end
+return CS.UnityEngine.UI.GridLayoutGroup

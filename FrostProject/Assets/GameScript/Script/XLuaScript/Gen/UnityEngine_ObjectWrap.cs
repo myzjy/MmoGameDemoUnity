@@ -40,13 +40,16 @@ namespace XLua.CSObjectWrap
 			Utils.EndObjectRegister(type, L, translator, null, null,
 			    null, null, null);
 
-		    Utils.BeginClassRegister(type, L, __CreateInstance, 7, 0, 0);
+		    Utils.BeginClassRegister(type, L, __CreateInstance, 10, 0, 0);
 			Utils.RegisterFunc(L, Utils.CLS_IDX, "Instantiate", _m_Instantiate_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "Destroy", _m_Destroy_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "DestroyImmediate", _m_DestroyImmediate_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "FindObjectsOfType", _m_FindObjectsOfType_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "FindObjectsByType", _m_FindObjectsByType_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "DontDestroyOnLoad", _m_DontDestroyOnLoad_xlua_st_);
             Utils.RegisterFunc(L, Utils.CLS_IDX, "FindObjectOfType", _m_FindObjectOfType_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "FindFirstObjectByType", _m_FindFirstObjectByType_xlua_st_);
+            Utils.RegisterFunc(L, Utils.CLS_IDX, "FindAnyObjectByType", _m_FindAnyObjectByType_xlua_st_);
             
 			
             
@@ -469,6 +472,51 @@ namespace XLua.CSObjectWrap
         }
         
         [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_FindObjectsByType_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 2&& translator.Assignable<System.Type>(L, 1)&& translator.Assignable<UnityEngine.FindObjectsSortMode>(L, 2)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    UnityEngine.FindObjectsSortMode _sortMode;translator.Get(L, 2, out _sortMode);
+                    
+                        var gen_ret = UnityEngine.Object.FindObjectsByType( _type, _sortMode );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                if(gen_param_count == 3&& translator.Assignable<System.Type>(L, 1)&& translator.Assignable<UnityEngine.FindObjectsInactive>(L, 2)&& translator.Assignable<UnityEngine.FindObjectsSortMode>(L, 3)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    UnityEngine.FindObjectsInactive _findObjectsInactive;translator.Get(L, 2, out _findObjectsInactive);
+                    UnityEngine.FindObjectsSortMode _sortMode;translator.Get(L, 3, out _sortMode);
+                    
+                        var gen_ret = UnityEngine.Object.FindObjectsByType( _type, _findObjectsInactive, _sortMode );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Object.FindObjectsByType!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
         static int _m_DontDestroyOnLoad_xlua_st_(RealStatePtr L)
         {
 		    try {
@@ -534,6 +582,92 @@ namespace XLua.CSObjectWrap
             }
             
             return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Object.FindObjectOfType!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_FindFirstObjectByType_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& translator.Assignable<System.Type>(L, 1)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    
+                        var gen_ret = UnityEngine.Object.FindFirstObjectByType( _type );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                if(gen_param_count == 2&& translator.Assignable<System.Type>(L, 1)&& translator.Assignable<UnityEngine.FindObjectsInactive>(L, 2)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    UnityEngine.FindObjectsInactive _findObjectsInactive;translator.Get(L, 2, out _findObjectsInactive);
+                    
+                        var gen_ret = UnityEngine.Object.FindFirstObjectByType( _type, _findObjectsInactive );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Object.FindFirstObjectByType!");
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_FindAnyObjectByType_xlua_st_(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+            
+			    int gen_param_count = LuaAPI.lua_gettop(L);
+            
+                if(gen_param_count == 1&& translator.Assignable<System.Type>(L, 1)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    
+                        var gen_ret = UnityEngine.Object.FindAnyObjectByType( _type );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                if(gen_param_count == 2&& translator.Assignable<System.Type>(L, 1)&& translator.Assignable<UnityEngine.FindObjectsInactive>(L, 2)) 
+                {
+                    System.Type _type = (System.Type)translator.GetObject(L, 1, typeof(System.Type));
+                    UnityEngine.FindObjectsInactive _findObjectsInactive;translator.Get(L, 2, out _findObjectsInactive);
+                    
+                        var gen_ret = UnityEngine.Object.FindAnyObjectByType( _type, _findObjectsInactive );
+                        translator.Push(L, gen_ret);
+                    
+                    
+                    
+                    return 1;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+            return LuaAPI.luaL_error(L, "invalid arguments to UnityEngine.Object.FindAnyObjectByType!");
             
         }
         

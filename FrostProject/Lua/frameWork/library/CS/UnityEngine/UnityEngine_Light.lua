@@ -1,7 +1,7 @@
----@class UnityEngine.Light : UnityEngine.Behaviour
+---@class CS.UnityEngine.Light : CS.UnityEngine.Behaviour
 ---@field public type number
 ---@field public spotAngle number
----@field public color UnityEngine.Color
+---@field public color CS.UnityEngine.Color
 ---@field public colorTemperature number
 ---@field public intensity number
 ---@field public bounceIntensity number
@@ -10,8 +10,8 @@
 ---@field public shadowNormalBias number
 ---@field public shadowNearPlane number
 ---@field public range number
----@field public flare UnityEngine.Flare
----@field public bakingOutput UnityEngine.LightBakingOutput
+---@field public flare CS.UnityEngine.Flare
+---@field public bakingOutput CS.UnityEngine.LightBakingOutput
 ---@field public cullingMask number
 ---@field public lightShadowCasterMode number
 ---@field public shadowRadius number
@@ -19,40 +19,40 @@
 ---@field public shadows number
 ---@field public shadowStrength number
 ---@field public shadowResolution number
----@field public layerShadowCullDistances System.Single[]
+---@field public layerShadowCullDistances CS.System.Single[]
 ---@field public cookieSize number
----@field public cookie UnityEngine.Texture
+---@field public cookie CS.UnityEngine.Texture
 ---@field public renderMode number
----@field public areaSize UnityEngine.Vector2
+---@field public areaSize CS.UnityEngine.Vector2
 ---@field public lightmapBakeType number
 ---@field public commandBufferCount number
-UnityEngine.Light = { }
----@return UnityEngine.Light
-function UnityEngine.Light.New() end
-function UnityEngine.Light:Reset() end
-function UnityEngine.Light:SetLightDirty() end
----@overload fun(evt:number, buffer:UnityEngine.Rendering.CommandBuffer): void
+CS.UnityEngine.Light = { }
+---@return CS.UnityEngine.Light
+function CS.UnityEngine.Light.New() end
+function CS.UnityEngine.Light:Reset() end
+function CS.UnityEngine.Light:SetLightDirty() end
+---@overload fun(evt:number, buffer:CS.UnityEngine.Rendering.CommandBuffer): void
 ---@param evt number
----@param buffer UnityEngine.Rendering.CommandBuffer
+---@param buffer CS.UnityEngine.Rendering.CommandBuffer
 ---@param shadowPassMask number
-function UnityEngine.Light:AddCommandBuffer(evt, buffer, shadowPassMask) end
----@overload fun(evt:number, buffer:UnityEngine.Rendering.CommandBuffer, queueType:number): void
+function CS.UnityEngine.Light:AddCommandBuffer(evt, buffer, shadowPassMask) end
+---@overload fun(evt:number, buffer:CS.UnityEngine.Rendering.CommandBuffer, queueType:number): void
 ---@param evt number
----@param buffer UnityEngine.Rendering.CommandBuffer
+---@param buffer CS.UnityEngine.Rendering.CommandBuffer
 ---@param shadowPassMask number
 ---@param queueType number
-function UnityEngine.Light:AddCommandBufferAsync(evt, buffer, shadowPassMask, queueType) end
+function CS.UnityEngine.Light:AddCommandBufferAsync(evt, buffer, shadowPassMask, queueType) end
 ---@param evt number
----@param buffer UnityEngine.Rendering.CommandBuffer
-function UnityEngine.Light:RemoveCommandBuffer(evt, buffer) end
+---@param buffer CS.UnityEngine.Rendering.CommandBuffer
+function CS.UnityEngine.Light:RemoveCommandBuffer(evt, buffer) end
 ---@param evt number
-function UnityEngine.Light:RemoveCommandBuffers(evt) end
-function UnityEngine.Light:RemoveAllCommandBuffers() end
----@return UnityEngine.Rendering.CommandBuffer[]
+function CS.UnityEngine.Light:RemoveCommandBuffers(evt) end
+function CS.UnityEngine.Light:RemoveAllCommandBuffers() end
+---@return CS.UnityEngine.Rendering.CommandBuffer[]
 ---@param evt number
-function UnityEngine.Light:GetCommandBuffers(evt) end
----@return UnityEngine.Light[]
+function CS.UnityEngine.Light:GetCommandBuffers(evt) end
+---@return CS.UnityEngine.Light[]
 ---@param t number
 ---@param layer number
-function UnityEngine.Light.GetLights(t, layer) end
-return UnityEngine.Light
+function CS.UnityEngine.Light.GetLights(t, layer) end
+return CS.UnityEngine.Light

@@ -1,52 +1,52 @@
----@class UnityEngine.RectTransformUtility
-UnityEngine.RectTransformUtility = { }
----@overload fun(rect:UnityEngine.RectTransform, screenPoint:UnityEngine.Vector2): boolean
+---@class CS.UnityEngine.RectTransformUtility
+CS.UnityEngine.RectTransformUtility = { }
+---@overload fun(rect:CS.UnityEngine.RectTransform, screenPoint:CS.UnityEngine.Vector2): boolean
 ---@return boolean
----@param rect UnityEngine.RectTransform
----@param screenPoint UnityEngine.Vector2
----@param cam UnityEngine.Camera
-function UnityEngine.RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, cam) end
+---@param rect CS.UnityEngine.RectTransform
+---@param screenPoint CS.UnityEngine.Vector2
+---@param cam CS.UnityEngine.Camera
+function CS.UnityEngine.RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, cam) end
 ---@return boolean
----@param rect UnityEngine.RectTransform
----@param screenPoint UnityEngine.Vector2
----@param cam UnityEngine.Camera
----@param worldPoint UnityEngine.Vector3
-function UnityEngine.RectTransformUtility.ScreenPointToWorldPointInRectangle(rect, screenPoint, cam, worldPoint) end
+---@param rect CS.UnityEngine.RectTransform
+---@param screenPoint CS.UnityEngine.Vector2
+---@param cam CS.UnityEngine.Camera
+---@param worldPoint CS.UnityEngine.Vector3
+function CS.UnityEngine.RectTransformUtility.ScreenPointToWorldPointInRectangle(rect, screenPoint, cam, worldPoint) end
 ---@return boolean
----@param rect UnityEngine.RectTransform
----@param screenPoint UnityEngine.Vector2
----@param cam UnityEngine.Camera
----@param localPoint UnityEngine.Vector2
-function UnityEngine.RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint, cam, localPoint) end
----@return UnityEngine.Ray
----@param cam UnityEngine.Camera
----@param screenPos UnityEngine.Vector2
-function UnityEngine.RectTransformUtility.ScreenPointToRay(cam, screenPos) end
----@return UnityEngine.Vector2
----@param cam UnityEngine.Camera
----@param worldPoint UnityEngine.Vector3
-function UnityEngine.RectTransformUtility.WorldToScreenPoint(cam, worldPoint) end
----@overload fun(trans:UnityEngine.Transform): UnityEngine.Bounds
----@return UnityEngine.Bounds
----@param root UnityEngine.Transform
----@param child UnityEngine.Transform
-function UnityEngine.RectTransformUtility.CalculateRelativeRectTransformBounds(root, child) end
----@param rect UnityEngine.RectTransform
+---@param rect CS.UnityEngine.RectTransform
+---@param screenPoint CS.UnityEngine.Vector2
+---@param cam CS.UnityEngine.Camera
+---@param localPoint CS.UnityEngine.Vector2
+function CS.UnityEngine.RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint, cam, localPoint) end
+---@return CS.UnityEngine.Ray
+---@param cam CS.UnityEngine.Camera
+---@param screenPos CS.UnityEngine.Vector2
+function CS.UnityEngine.RectTransformUtility.ScreenPointToRay(cam, screenPos) end
+---@return CS.UnityEngine.Vector2
+---@param cam CS.UnityEngine.Camera
+---@param worldPoint CS.UnityEngine.Vector3
+function CS.UnityEngine.RectTransformUtility.WorldToScreenPoint(cam, worldPoint) end
+---@overload fun(trans:CS.UnityEngine.Transform): CS.UnityEngine.Bounds
+---@return CS.UnityEngine.Bounds
+---@param root CS.UnityEngine.Transform
+---@param child CS.UnityEngine.Transform
+function CS.UnityEngine.RectTransformUtility.CalculateRelativeRectTransformBounds(root, child) end
+---@param rect CS.UnityEngine.RectTransform
 ---@param axis number
 ---@param keepPositioning boolean
 ---@param recursive boolean
-function UnityEngine.RectTransformUtility.FlipLayoutOnAxis(rect, axis, keepPositioning, recursive) end
----@param rect UnityEngine.RectTransform
+function CS.UnityEngine.RectTransformUtility.FlipLayoutOnAxis(rect, axis, keepPositioning, recursive) end
+---@param rect CS.UnityEngine.RectTransform
 ---@param keepPositioning boolean
 ---@param recursive boolean
-function UnityEngine.RectTransformUtility.FlipLayoutAxes(rect, keepPositioning, recursive) end
----@return UnityEngine.Vector2
----@param point UnityEngine.Vector2
----@param elementTransform UnityEngine.Transform
----@param canvas UnityEngine.Canvas
-function UnityEngine.RectTransformUtility.PixelAdjustPoint(point, elementTransform, canvas) end
----@return UnityEngine.Rect
----@param rectTransform UnityEngine.RectTransform
----@param canvas UnityEngine.Canvas
-function UnityEngine.RectTransformUtility.PixelAdjustRect(rectTransform, canvas) end
-return UnityEngine.RectTransformUtility
+function CS.UnityEngine.RectTransformUtility.FlipLayoutAxes(rect, keepPositioning, recursive) end
+---@return CS.UnityEngine.Vector2
+---@param point CS.UnityEngine.Vector2
+---@param elementTransform CS.UnityEngine.Transform
+---@param canvas CS.UnityEngine.Canvas
+function CS.UnityEngine.RectTransformUtility.PixelAdjustPoint(point, elementTransform, canvas) end
+---@return CS.UnityEngine.Rect
+---@param rectTransform CS.UnityEngine.RectTransform
+---@param canvas CS.UnityEngine.Canvas
+function CS.UnityEngine.RectTransformUtility.PixelAdjustRect(rectTransform, canvas) end
+return CS.UnityEngine.RectTransformUtility

@@ -1,10 +1,10 @@
----@class System.ValueType
-System.ValueType = { }
+---@class CS.System.ValueType
+CS.System.ValueType = { }
 ---@return boolean
----@param obj System.Object
-function System.ValueType:Equals(obj) end
+---@param obj CS.System.Object
+function CS.System.ValueType:Equals(obj) end
 ---@return number
-function System.ValueType:GetHashCode() end
+function CS.System.ValueType:GetHashCode() end
 ---@return string
-function System.ValueType:ToString() end
-return System.ValueType
+function CS.System.ValueType:ToString() end
+return CS.System.ValueType

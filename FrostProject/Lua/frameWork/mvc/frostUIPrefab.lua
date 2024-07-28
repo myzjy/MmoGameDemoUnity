@@ -169,14 +169,10 @@ function UIPrefab:Create(mediator, parentPrefabClass, parentTf, argument, custom
         MVCService:AddInputDelegate(self, self.OnInputHandler)
     end
 
-    CNSService:BeginFlow(FlowId.All, FlowId.ResourceInitialize, self.__classname)
     self:vOnResourceLoaded()
-    CNSService:EndFlow(FlowId.All, FlowId.ResourceInitialize)
 
-    CNSService:BeginFlow(FlowId.All, FlowId.LogicInitialize, self.__classname)
     self:vOnInitialize(argument)
     self:NotifyPrefabVisible(true)
-    CNSService:EndFlow(FlowId.All, FlowId.LogicInitialize)
 
     -- 初始化audioCfg
     if self._prefab.AudioEventCfg then
@@ -201,19 +197,18 @@ end
 ---销毁。会调vOnUninitialize。
 function UIPrefab:Destroy()
     self:NotifyPreDestroyDelegate()
-    table.clear(self._preDestroyDelegates)
+    table.Clear(self._preDestroyDelegates)
 
     if self.vOnInputUpdateUI then
         MVCService:RemoveInputDelegate(self)
     end
-    CNSService:BeginFlow(FlowId.All, FlowId.LogicUninitialize, self.__classname)
     self:NotifyPrefabVisible(false)
 
     -- 销毁自动动效相关的处理
     for i = #self._autoPlayAnimDelay.Queue, 1, -1 do
-        Pool:DestroyTable(self._autoPlayAnimDelay.Queue[i])
+        UPool:DestroyTable(self._autoPlayAnimDelay.Queue[i])
     end
-    table.clear(self._autoPlayAnimDelay.Queue)
+    table.Clear(self._autoPlayAnimDelay.Queue)
     self._autoPlayAnimDelay.Enable = false
     self._autoPlayAnimDelay.AccumulationTime = 0
     ScheduleService:RemoveUpdater(self, self._DelayPlayAnimationTick)
@@ -222,7 +217,6 @@ function UIPrefab:Destroy()
     if self._prefab then
         UIUtility:StopUIAnimation(self._prefab, false, true)
     end
-    CNSService:EndFlow(FlowId.All, FlowId.LogicUninitialize)
 
     if #self._child > 0 then
         for i = 1, #self._child do
@@ -243,12 +237,10 @@ function UIPrefab:Destroy()
     for k,v in pairs(self._imageAsyn) do
         AssetService:CancelAsyn(self, k)
     end
-    table.clear(self._imageAsyn)
-    table.clear(self._image2AssetPath)
+    table.Clear(self._imageAsyn)
+    table.Clear(self._image2AssetPath)
 
-    CNSService:BeginFlow(FlowId.All, FlowId.ResourceUninitialize, self.__classname)
     self:vOnResourceUnLoaded()
-    CNSService:EndFlow(FlowId.All, FlowId.ResourceUninitialize)
 
     EventService:RemoveUIEventByTable(self) -- 出现偶现事件错乱问题，应该有业务没有正常移除自己的事件，这里强行保护一下
     MVCService:RemovePrefab(self, self._parentTf)
@@ -272,7 +264,7 @@ function UIPrefab:Destroy()
 end
 
 ---异步加载ui成功。会调vOnCreateAsynPrefabClassCompleted。
----@param async UIPrefabClassAsyn 异步ui处理
+---@param async UIPrefabClassAsync 异步ui处理
 ---@param cls UIPrefab UI界面类定义
 ---@param parentTf UPanelWidget UE中的父控件（即创建出的控件所要挂载的地方）
 ---@param argument table 自定义参数，用于vInitialize时读取
@@ -374,7 +366,7 @@ function UIPrefab:SetAsynIcon(image, assetName, bIsSetDefault)
 
     if not self._imageAsyn[assetPath] then
         self._imageAsyn[assetPath] = {image}
-        AssetService:LoadAssetAsyn(LoadPriority.ImmediateShow, self, AssetType.Texture, assetPath, LifeType.Immediate)
+        AssetService:LoadAssetAsync(LoadPriority.ImmediateShow, self, AssetType.Texture, assetPath, LifeType.Immediate)
     else
         self._imageAsyn[assetPath][#self._imageAsyn[assetPath] + 1] = image
     end
@@ -411,7 +403,7 @@ function UIPrefab:OnLoadAssetCompleted(asyncLoadID, assetType, assetName, obj)
     self:vOnLoadAssetCompleted(asyncLoadID, assetType, assetName, obj)
 end
 function UIPrefab:GetPrefabIsVisible()
-    return IsValidObject(self._prefab) and self._prefab.IsVisible and self._prefab:IsVisible() or false
+    return UnityHelper.IsValidObject(self._prefab) and self._prefab.IsVisible and self._prefab:IsVisible() or false
 end
 function UIPrefab:GetPrefabClassByTag(tagName, param)
     if not param then
@@ -430,17 +422,17 @@ function UIPrefab:GetPrefabClassByTag(tagName, param)
             if not inPrefabInstance:GetPrefabIsVisible() then
                 -- 简单拦截，因为也有可能在更上层进行的隐藏，
                 if inPrefabInstance.__classname == ClassLib.CMGridClass.__classname then
-                    if IsValidObject(inPrefabInstance._uiGridObj) and inPrefabInstance._uiGridObj.IsVisible and inPrefabInstance._uiGridObj:IsVisible() then
+                    if UnityHelper.IsValidObject(inPrefabInstance._uiGridObj) and inPrefabInstance._uiGridObj.IsVisible and inPrefabInstance._uiGridObj:IsVisible() then
                     else
                         return nil
                     end
                 elseif inPrefabInstance.__classname == ClassLib.CMListViewClass.__classname then
-                    if IsValidObject(inPrefabInstance._listViewObj) and inPrefabInstance._listViewObj.IsVisible and inPrefabInstance._listViewObj:IsVisible() then
+                    if UnityHelper.IsValidObject(inPrefabInstance._listViewObj) and inPrefabInstance._listViewObj.IsVisible and inPrefabInstance._listViewObj:IsVisible() then
                     else
                         return nil
                     end
                 elseif inPrefabInstance.__classname == ClassLib.CMCurveListViewClass.__classname then
-                    if IsValidObject(inPrefabInstance._mListViewObj) and inPrefabInstance._mListViewObj.IsVisible and inPrefabInstance._mListViewObj:IsVisible() then
+                    if UnityHelper.IsValidObject(inPrefabInstance._mListViewObj) and inPrefabInstance._mListViewObj.IsVisible and inPrefabInstance._mListViewObj:IsVisible() then
                     else
                         return nil
                     end
@@ -469,16 +461,16 @@ function UIPrefab:GetPrefabNodeByTag(nodeTagName, param)
         if replaceNodeParam and replaceNodeParam.AutoWidgetNames:Length() > 0 then
             for i = 1, replaceNodeParam.AutoWidgetNames:Length() do
                 local autoWidgetName = replaceNodeParam.AutoWidgetNames:Get(i)
-                if not string.isEmpty(autoWidgetName) then
+                if not string.IsNullOrEmpty(autoWidgetName) then
                     prefabWidget = prefabWidget:GetAutoLoadWidget(autoWidgetName, true)
                 end
             end
         end
-        if prefabWidget and not string.isEmpty(replaceNodeParam.NodeName) then
+        if prefabWidget and not string.IsNullOrEmpty(replaceNodeParam.NodeName) then
             prefabNode = prefabWidget[replaceNodeParam.NodeName] or false
         end
         if prefabNode and prefabWidget then
-            if not string.isEmpty(replaceNodeParam.ButtonName) then
+            if not string.IsNullOrEmpty(replaceNodeParam.ButtonName) then
                 table.addUnique(btnList, prefabWidget[replaceNodeParam.ButtonName])
             else
                 table.addUnique(btnList, prefabNode)
@@ -524,7 +516,7 @@ function UIPrefab:_PlayAutoAnim(autoPlayMode)
         for i = 1, self._prefab.AnimAutoPlaySettings:Length() do
             local setting = self._prefab.AnimAutoPlaySettings:Get(i)
             if setting.AutoPlayMode == autoPlayMode and self._prefab[setting.AnimName] then
-                local animParam = Pool:CreateTable()
+                local animParam = UPool:CreateTable()
                 animParam.startAtTime = setting.StartAtTime
                 animParam.endAtTime = setting.EndAtTime
                 animParam.times = setting.NumLoopsToPlay
@@ -1053,7 +1045,7 @@ function UIPrefab:GetPrefabClassByUIPrefab(uiPrefab)
         return self, nil
     end
 
-    if IsValidObject(uiPrefab:GetParent()) then
+    if UnityHelper.IsValidObject(uiPrefab:GetParent()) then
         if self:GetAutoLoadWidget(uiPrefab:GetParent():GetName()) == uiPrefab then
             return self, uiPrefab:GetParent():GetName()
         end

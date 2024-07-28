@@ -75,8 +75,13 @@ local function endswith(target_string, start_pattern, plain)
     return find_pos_end == #target_string
 end
 string.empty = ""
+-------------------------------------------------------------------------------------------
+-- 返回字符串是否为空
+-- @param source(string) 需要检查的字符串
+-- @return 如果字符串为 nil 或者 长度为 0， 返回true
+-------------------------------------------------------------------------------------------
 function string.IsNullOrEmpty(source)
-    return source == nil or source == string.empty
+    return not source or string.len(source) == 0
 end
 
 ---去除头部空格

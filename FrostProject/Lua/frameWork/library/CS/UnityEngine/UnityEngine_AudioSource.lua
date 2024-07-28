@@ -1,10 +1,10 @@
----@class UnityEngine.AudioSource : UnityEngine.AudioBehaviour
+---@class CS.UnityEngine.AudioSource : CS.UnityEngine.AudioBehaviour
 ---@field public volume number
 ---@field public pitch number
 ---@field public time number
 ---@field public timeSamples number
----@field public clip UnityEngine.AudioClip
----@field public outputAudioMixerGroup UnityEngine.Audio.AudioMixerGroup
+---@field public clip CS.UnityEngine.AudioClip
+---@field public outputAudioMixerGroup CS.UnityEngine.Audio.AudioMixerGroup
 ---@field public isPlaying boolean
 ---@field public isVirtual boolean
 ---@field public loop boolean
@@ -27,59 +27,59 @@
 ---@field public minDistance number
 ---@field public maxDistance number
 ---@field public rolloffMode number
-UnityEngine.AudioSource = { }
----@return UnityEngine.AudioSource
-function UnityEngine.AudioSource.New() end
+CS.UnityEngine.AudioSource = { }
+---@return CS.UnityEngine.AudioSource
+function CS.UnityEngine.AudioSource.New() end
 ---@overload fun(): void
 ---@param delay uint64
-function UnityEngine.AudioSource:Play(delay) end
+function CS.UnityEngine.AudioSource:Play(delay) end
 ---@param delay number
-function UnityEngine.AudioSource:PlayDelayed(delay) end
+function CS.UnityEngine.AudioSource:PlayDelayed(delay) end
 ---@param time number
-function UnityEngine.AudioSource:PlayScheduled(time) end
+function CS.UnityEngine.AudioSource:PlayScheduled(time) end
 ---@param time number
-function UnityEngine.AudioSource:SetScheduledStartTime(time) end
+function CS.UnityEngine.AudioSource:SetScheduledStartTime(time) end
 ---@param time number
-function UnityEngine.AudioSource:SetScheduledEndTime(time) end
-function UnityEngine.AudioSource:Stop() end
-function UnityEngine.AudioSource:Pause() end
-function UnityEngine.AudioSource:UnPause() end
----@overload fun(clip:UnityEngine.AudioClip): void
----@param clip UnityEngine.AudioClip
+function CS.UnityEngine.AudioSource:SetScheduledEndTime(time) end
+function CS.UnityEngine.AudioSource:Stop() end
+function CS.UnityEngine.AudioSource:Pause() end
+function CS.UnityEngine.AudioSource:UnPause() end
+---@overload fun(clip:CS.UnityEngine.AudioClip): void
+---@param clip CS.UnityEngine.AudioClip
 ---@param volumeScale number
-function UnityEngine.AudioSource:PlayOneShot(clip, volumeScale) end
----@overload fun(clip:UnityEngine.AudioClip, position:UnityEngine.Vector3): void
----@param clip UnityEngine.AudioClip
----@param position UnityEngine.Vector3
+function CS.UnityEngine.AudioSource:PlayOneShot(clip, volumeScale) end
+---@overload fun(clip:CS.UnityEngine.AudioClip, position:CS.UnityEngine.Vector3): void
+---@param clip CS.UnityEngine.AudioClip
+---@param position CS.UnityEngine.Vector3
 ---@param volume number
-function UnityEngine.AudioSource.PlayClipAtPoint(clip, position, volume) end
+function CS.UnityEngine.AudioSource.PlayClipAtPoint(clip, position, volume) end
 ---@param t number
----@param curve UnityEngine.AnimationCurve
-function UnityEngine.AudioSource:SetCustomCurve(t, curve) end
----@return UnityEngine.AnimationCurve
+---@param curve CS.UnityEngine.AnimationCurve
+function CS.UnityEngine.AudioSource:SetCustomCurve(t, curve) end
+---@return CS.UnityEngine.AnimationCurve
 ---@param t number
-function UnityEngine.AudioSource:GetCustomCurve(t) end
----@param samples System.Single[]
+function CS.UnityEngine.AudioSource:GetCustomCurve(t) end
+---@param samples CS.System.Single[]
 ---@param channel number
-function UnityEngine.AudioSource:GetOutputData(samples, channel) end
----@param samples System.Single[]
+function CS.UnityEngine.AudioSource:GetOutputData(samples, channel) end
+---@param samples CS.System.Single[]
 ---@param channel number
 ---@param window number
-function UnityEngine.AudioSource:GetSpectrumData(samples, channel, window) end
+function CS.UnityEngine.AudioSource:GetSpectrumData(samples, channel, window) end
 ---@return boolean
 ---@param index number
 ---@param value number
-function UnityEngine.AudioSource:SetSpatializerFloat(index, value) end
+function CS.UnityEngine.AudioSource:SetSpatializerFloat(index, value) end
 ---@return boolean
 ---@param index number
----@param value System.Single
-function UnityEngine.AudioSource:GetSpatializerFloat(index, value) end
+---@param value CS.System.Single
+function CS.UnityEngine.AudioSource:GetSpatializerFloat(index, value) end
 ---@return boolean
 ---@param index number
 ---@param value number
-function UnityEngine.AudioSource:SetAmbisonicDecoderFloat(index, value) end
+function CS.UnityEngine.AudioSource:SetAmbisonicDecoderFloat(index, value) end
 ---@return boolean
 ---@param index number
----@param value System.Single
-function UnityEngine.AudioSource:GetAmbisonicDecoderFloat(index, value) end
-return UnityEngine.AudioSource
+---@param value CS.System.Single
+function CS.UnityEngine.AudioSource:GetAmbisonicDecoderFloat(index, value) end
+return CS.UnityEngine.AudioSource

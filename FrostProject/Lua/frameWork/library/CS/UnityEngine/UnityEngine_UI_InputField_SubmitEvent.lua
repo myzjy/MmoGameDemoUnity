@@ -1,5 +1,5 @@
----@class UnityEngine.UI.InputField.SubmitEvent : UnityEngine.Events.UnityEvent_System.String
-UnityEngine.UI.InputField.SubmitEvent = { }
----@return UnityEngine.UI.InputField.SubmitEvent
-function UnityEngine.UI.InputField.SubmitEvent.New() end
-return UnityEngine.UI.InputField.SubmitEvent
+---@class CS.UnityEngine.UI.InputField.SubmitEvent : CS.UnityEngine.Events.UnityEvent_System.String
+CS.UnityEngine.UI.InputField.SubmitEvent = { }
+---@return CS.UnityEngine.UI.InputField.SubmitEvent
+function CS.UnityEngine.UI.InputField.SubmitEvent.New() end
+return CS.UnityEngine.UI.InputField.SubmitEvent

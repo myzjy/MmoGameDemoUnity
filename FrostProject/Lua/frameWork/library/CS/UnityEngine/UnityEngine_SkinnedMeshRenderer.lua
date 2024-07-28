@@ -1,21 +1,21 @@
----@class UnityEngine.SkinnedMeshRenderer : UnityEngine.Renderer
+---@class CS.UnityEngine.SkinnedMeshRenderer : CS.UnityEngine.Renderer
 ---@field public quality number
 ---@field public updateWhenOffscreen boolean
 ---@field public forceMatrixRecalculationPerRender boolean
----@field public rootBone UnityEngine.Transform
----@field public bones UnityEngine.Transform[]
----@field public sharedMesh UnityEngine.Mesh
+---@field public rootBone CS.UnityEngine.Transform
+---@field public bones CS.UnityEngine.Transform[]
+---@field public sharedMesh CS.UnityEngine.Mesh
 ---@field public skinnedMotionVectors boolean
----@field public localBounds UnityEngine.Bounds
-UnityEngine.SkinnedMeshRenderer = { }
----@return UnityEngine.SkinnedMeshRenderer
-function UnityEngine.SkinnedMeshRenderer.New() end
+---@field public localBounds CS.UnityEngine.Bounds
+CS.UnityEngine.SkinnedMeshRenderer = { }
+---@return CS.UnityEngine.SkinnedMeshRenderer
+function CS.UnityEngine.SkinnedMeshRenderer.New() end
 ---@return number
 ---@param index number
-function UnityEngine.SkinnedMeshRenderer:GetBlendShapeWeight(index) end
+function CS.UnityEngine.SkinnedMeshRenderer:GetBlendShapeWeight(index) end
 ---@param index number
 ---@param value number
-function UnityEngine.SkinnedMeshRenderer:SetBlendShapeWeight(index, value) end
----@param mesh UnityEngine.Mesh
-function UnityEngine.SkinnedMeshRenderer:BakeMesh(mesh) end
-return UnityEngine.SkinnedMeshRenderer
+function CS.UnityEngine.SkinnedMeshRenderer:SetBlendShapeWeight(index, value) end
+---@param mesh CS.UnityEngine.Mesh
+function CS.UnityEngine.SkinnedMeshRenderer:BakeMesh(mesh) end
+return CS.UnityEngine.SkinnedMeshRenderer

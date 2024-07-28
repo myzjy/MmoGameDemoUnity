@@ -16,9 +16,12 @@ local GameUIModuleConfigList = {
         moduleClassName = "LoginModule",
         mediatorClassName = {
             "LoginMediator", --登录
-            "RegisterMediator", -- 注册
+            -- "RegisterMediator", -- 注册
         },
         filesPath = {
+            "game.module.loginAndReginsetr.login.loginMediator",
+            "game.module.loginAndReginsetr.login.loginUI.loginPanel",
+            "game.module.loginAndReginsetr.loginModule",
         }
     }
 }

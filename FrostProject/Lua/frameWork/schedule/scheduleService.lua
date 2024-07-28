@@ -41,7 +41,7 @@ function ScheduleService:Update(deltaTime)
 
         if tUpdateData ~= nullTbl then
             if (not tUpdateData.frameNum) or (tUpdateData.frameNum and (self.curFrameCount > tUpdateData.frameNum)) then
-                xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.uObject, deltaTime, table.unpack(tUpdateData.params))
+                xpcall(tUpdateData.func, __G__TRACKBACK__, tUpdateData.obj, deltaTime, table.unpack(tUpdateData.params))
                 if tUpdateData.isOnce then
                     self._updater[i] = nullTbl
                 end

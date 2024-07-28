@@ -283,6 +283,24 @@ local function concat(list, sep, i, j)
 	end
 	return tConcat
 end
+
+-------------------------------------------------------------------------------------------
+-- 向数组中添加唯一的值，并范围所在位置
+-- @param inArray(Table) 数组类型的Lua表
+-- @param inValue(*) 数组的元素
+-- @return inValue在inArray中的索引
+-------------------------------------------------------------------------------------------
+function table.addUnique(inArray, inValue)
+    if nil == inValue then return end
+    for tIndex, tValue in ipairs(inArray) do
+        if tValue == inValue then
+            return tIndex
+        end
+    end
+    return table.insert(inArray, inValue)
+end
+
+
 -- table.concat = concat
 table.count = count
 table.length = length

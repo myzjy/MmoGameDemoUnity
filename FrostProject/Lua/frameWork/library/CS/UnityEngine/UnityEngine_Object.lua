@@ -1,53 +1,53 @@
----@class UnityEngine.Object
+---@class CS.UnityEngine.Object
 ---@field public name string
 ---@field public hideFlags number
-UnityEngine.Object = { }
----@return UnityEngine.Object
-function UnityEngine.Object.New() end
+CS.UnityEngine.Object = { }
+---@return CS.UnityEngine.Object
+function CS.UnityEngine.Object.New() end
 ---@return number
-function UnityEngine.Object:GetInstanceID() end
+function CS.UnityEngine.Object:GetInstanceID() end
 ---@return number
-function UnityEngine.Object:GetHashCode() end
+function CS.UnityEngine.Object:GetHashCode() end
 ---@return boolean
----@param other System.Object
-function UnityEngine.Object:Equals(other) end
+---@param other CS.System.Object
+function CS.UnityEngine.Object:Equals(other) end
 ---@return boolean
----@param exists UnityEngine.Object
-function UnityEngine.Object.op_Implicit(exists) end
----@overload fun(original:UnityEngine.Object): UnityEngine.Object
----@overload fun(original:UnityEngine.Object, parent:UnityEngine.Transform): UnityEngine.Object
----@overload fun(original:UnityEngine.Object, position:UnityEngine.Vector3, rotation:UnityEngine.Quaternion): UnityEngine.Object
----@overload fun(original:UnityEngine.Object, parent:UnityEngine.Transform, instantiateInWorldSpace:boolean): UnityEngine.Object
----@return UnityEngine.Object
----@param original UnityEngine.Object
----@param position UnityEngine.Vector3
----@param rotation UnityEngine.Quaternion
----@param parent UnityEngine.Transform
-function UnityEngine.Object.Instantiate(original, position, rotation, parent) end
----@overload fun(obj:UnityEngine.Object): void
----@param obj UnityEngine.Object
+---@param exists CS.UnityEngine.Object
+function CS.UnityEngine.Object.op_Implicit(exists) end
+---@overload fun(original:CS.UnityEngine.Object): CS.UnityEngine.Object
+---@overload fun(original:CS.UnityEngine.Object, parent:CS.UnityEngine.Transform): CS.UnityEngine.Object
+---@overload fun(original:CS.UnityEngine.Object, position:CS.UnityEngine.Vector3, rotation:CS.UnityEngine.Quaternion): CS.UnityEngine.Object
+---@overload fun(original:CS.UnityEngine.Object, parent:CS.UnityEngine.Transform, instantiateInWorldSpace:boolean): CS.UnityEngine.Object
+---@return CS.UnityEngine.Object
+---@param original CS.UnityEngine.Object
+---@param position CS.UnityEngine.Vector3
+---@param rotation CS.UnityEngine.Quaternion
+---@param parent CS.UnityEngine.Transform
+function CS.UnityEngine.Object.Instantiate(original, position, rotation, parent) end
+---@overload fun(obj:CS.UnityEngine.Object): void
+---@param obj CS.UnityEngine.Object
 ---@param t number
-function UnityEngine.Object.Destroy(obj, t) end
----@overload fun(obj:UnityEngine.Object): void
----@param obj UnityEngine.Object
+function CS.UnityEngine.Object.Destroy(obj, t) end
+---@overload fun(obj:CS.UnityEngine.Object): void
+---@param obj CS.UnityEngine.Object
 ---@param allowDestroyingAssets boolean
-function UnityEngine.Object.DestroyImmediate(obj, allowDestroyingAssets) end
----@return UnityEngine.Object[]
+function CS.UnityEngine.Object.DestroyImmediate(obj, allowDestroyingAssets) end
+---@return CS.UnityEngine.Object[]
 ---@param t string
-function UnityEngine.Object.FindObjectsOfType(t) end
----@param target UnityEngine.Object
-function UnityEngine.Object.DontDestroyOnLoad(target) end
----@return UnityEngine.Object
+function CS.UnityEngine.Object.FindObjectsOfType(t) end
+---@param target CS.UnityEngine.Object
+function CS.UnityEngine.Object.DontDestroyOnLoad(target) end
+---@return CS.UnityEngine.Object
 ---@param t string
-function UnityEngine.Object.FindObjectOfType(t) end
+function CS.UnityEngine.Object.FindObjectOfType(t) end
 ---@return string
-function UnityEngine.Object:ToString() end
+function CS.UnityEngine.Object:ToString() end
 ---@return boolean
----@param x UnityEngine.Object
----@param y UnityEngine.Object
-function UnityEngine.Object.op_Equality(x, y) end
+---@param x CS.UnityEngine.Object
+---@param y CS.UnityEngine.Object
+function CS.UnityEngine.Object.op_Equality(x, y) end
 ---@return boolean
----@param x UnityEngine.Object
----@param y UnityEngine.Object
-function UnityEngine.Object.op_Inequality(x, y) end
-return UnityEngine.Object
+---@param x CS.UnityEngine.Object
+---@param y CS.UnityEngine.Object
+function CS.UnityEngine.Object.op_Inequality(x, y) end
+return CS.UnityEngine.Object

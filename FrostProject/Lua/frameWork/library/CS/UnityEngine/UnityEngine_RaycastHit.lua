@@ -1,14 +1,14 @@
----@class UnityEngine.RaycastHit : System.ValueType
----@field public collider UnityEngine.Collider
----@field public point UnityEngine.Vector3
----@field public normal UnityEngine.Vector3
----@field public barycentricCoordinate UnityEngine.Vector3
+---@class CS.UnityEngine.RaycastHit : CS.System.ValueType
+---@field public collider CS.UnityEngine.Collider
+---@field public point CS.UnityEngine.Vector3
+---@field public normal CS.UnityEngine.Vector3
+---@field public barycentricCoordinate CS.UnityEngine.Vector3
 ---@field public distance number
 ---@field public triangleIndex number
----@field public textureCoord UnityEngine.Vector2
----@field public textureCoord2 UnityEngine.Vector2
----@field public transform UnityEngine.Transform
----@field public rigidbody UnityEngine.Rigidbody
----@field public lightmapCoord UnityEngine.Vector2
-UnityEngine.RaycastHit = { }
-return UnityEngine.RaycastHit
+---@field public textureCoord CS.UnityEngine.Vector2
+---@field public textureCoord2 CS.UnityEngine.Vector2
+---@field public transform CS.UnityEngine.Transform
+---@field public rigidbody CS.UnityEngine.Rigidbody
+---@field public lightmapCoord CS.UnityEngine.Vector2
+CS.UnityEngine.RaycastHit = { }
+return CS.UnityEngine.RaycastHit

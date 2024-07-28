@@ -1,8 +1,11 @@
+using XLua;
+
 namespace FrostEngine
 {
     /// <summary>
     /// 加载资源回调函数集。
     /// </summary>
+    [CSharpCallLua]
     public sealed class LoadAssetCallbacks
     {
         private readonly LoadAssetSuccessCallback m_LoadAssetSuccessCallback;

@@ -11,7 +11,8 @@ function ModuleBase:ctor()
 end
 
 function ModuleBase:Create()
-
+    FrostLogD("ModuleBase","==> Create", self.__classname)
+    self:vOnInitializeModule()
 end
 
 function ModuleBase:Destroy()
@@ -165,6 +166,83 @@ end
 function ModuleBase:vOnEnterGame()
 end
 
+function ModuleBase:IsAllowSwitchGameState(switchType, currentState, targetState, userData)
+    return self:vOnGameStateAllowSwitch(switchType, currentState, targetState, userData)
+end
 
+function ModuleBase:SwitchGameState(operator, switchType, stateName, userData)
+    local constant = StateConstant
+    
+    if operator == constant.In then
+        self:vOnStateEnter(switchType, stateName, userData)
+        
+    elseif operator == constant.Out then
+        self:vOnStateLeave(switchType, stateName, userData)
+    end
+    
+    return true
+end
+
+function ModuleBase:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData, retData)
+    for i = 1, #self._mediator do
+        local name = self._mediator[i]:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
+        if name and retData then
+            retData[#retData + 1] = name
+            retData[#retData + 1] = self._mediator[i]
+        end
+    end
+end
+
+function ModuleBase:GetPrepareAssetData(collection)
+    if self.vOnPrepareAssetData then
+        self:LoadLocalFilePaths()
+        self:vOnPrepareAssetData(collection)
+        self:ReleaseLocalFilePaths()
+    end
+end
+
+-- 动态释放本地lua文件
+function ModuleBase:ReleaseLocalFilePaths()
+    if self._localFilePaths then
+        for tIndex, tFilePath in pairs(self._localFilePaths) do
+            package.loaded[tFilePath] = nil
+        end
+    end
+end
+
+-- 动态加载本地lua文件
+function ModuleBase:LoadLocalFilePaths()
+    if self._localFilePaths then
+        for tIndex, tFilePath in pairs(self._localFilePaths) do
+            require(tFilePath)
+        end
+    end
+end
+
+function ModuleBase:ActivePrefabClassCookie(active, classname, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
+    for i = 1, #self._mediator do
+        local mediator = self._mediator[i]
+        mediator:ActivePrefabClassCookie(active, classname, csInstanceID, rootGo, rootTf, uiPrefab, csPrefabClass)
+    end
+end
+
+function ModuleBase:CreateMediator(mediatorClass)
+    if not mediatorClass then
+        FrostLogE(self.__classname, "ModuleBaseClass.CreateM ediator : invalid parameter")
+        return
+    end
+    
+    ---@type UIMediator
+    local mediator = mediatorClass()
+    mediator:Create(self)
+    
+    self._mediator[#self._mediator + 1] = mediator
+end
+
+function ModuleBase:DisableUIPrefabRender(prefabPath)
+    for i = 1, #self._mediator do
+        self._mediator[i]:DisableUIPrefabRender(prefabPath)
+    end
+end
 
 return ModuleBase

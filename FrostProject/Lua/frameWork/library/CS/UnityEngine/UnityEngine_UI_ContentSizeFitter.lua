@@ -1,6 +1,6 @@
----@class UnityEngine.UI.ContentSizeFitter : UnityEngine.EventSystems.UIBehaviour
+---@class CS.UnityEngine.UI.ContentSizeFitter : CS.UnityEngine.EventSystems.UIBehaviour
 ---@field public horizontalFit number
 ---@field public verticalFit number
-UnityEngine.UI.ContentSizeFitter = { }
-function UnityEngine.UI.ContentSizeFitter:SetLayoutHorizontal() end
-function UnityEngine.UI.ContentSizeFitter:SetLayoutVertical() end
+CS.UnityEngine.UI.ContentSizeFitter = { }
+function CS.UnityEngine.UI.ContentSizeFitter:SetLayoutHorizontal() end
+function CS.UnityEngine.UI.ContentSizeFitter:SetLayoutVertical() end

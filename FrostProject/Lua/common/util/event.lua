@@ -17,21 +17,17 @@ local traceback = debug.traceback
 local ilist = UList
 
 local event_err_handle = function(msg)
-	error(msg, 2)
+	FrostLogE(msg)
 end
 
 local _pcall = {
 	__call = function(self, ...)
 		local status, err
 		if not self.obj then
-			status, err = pcall(self.func, ...)
+			xpcall(self.func, __G__TRACKBACK__, ...)
 		else
-			status, err = pcall(self.func, self.obj, ...)
+			xpcall(self.func, __G__TRACKBACK__,self.obj,...)
 		end
-		if not status then
-			event_err_handle(err .. "\n" .. traceback())
-		end
-		return status
 	end,
 
 	__eq = function(lhs, rhs)

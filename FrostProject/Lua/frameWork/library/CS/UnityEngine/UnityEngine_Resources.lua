@@ -1,31 +1,31 @@
----@class UnityEngine.Resources
-UnityEngine.Resources = { }
----@return UnityEngine.Resources
-function UnityEngine.Resources.New() end
----@return UnityEngine.Object[]
+---@class CS.UnityEngine.Resources
+CS.UnityEngine.Resources = { }
+---@return CS.UnityEngine.Resources
+function CS.UnityEngine.Resources.New() end
+---@return CS.UnityEngine.Object[]
 ---@param t string
-function UnityEngine.Resources.FindObjectsOfTypeAll(t) end
----@overload fun(path:string): UnityEngine.Object
----@return UnityEngine.Object
+function CS.UnityEngine.Resources.FindObjectsOfTypeAll(t) end
+---@overload fun(path:string): CS.UnityEngine.Object
+---@return CS.UnityEngine.Object
 ---@param path string
 ---@param systemTypeInstance string
-function UnityEngine.Resources.Load(path, systemTypeInstance) end
----@overload fun(path:string): UnityEngine.ResourceRequest
----@return UnityEngine.ResourceRequest
+function CS.UnityEngine.Resources.Load(path, systemTypeInstance) end
+---@overload fun(path:string): CS.UnityEngine.ResourceRequest
+---@return CS.UnityEngine.ResourceRequest
 ---@param path string
 ---@param t string
-function UnityEngine.Resources.LoadAsync(path, t) end
----@overload fun(path:string): UnityEngine.Object[]
----@return UnityEngine.Object[]
+function CS.UnityEngine.Resources.LoadAsync(path, t) end
+---@overload fun(path:string): CS.UnityEngine.Object[]
+---@return CS.UnityEngine.Object[]
 ---@param path string
 ---@param systemTypeInstance string
-function UnityEngine.Resources.LoadAll(path, systemTypeInstance) end
----@return UnityEngine.Object
+function CS.UnityEngine.Resources.LoadAll(path, systemTypeInstance) end
+---@return CS.UnityEngine.Object
 ---@param t string
 ---@param path string
-function UnityEngine.Resources.GetBuiltinResource(t, path) end
----@param assetToUnload UnityEngine.Object
-function UnityEngine.Resources.UnloadAsset(assetToUnload) end
----@return UnityEngine.AsyncOperation
-function UnityEngine.Resources.UnloadUnusedAssets() end
-return UnityEngine.Resources
+function CS.UnityEngine.Resources.GetBuiltinResource(t, path) end
+---@param assetToUnload CS.UnityEngine.Object
+function CS.UnityEngine.Resources.UnloadAsset(assetToUnload) end
+---@return CS.UnityEngine.AsyncOperation
+function CS.UnityEngine.Resources.UnloadUnusedAssets() end
+return CS.UnityEngine.Resources

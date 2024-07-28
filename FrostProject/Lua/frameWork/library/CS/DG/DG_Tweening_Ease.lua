@@ -1,4 +1,4 @@
----@class DG.Tweening.Ease : System.Enum
+---@class DG.Tweening.Ease : CS.System.Enum
 ---@field public value__ number
 ---@field public Unset number
 ---@field public Linear number

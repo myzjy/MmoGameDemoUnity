@@ -1,11 +1,11 @@
----@class UnityEngine.EventSystems.BaseRaycaster : UnityEngine.EventSystems.UIBehaviour
----@field public eventCamera UnityEngine.Camera
+---@class CS.UnityEngine.EventSystems.BaseRaycaster : CS.UnityEngine.EventSystems.UIBehaviour
+---@field public eventCamera CS.UnityEngine.Camera
 ---@field public sortOrderPriority number
 ---@field public renderOrderPriority number
-UnityEngine.EventSystems.BaseRaycaster = { }
----@param eventData UnityEngine.EventSystems.PointerEventData
----@param resultAppendList System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult
-function UnityEngine.EventSystems.BaseRaycaster:Raycast(eventData, resultAppendList) end
+CS.UnityEngine.EventSystems.BaseRaycaster = { }
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+---@param resultAppendList CS.System.Collections.Generic.List_UnityEngine.EventSystems.RaycastResult
+function CS.UnityEngine.EventSystems.BaseRaycaster:Raycast(eventData, resultAppendList) end
 ---@return string
-function UnityEngine.EventSystems.BaseRaycaster:ToString() end
-return UnityEngine.EventSystems.BaseRaycaster
+function CS.UnityEngine.EventSystems.BaseRaycaster:ToString() end
+return CS.UnityEngine.EventSystems.BaseRaycaster

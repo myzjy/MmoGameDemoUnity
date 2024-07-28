@@ -22,13 +22,6 @@
 ---@field DataTableService DataTableService
 ---@field GameBaseStage GameBaseStage
 ---@field Messenger Messenger
+---@field StateGameControl StateGameControl
+---@field StateUIControl StateUIControl
 ClassLibraryMap = {}
-
----@class CS
-CS = CS
-
----@class UnityEngine
-UnityEngine = CS.UnityEngine
-
----@class FrostEngine
-FrostEngine = CS.FrostEngine

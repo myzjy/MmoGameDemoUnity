@@ -34,3 +34,11 @@ function UnityHelper.TransformChild(inTransform)
     end
     return child
 end
+
+function GetCurrentWorld()
+    return CS.UnityEngine.SceneManagement.SceneManager:GetActiveScene()
+end
+
+function UnityHelper.IsValidObject(inObject)
+    return inObject ~= nil
+end

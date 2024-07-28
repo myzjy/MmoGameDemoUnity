@@ -1,4 +1,4 @@
----@class UITextTypeWriter : UnityEngine.MonoBehaviour
+---@class UITextTypeWriter : CS.UnityEngine.MonoBehaviour
 ---@field public CHANGELINE_TYPE number
 ---@field public totalTime number
 ---@field public waitTime number

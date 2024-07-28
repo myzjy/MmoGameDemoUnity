@@ -1,58 +1,58 @@
----@class System.IO.FileInfo : System.IO.FileSystemInfo
+---@class CS.System.IO.FileInfo : CS.System.IO.FileSystemInfo
 ---@field public Name string
 ---@field public Length int64
 ---@field public DirectoryName string
----@field public Directory System.IO.DirectoryInfo
+---@field public Directory CS.System.IO.DirectoryInfo
 ---@field public IsReadOnly boolean
 ---@field public Exists boolean
-System.IO.FileInfo = { }
----@return System.IO.FileInfo
+CS.System.IO.FileInfo = { }
+---@return CS.System.IO.FileInfo
 ---@param fileName string
-function System.IO.FileInfo.New(fileName) end
----@overload fun(): System.Security.AccessControl.FileSecurity
----@return System.Security.AccessControl.FileSecurity
+function CS.System.IO.FileInfo.New(fileName) end
+---@overload fun(): CS.System.Security.AccessControl.FileSecurity
+---@return CS.System.Security.AccessControl.FileSecurity
 ---@param includeSections number
-function System.IO.FileInfo:GetAccessControl(includeSections) end
----@param fileSecurity System.Security.AccessControl.FileSecurity
-function System.IO.FileInfo:SetAccessControl(fileSecurity) end
----@return System.IO.StreamReader
-function System.IO.FileInfo:OpenText() end
----@return System.IO.StreamWriter
-function System.IO.FileInfo:CreateText() end
----@return System.IO.StreamWriter
-function System.IO.FileInfo:AppendText() end
----@overload fun(destFileName:string): System.IO.FileInfo
----@return System.IO.FileInfo
+function CS.System.IO.FileInfo:GetAccessControl(includeSections) end
+---@param fileSecurity CS.System.Security.AccessControl.FileSecurity
+function CS.System.IO.FileInfo:SetAccessControl(fileSecurity) end
+---@return CS.System.IO.StreamReader
+function CS.System.IO.FileInfo:OpenText() end
+---@return CS.System.IO.StreamWriter
+function CS.System.IO.FileInfo:CreateText() end
+---@return CS.System.IO.StreamWriter
+function CS.System.IO.FileInfo:AppendText() end
+---@overload fun(destFileName:string): CS.System.IO.FileInfo
+---@return CS.System.IO.FileInfo
 ---@param destFileName string
 ---@param overwrite boolean
-function System.IO.FileInfo:CopyTo(destFileName, overwrite) end
----@return System.IO.FileStream
-function System.IO.FileInfo:Create() end
-function System.IO.FileInfo:Delete() end
-function System.IO.FileInfo:Decrypt() end
-function System.IO.FileInfo:Encrypt() end
----@overload fun(mode:number): System.IO.FileStream
----@overload fun(mode:number, access:number): System.IO.FileStream
----@return System.IO.FileStream
+function CS.System.IO.FileInfo:CopyTo(destFileName, overwrite) end
+---@return CS.System.IO.FileStream
+function CS.System.IO.FileInfo:Create() end
+function CS.System.IO.FileInfo:Delete() end
+function CS.System.IO.FileInfo:Decrypt() end
+function CS.System.IO.FileInfo:Encrypt() end
+---@overload fun(mode:number): CS.System.IO.FileStream
+---@overload fun(mode:number, access:number): CS.System.IO.FileStream
+---@return CS.System.IO.FileStream
 ---@param mode number
 ---@param access number
 ---@param share number
-function System.IO.FileInfo:Open(mode, access, share) end
----@return System.IO.FileStream
-function System.IO.FileInfo:OpenRead() end
----@return System.IO.FileStream
-function System.IO.FileInfo:OpenWrite() end
+function CS.System.IO.FileInfo:Open(mode, access, share) end
+---@return CS.System.IO.FileStream
+function CS.System.IO.FileInfo:OpenRead() end
+---@return CS.System.IO.FileStream
+function CS.System.IO.FileInfo:OpenWrite() end
 ---@param destFileName string
-function System.IO.FileInfo:MoveTo(destFileName) end
----@overload fun(destinationFileName:string, destinationBackupFileName:string): System.IO.FileInfo
----@return System.IO.FileInfo
+function CS.System.IO.FileInfo:MoveTo(destFileName) end
+---@overload fun(destinationFileName:string, destinationBackupFileName:string): CS.System.IO.FileInfo
+---@return CS.System.IO.FileInfo
 ---@param destinationFileName string
 ---@param destinationBackupFileName string
 ---@param ignoreMetadataErrors boolean
-function System.IO.FileInfo:Replace(destinationFileName, destinationBackupFileName, ignoreMetadataErrors) end
+function CS.System.IO.FileInfo:Replace(destinationFileName, destinationBackupFileName, ignoreMetadataErrors) end
 ---@return string
-function System.IO.FileInfo:ToString() end
+function CS.System.IO.FileInfo:ToString() end
 ---@return string
----@param encoding System.Text.Encoding
-function System.IO.FileInfo:ReadText(encoding) end
-return System.IO.FileInfo
+---@param encoding CS.System.Text.Encoding
+function CS.System.IO.FileInfo:ReadText(encoding) end
+return CS.System.IO.FileInfo

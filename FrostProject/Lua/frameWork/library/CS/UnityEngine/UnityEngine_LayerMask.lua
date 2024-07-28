@@ -1,17 +1,17 @@
----@class UnityEngine.LayerMask : System.ValueType
+---@class CS.UnityEngine.LayerMask : CS.System.ValueType
 ---@field public value number
-UnityEngine.LayerMask = { }
----@overload fun(mask:UnityEngine.LayerMask): number
+CS.UnityEngine.LayerMask = { }
+---@overload fun(mask:CS.UnityEngine.LayerMask): number
 ---@return number
 ---@param intVal number
-function UnityEngine.LayerMask.op_Implicit(intVal) end
+function CS.UnityEngine.LayerMask.op_Implicit(intVal) end
 ---@return string
 ---@param layer number
-function UnityEngine.LayerMask.LayerToName(layer) end
+function CS.UnityEngine.LayerMask.LayerToName(layer) end
 ---@return number
 ---@param layerName string
-function UnityEngine.LayerMask.NameToLayer(layerName) end
+function CS.UnityEngine.LayerMask.NameToLayer(layerName) end
 ---@return number
----@param layerNames System.String[]
-function UnityEngine.LayerMask.GetMask(layerNames) end
-return UnityEngine.LayerMask
+---@param layerNames CS.System.String[]
+function CS.UnityEngine.LayerMask.GetMask(layerNames) end
+return CS.UnityEngine.LayerMask

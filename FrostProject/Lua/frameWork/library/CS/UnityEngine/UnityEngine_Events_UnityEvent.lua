@@ -1,10 +1,10 @@
----@class UnityEngine.Events.UnityEvent : UnityEngine.Events.UnityEventBase
-UnityEngine.Events.UnityEvent = { }
----@return UnityEngine.Events.UnityEvent
-function UnityEngine.Events.UnityEvent.New() end
+---@class CS.UnityEngine.Events.UnityEvent : CS.UnityEngine.Events.UnityEventBase
+CS.UnityEngine.Events.UnityEvent = { }
+---@return CS.UnityEngine.Events.UnityEvent
+function CS.UnityEngine.Events.UnityEvent.New() end
 ---@param call (fun():void)
-function UnityEngine.Events.UnityEvent:AddListener(call) end
+function CS.UnityEngine.Events.UnityEvent:AddListener(call) end
 ---@param call (fun():void)
-function UnityEngine.Events.UnityEvent:RemoveListener(call) end
-function UnityEngine.Events.UnityEvent:Invoke() end
-return UnityEngine.Events.UnityEvent
+function CS.UnityEngine.Events.UnityEvent:RemoveListener(call) end
+function CS.UnityEngine.Events.UnityEvent:Invoke() end
+return CS.UnityEngine.Events.UnityEvent

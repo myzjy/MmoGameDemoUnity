@@ -188,7 +188,7 @@ function GameBaseStage:_endPreLoad(inIsSuccessed, inTaskGUID)
     local tMapID = self:GetMapID()
     if UnityHelper.IsValidID(tMapID) then
         local function callBack(inParam)
-            SceneMapService:OnStagePostLoadMap()
+            SceneMapService:OnStagePostLoadMap(inParam)
             -- self._changeContext.playerPos, self._changeContext.playerRotation
         end
         local function progressCallBack(inProgress)

@@ -1,36 +1,36 @@
----@class UnityEngine.UI.Scrollbar : UnityEngine.UI.Selectable
----@field public handleRect UnityEngine.RectTransform
+---@class CS.UnityEngine.UI.Scrollbar : CS.UnityEngine.UI.Selectable
+---@field public handleRect CS.UnityEngine.RectTransform
 ---@field public direction number
 ---@field public value number
 ---@field public size number
 ---@field public numberOfSteps number
----@field public onValueChanged UnityEngine.UI.Scrollbar.ScrollEvent
-UnityEngine.UI.Scrollbar = { }
+---@field public onValueChanged CS.UnityEngine.UI.Scrollbar.ScrollEvent
+CS.UnityEngine.UI.Scrollbar = { }
 ---@param executing number
-function UnityEngine.UI.Scrollbar:Rebuild(executing) end
-function UnityEngine.UI.Scrollbar:LayoutComplete() end
-function UnityEngine.UI.Scrollbar:GraphicUpdateComplete() end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Scrollbar:OnBeginDrag(eventData) end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Scrollbar:OnDrag(eventData) end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Scrollbar:OnPointerDown(eventData) end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Scrollbar:OnPointerUp(eventData) end
----@param eventData UnityEngine.EventSystems.AxisEventData
-function UnityEngine.UI.Scrollbar:OnMove(eventData) end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Scrollbar:FindSelectableOnLeft() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Scrollbar:FindSelectableOnRight() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Scrollbar:FindSelectableOnUp() end
----@return UnityEngine.UI.Selectable
-function UnityEngine.UI.Scrollbar:FindSelectableOnDown() end
----@param eventData UnityEngine.EventSystems.PointerEventData
-function UnityEngine.UI.Scrollbar:OnInitializePotentialDrag(eventData) end
+function CS.UnityEngine.UI.Scrollbar:Rebuild(executing) end
+function CS.UnityEngine.UI.Scrollbar:LayoutComplete() end
+function CS.UnityEngine.UI.Scrollbar:GraphicUpdateComplete() end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Scrollbar:OnBeginDrag(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Scrollbar:OnDrag(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Scrollbar:OnPointerDown(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Scrollbar:OnPointerUp(eventData) end
+---@param eventData CS.UnityEngine.EventSystems.AxisEventData
+function CS.UnityEngine.UI.Scrollbar:OnMove(eventData) end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Scrollbar:FindSelectableOnLeft() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Scrollbar:FindSelectableOnRight() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Scrollbar:FindSelectableOnUp() end
+---@return CS.UnityEngine.UI.Selectable
+function CS.UnityEngine.UI.Scrollbar:FindSelectableOnDown() end
+---@param eventData CS.UnityEngine.EventSystems.PointerEventData
+function CS.UnityEngine.UI.Scrollbar:OnInitializePotentialDrag(eventData) end
 ---@param direction number
 ---@param includeRectLayouts boolean
-function UnityEngine.UI.Scrollbar:SetDirection(direction, includeRectLayouts) end
-return UnityEngine.UI.Scrollbar
+function CS.UnityEngine.UI.Scrollbar:SetDirection(direction, includeRectLayouts) end
+return CS.UnityEngine.UI.Scrollbar

@@ -290,17 +290,18 @@ function MVCService:GetMediatorClassByName(mediatorName)
 end
 
 --- 创建模块时间
----@param inModuleClass any 模块类定义
+---@param inModuleClass ModuleBase 模块类定义
 ---@param ... any
 function MVCService:OnCreateModule(inModuleClass,...)
+    ---@type ModuleBase
     local md = inModuleClass()
     md:Create()
 
     for i = 1, select('#' ,...) do
         local arg = select(i,  ...)
-        md:CreateMediatar(arg)
+        md:CreateMediator(arg)
     end
-    self._module[#self._module+1] = md
+    self._module[#self._module + 1] = md
     return md
 end
 
@@ -311,11 +312,9 @@ function MVCService:_onLoadModuleConfig()
     for tModuleName, tModuleConfigData in pairs(tAllModulesConfigMap) do
         tGlobalModulesConfigMap[tModuleName] = tModuleConfigData
     end
+
     for tModuleName, tModuleConfigData in pairs(tGlobalModulesConfigMap) do
-        tGlobalModulesConfigMap[tModuleName] = tModuleConfigData
-    end
-    for tModuleName, tModuleConfigData in pairs(tGlobalModulesConfigMap) do
-        local tOnResult = xpcall(self._onLoadModuleConfig, __G__TRACKBACK__, self, tModuleConfigData)
+        local tOnResult = xpcall(self._onCreateGlobalModule, __G__TRACKBACK__, self, tModuleConfigData)
         if not tOnResult then
             FrostLogE(self.__classname, string.format("UIModule( %s ) load failed!", tModuleName))
         end
@@ -341,7 +340,7 @@ function MVCService:_onCreateGlobalModule(inModuleConfigData)
             tMediatorClassList[tIndex] = tMediatorDataClass
         end
     end
-    local md = self:OnCreateModule(tLoadModuleClass)
+    local md = self:OnCreateModule(tLoadModuleClass,table.unpack(tMediatorClassList))
     
     return md
 end

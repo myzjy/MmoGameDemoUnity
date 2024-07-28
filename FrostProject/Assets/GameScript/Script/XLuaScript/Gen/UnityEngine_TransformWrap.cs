@@ -21,11 +21,13 @@ namespace XLua.CSObjectWrap
         {
 			ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
 			System.Type type = typeof(UnityEngine.Transform);
-			Utils.BeginObjectRegister(type, L, translator, 0, 22, 19, 13);
+			Utils.BeginObjectRegister(type, L, translator, 0, 24, 19, 13);
 			
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetParent", _m_SetParent);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetPositionAndRotation", _m_SetPositionAndRotation);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "SetLocalPositionAndRotation", _m_SetLocalPositionAndRotation);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetPositionAndRotation", _m_GetPositionAndRotation);
+			Utils.RegisterFunc(L, Utils.METHOD_IDX, "GetLocalPositionAndRotation", _m_GetLocalPositionAndRotation);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Translate", _m_Translate);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "Rotate", _m_Rotate);
 			Utils.RegisterFunc(L, Utils.METHOD_IDX, "RotateAround", _m_RotateAround);
@@ -201,6 +203,72 @@ namespace XLua.CSObjectWrap
                     
                     
                     return 0;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_GetPositionAndRotation(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                UnityEngine.Transform gen_to_be_invoked = (UnityEngine.Transform)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _position;
+                    UnityEngine.Quaternion _rotation;
+                    
+                    gen_to_be_invoked.GetPositionAndRotation( out _position, out _rotation );
+                    translator.PushUnityEngineVector3(L, _position);
+                        
+                    translator.PushUnityEngineQuaternion(L, _rotation);
+                        
+                    
+                    
+                    
+                    return 2;
+                }
+                
+            } catch(System.Exception gen_e) {
+                return LuaAPI.luaL_error(L, "c# exception:" + gen_e);
+            }
+            
+        }
+        
+        [MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
+        static int _m_GetLocalPositionAndRotation(RealStatePtr L)
+        {
+		    try {
+            
+                ObjectTranslator translator = ObjectTranslatorPool.Instance.Find(L);
+            
+            
+                UnityEngine.Transform gen_to_be_invoked = (UnityEngine.Transform)translator.FastGetCSObj(L, 1);
+            
+            
+                
+                {
+                    UnityEngine.Vector3 _localPosition;
+                    UnityEngine.Quaternion _localRotation;
+                    
+                    gen_to_be_invoked.GetLocalPositionAndRotation( out _localPosition, out _localRotation );
+                    translator.PushUnityEngineVector3(L, _localPosition);
+                        
+                    translator.PushUnityEngineQuaternion(L, _localRotation);
+                        
+                    
+                    
+                    
+                    return 2;
                 }
                 
             } catch(System.Exception gen_e) {

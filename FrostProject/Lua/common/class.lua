@@ -5,8 +5,6 @@
 
 null = nil
 nullTbl = {}
-CS = CS
-TypeOf = CS.typeof
 
 --- @class LuaDataType Lua数据类型枚举
 LuaDataType = {

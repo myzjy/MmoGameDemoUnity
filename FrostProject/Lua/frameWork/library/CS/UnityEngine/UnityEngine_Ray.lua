@@ -1,16 +1,16 @@
----@class UnityEngine.Ray : System.ValueType
----@field public origin UnityEngine.Vector3
----@field public direction UnityEngine.Vector3
-UnityEngine.Ray = { }
----@return UnityEngine.Ray
----@param origin UnityEngine.Vector3
----@param direction UnityEngine.Vector3
-function UnityEngine.Ray.New(origin, direction) end
----@return UnityEngine.Vector3
+---@class CS.UnityEngine.Ray : CS.System.ValueType
+---@field public origin CS.UnityEngine.Vector3
+---@field public direction CS.UnityEngine.Vector3
+CS.UnityEngine.Ray = { }
+---@return CS.UnityEngine.Ray
+---@param origin CS.UnityEngine.Vector3
+---@param direction CS.UnityEngine.Vector3
+function CS.UnityEngine.Ray.New(origin, direction) end
+---@return CS.UnityEngine.Vector3
 ---@param distance number
-function UnityEngine.Ray:GetPoint(distance) end
+function CS.UnityEngine.Ray:GetPoint(distance) end
 ---@overload fun(): string
 ---@return string
 ---@param format string
-function UnityEngine.Ray:ToString(format) end
-return UnityEngine.Ray
+function CS.UnityEngine.Ray:ToString(format) end
+return CS.UnityEngine.Ray

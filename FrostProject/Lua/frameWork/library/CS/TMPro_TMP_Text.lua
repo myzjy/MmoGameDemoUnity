@@ -1,12 +1,12 @@
--- ---@class TMPro.TMP_Text : UnityEngine.UI.MaskableGraphic
+-- ---@class TMPro.TMP_Text : CS.UnityEngine.UI.MaskableGraphic
 -- ---@field public text string
 -- ---@field public isRightToLeftText boolean
 -- ---@field public font TMPro.TMP_FontAsset
--- ---@field public fontSharedMaterial UnityEngine.Material
--- ---@field public fontSharedMaterials UnityEngine.Material[]
--- ---@field public fontMaterial UnityEngine.Material
--- ---@field public fontMaterials UnityEngine.Material[]
--- ---@field public color UnityEngine.Color
+-- ---@field public fontSharedMaterial CS.UnityEngine.Material
+-- ---@field public fontSharedMaterials CS.UnityEngine.Material[]
+-- ---@field public fontMaterial CS.UnityEngine.Material
+-- ---@field public fontMaterials CS.UnityEngine.Material[]
+-- ---@field public color CS.UnityEngine.Color
 -- ---@field public alpha number
 -- ---@field public enableVertexGradient boolean
 -- ---@field public colorGradient TMPro.VertexGradient
@@ -14,8 +14,8 @@
 -- ---@field public spriteAsset TMPro.TMP_SpriteAsset
 -- ---@field public tintAllSprites boolean
 -- ---@field public overrideColorTags boolean
--- ---@field public faceColor UnityEngine.Color32
--- ---@field public outlineColor UnityEngine.Color32
+-- ---@field public faceColor CS.UnityEngine.Color32
+-- ---@field public outlineColor CS.UnityEngine.Color32
 -- ---@field public outlineWidth number
 -- ---@field public fontSize number
 -- ---@field public fontScale number
@@ -61,17 +61,17 @@
 -- ---@field public maxVisibleLines number
 -- ---@field public useMaxVisibleDescender boolean
 -- ---@field public pageToDisplay number
--- ---@field public margin UnityEngine.Vector4
+-- ---@field public margin CS.UnityEngine.Vector4
 -- ---@field public textInfo TMPro.TMP_TextInfo
 -- ---@field public havePropertiesChanged boolean
 -- ---@field public isUsingLegacyAnimationComponent boolean
--- ---@field public transform UnityEngine.Transform
--- ---@field public rectTransform UnityEngine.RectTransform
+-- ---@field public transform CS.UnityEngine.Transform
+-- ---@field public rectTransform CS.UnityEngine.RectTransform
 -- ---@field public autoSizeTextContainer boolean
--- ---@field public mesh UnityEngine.Mesh
+-- ---@field public mesh CS.UnityEngine.Mesh
 -- ---@field public isVolumetricText boolean
--- ---@field public bounds UnityEngine.Bounds
--- ---@field public textBounds UnityEngine.Bounds
+-- ---@field public bounds CS.UnityEngine.Bounds
+-- ---@field public textBounds CS.UnityEngine.Bounds
 -- ---@field public flexibleHeight number
 -- ---@field public flexibleWidth number
 -- ---@field public minWidth number
@@ -91,16 +91,16 @@
 -- ---@overload fun(): void
 -- ---@param ignoreActiveState boolean
 -- function TMPro.TMP_Text:ForceMeshUpdate(ignoreActiveState) end
--- ---@param mesh UnityEngine.Mesh
+-- ---@param mesh CS.UnityEngine.Mesh
 -- ---@param index number
 -- function TMPro.TMP_Text:UpdateGeometry(mesh, index) end
 -- ---@overload fun(): void
 -- ---@param flags number
 -- function TMPro.TMP_Text:UpdateVertexData(flags) end
--- ---@param vertices UnityEngine.Vector3[]
+-- ---@param vertices CS.UnityEngine.Vector3[]
 -- function TMPro.TMP_Text:SetVertices(vertices) end
 -- function TMPro.TMP_Text:UpdateMeshPadding() end
--- ---@param targetColor UnityEngine.Color
+-- ---@param targetColor CS.UnityEngine.Color
 -- ---@param duration number
 -- ---@param ignoreTimeScale boolean
 -- ---@param useAlpha boolean
@@ -110,7 +110,7 @@
 -- ---@param ignoreTimeScale boolean
 -- function TMPro.TMP_Text:CrossFadeAlpha(alpha, duration, ignoreTimeScale) end
 -- ---@overload fun(text:string): void
--- ---@overload fun(text:System.Text.StringBuilder): void
+-- ---@overload fun(text:CS.System.Text.StringBuilder): void
 -- ---@overload fun(text:string, syncTextInputBox:boolean): void
 -- ---@overload fun(text:string, arg0:number): void
 -- ---@overload fun(text:string, arg0:number, arg1:number): void
@@ -119,22 +119,22 @@
 -- ---@param arg1 number
 -- ---@param arg2 number
 -- function TMPro.TMP_Text:SetText(text, arg0, arg1, arg2) end
--- ---@overload fun(sourceText:System.Char[]): void
--- ---@overload fun(sourceText:System.Char[], start:number, length:number): void
--- ---@param sourceText System.Int32[]
+-- ---@overload fun(sourceText:CS.System.Char[]): void
+-- ---@overload fun(sourceText:CS.System.Char[], start:number, length:number): void
+-- ---@param sourceText CS.System.Int32[]
 -- ---@param start number
 -- ---@param length number
 -- function TMPro.TMP_Text:SetCharArray(sourceText, start, length) end
--- ---@overload fun(): UnityEngine.Vector2
--- ---@overload fun(text:string): UnityEngine.Vector2
--- ---@overload fun(width:number, height:number): UnityEngine.Vector2
--- ---@return UnityEngine.Vector2
+-- ---@overload fun(): CS.UnityEngine.Vector2
+-- ---@overload fun(text:string): CS.UnityEngine.Vector2
+-- ---@overload fun(width:number, height:number): CS.UnityEngine.Vector2
+-- ---@return CS.UnityEngine.Vector2
 -- ---@param text string
 -- ---@param width number
 -- ---@param height number
 -- function TMPro.TMP_Text:GetPreferredValues(text, width, height) end
--- ---@overload fun(): UnityEngine.Vector2
--- ---@return UnityEngine.Vector2
+-- ---@overload fun(): CS.UnityEngine.Vector2
+-- ---@return CS.UnityEngine.Vector2
 -- ---@param onlyVisibleCharacters boolean
 -- function TMPro.TMP_Text:GetRenderedValues(onlyVisibleCharacters) end
 -- ---@return TMPro.TMP_TextInfo

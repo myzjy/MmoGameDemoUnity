@@ -9,7 +9,7 @@ local UPoolClass = Class("UPoolClass")
 
 function UPoolClass:ctor()
     self._tablePool = {}
-    self._count = {}
+    self._count = 0
 end
 function UPoolClass:CreateTable()
     if self._count == 0 then

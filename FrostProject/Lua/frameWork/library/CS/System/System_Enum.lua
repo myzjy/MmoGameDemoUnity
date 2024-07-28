@@ -1,60 +1,60 @@
----@class System.Enum : System.ValueType
-System.Enum = { }
----@overload fun(enumType:string, value:string): System.Object
----@return System.Object
+---@class CS.System.Enum : CS.System.ValueType
+CS.System.Enum = { }
+---@overload fun(enumType:string, value:string): CS.System.Object
+---@return CS.System.Object
 ---@param enumType string
 ---@param value string
 ---@param ignoreCase boolean
-function System.Enum.Parse(enumType, value, ignoreCase) end
+function CS.System.Enum.Parse(enumType, value, ignoreCase) end
 ---@return string
 ---@param enumType string
-function System.Enum.GetUnderlyingType(enumType) end
----@return System.Array
+function CS.System.Enum.GetUnderlyingType(enumType) end
+---@return CS.System.Array
 ---@param enumType string
-function System.Enum.GetValues(enumType) end
+function CS.System.Enum.GetValues(enumType) end
 ---@return string
 ---@param enumType string
----@param value System.Object
-function System.Enum.GetName(enumType, value) end
----@return System.String[]
+---@param value CS.System.Object
+function CS.System.Enum.GetName(enumType, value) end
+---@return CS.System.String[]
 ---@param enumType string
-function System.Enum.GetNames(enumType) end
----@overload fun(enumType:string, value:System.Object): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:number): System.Object
----@overload fun(enumType:string, value:int64): System.Object
----@return System.Object
+function CS.System.Enum.GetNames(enumType) end
+---@overload fun(enumType:string, value:CS.System.Object): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:number): CS.System.Object
+---@overload fun(enumType:string, value:int64): CS.System.Object
+---@return CS.System.Object
 ---@param enumType string
 ---@param value uint64
-function System.Enum.ToObject(enumType, value) end
+function CS.System.Enum.ToObject(enumType, value) end
 ---@return boolean
 ---@param enumType string
----@param value System.Object
-function System.Enum.IsDefined(enumType, value) end
+---@param value CS.System.Object
+function CS.System.Enum.IsDefined(enumType, value) end
 ---@return string
 ---@param enumType string
----@param value System.Object
+---@param value CS.System.Object
 ---@param format string
-function System.Enum.Format(enumType, value, format) end
+function CS.System.Enum.Format(enumType, value, format) end
 ---@return boolean
----@param obj System.Object
-function System.Enum:Equals(obj) end
+---@param obj CS.System.Object
+function CS.System.Enum:Equals(obj) end
 ---@return number
-function System.Enum:GetHashCode() end
+function CS.System.Enum:GetHashCode() end
 ---@overload fun(): string
 ---@return string
 ---@param format string
-function System.Enum:ToString(format) end
+function CS.System.Enum:ToString(format) end
 ---@return number
----@param target System.Object
-function System.Enum:CompareTo(target) end
+---@param target CS.System.Object
+function CS.System.Enum:CompareTo(target) end
 ---@return boolean
----@param flag System.Enum
-function System.Enum:HasFlag(flag) end
+---@param flag CS.System.Enum
+function CS.System.Enum:HasFlag(flag) end
 ---@return number
-function System.Enum:GetTypeCode() end
-return System.Enum
+function CS.System.Enum:GetTypeCode() end
+return CS.System.Enum

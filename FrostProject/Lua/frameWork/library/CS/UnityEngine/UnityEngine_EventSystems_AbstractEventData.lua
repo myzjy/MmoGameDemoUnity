@@ -1,6 +1,6 @@
----@class UnityEngine.EventSystems.AbstractEventData
+---@class CS.UnityEngine.EventSystems.AbstractEventData
 ---@field public used boolean
-UnityEngine.EventSystems.AbstractEventData = { }
-function UnityEngine.EventSystems.AbstractEventData:Reset() end
-function UnityEngine.EventSystems.AbstractEventData:Use() end
-return UnityEngine.EventSystems.AbstractEventData
+CS.UnityEngine.EventSystems.AbstractEventData = { }
+function CS.UnityEngine.EventSystems.AbstractEventData:Reset() end
+function CS.UnityEngine.EventSystems.AbstractEventData:Use() end
+return CS.UnityEngine.EventSystems.AbstractEventData

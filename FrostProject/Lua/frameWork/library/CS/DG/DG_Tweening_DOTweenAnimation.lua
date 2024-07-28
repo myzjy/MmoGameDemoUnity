@@ -2,7 +2,7 @@
 ---@field public delay number
 ---@field public duration number
 ---@field public easeType number
----@field public easeCurve UnityEngine.AnimationCurve
+---@field public easeCurve CS.UnityEngine.AnimationCurve
 ---@field public loopType number
 ---@field public loops number
 ---@field public id string
@@ -12,19 +12,19 @@
 ---@field public autoKill boolean
 ---@field public isActive boolean
 ---@field public isValid boolean
----@field public target UnityEngine.Component
+---@field public target CS.UnityEngine.Component
 ---@field public animationType number
 ---@field public targetType number
 ---@field public forcedTargetType number
 ---@field public autoPlay boolean
 ---@field public useTargetAsV3 boolean
 ---@field public endValueFloat number
----@field public endValueV3 UnityEngine.Vector3
----@field public endValueV2 UnityEngine.Vector2
----@field public endValueColor UnityEngine.Color
+---@field public endValueV3 CS.UnityEngine.Vector3
+---@field public endValueV2 CS.UnityEngine.Vector2
+---@field public endValueColor CS.UnityEngine.Color
 ---@field public endValueString string
----@field public endValueRect UnityEngine.Rect
----@field public endValueTransform UnityEngine.Transform
+---@field public endValueRect CS.UnityEngine.Rect
+---@field public endValueTransform CS.UnityEngine.Transform
 ---@field public optionalBool0 boolean
 ---@field public optionalFloat0 number
 ---@field public optionalInt0 number
@@ -65,7 +65,7 @@ function DG.Tweening.DOTweenAnimation:DORewindAndPlayNext() end
 function DG.Tweening.DOTweenAnimation:DORestartById(id) end
 ---@param id string
 function DG.Tweening.DOTweenAnimation:DORestartAllById(id) end
----@return System.Collections.Generic.List_DG.Tweening.Tween
+---@return CS.System.Collections.Generic.List_DG.Tweening.Tween
 function DG.Tweening.DOTweenAnimation:GetTweens() end
 ---@return number
 ---@param t string

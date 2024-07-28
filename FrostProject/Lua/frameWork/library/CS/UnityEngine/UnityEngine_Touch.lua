@@ -1,8 +1,8 @@
----@class UnityEngine.Touch : System.ValueType
+---@class CS.UnityEngine.Touch : CS.System.ValueType
 ---@field public fingerId number
----@field public position UnityEngine.Vector2
----@field public rawPosition UnityEngine.Vector2
----@field public deltaPosition UnityEngine.Vector2
+---@field public position CS.UnityEngine.Vector2
+---@field public rawPosition CS.UnityEngine.Vector2
+---@field public deltaPosition CS.UnityEngine.Vector2
 ---@field public deltaTime number
 ---@field public tapCount number
 ---@field public phase number
@@ -13,5 +13,5 @@
 ---@field public azimuthAngle number
 ---@field public radius number
 ---@field public radiusVariance number
-UnityEngine.Touch = { }
-return UnityEngine.Touch
+CS.UnityEngine.Touch = { }
+return CS.UnityEngine.Touch

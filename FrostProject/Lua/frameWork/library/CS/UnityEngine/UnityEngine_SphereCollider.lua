@@ -1,7 +1,7 @@
----@class UnityEngine.SphereCollider : UnityEngine.Collider
----@field public center UnityEngine.Vector3
+---@class CS.UnityEngine.SphereCollider : CS.UnityEngine.Collider
+---@field public center CS.UnityEngine.Vector3
 ---@field public radius number
-UnityEngine.SphereCollider = { }
----@return UnityEngine.SphereCollider
-function UnityEngine.SphereCollider.New() end
-return UnityEngine.SphereCollider
+CS.UnityEngine.SphereCollider = { }
+---@return CS.UnityEngine.SphereCollider
+function CS.UnityEngine.SphereCollider.New() end
+return CS.UnityEngine.SphereCollider

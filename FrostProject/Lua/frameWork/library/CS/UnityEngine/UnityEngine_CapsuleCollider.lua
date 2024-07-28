@@ -1,9 +1,9 @@
----@class UnityEngine.CapsuleCollider : UnityEngine.Collider
----@field public center UnityEngine.Vector3
+---@class CS.UnityEngine.CapsuleCollider : CS.UnityEngine.Collider
+---@field public center CS.UnityEngine.Vector3
 ---@field public radius number
 ---@field public height number
 ---@field public direction number
-UnityEngine.CapsuleCollider = { }
----@return UnityEngine.CapsuleCollider
-function UnityEngine.CapsuleCollider.New() end
-return UnityEngine.CapsuleCollider
+CS.UnityEngine.CapsuleCollider = { }
+---@return CS.UnityEngine.CapsuleCollider
+function CS.UnityEngine.CapsuleCollider.New() end
+return CS.UnityEngine.CapsuleCollider

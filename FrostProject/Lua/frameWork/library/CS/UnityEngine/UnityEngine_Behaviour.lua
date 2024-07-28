@@ -1,7 +1,7 @@
----@class UnityEngine.Behaviour : UnityEngine.Component
+---@class CS.UnityEngine.Behaviour : CS.UnityEngine.Component
 ---@field public enabled boolean
 ---@field public isActiveAndEnabled boolean
-UnityEngine.Behaviour = { }
----@return UnityEngine.Behaviour
-function UnityEngine.Behaviour.New() end
-return UnityEngine.Behaviour
+CS.UnityEngine.Behaviour = { }
+---@return CS.UnityEngine.Behaviour
+function CS.UnityEngine.Behaviour.New() end
+return CS.UnityEngine.Behaviour

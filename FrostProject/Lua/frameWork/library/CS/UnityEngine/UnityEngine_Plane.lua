@@ -1,46 +1,46 @@
----@class UnityEngine.Plane : System.ValueType
----@field public normal UnityEngine.Vector3
+---@class CS.UnityEngine.Plane : CS.System.ValueType
+---@field public normal CS.UnityEngine.Vector3
 ---@field public distance number
----@field public flipped UnityEngine.Plane
-UnityEngine.Plane = { }
----@overload fun(inNormal:UnityEngine.Vector3, inPoint:UnityEngine.Vector3): UnityEngine.Plane
----@overload fun(inNormal:UnityEngine.Vector3, d:number): UnityEngine.Plane
----@return UnityEngine.Plane
----@param a UnityEngine.Vector3
----@param b UnityEngine.Vector3
----@param c UnityEngine.Vector3
-function UnityEngine.Plane.New(a, b, c) end
----@param inNormal UnityEngine.Vector3
----@param inPoint UnityEngine.Vector3
-function UnityEngine.Plane:SetNormalAndPosition(inNormal, inPoint) end
----@param a UnityEngine.Vector3
----@param b UnityEngine.Vector3
----@param c UnityEngine.Vector3
-function UnityEngine.Plane:Set3Points(a, b, c) end
-function UnityEngine.Plane:Flip() end
----@overload fun(translation:UnityEngine.Vector3): void
----@param plane UnityEngine.Plane
----@param translation UnityEngine.Vector3
-function UnityEngine.Plane:Translate(plane, translation) end
----@return UnityEngine.Vector3
----@param point UnityEngine.Vector3
-function UnityEngine.Plane:ClosestPointOnPlane(point) end
+---@field public flipped CS.UnityEngine.Plane
+CS.UnityEngine.Plane = { }
+---@overload fun(inNormal:CS.UnityEngine.Vector3, inPoint:CS.UnityEngine.Vector3): CS.UnityEngine.Plane
+---@overload fun(inNormal:CS.UnityEngine.Vector3, d:number): CS.UnityEngine.Plane
+---@return CS.UnityEngine.Plane
+---@param a CS.UnityEngine.Vector3
+---@param b CS.UnityEngine.Vector3
+---@param c CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane.New(a, b, c) end
+---@param inNormal CS.UnityEngine.Vector3
+---@param inPoint CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:SetNormalAndPosition(inNormal, inPoint) end
+---@param a CS.UnityEngine.Vector3
+---@param b CS.UnityEngine.Vector3
+---@param c CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:Set3Points(a, b, c) end
+function CS.UnityEngine.Plane:Flip() end
+---@overload fun(translation:CS.UnityEngine.Vector3): void
+---@param plane CS.UnityEngine.Plane
+---@param translation CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:Translate(plane, translation) end
+---@return CS.UnityEngine.Vector3
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:ClosestPointOnPlane(point) end
 ---@return number
----@param point UnityEngine.Vector3
-function UnityEngine.Plane:GetDistanceToPoint(point) end
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:GetDistanceToPoint(point) end
 ---@return boolean
----@param point UnityEngine.Vector3
-function UnityEngine.Plane:GetSide(point) end
+---@param point CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:GetSide(point) end
 ---@return boolean
----@param inPt0 UnityEngine.Vector3
----@param inPt1 UnityEngine.Vector3
-function UnityEngine.Plane:SameSide(inPt0, inPt1) end
+---@param inPt0 CS.UnityEngine.Vector3
+---@param inPt1 CS.UnityEngine.Vector3
+function CS.UnityEngine.Plane:SameSide(inPt0, inPt1) end
 ---@return boolean
----@param ray UnityEngine.Ray
----@param enter System.Single
-function UnityEngine.Plane:Raycast(ray, enter) end
+---@param ray CS.UnityEngine.Ray
+---@param enter CS.System.Single
+function CS.UnityEngine.Plane:Raycast(ray, enter) end
 ---@overload fun(): string
 ---@return string
 ---@param format string
-function UnityEngine.Plane:ToString(format) end
-return UnityEngine.Plane
+function CS.UnityEngine.Plane:ToString(format) end
+return CS.UnityEngine.Plane

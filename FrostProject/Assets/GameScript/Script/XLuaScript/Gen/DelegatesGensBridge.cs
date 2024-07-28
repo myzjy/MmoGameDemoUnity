@@ -372,6 +372,80 @@ namespace XLua
 #endif
 		}
         
+		public void __Gen_Delegate_Imp16(string p0, FrostEngine.LoadResourceStatus p1, string p2, object p3)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                LuaAPI.lua_pushstring(L, p0);
+                translator.Push(L, p1);
+                LuaAPI.lua_pushstring(L, p2);
+                translator.PushAny(L, p3);
+                
+                PCall(L, 4, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp17(string p0, object p1, float p2, object p3)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                LuaAPI.lua_pushstring(L, p0);
+                translator.PushAny(L, p1);
+                LuaAPI.lua_pushnumber(L, p2);
+                translator.PushAny(L, p3);
+                
+                PCall(L, 4, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
+		public void __Gen_Delegate_Imp18(string p0, float p1, object p2)
+		{
+#if THREAD_SAFE || HOTFIX_ENABLE
+            lock (luaEnv.luaEnvLock)
+            {
+#endif
+                RealStatePtr L = luaEnv.L;
+                int errFunc = LuaAPI.pcall_prepare(L, errorFuncRef, luaReference);
+                ObjectTranslator translator = luaEnv.translator;
+                LuaAPI.lua_pushstring(L, p0);
+                LuaAPI.lua_pushnumber(L, p1);
+                translator.PushAny(L, p2);
+                
+                PCall(L, 3, 0, errFunc);
+                
+                
+                
+                LuaAPI.lua_settop(L, errFunc - 1);
+                
+#if THREAD_SAFE || HOTFIX_ENABLE
+            }
+#endif
+		}
+        
 		
 		public override Delegate GetDelegateByType(Type type)
 		{
@@ -469,6 +543,21 @@ namespace XLua
 		    if (type == typeof(System.Action<string, object>))
 			{
 			    return new System.Action<string, object>(__Gen_Delegate_Imp15);
+			}
+		
+		    if (type == typeof(FrostEngine.LoadAssetFailureCallback))
+			{
+			    return new FrostEngine.LoadAssetFailureCallback(__Gen_Delegate_Imp16);
+			}
+		
+		    if (type == typeof(FrostEngine.LoadAssetSuccessCallback))
+			{
+			    return new FrostEngine.LoadAssetSuccessCallback(__Gen_Delegate_Imp17);
+			}
+		
+		    if (type == typeof(FrostEngine.LoadAssetUpdateCallback))
+			{
+			    return new FrostEngine.LoadAssetUpdateCallback(__Gen_Delegate_Imp18);
 			}
 		
 		    return null;

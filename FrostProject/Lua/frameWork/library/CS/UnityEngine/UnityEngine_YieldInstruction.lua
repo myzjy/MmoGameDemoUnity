@@ -1,5 +1,5 @@
----@class UnityEngine.YieldInstruction
-UnityEngine.YieldInstruction = { }
----@return UnityEngine.YieldInstruction
-function UnityEngine.YieldInstruction.New() end
-return UnityEngine.YieldInstruction
+---@class CS.UnityEngine.YieldInstruction
+CS.UnityEngine.YieldInstruction = { }
+---@return CS.UnityEngine.YieldInstruction
+function CS.UnityEngine.YieldInstruction.New() end
+return CS.UnityEngine.YieldInstruction
