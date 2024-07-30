@@ -7,4 +7,8 @@ function LoginMediator:vGetBelongUIStateName()
     }
 end
 
+function LoginMediator:SwitchUIStateIn(switchType, userData)
+    self:CreateAsyncPrefabClass(ClassLibraryMap.LoginPanel, nil, nil,nil, 1)
+end
+
 return LoginMediator

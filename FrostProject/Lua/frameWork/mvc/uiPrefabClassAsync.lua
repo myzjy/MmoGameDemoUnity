@@ -49,8 +49,8 @@ function UIPrefabClassAsync:Create(mediator, parentPrefabClass, parentTf, prefab
     self._layer = layer or false
     self._insertFirst = insertFirst or false
     
-    self._assetName = prefabClassDef.__vtbl:GetResourcePath(style)
-    AssetService:LoadAssetAsync(loadPriority, self, TypeOf(CS.UnityEngine.Object), self._assetName)
+    self._assetName = prefabClassDef:GetResourcePath(style)
+    AssetService:LoadAssetAsync(loadPriority, self, typeof(CS.UnityEngine.Object), self._assetName)
 end
 function UIPrefabClassAsync:Destroy()
     self._mediator = false

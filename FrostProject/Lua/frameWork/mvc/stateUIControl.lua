@@ -603,7 +603,7 @@ function StateUIControl:AddStateName(list, stateName, userData)
         
         local data = UPool:CreateTable()
         data.StateName = v
-        list[#list+1] = data
+        list[#list + 1] = data
         self:AddHistory(v)
     end
     

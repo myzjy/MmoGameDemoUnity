@@ -122,7 +122,7 @@ end
 function MVCService:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData, childUserData, onlyEntityModule)
     
     --local StartTimeMS = NGRHelper.GetTimestampNowMs()
-    local data = operator == StateConstant.In or nil
+    local data = operator == StateConstant.In and UPool:CreateTable() or nil
     
     self:_DoEachModule(function(inModuleInstance)
         inModuleInstance:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData, data)

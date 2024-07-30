@@ -305,7 +305,7 @@ function StateService:ChangeGameState(stateName, userData, forecastStateName, ui
         uiStateName = uiStateName or ""
     end
     
-    FrostLogD(self.__classname, "--> StateService:ChangeGameState", stateName)
+    FrostLogD(self.__classname, "--> StateService:ChangeGameState", stateName,"uiStateName", uiStateName)
     self._gameStateControl:ChangeState(stateName, userData, forecastStateName, uiStateName, dontLoadResource, sceneID, loadUI)
 end
 

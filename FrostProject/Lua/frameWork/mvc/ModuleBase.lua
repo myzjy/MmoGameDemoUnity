@@ -7,6 +7,7 @@ local ModuleBase = Class("ModuleBase")
 
 function ModuleBase:ctor()
     self._localFilePaths = false -- 仅在存在非全生命周期
+    ---@type table<number,UIMediator>
     self._mediator = {}
 end
 
@@ -185,6 +186,7 @@ end
 
 function ModuleBase:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData, retData)
     for i = 1, #self._mediator do
+        FrostLogD(self.__classname, "ModuleBase:SwitchUIState","operator",operator,"switchType" ,switchType, "rootStateName",rootStateName,"stateName",  stateName, "childStateName", childStateName)
         local name = self._mediator[i]:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
         if name and retData then
             retData[#retData + 1] = name

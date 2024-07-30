@@ -93,12 +93,14 @@ end
 --- @param childStateName string 子状态名
 --- @param userData any 配置参数或者自定义数据
 function UIMediator:SwitchUIState(operator, switchType, rootStateName, stateName, childStateName, userData)
+    FrostLogD(self.__classname, "childStateName",childStateName,"stateName",stateName,"rootStateName",rootStateName,self._belongUIStateName)
     if not self._belongUIStateName or #self._belongUIStateName == 0 then
         return
     end
 
     local constant = StateConstant
     local inStateName = false
+    FrostLogD(self.__classname,"self._inStateName ", self._inStateName)
     if self._belongUIStateName[1] == constant.AllState then
         if childStateName and childStateName ~= "" then
             inStateName = childStateName
@@ -242,7 +244,7 @@ function UIMediator:SwitchUIStateIn(switchType, userData)
     self:vOnUIStateIn(switchType, self._inStateName, userData)
     CNSService:EndFlow(FlowId.All, FlowId.UIStateIn)
 
-    if #self._prefabClassAsyn == 0 then
+    if #self._prefabClassAsync == 0 then
         self:SetMaskCoveredofViewport()
     end
 end
@@ -278,14 +280,14 @@ function UIMediator:CreatePrefabClassAsynCompleted(asyn, cls, argument, customID
     local prefabClass = self:CreatePrefabClass(cls, argument, customID, style, layer, asyncLoadID)
     asyn:ApplyUpdateUI(prefabClass)
 
-    for i = 1, #self._prefabClassAsyn do
-        if self._prefabClassAsyn[i] == asyn then
-            table.remove(self._prefabClassAsyn, i)
+    for i = 1, #self._prefabClassAsync do
+        if self._prefabClassAsync[i] == asyn then
+            table.remove(self._prefabClassAsync, i)
             break
         end
     end
 
-    if #self._prefabClassAsyn == 0 then
+    if #self._prefabClassAsync == 0 then
         self:SetMaskCoveredofViewport()
     end
 
@@ -493,7 +495,7 @@ function UIMediator:CreatePrefabClass(cls, argument, customID, style, layer, asy
         return nil
     end
 
-    local obj = cls:New()
+    local obj = cls()
 
     obj:Create(self, nil, nil, argument, customID, style, layer, asyncLoadID)
 
@@ -510,23 +512,23 @@ end
 -- @param style 资源样式(索引)
 ---@param layer PanelLayerConfig @指定的层级
 -- @return 无
-function UIMediator:CreateAsynPrefabClass(cls, argument, loadPriority, life, customID, style, layer)
+function UIMediator:CreateAsyncPrefabClass(cls, argument, loadPriority, life, customID, style, layer)
     if not cls then
-        FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : invalid parameter")
+        FrostLogE(self.__classname, "UIMediator.CreateAsyncPrefabClass : invalid parameter")
         return
     end
     if customID then
         if self:GetPrefabClassByCustomID(customID) then
-            FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : already exist prefab", customID)
+            FrostLogE(self.__classname, "UIMediator.CreateAsyncPrefabClass : already exist prefab", customID)
             return
         end
         if self:GetCreateAsynPrefabClassStateByCustomID(customID) then
-            FrostLogE(self.__classname, "UIMediator.CreateAsynPrefabClass : prefab is createing", customID)
+            FrostLogE(self.__classname, "UIMediator.CreateAsyncPrefabClass : prefab is createing", customID)
             return
         end
     end
-    local obj = ClassLib.UIPrefabClassAsyn:New()
-    self._prefabClassAsyn[#self._prefabClassAsyn+1] = obj
+    local obj = ClassLibraryMap.UIPrefabClassAsync()
+    self._prefabClassAsync[#self._prefabClassAsync+1] = obj
     obj:Create(self, nil, nil, cls, argument, loadPriority or LoadPriority.SpareShow, life or LifeType.Immediate, customID, style, layer)
 end
 
@@ -569,10 +571,10 @@ function UIMediator:DestroyPrefabClassByName(name, onlyAsyn)
         end
     end
 
-    for i = #self._prefabClassAsyn, 1, -1 do
-        local pca = self._prefabClassAsyn[i]
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
         if pca:GetPrefabClassName() == name then
-            table.remove(self._prefabClassAsyn, i)
+            table.remove(self._prefabClassAsync, i)
             pca:Destroy()
         end
     end
@@ -598,10 +600,10 @@ function UIMediator:DestroyPrefabClassByCustomID(customID, onlyAsyn)
         end
     end
 
-    for i = #self._prefabClassAsyn, 1, -1 do
-        local pca = self._prefabClassAsyn[i]
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
         if pca._customID == customID then
-            table.remove(self._prefabClassAsyn, i)
+            table.remove(self._prefabClassAsync, i)
             pca:Destroy()
         end
     end
@@ -620,10 +622,10 @@ function UIMediator:DestroyAllPrefabClass(onlyAsyn)
         end
     end
 
-    local asyn = table.remove(self._prefabClassAsyn)
+    local asyn = table.remove(self._prefabClassAsync)
     while asyn do
         asyn:Destroy()
-        asyn = table.remove(self._prefabClassAsyn)
+        asyn = table.remove(self._prefabClassAsync)
     end
 end
 
@@ -700,8 +702,8 @@ function UIMediator:GetCreateAsynPrefabClassStateByName(name)
         return
     end
 
-    for i = #self._prefabClassAsyn, 1, -1 do
-        local pca = self._prefabClassAsyn[i]
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
         if pca:GetPrefabClassName() == name then
             return true
         end
@@ -717,8 +719,8 @@ function UIMediator:GetCreateAsynPrefabClassStateByCustomID(customID)
         FrostLogE(self.__classname, "UIMediator.GetCreateAsynPrefabClassStateByCustomID : invalid parameter")
         return
     end
-    for i = #self._prefabClassAsyn, 1, -1 do
-        local pca = self._prefabClassAsyn[i]
+    for i = #self._prefabClassAsync, 1, -1 do
+        local pca = self._prefabClassAsync[i]
         if pca._customID == customID then
             return true
         end
@@ -762,8 +764,8 @@ function UIMediator:SendUpdateUI(id, argument, dummy)
         CNSService:EndFlow(FlowId.All, FlowId.SendUpdateUI)
     end
 
-    for i = 1, #self._prefabClassAsyn do
-        local asyn = self._prefabClassAsyn[i]
+    for i = 1, #self._prefabClassAsync do
+        local asyn = self._prefabClassAsync[i]
         asyn:SendUpdateUI(id, argument)
     end
 
@@ -829,7 +831,7 @@ function UIMediator:IsInputEnable()
     return self._inputEnable or not self._belongUIStateName or #self._belongUIStateName == 0 or (#self._belongUIStateName > 0 and self._belongUIStateName[1] == "")
 end
 
--- 创建或销毁UI 例如 self._ui = SetUIVisible(self._ui, true, ClassLib.UITestClass, false) 或 self._ui = SetUIVisible(self._ui, false)
+-- 创建或销毁UI 例如 self._ui = SetUIVisible(self._ui, true, ClassLibraryMap.UITestClass, false) 或 self._ui = SetUIVisible(self._ui, false)
 -- @param ui ui对象
 -- @param visible 是否显示
 -- @param class UI对应的PrefabClass

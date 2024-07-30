@@ -15,8 +15,8 @@ return {
     "frameWork.services.gameStage.gameStageService",     -- 游戏阶段服务
 
     "frameWork.services.gameTime.gameTimeService",       -- 时间服务
-    "frameWork.services.csNetwork.netWrokService",       -- 网络服务
-    "frameWork.services.sceneMap.sceneMapService",       -- 地图
+    "frameWork.services.csNetwork.NetWrokService",       -- 网络服务
+    "frameWork.services.sceneMap.SceneMapService",       -- 地图
 
     "frameWork.services.asset.assetService",       -- 资源
 

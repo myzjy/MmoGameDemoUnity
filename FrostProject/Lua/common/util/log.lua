@@ -173,6 +173,8 @@ function TableConcat(inArguments)
             table.insert(tTabMap, JSON.encode(tValue))
         elseif tTypeStr =="table" then
             table.insert(tTabMap, JSON.encode(tValue))
+        elseif tTypeStr == "boolean" then
+            table.insert(tTabMap, JSON.encode(tValue))
         else
             table.insert(tTabMap, tValue)
         end
